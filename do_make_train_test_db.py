@@ -100,4 +100,4 @@ for timeframe in timeframes:
             
     if not test_on_screen:
         #os.system('mv train.big.from train.big.to test.from test.to new_data/.')
-        os.system('mv raw/t* new_data/.')
+        os.system('mv raw/t* data/.')

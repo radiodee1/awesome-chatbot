@@ -204,4 +204,4 @@ if __name__ == '__main__':
 
         transaction_bldr('', force=True)
 
-    #os.system("mv movie_lines.db input.db")
+    os.system("mv input.db raw/input_movie.db")
