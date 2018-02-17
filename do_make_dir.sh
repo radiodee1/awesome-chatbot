@@ -8,13 +8,10 @@ else
 fi
 
 
-mkdir raw model_glove
-cd new_data/
-touch test.from test.to train.from train.to
-cd ..
+mkdir raw model
 
 
-pip3 install tqdm colorama regex
+pip3 install tqdm colorama regex unidecode
 
 
 if [ -f raw/RC_2015-01.bz2 ] ; then
