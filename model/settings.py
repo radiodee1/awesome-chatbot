@@ -11,6 +11,7 @@ hparams = {
     'tgt_ending': "to",
     'base_filename': "chatbot",
     'num_train_total': 500000,
+    'num_vocab_total': 20000,
     'batch_size': 256,
     'steps_to_stats': 100,
     'sol':'<s>',
