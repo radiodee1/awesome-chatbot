@@ -1,6 +1,11 @@
 raw/*
 data/*
 saved/*
+*.db
+*.db-journal
+*.txt
+
+*.bz2
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
