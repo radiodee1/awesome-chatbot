@@ -6,7 +6,7 @@ from keras.preprocessing import text
 from keras.models import Sequential
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten
 
-print(hparams)
+#print(hparams)
 
 words = hparams['num_vocab_total']
 text_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
@@ -92,7 +92,6 @@ if True:
         #ls = np.asarray(ls)
         #ls_xxx.extend(ls)
         #ls_xxx.append(hparams['eol'])
-        print (ls_xxx.shape, ls.T.shape)
         if ls_xxx.shape[0] == 0:
             ls_xxx = ls
 
@@ -123,15 +122,19 @@ if True:
         else:
             ls_yyy = np.row_stack((ls_yyy,ls))
 
+        ############ batch #############
+
         if ii % batch_size  == 0:
-            #temp_xxx.extend(ls_xxx)
-            if temp_xxx.shape[0] == 0:
+
+            #print (ls_xxx)
+            #exit()
+            if len(temp_xxx.shape) == 1:
                 temp_xxx = ls_xxx
             else:
                 temp_xxx = np.dstack((temp_xxx,ls_xxx))
             ls_xxx = np.array([])
             #temp_yyy.extend(ls_yyy)
-            if temp_yyy.shape[0] == 0:
+            if len(temp_yyy.shape) == 1:
                 temp_yyy = ls_yyy
             else:
                 temp_yyy = np.dstack((temp_yyy,ls_yyy))
@@ -146,28 +149,28 @@ y = np.array(temp_yyy)
 #print (len(x[0][0]))
 
 
-if False:
+if True:
     #x = np.array(x)
     #y = np.array(y)
 
 
-    x = np.reshape(x, (batch_size,))
-    y = np.reshape(y, (batch_size,))
+    x = np.swapaxes(x, 0,2)
+    y = np.swapaxes(y, 0,2)
     #x = np.transpose(x)
     #y = np.transpose(y)
 
 #print (x)
 #print (x.shape[1:])
-#print (x.shape)
+print (x.shape)
 x_shape =  x.shape
 #x_shape =(x.shape[0], x.shape[0])
 
 model = Sequential()
-model.add(Embedding(words, units, input_shape=x_shape[1:]))
+model.add(Embedding(words, units,input_length=tokens_per_sentence, input_shape=x_shape[1:]))
 #model.add(Flatten())
 shape = x_shape[1:][0]
-model.add(LSTM(shape, return_sequences=True))
-model.add(Bidirectional(LSTM(shape)))
+model.add(LSTM(units, return_sequences=True))
+#model.add(Bidirectional(LSTM(shape)))
 
 #model.add(LSTM(units))
 
