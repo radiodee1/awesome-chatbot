@@ -5,7 +5,8 @@ from settings import hparams
 from keras.preprocessing import text, sequence
 from keras.models import Sequential
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten
-
+import gensim.models.word2vec as w2v
+import os
 #print(hparams)
 
 words = hparams['num_vocab_total']
@@ -18,6 +19,15 @@ oov_token = hparams['unk']
 batch_size = hparams['batch_size']
 units = hparams['units']
 tokens_per_sentence = hparams['tokens_per_sentence']
+raw_embedding_filename = hparams['raw_embedding_filename']
+
+
+if True:
+    print ("stage: load model")
+    word2vec_book = w2v.Word2Vec.load(os.path.join("../data", raw_embedding_filename + "_1.w2v"))
+    words = len(word2vec_book.wv.vocab)
+    vocab_size = words
+    print(word2vec_book.wv.index2word[vocab_size - 1], word2vec_book.wv.index2word[vocab_size - 2], word2vec_book.wv.index2word[vocab_size - 3])
 
 zzz_fr = None
 zzz_to = None
@@ -68,16 +78,16 @@ if True:
 
     tokenize_text_fr = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
     tokenize_text_fr.fit_on_texts(text_zzz_to)
-    x_matrix = tokenize_text_fr.texts_to_matrix(text_xxx)
+    #x_matrix = tokenize_text_fr.texts_to_matrix(text_xxx)
     #print (x_matrix, x_matrix.shape)
     #x_matrix = sequence.pad_sequences(text_xxx, maxlen=tokens_per_sentence)
 
-    print (x_matrix, x_matrix.shape)
-    x_matrix = np.expand_dims(x_matrix, axis=0)
+    #print (x_matrix, x_matrix.shape)
+    #x_matrix = np.expand_dims(x_matrix, axis=0)
 
     tokenize_text_to = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
     tokenize_text_to.fit_on_texts(text_zzz_to)
-    y_matrix = tokenize_text_to.texts_to_matrix(text_yyy)
+    #y_matrix = tokenize_text_to.texts_to_matrix(text_yyy)
 
     #y_matrix = np.dstack((y_matrix,y_matrix))
 
@@ -183,11 +193,24 @@ if True:
 
 #print (x)
 #print (x.shape[1:])
-print (x_matrix.shape, y.shape)
-x_shape =  x_matrix.shape
+print (x.shape, y.shape)
+x_shape =  x.shape #_matrix.shape
+
+if True:
+    embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
+    for i in range(len(word2vec_book.wv.vocab)):
+        embedding_vector = word2vec_book.wv[word2vec_book.wv.index2word[i]]
+        if embedding_vector is not None:
+            embedding_matrix[i] = embedding_vector
 
 model = Sequential()
-model.add(Embedding(words, units,input_length=tokens_per_sentence, batch_size=batch_size , input_shape=x_shape[1:], batch_input_shape=x_shape))
+model.add(Embedding(words, units,
+                    weights=[embedding_matrix],
+                    input_length=tokens_per_sentence,
+                    batch_size=batch_size ,
+                    input_shape=x_shape[1:],
+                    batch_input_shape=x_shape))
+
 shape = x_shape[1:][0]
 #model.add(LSTM(batch_size, input_shape=x_shape[1:], batch_size=batch_size, return_sequences=True))
 #model.add(Bidirectional(LSTM(shape)))
@@ -198,4 +221,4 @@ model.compile(optimizer='rmsprop', loss='mse')
 
 #model.fit(x ,y,epochs=1, batch_size=batch_size)
 
-model.train_on_batch(x_matrix, x_matrix)
+model.train_on_batch(x, x)

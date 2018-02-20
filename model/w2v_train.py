@@ -19,7 +19,7 @@ import re
 #from nltk.tokenize import TweetTokenizer, sent_tokenize, PunktSentenceTokenizer
 #from nltk.stem import *
 import gensim.models.word2vec as w2v
-
+from settings import hparams
 
 
 
@@ -60,13 +60,13 @@ def sentence_to_wordlist(raw, sentence_label="", pos_tag=False):
 
 test = []
 
-if False:
+if True:
     test = [["I go to school."],[" I've gone to school."],[" go north."],[" go south."],[" go east."],[" go west."],[" move south."]]
 
 
     new_test = []
     for t in test:
-        z = sentence_to_wordlist(t, pos_tag=True)
+        z = sentence_to_wordlist(t, pos_tag=False)
         new_test.append(z)
         #print (z)
     test = new_test
@@ -213,8 +213,12 @@ if False:
 
 
 #exit()
+
+raw_embedding_filename = hparams['raw_embedding_filename']
+units = hparams['units']
+
 ############################################
-num_features =  300 #  900 is not good
+num_features =  units #  900 is not good
 # Minimum word count threshold.
 min_word_count = 1 # 3
 
@@ -247,16 +251,18 @@ if model_generate_new and True:
         sample=downsampling
     )
 
+
+
 elif False:
     print ("stage: load model")
-    word2vec_book = w2v.Word2Vec.load(os.path.join("../data","word2vec_book.w2v"))
+    word2vec_book = w2v.Word2Vec.load(os.path.join("../data", raw_embedding_filename +"_1.w2v"))
     #word2vec_book = w2v.KeyedVectors.load_word2vec_format(os.path.join("trained",'saved_google',"GoogleNews-vectors-negative300.bin"),binary=True)
 
 
 if True:
     word2vec_book.build_vocab(sentences_book)
 
-    print("stage: Word2Vec book vocabulary length:", len(word2vec_book.wv.vocab))
+    print("stage: Word2Vec vocabulary length:", len(word2vec_book.wv.vocab))
 
 if True:
     print ("stage: train")
@@ -267,6 +273,6 @@ if True:
 
 
 
-    word2vec_book.save(os.path.join("../data", "word2vec_book.w2v"))
+    word2vec_book.save(os.path.join("../data", raw_embedding_filename + "_1.w2v"))
 
 

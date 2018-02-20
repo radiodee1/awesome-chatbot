@@ -20,6 +20,7 @@ hparams = {
     'layers': 2,
     'units': 50, ##600
     'learning_rate': 0.001,
-    'tokens_per_sentence': 55
+    'tokens_per_sentence': 55,
+    'raw_embedding_filename': 'embedding'
     
 }
