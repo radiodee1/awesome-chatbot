@@ -20,6 +20,6 @@ hparams = {
     'layers': 2,
     'units': 50, ##600
     'learning_rate': 0.001,
-    'tokens_per_sentence': 50
+    'tokens_per_sentence': 55
     
 }

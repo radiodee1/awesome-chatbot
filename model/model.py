@@ -2,7 +2,7 @@
 
 import numpy as np
 from settings import hparams
-from keras.preprocessing import text
+from keras.preprocessing import text, sequence
 from keras.models import Sequential
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten
 
@@ -38,14 +38,16 @@ with open(vocab_to, 'r') as r:
 with open(text_fr, 'r') as r:
     xxx = r.read()
     text_xxx = []
-    for x in xxx.split('\n'):
-        text_xxx.append(x)
+    for xx in xxx.split('\n'):
+        #for x in xx.split():
+        text_xxx.append(xx)
 
 with open(text_to, 'r') as r:
     yyy = r.read()
     text_yyy = []
-    for x in yyy.split('\n'):
-        text_yyy.append(x)
+    for xx in yyy.split('\n'):
+        #for x in xx.split():
+        text_yyy.append(xx)
 
 
 
@@ -54,7 +56,8 @@ with open(text_to, 'r') as r:
 if True:
     tokenize_voc_fr = text.Tokenizer(num_words=words,oov_token=oov_token, filters='\n' )#, filters='"#$%&()*+-/:;<=>@[\\]^_`{|}~\t\n')
     tokenize_voc_fr.fit_on_texts(text_zzz_fr)
-    #x = tokenize_voc_fr.texts_to_matrix(text_zzz_fr)
+    #x_unused = tokenize_voc_fr.texts_to_matrix(text_zzz_fr)
+
 
     #print (tokenize_voc_fr.word_index, len(tokenize_voc_fr.word_index))
 
@@ -62,6 +65,23 @@ if True:
     tokenize_voc_to = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
     tokenize_voc_to.fit_on_texts(text_zzz_to)
     #y = tokenize_voc_to.texts_to_matrix(text_zzz_to)
+
+    tokenize_text_fr = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
+    tokenize_text_fr.fit_on_texts(text_zzz_to)
+    x_matrix = tokenize_text_fr.texts_to_matrix(text_xxx)
+    #print (x_matrix, x_matrix.shape)
+    #x_matrix = sequence.pad_sequences(text_xxx, maxlen=tokens_per_sentence)
+
+    print (x_matrix, x_matrix.shape)
+    x_matrix = np.expand_dims(x_matrix, axis=0)
+
+    tokenize_text_to = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
+    tokenize_text_to.fit_on_texts(text_zzz_to)
+    y_matrix = tokenize_text_to.texts_to_matrix(text_yyy)
+
+    #y_matrix = np.dstack((y_matrix,y_matrix))
+
+    #print (x_matrix.shape)
 
 if True:
 
@@ -72,6 +92,7 @@ if True:
     temp_yyy = np.array([])
 
     for ii in range(len(text_xxx)):
+        ############### x #######################
         i = text.text_to_word_sequence(text_xxx[ii])
         ls = np.array([])
         for word in range(tokens_per_sentence):#i:
@@ -97,6 +118,8 @@ if True:
 
         else:
             ls_xxx = np.row_stack((ls_xxx,ls))
+
+        ################# y ####################
         j = text.text_to_word_sequence(text_yyy[ii])
         ls = np.array([])
         for word in range(tokens_per_sentence):#j:
@@ -140,40 +163,39 @@ if True:
                 temp_yyy = np.dstack((temp_yyy,ls_yyy))
             ls_yyy = np.array([])
 
+
+
 #temp_yyy.extend([0,0,0,0,0])
 
-x = np.array(temp_xxx)
-y = np.array(temp_yyy)
+if True:
+    x = np.array(temp_xxx)
+    y = np.array(temp_yyy)
 
-#print (len(x),'\n', len(x[2]))
-#print (len(x[0][0]))
 
+#x = x_matrix
+#y = y_matrix
 
 if True:
-    #x = np.array(x)
-    #y = np.array(y)
-
 
     x = np.swapaxes(x, 0,2)
     y = np.swapaxes(y, 0,2)
-    #x = np.transpose(x)
-    #y = np.transpose(y)
+
 
 #print (x)
 #print (x.shape[1:])
-print (x.shape)
-x_shape =  x.shape
-#x_shape =(x.shape[0], x.shape[0])
+print (x_matrix.shape, y.shape)
+x_shape =  x_matrix.shape
 
 model = Sequential()
-model.add(Embedding(words, units,input_length=tokens_per_sentence, input_shape=x_shape[1:]))
-#model.add(Flatten())
+model.add(Embedding(words, units,input_length=tokens_per_sentence, batch_size=batch_size , input_shape=x_shape[1:], batch_input_shape=x_shape))
 shape = x_shape[1:][0]
-model.add(LSTM(units, return_sequences=True))
+#model.add(LSTM(batch_size, input_shape=x_shape[1:], batch_size=batch_size, return_sequences=True))
 #model.add(Bidirectional(LSTM(shape)))
 
 #model.add(LSTM(units))
 
-model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+model.compile(optimizer='rmsprop', loss='mse')
 
-model.fit(x ,y,epochs=1, batch_size=batch_size)
+#model.fit(x ,y,epochs=1, batch_size=batch_size)
+
+model.train_on_batch(x_matrix, x_matrix)

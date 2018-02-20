@@ -4,3 +4,4 @@ colorama
 regex
 unidecode
 keras
+gensim
