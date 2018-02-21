@@ -3,8 +3,8 @@
 import numpy as np
 from settings import hparams
 from keras.preprocessing import text, sequence
-from keras.models import Sequential
-from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten
+from keras.models import Sequential , Model
+from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
 import gensim.models.word2vec as w2v
 import os
 import tensorflow as tf
@@ -202,8 +202,34 @@ def embedding_model():
 
     return model
 
+def embedding_model_api():
+    embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
+    for i in range(len(word2vec_book.wv.vocab)):
+        embedding_vector = word2vec_book.wv[word2vec_book.wv.index2word[i]]
+        if embedding_vector is not None:
+            embedding_matrix[i] = embedding_vector
 
-def train_embedding_model(model, x, y):
+    x_shape = (batch_size, tokens_per_sentence)
+
+    valid_word = Input(shape=x_shape[1:])
+    #other_word = Input(shape=x_shape[1:])
+
+    embeddings = Embedding(words, units, weights=[embedding_matrix],
+                           batch_size=batch_size, input_shape=x_shape[1:])
+    embed_a = embeddings(valid_word)
+    #embed_b = embeddings(other_word)
+
+    #similarity = dot([embed_a,embed_b], normalize=False , axes=2)
+
+    k_model = Model(inputs=[valid_word], outputs=embed_a )
+
+
+    k_model.compile(optimizer='adam', loss='mse')
+
+    return k_model
+
+
+def train_embedding_model_api(model, x, y):
     z = x.shape[2] // batch_size
     for i in range(z):
         xx , yy = get_batch(i, x, y)
@@ -214,8 +240,8 @@ def train_embedding_model(model, x, y):
 
 x, y = word_and_vector_size_arrays(text_xxx, text_yyy)
 
-model = embedding_model()
+model = embedding_model_api()
 
-train_embedding_model(model, x, y)
+train_embedding_model_api(model, x, y)
 
 print ("here")
