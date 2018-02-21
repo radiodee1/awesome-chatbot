@@ -180,28 +180,6 @@ def swap_axes(x, y):
     return x, y
 
 
-def embedding_model():
-    embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
-    for i in range(len(word2vec_book.wv.vocab)):
-        embedding_vector = word2vec_book.wv[word2vec_book.wv.index2word[i]]
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-
-    x_shape = (batch_size, tokens_per_sentence)
-
-    model = Sequential()
-    model.add(Embedding(words, units,
-                        weights=[embedding_matrix],
-                        input_length=tokens_per_sentence,
-                        batch_size=batch_size ,
-                        input_shape=x_shape[1:],
-                        ))
-
-
-    model.compile(optimizer='rmsprop', loss='mse')
-
-    return model
-
 def embedding_model_api():
     embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
     for i in range(len(word2vec_book.wv.vocab)):
