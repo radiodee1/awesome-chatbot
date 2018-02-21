@@ -181,8 +181,8 @@ def word_and_vector_size_arrays(text_xxx, text_yyy):
         #ls = np.array([])
         ############ batch #############
 
-        if ii % batch_size == 0:
-
+        if ii % (len(text_xxx) // batch_size) == 0:
+            print (len(text_xxx) // batch_size)
             # exit()
             if temp_xxx.shape[0] == 0:
                 temp_xxx = ls_xxx
@@ -318,32 +318,37 @@ if False:
     y = np.array(temp_yyy)
 
 
-print (x.shape , y.shape)
-
-
-if True:
-    a = 2
-    b = 16
-    x = np.array_split(x, b, axis=a)
-    y = np.array_split(y, b, axis=a)
-
-    print (x[0].shape , y[0].shape)
+print (x)
+print (x[:,:,0:15].shape , y[:,:,0:15].shape)
 
 if False:
     x = np.swapaxes(x, 0, 2)
     y = np.swapaxes(y, 0, 2)
-
+    #y = np.swapaxes(y, 1, 2)
     #x = np.swapaxes(x, 0,1)
     #y = np.swapaxes(y, 1,2)
 
     #x = np.expand_dims(x, axis=0)
     #y = np.expand_dims(y, axis=0)
 
-x_shape =  x[0].shape #_matrix.shape
+
+if False:
+
+    ax = 2
+    ay = 0
+    b = (x.shape[2] - 0)// (batch_size - 0)
+    print (b,'b')
+    x = np.array_split(x, b, axis=ax)
+    y = np.array_split(y, b, axis=ay)
+
+    print (x[1].shape , y[1].shape)
+
+
+x_shape =  x.shape #_matrix.shape
 
 #x_shape = (batch_size, batch_size, tokens_per_sentence)
 print (x_shape)
-
+print (x.shape, y.shape)
 
 if True:
     embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
@@ -371,8 +376,8 @@ model.add(Embedding(words, units,
 
 model.compile(optimizer='rmsprop', loss='mse')
 
-#model.fit(x[0] ,y[0],epochs=1, batch_size=batch_size)
+#model.fit(x ,y,epochs=1, batch_size=batch_size)
 
-print (x[0].shape)
+print (np.swapaxes(x[1][0],0,1).shape, y[1].shape)
 
-model.train_on_batch(x[0], y[0])
+model.train_on_batch(np.swapaxes(x[1][0],0,1), y[1])
