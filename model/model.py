@@ -5,6 +5,9 @@ from settings import hparams
 from keras.preprocessing import text, sequence
 from keras.models import Sequential , Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
+from keras.layers import Activation, RepeatVector, Permute, Merge, Dense #, TimeDistributedMerge
+from keras.layers import Concatenate
+#from keras.engine.topology import merge
 import gensim.models.word2vec as w2v
 import os
 import tensorflow as tf
@@ -195,11 +198,26 @@ def embedding_model_lstm():
                            batch_size=batch_size, input_shape=x_shape[1:])
     embed_a = embeddings(valid_word)
 
-    lstm = LSTM(units=units, input_shape=(tokens_per_sentence, units), return_sequences=True)
+    lstm_a = LSTM(units=units, input_shape=(tokens_per_sentence, units), return_sequences=True)
 
-    recurrent_a = lstm(embed_a)
+    recurrent_a = lstm_a(embed_a)
 
-    k_model = Model(inputs=[valid_word], outputs=recurrent_a)
+    attention_b = Input(shape=x_shape[1:])
+    dense_b = Dense(input_dim=x_shape[1:], units=tokens_per_sentence)
+    dense_out = dense_b(attention_b)
+    activation_b = Activation('softmax')
+    act_out = activation_b(dense_out)
+    repeat_vec_b = RepeatVector(units)
+    repeat_b = repeat_vec_b(act_out)
+    permute_b = Permute((2,1))
+    end_b = permute_b(repeat_b)
+
+    merge_c = Concatenate([recurrent_a,end_b])
+
+    time_distributed_c = TimeDistributed(merge_c)
+    #time_c = time_distributed_c(merge_c)
+
+    k_model = Model(inputs=[valid_word], outputs=[time_distributed_c])
 
     k_model.compile(optimizer='adam', loss='mse')
 
