@@ -91,7 +91,6 @@ if True:
     #y_matrix = tokenize_text_to.texts_to_matrix(text_yyy)
 
     #y_matrix = np.dstack((y_matrix,y_matrix))
-
     #print (x_matrix.shape)
 
 def word_and_vector_size_arrays(text_xxx, text_yyy):
@@ -105,11 +104,12 @@ def word_and_vector_size_arrays(text_xxx, text_yyy):
         ############### x #######################
         i = text.text_to_word_sequence(text_xxx[ii])
         ls = np.array([])
+        #print (len(i),'i')
         for word in range(tokens_per_sentence):  # i:
             if word + 1 <= len(i):
                 if i[word] in word2vec_book.wv.vocab:  # tokenize_voc_fr.word_index:
-                    w = np.array([tokenize_voc_fr.word_index[i[word]]])
-                    #w = word2vec_book.wv[i[word]]
+                    #w = np.array([tokenize_voc_fr.word_index[i[word]]])
+                    w = np.array([word2vec_book.wv.vocab[i[word]].index])
                     if ls.shape[0] == 0:
                         ls = w
                     else:
@@ -136,12 +136,13 @@ def word_and_vector_size_arrays(text_xxx, text_yyy):
         if ls_xxx.shape[0] == 0:
             ls_xxx = ls
 
-        else:
+        else: #if ls.shape[0] == tokens_per_sentence:
             ls_xxx = np.dstack((ls_xxx, ls))
 
         ################# y ####################
         j = text.text_to_word_sequence(text_yyy[ii])
         ls = np.array([])
+        #print (len(j),'j')
         for word in range(tokens_per_sentence):  # j:
             if word + 1 <= len(j):
                 if j[word] in word2vec_book.wv.vocab:  # tokenize_voc_to.word_index:
@@ -177,27 +178,28 @@ def word_and_vector_size_arrays(text_xxx, text_yyy):
             ls_yyy = ls
         else:
             ls_yyy = np.dstack((ls_yyy, ls))
-        ls = np.array([])
+        #ls = np.array([])
         ############ batch #############
 
         if ii % batch_size == 0:
-            '''
+
             # exit()
             if temp_xxx.shape[0] == 0:
                 temp_xxx = ls_xxx
             else:
-                temp_xxx = np.vstack((temp_xxx, ls_xxx))
+                temp_xxx = np.dstack((temp_xxx, ls_xxx))
             ls_xxx = np.array([])
-            '''
+            ###############
             # temp_yyy.extend(ls_yyy)
             if temp_yyy.shape[0] == 0:
                 temp_yyy = ls_yyy
             else:
                 temp_yyy = np.dstack((temp_yyy, ls_yyy))
             ls_yyy = np.array([])
+            #print (ls_xxx.shape,temp_yyy.shape,'shape')
 
-            ls = np.array([])
-    return ls_xxx, temp_yyy
+            #ls = np.array([])
+    return temp_xxx, temp_yyy
 
 
 def vector_size_arrays(text_xxx, text_yyy):
@@ -316,27 +318,26 @@ if False:
     y = np.array(temp_yyy)
 
 
+print (x.shape , y.shape)
+
+
+if True:
+    a = 2
+    b = 16
+    x = np.array_split(x, b, axis=a)
+    y = np.array_split(y, b, axis=a)
+
+    print (x[0].shape , y[0].shape)
 
 if False:
     x = np.swapaxes(x, 0, 2)
     y = np.swapaxes(y, 0, 2)
 
     #x = np.swapaxes(x, 0,1)
-    y = np.swapaxes(y, 1,2)
+    #y = np.swapaxes(y, 1,2)
 
     #x = np.expand_dims(x, axis=0)
     #y = np.expand_dims(y, axis=0)
-
-print (x.shape , y.shape)
-
-if False:
-    a = 0
-    x = np.array_split(x, 16, axis=a)
-    y = np.array_split(y, 16, axis=a)
-
-    #print (x.shape , y.shape)
-
-
 
 x_shape =  x[0].shape #_matrix.shape
 
@@ -374,4 +375,4 @@ model.compile(optimizer='rmsprop', loss='mse')
 
 print (x[0].shape)
 
-model.train_on_batch(x, y)
+model.train_on_batch(x[0], y[0])
