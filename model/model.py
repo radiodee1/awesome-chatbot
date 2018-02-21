@@ -180,7 +180,7 @@ def swap_axes(x, y):
     return x, y
 
 
-def embedding_model_api():
+def embedding_model_lstm():
     embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
     for i in range(len(word2vec_book.wv.vocab)):
         embedding_vector = word2vec_book.wv[word2vec_book.wv.index2word[i]]
@@ -195,13 +195,41 @@ def embedding_model_api():
                            batch_size=batch_size, input_shape=x_shape[1:])
     embed_a = embeddings(valid_word)
 
-    k_model = Model(inputs=[valid_word], outputs=embed_a )
+    lstm = LSTM(units=units, input_shape=(tokens_per_sentence, units), return_sequences=True)
 
+    recurrent_a = lstm(embed_a)
+
+    k_model = Model(inputs=[valid_word], outputs=recurrent_a)
 
     k_model.compile(optimizer='adam', loss='mse')
 
     return k_model
 
+def lstm_model_api():
+    input_dim = tokens_per_sentence
+    hidden = units
+
+    # The LSTM  model -  output_shape = (batch, step, hidden)
+    model1 = Sequential()
+    model1.add(LSTM(units=units, output_dim=hidden, input_shape=(tokens_per_sentence, units), return_sequences=True))
+
+    # The weight model  - actual output shape  = (batch, step)
+    # after reshape : output_shape = (batch, step,  hidden)
+    model2 = Sequential()
+    model2.add(Dense(input_dim=input_dim, output_dim=step))
+    model2.add(Activation('softmax'))  # Learn a probability distribution over each  step.
+    # Reshape to match LSTM's output shape, so that we can do element-wise multiplication.
+    model2.add(RepeatVector(hidden))
+    model2.add(Permute(2, 1))
+
+    # The final model which gives the weighted sum:
+    model = Sequential()
+    model.add(Merge([model1, model2], 'mul'))  # Multiply each element with corresponding weight a[i][j][k] * b[i][j]
+    model.add(TimeDistributedMerge('sum'))  # Sum the weighted elements.
+
+    model.compile(loss='mse', optimizer='sgd')
+
+    return model
 
 def train_embedding_model_api(model, x, y):
     z = x.shape[2] // batch_size
@@ -214,7 +242,7 @@ def train_embedding_model_api(model, x, y):
 
 x, y = word_and_vector_size_arrays(text_xxx, text_yyy)
 
-model = embedding_model_api()
+model = embedding_model_lstm()
 
 train_embedding_model_api(model, x, y)
 
