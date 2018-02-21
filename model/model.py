@@ -182,7 +182,7 @@ def word_and_vector_size_arrays(text_xxx, text_yyy):
         ############ batch #############
 
         if ii % (len(text_xxx) // batch_size) == 0:
-            print (len(text_xxx) // batch_size)
+            #print (len(text_xxx) // batch_size)
             # exit()
             if temp_xxx.shape[0] == 0:
                 temp_xxx = ls_xxx
@@ -319,18 +319,23 @@ if False:
 
 
 print (x)
-print (x[:,:,0:15].shape , y[:,:,0:15].shape)
+print (x[:,:,0:16].shape , y[:,:,0:16].shape)
 
-if False:
+if True:
+    x = x[:,:,0:16]
+    y = y[:,:,0:16]
+
+
+if True:
     x = np.swapaxes(x, 0, 2)
     y = np.swapaxes(y, 0, 2)
-    #y = np.swapaxes(y, 1, 2)
+    y = np.swapaxes(y, 1, 2)
     #x = np.swapaxes(x, 0,1)
     #y = np.swapaxes(y, 1,2)
 
     #x = np.expand_dims(x, axis=0)
     #y = np.expand_dims(y, axis=0)
-
+    x = x[:,:,0]
 
 if False:
 
@@ -378,6 +383,8 @@ model.compile(optimizer='rmsprop', loss='mse')
 
 #model.fit(x ,y,epochs=1, batch_size=batch_size)
 
-print (np.swapaxes(x[1][0],0,1).shape, y[1].shape)
+#print (np.swapaxes(x[1][0],0,1).shape, y[1].shape)
 
-model.train_on_batch(np.swapaxes(x[1][0],0,1), y[1])
+model.train_on_batch(x, y)
+
+print ("here")
