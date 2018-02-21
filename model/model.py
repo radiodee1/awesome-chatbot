@@ -212,14 +212,10 @@ def embedding_model_api():
     x_shape = (batch_size, tokens_per_sentence)
 
     valid_word = Input(shape=x_shape[1:])
-    #other_word = Input(shape=x_shape[1:])
 
     embeddings = Embedding(words, units, weights=[embedding_matrix],
                            batch_size=batch_size, input_shape=x_shape[1:])
     embed_a = embeddings(valid_word)
-    #embed_b = embeddings(other_word)
-
-    #similarity = dot([embed_a,embed_b], normalize=False , axes=2)
 
     k_model = Model(inputs=[valid_word], outputs=embed_a )
 
