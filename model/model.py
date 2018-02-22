@@ -200,12 +200,17 @@ def embedding_model_lstm():
 
     lstm_a = Bidirectional(LSTM(units=units,
                                 input_shape=(tokens_per_sentence, units),
-                                return_sequences=True),merge_mode='mul')
+                                return_sequences=True))
 
     recurrent_a = lstm_a(embed_a)
 
+    lstm_b = Bidirectional(LSTM(units=units,
+                                input_shape=(tokens_per_sentence,units),
+                                return_sequences=True))
 
+    recurrent_b = lstm_b(recurrent_a)
 
+    '''
     attention_b = Input(shape=x_shape[1:])
     dense_b = Dense(input_dim=x_shape[1:], units=tokens_per_sentence)
     dense_out = dense_b(attention_b)
@@ -221,8 +226,9 @@ def embedding_model_lstm():
 
     time_distributed_c = TimeDistributed(merge_c)
     #time_c = time_distributed_c(merge_c)
+    '''
 
-    k_model = Model(inputs=[valid_word], outputs=[recurrent_a])
+    k_model = Model(inputs=[valid_word], outputs=[recurrent_b])
 
     k_model.compile(optimizer='adam', loss='mse')
 
