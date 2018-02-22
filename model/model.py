@@ -207,14 +207,20 @@ def embedding_model_lstm():
 
     embed_a = embeddings_a(valid_word)
 
-    lstm_a = Bidirectional(LSTM(units=units,
-                                input_shape=(units,tokens_per_sentence),#(tokens_per_sentence, units),
-                                return_sequences=True))
 
+    lstm_a = Bidirectional(LSTM(units=units,
+                                #input_shape=(tokens_per_sentence, units),
+                                return_sequences=True))
+    '''
+    lstm_a = LSTM(units=units,
+                                # input_shape=(tokens_per_sentence, units),
+                                return_sequences=True)
+    '''
     recurrent_a = lstm_a(embed_a)
 
     lstm_a2 = Bidirectional(LSTM(units=units,
-                                input_shape=(units,tokens_per_sentence),#(tokens_per_sentence,units),
+                                #input_shape=(tokens_per_sentence,units),
+
                                 return_sequences=True))
 
     recurrent_a2 = lstm_a2(recurrent_a)

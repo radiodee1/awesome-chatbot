@@ -152,7 +152,7 @@ model_generate_new = True
 game_glob1 = "../raw/zork1-output.txt" ## actual commands processed
 game_glob2 = "../raw/z*.txt" ## not for good game corpus
 game_glob3 = "../raw/got*.txt"
-game_glob4 = "../raw/zork1-example.txt"
+game_glob4 = "../raw/t*.big.*"
 
 sentences_book = []
 if False:
@@ -161,11 +161,11 @@ if False:
 if False:
     sentences_zork = assemble_corpus(game_glob2, tag=True, print_sentences=True)
 
-if True:
+if False:
     #sentences_book = []
     sentences_book = assemble_corpus(game_glob3, tag=True)
 
-if False:
+if True:
     #sentences_book = []
     sentences_book = assemble_corpus(game_glob4, tag=True)
 
@@ -221,7 +221,7 @@ downsampling = 1e-2
 #deterministic, good for debugging
 seed = 1
 
-epochs = 1000
+epochs = 1
 
 if model_generate_new and True:
     word2vec_book = w2v.Word2Vec(
@@ -250,8 +250,9 @@ if True:
 if True:
     print ("stage: train")
 
+    word_count = hparams['num_vocab_total']
     word2vec_book.train(sentences_book,
-                        total_examples=len(word2vec_book.wv.vocab),
+                        total_examples=word_count, #len(word2vec_book.wv.vocab),
                         epochs=epochs)
 
 
