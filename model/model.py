@@ -203,7 +203,9 @@ def embedding_model_lstm():
 
     embeddings_a = Embedding(words, units, weights=[embedding_matrix],
                              input_length=tokens_per_sentence,
-                             batch_size=batch_size, input_shape=x_shape[1:])
+                             batch_size=batch_size, input_shape=x_shape[1:],
+                             trainable=False
+                             )
 
     embed_a = embeddings_a(valid_word)
 
