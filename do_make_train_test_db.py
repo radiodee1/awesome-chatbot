@@ -3,8 +3,9 @@
 import sqlite3
 import pandas as pd
 import os
-import tokenize_weak
+import model.tokenize_weak
 import sys
+from model.settings import hparams
 #import core.tokenizer as ct
 
 timeframes = ['input']
@@ -25,9 +26,12 @@ steps_per_stats = 100
 pull_size = batch_size * steps_per_stats * 10
 
 def format(s):
-    z = tokenize_weak.format(s)
-    if z.strip() == '':
+    z = model.tokenize_weak.format(s)
+    if z == None or z.strip() == '':
         z = ' what ? '
+
+    z = hparams['sol'] + ' ' + z
+    z = z + ' ' + hparams['eol']
     return z
 
 for timeframe in timeframes:
