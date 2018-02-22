@@ -74,12 +74,16 @@ if True:
     tokenize_text_to.fit_on_texts(text_zzz_to)
 
 
-def word_and_vector_size_arrays(text_xxx, text_yyy):
+def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False):
     ls_xxx = np.array([])
     ls_yyy = np.array([])
 
     temp_xxx = np.array([])
     temp_yyy = np.array([])
+
+    mult = 1
+    if double_y:
+        mult = 2
 
     for ii in range(len(text_xxx)):
         ############### x #######################
@@ -121,18 +125,21 @@ def word_and_vector_size_arrays(text_xxx, text_yyy):
             if word + 1 <= len(j):
                 if j[word] in word2vec_book.wv.vocab:  # tokenize_voc_to.word_index:
                     w = word2vec_book.wv[j[word]]
+                    if double_y:
+                        reverse = np.flip(w, axis=0)
+                        w = np.hstack((w, reverse))
                     if ls.shape[0] == 0:
                         ls = w
                     else:
                         ls = np.vstack((ls, w))
                 else:
-                    pad = np.zeros(units)
+                    pad = np.zeros(units * mult)
                     if ls.shape[0] == 0:
                         ls = pad
                     else:
                         ls = np.vstack((ls, pad))
             else:
-                pad = np.zeros(units)
+                pad = np.zeros(units * mult)
                 if ls.shape[0] == 0:
                     ls = pad
                 else:
@@ -204,11 +211,14 @@ def embedding_model_lstm():
 
     recurrent_a = lstm_a(embed_a)
 
-    lstm_b = Bidirectional(LSTM(units=units,
+    lstm_a2 = Bidirectional(LSTM(units=units,
                                 input_shape=(tokens_per_sentence,units),
                                 return_sequences=True))
 
-    recurrent_b = lstm_b(recurrent_a)
+    recurrent_a2 = lstm_a2(recurrent_a)
+
+    time_dist_a = TimeDistributed(Dense(units, activation='softmax'))(recurrent_a2)
+
 
     '''
     attention_b = Input(shape=x_shape[1:])
@@ -228,7 +238,7 @@ def embedding_model_lstm():
     #time_c = time_distributed_c(merge_c)
     '''
 
-    k_model = Model(inputs=[valid_word], outputs=[recurrent_b])
+    k_model = Model(inputs=[valid_word], outputs=[recurrent_a2])
 
     k_model.compile(optimizer='adam', loss='mse')
 
@@ -269,7 +279,7 @@ def train_embedding_model_api(model, x, y):
         model.train_on_batch(xx,yy)
 
 
-x, y = word_and_vector_size_arrays(text_xxx, text_yyy)
+x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=True)
 
 model = embedding_model_lstm()
 
