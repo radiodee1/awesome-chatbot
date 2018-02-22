@@ -202,17 +202,19 @@ def embedding_model_lstm():
     valid_word = Input(shape=x_shape[1:])
 
     embeddings_a = Embedding(words, units, weights=[embedding_matrix],
-                           batch_size=batch_size, input_shape=x_shape[1:])
+                             input_length=tokens_per_sentence,
+                             batch_size=batch_size, input_shape=x_shape[1:])
+
     embed_a = embeddings_a(valid_word)
 
     lstm_a = Bidirectional(LSTM(units=units,
-                                input_shape=(tokens_per_sentence, units),
+                                input_shape=(units,tokens_per_sentence),#(tokens_per_sentence, units),
                                 return_sequences=True))
 
     recurrent_a = lstm_a(embed_a)
 
     lstm_a2 = Bidirectional(LSTM(units=units,
-                                input_shape=(tokens_per_sentence,units),
+                                input_shape=(units,tokens_per_sentence),#(tokens_per_sentence,units),
                                 return_sequences=True))
 
     recurrent_a2 = lstm_a2(recurrent_a)

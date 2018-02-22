@@ -151,17 +151,17 @@ model_generate_new = True
 
 game_glob1 = "../raw/zork1-output.txt" ## actual commands processed
 game_glob2 = "../raw/z*.txt" ## not for good game corpus
-game_glob3 = "../raw/wiki*.txt"
+game_glob3 = "../raw/got*.txt"
 game_glob4 = "../raw/zork1-example.txt"
 
 sentences_book = []
 if False:
     sentences_game = assemble_corpus(game_glob1, tag=True, stem_words=False)
 
-if True:
+if False:
     sentences_zork = assemble_corpus(game_glob2, tag=True, print_sentences=True)
 
-if False:
+if True:
     #sentences_book = []
     sentences_book = assemble_corpus(game_glob3, tag=True)
 
@@ -170,7 +170,7 @@ if False:
     sentences_book = assemble_corpus(game_glob4, tag=True)
 
 if True:
-    sentences_book.extend(sentences_zork)
+    sentences_book.extend(sentences_book)
     sentences_book.extend(test)
 
 #print (sentences_book)
