@@ -21,11 +21,12 @@ import re
 import gensim.models.word2vec as w2v
 from settings import hparams
 
-
+eol_marker = hparams['eol']
+sol_marker = hparams['sol']
 
 #########################################
 
-def sentence_to_wordlist(raw, sentence_label="", pos_tag=False):
+def sentence_to_wordlist(raw, sentence_label="", tag=False):
     pre = raw #raw.split()
     raw = ""
     #w = []
@@ -42,18 +43,13 @@ def sentence_to_wordlist(raw, sentence_label="", pos_tag=False):
     words = clean.split()
     words = [x.lower() for x in words]
 
-    if pos_tag:
-        tag = []
-        words = nltk.pos_tag(words)
-        for word in words:
-            tag.append(word[0])
-            tag.append(word[1].decode("utf-8"))
-        words = tag
-        #print (words)
-        pass
+    if tag:
+        out = [sol_marker]
+        out.extend(words)
+        out.append(eol_marker)
+        words = out
 
     if len(sentence_label) > 0: words.append(sentence_label)
-    #print (words)
     return words
 
 ########################################
@@ -66,7 +62,7 @@ if True:
 
     new_test = []
     for t in test:
-        z = sentence_to_wordlist(t, pos_tag=False)
+        z = sentence_to_wordlist(t, tag=True)
         new_test.append(z)
         #print (z)
     test = new_test
@@ -76,7 +72,7 @@ if True:
 
 ###########################################
 
-def assemble_corpus(glob_txt, stem_words=False, sentence_label="", pos_tag=False, tweet_tag=False, print_sentences=False):
+def assemble_corpus(glob_txt, stem_words=False, sentence_label="", tag=False, tweet_tag=False, print_sentences=False):
     pass
 
     #add everything once
@@ -131,32 +127,19 @@ def assemble_corpus(glob_txt, stem_words=False, sentence_label="", pos_tag=False
 
     ###########################
 
-    if pos_tag: print ("stage: pos tagging")
-    else:
-        pass
-        #if print_sentences: print (raw_sentences[-10:])
-        #return raw_sentences
+    print ("stage: tag and separate")
+
 
     sentences = []
     for raw_sentence in raw_sentences:
         if len(raw_sentence) > 0:
             if not type(raw_sentence) == list: raw_sentence = raw_sentence.split()
-            z = sentence_to_wordlist(raw_sentence, sentence_label=sentence_label, pos_tag=pos_tag)
+            z = sentence_to_wordlist(raw_sentence, sentence_label=sentence_label, tag=tag)
             if len(z) > 0:
                 sentences.append(z)
 
-    # stem words and add them
-    if stem_words:
-        print ("stage: stem")
-        stemmer = SnowballStemmer("english", ignore_stopwords=True)
-        for raw_sentence in raw_sentences:
-            if len(raw_sentence) > 0:
-                sent = sentence_to_wordlist(raw_sentence)
-                sent = [stemmer.stem(word) for word in sent]
-                sentences.append(sent)
 
     if print_sentences: print(sentences[-20:])
-    #print(sentence_to_wordlist(raw_sentences[0], pos_tag=pos_tag))
 
     token_count = sum([len(sentence) for sentence in sentences])
     print("stage: The corpus contains {0:,} tokens".format(token_count))
@@ -173,18 +156,18 @@ game_glob4 = "../raw/zork1-example.txt"
 
 sentences_book = []
 if False:
-    sentences_game = assemble_corpus(game_glob1, stem_words=False)
+    sentences_game = assemble_corpus(game_glob1, tag=True, stem_words=False)
 
 if True:
-    sentences_zork = assemble_corpus(game_glob2, pos_tag=False,print_sentences=True)
+    sentences_zork = assemble_corpus(game_glob2, tag=True, print_sentences=True)
 
 if False:
     #sentences_book = []
-    sentences_book = assemble_corpus(game_glob3, pos_tag=False)
+    sentences_book = assemble_corpus(game_glob3, tag=True)
 
 if False:
     #sentences_book = []
-    sentences_book = assemble_corpus(game_glob4, pos_tag=False)
+    sentences_book = assemble_corpus(game_glob4, tag=True)
 
 if True:
     sentences_book.extend(sentences_zork)
