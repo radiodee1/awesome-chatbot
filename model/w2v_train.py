@@ -252,7 +252,7 @@ if True:
 
     word_count = hparams['num_vocab_total']
     word2vec_book.train(sentences_book,
-                        total_examples=word_count, #len(word2vec_book.wv.vocab),
+                        total_examples=len(word2vec_book.wv.vocab),
                         epochs=epochs)
 
 

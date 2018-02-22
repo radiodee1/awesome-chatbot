@@ -213,11 +213,7 @@ def embedding_model_lstm():
     lstm_a = Bidirectional(LSTM(units=units,
                                 #input_shape=(tokens_per_sentence, units),
                                 return_sequences=True))
-    '''
-    lstm_a = LSTM(units=units,
-                                # input_shape=(tokens_per_sentence, units),
-                                return_sequences=True)
-    '''
+
     recurrent_a = lstm_a(embed_a)
 
     lstm_a2 = Bidirectional(LSTM(units=units,
@@ -297,3 +293,5 @@ model = embedding_model_lstm()
 train_embedding_model_api(model, x, y)
 
 print ("here")
+
+print (len(word2vec_book.wv.vocab))
