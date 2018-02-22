@@ -126,7 +126,7 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False):
                 if j[word] in word2vec_book.wv.vocab:  # tokenize_voc_to.word_index:
                     w = word2vec_book.wv[j[word]]
                     if double_y:
-                        reverse = np.flip(w, axis=0)
+                        reverse = w[::-1]
                         w = np.hstack((w, reverse))
                     if ls.shape[0] == 0:
                         ls = w
@@ -280,6 +280,7 @@ def train_embedding_model_api(model, x, y):
 
 
 x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=True)
+
 
 model = embedding_model_lstm()
 
