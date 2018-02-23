@@ -183,41 +183,52 @@ def get_batch(batch, x, y):
 
 def swap_axes(x, y):
     x = np.swapaxes(x, 0, 2)
+    x = np.swapaxes(x, 1, 2)
+
     y = np.swapaxes(y, 0, 2)
     y = np.swapaxes(y, 1, 2)
 
-    x = x[:,:,0]
+    #x = x[:,:,0]
+
     return x, y
 
 
 def embedding_model_lstm():
+    print (batch_size, tokens_per_sentence)
+    '''
     embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
     for i in range(len(word2vec_book.wv.vocab)):
         embedding_vector = word2vec_book.wv[word2vec_book.wv.index2word[i]]
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
+    '''
 
-    x_shape = (batch_size, tokens_per_sentence)
+    x_shape = (tokens_per_sentence,units)
 
-    valid_word = Input(shape=x_shape[1:])
+    valid_word = Input(shape=x_shape)
 
+    '''
     embeddings_a = Embedding(words, units, weights=[embedding_matrix],
-                             input_length=tokens_per_sentence,
+                             #input_length=tokens_per_sentence,
                              batch_size=batch_size, input_shape=x_shape[1:],
                              trainable=False
                              )
 
     embed_a = embeddings_a(valid_word)
-
+    '''
 
     lstm_a = Bidirectional(LSTM(units=units,
-                                #input_shape=(tokens_per_sentence, units),
+                                #input_shape=( units,),
                                 return_sequences=True))
 
-    recurrent_a = lstm_a(embed_a)
+    #recurrent_a = lstm_a(embed_a)
+
+
+
+    recurrent_a = lstm_a(valid_word)
 
     lstm_a2 = Bidirectional(LSTM(units=units,
-                                #input_shape=(tokens_per_sentence,units),
+                                #input_shape=(units,),
 
                                 return_sequences=True))
 
@@ -282,15 +293,18 @@ def train_embedding_model_api(model, x, y):
         xx , yy = get_batch(i, x, y)
         xx, yy = swap_axes(xx, yy)
         #print (xx.shape)
+        #model.train_on_batch(xx,yy)
         model.train_on_batch(xx,yy)
 
 
-x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=True)
-
+x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False)
+_, y2 = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=True)
 
 model = embedding_model_lstm()
 
-train_embedding_model_api(model, x, y)
+#model.fit(x,y)
+
+train_embedding_model_api(model, y, y2)
 
 print ("here")
 
