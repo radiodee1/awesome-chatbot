@@ -74,7 +74,7 @@ if True:
     tokenize_text_to.fit_on_texts(text_zzz_to)
 
 
-def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False):
+def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence=False):
     ls_xxx = np.array([])
     ls_yyy = np.array([])
 
@@ -146,6 +146,8 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False):
                     ls = np.vstack((ls, pad))
             pass
 
+        if double_sentence:
+            ls = np.vstack((ls, ls[::-1]))
         if ls_yyy.shape[0] == 0:
             ls_yyy = ls
         else:
@@ -186,7 +188,7 @@ def swap_axes(x, y):
     #x = np.swapaxes(x, 1, 2)
 
     y = np.swapaxes(y, 0, 2)
-    y = np.swapaxes(y, 1, 2)
+    #y = np.swapaxes(y, 1, 2)
 
     #x = x[:,:,0]
 
@@ -295,7 +297,10 @@ def train_embedding_model_api(model, x, y):
 
 
 x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False)
-_, y2 = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=True)
+_, y2 = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence=True)
+
+print (y2.shape)
+
 
 model = embedding_model_lstm()
 
