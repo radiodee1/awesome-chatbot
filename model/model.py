@@ -74,7 +74,7 @@ if True:
     tokenize_text_to.fit_on_texts(text_zzz_to)
 
 
-def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence=False):
+def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False):
     ls_xxx = np.array([])
     ls_yyy = np.array([])
 
@@ -92,24 +92,24 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sente
         for word in range(tokens_per_sentence):  # i:
             if word + 1 <= len(i):
                 if i[word] in word2vec_book.wv.vocab:  # tokenize_voc_fr.word_index:
-                    w = np.array([word2vec_book.wv.vocab[i[word]].index])
+                    w = word2vec_book.wv[i[word]]
                     if ls.shape[0] == 0:
                         ls = w
                     else:
-                        ls = np.hstack((ls, w))
+                        ls = np.vstack((ls, w))
 
                 else:
-                    pad = np.zeros(1)
+                    pad = np.zeros(units)
                     if ls.shape[0] == 0:
                         ls = pad
                     else:
-                        ls = np.hstack((ls, pad))
+                        ls = np.vstack((ls, pad))
             else:
-                pad = np.zeros(1)
+                pad = np.zeros(units)
                 if ls.shape[0] == 0:
                     ls = pad
                 else:
-                    ls = np.hstack((ls, pad))
+                    ls = np.vstack((ls, pad))
             pass
 
         if ls_xxx.shape[0] == 0:
@@ -146,7 +146,7 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sente
                     ls = np.vstack((ls, pad))
             pass
 
-        if double_sentence:
+        if double_sentence_y:
             ls = np.vstack((ls, ls[::-1]))
         if ls_yyy.shape[0] == 0:
             ls_yyy = ls
@@ -296,17 +296,16 @@ def train_embedding_model_api(model, x, y):
         model.train_on_batch(xx,yy)
 
 
-x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False)
-_, y2 = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence=True)
+x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=True)
 
-print (y2.shape)
+print (y.shape)
 
 
 model = embedding_model_lstm()
 
 #model.fit(x,y)
 
-train_embedding_model_api(model, y, y2)
+train_embedding_model_api(model, x, y)
 
 print ("here")
 
