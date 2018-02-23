@@ -233,7 +233,7 @@ def embedding_model_lstm():
 
     recurrent_a2 = lstm_a2(recurrent_a)
 
-    #time_dist_a = TimeDistributed(Dense(units, activation='softmax'))(recurrent_a2)
+    time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
 
 
     '''
@@ -254,9 +254,9 @@ def embedding_model_lstm():
     #time_c = time_distributed_c(merge_c)
     '''
 
-    k_model = Model(inputs=[valid_word], outputs=[recurrent_a2])
+    k_model = Model(inputs=[valid_word], outputs=[time_dist_a])
 
-    k_model.compile(optimizer='adam', loss='mse')
+    k_model.compile(optimizer='adam', loss='binary_crossentropy')
 
     return k_model
 
@@ -286,17 +286,33 @@ def lstm_model_api():
 
     return model
 
-def train_embedding_model_api(model, x, y):
+def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
     z = x.shape[2] // batch_size
-    for i in range(z):
-        xx , yy = get_batch(i, x, y)
-        xx, yy = swap_axes(xx, yy)
-        #print (xx.shape)
-        #model.train_on_batch(xx,yy)
-        model.train_on_batch(xx,yy)
+    num = 0
+    for _ in range(epochs):
+        print ('----')
+        for i in range(z):
+            xx , yy = get_batch(i, x, y)
+            xx, yy = swap_axes(xx, yy)
+            #model.train_on_batch(xx,yy)
+            if not predict:
+                print (xx.shape, yy.shape)
+                model.train_on_batch(xx,yy)
+            else:
+                ypredict = model.predict(xx, batch_size=batch_size)
+                print (ypredict.shape)
+                for i in ypredict:
+                    num += 1
+                    if qnum != -1 and num > qnum: return
+                    print (i,'<', i.shape)
+
+                    for j in range(units):
+                        #print (j,'<<<<',i[:,j].shape)
+                        z = word2vec_book.wv.most_similar(positive=[i[:,j]],topn=1)
+                        print (z[0][0])
 
 
-x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=True)
+x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False)
 
 print (y.shape)
 
@@ -305,8 +321,9 @@ model = embedding_model_lstm()
 
 #model.fit(x,y)
 
-train_embedding_model_api(model, x, y)
+train_embedding_model_api(model, x, y, epochs=75)
 
-print ("here")
+if True:
+    train_embedding_model_api(model, x, y, predict=True, qnum=1)
 
-print (len(word2vec_book.wv.vocab))
+print ('\n',len(word2vec_book.wv.vocab))
