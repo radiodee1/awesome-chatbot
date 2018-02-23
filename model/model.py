@@ -321,7 +321,7 @@ model = embedding_model_lstm()
 
 #model.fit(x,y)
 
-train_embedding_model_api(model, x, y, epochs=5)
+train_embedding_model_api(model, x, y, epochs=50)
 
 if True:
     train_embedding_model_api(model, x, y, predict=True, qnum=1)

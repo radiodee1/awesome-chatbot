@@ -26,7 +26,7 @@ sol_marker = hparams['sol']
 
 #########################################
 
-def sentence_to_wordlist(raw, sentence_label="", tag=False):
+def sentence_to_wordlist(raw, sentence_label="", tag=False, clean=False):
     pre = raw #raw.split()
     raw = ""
     #w = []
@@ -38,9 +38,12 @@ def sentence_to_wordlist(raw, sentence_label="", tag=False):
         else:
             #print("missed s")
             pass
-    clean = re.sub("[^a-zA-Z]"," ", raw)
+    if clean:
+        clean = re.sub("[^a-zA-Z]"," ", raw)
+        words = clean.split()
+    else:
+        words = raw.split()
 
-    words = clean.split()
     words = [x.lower() for x in words]
 
     if tag:
@@ -80,7 +83,6 @@ def assemble_corpus(glob_txt, stem_words=False, sentence_label="", tag=False, tw
     #add zork text twice more
     book_filenames = sorted(glob.glob(glob_txt))
 
-    #book_filenames.extend(sorted(glob.glob("data/z*.txt")))
 
     print (book_filenames)
 
@@ -152,7 +154,8 @@ model_generate_new = True
 game_glob1 = "../raw/zork1-output.txt" ## actual commands processed
 game_glob2 = "../raw/z*.txt" ## not for good game corpus
 game_glob3 = "../raw/got*.txt"
-game_glob4 = "../raw/t*.big.*"
+game_glob4 = "../raw/t*.big.*" ## test and train are already tagged!!
+game_glob5 = "../data/t*.big.*" ## after move to data folder
 
 sentences_book = []
 if False:
@@ -167,10 +170,12 @@ if False:
 
 if True:
     #sentences_book = []
-    sentences_book = assemble_corpus(game_glob4, tag=True)
+    sentences_book = assemble_corpus(game_glob4, tag=False, print_sentences=True)
+    if len(sentences_book) == 0:
+        sentences_book = assemble_corpus(game_glob5, tag=False, print_sentences=False)
 
 if True:
-    sentences_book.extend(sentences_book)
+    #sentences_book.extend(sentences_book)
     sentences_book.extend(test)
 
 #print (sentences_book)
@@ -221,7 +226,7 @@ downsampling = 1e-2
 #deterministic, good for debugging
 seed = 1
 
-epochs = 1
+epochs = 10
 
 if model_generate_new and True:
     word2vec_book = w2v.Word2Vec(
@@ -260,3 +265,5 @@ if True:
     word2vec_book.save(os.path.join("../data", raw_embedding_filename + "_1.w2v"))
 
 
+if True:
+    print (word2vec_book.wv.most_similar(positive=[word2vec_book.wv['<s>']],topn=10))
