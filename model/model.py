@@ -183,7 +183,7 @@ def get_batch(batch, x, y):
 
 def swap_axes(x, y):
     x = np.swapaxes(x, 0, 2)
-    x = np.swapaxes(x, 1, 2)
+    #x = np.swapaxes(x, 1, 2)
 
     y = np.swapaxes(y, 0, 2)
     y = np.swapaxes(y, 1, 2)
@@ -203,7 +203,7 @@ def embedding_model_lstm():
             embedding_matrix[i] = embedding_vector
     '''
 
-    x_shape = (tokens_per_sentence,units)
+    x_shape = (units,tokens_per_sentence)
 
     valid_word = Input(shape=x_shape)
 
@@ -217,24 +217,21 @@ def embedding_model_lstm():
     embed_a = embeddings_a(valid_word)
     '''
 
-    lstm_a = Bidirectional(LSTM(units=units,
-                                #input_shape=( units,),
+    lstm_a = Bidirectional(LSTM(units=tokens_per_sentence,
+                                input_shape=( None,units),
                                 return_sequences=True))
-
-    #recurrent_a = lstm_a(embed_a)
 
 
 
     recurrent_a = lstm_a(valid_word)
 
-    lstm_a2 = Bidirectional(LSTM(units=units,
-                                #input_shape=(units,),
-
+    lstm_a2 = Bidirectional(LSTM(units=tokens_per_sentence,
+                                input_shape=(None,units),
                                 return_sequences=True))
 
     recurrent_a2 = lstm_a2(recurrent_a)
 
-    time_dist_a = TimeDistributed(Dense(units, activation='softmax'))(recurrent_a2)
+    #time_dist_a = TimeDistributed(Dense(units, activation='softmax'))(recurrent_a2)
 
 
     '''
