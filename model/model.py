@@ -7,6 +7,7 @@ from keras.models import Sequential , Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
 from keras.layers import Activation, RepeatVector, Permute, Merge, Dense #, TimeDistributedMerge
 from keras.layers import Concatenate, Add, Multiply
+from keras.models import load_model
 #from keras.engine.topology import merge
 import gensim.models.word2vec as w2v
 import os
@@ -321,7 +322,16 @@ model = embedding_model_lstm()
 
 #model.fit(x,y)
 
-train_embedding_model_api(model, x, y, epochs=50)
+if False:
+    model = load_model(hparams['save_dir'] + hparams['base_filename'] +'.h5')
+    print ('load works')
+    #exit()
+
+if True:
+    train_embedding_model_api(model, x, y, epochs=50)
+
+if True:
+    model.save(hparams['save_dir'] + hparams['base_filename'] + '.h5')
 
 if True:
     train_embedding_model_api(model, x, y, predict=True, qnum=1)
