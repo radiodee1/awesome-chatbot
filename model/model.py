@@ -321,9 +321,11 @@ model = embedding_model_lstm()
 
 #model.fit(x,y)
 
-train_embedding_model_api(model, x, y, epochs=75)
+train_embedding_model_api(model, x, y, epochs=5)
 
 if True:
     train_embedding_model_api(model, x, y, predict=True, qnum=1)
 
 print ('\n',len(word2vec_book.wv.vocab))
+
+print ( word2vec_book.wv.most_similar(positive=['</s>'], topn=5))
