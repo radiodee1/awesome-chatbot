@@ -21,7 +21,7 @@ to_lower = True
 test_on_screen = False
 remove_caps = True
 
-batch_size = 256
+batch_size = 64 #256
 steps_per_stats = 100
 pull_size = batch_size * steps_per_stats * 10
 
@@ -103,5 +103,5 @@ for timeframe in timeframes:
             print(counter * limit, counter, 'rows completed so far')
             
     if not test_on_screen:
-        #os.system('mv raw/t* data/.')
+        os.system('mv raw/t* data/.')
         pass

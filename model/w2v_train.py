@@ -270,5 +270,5 @@ if True:
 
 
 if True:
-    print (word2vec_book.wv.most_similar(positive=[word2vec_book.wv['<s>']],topn=10))
+    print (word2vec_book.wv.most_similar(positive=[word2vec_book.wv['[sol]']],topn=10))
     print (word2vec_book.wv.most_similar(positive=['man']))

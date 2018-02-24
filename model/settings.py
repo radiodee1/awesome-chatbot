@@ -15,9 +15,9 @@ hparams = {
     'num_vocab_total': 20000,
     'batch_size': 16, #256
     'steps_to_stats': 100,
-    'sol':'<s>',
-    'eol':'</s>',
-    'unk':'<unk>',
+    'sol':'sol',
+    'eol':'eol',
+    'unk':'unk',
     'layers': 2,
     'units': 50, ##600
     'learning_rate': 0.001,

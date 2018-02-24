@@ -42,6 +42,7 @@ if True:
 if True:
     zzz_fr = None
     zzz_to = None
+    '''
     with open(vocab_fr,'r') as r:
         zzz_fr = r.read()
         text_zzz_fr = []
@@ -53,7 +54,7 @@ if True:
         text_zzz_to = []
         for x in zzz_to.split('\n'):
             text_zzz_to.append(x)
-
+    '''
     with open(text_fr, 'r') as r:
         xxx = r.read()
         text_xxx = []
@@ -180,7 +181,7 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sente
 
 
 
-def get_batch(batch, x, y):
+def get_batch(batch, x, y, batch_size=16):
     """ first batch starts at 0 """
     a = batch_size * batch
     b = batch_size * (batch + 1)
@@ -244,24 +245,6 @@ def embedding_model_lstm():
     time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
 
 
-    '''
-    single_cell = tf.nn.rnn_cell.LSTMCell(units)
-    cell = tf.nn.rnn_cell.MultiRNNCell([single_cell] * tokens_per_sentence)
-
-    do_decode = True
-    attn = tf.contrib.legacy_seq2seq.embedding_attention_seq2seq(
-        valid_word,
-        lstm_a,
-        cell,
-        num_encoder_symbols=words,
-        num_decoder_symbols=words,
-        embedding_size=units,
-        #output_projection=output_projection,
-        feed_previous=do_decode#,
-        #dtype=dtype
-    )
-    '''
-
     print (K.shape(recurrent_a2), 'not time dist')
 
     k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
@@ -299,6 +282,29 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                         print (z[0][0])
 
 def inference_embedding_model_api(model, x, y):
+    z = None
+    num = 0
+    xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
+    print (xx.shape)
+    for k in range(xx.shape[0]):
+        #print (xx[k,:,0].shape)
+        print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
+
+    while z == None or  (z != hparams['eol'] and num < tokens_per_sentence):
+        single_word_x = np.zeros((50,55))
+        single_word_x[:,0] = xx[0][:,0]
+        single_word_x = np.expand_dims(single_word_x, axis=0)
+        single_word_y = np.zeros((50,55))
+        single_word_y[:,0] = yy[0][:,0]
+        single_word_y = np.expand_dims(single_word_y, axis=0)
+        #print (single_word_x.shape,"here", xx.shape)
+        z = model.predict([single_word_x, single_word_y],batch_size=1)[0]
+        #print (z.shape,'z', xx.shape)
+        yy = np.expand_dims(z, axis=0)
+        #z = list(z)
+        z = word2vec_book.wv.most_similar(positive=[z[:,0]])[0][0]
+        print (z, end=' ')
+        num +=1
     pass
 
 if True:
@@ -332,7 +338,12 @@ if True:
     print ('stage: simple predict')
     train_embedding_model_api(model, x_test, y_test, predict=True, qnum=1)
 
+if True:
+    print ('-------')
+    inference_embedding_model_api(model,x_test,y_test)
+
 print ('\n',len(word2vec_book.wv.vocab))
 
-print ( word2vec_book.wv.most_similar(positive=['</s>'], topn=5))
+print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))
 print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))
+print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
