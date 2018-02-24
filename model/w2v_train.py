@@ -229,7 +229,7 @@ seed = 1
 epochs = 10
 
 if model_generate_new and True:
-    
+
     word2vec_book = w2v.Word2Vec(
         sg=1,
         seed=seed,

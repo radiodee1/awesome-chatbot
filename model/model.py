@@ -18,6 +18,9 @@ words = hparams['num_vocab_total']
 text_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
 text_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
 
+train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
+
 vocab_fr = hparams['data_dir'] + hparams['vocab_name'] + '.' + hparams['src_ending']
 vocab_to = hparams['data_dir'] + hparams['vocab_name'] + '.' + hparams['tgt_ending']
 oov_token = hparams['unk']
@@ -61,8 +64,20 @@ if True:
         for xx in yyy.split('\n'):
             text_yyy.append(xx)
 
+    with open(train_fr, 'r') as r:
+        xxx = r.read()
+        train_xxx = []
+        for xx in xxx.split('\n'):
+            train_xxx.append(xx)
 
-if True:
+    with open(train_to, 'r') as r:
+        yyy = r.read()
+        train_yyy = []
+        for xx in yyy.split('\n'):
+            train_yyy.append(xx)
+
+'''
+if False:
     tokenize_voc_fr = text.Tokenizer(num_words=words,oov_token=oov_token, filters='\n' )
     tokenize_voc_fr.fit_on_texts(text_zzz_fr)
 
@@ -74,7 +89,7 @@ if True:
 
     tokenize_text_to = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
     tokenize_text_to.fit_on_texts(text_zzz_to)
-
+'''
 
 def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False):
     ls_xxx = np.array([])
@@ -314,7 +329,10 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                         print (z[0][0])
 
 
-x, y = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False)
+
+if True:
+    x, y = word_and_vector_size_arrays(train_xxx, train_yyy)
+    x_test, y_test = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False)
 
 print (y.shape)
 
@@ -329,13 +347,13 @@ if False:
     #exit()
 
 if True:
-    train_embedding_model_api(model, x, y, epochs=50)
+    train_embedding_model_api(model, x, y, epochs=1)
 
 if True:
     model.save(hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num +'.h5')
 
 if True:
-    train_embedding_model_api(model, x, y, predict=True, qnum=1)
+    train_embedding_model_api(model, x_test, y_test, predict=True, qnum=1)
 
 print ('\n',len(word2vec_book.wv.vocab))
 
