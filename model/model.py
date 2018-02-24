@@ -26,10 +26,11 @@ units = hparams['units']
 tokens_per_sentence = hparams['tokens_per_sentence']
 raw_embedding_filename = hparams['raw_embedding_filename']
 
+base_file_num = str(hparams['base_file_num'])
 
 if True:
     print ("stage: load model")
-    word2vec_book = w2v.Word2Vec.load(os.path.join("../data", raw_embedding_filename + "_1.w2v"))
+    word2vec_book = w2v.Word2Vec.load(os.path.join(hparams['save_dir'], raw_embedding_filename + "_1.w2v"))
     words = len(word2vec_book.wv.vocab)
     vocab_size = words
 
@@ -323,7 +324,7 @@ model = embedding_model_lstm()
 #model.fit(x,y)
 
 if False:
-    model = load_model(hparams['save_dir'] + hparams['base_filename'] +'.h5')
+    model = load_model(hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5')
     print ('load works')
     #exit()
 
@@ -331,7 +332,7 @@ if True:
     train_embedding_model_api(model, x, y, epochs=50)
 
 if True:
-    model.save(hparams['save_dir'] + hparams['base_filename'] + '.h5')
+    model.save(hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num +'.h5')
 
 if True:
     train_embedding_model_api(model, x, y, predict=True, qnum=1)
@@ -339,3 +340,4 @@ if True:
 print ('\n',len(word2vec_book.wv.vocab))
 
 print ( word2vec_book.wv.most_similar(positive=['</s>'], topn=5))
+print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))

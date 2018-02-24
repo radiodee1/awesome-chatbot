@@ -229,6 +229,7 @@ seed = 1
 epochs = 10
 
 if model_generate_new and True:
+    
     word2vec_book = w2v.Word2Vec(
         sg=1,
         seed=seed,
@@ -241,18 +242,18 @@ if model_generate_new and True:
 
 
 
-elif False:
+if True:
     print ("stage: load model")
-    word2vec_book = w2v.Word2Vec.load(os.path.join("../data", raw_embedding_filename +"_1.w2v"))
+    word2vec_book = w2v.Word2Vec.load(os.path.join(hparams['save_dir'], raw_embedding_filename +"_1.w2v"))
     #word2vec_book = w2v.KeyedVectors.load_word2vec_format(os.path.join("trained",'saved_google',"GoogleNews-vectors-negative300.bin"),binary=True)
 
 
-if True:
+if False:
     word2vec_book.build_vocab(sentences_book)
 
     print("stage: Word2Vec vocabulary length:", len(word2vec_book.wv.vocab))
 
-if True:
+if False:
     print ("stage: train")
 
     word_count = hparams['num_vocab_total']
@@ -262,8 +263,9 @@ if True:
 
 
 
-    word2vec_book.save(os.path.join("../data", raw_embedding_filename + "_1.w2v"))
+    word2vec_book.save(os.path.join(hparams['save_dir'], raw_embedding_filename + "_1.w2v"))
 
 
 if True:
     print (word2vec_book.wv.most_similar(positive=[word2vec_book.wv['<s>']],topn=10))
+    print (word2vec_book.wv.most_similar(positive=['man']))
