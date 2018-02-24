@@ -214,6 +214,8 @@ def embedding_model_lstm():
     x_shape = (units,tokens_per_sentence)
 
     valid_word = Input(shape=x_shape)
+    valid_word_y = Input(shape=x_shape)
+
 
     '''
     embeddings_a = Embedding(words, units, weights=[embedding_matrix],
@@ -231,11 +233,13 @@ def embedding_model_lstm():
 
     recurrent_a = lstm_a(valid_word)
 
-    lstm_a2 = LSTM(units=tokens_per_sentence,
+    concat_a = Concatenate()([recurrent_a,valid_word_y])
+
+    lstm_a2 = LSTM(units=tokens_per_sentence * 2,
                                 input_shape=(None,units),
                                 return_sequences=True)
 
-    recurrent_a2 = lstm_a2(recurrent_a)
+    recurrent_a2 = lstm_a2(concat_a)
 
     time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
 
@@ -260,7 +264,7 @@ def embedding_model_lstm():
 
     print (K.shape(recurrent_a2), 'not time dist')
 
-    k_model = Model(inputs=[valid_word], outputs=[time_dist_a])
+    k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
 
     k_model.compile(optimizer='adam', loss='binary_crossentropy')
 
@@ -279,10 +283,10 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
             #model.train_on_batch(xx,yy)
             if not predict:
                 print (xx.shape, yy.shape)
-                model.train_on_batch(xx,yy)
+                model.train_on_batch([xx,yy],yy)
                 #model.fit(xx,yy)
             else:
-                ypredict = model.predict(xx, batch_size=batch_size)
+                ypredict = model.predict([xx,yy], batch_size=batch_size)
                 print (ypredict.shape)
                 for ii in ypredict:
                     num += 1
@@ -294,7 +298,8 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0])
 
-
+def inference_embedding_model_api(model, x, y):
+    pass
 
 if True:
     print ('stage: arrays')
