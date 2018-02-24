@@ -8,6 +8,8 @@ from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed,
 from keras.layers import Activation, RepeatVector, Permute, Merge, Dense #, TimeDistributedMerge
 from keras.layers import Concatenate, Add, Multiply
 from keras.models import load_model
+from keras import backend as K
+import tensorflow as tf
 #from keras.engine.topology import merge
 import gensim.models.word2vec as w2v
 import os
@@ -32,7 +34,7 @@ raw_embedding_filename = hparams['raw_embedding_filename']
 base_file_num = str(hparams['base_file_num'])
 
 if True:
-    print ("stage: load model")
+    print ("stage: load w2v model")
     word2vec_book = w2v.Word2Vec.load(os.path.join(hparams['save_dir'], raw_embedding_filename + "_1.w2v"))
     words = len(word2vec_book.wv.vocab)
     vocab_size = words
@@ -76,20 +78,7 @@ if True:
         for xx in yyy.split('\n'):
             train_yyy.append(xx)
 
-'''
-if False:
-    tokenize_voc_fr = text.Tokenizer(num_words=words,oov_token=oov_token, filters='\n' )
-    tokenize_voc_fr.fit_on_texts(text_zzz_fr)
 
-    tokenize_voc_to = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
-    tokenize_voc_to.fit_on_texts(text_zzz_to)
-
-    tokenize_text_fr = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
-    tokenize_text_fr.fit_on_texts(text_zzz_to)
-
-    tokenize_text_to = text.Tokenizer(num_words=words, oov_token=oov_token, filters='\n')
-    tokenize_text_to.fit_on_texts(text_zzz_to)
-'''
 
 def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False):
     ls_xxx = np.array([])
@@ -240,13 +229,11 @@ def embedding_model_lstm():
                                 input_shape=( None,units),
                                 return_sequences=True))
 
-
-
     recurrent_a = lstm_a(valid_word)
 
-    lstm_a2 = Bidirectional(LSTM(units=tokens_per_sentence,
+    lstm_a2 = LSTM(units=tokens_per_sentence,
                                 input_shape=(None,units),
-                                return_sequences=True))
+                                return_sequences=True)
 
     recurrent_a2 = lstm_a2(recurrent_a)
 
@@ -254,22 +241,24 @@ def embedding_model_lstm():
 
 
     '''
-    attention_b = Input(shape=x_shape[1:])
-    dense_b = Dense(input_dim=x_shape[1:], units=tokens_per_sentence)
-    dense_out = dense_b(attention_b)
-    #dense_out = dense_b(recurrent_a)
-    activation_b = Activation('softmax')
-    act_out = activation_b(dense_out)
-    repeat_vec_b = RepeatVector(units)
-    repeat_b = repeat_vec_b(act_out)
-    permute_b = Permute((2,1))
-    end_b = permute_b(repeat_b)
+    single_cell = tf.nn.rnn_cell.LSTMCell(units)
+    cell = tf.nn.rnn_cell.MultiRNNCell([single_cell] * tokens_per_sentence)
 
-    merge_c = Add()([recurrent_a,end_b])
-
-    time_distributed_c = TimeDistributed(merge_c)
-    #time_c = time_distributed_c(merge_c)
+    do_decode = True
+    attn = tf.contrib.legacy_seq2seq.embedding_attention_seq2seq(
+        valid_word,
+        lstm_a,
+        cell,
+        num_encoder_symbols=words,
+        num_decoder_symbols=words,
+        embedding_size=units,
+        #output_projection=output_projection,
+        feed_previous=do_decode#,
+        #dtype=dtype
+    )
     '''
+
+    print (K.shape(recurrent_a2), 'not time dist')
 
     k_model = Model(inputs=[valid_word], outputs=[time_dist_a])
 
@@ -277,31 +266,7 @@ def embedding_model_lstm():
 
     return k_model
 
-def lstm_model_api():
-    input_dim = tokens_per_sentence
-    hidden = units
 
-    # The LSTM  model -  output_shape = (batch, step, hidden)
-    model1 = Sequential()
-    model1.add(LSTM(units=units, output_dim=hidden, input_shape=(tokens_per_sentence, units), return_sequences=True))
-
-    # The weight model  - actual output shape  = (batch, step)
-    # after reshape : output_shape = (batch, step,  hidden)
-    model2 = Sequential()
-    model2.add(Dense(input_dim=input_dim, output_dim=step))
-    model2.add(Activation('softmax'))  # Learn a probability distribution over each  step.
-    # Reshape to match LSTM's output shape, so that we can do element-wise multiplication.
-    model2.add(RepeatVector(hidden))
-    model2.add(Permute(2, 1))
-
-    # The final model which gives the weighted sum:
-    model = Sequential()
-    model.add(Merge([model1, model2], 'mul'))  # Multiply each element with corresponding weight a[i][j][k] * b[i][j]
-    model.add(TimeDistributedMerge('sum'))  # Sum the weighted elements.
-
-    model.compile(loss='mse', optimizer='sgd')
-
-    return model
 
 def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
     z = x.shape[2] // batch_size
@@ -315,44 +280,51 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
             if not predict:
                 print (xx.shape, yy.shape)
                 model.train_on_batch(xx,yy)
+                #model.fit(xx,yy)
             else:
                 ypredict = model.predict(xx, batch_size=batch_size)
                 print (ypredict.shape)
-                for i in ypredict:
+                for ii in ypredict:
                     num += 1
                     if qnum != -1 and num > qnum: return
-                    print (i,'<', i.shape)
+                    print (ii,'<', ii.shape)
 
                     for j in range(units):
                         #print (j,'<<<<',i[:,j].shape)
-                        z = word2vec_book.wv.most_similar(positive=[i[:,j]],topn=1)
+                        z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0])
 
 
 
 if True:
-    x, y = word_and_vector_size_arrays(train_xxx, train_yyy)
+    print ('stage: arrays')
+    #x, y = word_and_vector_size_arrays(train_xxx, train_yyy)
+    print ('stage: arrays test')
     x_test, y_test = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False)
+    x = x_test
+    y = y_test
 
 print (y.shape)
 
 
 model = embedding_model_lstm()
 
-#model.fit(x,y)
 
 if False:
     model = load_model(hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5')
-    print ('load works')
+    print ('stage: load works')
     #exit()
 
 if True:
-    train_embedding_model_api(model, x, y, epochs=1)
+    print ('stage: train')
+    train_embedding_model_api(model, x, y, epochs=100)
 
 if True:
+    print ('stage: save lstm model')
     model.save(hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num +'.h5')
 
 if True:
+    print ('stage: simple predict')
     train_embedding_model_api(model, x_test, y_test, predict=True, qnum=1)
 
 print ('\n',len(word2vec_book.wv.vocab))
