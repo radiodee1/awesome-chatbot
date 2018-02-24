@@ -52,7 +52,8 @@ def sentence_to_wordlist(raw, sentence_label="", tag=False, clean=False):
         out.append(eol_marker)
         words = out
 
-    if len(sentence_label) > 0: words.append(sentence_label)
+    if len(sentence_label) > 0:
+        words.append(sentence_label)
     return words
 
 ########################################
@@ -75,7 +76,7 @@ if True:
 
 ###########################################
 
-def assemble_corpus(glob_txt, stem_words=False, sentence_label="", tag=False, tweet_tag=False, print_sentences=False):
+def assemble_corpus(glob_txt, clean=False, sentence_label="", tag=False, tweet_tag=False, print_sentences=False):
     pass
 
     #add everything once
@@ -136,8 +137,8 @@ def assemble_corpus(glob_txt, stem_words=False, sentence_label="", tag=False, tw
     for raw_sentence in raw_sentences:
         if len(raw_sentence) > 0:
             if not type(raw_sentence) == list: raw_sentence = raw_sentence.split()
-            z = sentence_to_wordlist(raw_sentence, sentence_label=sentence_label, tag=tag)
-            if len(z) > 0:
+            z = sentence_to_wordlist(raw_sentence, sentence_label=sentence_label, tag=tag,clean=clean)
+            if (not tag and len(z) > 0) or (tag and len(z) > 2):
                 sentences.append(z)
 
 
@@ -164,21 +165,23 @@ if False:
 if False:
     sentences_zork = assemble_corpus(game_glob2, tag=True, print_sentences=True)
 
-if False:
+if True:
     #sentences_book = []
-    sentences_book = assemble_corpus(game_glob3, tag=True)
+    sentences_got = assemble_corpus(game_glob3, tag=True, print_sentences=True, clean=True)
+    #exit()
 
 if True:
     #sentences_book = []
     sentences_book = assemble_corpus(game_glob4, tag=False, print_sentences=True)
     if len(sentences_book) == 0:
-        sentences_book = assemble_corpus(game_glob5, tag=False, print_sentences=False)
+        sentences_book = assemble_corpus(game_glob5, tag=False, print_sentences=True)
 
 if True:
-    #sentences_book.extend(sentences_book)
+    sentences_book.extend(sentences_got)
     sentences_book.extend(test)
 
 #print (sentences_book)
+
 
 if False:
     #print ("-----------------")
@@ -226,7 +229,7 @@ downsampling = 1e-2
 #deterministic, good for debugging
 seed = 1
 
-epochs = 10
+epochs = 5
 
 if model_generate_new and True:
 
@@ -242,21 +245,21 @@ if model_generate_new and True:
 
 
 
-if True:
+if False:
     print ("stage: load model")
     word2vec_book = w2v.Word2Vec.load(os.path.join(hparams['save_dir'], raw_embedding_filename +"_1.w2v"))
     #word2vec_book = w2v.KeyedVectors.load_word2vec_format(os.path.join("trained",'saved_google',"GoogleNews-vectors-negative300.bin"),binary=True)
 
 
-if False:
+if True:
     word2vec_book.build_vocab(sentences_book)
 
     print("stage: Word2Vec vocabulary length:", len(word2vec_book.wv.vocab))
 
-if False:
+if True:
     print ("stage: train")
 
-    word_count = hparams['num_vocab_total']
+    #word_count = hparams['num_vocab_total']
     word2vec_book.train(sentences_book,
                         total_examples=len(word2vec_book.wv.vocab),
                         epochs=epochs)

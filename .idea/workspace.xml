@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/model.py" afterPath="$PROJECT_DIR$/model/model.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/w2v_train.py" afterPath="$PROJECT_DIR$/model/w2v_train.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="415">
-              <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+            <state relative-caret-position="806">
+              <caret line="47" column="0" lean-forward="false" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -88,11 +88,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="w2v_train.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="w2v_train.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="277">
-              <caret line="231" column="0" lean-forward="false" selection-start-line="231" selection-start-column="0" selection-end-line="231" selection-end-column="0" />
+            <state relative-caret-position="-46">
+              <caret line="231" column="10" lean-forward="false" selection-start-line="231" selection-start-column="10" selection-end-line="231" selection-end-column="10" />
               <folding>
                 <element signature="e#20#84#0" expanded="true" />
               </folding>
@@ -117,9 +117,11 @@
       <find>append</find>
       <find>pos_tag</find>
       <find>assemble_corpus</find>
-      <find>model_generate_new</find>
       <find>tokenize_text_to</find>
       <find>tokenize_voc_to</find>
+      <find>model_generate_new</find>
+      <find>sentence_to_wordlist</find>
+      <find>word_count</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -134,8 +136,8 @@
         <option value="$PROJECT_DIR$/do_make_train_test_db.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/w2v_train.py" />
         <option value="$PROJECT_DIR$/model/model.py" />
+        <option value="$PROJECT_DIR$/model/w2v_train.py" />
       </list>
     </option>
   </component>
@@ -160,6 +162,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -186,7 +189,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
     </panes>
   </component>
@@ -271,13 +273,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_embedding.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/model_embedding.py" />
     <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3618">
@@ -313,13 +309,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_embedding.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/model_embedding.py" />
     <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3618">
@@ -587,21 +577,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_embedding.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/model_embedding_api.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2844">
-          <caret line="165" column="0" lean-forward="false" selection-start-line="165" selection-start-column="0" selection-end-line="165" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/model_embedding.py" />
+    <entry file="file://$PROJECT_DIR$/model/model_embedding_api.py" />
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -644,16 +621,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="231" column="0" lean-forward="false" selection-start-line="231" selection-start-column="0" selection-end-line="231" selection-end-column="0" />
-          <folding>
-            <element signature="e#20#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -672,10 +639,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="415">
-          <caret line="47" column="0" lean-forward="true" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
+        <state relative-caret-position="806">
+          <caret line="47" column="0" lean-forward="false" selection-start-line="47" selection-start-column="0" selection-end-line="47" selection-end-column="0" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-46">
+          <caret line="231" column="10" lean-forward="false" selection-start-line="231" selection-start-column="10" selection-end-line="231" selection-end-column="10" />
+          <folding>
+            <element signature="e#20#84#0" expanded="true" />
           </folding>
         </state>
       </provider>
