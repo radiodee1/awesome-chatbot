@@ -276,7 +276,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
             xx, yy = swap_axes(xx, yy)
             #model.train_on_batch(xx,yy)
             if not predict:
-                print (xx.shape, yy.shape)
+                #print (xx.shape, yy.shape)
                 model.train_on_batch([xx,yy],yy)
                 #model.fit(xx,yy)
             else:
@@ -290,7 +290,8 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                     for j in range(units):
                         #print (j,'<<<<',i[:,j].shape)
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
-                        print (z[0][0])
+                        print (z[0][0], end=' ')
+            print('\n-------------')
 
 def inference_embedding_model_api(model, x, y):
     z = None
@@ -301,6 +302,7 @@ def inference_embedding_model_api(model, x, y):
         #print (xx[k,:,0].shape)
         print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
 
+    print('\n--------------')
     while z == None or  (z != hparams['eol'] and num < tokens_per_sentence):
         single_word_x = np.zeros((50,55))
         single_word_x[:,0] = xx[0][:,0]
