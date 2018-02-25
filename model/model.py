@@ -215,7 +215,9 @@ def swap_axes(x, y):
 
 
 def embedding_model_lstm():
-    print (batch_size, tokens_per_sentence)
+
+    #print (batch_size, tokens_per_sentence)
+
     '''
     embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
     for i in range(len(word2vec_book.wv.vocab)):
@@ -266,8 +268,8 @@ def embedding_model_lstm():
     return k_model
 
 def embedding_model_lstm_softmax():
-    print (batch_size, tokens_per_sentence)
 
+    #print (batch_size, tokens_per_sentence)
 
     x_shape = (units,tokens_per_sentence)
 
@@ -336,7 +338,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
 
 def inference_embedding_model_api(model, x, y):
     z = None
-    num = 1
+    num = 1 # skip zero?
     xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
     #print (xx.shape)
     for k in range(xx.shape[0]):
