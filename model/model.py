@@ -327,7 +327,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                     if qnum != -1 and num > qnum: return
                     #print (ii,'<', ii.shape)
 
-                    for j in range(units):
+                    for j in range(tokens_per_sentence):
                         #print (j,'<<<<',i[:,j].shape)
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0], end=' ')
