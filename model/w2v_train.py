@@ -211,7 +211,7 @@ units = hparams['units']
 ############################################
 num_features =  units #  900 is not good
 # Minimum word count threshold.
-min_word_count = 1 # 3
+min_word_count = 2 # 3
 
 # Number of threads to run in parallel.
 #more workers, faster we train
@@ -270,5 +270,5 @@ if True:
 
 
 if True:
-    print (word2vec_book.wv.most_similar(positive=[word2vec_book.wv['[sol]']],topn=10))
+    #print (word2vec_book.wv.most_similar(positive=[word2vec_book.wv['[sol]']],topn=10))
     print (word2vec_book.wv.most_similar(positive=['man']))
