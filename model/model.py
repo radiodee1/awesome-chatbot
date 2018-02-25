@@ -32,6 +32,7 @@ tokens_per_sentence = hparams['tokens_per_sentence']
 raw_embedding_filename = hparams['raw_embedding_filename']
 
 base_file_num = str(hparams['base_file_num'])
+filename = None
 
 if True:
     print ("stage: load w2v model")
@@ -253,7 +254,7 @@ def embedding_model_lstm():
 
     recurrent_a2 = lstm_a2(concat_a)
 
-    time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
+    time_dist_a = TimeDistributed(Dense(tokens_per_sentence, activation='softmax'))(recurrent_a2)
 
 
     #print (K.shape(recurrent_a2), 'not time dist')
@@ -264,6 +265,45 @@ def embedding_model_lstm():
 
     return k_model
 
+def embedding_model_lstm_softmax():
+    print (batch_size, tokens_per_sentence)
+
+
+    x_shape = (units,tokens_per_sentence)
+
+    valid_word = Input(shape=x_shape)
+    valid_word_y = Input(shape=x_shape)
+
+
+
+    concat_a = Concatenate()([valid_word,valid_word_y])
+
+
+    lstm_a = Bidirectional(LSTM(units=tokens_per_sentence * 2,
+                                input_shape=( None,units),
+                                return_sequences=True))
+
+    recurrent_a = lstm_a(concat_a)
+
+    #concat_a = Concatenate()([recurrent_a,valid_word_y])
+
+    lstm_a2 = LSTM(units=tokens_per_sentence * 2,
+                                input_shape=(None,units),
+                                return_sequences=True)
+
+    recurrent_a2 = lstm_a2(recurrent_a)
+
+    time_dist_a = TimeDistributed(Dense(tokens_per_sentence, activation='softmax'))(recurrent_a2)
+
+
+    #print (K.shape(recurrent_a2), 'not time dist')
+
+    k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
+
+    k_model.compile(optimizer='adam', loss='binary_crossentropy')
+
+
+    return k_model
 
 
 def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
@@ -297,7 +337,7 @@ def inference_embedding_model_api(model, x, y):
     z = None
     num = 1
     xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
-    print (xx.shape)
+    #print (xx.shape)
     for k in range(xx.shape[0]):
         #print (xx[k,:,0].shape)
         print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
@@ -326,25 +366,31 @@ def inference_embedding_model_api(model, x, y):
         z = z[0][0]
         print (z, end=' ')
         num +=1
+    print()
     pass
 
 if True:
-    #print ('stage: arrays train')
+    print ('stage: arrays train')
     #x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
-    #x = x_test
-    #y = y_test
+    x = x_test
+    y = y_test
 
     #print (y.shape)
 
-
-model = embedding_model_lstm()
+if True:
+    model = embedding_model_lstm()
+    filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
+else:
+    model = embedding_model_lstm_softmax()
+    filename = hparams['save_dir'] + hparams['base_filename'] + '-softmax-' + base_file_num + '.h5'
 
 
 if True:
     print('stage: checking for load')
-    filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+    if filename == None:
+        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
     if os.path.isfile(filename):
         model = load_model(filename)
         print ('stage: load works')
@@ -352,24 +398,27 @@ if True:
         print('stage: load failed')
     #exit()
 
-if False:
+if True:
     print ('stage: train')
     train_embedding_model_api(model, x, y, epochs=2)
 
-if False:
+if True:
     print ('stage: save lstm model')
-    model.save(hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num +'.h5')
+    if filename == None:
+        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+    model.save(filename)
 
 if True:
     print ('stage: simple predict')
     train_embedding_model_api(model, x_test, y_test, predict=True, qnum=1)
 
 if True:
-    print ('-------')
+    print ('\n-------')
     inference_embedding_model_api(model,x_test,y_test)
 
-print ('\n',len(word2vec_book.wv.vocab))
+if False:
+    print ('\n',len(word2vec_book.wv.vocab))
 
-print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))
-print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))
-print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
+    print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))
+    print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))
+    print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
