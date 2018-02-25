@@ -323,7 +323,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                 ypredict = model.predict([xx,yy], batch_size=batch_size)
                 #print (ypredict.shape)
                 for ii in ypredict:
-                    num += 1
+                    #num += 1
                     if qnum != -1 and num > qnum: return
                     #print (ii,'<', ii.shape)
 
@@ -331,6 +331,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                         #print (j,'<<<<',i[:,j].shape)
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0], end=' ')
+                    num += 1
         print('\n---- epoch ' + str(e) + ' ---------')
 
 def inference_embedding_model_api(model, x, y):
@@ -371,11 +372,11 @@ def inference_embedding_model_api(model, x, y):
 
 if True:
     print ('stage: arrays train')
-    #x, y = word_and_vector_size_arrays(train_fr, train_to)
+    x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
-    x = x_test
-    y = y_test
+    #x = x_test
+    #y = y_test
 
     #print (y.shape)
 
