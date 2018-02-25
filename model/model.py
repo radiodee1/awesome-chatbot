@@ -39,7 +39,7 @@ if True:
     words = len(word2vec_book.wv.vocab)
     vocab_size = words
 
-if True:
+if False:
     zzz_fr = None
     zzz_to = None
     '''
@@ -54,7 +54,7 @@ if True:
         text_zzz_to = []
         for x in zzz_to.split('\n'):
             text_zzz_to.append(x)
-    '''
+    
     with open(text_fr, 'r') as r:
         xxx = r.read()
         text_xxx = []
@@ -78,10 +78,21 @@ if True:
         train_yyy = []
         for xx in yyy.split('\n'):
             train_yyy.append(xx)
+    '''
 
-
+def open_sentences(filename):
+    with open(filename, 'r') as r:
+        yyy = r.read()
+        t_yyy = []
+        for xx in yyy.split('\n'):
+            t_yyy.append(xx)
+    return t_yyy
 
 def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False):
+
+    text_xxx = open_sentences(text_xxx)
+    text_yyy = open_sentences(text_yyy)
+
     ls_xxx = np.array([])
     ls_yyy = np.array([])
 
@@ -245,7 +256,7 @@ def embedding_model_lstm():
     time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
 
 
-    print (K.shape(recurrent_a2), 'not time dist')
+    #print (K.shape(recurrent_a2), 'not time dist')
 
     k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
 
@@ -308,12 +319,12 @@ def inference_embedding_model_api(model, x, y):
     pass
 
 if True:
-    print ('stage: arrays')
-    #x, y = word_and_vector_size_arrays(train_xxx, train_yyy)
+    print ('stage: arrays train')
+    x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays test')
-    x_test, y_test = word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False)
-    x = x_test
-    y = y_test
+    x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
+    #x = x_test
+    #y = y_test
 
 print (y.shape)
 
@@ -321,14 +332,19 @@ print (y.shape)
 model = embedding_model_lstm()
 
 
-if False:
-    model = load_model(hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5')
-    print ('stage: load works')
+if True:
+    print('stage: checking for load')
+    filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+    if os.path.isfile(filename):
+        model = load_model(filename)
+        print ('stage: load works')
+    else:
+        print('stage: load failed')
     #exit()
 
 if True:
     print ('stage: train')
-    train_embedding_model_api(model, x, y, epochs=100)
+    train_embedding_model_api(model, x, y, epochs=2)
 
 if True:
     print ('stage: save lstm model')
