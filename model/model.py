@@ -269,8 +269,8 @@ def embedding_model_lstm():
 def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
     z = x.shape[2] // batch_size
     num = 0
-    for _ in range(epochs):
-        print ('----')
+    for e in range(epochs):
+        #print ('----')
         for i in range(z):
             xx , yy = get_batch(i, x, y)
             xx, yy = swap_axes(xx, yy)
@@ -281,17 +281,17 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                 #model.fit(xx,yy)
             else:
                 ypredict = model.predict([xx,yy], batch_size=batch_size)
-                print (ypredict.shape)
+                #print (ypredict.shape)
                 for ii in ypredict:
                     num += 1
                     if qnum != -1 and num > qnum: return
-                    print (ii,'<', ii.shape)
+                    #print (ii,'<', ii.shape)
 
                     for j in range(units):
                         #print (j,'<<<<',i[:,j].shape)
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0], end=' ')
-            print('\n-------------')
+        print('\n---- epoch ' + str(e) + ' ---------')
 
 def inference_embedding_model_api(model, x, y):
     z = None
