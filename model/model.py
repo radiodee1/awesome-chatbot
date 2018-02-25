@@ -295,40 +295,48 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
 
 def inference_embedding_model_api(model, x, y):
     z = None
-    num = 0
+    num = 1
     xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
     print (xx.shape)
     for k in range(xx.shape[0]):
         #print (xx[k,:,0].shape)
         print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
 
+
     print('\n--------------')
+    if True:
+        xx = np.expand_dims(xx[:,:,0], axis=0)
+        xx = np.swapaxes(xx, 2,1)
+    else:
+        xx = np.expand_dims(xx[0,:, :], axis=0)
+
+    single_word_y = np.zeros((1,50, 55))
     while z == None or  (z != hparams['eol'] and num < tokens_per_sentence):
-        single_word_x = np.zeros((50,55))
-        single_word_x[:,0] = xx[0][:,0]
-        single_word_x = np.expand_dims(single_word_x, axis=0)
-        single_word_y = np.zeros((50,55))
-        single_word_y[:,0] = yy[0][:,0]
-        single_word_y = np.expand_dims(single_word_y, axis=0)
-        #print (single_word_x.shape,"here", xx.shape)
-        z = model.predict([single_word_x, single_word_y],batch_size=1)[0]
-        #print (z.shape,'z', xx.shape)
+
+        #single_word_y = np.zeros((1,50,55))
+
+        single_word_y[0,:,num] = yy[0,:,num] ## note: dont make this to yy[0,:,0]
+        #print (single_word_y[0,:,num].shape,"y here", yy[0,:,num].shape, num)
+        z = model.predict([xx, single_word_y],batch_size=1)[0]
         yy = np.expand_dims(z, axis=0)
-        #z = list(z)
-        z = word2vec_book.wv.most_similar(positive=[z[:,0]])[0][0]
+
+        z = word2vec_book.wv.most_similar(positive=[z[:,0]])
+        #print(z[0])
+
+        z = z[0][0]
         print (z, end=' ')
         num +=1
     pass
 
 if True:
-    print ('stage: arrays train')
-    x, y = word_and_vector_size_arrays(train_fr, train_to)
+    #print ('stage: arrays train')
+    #x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
     #x = x_test
     #y = y_test
 
-print (y.shape)
+    #print (y.shape)
 
 
 model = embedding_model_lstm()
@@ -344,11 +352,11 @@ if True:
         print('stage: load failed')
     #exit()
 
-if True:
+if False:
     print ('stage: train')
     train_embedding_model_api(model, x, y, epochs=2)
 
-if True:
+if False:
     print ('stage: save lstm model')
     model.save(hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num +'.h5')
 
