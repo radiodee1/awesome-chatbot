@@ -371,9 +371,9 @@ def inference_embedding_model_api(model, x, y):
     pass
 
 if True:
-    print ('stage: arrays train')
+    print ('stage: arrays prep for train')
     x, y = word_and_vector_size_arrays(train_fr, train_to)
-    print ('stage: arrays test')
+    print ('stage: arrays prep for test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
     #x = x_test
     #y = y_test
