@@ -256,14 +256,14 @@ def embedding_model_lstm():
 
     recurrent_a2 = lstm_a2(concat_a)
 
-    time_dist_a = TimeDistributed(Dense(tokens_per_sentence, activation='softmax'))(recurrent_a2)
+    time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
 
 
     #print (K.shape(recurrent_a2), 'not time dist')
 
     k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
 
-    k_model.compile(optimizer='adam', loss='binary_crossentropy')
+    k_model.compile(optimizer='adam', loss='binary_crossentropy',metrics=['accuracy'])
 
     return k_model
 
@@ -295,14 +295,14 @@ def embedding_model_lstm_softmax():
 
     recurrent_a2 = lstm_a2(recurrent_a)
 
-    time_dist_a = TimeDistributed(Dense(tokens_per_sentence, activation='softmax'))(recurrent_a2)
+    time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
 
 
     #print (K.shape(recurrent_a2), 'not time dist')
 
     k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
 
-    k_model.compile(optimizer='adam', loss='binary_crossentropy')
+    k_model.compile(optimizer='adam', loss='binary_crossentropy',metrics=['accuracy'])
 
 
     return k_model
@@ -319,8 +319,9 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
             #model.train_on_batch(xx,yy)
             if not predict:
                 #print (xx.shape, yy.shape)
-                model.train_on_batch([xx,yy],yy)
-                #model.fit(xx,yy)
+                #model.train_on_batch([xx,yy],yy)
+                model.fit([xx,yy],yy)
+                #model.evaluate([xx,yy],yy)
             else:
                 ypredict = model.predict([xx,yy], batch_size=batch_size)
                 #print (ypredict.shape)
@@ -334,26 +335,37 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0], end=' ')
                     num += 1
-        print('\n---- epoch ' + str(e) + ' ---------')
+        print('\n---- epoch ' + str(e + 1) + ' ----')
 
-def inference_embedding_model_api(model, x, y):
+def inference_embedding_model_api(model, x, y, input='', show_similarity=False):
     z = None
     num = 1 # skip zero?
-    xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
-    #print (xx.shape)
-    for k in range(xx.shape[0]):
-        #print (xx[k,:,0].shape)
-        print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
+    xx = None
+    if len(input) != 0:
+        print(input)
+        jj = np.zeros((1,units,tokens_per_sentence))
+        ii = input.lower().split()
+        for k in range(len(ii)):
+            w2v = word2vec_book.wv[ii[k]]
+            jj[0][:,k] = w2v
+            xx = yy = jj
+        pass
+    else:
+        xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
+        #print (xx.shape)
+        for k in range(xx.shape[0]):
+            #print (xx[k,:,0].shape)
+            print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
 
 
     print('\n--------------')
-    if True:
+    if False:
         xx = np.expand_dims(xx[:,:,0], axis=0)
         xx = np.swapaxes(xx, 2,1)
     else:
         xx = np.expand_dims(xx[0,:, :], axis=0)
 
-    single_word_y = np.zeros((1,50, 55))
+    single_word_y = np.zeros((1,units, tokens_per_sentence))
     while z == None or  (z != hparams['eol'] and num < tokens_per_sentence):
 
         #single_word_y = np.zeros((1,50,55))
@@ -364,7 +376,7 @@ def inference_embedding_model_api(model, x, y):
         yy = np.expand_dims(z, axis=0)
 
         z = word2vec_book.wv.most_similar(positive=[z[:,0]])
-        #print(z[0])
+        if show_similarity: print(z[0])
 
         z = z[0][0]
         print (z, end=' ')
@@ -374,11 +386,11 @@ def inference_embedding_model_api(model, x, y):
 
 if True:
     print ('stage: arrays prep for train')
-    x, y = word_and_vector_size_arrays(train_fr, train_to)
+    #x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays prep for test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
-    #x = x_test
-    #y = y_test
+    x = x_test
+    y = y_test
 
     #print (y.shape)
 
@@ -388,7 +400,7 @@ if True:
 else:
     model = embedding_model_lstm_softmax()
     filename = hparams['save_dir'] + hparams['base_filename'] + '-softmax-' + base_file_num + '.h5'
-
+print(filename)
 
 if True:
     print('stage: checking for load')
@@ -417,9 +429,12 @@ if True:
 
 if True:
     print ('\n-------')
-    inference_embedding_model_api(model,x_test,y_test)
+    inference_embedding_model_api(model,x_test,y_test, show_similarity=False)
 
-if False:
+if True:
+    inference_embedding_model_api(model,x_test,y_test,input='are you eol', show_similarity=False)
+
+if True:
     print ('\n',len(word2vec_book.wv.vocab))
 
     print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))

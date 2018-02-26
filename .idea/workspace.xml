@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/do_make_train_test_db.py" afterPath="$PROJECT_DIR$/do_make_train_test_db.py" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/model.py" afterPath="$PROJECT_DIR$/model/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="574">
-              <caret line="340" column="24" lean-forward="false" selection-start-line="340" selection-start-column="24" selection-end-line="340" selection-end-column="24" />
+            <state relative-caret-position="826">
+              <caret line="267" column="18" lean-forward="true" selection-start-line="267" selection-start-column="18" selection-end-line="267" selection-end-column="18" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -49,7 +49,7 @@
       <file leaf-file-name="do_make_train_test_db.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_train_test_db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="198">
+            <state relative-caret-position="324">
               <caret line="23" column="17" lean-forward="false" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
               <folding>
                 <element signature="e#20#34#0" expanded="true" />
@@ -81,7 +81,7 @@
       <file leaf-file-name="w2v_train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1164">
+            <state relative-caret-position="3492">
               <caret line="213" column="18" lean-forward="false" selection-start-line="213" selection-start-column="18" selection-end-line="213" selection-end-column="18" />
               <folding>
                 <element signature="e#20#84#0" expanded="true" />
@@ -603,14 +603,7 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_launch_w2v_train.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" column="20" lean-forward="false" selection-start-line="3" selection-start-column="20" selection-end-line="3" selection-end-column="20" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/do_launch_w2v_train.sh" />
     <entry file="file://$PROJECT_DIR$/do_make_w2v_train.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -621,7 +614,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1164">
+        <state relative-caret-position="3492">
           <caret line="213" column="18" lean-forward="false" selection-start-line="213" selection-start-column="18" selection-end-line="213" selection-end-column="18" />
           <folding>
             <element signature="e#20#84#0" expanded="true" />
@@ -639,7 +632,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_train_test_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="198">
+        <state relative-caret-position="324">
           <caret line="23" column="17" lean-forward="false" selection-start-line="23" selection-start-column="17" selection-end-line="23" selection-end-column="17" />
           <folding>
             <element signature="e#20#34#0" expanded="true" />
@@ -649,8 +642,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="340" column="24" lean-forward="false" selection-start-line="340" selection-start-column="24" selection-end-line="340" selection-end-column="24" />
+        <state relative-caret-position="826">
+          <caret line="267" column="18" lean-forward="true" selection-start-line="267" selection-start-column="18" selection-end-line="267" selection-end-column="18" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
