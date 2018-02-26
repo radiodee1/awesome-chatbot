@@ -428,6 +428,7 @@ if True:
 if True:
     print ('\n',len(word2vec_book.wv.vocab))
 
-    print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))
+    vec = word2vec_book.wv['sol']
+    print ( word2vec_book.wv.most_similar(positive=[vec], topn=5))
     print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))
     print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
