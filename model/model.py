@@ -190,7 +190,16 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sente
 
 
 
-
+def get_batch_three(batch, x, y,z, batch_size=16):
+    """ first batch starts at 0 """
+    a = batch_size * batch
+    b = batch_size * (batch + 1)
+    x = x[:,:,a:b]
+    y = y[:,:,a:b]
+    z = z[:,:,a:b] #np.zeros_like(y)
+    temp = z[1:,:,:]
+    z[:tokens_per_sentence -1,:,:] = temp
+    return x, y, z
 
 
 def get_batch(batch, x, y, batch_size=16):
@@ -202,17 +211,16 @@ def get_batch(batch, x, y, batch_size=16):
     return x, y
 
 
-def swap_axes(x, y):
+def swap_axes(x, y, z):
     x = np.swapaxes(x, 0, 2)
     #x = np.swapaxes(x, 1, 2)
 
     y = np.swapaxes(y, 0, 2)
     #y = np.swapaxes(y, 1, 2)
 
-    #x = x[:,:,0]
 
-    return x, y
-
+    z = np.swapaxes(z, 0, 2)
+    return x, y, z
 
 def embedding_model_lstm():
 
@@ -314,13 +322,13 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
     for e in range(epochs):
         #print ('----')
         for i in range(z):
-            xx , yy = get_batch(i, x, y)
-            xx, yy = swap_axes(xx, yy)
+            xx , yy, yymod = get_batch_three(i, x, y, y)
+            xx, yy , yymod = swap_axes(xx, yy, yymod)
             #model.train_on_batch(xx,yy)
             if not predict:
                 #print (xx.shape, yy.shape)
                 #model.train_on_batch([xx,yy],yy)
-                model.fit([xx,yy],yy)
+                model.fit([xx,yy],yymod)
                 #model.evaluate([xx,yy],yy)
             else:
                 ypredict = model.predict([xx,yy], batch_size=batch_size)
@@ -392,6 +400,7 @@ if True:
     x = x_test
     y = y_test
 
+
     #print (y.shape)
 
 if True:
@@ -399,7 +408,7 @@ if True:
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 else:
     model = embedding_model_lstm_softmax()
-    filename = hparams['save_dir'] + hparams['base_filename'] + '-softmax-' + base_file_num + '.h5'
+    filename = hparams['save_dir'] + hparams['base_filename'] + '-concat-' + base_file_num + '.h5'
 print(filename)
 
 if True:
@@ -432,9 +441,10 @@ if True:
     inference_embedding_model_api(model,x_test,y_test, show_similarity=False)
 
 if True:
-    inference_embedding_model_api(model,x_test,y_test,input='are you eol', show_similarity=False)
+    print()
+    inference_embedding_model_api(model,x_test,y_test,input='sol who are you eol', show_similarity=False)
 
-if True:
+if False:
     print ('\n',len(word2vec_book.wv.vocab))
 
     print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))
