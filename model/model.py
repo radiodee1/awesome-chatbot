@@ -40,46 +40,7 @@ if True:
     words = len(word2vec_book.wv.vocab)
     vocab_size = words
 
-if False:
-    zzz_fr = None
-    zzz_to = None
-    '''
-    with open(vocab_fr,'r') as r:
-        zzz_fr = r.read()
-        text_zzz_fr = []
-        for x in zzz_fr.split('\n'):
-            text_zzz_fr.append(x)
 
-    with open(vocab_to, 'r') as r:
-        zzz_to = r.read()
-        text_zzz_to = []
-        for x in zzz_to.split('\n'):
-            text_zzz_to.append(x)
-    
-    with open(text_fr, 'r') as r:
-        xxx = r.read()
-        text_xxx = []
-        for xx in xxx.split('\n'):
-            text_xxx.append(xx)
-
-    with open(text_to, 'r') as r:
-        yyy = r.read()
-        text_yyy = []
-        for xx in yyy.split('\n'):
-            text_yyy.append(xx)
-
-    with open(train_fr, 'r') as r:
-        xxx = r.read()
-        train_xxx = []
-        for xx in xxx.split('\n'):
-            train_xxx.append(xx)
-
-    with open(train_to, 'r') as r:
-        yyy = r.read()
-        train_yyy = []
-        for xx in yyy.split('\n'):
-            train_yyy.append(xx)
-    '''
 
 def open_sentences(filename):
     with open(filename, 'r') as r:
@@ -106,7 +67,8 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sente
 
     for ii in range(len(text_xxx)):
         ############### x #######################
-        i = text.text_to_word_sequence(text_xxx[ii])
+        #i = text.text_to_word_sequence(text_xxx[ii])
+        i = text_xxx[ii].split()
         ls = np.array([])
         for word in range(tokens_per_sentence):  # i:
             if word + 1 <= len(i):
@@ -138,7 +100,8 @@ def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sente
             ls_xxx = np.dstack((ls_xxx, ls))
 
         ################# y ####################
-        j = text.text_to_word_sequence(text_yyy[ii])
+        #j = text.text_to_word_sequence(text_yyy[ii])
+        j = text_yyy[ii].split()
         ls = np.array([])
         for word in range(tokens_per_sentence):  # j:
             if word + 1 <= len(j):
@@ -258,16 +221,15 @@ def embedding_model_lstm():
 
     concat_a = Concatenate()([recurrent_a,valid_word_y])
 
-    lstm_a2 = LSTM(units=tokens_per_sentence * 2,
+    lstm_a2 = Bidirectional(LSTM(units=tokens_per_sentence ,
                                 input_shape=(None,units),
-                                return_sequences=True)
+                                return_sequences=True))
 
     recurrent_a2 = lstm_a2(concat_a)
 
     time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
+    #time_dist_a = TimeDistributed(tokens_per_sentence)(recurrent_a2)
 
-
-    #print (K.shape(recurrent_a2), 'not time dist')
 
     k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
 
@@ -327,8 +289,8 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
             #model.train_on_batch(xx,yy)
             if not predict:
                 #print (xx.shape, yy.shape)
-                #model.train_on_batch([xx,yy],yy)
-                model.fit([xx,yy],yymod)
+                model.train_on_batch([xx,yy],yymod)
+                #model.fit([xx,yy],yymod)
                 #model.evaluate([xx,yy],yy)
             else:
                 ypredict = model.predict([xx,yy], batch_size=batch_size)
@@ -347,7 +309,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
 
 def inference_embedding_model_api(model, x, y, input='', show_similarity=False):
     z = None
-    num = 1 # skip zero?
+    num = 1 #0 # skip zero?
     xx = None
     if len(input) != 0:
         print(input)
@@ -362,28 +324,47 @@ def inference_embedding_model_api(model, x, y, input='', show_similarity=False):
         xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
         #print (xx.shape)
         for k in range(xx.shape[0]):
-            #print (xx[k,:,0].shape)
+
             print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
 
 
     print('\n--------------')
-    if False:
+    if True:
         xx = np.expand_dims(xx[:,:,0], axis=0)
         xx = np.swapaxes(xx, 2,1)
+        #print(xx.shape)
+        if xx.shape[2] != tokens_per_sentence:
+            temp = np.zeros((1, units, tokens_per_sentence))
+            for t in range(tokens_per_sentence):
+                temp[:,:,t] = xx[0,:,0]
+            #print(temp)
+            xx = temp
     else:
         xx = np.expand_dims(xx[0,:, :], axis=0)
-
+        #print(xx.shape)
     single_word_y = np.zeros((1,units, tokens_per_sentence))
     while z == None or  (z != hparams['eol'] and num < tokens_per_sentence):
 
-        #single_word_y = np.zeros((1,50,55))
+        if False:
+            single_word_y[0,:,num] = yy[0,:,num] ## note: dont make this to yy[0,:,0]
+        else:
+            #print(single_word_y.shape,"---")
+            single_word_y[0,:,0] = yy[0,:,0] ## note: dont make this to yy[0,:,0]
 
-        single_word_y[0,:,num] = yy[0,:,num] ## note: dont make this to yy[0,:,0]
-        #print (single_word_y[0,:,num].shape,"y here", yy[0,:,num].shape, num)
-        z = model.predict([xx, single_word_y],batch_size=1)[0]
+        z = model.predict([xx, single_word_y],batch_size=1)
+        #print(z.shape)
+        z = z[0]
         yy = np.expand_dims(z, axis=0)
+        #z = word2vec_book.wv.most_similar(positive=[z[:,0]])
+        if True:
+            z = word2vec_book.wv.most_similar(positive=[z[:,0]])
+            #print(z)
+        elif z[0][0] in word2vec_book.wv.vocab:
+            result = word2vec_book.wv[z[0][0]]
+            yy = np.expand_dims(result,axis=0)
+            yy = np.expand_dims(yy,axis=2)
+            #print(yy.shape,'<<<')
 
-        z = word2vec_book.wv.most_similar(positive=[z[:,0]])
         if show_similarity: print(z[0])
 
         z = z[0][0]
@@ -397,9 +378,9 @@ if True:
     #x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays prep for test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
-    x = x_test
-    y = y_test
-
+    #x = x_test
+    #y = y_test
+    x = y = x_test
 
     #print (y.shape)
 
@@ -444,7 +425,7 @@ if True:
     print()
     inference_embedding_model_api(model,x_test,y_test,input='sol who are you eol', show_similarity=False)
 
-if False:
+if True:
     print ('\n',len(word2vec_book.wv.vocab))
 
     print ( word2vec_book.wv.most_similar(positive=['sol'], topn=5))
