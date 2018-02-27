@@ -9,6 +9,8 @@ from keras.layers import Activation, RepeatVector, Permute, Merge, Dense #, Time
 from keras.layers import Concatenate, Add, Multiply
 from keras.models import load_model
 from keras import optimizers
+from keras.utils import to_categorical
+from random import randint
 from keras import backend as K
 import tensorflow as tf
 #from keras.engine.topology import merge
@@ -50,6 +52,55 @@ def open_sentences(filename):
         for xx in yyy.split('\n'):
             t_yyy.append(xx)
     return t_yyy
+
+def vector_input_three(filename_x1, filename_x2, filename_y ):
+    text_x1 = open_sentences(filename_x1)
+    text_x2 = open_sentences(filename_x2)
+    text_y  = open_sentences(filename_y)
+    out_x1 = np.zeros((units, len(text_x1) * tokens_per_sentence))
+    out_x2 = np.zeros((units, len(text_x1) * tokens_per_sentence))
+    out_y  = np.zeros((units, len(text_x1) * tokens_per_sentence))
+
+    for ii in range(len(text_x1)):
+        ################ x1 ##################
+        i = text_x1[ii].split()
+        words = len(i)
+        for index_i in range(words):
+            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
+                vec = word2vec_book.wv[i[index_i]]
+                #print(vec.shape,'vocab', i[index_i])
+            else:
+                vec = np.zeros((units))
+                #print(vec.shape, 'fixed')
+            ## add to output
+            out_x1[:,index_i] = vec
+        ############### x2 ##################
+        i = text_x2[ii].split()
+        words = len(i)
+        for index_i in range(words):
+            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
+                vec = word2vec_book.wv[i[index_i]]
+                #print(vec.shape, 'vocab', i[index_i])
+            else:
+                vec = np.zeros((units))
+                #print(vec.shape, 'fixed')
+            ## add to output
+            out_x2[:, index_i] = vec
+        ################# y ###############
+        i = text_y[ii].split()
+        words = len(i)
+        for index_i in range(words):
+            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
+                vec = word2vec_book.wv[i[index_i]]
+                #print(vec.shape, 'vocab', i[index_i])
+            else:
+                vec = np.zeros((units))
+                #print(vec.shape, 'fixed')
+            ## add to output
+            out_y[:, index_i] = vec
+
+    return out_x1, out_x2, out_y
+
 
 def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False):
 
@@ -217,8 +268,7 @@ def embedding_model_lstm():
 
     ### encoder for training ###
     lstm_a = LSTM(units=tokens_per_sentence,
-                                return_state=True,
-                                #return_sequences=True
+                                return_state=True
                   )
 
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
@@ -229,7 +279,6 @@ def embedding_model_lstm():
 
     lstm_b = LSTM(units=tokens_per_sentence ,return_state=True #,
                                 #input_shape=(None,units),
-                                #return_sequences=True
                   )
 
     recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
@@ -264,9 +313,9 @@ def embedding_model_lstm():
     adam = optimizers.Adam(lr=0.001)
 
 
-    model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
-    model_encoder.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
-    model_inference.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    #model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    #model_encoder.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    #model_inference.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
 
 
     return model, model_encoder, model_inference
@@ -409,6 +458,33 @@ def inference_w_a_g(model, x, y, n=0, count_printout=False):
     print()
     pass
 
+
+def generate_sequence(length, n_unique):
+    return [randint(1, n_unique - 1) for _ in range(length)]
+
+
+# prepare data for the LSTM
+def get_dataset(n_in, n_out, cardinality, n_samples):
+    X1, X2, y = list(), list(), list()
+    for _ in range(n_samples):
+        # generate source sequence
+        source = generate_sequence(n_in, cardinality)
+        # define target sequence
+        target = source[:n_out]
+        target.reverse()
+        # create padded input target sequence
+        target_in = [0] + target[:-1]
+        # encode
+        src_encoded = to_categorical([source], num_classes=cardinality)
+        tar_encoded = to_categorical([target], num_classes=cardinality)
+        tar2_encoded = to_categorical([target_in], num_classes=cardinality)
+        # store
+        X1.append(src_encoded)
+        X2.append(tar2_encoded)
+        y.append(tar_encoded)
+    return np.array(X1), np.array(X2), np.array(y)
+
+
 if True:
     print ('stage: arrays prep for train')
     #x, y = word_and_vector_size_arrays(train_fr, train_to)
@@ -416,6 +492,29 @@ if True:
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
     x = x_test
     y = y_test
+
+if False:
+    x1, x2, y = vector_input_three(text_fr, text_to, text_to)
+    x1 = np.expand_dims(x1, 0)
+    x2 = np.expand_dims(x2, 0)
+    y  = np.expand_dims(y,  0)
+
+    x1 = np.swapaxes(x1, 1,2)
+    x2 = np.swapaxes(x2, 1,2)
+    y = np.swapaxes(y, 1,2)
+
+if True:
+    cardinality = tokens_per_sentence
+    x1, x2, y = get_dataset(units,units,cardinality,1)
+    print(x1.shape, x2.shape, y.shape)
+    print(x1)
+    model, model_b, model_c = embedding_model_lstm()
+    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
+    x1 = np.swapaxes(x1, 2,3)
+    x2 = np.swapaxes(x2, 2,3)
+    y = np.swapaxes(y, 2,3)
+    model.fit([x1[0],x2[0]],y[0])
+    exit()
     #x = y = x_test
 
     #print (y.shape)
@@ -423,9 +522,9 @@ if True:
 if True:
     model, model_b, model_c = embedding_model_lstm()
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
-else:
-    model = embedding_model_lstm_alternate()
-    filename = hparams['save_dir'] + hparams['base_filename'] + '-concat-' + base_file_num + '.h5'
+    x = np.swapaxes(x, 2,0)
+    y = np.swapaxes(y, 2,0)
+    model.fit([x,y],y)
 print(filename)
 
 if True:
