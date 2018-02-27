@@ -5,7 +5,7 @@ from settings import hparams
 from keras.preprocessing import text, sequence
 from keras.models import Sequential , Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
-from keras.layers import Activation, RepeatVector, Permute, Merge, Dense #, TimeDistributedMerge
+from keras.layers import Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda
 from keras.layers import Concatenate, Add, Multiply
 from keras.models import load_model
 from keras import optimizers
@@ -250,7 +250,8 @@ def embedding_model_lstm():
             embedding_matrix[i] = embedding_vector
     '''
 
-    x_shape = (units,tokens_per_sentence)
+    #x_shape = (units,tokens_per_sentence)
+    x_shape = (tokens_per_sentence,units)
 
     valid_word_a = Input(shape=(None,units))
     valid_word_b = Input(shape=(None,units))
@@ -266,8 +267,10 @@ def embedding_model_lstm():
     embed_a = embeddings_a(valid_word)
     '''
 
+    tokens_partb = units
+
     ### encoder for training ###
-    lstm_a = LSTM(units=tokens_per_sentence,
+    lstm_a = LSTM(units=tokens_partb,
                                 return_state=True
                   )
 
@@ -277,15 +280,29 @@ def embedding_model_lstm():
 
     ### decoder for training ###
 
-    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True #,
-                                #input_shape=(None,units),
+    lstm_b = LSTM(units=tokens_partb ,return_state=True ,
+                                input_shape=x_shape[1:],
                   )
 
     recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
-    dense_b = Dense(tokens_per_sentence, activation='softmax')
+    reshape_b = Reshape((-1,tokens_partb))(recurrent_b)
 
-    decoder_b = dense_b(recurrent_b)
+    #permute_b = Permute((1,2))(reshape_b)
+    #print(permute_b.shape)
+
+    #lambda_b = Lambda(lambda x: K.squeeze(x, axis=0))(reshape_b)  # decrease 1 dimension
+
+    #permute_b2 = Permute((1,2))(lambda_b)
+
+    #print(lambda_b.shape)
+
+    dense_b = Dense(tokens_partb, activation='softmax')
+
+    decoder_b = dense_b(reshape_b)
+
+    #decoder_b = dense_b(reshape_b)
+
     model = Model([valid_word_a,valid_word_b], decoder_b)
 
     ### encoder for inference ###
@@ -293,8 +310,8 @@ def embedding_model_lstm():
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(tokens_per_sentence,))
-    input_c = Input(shape=(tokens_per_sentence,))
+    input_h = Input(shape=(tokens_partb,))
+    input_c = Input(shape=(tokens_partb,))
 
     inputs_inference = [input_h, input_c]
 
@@ -468,7 +485,7 @@ def get_dataset(n_in, n_out, cardinality, n_samples):
     X1, X2, y = list(), list(), list()
     for _ in range(n_samples):
         # generate source sequence
-        source = generate_sequence(n_in, cardinality)
+        source = generate_sequence(n_in, cardinality + 1)
         # define target sequence
         target = source[:n_out]
         target.reverse()
@@ -493,38 +510,46 @@ if True:
     x = x_test
     y = y_test
 
+
+
 if False:
     x1, x2, y = vector_input_three(text_fr, text_to, text_to)
-    x1 = np.expand_dims(x1, 0)
-    x2 = np.expand_dims(x2, 0)
-    y  = np.expand_dims(y,  0)
-
-    x1 = np.swapaxes(x1, 1,2)
-    x2 = np.swapaxes(x2, 1,2)
-    y = np.swapaxes(y, 1,2)
-
-if True:
-    cardinality = tokens_per_sentence
-    x1, x2, y = get_dataset(units,units,cardinality,1)
     print(x1.shape, x2.shape, y.shape)
-    print(x1)
     model, model_b, model_c = embedding_model_lstm()
     model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
-    x1 = np.swapaxes(x1, 2,3)
-    x2 = np.swapaxes(x2, 2,3)
-    y = np.swapaxes(y, 2,3)
-    model.fit([x1[0],x2[0]],y[0])
-    exit()
+
+    print(x1.shape)
+    for i in range(x1.shape[1]):
+        xx1 = x1[:,i]
+        xx2 = x2[:,i]
+        yy = y[:,i]
+
+
+        xx1 = np.expand_dims(xx1, 0)
+        xx2 = np.expand_dims(xx2, 0)
+        yy = np.expand_dims(yy, 0)
+
+        xx1 = np.expand_dims(xx1, 0)
+        xx2 = np.expand_dims(xx2, 0)
+        yy = np.expand_dims(yy, 0)
+
+        #print(xx1.shape)
+        model.fit([xx1,xx2],yy)
     #x = y = x_test
 
     #print (y.shape)
 
 if True:
     model, model_b, model_c = embedding_model_lstm()
+    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
+    x, x2, y = vector_input_three(text_fr, text_to, text_to)
+
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
-    x = np.swapaxes(x, 2,0)
-    y = np.swapaxes(y, 2,0)
-    model.fit([x,y],y)
+
+    #x = np.swapaxes(x, 2,0)
+    #x2 = np.swapaxes(x2, 2,0)
+    #y = np.swapaxes(y, 2,0)
+    model.fit([x,x2],y)
 print(filename)
 
 if True:
