@@ -177,13 +177,14 @@ def get_batch(batch, x, y, batch_size=16):
 
 def swap_axes(x, y, z):
     x = np.swapaxes(x, 0, 2)
-    #x = np.swapaxes(x, 1, 2)
+    x = np.swapaxes(x, 1, 2)
 
     y = np.swapaxes(y, 0, 2)
-    #y = np.swapaxes(y, 1, 2)
+    y = np.swapaxes(y, 1, 2)
 
 
     z = np.swapaxes(z, 0, 2)
+    z = np.swapaxes(z, 1, 2)
     return x, y, z
 
 def embedding_model_lstm():
@@ -270,45 +271,7 @@ def embedding_model_lstm():
 
     return model, model_encoder, model_inference
 
-def embedding_model_lstm_alternate():
 
-    #print (batch_size, tokens_per_sentence)
-
-    x_shape = (units,tokens_per_sentence)
-
-    valid_word = Input(shape=x_shape)
-    valid_word_y = Input(shape=x_shape)
-
-
-
-    concat_a = Concatenate()([valid_word,valid_word_y])
-
-
-    lstm_a = Bidirectional(LSTM(units=tokens_per_sentence * 2,
-                                input_shape=( None,units),
-                                return_sequences=True))
-
-    recurrent_a = lstm_a(concat_a)
-
-    #concat_a = Concatenate()([recurrent_a,valid_word_y])
-
-    lstm_a2 = LSTM(units=tokens_per_sentence * 2,
-                                input_shape=(None,units),
-                                return_sequences=True)
-
-    recurrent_a2 = lstm_a2(recurrent_a)
-
-    time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
-
-
-    #print (K.shape(recurrent_a2), 'not time dist')
-
-    k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
-
-    k_model.compile(optimizer='adam', loss='binary_crossentropy',metrics=['accuracy'])
-
-
-    return k_model
 
 
 def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
