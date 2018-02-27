@@ -8,6 +8,7 @@ from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed,
 from keras.layers import Activation, RepeatVector, Permute, Merge, Dense #, TimeDistributedMerge
 from keras.layers import Concatenate, Add, Multiply
 from keras.models import load_model
+from keras import optimizers
 from keras import backend as K
 import tensorflow as tf
 #from keras.engine.topology import merge
@@ -199,8 +200,8 @@ def embedding_model_lstm():
 
     x_shape = (units,tokens_per_sentence)
 
-    valid_word = Input(shape=x_shape)
-    valid_word_y = Input(shape=x_shape)
+    valid_word_a = Input(shape=(None,units))
+    valid_word_b = Input(shape=(None,units))
 
 
     '''
@@ -213,31 +214,63 @@ def embedding_model_lstm():
     embed_a = embeddings_a(valid_word)
     '''
 
-    lstm_a = Bidirectional(LSTM(units=tokens_per_sentence,
-                                input_shape=( None,units),
-                                return_sequences=True))
+    ### encoder for training ###
+    lstm_a = LSTM(units=tokens_per_sentence,
+                                return_state=True,
+                                #return_sequences=True
+                  )
 
-    recurrent_a = lstm_a(valid_word)
+    recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-    concat_a = Concatenate()([recurrent_a,valid_word_y])
+    lstm_a_states = [lstm_a_h , lstm_a_c]
 
-    lstm_a2 = Bidirectional(LSTM(units=tokens_per_sentence ,
-                                input_shape=(None,units),
-                                return_sequences=True))
+    ### decoder for training ###
 
-    recurrent_a2 = lstm_a2(concat_a)
+    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True #,
+                                #input_shape=(None,units),
+                                #return_sequences=True
+                  )
 
-    time_dist_a = TimeDistributed(Dense(tokens_per_sentence))(recurrent_a2)
-    #time_dist_a = TimeDistributed(tokens_per_sentence)(recurrent_a2)
+    recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
+
+    dense_b = Dense(tokens_per_sentence, activation='softmax')
+
+    decoder_b = dense_b(recurrent_b)
+    model = Model([valid_word_a,valid_word_b], decoder_b)
+
+    ### encoder for inference ###
+    model_encoder = Model(valid_word_a, lstm_a_states)
+
+    ### decoder for inference ###
+
+    input_h = Input(shape=(tokens_per_sentence,))
+    input_c = Input(shape=(tokens_per_sentence,))
+
+    inputs_inference = [input_h, input_c]
+
+    outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
+                                                                         initial_state=inputs_inference)
+
+    outputs_states = [outputs_inference_h, outputs_inference_c]
+
+    dense_outputs_inference = dense_b(outputs_inference)
+
+    model_inference = Model([valid_word_b] + inputs_inference,
+                            [dense_outputs_inference] + outputs_states)
+
+    ### boilerplate ###
+
+    adam = optimizers.Adam(lr=0.001)
 
 
-    k_model = Model(inputs=[valid_word,valid_word_y], outputs=[time_dist_a])
+    model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    model_encoder.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    model_inference.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
 
-    k_model.compile(optimizer='adam', loss='binary_crossentropy',metrics=['accuracy'])
 
-    return k_model
+    return model, model_encoder, model_inference
 
-def embedding_model_lstm_softmax():
+def embedding_model_lstm_alternate():
 
     #print (batch_size, tokens_per_sentence)
 
@@ -305,7 +338,7 @@ def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
                         z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
                         print (z[0][0], end=' ')
                     num += 1
-        print('\n---- epoch ' + str(e + 1) + ' ----')
+        print('---- epoch ' + str(e + 1) + ' ----')
 
 def inference_embedding_model_api(model, x, y, input='', show_similarity=False):
     z = None
@@ -373,22 +406,62 @@ def inference_embedding_model_api(model, x, y, input='', show_similarity=False):
     print()
     pass
 
+def inference_w_a_g(model, x, y, n=0, count_printout=False):
+    xx, yy = get_batch(n, x,y)
+    xx, yy, _ = swap_axes(xx,yy,yy)
+    z = xx[0,:,:]
+    #print(xx.shape, z.shape, z.shape[1])
+    i = 0
+    h = 0
+    found = False
+    switch = False
+    out = np.zeros((1,units))
+    while i < tokens_per_sentence * 2 and found == False:
+        single_word = np.zeros((1,units,tokens_per_sentence))
+        if (not switch) and i < tokens_per_sentence:
+            vec_in = xx[0,:,i]
+            word_in = word2vec_book.most_similar(positive=[vec_in], topn=1)[0][0]
+            if count_printout: print(word_in,'= word in',i)
+            single_word[0,:,0] = xx[0,:,i]
+        else:
+            single_word[0,:,0] = out
+            word_end = word2vec_book.most_similar(positive=[out], topn=1)[0][0]
+            if word_end == hparams['eol'] and i > h + 2: found = True
+            if count_printout: print(word_end,'= re-used',i)
+        xx_start = np.zeros((1,units,tokens_per_sentence))
+        xx_start[0] = z
+        out = model.predict([xx_start,single_word], batch_size=1)
+        out = out[0,:,0]
+        vec = word2vec_book.most_similar(positive=[out], topn=1)
+        #print(vec)
+        word_out = vec[0][0]
+        if count_printout: print(word_out,'= word out',i)
+        else: print(word_out, end=', ')
+        if word_in == hparams['eol']:
+            switch = True
+            word_in = ''
+            h = i
+            #print('throw fit.')
+        i += 1
+    print()
+    pass
+
 if True:
     print ('stage: arrays prep for train')
     #x, y = word_and_vector_size_arrays(train_fr, train_to)
     print ('stage: arrays prep for test')
     x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
-    #x = x_test
-    #y = y_test
-    x = y = x_test
+    x = x_test
+    y = y_test
+    #x = y = x_test
 
     #print (y.shape)
 
 if True:
-    model = embedding_model_lstm()
+    model, model_b, model_c = embedding_model_lstm()
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 else:
-    model = embedding_model_lstm_softmax()
+    model = embedding_model_lstm_alternate()
     filename = hparams['save_dir'] + hparams['base_filename'] + '-concat-' + base_file_num + '.h5'
 print(filename)
 
@@ -405,7 +478,7 @@ if True:
 
 if True:
     print ('stage: train')
-    train_embedding_model_api(model, x, y, epochs=2)
+    train_embedding_model_api(model, x, y, epochs=20)
 
 if True:
     print ('stage: save lstm model')
@@ -423,9 +496,13 @@ if True:
 
 if True:
     print()
-    inference_embedding_model_api(model,x_test,y_test,input='sol who are you eol', show_similarity=False)
+    inference_embedding_model_api(model,x_test,y_test,input='sol so who are you eol', show_similarity=False)
 
 if True:
+    print()
+    inference_w_a_g(model, x_test, y_test, n=0, count_printout=False)
+
+if False:
     print ('\n',len(word2vec_book.wv.vocab))
 
     vec = word2vec_book.wv['sol']
