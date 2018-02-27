@@ -62,6 +62,7 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
     out_y  = np.zeros((units, len(text_x1) * tokens_per_sentence))
 
     for ii in range(len(text_x1)):
+        eol_count = 0
         ################ x1 ##################
         i = text_x1[ii].split()
         words = len(i)
@@ -73,7 +74,11 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
                 vec = np.zeros((units))
                 #print(vec.shape, 'fixed')
             ## add to output
-            out_x1[:,index_i] = vec
+            if i[index_i] == hparams['eol']: eol_count +=1
+            if eol_count >= 3: break
+            out_x1[:,index_i + tokens_per_sentence * ii ] = vec
+
+        if eol_count >= 3: continue
         ############### x2 ##################
         i = text_x2[ii].split()
         words = len(i)
@@ -85,7 +90,11 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
                 vec = np.zeros((units))
                 #print(vec.shape, 'fixed')
             ## add to output
-            out_x2[:, index_i] = vec
+            if i[index_i] == hparams['eol']: eol_count +=1
+            if eol_count >= 3: break
+            out_x2[:, index_i + tokens_per_sentence * ii ] = vec
+
+        if eol_count >= 3: continue
         ################# y ###############
         i = text_y[ii].split()
         words = len(i)
@@ -97,146 +106,21 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
                 vec = np.zeros((units))
                 #print(vec.shape, 'fixed')
             ## add to output
-            out_y[:, index_i] = vec
+            if i[index_i] == hparams['eol']: eol_count +=1
+            if eol_count >= 3: break
+            out_y[:, index_i + tokens_per_sentence * ii ] = vec
+        if eol_count >= 3: continue
+        ####### shift y ############
+        print(out_y.shape)
+        out_y_shift = np.zeros((units, len(text_x1) * tokens_per_sentence))
+        out_y_shift[:,: len(text_x1) * tokens_per_sentence - 1] = out_y[:,1:]
+        out_y = out_y_shift
+        print(out_y.shape)
 
     return out_x1, out_x2, out_y
 
 
-def word_and_vector_size_arrays(text_xxx, text_yyy, double_y=False, double_sentence_y=False):
 
-    text_xxx = open_sentences(text_xxx)
-    text_yyy = open_sentences(text_yyy)
-
-    ls_xxx = np.array([])
-    ls_yyy = np.array([])
-
-    temp_xxx = np.array([])
-    temp_yyy = np.array([])
-
-    mult = 1
-    if double_y:
-        mult = 2
-
-    for ii in range(len(text_xxx)):
-        ############### x #######################
-        #i = text.text_to_word_sequence(text_xxx[ii])
-        i = text_xxx[ii].split()
-        ls = np.array([])
-        for word in range(tokens_per_sentence):  # i:
-            if word + 1 <= len(i):
-                if i[word] in word2vec_book.wv.vocab:  # tokenize_voc_fr.word_index:
-                    w = word2vec_book.wv[i[word]]
-                    if ls.shape[0] == 0:
-                        ls = w
-                    else:
-                        ls = np.vstack((ls, w))
-
-                else:
-                    pad = np.zeros(units)
-                    if ls.shape[0] == 0:
-                        ls = pad
-                    else:
-                        ls = np.vstack((ls, pad))
-            else:
-                pad = np.zeros(units)
-                if ls.shape[0] == 0:
-                    ls = pad
-                else:
-                    ls = np.vstack((ls, pad))
-            pass
-
-        if ls_xxx.shape[0] == 0:
-            ls_xxx = ls
-
-        else:
-            ls_xxx = np.dstack((ls_xxx, ls))
-
-        ################# y ####################
-        #j = text.text_to_word_sequence(text_yyy[ii])
-        j = text_yyy[ii].split()
-        ls = np.array([])
-        for word in range(tokens_per_sentence):  # j:
-            if word + 1 <= len(j):
-                if j[word] in word2vec_book.wv.vocab:  # tokenize_voc_to.word_index:
-                    w = word2vec_book.wv[j[word]]
-                    if double_y:
-                        reverse = w[::-1]
-                        w = np.hstack((w, reverse))
-                    if ls.shape[0] == 0:
-                        ls = w
-                    else:
-                        ls = np.vstack((ls, w))
-                else:
-                    pad = np.zeros(units * mult)
-                    if ls.shape[0] == 0:
-                        ls = pad
-                    else:
-                        ls = np.vstack((ls, pad))
-            else:
-                pad = np.zeros(units * mult)
-                if ls.shape[0] == 0:
-                    ls = pad
-                else:
-                    ls = np.vstack((ls, pad))
-            pass
-
-        if double_sentence_y:
-            ls = np.vstack((ls, ls[::-1]))
-        if ls_yyy.shape[0] == 0:
-            ls_yyy = ls
-        else:
-            ls_yyy = np.dstack((ls_yyy, ls))
-        ############ batch #############
-
-        if ii % (len(text_xxx) // batch_size) == 0:
-            if temp_xxx.shape[0] == 0:
-                temp_xxx = ls_xxx
-            else:
-                temp_xxx = np.dstack((temp_xxx, ls_xxx))
-            ls_xxx = np.array([])
-            ###############
-            if temp_yyy.shape[0] == 0:
-                temp_yyy = ls_yyy
-            else:
-                temp_yyy = np.dstack((temp_yyy, ls_yyy))
-            ls_yyy = np.array([])
-
-    return temp_xxx, temp_yyy
-
-
-
-def get_batch_three(batch, x, y,z, batch_size=16):
-    """ first batch starts at 0 """
-    a = batch_size * batch
-    b = batch_size * (batch + 1)
-    x = x[:,:,a:b]
-    y = y[:,:,a:b]
-    z = z[:,:,a:b] #np.zeros_like(y)
-    temp = z[1:,:,:]
-    z[:tokens_per_sentence -1,:,:] = temp
-    return x, y, z
-
-
-def get_batch(batch, x, y, batch_size=16):
-    """ first batch starts at 0 """
-    a = batch_size * batch
-    b = batch_size * (batch + 1)
-    x = x[:,:,a:b]
-    y = y[:,:,a:b]
-    return x, y
-
-
-def swap_axes(x, y, z):
-    x = np.swapaxes(x, 0, 2)
-    x = np.swapaxes(x, 1, 2)
-
-    y = np.swapaxes(y, 0, 2)
-    y = np.swapaxes(y, 1, 2)
-
-
-    z = np.swapaxes(z, 0, 2)
-    z = np.swapaxes(z, 1, 2)
-    return x, y, z
 
 def embedding_model_lstm():
 
@@ -453,3 +337,4 @@ if True:
     print ( word2vec_book.wv.most_similar(positive=[vec], topn=5))
     print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))
     print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
+
