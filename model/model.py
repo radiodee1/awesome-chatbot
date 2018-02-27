@@ -271,8 +271,7 @@ def embedding_model_lstm():
 
     ### encoder for training ###
     lstm_a = LSTM(units=tokens_partb,
-                                return_state=True
-                  )
+                                return_state=True)
 
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
@@ -281,8 +280,7 @@ def embedding_model_lstm():
     ### decoder for training ###
 
     lstm_b = LSTM(units=tokens_partb ,return_state=True ,
-                                input_shape=x_shape[1:],
-                  )
+                                input_shape=x_shape[1:])
 
     recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
@@ -339,140 +337,52 @@ def embedding_model_lstm():
 
 
 
-def train_embedding_model_api(model, x, y, predict=False, epochs=1, qnum=-1):
-    z = x.shape[2] // batch_size
-    num = 0
-    for e in range(epochs):
-        #print ('----')
-        for i in range(z):
-            xx , yy, yymod = get_batch_three(i, x, y, y)
-            xx, yy , yymod = swap_axes(xx, yy, yymod)
-            #model.train_on_batch(xx,yy)
-            if not predict:
-                #print (xx.shape, yy.shape)
-                model.train_on_batch([xx,yy],yymod)
-                #model.fit([xx,yy],yymod)
-                #model.evaluate([xx,yy],yy)
-            else:
-                ypredict = model.predict([xx,yy], batch_size=batch_size)
-                #print (ypredict.shape)
-                for ii in ypredict:
-                    #num += 1
-                    if qnum != -1 and num > qnum: return
-                    #print (ii,'<', ii.shape)
-
-                    for j in range(tokens_per_sentence):
-                        #print (j,'<<<<',i[:,j].shape)
-                        z = word2vec_book.wv.most_similar(positive=[ii[:,j]],topn=1)
-                        print (z[0][0], end=' ')
-                    num += 1
-        print('---- epoch ' + str(e + 1) + ' ----')
-
-def inference_embedding_model_api(model, x, y, input='', show_similarity=False):
-    z = None
-    num = 1 #0 # skip zero?
-    xx = None
-    if len(input) != 0:
-        print(input)
-        jj = np.zeros((1,units,tokens_per_sentence))
-        ii = input.lower().split()
-        for k in range(len(ii)):
-            w2v = word2vec_book.wv[ii[k]]
-            jj[0][:,k] = w2v
-            xx = yy = jj
-        pass
-    else:
-        xx, yy = get_batch(0, x, y, batch_size=tokens_per_sentence)
-        #print (xx.shape)
-        for k in range(xx.shape[0]):
-
-            print (word2vec_book.wv.most_similar(positive=[xx[k,:,0]], topn=1)[0][0], end=' ')
 
 
-    print('\n--------------')
-    if True:
-        xx = np.expand_dims(xx[:,:,0], axis=0)
-        xx = np.swapaxes(xx, 2,1)
-        #print(xx.shape)
-        if xx.shape[2] != tokens_per_sentence:
-            temp = np.zeros((1, units, tokens_per_sentence))
-            for t in range(tokens_per_sentence):
-                temp[:,:,t] = xx[0,:,0]
-            #print(temp)
-            xx = temp
-    else:
-        xx = np.expand_dims(xx[0,:, :], axis=0)
-        #print(xx.shape)
-    single_word_y = np.zeros((1,units, tokens_per_sentence))
-    while z == None or  (z != hparams['eol'] and num < tokens_per_sentence):
-
-        if False:
-            single_word_y[0,:,num] = yy[0,:,num] ## note: dont make this to yy[0,:,0]
-        else:
-            #print(single_word_y.shape,"---")
-            single_word_y[0,:,0] = yy[0,:,0] ## note: dont make this to yy[0,:,0]
-
-        z = model.predict([xx, single_word_y],batch_size=1)
-        #print(z.shape)
-        z = z[0]
-        yy = np.expand_dims(z, axis=0)
-        #z = word2vec_book.wv.most_similar(positive=[z[:,0]])
-        if True:
-            z = word2vec_book.wv.most_similar(positive=[z[:,0]])
-            #print(z)
-        elif z[0][0] in word2vec_book.wv.vocab:
-            result = word2vec_book.wv[z[0][0]]
-            yy = np.expand_dims(result,axis=0)
-            yy = np.expand_dims(yy,axis=2)
-            #print(yy.shape,'<<<')
-
-        if show_similarity: print(z[0])
-
-        z = z[0][0]
-        print (z, end=' ')
-        num +=1
-    print()
-    pass
-
-def inference_w_a_g(model, x, y, n=0, count_printout=False):
-    xx, yy = get_batch(n, x,y)
-    xx, yy, _ = swap_axes(xx,yy,yy)
-    z = xx[0,:,:]
-    #print(xx.shape, z.shape, z.shape[1])
-    i = 0
-    h = 0
-    found = False
+def predict_word(txt):
+    model, infenc, infdec = embedding_model_lstm()
     switch = False
-    out = np.zeros((1,units))
-    while i < tokens_per_sentence * 2 and found == False:
-        single_word = np.zeros((1,units,tokens_per_sentence))
-        if (not switch) and i < tokens_per_sentence:
-            vec_in = xx[0,:,i]
-            word_in = word2vec_book.most_similar(positive=[vec_in], topn=1)[0][0]
-            if count_printout: print(word_in,'= word in',i)
-            single_word[0,:,0] = xx[0,:,i]
-        else:
-            single_word[0,:,0] = out
-            word_end = word2vec_book.most_similar(positive=[out], topn=1)[0][0]
-            if word_end == hparams['eol'] and i > h + 2: found = True
-            if count_printout: print(word_end,'= re-used',i)
-        xx_start = np.zeros((1,units,tokens_per_sentence))
-        xx_start[0] = z
-        out = model.predict([xx_start,single_word], batch_size=1)
-        out = out[0,:,0]
-        vec = word2vec_book.most_similar(positive=[out], topn=1)
-        #print(vec)
-        word_out = vec[0][0]
-        if count_printout: print(word_out,'= word out',i)
-        else: print(word_out, end=', ')
-        if word_in == hparams['eol']:
-            switch = True
-            word_in = ''
-            h = i
-            #print('throw fit.')
-        i += 1
-    print()
-    pass
+    vec = []
+    t = txt.lower().split()
+    for i in range(len(t) * 3):
+        if switch or t[i] in word2vec_book.wv.vocab:
+            if not switch: print(t[i])
+            if len(vec) == 0:
+                vec = word2vec_book.wv[t[i]]
+                #vec = vec[:,0]
+                vec = np.expand_dims(vec, 0)
+                vec = np.expand_dims(vec, 0)
+            predict = predict_sequence(infenc, infdec, vec, 1, units)
+            word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
+            if switch or t[i] == hparams['eol']:
+                predict = np.expand_dims(predict,0)
+                predict = np.expand_dims(predict,0)
+                vec = predict
+                print(vec.shape)
+                switch = True
+            else:
+                vec = []
+
+
+def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
+    # encode
+    state = infenc.predict(source)
+    # start of sequence input
+    target_seq = np.zeros((1,1,units)) #np.array([0.0 for _ in range(cardinality)]).reshape(1, 1, cardinality)
+    # collect predictions
+    output = list()
+    for t in range(n_steps):
+        # predict next char
+        yhat, h, c = infdec.predict([target_seq] + state)
+        # store prediction
+        output.append(yhat[0,:])
+        # update state
+        state = [h, c]
+        # update target sequence
+        target_seq = yhat
+        print(word2vec_book.wv.most_similar(positive=[yhat[0,:]], topn=1)[0])
+    if not simple_reply: return np.array(output)
+    else: return yhat[0,:]
 
 
 def batch_train(model, x1, x2, y):
@@ -483,7 +393,6 @@ def batch_train(model, x1, x2, y):
         xx1 = x1[:,i]
         xx2 = x2[:,i]
         yy = y[:,i]
-
 
         xx1 = np.expand_dims(xx1, 0)
         xx2 = np.expand_dims(xx2, 0)
@@ -503,25 +412,6 @@ def batch_train(model, x1, x2, y):
 
 
 
-if False:
-    model, model_b, model_c = embedding_model_lstm()
-    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
-    x, x2, y = vector_input_three(text_fr, text_to, text_to)
-
-    filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
-
-    x = np.expand_dims(x, 0)
-    x2 = np.expand_dims(x2, 0)
-    y = np.expand_dims(y, 0)
-
-    x = np.swapaxes(x, 2, 1)
-    x2 = np.swapaxes(x2, 2, 1)
-    y = np.swapaxes(y, 2, 1)
-    print(x.shape)
-
-
-    model.fit([x,x2],y)
-print(filename)
 
 if True:
     print('stage: checking for load')
@@ -536,15 +426,9 @@ if True:
 
 if True:
     print ('stage: arrays prep for test')
-    x1, x2, y = vector_input_three(text_fr, text_to, text_to)
+    x1, x2, y = vector_input_three(text_to, text_to, text_to)
     model , _, _ = embedding_model_lstm()
     batch_train(model, x1, x2, y)
-
-
-
-if False:
-    print ('stage: train')
-    train_embedding_model_api(model, x, y, epochs=20)
 
 if True:
     print ('stage: save lstm model')
@@ -552,23 +436,17 @@ if True:
         filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
     model.save(filename)
 
-if False:
-    print ('stage: simple predict')
-    train_embedding_model_api(model, x_test, y_test, predict=True, qnum=1)
+if True:
+    print('stage: try predict')
+    c = open_sentences(text_to)
+    line = c[0]
+    predict_word(line)
+    print('----------------')
+    predict_word('sol what is up ? eol')
 
-if False:
-    print ('\n-------')
-    inference_embedding_model_api(model,x_test,y_test, show_similarity=False)
 
-if False:
-    print()
-    inference_embedding_model_api(model,x_test,y_test,input='sol so who are you eol', show_similarity=False)
 
-if False:
-    print()
-    inference_w_a_g(model, x_test, y_test, n=0, count_printout=False)
-
-if False:
+if True:
     print ('\n',len(word2vec_book.wv.vocab))
 
     vec = word2vec_book.wv['sol']
