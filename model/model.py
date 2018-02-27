@@ -111,11 +111,9 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
             out_y[:, index_i + tokens_per_sentence * ii ] = vec
         if eol_count >= 3: continue
         ####### shift y ############
-        print(out_y.shape)
         out_y_shift = np.zeros((units, len(text_x1) * tokens_per_sentence))
         out_y_shift[:,: len(text_x1) * tokens_per_sentence - 1] = out_y[:,1:]
         out_y = out_y_shift
-        print(out_y.shape)
 
     return out_x1, out_x2, out_y
 
@@ -272,7 +270,7 @@ def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
 def batch_train(model, x1, x2, y):
 
     batch = tokens_per_sentence
-    print(x1.shape)
+
     for i in range(x1.shape[1]):
         xx1 = x1[:,i]
         xx2 = x2[:,i]
@@ -324,6 +322,7 @@ if True:
     print('stage: try predict')
     c = open_sentences(text_to)
     line = c[0]
+    print(line)
     predict_word(line)
     print('----------------')
     predict_word('sol what is up ? eol')
@@ -335,6 +334,6 @@ if True:
 
     vec = word2vec_book.wv['sol']
     print ( word2vec_book.wv.most_similar(positive=[vec], topn=5))
-    print ( word2vec_book.wv.most_similar(positive=['man'], topn=5))
+    print ( word2vec_book.wv.most_similar(positive=["she's"], topn=5))
     print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
 
