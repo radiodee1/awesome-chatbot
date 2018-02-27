@@ -329,10 +329,9 @@ def embedding_model_lstm():
 
     adam = optimizers.Adam(lr=0.001)
 
-
-    #model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
-    #model_encoder.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
-    #model_inference.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    model_encoder.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    model_inference.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
 
 
     return model, model_encoder, model_inference
@@ -476,48 +475,9 @@ def inference_w_a_g(model, x, y, n=0, count_printout=False):
     pass
 
 
-def generate_sequence(length, n_unique):
-    return [randint(1, n_unique - 1) for _ in range(length)]
+def batch_train(model, x1, x2, y):
 
-
-# prepare data for the LSTM
-def get_dataset(n_in, n_out, cardinality, n_samples):
-    X1, X2, y = list(), list(), list()
-    for _ in range(n_samples):
-        # generate source sequence
-        source = generate_sequence(n_in, cardinality + 1)
-        # define target sequence
-        target = source[:n_out]
-        target.reverse()
-        # create padded input target sequence
-        target_in = [0] + target[:-1]
-        # encode
-        src_encoded = to_categorical([source], num_classes=cardinality)
-        tar_encoded = to_categorical([target], num_classes=cardinality)
-        tar2_encoded = to_categorical([target_in], num_classes=cardinality)
-        # store
-        X1.append(src_encoded)
-        X2.append(tar2_encoded)
-        y.append(tar_encoded)
-    return np.array(X1), np.array(X2), np.array(y)
-
-
-if True:
-    print ('stage: arrays prep for train')
-    #x, y = word_and_vector_size_arrays(train_fr, train_to)
-    print ('stage: arrays prep for test')
-    x_test, y_test = word_and_vector_size_arrays(text_fr, text_to, double_y=False, double_sentence_y=False)
-    x = x_test
-    y = y_test
-
-
-
-if False:
-    x1, x2, y = vector_input_three(text_fr, text_to, text_to)
-    print(x1.shape, x2.shape, y.shape)
-    model, model_b, model_c = embedding_model_lstm()
-    model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
-
+    batch = tokens_per_sentence
     print(x1.shape)
     for i in range(x1.shape[1]):
         xx1 = x1[:,i]
@@ -534,21 +494,32 @@ if False:
         yy = np.expand_dims(yy, 0)
 
         #print(xx1.shape)
-        model.fit([xx1,xx2],yy)
+        model.train_on_batch([xx1,xx2],yy)
+        if i % batch == 0:
+            print(model.evaluate([xx1,xx2], yy), i, end=' ')
     #x = y = x_test
 
     #print (y.shape)
 
-if True:
+
+
+if False:
     model, model_b, model_c = embedding_model_lstm()
     model.compile(optimizer='adam', loss='categorical_crossentropy',metrics=['accuracy'])
     x, x2, y = vector_input_three(text_fr, text_to, text_to)
 
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
-    #x = np.swapaxes(x, 2,0)
-    #x2 = np.swapaxes(x2, 2,0)
-    #y = np.swapaxes(y, 2,0)
+    x = np.expand_dims(x, 0)
+    x2 = np.expand_dims(x2, 0)
+    y = np.expand_dims(y, 0)
+
+    x = np.swapaxes(x, 2, 1)
+    x2 = np.swapaxes(x2, 2, 1)
+    y = np.swapaxes(y, 2, 1)
+    print(x.shape)
+
+
     model.fit([x,x2],y)
 print(filename)
 
@@ -564,6 +535,14 @@ if True:
     #exit()
 
 if True:
+    print ('stage: arrays prep for test')
+    x1, x2, y = vector_input_three(text_fr, text_to, text_to)
+    model , _, _ = embedding_model_lstm()
+    batch_train(model, x1, x2, y)
+
+
+
+if False:
     print ('stage: train')
     train_embedding_model_api(model, x, y, epochs=20)
 
@@ -573,19 +552,19 @@ if True:
         filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
     model.save(filename)
 
-if True:
+if False:
     print ('stage: simple predict')
     train_embedding_model_api(model, x_test, y_test, predict=True, qnum=1)
 
-if True:
+if False:
     print ('\n-------')
     inference_embedding_model_api(model,x_test,y_test, show_similarity=False)
 
-if True:
+if False:
     print()
     inference_embedding_model_api(model,x_test,y_test,input='sol so who are you eol', show_similarity=False)
 
-if True:
+if False:
     print()
     inference_w_a_g(model, x_test, y_test, n=0, count_printout=False)
 
