@@ -202,7 +202,7 @@ def embedding_model_lstm():
     input_h = Input(shape=(tokens_partb,tokens_per_sentence))
     input_c = Input(shape=(tokens_partb,tokens_per_sentence))
 
-    
+
     print(input_h.shape, input_c.shape,'+')
     #print(input_h.get_weights())
 
@@ -324,7 +324,8 @@ if True:
     print ('stage: arrays prep for test')
     x1, x2, y = vector_input_three(text_to, text_to, text_to)
     model , _, _ = embedding_model_lstm()
-    batch_train(model, x1, x2, y)
+    #batch_train(model, x1, x2, y)
+    model.fit([x1,x2],y)
 
 if True:
     print ('stage: save lstm model')
