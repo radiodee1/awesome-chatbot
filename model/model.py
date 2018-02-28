@@ -334,6 +334,6 @@ if True:
 
     vec = word2vec_book.wv['sol']
     print ( word2vec_book.wv.most_similar(positive=[vec], topn=5))
-    print ( word2vec_book.wv.most_similar(positive=["she's"], topn=5))
+    #print ( word2vec_book.wv.most_similar(positive=["she's"], topn=5))
     print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
 

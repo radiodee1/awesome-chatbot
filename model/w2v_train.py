@@ -211,7 +211,7 @@ units = hparams['units']
 ############################################
 num_features =  units #  900 is not good
 # Minimum word count threshold.
-min_word_count = 2 # 3
+min_word_count = 3 # 3
 
 # Number of threads to run in parallel.
 #more workers, faster we train

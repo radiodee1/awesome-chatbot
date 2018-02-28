@@ -86,6 +86,7 @@ def format(content, do_tokenize=False):
     x = re.sub('[/]', '', x)
     x = re.sub("[`]", "'", x)
     x = re.sub('[.]', ' . ', x)
+    x = re.sub("[']", " ' ", x)
 
     c = x.split()
 
