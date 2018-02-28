@@ -134,9 +134,11 @@ def embedding_model_lstm():
 
     #x_shape = (units,tokens_per_sentence)
     x_shape = (tokens_per_sentence,units)
+    x_shape_new = (None,units)
 
-    valid_word_a = Input(shape=(None,units))
-    valid_word_b = Input(shape=(None,units))
+
+    valid_word_a = Input(shape=x_shape)
+    valid_word_b = Input(shape=x_shape)
 
 
     '''
@@ -149,38 +151,45 @@ def embedding_model_lstm():
     embed_a = embeddings_a(valid_word)
     '''
 
-    tokens_partb = units
+    tokens_parta = units
+    tokens_partb = units #tokens_per_sentence doesn't work
 
     ### encoder for training ###
-    lstm_a = LSTM(units=tokens_partb,
+    lstm_a = LSTM(units=tokens_per_sentence,input_shape=x_shape, # [1:]
                                 return_state=True)
 
+    print(x_shape[1:])
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
+    print( recurrent_a.shape, lstm_a_h.shape, lstm_a_c.shape ,'a,h,c')
     lstm_a_states = [lstm_a_h , lstm_a_c]
+
 
     ### decoder for training ###
 
-    lstm_b = LSTM(units=tokens_partb ,return_state=True ,
+    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True ,
                                 input_shape=x_shape[1:])
 
     recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
+    print(recurrent_b.shape)
 
-    reshape_b = Reshape((-1,tokens_partb))(recurrent_b)
+    reshape_b = Reshape((-1,tokens_per_sentence))(recurrent_b)
 
+    print(reshape_b.shape,'<')
     #permute_b = Permute((1,2))(reshape_b)
     #print(permute_b.shape)
 
-    #lambda_b = Lambda(lambda x: K.squeeze(x, axis=0))(reshape_b)  # decrease 1 dimension
+    #lambda_b = Lambda(lambda x: K.squeeze(x, axis=0))(recurrent_b)  # decrease 1 dimension
 
     #permute_b2 = Permute((1,2))(lambda_b)
 
     #print(lambda_b.shape)
 
-    dense_b = Dense(tokens_partb, activation='softmax')
+    dense_b = Dense(tokens_per_sentence, activation='softmax', name='dense_layer_b')
 
     decoder_b = dense_b(reshape_b)
-
+    print(dense_b.input_shape, dense_b.output_shape,'-')
+    print(decoder_b.shape,'d')
     #decoder_b = dense_b(reshape_b)
 
     model = Model([valid_word_a,valid_word_b], decoder_b)
@@ -190,13 +199,18 @@ def embedding_model_lstm():
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(tokens_partb,))
-    input_c = Input(shape=(tokens_partb,))
+    input_h = Input(shape=(tokens_partb,tokens_per_sentence))
+    input_c = Input(shape=(tokens_partb,tokens_per_sentence))
+
+    
+    print(input_h.shape, input_c.shape,'+')
+    #print(input_h.get_weights())
 
     inputs_inference = [input_h, input_c]
 
     outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
                                                                          initial_state=inputs_inference)
+    print(outputs_inference.shape,'o')
 
     outputs_states = [outputs_inference_h, outputs_inference_c]
 

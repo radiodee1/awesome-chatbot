@@ -229,7 +229,7 @@ downsampling = 1e-2
 #deterministic, good for debugging
 seed = 1
 
-epochs = 5
+epochs = 20
 
 if model_generate_new and True:
 
