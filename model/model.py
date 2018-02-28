@@ -132,8 +132,8 @@ def embedding_model_lstm():
             embedding_matrix[i] = embedding_vector
     '''
 
-    #x_shape = (units,tokens_per_sentence)
-    x_shape = (tokens_per_sentence,units)
+    x_shape = (units,tokens_per_sentence)
+    #x_shape = (tokens_per_sentence,units)
     x_shape_new = (None,units)
 
 
@@ -171,9 +171,9 @@ def embedding_model_lstm():
                                 input_shape=x_shape[1:])
 
     recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
-    print(recurrent_b.shape)
+    print(recurrent_b.shape,'r')
 
-    reshape_b = Reshape((-1,tokens_per_sentence))(recurrent_b)
+    reshape_b = Reshape((-1,tokens_per_sentence ))(recurrent_b)
 
     print(reshape_b.shape,'<')
     #permute_b = Permute((1,2))(reshape_b)
@@ -185,22 +185,22 @@ def embedding_model_lstm():
 
     #print(lambda_b.shape)
 
-    dense_b = Dense(tokens_per_sentence, activation='softmax', name='dense_layer_b')
+    dense_b = Dense(tokens_per_sentence ,input_shape=(units,), activation='softmax', name='dense_layer_b')
 
     decoder_b = dense_b(reshape_b)
-    print(dense_b.input_shape, dense_b.output_shape,'-')
-    print(decoder_b.shape,'d')
+    #print(dense_b.input_shape, dense_b.output_shape,'-')
+    #print(decoder_b.shape,'d')
     #decoder_b = dense_b(reshape_b)
 
-    model = Model([valid_word_a,valid_word_b], decoder_b)
+    model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
     ### encoder for inference ###
     model_encoder = Model(valid_word_a, lstm_a_states)
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(tokens_partb,tokens_per_sentence))
-    input_c = Input(shape=(tokens_partb,tokens_per_sentence))
+    input_h = Input(shape=(units,tokens_per_sentence))
+    input_c = Input(shape=(units,tokens_per_sentence))
 
 
     print(input_h.shape, input_c.shape,'+')
@@ -285,23 +285,27 @@ def batch_train(model, x1, x2, y):
 
     batch = tokens_per_sentence
 
-    for i in range(x1.shape[1]):
-        xx1 = x1[:,i]
-        xx2 = x2[:,i]
-        yy = y[:,i]
+    for i in range(x1.shape[1] // batch):
+
+        start = i * batch
+        end = (i + 1) * batch
+        xx1 = x1[:,start:end ]
+        xx2 = x2[:,start:end ]
+        yy = y[:  ,start:end ]
 
         xx1 = np.expand_dims(xx1, 0)
         xx2 = np.expand_dims(xx2, 0)
         yy = np.expand_dims(yy, 0)
 
-        xx1 = np.expand_dims(xx1, 0)
-        xx2 = np.expand_dims(xx2, 0)
-        yy = np.expand_dims(yy, 0)
+        #xx1 = np.swapaxes(xx1, 1,2)
+        #xx2 = np.swapaxes(xx2, 1,2)
+        #yy = np.swapaxes(yy, 1,2)
 
-        #print(xx1.shape)
+        print(xx1.shape)
         model.train_on_batch([xx1,xx2],yy)
         if i % batch == 0:
-            print(model.evaluate([xx1,xx2], yy), i, end=' ')
+            #print(model.evaluate([xx1,xx2], yy), i, end=' ')
+            pass
     #x = y = x_test
 
     #print (y.shape)
@@ -324,8 +328,8 @@ if True:
     print ('stage: arrays prep for test')
     x1, x2, y = vector_input_three(text_to, text_to, text_to)
     model , _, _ = embedding_model_lstm()
-    #batch_train(model, x1, x2, y)
-    model.fit([x1,x2],y)
+    batch_train(model, x1, x2, y)
+    #model.fit([x1,x2],y)
 
 if True:
     print ('stage: save lstm model')
