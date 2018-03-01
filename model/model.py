@@ -122,8 +122,6 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
 
 def embedding_model_lstm():
 
-    #print (batch_size, tokens_per_sentence)
-
     '''
     embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
     for i in range(len(word2vec_book.wv.vocab)):
@@ -133,9 +131,6 @@ def embedding_model_lstm():
     '''
 
     x_shape = (units,tokens_per_sentence)
-    #x_shape = (tokens_per_sentence,units)
-    x_shape_new = (None,units)
-
 
     valid_word_a = Input(shape=x_shape)
     valid_word_b = Input(shape=x_shape)
@@ -151,46 +146,30 @@ def embedding_model_lstm():
     embed_a = embeddings_a(valid_word)
     '''
 
-    tokens_parta = units
-    tokens_partb = units #tokens_per_sentence doesn't work
 
     ### encoder for training ###
-    lstm_a = LSTM(units=tokens_per_sentence,input_shape=x_shape, # [1:]
-                                return_state=True)
+    lstm_a = LSTM(units=tokens_per_sentence,input_shape=x_shape, return_state=True)
 
-    print(x_shape[1:])
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-    print( recurrent_a.shape, lstm_a_h.shape, lstm_a_c.shape ,'a,h,c')
     lstm_a_states = [lstm_a_h , lstm_a_c]
 
-
+    print(lstm_a_h)
     ### decoder for training ###
 
-    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True ,
-                                input_shape=x_shape[1:])
+    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True ,input_shape=x_shape)
 
-    recurrent_b, _, _ = lstm_b(valid_word_b, initial_state=lstm_a_states)
-    print(recurrent_b.shape,'r')
+    recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
-    reshape_b = Reshape((-1,tokens_per_sentence ))(recurrent_b)
+    print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
 
-    print(reshape_b.shape,'<')
-    #permute_b = Permute((1,2))(reshape_b)
-    #print(permute_b.shape)
+    dense_b = Dense(tokens_per_sentence  , activation='softmax', name='dense_layer_b')
 
-    #lambda_b = Lambda(lambda x: K.squeeze(x, axis=0))(recurrent_b)  # decrease 1 dimension
+    decoder_b = dense_b(recurrent_b)
 
-    #permute_b2 = Permute((1,2))(lambda_b)
-
-    #print(lambda_b.shape)
-
-    dense_b = Dense(tokens_per_sentence ,input_shape=(units,), activation='softmax', name='dense_layer_b')
-
-    decoder_b = dense_b(reshape_b)
-    #print(dense_b.input_shape, dense_b.output_shape,'-')
     #print(decoder_b.shape,'d')
-    #decoder_b = dense_b(reshape_b)
+
+    #recurrent_b = Reshape((-1,tokens_per_sentence))(recurrent_b)
 
     model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
@@ -202,15 +181,10 @@ def embedding_model_lstm():
     input_h = Input(shape=(units,tokens_per_sentence))
     input_c = Input(shape=(units,tokens_per_sentence))
 
-
-    print(input_h.shape, input_c.shape,'+')
-    #print(input_h.get_weights())
-
     inputs_inference = [input_h, input_c]
 
     outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
                                                                          initial_state=inputs_inference)
-    print(outputs_inference.shape,'o')
 
     outputs_states = [outputs_inference_h, outputs_inference_c]
 
@@ -224,9 +198,8 @@ def embedding_model_lstm():
     adam = optimizers.Adam(lr=0.001)
 
     model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
-    model_encoder.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
-    model_inference.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
 
+    #print(valid_word_a.shape,valid_word_b.shape,x_shape,'end')
 
     return model, model_encoder, model_inference
 
@@ -301,7 +274,8 @@ def batch_train(model, x1, x2, y):
         #xx2 = np.swapaxes(xx2, 1,2)
         #yy = np.swapaxes(yy, 1,2)
 
-        print(xx1.shape)
+        print(xx1.shape,'train')
+
         model.train_on_batch([xx1,xx2],yy)
         if i % batch == 0:
             #print(model.evaluate([xx1,xx2], yy), i, end=' ')
