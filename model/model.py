@@ -294,12 +294,11 @@ def stack_sentences(xx):
         start = i * batch
         end = (i + 1) * batch
         x = xx[:,start:end]
-        print(out.shape, x.shape)
+
         out[i,:,:] = x
 
     out = np.swapaxes(out,1,2)
     return out
-
 
 
 if True:
@@ -321,7 +320,7 @@ if True:
     x2 = stack_sentences(x2)
     y = stack_sentences(y)
     model.fit([x1,x2], y, batch_size=16)
-    exit()
+
     #batch_train(model, x1, x2, y)
     #model.fit([x1,x2],y)
 
