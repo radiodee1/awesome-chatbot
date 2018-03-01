@@ -199,7 +199,7 @@ def embedding_model_lstm():
 
     adam = optimizers.Adam(lr=0.001)
 
-    model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='rmsprop', loss='categorical_crossentropy',metrics=['accuracy'])
 
     #print(valid_word_a.shape,valid_word_b.shape,x_shape,'end')
 
