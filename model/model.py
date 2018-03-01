@@ -130,7 +130,7 @@ def embedding_model_lstm():
             embedding_matrix[i] = embedding_vector
     '''
 
-    x_shape = (units,tokens_per_sentence)
+    x_shape = (None,units)
 
     valid_word_a = Input(shape=x_shape)
     valid_word_b = Input(shape=x_shape)
@@ -148,7 +148,8 @@ def embedding_model_lstm():
 
 
     ### encoder for training ###
-    lstm_a = LSTM(units=tokens_per_sentence,input_shape=x_shape, return_state=True)
+    lstm_a = LSTM(units=tokens_per_sentence, #input_shape=x_shape,
+                  return_state=True)
 
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
@@ -157,13 +158,14 @@ def embedding_model_lstm():
     print(lstm_a_h)
     ### decoder for training ###
 
-    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True ,input_shape=x_shape)
+    lstm_b = LSTM(units=tokens_per_sentence ,return_state=True #,input_shape=x_shape
+                  )
 
     recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
 
-    dense_b = Dense(tokens_per_sentence  , activation='softmax', name='dense_layer_b')
+    dense_b = Dense(units, activation='softmax', name='dense_layer_b')
 
     decoder_b = dense_b(recurrent_b)
 
@@ -178,8 +180,8 @@ def embedding_model_lstm():
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(units,tokens_per_sentence))
-    input_c = Input(shape=(units,tokens_per_sentence))
+    input_h = Input(shape=(tokens_per_sentence,))
+    input_c = Input(shape=(tokens_per_sentence,))
 
     inputs_inference = [input_h, input_c]
 
@@ -270,9 +272,9 @@ def batch_train(model, x1, x2, y):
         xx2 = np.expand_dims(xx2, 0)
         yy = np.expand_dims(yy, 0)
 
-        #xx1 = np.swapaxes(xx1, 1,2)
-        #xx2 = np.swapaxes(xx2, 1,2)
-        #yy = np.swapaxes(yy, 1,2)
+        xx1 = np.swapaxes(xx1, 1,2)
+        xx2 = np.swapaxes(xx2, 1,2)
+        yy = np.swapaxes(yy, 1,2)
 
         print(xx1.shape,'train')
 
