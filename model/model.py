@@ -289,7 +289,7 @@ def batch_train(model, x1, x2, y):
 def stack_sentences(xx):
     batch = tokens_per_sentence
     tot = x1.shape[1] // batch
-    out = np.zeros((tot+1,units,tokens_per_sentence))
+    out = np.zeros((tot,units,tokens_per_sentence))
     for i in range(tot):
         start = i * batch
         end = (i + 1) * batch
