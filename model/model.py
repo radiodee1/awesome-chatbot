@@ -322,7 +322,7 @@ if True:
     model.fit([x1,x2], y, batch_size=16)
 
     #batch_train(model, x1, x2, y)
-    #model.fit([x1,x2],y)
+
 
 if True:
     print ('stage: save lstm model')
