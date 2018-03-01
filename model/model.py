@@ -165,9 +165,12 @@ def embedding_model_lstm():
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
 
-    dense_b = Dense(units, activation='softmax', name='dense_layer_b')
+    #reshape_b = Reshape((tokens_per_sentence,units))(recurrent_b)
 
-    decoder_b = dense_b(recurrent_b)
+    dense_b = Dense(units, activation='softmax', name='dense_layer_b')
+                    #, input_shape=(tokens_per_sentence,))
+
+    decoder_b = dense_b( recurrent_b)
 
     #print(decoder_b.shape,'d')
 
