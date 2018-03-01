@@ -286,6 +286,19 @@ def batch_train(model, x1, x2, y):
 
     #print (y.shape)
 
+def stack_sentences(xx):
+    batch = tokens_per_sentence
+    tot = x1.shape[1] // batch
+    out = np.zeros((tot+1,units,tokens_per_sentence))
+    for i in range(tot):
+        start = i * batch
+        end = (i + 1) * batch
+        x = xx[:,start:end]
+        print(out.shape, x.shape)
+        out[i,:,:] = x
+
+    out = np.swapaxes(out,1,2)
+    return out
 
 
 
@@ -304,7 +317,12 @@ if True:
     print ('stage: arrays prep for test')
     x1, x2, y = vector_input_three(text_to, text_to, text_to)
     model , _, _ = embedding_model_lstm()
-    batch_train(model, x1, x2, y)
+    x1 = stack_sentences(x1)
+    x2 = stack_sentences(x2)
+    y = stack_sentences(y)
+    model.fit([x1,x2], y, batch_size=16)
+    exit()
+    #batch_train(model, x1, x2, y)
     #model.fit([x1,x2],y)
 
 if True:
