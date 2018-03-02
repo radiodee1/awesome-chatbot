@@ -122,29 +122,11 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
 
 def embedding_model_lstm():
 
-    '''
-    embedding_matrix = np.zeros((len(word2vec_book.wv.vocab), units))
-    for i in range(len(word2vec_book.wv.vocab)):
-        embedding_vector = word2vec_book.wv[word2vec_book.wv.index2word[i]]
-        if embedding_vector is not None:
-            embedding_matrix[i] = embedding_vector
-    '''
 
-    x_shape = (tokens_per_sentence,units)
+    x_shape = (None,units)
 
     valid_word_a = Input(shape=x_shape)
     valid_word_b = Input(shape=x_shape)
-
-
-    '''
-    embeddings_a = Embedding(words, units, weights=[embedding_matrix],
-                             #input_length=tokens_per_sentence,
-                             batch_size=batch_size, input_shape=x_shape[1:],
-                             trainable=False
-                             )
-
-    embed_a = embeddings_a(valid_word)
-    '''
 
 
     ### encoder for training ###
@@ -155,7 +137,6 @@ def embedding_model_lstm():
 
     lstm_a_states = [lstm_a_h , lstm_a_c]
 
-    print(lstm_a_h)
     ### decoder for training ###
 
     lstm_b = LSTM(units=tokens_per_sentence ,return_state=True #,input_shape=x_shape
@@ -165,17 +146,25 @@ def embedding_model_lstm():
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
 
-    reshape_b = Reshape((-1,tokens_per_sentence,units))(recurrent_b)
+    def backend_reshape(x):
+        return K.reshape(x, (-1,tokens_per_sentence, units))
 
-    dense_b = TimeDistributed(Dense(units, activation='softmax', name='dense_layer_b'))
+    reshape_b = Lambda(backend_reshape)(recurrent_b)
+    print(reshape_b.shape,'permute')
+
+    print(recurrent_b.shape,'r')
+
+    dense_b = Dense(units, activation='softmax', name='dense_layer_b')
                     #, input_shape=(tokens_per_sentence,))
+    time_b = TimeDistributed(dense_b)
 
-    decoder_b = dense_b(reshape_b) # recurrent_b
+    decoder_b = time_b(reshape_b) # recurrent_b
+
+    #reshape_b = Reshape((-1,tokens_per_sentence,units))(decoder_b)
 
     #distributed_b = TimeDistributed(decoder_b)
     #print(decoder_b.shape,'d')
 
-    #reshape_b = Reshape((-1,units))(decoder_b)
     #lambda_b = Lambda(lambda decoder_b: K.squeeze(decoder_b,0))
     #print(lambda_b.shape)
 
@@ -186,8 +175,8 @@ def embedding_model_lstm():
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(tokens_per_sentence,))
-    input_c = Input(shape=(tokens_per_sentence,))
+    input_h = Input(shape=(None,tokens_per_sentence))
+    input_c = Input(shape=(None,tokens_per_sentence))
 
     inputs_inference = [input_h, input_c]
 
@@ -195,6 +184,7 @@ def embedding_model_lstm():
                                                                          initial_state=inputs_inference)
 
     outputs_states = [outputs_inference_h, outputs_inference_c]
+
 
     dense_outputs_inference = dense_b(outputs_inference)
 
