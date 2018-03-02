@@ -146,20 +146,25 @@ def embedding_model_lstm():
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
 
-    def backend_reshape(x):
-        return K.reshape(x, (-1,tokens_per_sentence, units))
 
-    reshape_b = Lambda(backend_reshape)(recurrent_b)
-    print(reshape_b.shape,'permute')
+    #print(reshape_b.shape,'permute')
 
     print(recurrent_b.shape,'r')
 
     dense_b = Dense(units, activation='softmax', name='dense_layer_b')
                     #, input_shape=(tokens_per_sentence,))
-    time_b = TimeDistributed(dense_b)
+    #time_b = TimeDistributed(dense_b)
 
-    decoder_b = time_b(reshape_b) # recurrent_b
+    decoder_b = dense_b(recurrent_b) # recurrent_b
+    print(decoder_b.shape,'d')
+    '''
+    def backend_reshape(x):
+        x = K.permute_dimensions(x,(0,1))
+        #x = K.squeeze(x,0)
+        return x
 
+    reshape_b = Lambda(backend_reshape)(decoder_b)
+    '''
     #reshape_b = Reshape((-1,tokens_per_sentence,units))(decoder_b)
 
     #distributed_b = TimeDistributed(decoder_b)
@@ -315,9 +320,11 @@ if True:
     x1 = stack_sentences(x1)
     x2 = stack_sentences(x2)
     y = stack_sentences(y)
-    model.fit([x1,x2], y, batch_size=16)
+    #y = np.squeeze(y ,0)
+    #model.fit([x1,x2], y, batch_size=16)
+    model.train_on_batch([x1, x2], y)
 
-    #batch_train(model, x1, x2, y)
+    #batch_train(model, x1[0], x2[0], y[0])
 
 
 if True:
