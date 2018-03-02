@@ -172,9 +172,12 @@ def embedding_model_lstm():
 
     decoder_b = dense_b( recurrent_b)
 
+    #distributed_b = TimeDistributed(decoder_b)
     #print(decoder_b.shape,'d')
 
-    #recurrent_b = Reshape((-1,tokens_per_sentence))(recurrent_b)
+    #reshape_b = Reshape((-1,units))(decoder_b)
+    #lambda_b = Lambda(lambda decoder_b: K.squeeze(decoder_b,0))
+    #print(lambda_b.shape)
 
     model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
