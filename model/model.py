@@ -130,7 +130,7 @@ def embedding_model_lstm():
             embedding_matrix[i] = embedding_vector
     '''
 
-    x_shape = (None,units)
+    x_shape = (tokens_per_sentence,units)
 
     valid_word_a = Input(shape=x_shape)
     valid_word_b = Input(shape=x_shape)
@@ -165,12 +165,12 @@ def embedding_model_lstm():
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
 
-    #reshape_b = Reshape((tokens_per_sentence,units))(recurrent_b)
+    reshape_b = Reshape((-1,tokens_per_sentence,units))(recurrent_b)
 
-    dense_b = Dense(units, activation='softmax', name='dense_layer_b')
+    dense_b = TimeDistributed(Dense(units, activation='softmax', name='dense_layer_b'))
                     #, input_shape=(tokens_per_sentence,))
 
-    decoder_b = dense_b( recurrent_b)
+    decoder_b = dense_b(reshape_b) # recurrent_b
 
     #distributed_b = TimeDistributed(decoder_b)
     #print(decoder_b.shape,'d')
