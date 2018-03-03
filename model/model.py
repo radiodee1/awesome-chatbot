@@ -78,7 +78,7 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
             ## add to output
             if i[index_i] == hparams['eol']: eol_count +=1
             #if eol_count >= 3: break
-            out_x1[:,index_i + tokens * ii ] = vec
+            out_x1[:,index_i + tokens * ii ] = vec[:units]
 
         #if eol_count >= 3: continue
         ############### x2 ##################
@@ -94,7 +94,7 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
             ## add to output
             if i[index_i] == hparams['eol']: eol_count +=1
             #if eol_count >= 3: break
-            out_x2[:, index_i + tokens * ii ] = vec
+            out_x2[:, index_i + tokens * ii ] = vec[:units]
 
         #if eol_count >= 3: continue
         ################# y ###############
@@ -110,15 +110,16 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
             ## add to output
             if i[index_i] == hparams['eol']: eol_count +=1
             #if eol_count >= 3: break
-            out_y[:, index_i + tokens * ii ] = vec
+            out_y[:, index_i + tokens * ii ] = vec[:units]
         #if eol_count >= 3: continue
 
     ####### shift y ############
     out_y_shift = np.zeros((units, len(text_x1) * tokens))
     out_y_shift[:,: len(text_x1) * tokens - 1] = out_y[:,1:]
     out_y = out_y_shift
+
     #### test ####
-    print(out_x1.shape, out_x2.shape, out_y.shape)
+    print(out_x1.shape, out_x2.shape, out_y.shape, 'sentences')
 
     return out_x1, out_x2, out_y
 
@@ -155,26 +156,16 @@ def embedding_model_lstm():
         x = K.expand_dims(x,0)
         return x
 
-    dimensions_b = Lambda(backend_dim)(recurrent_b)
+    #dimensions_b = Lambda(backend_dim)(recurrent_b)
     #print(reshape_b.shape,'permute')
 
-    print(recurrent_b.shape,'r')
+    #print(dimensions_b.shape,'dim')
 
     dense_b = Dense(lstm_shape, activation='softmax', name='dense_layer_b')
-                    #, input_shape=(tokens_per_sentence,))
-    time_b = TimeDistributed(dense_b)
-    decoder_b = time_b(dimensions_b)
-    #decoder_b = dense_b(recurrent_b) # recurrent_b
-    print(decoder_b.shape,'d')
-    '''
-    def backend_reshape(x):
-        x = K.permute_dimensions(x,(0,1))
-        #x = K.squeeze(x,0)
-        return x
 
-    reshape_b = Lambda(backend_reshape)(decoder_b)
-    '''
-    #reshape_b = Reshape((-1,tokens_per_sentence,units))(decoder_b)
+
+    #decoder_b = dense_b(dimensions_b) # recurrent_b
+
 
     #distributed_b = TimeDistributed(decoder_b)
     #print(decoder_b.shape,'d')
@@ -182,7 +173,7 @@ def embedding_model_lstm():
     #lambda_b = Lambda(lambda decoder_b: K.squeeze(decoder_b,0))
     #print(lambda_b.shape)
 
-    model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
+    model = Model([valid_word_a,valid_word_b], recurrent_b) # decoder_b
 
     ### encoder for inference ###
     model_encoder = Model(valid_word_a, lstm_a_states)
@@ -209,7 +200,7 @@ def embedding_model_lstm():
 
     adam = optimizers.Adam(lr=0.001)
 
-    model.compile(optimizer='rmsprop', loss='categorical_crossentropy',metrics=['accuracy'])
+    model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
 
     #print(valid_word_a.shape,valid_word_b.shape,x_shape,'end')
 
@@ -333,7 +324,7 @@ if True:
     #y = np.squeeze(y ,0)
     #model.fit([x1,x2], y, batch_size=16)
 
-    print(x1.shape, x2.shape, y.shape)
+    print(x1.shape, x2.shape, y.shape,'train')
 
     model.train_on_batch([x1[0], x2[0]], y[0])
 

@@ -19,7 +19,7 @@ hparams = {
     'eol':'eol',
     'unk':'unk',
     'layers': 2,
-    'units': 300, ##600
+    'units': 256, ##600
     'learning_rate': 0.001,
     'tokens_per_sentence': 25,
     'raw_embedding_filename': 'embedding'
