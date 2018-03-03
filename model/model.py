@@ -229,7 +229,7 @@ def predict_word(txt):
                 vec = np.expand_dims(vec, 0)
                 vec = np.expand_dims(vec, 0)
             predict = predict_sequence(infenc, infdec, vec, 1, units)
-            word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
+            #word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
             if switch or t[i] == hparams['eol']:
                 predict = np.expand_dims(predict,0)
                 predict = np.expand_dims(predict,0)
@@ -242,6 +242,8 @@ def predict_word(txt):
 
 def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
     # encode
+    print(source.shape,'s')
+    if len(source.shape) > 3: source = source[0]
     state = infenc.predict(source)
     # start of sequence input
     target_seq = np.zeros((1,1,units))
@@ -249,17 +251,28 @@ def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
     output = list()
     for t in range(n_steps):
         # predict next char
-        yhat, h, c = infdec.predict([target_seq] + state)
+        target_values = [target_seq] + state
+        #print(target_values)
+        target_values = _set_t_values(target_values)
+        yhat, h, c = infdec.predict(target_values)
         # store prediction
         output.append(yhat[0,:])
         # update state
         state = [h, c]
         # update target sequence
         target_seq = yhat
-        print(word2vec_book.wv.most_similar(positive=[yhat[0,:]], topn=1)[0])
+        print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0])
     if not simple_reply: return np.array(output)
     else: return yhat[0,:]
 
+def _set_t_values(l):
+    out = list([])
+    for i in l:
+        if len(i.shape) < 3:
+            i = np.expand_dims(i, 0)
+        print(i.shape)
+        out.append(i)
+    return out
 
 def batch_train(model, x1, x2, y):
 
@@ -318,7 +331,7 @@ if True:
         print('stage: load failed')
     #exit()
 
-if True:
+if False:
     print ('stage: arrays prep for test')
     x1, x2, y = vector_input_three(text_to, text_to, text_to)
     model , _, _ = embedding_model_lstm()
