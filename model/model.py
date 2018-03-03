@@ -290,6 +290,15 @@ def _set_t_values(l):
         out.append(i)
     return out
 
+def check_sentence(x2,y):
+    for i in range(5):
+        vec_x = x2[0,i,:]
+        print(word2vec_book.wv.most_similar(positive=[vec_x])[0][0],end=' ')
+    print()
+    for i in range(5):
+        vec_y = y[0,i,:]
+        print(word2vec_book.wv.most_similar(positive=[vec_y])[0][0],end=' ')
+    print()
 
 def stack_sentences(xx):
     batch = units # tokens_per_sentence
@@ -332,6 +341,8 @@ if True:
     y =  stack_sentences(y)
 
     print('stage: stack sentences')
+
+    check_sentence(x2,y)
 
     model.summary()
 
