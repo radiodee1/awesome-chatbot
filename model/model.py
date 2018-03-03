@@ -130,14 +130,14 @@ def embedding_model_lstm():
 
 
     x_shape = (None,units)
-    lstm_shape = units
+    lstm_unit = units
 
     valid_word_a = Input(shape=x_shape)
     valid_word_b = Input(shape=x_shape)
 
 
     ### encoder for training ###
-    lstm_a = LSTM(units=lstm_shape, input_shape=(None,lstm_shape),return_sequences=True,
+    lstm_a = LSTM(units=lstm_unit, input_shape=(None,lstm_unit),return_sequences=True,
                   return_state=True)
 
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
@@ -146,36 +146,21 @@ def embedding_model_lstm():
 
     ### decoder for training ###
 
-    lstm_b = LSTM(units=lstm_shape ,return_sequences=True,
+    lstm_b = LSTM(units=lstm_unit ,return_sequences=True,
                   return_state=True
                   )
 
-    #recurrent_b = lstm_b(valid_word_b, initial_state=lstm_a_states)
+
     recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
-    print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
-    '''
-    def backend_dim(x):
-        x = K.expand_dims(x,0)
-        return x
-    '''
-    #dimensions_b = Lambda(backend_dim)(recurrent_b)
-    #print(reshape_b.shape,'permute')
 
-    #print(dimensions_b.shape,'dim')
 
-    dense_b = Dense(lstm_shape, activation='softmax', name='dense_layer_b',
-                                    batch_input_shape=(None,lstm_shape,lstm_shape))
+    dense_b = Dense(lstm_unit, activation='softmax', name='dense_layer_b',
+                                    batch_input_shape=(None,lstm_unit,lstm_unit))
 
 
     decoder_b = dense_b(recurrent_b) # recurrent_b
 
-
-    #distributed_b = TimeDistributed(decoder_b)
-    #print(decoder_b.shape,'d')
-
-    #lambda_b = Lambda(lambda decoder_b: K.squeeze(decoder_b,0))
-    #print(lambda_b.shape)
 
     model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
@@ -184,8 +169,8 @@ def embedding_model_lstm():
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(None,lstm_shape))
-    input_c = Input(shape=(None,lstm_shape))
+    input_h = Input(shape=(None,lstm_unit))
+    input_c = Input(shape=(None,lstm_unit))
 
     inputs_inference = [input_h, input_c]
 
@@ -204,7 +189,7 @@ def embedding_model_lstm():
 
     adam = optimizers.Adam(lr=0.001)
 
-    model.compile(optimizer='rmsprop', loss='categorical_crossentropy')
+    model.compile(optimizer=adam, loss='categorical_crossentropy')
 
     #print(valid_word_a.shape,valid_word_b.shape,x_shape,'end')
 
@@ -228,13 +213,13 @@ def predict_word(txt):
                 vec = vec[:units]
                 vec = np.expand_dims(vec, 0)
                 vec = np.expand_dims(vec, 0)
-            predict = predict_sequence(infenc, infdec, vec, 1, units)
+            predict = predict_sequence(infenc, infdec, vec, 10, units)
             #word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
             if switch or t[i] == hparams['eol']:
                 predict = np.expand_dims(predict,0)
                 predict = np.expand_dims(predict,0)
                 vec = predict
-                print(vec.shape)
+                #print(vec.shape)
                 switch = True
             else:
                 vec = []
@@ -242,7 +227,7 @@ def predict_word(txt):
 
 def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
     # encode
-    print(source.shape,'s')
+    #print(source.shape,'s')
     if len(source.shape) > 3: source = source[0]
     state = infenc.predict(source)
     # start of sequence input
@@ -270,10 +255,11 @@ def _set_t_values(l):
     for i in l:
         if len(i.shape) < 3:
             i = np.expand_dims(i, 0)
-        print(i.shape)
+        #print(i.shape)
         out.append(i)
     return out
 
+'''
 def batch_train(model, x1, x2, y):
 
     batch = tokens_per_sentence
@@ -303,6 +289,7 @@ def batch_train(model, x1, x2, y):
     #x = y = x_test
 
     #print (y.shape)
+'''
 
 def stack_sentences(xx):
     batch = units #tokens_per_sentence
@@ -331,7 +318,7 @@ if True:
         print('stage: load failed')
     #exit()
 
-if False:
+if True:
     print ('stage: arrays prep for test')
     x1, x2, y = vector_input_three(text_to, text_to, text_to)
     model , _, _ = embedding_model_lstm()
