@@ -137,7 +137,7 @@ def embedding_model_lstm():
 
 
     ### encoder for training ###
-    lstm_a = LSTM(units=lstm_shape, #input_shape=x_shape,
+    lstm_a = LSTM(units=lstm_shape, input_shape=(None,lstm_shape),return_sequences=True,
                   return_state=True)
 
     recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
@@ -146,9 +146,11 @@ def embedding_model_lstm():
 
     ### decoder for training ###
 
-    lstm_b = LSTM(units=lstm_shape ,return_state=True #,input_shape=x_shape
+    lstm_b = LSTM(units=lstm_shape ,return_sequences=True,
+                  return_state=True
                   )
 
+    #recurrent_b = lstm_b(valid_word_b, initial_state=lstm_a_states)
     recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
@@ -162,7 +164,8 @@ def embedding_model_lstm():
 
     #print(dimensions_b.shape,'dim')
 
-    dense_b = Dense(lstm_shape, activation='softmax', name='dense_layer_b', input_shape=(lstm_shape,))
+    dense_b = Dense(lstm_shape, activation='softmax', name='dense_layer_b',
+                                    batch_input_shape=(None,lstm_shape,lstm_shape))
 
 
     decoder_b = dense_b(recurrent_b) # recurrent_b
@@ -300,7 +303,7 @@ def stack_sentences(xx):
         out[i,:,:] = x
 
     out = np.swapaxes(out,1,2)
-    out = np.expand_dims(out, 0)
+    #out = np.expand_dims(out, 0)
     return out
 
 
@@ -322,12 +325,22 @@ if True:
     x1 = stack_sentences(x1)
     x2 = stack_sentences(x2)
     y = stack_sentences(y)
-    #y = np.squeeze(y ,0)
-    #model.fit([x1,x2], y, batch_size=16)
+
+    #x1 = np.swapaxes(x1, 0,1)
+    #x2 = np.swapaxes(x2, 0,1)
+    #y  = np.swapaxes(y,  0,1)
+
+    #x1 = np.expand_dims(x1,0)
+    #x2 = np.expand_dims(x2,0)
+    #y =  np.expand_dims(y, 0)
+
+    model.summary()
+
+    model.fit([x1,x2], y, batch_size=1)
 
     print(x1.shape, x2.shape, y.shape,'train')
 
-    model.train_on_batch([x1[0], x2[0]], y[0])
+    #model.train_on_batch([x1[0], x2[0]], y[0])
 
     #batch_train(model, x1[0], x2[0], y[0])
 
