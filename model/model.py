@@ -225,7 +225,7 @@ def predict_word(txt):
             if not switch: print(t[i])
             if len(vec) == 0:
                 vec = word2vec_book.wv[t[i]]
-                #vec = vec[:,0]
+                vec = vec[:units]
                 vec = np.expand_dims(vec, 0)
                 vec = np.expand_dims(vec, 0)
             predict = predict_sequence(infenc, infdec, vec, 1, units)
@@ -244,7 +244,7 @@ def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
     # encode
     state = infenc.predict(source)
     # start of sequence input
-    target_seq = np.zeros((1,1,units)) #np.array([0.0 for _ in range(cardinality)]).reshape(1, 1, cardinality)
+    target_seq = np.zeros((1,1,units))
     # collect predictions
     output = list()
     for t in range(n_steps):
@@ -336,7 +336,7 @@ if True:
 
     model.summary()
 
-    model.fit([x1,x2], y, batch_size=1)
+    model.fit([x1,x2], y, batch_size=16)
 
     print(x1.shape, x2.shape, y.shape,'train')
 
