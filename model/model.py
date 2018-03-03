@@ -152,19 +152,20 @@ def embedding_model_lstm():
     recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
     print(inner_lstmb_h.shape, inner_lstmb_c.shape,'h c')
+    '''
     def backend_dim(x):
         x = K.expand_dims(x,0)
         return x
-
+    '''
     #dimensions_b = Lambda(backend_dim)(recurrent_b)
     #print(reshape_b.shape,'permute')
 
     #print(dimensions_b.shape,'dim')
 
-    dense_b = Dense(lstm_shape, activation='softmax', name='dense_layer_b')
+    dense_b = Dense(lstm_shape, activation='softmax', name='dense_layer_b', input_shape=(lstm_shape,))
 
 
-    #decoder_b = dense_b(dimensions_b) # recurrent_b
+    decoder_b = dense_b(recurrent_b) # recurrent_b
 
 
     #distributed_b = TimeDistributed(decoder_b)
@@ -173,7 +174,7 @@ def embedding_model_lstm():
     #lambda_b = Lambda(lambda decoder_b: K.squeeze(decoder_b,0))
     #print(lambda_b.shape)
 
-    model = Model([valid_word_a,valid_word_b], recurrent_b) # decoder_b
+    model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
     ### encoder for inference ###
     model_encoder = Model(valid_word_a, lstm_a_states)
