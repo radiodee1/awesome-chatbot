@@ -46,13 +46,42 @@ if True:
 
 
 def open_sentences(filename):
+    t_yyy = []
     with open(filename, 'r') as r:
-        yyy = r.read()
-        t_yyy = []
-        for xx in yyy.split('\n'):
+        for xx in r:
             t_yyy.append(xx)
-    r.close()
+    #r.close()
     return t_yyy
+
+def vector_input_one(filename, length, shift_output=False):
+    tokens = units
+    text_x1 = open_sentences(filename)
+    out_x1 = np.zeros((units, length * tokens))
+    print(filename)
+    for ii in range(length):
+        i = text_x1[ii].split()
+        words = len(i)
+        for index_i in range(words):
+            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
+                vec = word2vec_book.wv[i[index_i]]
+                # print(vec.shape,'vocab', i[index_i])
+            else:
+                vec = np.zeros((units))
+                # print(vec.shape, 'fixed')
+            ## add to output
+            # if eol_count >= 3: break
+            out_x1[:, index_i + tokens * ii] = vec[:units]
+    if shift_output:
+        print('stage: start shift y')
+        out_y_shift = np.zeros((units, length * tokens))
+        out_y_shift[:, : length * tokens - 1] = out_x1[:, 1:]
+        out_x1 = out_y_shift
+
+    #### test ####
+    print(out_x1.shape,  'sentences')
+
+    return out_x1
+
 
 def vector_input_three(filename_x1, filename_x2, filename_y ):
     tokens = units #tokens_per_sentence
@@ -63,6 +92,7 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
     out_x2 = np.zeros((units, len(text_x1) * tokens))
     out_y  = np.zeros((units, len(text_x1) * tokens))
 
+    print('stage: three inputs loaded')
     for ii in range(len(text_x1)):
         eol_count = 0
         ################ x1 ##################
@@ -114,6 +144,7 @@ def vector_input_three(filename_x1, filename_x2, filename_y ):
         #if eol_count >= 3: continue
 
     ####### shift y ############
+    print('stage: start shift y')
     out_y_shift = np.zeros((units, len(text_x1) * tokens))
     out_y_shift[:,: len(text_x1) * tokens - 1] = out_y[:,1:]
     out_y = out_y_shift
@@ -130,7 +161,7 @@ def embedding_model_lstm():
 
 
     x_shape = (None,units)
-    lstm_unit = units
+    lstm_unit =  units
 
     valid_word_a = Input(shape=x_shape)
     valid_word_b = Input(shape=x_shape)
@@ -154,12 +185,13 @@ def embedding_model_lstm():
     recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
 
-
     dense_b = Dense(lstm_unit, activation='softmax', name='dense_layer_b',
-                                    batch_input_shape=(None,lstm_unit,lstm_unit))
+                                    batch_input_shape=(None,lstm_unit,units))
 
 
     decoder_b = dense_b(recurrent_b) # recurrent_b
+
+    #reshape_b = Permute((2,1))(decoder_b)
 
 
     model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
@@ -213,7 +245,7 @@ def predict_word(txt):
                 vec = vec[:units]
                 vec = np.expand_dims(vec, 0)
                 vec = np.expand_dims(vec, 0)
-            predict = predict_sequence(infenc, infdec, vec, 10, units)
+            predict = predict_sequence(infenc, infdec, vec, 1, units)
             #word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
             if switch or t[i] == hparams['eol']:
                 predict = np.expand_dims(predict,0)
@@ -259,49 +291,19 @@ def _set_t_values(l):
         out.append(i)
     return out
 
-'''
-def batch_train(model, x1, x2, y):
-
-    batch = tokens_per_sentence
-
-    for i in range(x1.shape[1] // batch):
-
-        start = i * batch
-        end = (i + 1) * batch
-        xx1 = x1[:,start:end ]
-        xx2 = x2[:,start:end ]
-        yy = y[:  ,start:end ]
-
-        xx1 = np.expand_dims(xx1, 0)
-        xx2 = np.expand_dims(xx2, 0)
-        yy = np.expand_dims(yy, 0)
-
-        xx1 = np.swapaxes(xx1, 1,2)
-        xx2 = np.swapaxes(xx2, 1,2)
-        yy = np.swapaxes(yy, 1,2)
-
-        print(xx1.shape,'train')
-
-        model.train_on_batch([xx1[0],xx2[0]],yy[0])
-        if i % batch == 0:
-            #print(model.evaluate([xx1,xx2], yy), i, end=' ')
-            pass
-    #x = y = x_test
-
-    #print (y.shape)
-'''
 
 def stack_sentences(xx):
-    batch = units #tokens_per_sentence
+    batch = units # tokens_per_sentence
     tot = xx.shape[1] // batch
-    out = np.zeros((tot,units,batch))
+    out = [] # np.zeros((tot,units,batch))
     for i in range(tot):
         start = i * batch
         end = (i + 1) * batch
         x = xx[:,start:end]
+        out.append(x)
+        #out[i,:,:] = x
 
-        out[i,:,:] = x
-
+    out = np.array(out)
     out = np.swapaxes(out,1,2)
     #out = np.expand_dims(out, 0)
     return out
@@ -320,12 +322,17 @@ if True:
 
 if True:
     print ('stage: arrays prep for test')
-    x1, x2, y = vector_input_three(text_to, text_to, text_to)
+    #x1, x2, y = vector_input_three(train_fr, train_to, train_to)
+    length = len(open_sentences(train_fr)) // units
+    x1 = vector_input_one(train_fr,length)
+    x2 = vector_input_one(train_to,length)
+    y = vector_input_one(train_to,length,shift_output=True)
     model , _, _ = embedding_model_lstm()
     x1 = stack_sentences(x1)
     x2 = stack_sentences(x2)
     y = stack_sentences(y)
 
+    print('stage: stack sentences')
     #x1 = np.swapaxes(x1, 0,1)
     #x2 = np.swapaxes(x2, 0,1)
     #y  = np.swapaxes(y,  0,1)
@@ -338,9 +345,8 @@ if True:
 
     model.fit([x1,x2], y, batch_size=16)
 
-    print(x1.shape, x2.shape, y.shape,'train')
 
-    #model.train_on_batch([x1[0], x2[0]], y[0])
+    #model.train_on_batch([x1, x2], y)
 
     #batch_train(model, x1[0], x2[0], y[0])
 
