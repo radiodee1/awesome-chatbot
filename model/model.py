@@ -67,9 +67,7 @@ def vector_input_one(filename, length, shift_output=False):
                 # print(vec.shape,'vocab', i[index_i])
             else:
                 vec = np.zeros((units))
-                # print(vec.shape, 'fixed')
-            ## add to output
-            # if eol_count >= 3: break
+
             out_x1[:, index_i + tokens * ii] = vec[:units]
     if shift_output:
         print('stage: start shift y')
@@ -277,8 +275,9 @@ def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
         # update state
         state = [h, c]
         # update target sequence
-        target_seq = yhat
+        target_seq = h #yhat
         print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0])
+        print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
     if not simple_reply: return np.array(output)
     else: return yhat[0,:]
 
@@ -322,24 +321,17 @@ if True:
 
 if True:
     print ('stage: arrays prep for test')
-    #x1, x2, y = vector_input_three(train_fr, train_to, train_to)
-    length = len(open_sentences(train_fr)) // units
+
+    length = len(open_sentences(train_fr)) // int(units * 1/6)
     x1 = vector_input_one(train_fr,length)
     x2 = vector_input_one(train_to,length)
-    y = vector_input_one(train_to,length,shift_output=True)
+    y =  vector_input_one(train_to,length,shift_output=True)
     model , _, _ = embedding_model_lstm()
     x1 = stack_sentences(x1)
     x2 = stack_sentences(x2)
-    y = stack_sentences(y)
+    y =  stack_sentences(y)
 
     print('stage: stack sentences')
-    #x1 = np.swapaxes(x1, 0,1)
-    #x2 = np.swapaxes(x2, 0,1)
-    #y  = np.swapaxes(y,  0,1)
-
-    #x1 = np.expand_dims(x1,0)
-    #x2 = np.expand_dims(x2,0)
-    #y =  np.expand_dims(y, 0)
 
     model.summary()
 
