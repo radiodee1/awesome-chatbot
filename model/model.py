@@ -294,15 +294,14 @@ if True:
         try:
             s = (length )* z
             print(s,s + length,'start,stop')
-            x1 = vector_input_one(train_fr,length,s)
+            x1 = vector_input_one(train_to,length,s) ## change this to 'train_fr' when not autoencoding
             x2 = vector_input_one(train_to,length,s)
             y =  vector_input_one(train_to,length,s,shift_output=True)
 
             x1 = stack_sentences(x1)
             x2 = stack_sentences(x2)
             y =  stack_sentences(y)
-
-            check_sentence(x2,y,0)
+            if False: check_sentence(x2,y,0)
             model.fit([x1,x2], y, batch_size=16)
         except:
             save_model(filename + ".backup")
