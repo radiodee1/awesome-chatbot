@@ -54,13 +54,16 @@ def open_sentences(filename):
     #r.close()
     return t_yyy
 
-def vector_input_one(filename, length,start=0, shift_output=False):
+def vector_input_one(filename, length, start=0,batch=-1, shift_output=False):
     tokens = units
     text_x1 = open_sentences(filename)
     out_x1 = np.zeros((units, length * tokens))
+    if batch == -1: batch = length
     #print(filename)
-    for ii in range(start , start + length ):
-        i = text_x1[ii].split()
+    #if start is not 0: start -= 1
+    for ii in range( length ):
+
+        i = text_x1[start + ii].split()
         words = len(i)
         if words >= tokens: words = tokens - 1
         for index_i in range(words ):
@@ -70,10 +73,10 @@ def vector_input_one(filename, length,start=0, shift_output=False):
             else:
                 vec = np.zeros((units))
             try:
-                out_x1[:, index_i + tokens * ii] = vec[:units]
+                out_x1[:, index_i + (ii * tokens)  ] = vec[:units]
             except:
-                print(out_x1.shape, index_i, tokens, ii)
-                exit()
+                print(out_x1.shape, index_i, tokens, ii, words, start, length)
+                #exit()
     if shift_output:
         #print('stage: start shift y')
         out_y_shift = np.zeros((units, length * tokens))
@@ -84,9 +87,6 @@ def vector_input_one(filename, length,start=0, shift_output=False):
     #print(out_x1.shape,  'sentences')
 
     return out_x1
-
-
-
 
 
 def embedding_model_lstm():
@@ -161,9 +161,6 @@ def embedding_model_lstm():
 
 
 
-
-
-
 def predict_word(txt):
     model, infenc, infdec = embedding_model_lstm()
     switch = False
@@ -224,8 +221,8 @@ def _set_t_values(l):
         out.append(i)
     return out
 
-def check_sentence(x2,y):
-    for j in range(4):
+def check_sentence(x2,y, start = 0):
+    for j in range(start, start + 4):
         print("x >",j,end=' ')
         for i in range(5):
             vec_x = x2[j,i,:]
@@ -287,7 +284,7 @@ if True:
         x2 = stack_sentences(x2)
         y =  stack_sentences(y)
 
-        check_sentence(x2,y)
+        check_sentence(x2,y,0)
         model.fit([x1,x2], y, batch_size=16)
 
         #model.train_on_batch([x1, x2], y)
