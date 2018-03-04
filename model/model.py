@@ -263,26 +263,7 @@ def stack_sentences(xx):
     #out = np.expand_dims(out, 0)
     return out
 
-
-
-def save_model(filename):
-    print ('stage: save lstm model')
-    if filename == None:
-        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
-    model.save(filename)
-
-if True:
-    print('stage: checking for load')
-    if filename == None:
-        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
-    if os.path.isfile(filename):
-        model = load_model(filename)
-        print ('stage: load works')
-    else:
-        print('stage: load failed')
-    #exit()
-
-if True:
+def train_model(check_sentences=False):
     print ('stage: arrays prep for test/train')
     model , _, _ = embedding_model_lstm()
     model.summary()
@@ -301,7 +282,7 @@ if True:
             x1 = stack_sentences(x1)
             x2 = stack_sentences(x2)
             y =  stack_sentences(y)
-            if False: check_sentence(x2,y,0)
+            if check_sentences: check_sentence(x2,y,0)
             model.fit([x1,x2], y, batch_size=16)
         except:
             save_model(filename + ".backup")
@@ -310,8 +291,31 @@ if True:
 
             pass
         #model.train_on_batch([x1, x2], y)
+    return model
+
+def save_model(filename):
+    print ('stage: save lstm model')
+    if filename == None:
+        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+    model.save(filename)
+
+if True:
+    print('stage: checking for load')
+    if filename == None:
+        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+    if os.path.isfile(filename):
+        model = load_model(filename)
+        print ('stage: load works')
+    else:
+        print('stage: load failed')
+    #exit()
 
 
+
+
+
+if True:
+    model = train_model(check_sentences=False)
 
 if True:
     save_model(filename)
