@@ -155,8 +155,6 @@ def embedding_model_lstm():
 
     model.compile(optimizer=adam, loss='categorical_crossentropy')
 
-    #print(valid_word_a.shape,valid_word_b.shape,x_shape,'end')
-
     return model, model_encoder, model_inference
 
 
@@ -166,51 +164,65 @@ def predict_word(txt):
     switch = False
     vec = []
     t = txt.lower().split()
-    for i in range(len(t) * 3):
+    steps = 1
+    #decode = False
+    for i in range(0,len(t) * 3):
         if switch or t[i] in word2vec_book.wv.vocab:
-            if not switch: print(t[i])
+            if not switch:
+                print(t[i])
+                steps = 1
+                #decode = True
             if len(vec) == 0:
                 vec = word2vec_book.wv[t[i]]
                 vec = vec[:units]
                 vec = np.expand_dims(vec, 0)
                 vec = np.expand_dims(vec, 0)
-            predict = predict_sequence(infer_enc, infer_dec, vec, 1, units)
-            #word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
+                #print(vec[:,:,0:10])
+            predict = predict_sequence(infer_enc, infer_dec, vec, steps)
+
             if switch or t[i] == hparams['eol']:
                 predict = np.expand_dims(predict,0)
                 predict = np.expand_dims(predict,0)
                 vec = predict
+
                 #print(vec.shape)
                 switch = True
-            else:
+                #decode = False
+                steps = 1
+            elif not switch:
+                pass
                 vec = []
 
 
-def predict_sequence(infer_enc, infer_dec, source, n_steps, simple_reply=True):
+def predict_sequence(infer_enc, infer_dec, source, n_steps,decode=False ,simple_reply=True):
     # encode
     #print(source.shape,'s')
     if len(source.shape) > 3: source = source[0]
     state = infer_enc.predict(source)
     # start of sequence input
-    target_seq = np.zeros((1,1,units))
+
+    yhat = np.zeros((1,1,units))
+    target_seq = state[0] # np.zeros((1,1,units))
     # collect predictions
     output = list()
-    for t in range(n_steps):
-        # predict next char
-        target_values = [target_seq] + state
-        #print(target_values)
-        target_values = _set_t_values(target_values)
-        yhat, h, c = infer_dec.predict(target_values)
-        # store prediction
-        output.append(yhat[0,:])
-        # update state
-        state = [h, c]
-        # update target sequence
-        target_seq = h #yhat
-        print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0])
-        print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
+    if not decode or True:
+        for t in range(n_steps):
+            # predict next char
+            target_values = [target_seq] + state
+            #print(target_values)
+            target_values = _set_t_values(target_values)
+            yhat, h, c = infer_dec.predict(target_values)
+            # store prediction
+            output.append(yhat[0,:])
+            # update state
+            state = [h, c]
+            # update target sequence
+            target_seq = h #yhat
+            print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0][0])
+            print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
     if not simple_reply: return np.array(output)
     else: return yhat[0,:]
+
 
 def _set_t_values(l):
     out = list([])
@@ -220,6 +232,7 @@ def _set_t_values(l):
         #print(i.shape)
         out.append(i)
     return out
+
 
 def model_infer(filename):
     print('stage: try predict')
@@ -244,6 +257,7 @@ def check_sentence(x2,y, start = 0):
             print(word2vec_book.wv.most_similar(positive=[vec_y])[0][0],end=' ')
         print()
 
+
 def stack_sentences(xx):
     batch = units # tokens_per_sentence
     tot = xx.shape[1] // batch
@@ -263,9 +277,10 @@ def stack_sentences(xx):
     #out = np.expand_dims(out, 0)
     return out
 
-def train_model(check_sentences=False):
+
+def train_model(model, check_sentences=False):
     print ('stage: arrays prep for test/train')
-    model , _, _ = embedding_model_lstm()
+    if model is None: model , _, _ = embedding_model_lstm()
     model.summary()
     tot = len(open_sentences(train_fr))
     length = tot // int(units ) * batch_constant
@@ -274,7 +289,7 @@ def train_model(check_sentences=False):
     for z in range(steps):
         try:
             s = (length )* z
-            print(s,s + length,'start,stop')
+            print(s,s + length,'start, stop')
             x1 = vector_input_one(train_to,length,s) ## change this to 'train_fr' when not autoencoding
             x2 = vector_input_one(train_to,length,s)
             y =  vector_input_one(train_to,length,s,shift_output=True)
@@ -293,13 +308,14 @@ def train_model(check_sentences=False):
         #model.train_on_batch([x1, x2], y)
     return model
 
-def save_model(filename):
+def save_model(model, filename):
     print ('stage: save lstm model')
     if filename == None:
         filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
     model.save(filename)
 
-if True:
+
+def load_model_file(filename):
     print('stage: checking for load')
     if filename == None:
         filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
@@ -308,17 +324,18 @@ if True:
         print ('stage: load works')
     else:
         print('stage: load failed')
-    #exit()
-
-
-
+    return model
 
 
 if True:
-    model = train_model(check_sentences=False)
+    model = load_model_file(filename)
+
+
+if False:
+    train_model(model, check_sentences=False)
 
 if True:
-    save_model(filename)
+    save_model(model,filename)
 
 
 if True:
