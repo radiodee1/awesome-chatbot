@@ -218,7 +218,7 @@ def predict_sequence(infer_enc, infer_dec, source, n_steps,decode=False ,simple_
             state = [h, c]
             # update target sequence
             target_seq = h #yhat
-            print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0][0])
+            #print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0][0])
             print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
     if not simple_reply: return np.array(output)
     else: return yhat[0,:]
@@ -327,11 +327,14 @@ def load_model_file(filename):
     return model
 
 
+if False:
+    model, _, _ = embedding_model_lstm()
+
 if True:
     model = load_model_file(filename)
 
 
-if False:
+if True:
     train_model(model, check_sentences=False)
 
 if True:
@@ -339,7 +342,7 @@ if True:
 
 
 if True:
-    model_infer(text_fr)
+    model_infer(train_to)
 
 
 if True:

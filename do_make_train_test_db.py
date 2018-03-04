@@ -21,7 +21,7 @@ to_lower = True
 test_on_screen = False
 remove_caps = True
 
-batch_size = 32 # 64 #256
+batch_size = 64 #32 # 64 #256
 steps_per_stats = 100
 pull_size = batch_size * steps_per_stats * 10
 
