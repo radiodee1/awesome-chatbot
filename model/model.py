@@ -238,7 +238,7 @@ def stack_sentences(xx):
     batch = units # tokens_per_sentence
     tot = xx.shape[1] // batch
     out = np.zeros((tot,batch,units)) # [] #
-    print(tot,'tot', xx.shape)
+    #print(tot,'tot', xx.shape)
     for i in range(tot):
         start = i * batch
         end = (i + 1) * batch
@@ -248,11 +248,26 @@ def stack_sentences(xx):
         out[i,:,:] = x
 
     #out = np.array(out)
-    print(out.shape, 'swap')
+    #print(out.shape, 'swap')
     out = np.swapaxes(out,1,2)
     #out = np.expand_dims(out, 0)
     return out
 
+def model_infer(filename):
+    print('stage: try predict')
+    c = open_sentences(filename)
+    line = c[0]
+    print(line)
+    predict_word(line)
+    print('----------------')
+    predict_word('sol what is up ? eol')
+
+
+def save_model(filename):
+    print ('stage: save lstm model')
+    if filename == None:
+        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+    model.save(filename)
 
 if True:
     print('stage: checking for load')
@@ -274,38 +289,35 @@ if True:
     steps = tot // length
 
     for z in range(steps):
-        s = (length )* z
-        print(s,s + length,'start,stop')
-        x1 = vector_input_one(train_fr,length,s)
-        x2 = vector_input_one(train_to,length,s)
-        y =  vector_input_one(train_to,length,s,shift_output=True)
+        try:
+            s = (length )* z
+            print(s,s + length,'start,stop')
+            x1 = vector_input_one(train_fr,length,s)
+            x2 = vector_input_one(train_to,length,s)
+            y =  vector_input_one(train_to,length,s,shift_output=True)
 
-        x1 = stack_sentences(x1)
-        x2 = stack_sentences(x2)
-        y =  stack_sentences(y)
+            x1 = stack_sentences(x1)
+            x2 = stack_sentences(x2)
+            y =  stack_sentences(y)
 
-        check_sentence(x2,y,0)
-        model.fit([x1,x2], y, batch_size=16)
+            check_sentence(x2,y,0)
+            model.fit([x1,x2], y, batch_size=16)
+        except:
+            save_model(filename + ".backup")
+            pass
+        finally:
 
+            pass
         #model.train_on_batch([x1, x2], y)
 
 
 
 if True:
-    print ('stage: save lstm model')
-    if filename == None:
-        filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
-    model.save(filename)
+    save_model(filename)
+
 
 if True:
-    print('stage: try predict')
-    c = open_sentences(text_to)
-    line = c[0]
-    print(line)
-    predict_word(line)
-    print('----------------')
-    predict_word('sol what is up ? eol')
-
+    model_infer(text_fr)
 
 
 if True:
