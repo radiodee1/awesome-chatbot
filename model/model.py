@@ -162,7 +162,7 @@ def embedding_model_lstm():
 
 
 def predict_word(txt):
-    model, infenc, infdec = embedding_model_lstm()
+    model, infer_enc, infer_dec = embedding_model_lstm()
     switch = False
     vec = []
     t = txt.lower().split()
@@ -174,7 +174,7 @@ def predict_word(txt):
                 vec = vec[:units]
                 vec = np.expand_dims(vec, 0)
                 vec = np.expand_dims(vec, 0)
-            predict = predict_sequence(infenc, infdec, vec, 1, units)
+            predict = predict_sequence(infer_enc, infer_dec, vec, 1, units)
             #word = word2vec_book.wv.most_similar(positive=[predict], topn=1)[0][0]
             if switch or t[i] == hparams['eol']:
                 predict = np.expand_dims(predict,0)
@@ -186,11 +186,11 @@ def predict_word(txt):
                 vec = []
 
 
-def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
+def predict_sequence(infer_enc, infer_dec, source, n_steps, simple_reply=True):
     # encode
     #print(source.shape,'s')
     if len(source.shape) > 3: source = source[0]
-    state = infenc.predict(source)
+    state = infer_enc.predict(source)
     # start of sequence input
     target_seq = np.zeros((1,1,units))
     # collect predictions
@@ -200,7 +200,7 @@ def predict_sequence(infenc, infdec, source, n_steps, simple_reply=True):
         target_values = [target_seq] + state
         #print(target_values)
         target_values = _set_t_values(target_values)
-        yhat, h, c = infdec.predict(target_values)
+        yhat, h, c = infer_dec.predict(target_values)
         # store prediction
         output.append(yhat[0,:])
         # update state
@@ -220,6 +220,16 @@ def _set_t_values(l):
         #print(i.shape)
         out.append(i)
     return out
+
+def model_infer(filename):
+    print('stage: try predict')
+    c = open_sentences(filename)
+    line = c[0]
+    print(line)
+    predict_word(line)
+    print('----------------')
+    predict_word('sol what is up ? eol')
+
 
 def check_sentence(x2,y, start = 0):
     for j in range(start, start + 4):
@@ -253,14 +263,6 @@ def stack_sentences(xx):
     #out = np.expand_dims(out, 0)
     return out
 
-def model_infer(filename):
-    print('stage: try predict')
-    c = open_sentences(filename)
-    line = c[0]
-    print(line)
-    predict_word(line)
-    print('----------------')
-    predict_word('sol what is up ? eol')
 
 
 def save_model(filename):
