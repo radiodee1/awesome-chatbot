@@ -270,7 +270,7 @@ if True:
     model , _, _ = embedding_model_lstm()
     model.summary()
     tot = len(open_sentences(train_fr))
-    length = tot // int(units * 1/6) #* batch_constant
+    length = tot // int(units ) * batch_constant
     steps = tot // length
 
     for z in range(steps):
