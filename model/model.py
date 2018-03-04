@@ -62,6 +62,7 @@ def vector_input_one(filename, length,start=0, shift_output=False):
     for ii in range(start , start + length ):
         i = text_x1[ii].split()
         words = len(i)
+        if words >= tokens: words = tokens - 1
         for index_i in range(words ):
             if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
                 vec = word2vec_book.wv[i[index_i]]
@@ -69,7 +70,7 @@ def vector_input_one(filename, length,start=0, shift_output=False):
             else:
                 vec = np.zeros((units))
             try:
-                out_x1[:, index_i +   ii] = vec[:units]
+                out_x1[:, index_i + tokens * ii] = vec[:units]
             except:
                 print(out_x1.shape, index_i, tokens, ii)
                 exit()
@@ -224,29 +225,33 @@ def _set_t_values(l):
     return out
 
 def check_sentence(x2,y):
-    print("x >",end=' ')
-    for i in range(5):
-        vec_x = x2[0,i,:]
-        print(word2vec_book.wv.most_similar(positive=[vec_x])[0][0],end=' ')
-    print()
-    print("y >", end=' ')
-    for i in range(5):
-        vec_y = y[0,i,:]
-        print(word2vec_book.wv.most_similar(positive=[vec_y])[0][0],end=' ')
-    print()
+    for j in range(4):
+        print("x >",j,end=' ')
+        for i in range(5):
+            vec_x = x2[j,i,:]
+            print(word2vec_book.wv.most_similar(positive=[vec_x])[0][0],end=' ')
+        print()
+        print("y >",j, end=' ')
+        for i in range(5):
+            vec_y = y[j,i,:]
+            print(word2vec_book.wv.most_similar(positive=[vec_y])[0][0],end=' ')
+        print()
 
 def stack_sentences(xx):
     batch = units # tokens_per_sentence
     tot = xx.shape[1] // batch
-    out = [] # np.zeros((tot,units,batch))
+    out = np.zeros((tot,batch,units)) # [] #
+    print(tot,'tot', xx.shape)
     for i in range(tot):
         start = i * batch
         end = (i + 1) * batch
         x = xx[:,start:end]
-        out.append(x)
-        #out[i,:,:] = x
+        #x = xx[:,i]
+        #out.append(x)
+        out[i,:,:] = x
 
-    out = np.array(out)
+    #out = np.array(out)
+    print(out.shape, 'swap')
     out = np.swapaxes(out,1,2)
     #out = np.expand_dims(out, 0)
     return out
@@ -277,6 +282,7 @@ if True:
         x1 = vector_input_one(train_fr,length,s)
         x2 = vector_input_one(train_to,length,s)
         y =  vector_input_one(train_to,length,s,shift_output=True)
+
         x1 = stack_sentences(x1)
         x2 = stack_sentences(x2)
         y =  stack_sentences(y)
