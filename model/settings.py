@@ -22,6 +22,7 @@ hparams = {
     'units': 300, ##600
     'learning_rate': 0.001,
     'tokens_per_sentence': 25,
-    'raw_embedding_filename': 'embedding'
+    'raw_embedding_filename': 'embedding',
+    'batch_constant': 10
     
 }

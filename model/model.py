@@ -35,6 +35,7 @@ tokens_per_sentence = hparams['tokens_per_sentence']
 raw_embedding_filename = hparams['raw_embedding_filename']
 
 base_file_num = str(hparams['base_file_num'])
+batch_constant = int(hparams['batch_constant'])
 filename = None
 
 if True:
@@ -53,104 +54,36 @@ def open_sentences(filename):
     #r.close()
     return t_yyy
 
-def vector_input_one(filename, length, shift_output=False):
+def vector_input_one(filename, length,start=0, shift_output=False):
     tokens = units
     text_x1 = open_sentences(filename)
     out_x1 = np.zeros((units, length * tokens))
-    print(filename)
-    for ii in range(length):
+    #print(filename)
+    for ii in range(start , start + length ):
         i = text_x1[ii].split()
         words = len(i)
-        for index_i in range(words):
+        for index_i in range(words ):
             if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
                 vec = word2vec_book.wv[i[index_i]]
                 # print(vec.shape,'vocab', i[index_i])
             else:
                 vec = np.zeros((units))
-
-            out_x1[:, index_i + tokens * ii] = vec[:units]
+            try:
+                out_x1[:, index_i +   ii] = vec[:units]
+            except:
+                print(out_x1.shape, index_i, tokens, ii)
+                exit()
     if shift_output:
-        print('stage: start shift y')
+        #print('stage: start shift y')
         out_y_shift = np.zeros((units, length * tokens))
         out_y_shift[:, : length * tokens - 1] = out_x1[:, 1:]
         out_x1 = out_y_shift
 
     #### test ####
-    print(out_x1.shape,  'sentences')
+    #print(out_x1.shape,  'sentences')
 
     return out_x1
 
-
-def vector_input_three(filename_x1, filename_x2, filename_y ):
-    tokens = units #tokens_per_sentence
-    text_x1 = open_sentences(filename_x1)
-    text_x2 = open_sentences(filename_x2)
-    text_y  = open_sentences(filename_y)
-    out_x1 = np.zeros((units, len(text_x1) * tokens))
-    out_x2 = np.zeros((units, len(text_x1) * tokens))
-    out_y  = np.zeros((units, len(text_x1) * tokens))
-
-    print('stage: three inputs loaded')
-    for ii in range(len(text_x1)):
-        eol_count = 0
-        ################ x1 ##################
-        i = text_x1[ii].split()
-        words = len(i)
-        for index_i in range(words):
-            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
-                vec = word2vec_book.wv[i[index_i]]
-                #print(vec.shape,'vocab', i[index_i])
-            else:
-                vec = np.zeros((units))
-                #print(vec.shape, 'fixed')
-            ## add to output
-            if i[index_i] == hparams['eol']: eol_count +=1
-            #if eol_count >= 3: break
-            out_x1[:,index_i + tokens * ii ] = vec[:units]
-
-        #if eol_count >= 3: continue
-        ############### x2 ##################
-        i = text_x2[ii].split()
-        words = len(i)
-        for index_i in range(words):
-            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
-                vec = word2vec_book.wv[i[index_i]]
-                #print(vec.shape, 'vocab', i[index_i])
-            else:
-                vec = np.zeros((units))
-                #print(vec.shape, 'fixed')
-            ## add to output
-            if i[index_i] == hparams['eol']: eol_count +=1
-            #if eol_count >= 3: break
-            out_x2[:, index_i + tokens * ii ] = vec[:units]
-
-        #if eol_count >= 3: continue
-        ################# y ###############
-        i = text_y[ii].split()
-        words = len(i)
-        for index_i in range(words):
-            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
-                vec = word2vec_book.wv[i[index_i]]
-                #print(vec.shape, 'vocab', i[index_i])
-            else:
-                vec = np.zeros((units))
-                #print(vec.shape, 'fixed')
-            ## add to output
-            if i[index_i] == hparams['eol']: eol_count +=1
-            #if eol_count >= 3: break
-            out_y[:, index_i + tokens * ii ] = vec[:units]
-        #if eol_count >= 3: continue
-
-    ####### shift y ############
-    print('stage: start shift y')
-    out_y_shift = np.zeros((units, len(text_x1) * tokens))
-    out_y_shift[:,: len(text_x1) * tokens - 1] = out_y[:,1:]
-    out_y = out_y_shift
-
-    #### test ####
-    print(out_x1.shape, out_x2.shape, out_y.shape, 'sentences')
-
-    return out_x1, out_x2, out_y
 
 
 
@@ -291,10 +224,12 @@ def _set_t_values(l):
     return out
 
 def check_sentence(x2,y):
+    print("x >",end=' ')
     for i in range(5):
         vec_x = x2[0,i,:]
         print(word2vec_book.wv.most_similar(positive=[vec_x])[0][0],end=' ')
     print()
+    print("y >", end=' ')
     for i in range(5):
         vec_y = y[0,i,:]
         print(word2vec_book.wv.most_similar(positive=[vec_y])[0][0],end=' ')
@@ -329,29 +264,28 @@ if True:
     #exit()
 
 if True:
-    print ('stage: arrays prep for test')
-
-    length = len(open_sentences(train_fr)) // int(units * 1/6)
-    x1 = vector_input_one(train_fr,length)
-    x2 = vector_input_one(train_to,length)
-    y =  vector_input_one(train_to,length,shift_output=True)
+    print ('stage: arrays prep for test/train')
     model , _, _ = embedding_model_lstm()
-    x1 = stack_sentences(x1)
-    x2 = stack_sentences(x2)
-    y =  stack_sentences(y)
-
-    print('stage: stack sentences')
-
-    check_sentence(x2,y)
-
     model.summary()
+    tot = len(open_sentences(train_fr))
+    length = tot // int(units * 1/6) #* batch_constant
+    steps = tot // length
 
-    model.fit([x1,x2], y, batch_size=16)
+    for z in range(steps):
+        s = (length )* z
+        print(s,s + length,'start,stop')
+        x1 = vector_input_one(train_fr,length,s)
+        x2 = vector_input_one(train_to,length,s)
+        y =  vector_input_one(train_to,length,s,shift_output=True)
+        x1 = stack_sentences(x1)
+        x2 = stack_sentences(x2)
+        y =  stack_sentences(y)
 
+        check_sentence(x2,y)
+        model.fit([x1,x2], y, batch_size=16)
 
-    #model.train_on_batch([x1, x2], y)
+        #model.train_on_batch([x1, x2], y)
 
-    #batch_train(model, x1[0], x2[0], y[0])
 
 
 if True:
