@@ -110,12 +110,18 @@ def embedding_model_lstm():
 
 
     ### encoder for training ###
-    lstm_a = LSTM(units=lstm_unit, input_shape=(None,lstm_unit),return_sequences=True,
-                  return_state=True)
+    lstm_a = Bidirectional(LSTM(units=lstm_unit, input_shape=(None,lstm_unit),return_sequences=True,
+                  return_state=True
+                                ), merge_mode='mul')
 
-    recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
+    #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-    lstm_a_states = [lstm_a_h , lstm_a_c]
+    recurrent_a = lstm_a(valid_word_a)
+    #print(len(recurrent_a),'len')
+
+    lstm_a_states = [recurrent_a[2] , recurrent_a[4] ]#, recurrent_a[1], recurrent_a[3]]
+
+    #lstm_a_states = [recurrent_a]
 
     ### decoder for training ###
 
@@ -125,6 +131,7 @@ def embedding_model_lstm():
 
 
     recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
+
 
 
     dense_b = Dense(lstm_unit, activation='softmax', name='dense_layer_b',
@@ -157,7 +164,9 @@ def embedding_model_lstm():
     dense_outputs_inference = dense_b(outputs_inference)
 
     model_inference = Model([valid_word_b] + inputs_inference,
-                            [dense_outputs_inference] + outputs_states)
+                            [dense_outputs_inference] +
+                            #[] +
+                            outputs_states)
 
     ### boilerplate ###
 
@@ -337,25 +346,23 @@ def load_model_file(model, filename):
     return model
 
 
-if False:
+if True:
     model, _, _ = embedding_model_lstm()
 
-if True:
+    #if False:
     model = load_model_file(model,filename)
 
 
 if True:
     train_model(model, check_sentences=False)
 
-if True:
     save_model(model,filename)
 
 
-if False:
+if True:
     model_infer(train_to)
 
 
-if True:
     print ('\n',len(word2vec_book.wv.vocab))
 
     vec = word2vec_book.wv['sol']
