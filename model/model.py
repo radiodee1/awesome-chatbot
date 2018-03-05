@@ -37,6 +37,7 @@ raw_embedding_filename = hparams['raw_embedding_filename']
 base_file_num = str(hparams['base_file_num'])
 batch_constant = int(hparams['batch_constant'])
 filename = None
+model = None
 
 if True:
     print ("stage: load w2v model")
