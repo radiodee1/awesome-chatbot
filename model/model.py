@@ -16,6 +16,7 @@ import tensorflow as tf
 #from keras.engine.topology import merge
 import gensim.models.word2vec as w2v
 import os
+import sys
 import tensorflow as tf
 #print(hparams)
 
@@ -38,6 +39,14 @@ base_file_num = str(hparams['base_file_num'])
 batch_constant = int(hparams['batch_constant'])
 filename = None
 model = None
+
+printable = ''
+
+print(sys.argv)
+if len(sys.argv) > 1:
+    printable = str(sys.argv[1])
+    #print(printable)
+#exit()
 
 if True:
     print ("stage: load w2v model")
@@ -290,7 +299,7 @@ def train_model(model, check_sentences=False):
     for z in range(steps):
         try:
             s = (length )* z
-            print(s,s + length,'start, stop')
+            print(s,s + length,'start, stop',printable)
             x1 = vector_input_one(train_to,length,s) ## change this to 'train_fr' when not autoencoding
             x2 = vector_input_one(train_to,length,s)
             y =  vector_input_one(train_to,length,s,shift_output=True)
@@ -328,7 +337,7 @@ def load_model_file(model, filename):
     return model
 
 
-if True:
+if False:
     model, _, _ = embedding_model_lstm()
 
 if True:
