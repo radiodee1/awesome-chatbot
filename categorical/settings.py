@@ -3,7 +3,7 @@
 hparams = {
     'save_dir': "../saved/",
     'data_dir': "../data/",
-    'vocab_name': "vocab",
+    'vocab_name': "vocab.big",
     'test_name': "test",
     'test_size': 100,
     'train_name': "train",

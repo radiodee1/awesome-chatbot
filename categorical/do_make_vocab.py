@@ -2,9 +2,10 @@
 
 from collections import Counter
 import tokenize_weak
+from settings import hparams
 import sys
 
-vocab_length = 20000
+vocab_length = hparams['num_vocab_total']
 train_file = ''
 v = []
 

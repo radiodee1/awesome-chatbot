@@ -48,11 +48,12 @@ if len(sys.argv) > 1:
     #print(printable)
 #exit()
 
-if True:
+if False:
     print ("stage: load w2v model")
     word2vec_book = w2v.Word2Vec.load(os.path.join(hparams['save_dir'], raw_embedding_filename + "_1.w2v"))
     words = len(word2vec_book.wv.vocab)
     vocab_size = words
+
 
 
 
@@ -98,25 +99,66 @@ def vector_input_one(filename, length, start=0,batch=-1, shift_output=False):
 
     return out_x1
 
+def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
+    tokens = units
+    text_x1 = open_sentences(filename)
+    out_x1 = np.zeros((units, length * tokens))
+    if batch == -1: batch = length
+    # print(filename)
+    # if start is not 0: start -= 1
+    for ii in range(length):
 
-def embedding_model_lstm():
+        i = text_x1[start + ii].split()
+        words = len(i)
+        if words >= tokens: words = tokens - 1
+        for index_i in range(words):
+            if index_i < len(i) and i[index_i] in vocab_list:
+                vec = vocab_dict[i[index_i]]
+                vec = to_categorical(vec,len(vocab_list))
+            else:
+                vec = np.zeros((units))
+            try:
+                out_x1[:, index_i + (ii * tokens)] = vec[:units]
+            except:
+                print(out_x1.shape, index_i, tokens, ii, words, start, length)
+                # exit()
+    if shift_output:
+        # print('stage: start shift y')
+        out_y_shift = np.zeros((units, length * tokens))
+        out_y_shift[:, : length * tokens - 1] = out_x1[:, 1:]
+        out_x1 = out_y_shift
 
+    #### test ####
+    # print(out_x1.shape,  'sentences')
+
+    return out_x1
+
+
+def embedding_model_lstm(words=20003):
 
     x_shape = (None,units)
     lstm_unit =  units
 
-    valid_word_a = Input(shape=x_shape)
+    valid_word_a = Input(shape=(words,))
     valid_word_b = Input(shape=x_shape)
 
+    embeddings_a = Embedding(words, lstm_unit,
+                             input_length=lstm_unit,
+                             #batch_size=batch_size,
+                             input_shape=(words,),
+                             #trainable=False
+                             )
+    embed_a = embeddings_a(valid_word_a)
 
     ### encoder for training ###
-    lstm_a = Bidirectional(LSTM(units=lstm_unit, input_shape=(None,lstm_unit),return_sequences=True,
-                  return_state=True
+    lstm_a = Bidirectional(LSTM(units=lstm_unit, #input_shape=(None,lstm_unit),
+                                return_sequences=True,
+                                return_state=True
                                 ), merge_mode='mul')
 
     #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-    recurrent_a = lstm_a(valid_word_a)
+    recurrent_a = lstm_a(embed_a) #valid_word_a
     #print(len(recurrent_a),'len')
 
     lstm_a_states = [recurrent_a[2] , recurrent_a[4] ]#, recurrent_a[1], recurrent_a[3]]
@@ -345,6 +387,19 @@ def load_model_file(model, filename):
         print('stage: load failed')
     return model
 
+def load_vocab(filename):
+    ''' assume there is one word per line in vocab text file '''
+    dict = {}
+    list = open_sentences(filename)
+    for i in range(len(list)):
+        list[i] = list[i].strip()
+        dict[list[i]] = i
+    return list, dict
+
+
+
+if True:
+    pass
 
 if True:
     model, _, _ = embedding_model_lstm()
@@ -354,6 +409,12 @@ if True:
 
 
 if True:
+    print('stage: load vocab')
+    l, d = load_vocab(vocab_fr)
+    print(l[5])
+    print(to_categorical(5, len(l)))
+    print(len(to_categorical(5, len(l))))
+    exit()
     train_model(model, check_sentences=False)
 
     save_model(model,filename)
