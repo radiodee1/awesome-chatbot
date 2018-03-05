@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
+      <change beforePath="$PROJECT_DIR$/do_launch_categorical.sh" afterPath="$PROJECT_DIR$/do_launch_categorical.sh" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,11 +14,33 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2161">
-              <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+            <state relative-caret-position="377">
+              <caret line="156" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
+              <folding>
+                <element signature="e#20#38#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/categorical/model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="144">
+              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="do_launch_categorical.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/do_launch_categorical.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="54">
+              <caret line="3" column="14" lean-forward="false" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
               <folding />
             </state>
           </provider>
@@ -36,8 +61,8 @@
       <file leaf-file-name="do_launch_model.sh" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_launch_model.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
+            <state relative-caret-position="72">
+              <caret line="4" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="19" />
               <folding />
             </state>
           </provider>
@@ -98,16 +123,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="do_make_w2v_train.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_w2v_train.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
@@ -151,6 +166,8 @@
         <option value="$PROJECT_DIR$/do_launch_series.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/model.py" />
+        <option value="$PROJECT_DIR$/do_launch_categorical.sh" />
+        <option value="$PROJECT_DIR$/categorical/model.py" />
       </list>
     </option>
   </component>
@@ -182,6 +199,11 @@
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="categorical" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
@@ -263,23 +285,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3618">
-          <caret line="220" column="21" lean-forward="false" selection-start-line="220" selection-start-column="21" selection-end-line="220" selection-end-column="21" />
-          <folding>
-            <element signature="e#20#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -292,7 +297,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -326,7 +333,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -359,7 +368,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -407,7 +418,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -430,7 +443,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -453,7 +468,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -476,7 +493,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -499,7 +518,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -515,7 +536,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="396">
           <caret line="23" column="1" lean-forward="false" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
-          <folding />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -605,14 +628,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_launch_model.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="0" lean-forward="false" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_launch_series.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="504">
@@ -631,10 +646,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/do_launch_model.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="19" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="4" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_launch_categorical.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" column="14" lean-forward="false" selection-start-line="3" selection-start-column="14" selection-end-line="3" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2161">
-          <caret line="15" column="0" lean-forward="false" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
+        <state relative-caret-position="377">
+          <caret line="156" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/categorical/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding />
         </state>
       </provider>
