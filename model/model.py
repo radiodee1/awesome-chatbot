@@ -154,7 +154,7 @@ def embedding_model_lstm():
 
     adam = optimizers.Adam(lr=0.001)
 
-    model.compile(optimizer=adam, loss='categorical_crossentropy')
+    model.compile(optimizer=adam, loss='mse')
 
     return model, model_encoder, model_inference
 
@@ -342,7 +342,7 @@ if True:
     save_model(model,filename)
 
 
-if True:
+if False:
     model_infer(train_to)
 
 
