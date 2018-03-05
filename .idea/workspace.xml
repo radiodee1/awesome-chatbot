@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/categorical/do_make_vocab.py" afterPath="$PROJECT_DIR$/categorical/do_make_vocab.py" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -43,11 +45,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
+            <state relative-caret-position="864">
+              <caret line="48" column="26" lean-forward="false" selection-start-line="48" selection-start-column="26" selection-end-line="48" selection-end-column="26" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
@@ -55,10 +57,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tokenize_weak.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tokenize_weak.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/categorical/tokenize_weak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
+            <state relative-caret-position="-1266">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
@@ -165,6 +167,7 @@
         <option value="$PROJECT_DIR$/categorical/model.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/categorical/settings.py" />
+        <option value="$PROJECT_DIR$/categorical/do_make_vocab.py" />
       </list>
     </option>
   </component>
@@ -650,14 +653,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/categorical/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/categorical/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="360">
@@ -666,21 +661,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
+    <entry file="file://$PROJECT_DIR$/categorical/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="0" lean-forward="true" selection-start-line="9" selection-start-column="0" selection-end-line="9" selection-end-column="0" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1266">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/categorical/tokenize_weak.py">
+    <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="144">
+          <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="864">
+          <caret line="48" column="26" lean-forward="false" selection-start-line="48" selection-start-column="26" selection-end-line="48" selection-end-column="26" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

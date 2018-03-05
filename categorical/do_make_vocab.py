@@ -46,7 +46,7 @@ def save_vocab():
     pass
 
 if __name__ == '__main__':
-    train_file = 'train.big.from'
+    train_file = '../data/train.big.from'
 
     if len(sys.argv) > 1:
         train_file = str(sys.argv[1])
