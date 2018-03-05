@@ -18,7 +18,7 @@ hparams = {
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    'layers': 2,
+    #'layers': 2,
     'units': 64, ##600
     'learning_rate': 0.001,
     'tokens_per_sentence': 25,

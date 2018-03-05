@@ -9,7 +9,7 @@ hparams = {
     'train_name': "train",
     'src_ending': "from",
     'tgt_ending': "to",
-    'base_filename': "chatbot",
+    'base_filename': "chatbot-categorical",
     'base_file_num': 1,
     'num_train_total': 500000,
     'num_vocab_total': 20000,
@@ -18,7 +18,7 @@ hparams = {
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    'layers': 2,
+    #'layers': 2,
     'units': 64, ##600
     'learning_rate': 0.001,
     'tokens_per_sentence': 25,
