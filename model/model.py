@@ -127,7 +127,7 @@ def embedding_model_lstm():
     #reshape_b = Permute((2,1))(decoder_b)
 
 
-    model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
+    model = Model([valid_word_a,valid_word_b], recurrent_b) # decoder_b
 
     ### encoder for inference ###
     model_encoder = Model(valid_word_a, lstm_a_states)
@@ -316,7 +316,7 @@ def save_model(model, filename):
     model.save(filename)
 
 
-def load_model_file(filename):
+def load_model_file(model, filename):
     print('stage: checking for load')
     if filename == None:
         filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
@@ -328,11 +328,11 @@ def load_model_file(filename):
     return model
 
 
-if False:
+if True:
     model, _, _ = embedding_model_lstm()
 
 if True:
-    model = load_model_file(filename)
+    model = load_model_file(model,filename)
 
 
 if True:
