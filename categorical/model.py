@@ -65,39 +65,7 @@ def open_sentences(filename):
     #r.close()
     return t_yyy
 
-def vector_input_one(filename, length, start=0,batch=-1, shift_output=False):
-    tokens = units
-    text_x1 = open_sentences(filename)
-    out_x1 = np.zeros((units, length * tokens))
-    if batch == -1: batch = length
-    #print(filename)
-    #if start is not 0: start -= 1
-    for ii in range( length ):
 
-        i = text_x1[start + ii].split()
-        words = len(i)
-        if words >= tokens: words = tokens - 1
-        for index_i in range(words ):
-            if index_i < len(i) and i[index_i] in word2vec_book.wv.vocab:
-                vec = word2vec_book.wv[i[index_i]]
-                # print(vec.shape,'vocab', i[index_i])
-            else:
-                vec = np.zeros((units))
-            try:
-                out_x1[:, index_i + (ii * tokens)  ] = vec[:units]
-            except:
-                print(out_x1.shape, index_i, tokens, ii, words, start, length)
-                #exit()
-    if shift_output:
-        #print('stage: start shift y')
-        out_y_shift = np.zeros((units, length * tokens))
-        out_y_shift[:, : length * tokens - 1] = out_x1[:, 1:]
-        out_x1 = out_y_shift
-
-    #### test ####
-    #print(out_x1.shape,  'sentences')
-
-    return out_x1
 
 def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
     tokens = units
@@ -404,35 +372,7 @@ def train_model_categorical(model, list, dict, check_sentences=False):
         # model.train_on_batch([x1, x2], y)
     return model
 
-def train_model(model, check_sentences=False):
-    print ('stage: arrays prep for test/train')
-    if model is None: model , _, _ = embedding_model_lstm()
-    model.summary()
-    tot = len(open_sentences(train_fr))
-    length = tot // int(units ) * batch_constant
-    steps = tot // length
 
-    for z in range(steps):
-        try:
-            s = (length )* z
-            print(s,s + length,'start, stop',printable)
-            x1 = vector_input_one(train_to,length,s) ## change this to 'train_fr' when not autoencoding
-            x2 = vector_input_one(train_to,length,s)
-            y =  vector_input_one(train_to,length,s,shift_output=True)
-
-            x1 = stack_sentences(x1)
-            x2 = stack_sentences(x2)
-            y =  stack_sentences(y)
-            if check_sentences: check_sentence(x2,y,0)
-            model.fit([x1,x2], y, batch_size=16)
-        except:
-            save_model(filename + ".backup")
-            pass
-        finally:
-
-            pass
-        #model.train_on_batch([x1, x2], y)
-    return model
 
 def save_model(model, filename):
     print ('stage: save lstm model')
