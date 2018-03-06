@@ -140,13 +140,13 @@ def embedding_model_lstm(words=20003):
     x_shape = (None,units)
     lstm_unit =  units
 
-    valid_word_a = Input(shape=(words,))
-    valid_word_b = Input(shape=(words,))
+    valid_word_a = Input(shape=(None,))
+    valid_word_b = Input(shape=(None,))
 
-    embeddings_a = Embedding(words, lstm_unit,
+    embeddings_a = Embedding(words,lstm_unit ,#, words,
                              input_length=lstm_unit,
                              #batch_size=batch_size,
-                             input_shape=(words,),
+                             #input_shape=(None,lstm_unit,words),
                              #trainable=False
                              )
     embed_a = embeddings_a(valid_word_a)
@@ -166,28 +166,25 @@ def embedding_model_lstm(words=20003):
 
 
     ### decoder for training ###
-    embeddings_b = Embedding(words, lstm_unit,
+    embeddings_b = Embedding(words, lstm_unit, #, words,
                              input_length=lstm_unit,
                              # batch_size=batch_size,
-                             input_shape=(words,),
+                             #input_shape=(words,),
                              # trainable=False
                              )
     embed_b = embeddings_b(valid_word_b)
 
     lstm_b = LSTM(units=lstm_unit ,
-                  return_sequences=True,
+                  #return_sequences=True,
                   return_state=True
                   )
 
-
     recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
-
-
 
     dense_b = Dense(lstm_unit,
                     activation='softmax',
-                    name='dense_layer_b',
-                    batch_input_shape=(None,words)
+                    #name='dense_layer_b',
+                    #batch_input_shape=(None,lstm_unit)
                     )
 
 
@@ -224,6 +221,7 @@ def embedding_model_lstm(words=20003):
 
     adam = optimizers.Adam(lr=0.001)
 
+    # try 'sparse_categorical_crossentropy'
     model.compile(optimizer=adam, loss='categorical_crossentropy')
 
     return model, model_encoder, model_inference
@@ -349,31 +347,37 @@ def stack_sentences(xx):
     return out
 
 def stack_sentences_categorical(xx, vocab_list):
-    batch = 1# tokens_per_sentence
-    tot = batch #xx.shape[0] // batch
-    out = np.zeros((len(vocab_list), batch)) # [] #
+    batch = 64# tokens_per_sentence
+    tot = 1# batch #xx.shape[0] // batch
+    #out = np.zeros((len(vocab_list), batch))
+    out = np.zeros((batch, batch))
     #print(tot,'tot', xx.shape)
     #mid = np.zeros((tot, batch, len(vocab_list)))
     for i in range(tot):
         start = i * batch
         end = (i + 1) * batch
         x = xx[start:end]
-        for j in range(len(x)):
-            out[:,i] = to_categorical(x[j], len(vocab_list))
+
+        out[i,:] = np.array(x)
+        #for j in range(len(x)):
+        #    out[:,i] = to_categorical(x[j], len(vocab_list))
             #print(out)
             #exit()
 
     #out = np.array(out)
-    #print(out.shape, 'swap')
-    out = np.swapaxes(out,1,0)
-    #out = np.expand_dims(out, 0)
+    print(out.shape, 'swap', out)
+    #for z in range(10):
+    #    print(out[z,0:3])
+    #exit()
+    #out = np.swapaxes(out,1,0)
+    #out = np.expand_dims(out, -1)
     return out
 
 def train_model_categorical(model, list, dict, check_sentences=False):
     print('stage: arrays prep for test/train')
     if model is None: model, _, _ = embedding_model_lstm(len(list))
     model.summary()
-    tot = len(open_sentences(train_fr))
+    tot = len(open_sentences(text_fr))
     length = tot // int(units) * batch_constant
     steps = tot // length
 
@@ -381,15 +385,15 @@ def train_model_categorical(model, list, dict, check_sentences=False):
         try:
             s = (length) * z
             print(s, s + length, 'start, stop', printable)
-            x1 = categorical_input_one(train_to,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
-            x2 = categorical_input_one(train_to,list,dict, length, s)
-            y =  categorical_input_one(train_to,list,dict, length, s, shift_output=True)
+            x1 = categorical_input_one(text_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
+            x2 = categorical_input_one(text_fr,list,dict, length, s)
+            y =  categorical_input_one(text_fr,list,dict, length, s, shift_output=True)
 
             x1 = stack_sentences_categorical(x1,list)
             x2 = stack_sentences_categorical(x2,list)
             y = stack_sentences_categorical(y,list)
             if check_sentences: check_sentence(x2, y, 0)
-            model.fit([x1, x2], y, batch_size=1)
+            model.fit([x1, x2], y, batch_size=16)
         except:
             save_model(filename + ".backup")
             pass
