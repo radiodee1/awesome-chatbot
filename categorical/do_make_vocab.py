@@ -29,7 +29,7 @@ def make_vocab():
     cc = c.most_common(l)
     print(len(cc), 'length of result list')
     #v = []
-    for z in sorted(cc):
+    for z in sorted(cc, key= lambda word: word[1]):
         if z[0].lower() not in v: v.append(z[0].lower())
     #vv = list(set(v))
     v.sort()
@@ -37,14 +37,15 @@ def make_vocab():
     #print(v)
 
 def save_vocab():
+    ''' remember to leave zero spot blank '''
     sol = hparams['sol']
     eol = hparams['eol']
     unk = hparams['unk']
-    name = train_file.replace('train', 'vocab')
-    if name == train_file:
+    name = train_file[0].replace('train', 'vocab')
+    if name == train_file[0]:
         name += '.voc.txt'
     with open(name, 'w') as x:
-        x.write(unk+'\n'+ sol+'\n'+eol+'\n')
+        x.write('\n'+unk+'\n'+ sol+'\n'+eol+'\n')
         for z in v:
             x.write(z + "\n")
         print('values written')
