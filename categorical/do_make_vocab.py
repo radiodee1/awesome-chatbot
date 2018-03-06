@@ -36,11 +36,14 @@ def make_vocab():
     #print(v)
 
 def save_vocab():
+    sol = hparams['sol']
+    eol = hparams['eol']
+    unk = hparams['unk']
     name = train_file.replace('train', 'vocab')
     if name == train_file:
         name += '.voc.txt'
     with open(name, 'w') as x:
-        x.write('<s>\n</s>\n<unk>\n')
+        x.write(sol+'\n'+ eol+'\n'+unk+'\n')
         for z in v:
             x.write(z + "\n")
         print('values written')

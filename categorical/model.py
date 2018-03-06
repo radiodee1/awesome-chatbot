@@ -319,7 +319,7 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
     tot = 1 #64# batch #xx.shape[0] // batch
     out = None
     if not shift_output:
-        out = np.zeros((batch, batch))
+        out = np.zeros(( tot, batch))
     else:
         out = np.zeros((len(vocab_list), batch))
 
@@ -328,18 +328,19 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
         end = (i + 1) * batch
         x = xx[start:end]
         if not shift_output:
-            out[i,:] = np.array(x)
+            out[i] = np.array(x)
         else:
             for j in range(len(x)):
                 out[:,i] = to_categorical(x[j], len(vocab_list))
-            #print(out.shape)
-            #exit()
+            print(out.shape, out)
+            exit()
 
     if not shift_output:
         pass
     else:
         out = np.swapaxes(out,1,0)
     #out = np.expand_dims(out, -1)
+
     return out
 
 def train_model_categorical(model, list, dict, check_sentences=False):
@@ -404,12 +405,8 @@ def load_vocab(filename):
 
 
 if True:
-    pass
-
-if True:
     model, _, _ = embedding_model_lstm()
 
-    #if False:
     model = load_model_file(model,filename)
 
 
@@ -421,11 +418,11 @@ if True:
     print(len(to_categorical(5, len(l))))
 
     train_model_categorical(model,l,d, check_sentences=False)
-    exit()
+
     save_model(model,filename)
 
 
-if True:
+if False:
     model_infer(train_to)
 
 
