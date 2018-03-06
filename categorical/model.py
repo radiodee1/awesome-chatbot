@@ -64,7 +64,7 @@ def open_sentences(filename):
 
 
 def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
-    tokens = units
+    tokens = units #tokens_per_sentence #units
     text_x1 = open_sentences(filename)
     out_x1 = np.zeros(( length * tokens))
     #if batch == -1: batch = batch_size
@@ -79,8 +79,8 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
         if words >= tokens: words = tokens - 1
         for index_i in range(words):
 
-            if index_i < len(i) and i[index_i] in vocab_list:
-                vec = vocab_dict[i[index_i]]
+            if index_i < words and i[index_i].lower() in vocab_list:
+                vec = vocab_dict[i[index_i].lower()]
                 #vec = to_categorical(vec,len(vocab_list))
                 out_x1[ num + (ii * tokens)] = vec
                 num += 1
@@ -107,7 +107,7 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
     return out_x1
 
 
-def embedding_model_lstm(words=20003):
+def embedding_model_lstm(words):
 
     x_shape = (None,units)
     lstm_unit =  units
@@ -285,11 +285,14 @@ def model_infer(filename):
     predict_word('sol what is up ? eol')
 
 
-def check_sentence(x2,y, lst=None, start = 0):
-    print(x2.shape, y.shape)
+def check_sentence(x2, y, lst=None, start = 0):
+    print(x2.shape, y.shape, train_to)
     ii = 7
     for k in range(10):
         print(k,lst[k])
+    c = open_sentences(train_to)
+    line = c[start]
+    print(line)
     for j in range(start, start + 8):
         print("x >",j,end=' ')
         for i in range(ii):
@@ -331,7 +334,7 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
 
 def train_model_categorical(model, list, dict,train_model=True, check_sentences=False):
     print('stage: arrays prep for test/train')
-    if model is None: model, _, _ = embedding_model_lstm(len(list))
+    if model is None: model, _, _ = embedding_model_lstm(words=len(list))
     if not check_sentences: model.summary()
     tot = len(open_sentences(train_fr))
     length = batch_constant
@@ -391,19 +394,13 @@ def load_vocab(filename):
     return list, dict
 
 
-
 if True:
-    model, _, _ = embedding_model_lstm()
-
     model = load_model_file(model,filename)
 
 
 if True:
     print('stage: load vocab')
     l, d = load_vocab(vocab_fr)
-    #print(l[5])
-    #print(to_categorical(5, len(l)))
-    #print(len(to_categorical(5, len(l))))
 
     train_model_categorical(model,l,d, check_sentences=True)
 

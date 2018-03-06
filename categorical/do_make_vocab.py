@@ -4,6 +4,7 @@ from collections import Counter
 import tokenize_weak
 from settings import hparams
 import sys
+from operator import itemgetter
 
 vocab_length = hparams['num_vocab_total']
 train_file = ''
@@ -21,16 +22,25 @@ def make_vocab():
                     wordlist.append(word)
             pass
     print('values read')
-    wordset = set(wordlist)
-    c = Counter(wordset)
-    l = len(wordset)
+
+    #wordset = set(wordlist)
+    c = Counter(wordlist)
+    l = len(wordlist)
     print(l,'length of raw vocab data')
     if l > vocab_length: l = vocab_length
-    cc = c.most_common(l)
+    cc = c.most_common()
+
+    #cc = wordlist
     print(len(cc), 'length of result list')
     #v = []
-    for z in sorted(cc, key= lambda word: word[1]):
-        if z[0].lower() not in v: v.append(z[0].lower())
+    num = 0
+    ss = sorted(cc, key=itemgetter(1))
+    print(ss[0:10])
+    ss.reverse()
+    print(ss[0:10])
+    for z in ss: # sorted(cc, key= lambda word: word[1]):
+        if z[0].lower() not in v and num < vocab_length: v.append(z[0].lower())
+        num +=1
     #vv = list(set(v))
     v.sort()
     #v = vv
