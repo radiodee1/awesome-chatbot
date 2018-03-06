@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/categorical/do_make_vocab.py" afterPath="$PROJECT_DIR$/categorical/do_make_vocab.py" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,23 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2502">
-              <caret line="156" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
-              <folding>
-                <element signature="e#20#38#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="448">
-              <caret line="334" column="33" lean-forward="false" selection-start-line="334" selection-start-column="33" selection-end-line="334" selection-end-column="33" />
+            <state relative-caret-position="305">
+              <caret line="192" column="64" lean-forward="false" selection-start-line="192" selection-start-column="64" selection-end-line="192" selection-end-column="64" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -149,6 +136,7 @@
       <find>recurrent_a</find>
       <find>words</find>
       <find>batch_size</find>
+      <find>categorical_input_one</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -171,8 +159,8 @@
         <option value="$PROJECT_DIR$/do_launch_categorical.sh" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/categorical/settings.py" />
-        <option value="$PROJECT_DIR$/categorical/model.py" />
         <option value="$PROJECT_DIR$/categorical/do_make_vocab.py" />
+        <option value="$PROJECT_DIR$/categorical/model.py" />
       </list>
     </option>
   </component>
@@ -339,7 +327,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -374,7 +362,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -424,7 +412,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -449,7 +437,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -474,7 +462,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -499,7 +487,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -524,7 +512,7 @@
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -542,7 +530,7 @@
         <state relative-caret-position="396">
           <caret line="23" column="1" lean-forward="false" selection-start-line="23" selection-start-column="1" selection-end-line="23" selection-end-column="1" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -653,7 +641,7 @@
         <state relative-caret-position="2502">
           <caret line="156" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="372" selection-end-column="0" />
           <folding>
-            <element signature="e#20#38#0" expanded="true" />
+            <element signature="e#20#38#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -694,8 +682,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="448">
-          <caret line="334" column="33" lean-forward="false" selection-start-line="334" selection-start-column="33" selection-end-line="334" selection-end-column="33" />
+        <state relative-caret-position="305">
+          <caret line="192" column="64" lean-forward="false" selection-start-line="192" selection-start-column="64" selection-end-line="192" selection-end-column="64" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>

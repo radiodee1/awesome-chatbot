@@ -189,8 +189,8 @@ def embedding_model_lstm(words=20003):
 
     adam = optimizers.Adam(lr=0.001)
 
-    # try 'sparse_categorical_crossentropy'
-    model.compile(optimizer=adam, loss='mse')
+    # try 'sparse_categorical_crossentropy', 'mse'
+    model.compile(optimizer=adam, loss='categorical_crossentropy')
 
     return model, model_encoder, model_inference
 
@@ -315,31 +315,23 @@ def stack_sentences(xx):
     return out
 
 def stack_sentences_categorical(xx, vocab_list, shift_output=False):
-    batch = 64# tokens_per_sentence
-    tot = 1 #64# batch #xx.shape[0] // batch
+
+    batch = 1# units# tokens_per_sentence
+    tot = xx.shape[0] // batch
     out = None
     if not shift_output:
-        out = np.zeros(( tot, batch))
+        out = np.zeros(( tot))
     else:
-        out = np.zeros((len(vocab_list), batch))
+        out = np.zeros((tot,len(vocab_list)))
 
     for i in range(tot):
-        start = i * batch
-        end = (i + 1) * batch
-        x = xx[start:end]
+        #start = i * batch
+        #end = (i + 1) * batch
+        x = xx[i]
         if not shift_output:
             out[i] = np.array(x)
         else:
-            for j in range(len(x)):
-                out[:,i] = to_categorical(x[j], len(vocab_list))
-            print(out.shape, out)
-            exit()
-
-    if not shift_output:
-        pass
-    else:
-        out = np.swapaxes(out,1,0)
-    #out = np.expand_dims(out, -1)
+            out[i,:] = to_categorical(x, len(vocab_list))
 
     return out
 
@@ -354,7 +346,7 @@ def train_model_categorical(model, list, dict, check_sentences=False):
     for z in range(steps):
         try:
             s = (length) * z
-            print(s, s + length, 'start, stop', printable)
+            print(s, s + length,steps, 'start, stop, steps', printable)
             x1 = categorical_input_one(text_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
             x2 = categorical_input_one(text_fr,list,dict, length, s)
             y =  categorical_input_one(text_fr,list,dict, length, s, shift_output=True)
