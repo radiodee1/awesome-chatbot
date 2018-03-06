@@ -181,7 +181,7 @@ def embedding_model_lstm(words=20003):
 
     recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
 
-    dense_b = Dense(lstm_unit,
+    dense_b = Dense(words,
                     activation='softmax',
                     #name='dense_layer_b',
                     #batch_input_shape=(None,lstm_unit)
@@ -222,7 +222,7 @@ def embedding_model_lstm(words=20003):
     adam = optimizers.Adam(lr=0.001)
 
     # try 'sparse_categorical_crossentropy'
-    model.compile(optimizer=adam, loss='categorical_crossentropy')
+    model.compile(optimizer=adam, loss='mse')
 
     return model, model_encoder, model_inference
 
@@ -346,30 +346,31 @@ def stack_sentences(xx):
     #out = np.expand_dims(out, 0)
     return out
 
-def stack_sentences_categorical(xx, vocab_list):
+def stack_sentences_categorical(xx, vocab_list, shift_output=False):
     batch = 64# tokens_per_sentence
-    tot = 1# batch #xx.shape[0] // batch
-    #out = np.zeros((len(vocab_list), batch))
-    out = np.zeros((batch, batch))
-    #print(tot,'tot', xx.shape)
-    #mid = np.zeros((tot, batch, len(vocab_list)))
+    tot = 1 #64# batch #xx.shape[0] // batch
+    out = None
+    if not shift_output:
+        out = np.zeros((batch, batch))
+    else:
+        out = np.zeros((len(vocab_list), batch))
+
     for i in range(tot):
         start = i * batch
         end = (i + 1) * batch
         x = xx[start:end]
-
-        out[i,:] = np.array(x)
-        #for j in range(len(x)):
-        #    out[:,i] = to_categorical(x[j], len(vocab_list))
-            #print(out)
+        if not shift_output:
+            out[i,:] = np.array(x)
+        else:
+            for j in range(len(x)):
+                out[:,i] = to_categorical(x[j], len(vocab_list))
+            #print(out.shape)
             #exit()
 
-    #out = np.array(out)
-    print(out.shape, 'swap', out)
-    #for z in range(10):
-    #    print(out[z,0:3])
-    #exit()
-    #out = np.swapaxes(out,1,0)
+    if not shift_output:
+        pass
+    else:
+        out = np.swapaxes(out,1,0)
     #out = np.expand_dims(out, -1)
     return out
 
@@ -391,7 +392,7 @@ def train_model_categorical(model, list, dict, check_sentences=False):
 
             x1 = stack_sentences_categorical(x1,list)
             x2 = stack_sentences_categorical(x2,list)
-            y = stack_sentences_categorical(y,list)
+            y = stack_sentences_categorical(y,list, shift_output=True)
             if check_sentences: check_sentence(x2, y, 0)
             model.fit([x1, x2], y, batch_size=16)
         except:
