@@ -11,14 +11,15 @@ v = []
 
 def make_vocab():
     wordlist = []
-    with open(train_file, 'r') as x:
-        xx = x.read()
-        for line in xx.split('\n'):
-            line = tokenize_weak.format(line)
-            y = line.lower().split()
-            for word in y:
-                wordlist.append(word)
-        pass
+    for filename in train_file:
+        with open(filename, 'r') as x:
+            xx = x.read()
+            for line in xx.split('\n'):
+                line = tokenize_weak.format(line)
+                y = line.lower().split()
+                for word in y:
+                    wordlist.append(word)
+            pass
     print('values read')
     wordset = set(wordlist)
     c = Counter(wordset)
@@ -50,7 +51,7 @@ def save_vocab():
     pass
 
 if __name__ == '__main__':
-    train_file = '../data/train.big.from'
+    train_file = ['../data/train.big.from', '../data/train.big.to']
 
     if len(sys.argv) > 1:
         train_file = str(sys.argv[1])

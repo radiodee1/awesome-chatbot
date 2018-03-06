@@ -67,29 +67,34 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
     tokens = units
     text_x1 = open_sentences(filename)
     out_x1 = np.zeros(( length * tokens))
-    if batch == -1: batch = batch_size
+    #if batch == -1: batch = batch_size
     if start % units != 0 or (length + start) % units != 0:
         print('bad batch size',start % units, start+length % units, units)
         exit()
     # print(filename)
     for ii in range(length):
-
+        num = 0
         i = text_x1[start + ii].split()
         words = len(i)
         if words >= tokens: words = tokens - 1
         for index_i in range(words):
+
             if index_i < len(i) and i[index_i] in vocab_list:
                 vec = vocab_dict[i[index_i]]
                 #vec = to_categorical(vec,len(vocab_list))
-
+                out_x1[ num + (ii * tokens)] = vec
+                num += 1
             else:
                 vec = 0
+
             try:
-                out_x1[ index_i + (ii * tokens)] = vec
+                #out_x1[ index_i + (ii * tokens)] = vec
+                pass
             except:
                 pass
                 #print(out_x1.shape, index_i, tokens, ii, words, start, length)
                 # exit()
+
     if shift_output:
         # print('stage: start shift y')
         out_y_shift = np.zeros(( length * tokens))
@@ -283,8 +288,9 @@ def model_infer(filename):
 def check_sentence(x2,y, lst=None, start = 0):
     print(x2.shape, y.shape)
     ii = 7
-
-    for j in range(start, start + 4):
+    for k in range(10):
+        print(k,lst[k])
+    for j in range(start, start + 8):
         print("x >",j,end=' ')
         for i in range(ii):
             vec_x = x2[i + units * j]
@@ -326,7 +332,7 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
 def train_model_categorical(model, list, dict,train_model=True, check_sentences=False):
     print('stage: arrays prep for test/train')
     if model is None: model, _, _ = embedding_model_lstm(len(list))
-    model.summary()
+    if not check_sentences: model.summary()
     tot = len(open_sentences(train_fr))
     length = batch_constant
     steps = tot // length
@@ -399,7 +405,7 @@ if True:
     #print(to_categorical(5, len(l)))
     #print(len(to_categorical(5, len(l))))
 
-    train_model_categorical(model,l,d, check_sentences=False)
+    train_model_categorical(model,l,d, check_sentences=True)
 
     save_model(model,filename)
 
