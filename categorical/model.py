@@ -48,13 +48,9 @@ if len(sys.argv) > 1:
     #print(printable)
 #exit()
 
-if False:
-    print ("stage: load w2v model")
-    word2vec_book = w2v.Word2Vec.load(os.path.join(hparams['save_dir'], raw_embedding_filename + "_1.w2v"))
-    words = len(word2vec_book.wv.vocab)
-    vocab_size = words
-
-
+if batch_size % units != 0 or batch_constant % units != 0:
+    print('batch size and batch constant must be mult of',units)
+    exit()
 
 
 def open_sentences(filename):
@@ -71,9 +67,11 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
     tokens = units
     text_x1 = open_sentences(filename)
     out_x1 = np.zeros(( length * tokens))
-    if batch == -1: batch = length
+    if batch == -1: batch = batch_size
+    if start % units != 0 or (length + start) % units != 0:
+        print('bad batch size',start % units, start+length % units, units)
+        exit()
     # print(filename)
-    # if start is not 0: start -= 1
     for ii in range(length):
 
         i = text_x1[start + ii].split()
@@ -89,7 +87,8 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
             try:
                 out_x1[ index_i + (ii * tokens)] = vec
             except:
-                print(out_x1.shape, index_i, tokens, ii, words, start, length)
+                pass
+                #print(out_x1.shape, index_i, tokens, ii, words, start, length)
                 # exit()
     if shift_output:
         # print('stage: start shift y')
@@ -281,42 +280,27 @@ def model_infer(filename):
     predict_word('sol what is up ? eol')
 
 
-def check_sentence(x2,y, start = 0):
+def check_sentence(x2,y, lst=None, start = 0):
+    print(x2.shape, y.shape)
+    ii = 7
+
     for j in range(start, start + 4):
         print("x >",j,end=' ')
-        for i in range(5):
-            vec_x = x2[j,i,:]
-            print(word2vec_book.wv.most_similar(positive=[vec_x])[0][0],end=' ')
+        for i in range(ii):
+            vec_x = x2[i + units * j]
+            print(lst[int(vec_x)], ' ' , int(vec_x),' ',end=' ')
         print()
         print("y >",j, end=' ')
-        for i in range(5):
-            vec_y = y[j,i,:]
-            print(word2vec_book.wv.most_similar(positive=[vec_y])[0][0],end=' ')
+        for i in range(ii):
+            vec_y = y[i + units * j,:]
+            vec_y = np.argmax(vec_y)
+            print(lst[int(vec_y)], ' ', vec_y,' ', end=' ')
         print()
 
-
-def stack_sentences(xx):
-    batch = units # tokens_per_sentence
-    tot = xx.shape[1] // batch
-    out = np.zeros((tot,batch,units)) # [] #
-    #print(tot,'tot', xx.shape)
-    for i in range(tot):
-        start = i * batch
-        end = (i + 1) * batch
-        x = xx[:,start:end]
-        #x = xx[:,i]
-        #out.append(x)
-        out[i,:,:] = x
-
-    #out = np.array(out)
-    #print(out.shape, 'swap')
-    out = np.swapaxes(out,1,2)
-    #out = np.expand_dims(out, 0)
-    return out
 
 def stack_sentences_categorical(xx, vocab_list, shift_output=False):
 
-    batch = 1# units# tokens_per_sentence
+    batch = units #batch_size #1#
     tot = xx.shape[0] // batch
     out = None
     if not shift_output:
@@ -332,37 +316,43 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
             out[i] = np.array(x)
         else:
             out[i,:] = to_categorical(x, len(vocab_list))
-
+    if not shift_output:
+        #out = np.swapaxes(out,0,1)
+        pass
+    else:
+        pass
     return out
 
-def train_model_categorical(model, list, dict, check_sentences=False):
+def train_model_categorical(model, list, dict,train_model=True, check_sentences=False):
     print('stage: arrays prep for test/train')
     if model is None: model, _, _ = embedding_model_lstm(len(list))
     model.summary()
-    tot = len(open_sentences(text_fr))
-    length = tot // int(units) * batch_constant
+    tot = len(open_sentences(train_fr))
+    length = batch_constant
     steps = tot // length
-
+    #if steps < 1.0: steps = 1
+    #print( steps, tot, length, batch_size)
     for z in range(steps):
         try:
             s = (length) * z
-            print(s, s + length,steps, 'start, stop, steps', printable)
-            x1 = categorical_input_one(text_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
-            x2 = categorical_input_one(text_fr,list,dict, length, s)
-            y =  categorical_input_one(text_fr,list,dict, length, s, shift_output=True)
+            print(s, s + length,steps,'at',z, 'start, stop, steps', printable)
+            x1 = categorical_input_one(train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
+            x2 = categorical_input_one(train_to,list,dict, length, s)
+            y =  categorical_input_one(train_to,list,dict, length, s, shift_output=True)
 
             x1 = stack_sentences_categorical(x1,list)
             x2 = stack_sentences_categorical(x2,list)
-            y = stack_sentences_categorical(y,list, shift_output=True)
-            if check_sentences: check_sentence(x2, y, 0)
-            model.fit([x1, x2], y, batch_size=16)
-        except:
-            save_model(filename + ".backup")
-            pass
+            y =  stack_sentences_categorical(y,list, shift_output=True)
+            if check_sentences:
+                check_sentence(x2, y,list, 0)
+                exit()
+            if train_model:
+                model.fit([x1, x2], y, batch_size=16)
+        except Exception as e:
+            print(repr(e))
+            save_model(model,filename + ".backup")
         finally:
-
             pass
-        # model.train_on_batch([x1, x2], y)
     return model
 
 
@@ -405,9 +395,9 @@ if True:
 if True:
     print('stage: load vocab')
     l, d = load_vocab(vocab_fr)
-    print(l[5])
-    print(to_categorical(5, len(l)))
-    print(len(to_categorical(5, len(l))))
+    #print(l[5])
+    #print(to_categorical(5, len(l)))
+    #print(len(to_categorical(5, len(l))))
 
     train_model_categorical(model,l,d, check_sentences=False)
 

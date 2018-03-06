@@ -43,7 +43,7 @@ def save_vocab():
     if name == train_file:
         name += '.voc.txt'
     with open(name, 'w') as x:
-        x.write(sol+'\n'+ eol+'\n'+unk+'\n')
+        x.write(unk+'\n'+ sol+'\n'+eol+'\n')
         for z in v:
             x.write(z + "\n")
         print('values written')
