@@ -35,9 +35,9 @@ def make_vocab():
     #v = []
     num = 0
     ss = sorted(cc, key=itemgetter(1))
-    print(ss[0:10])
+    #print(ss[0:10])
     ss.reverse()
-    print(ss[0:10])
+    #print(ss[0:10])
     for z in ss: # sorted(cc, key= lambda word: word[1]):
         if z[0].lower() not in v and num < vocab_length: v.append(z[0].lower())
         num +=1
