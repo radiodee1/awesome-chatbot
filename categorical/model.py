@@ -102,7 +102,7 @@ def vector_input_one(filename, length, start=0,batch=-1, shift_output=False):
 def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
     tokens = units
     text_x1 = open_sentences(filename)
-    out_x1 = np.zeros((units, length * tokens))
+    out_x1 = np.zeros(( length * tokens))
     if batch == -1: batch = length
     # print(filename)
     # if start is not 0: start -= 1
@@ -114,18 +114,19 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
         for index_i in range(words):
             if index_i < len(i) and i[index_i] in vocab_list:
                 vec = vocab_dict[i[index_i]]
-                vec = to_categorical(vec,len(vocab_list))
+                #vec = to_categorical(vec,len(vocab_list))
+
             else:
-                vec = np.zeros((units))
+                vec = 0
             try:
-                out_x1[:, index_i + (ii * tokens)] = vec[:units]
+                out_x1[ index_i + (ii * tokens)] = vec
             except:
                 print(out_x1.shape, index_i, tokens, ii, words, start, length)
                 # exit()
     if shift_output:
         # print('stage: start shift y')
-        out_y_shift = np.zeros((units, length * tokens))
-        out_y_shift[:, : length * tokens - 1] = out_x1[:, 1:]
+        out_y_shift = np.zeros(( length * tokens))
+        out_y_shift[ : length * tokens - 1] = out_x1[ 1:]
         out_x1 = out_y_shift
 
     #### test ####
@@ -140,7 +141,7 @@ def embedding_model_lstm(words=20003):
     lstm_unit =  units
 
     valid_word_a = Input(shape=(words,))
-    valid_word_b = Input(shape=x_shape)
+    valid_word_b = Input(shape=(words,))
 
     embeddings_a = Embedding(words, lstm_unit,
                              input_length=lstm_unit,
@@ -163,29 +164,38 @@ def embedding_model_lstm(words=20003):
 
     lstm_a_states = [recurrent_a[2] , recurrent_a[4] ]#, recurrent_a[1], recurrent_a[3]]
 
-    #lstm_a_states = [recurrent_a]
 
     ### decoder for training ###
+    embeddings_b = Embedding(words, lstm_unit,
+                             input_length=lstm_unit,
+                             # batch_size=batch_size,
+                             input_shape=(words,),
+                             # trainable=False
+                             )
+    embed_b = embeddings_b(valid_word_b)
 
-    lstm_b = LSTM(units=lstm_unit ,return_sequences=True,
+    lstm_b = LSTM(units=lstm_unit ,
+                  return_sequences=True,
                   return_state=True
                   )
 
 
-    recurrent_b, inner_lstmb_h, inner_lstmb_c = lstm_b(valid_word_b, initial_state=lstm_a_states)
+    recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
 
 
 
-    dense_b = Dense(lstm_unit, activation='softmax', name='dense_layer_b',
-                                    batch_input_shape=(None,lstm_unit,units))
+    dense_b = Dense(lstm_unit,
+                    activation='softmax',
+                    name='dense_layer_b',
+                    batch_input_shape=(None,words)
+                    )
 
 
     decoder_b = dense_b(recurrent_b) # recurrent_b
 
-    #reshape_b = Permute((2,1))(decoder_b)
 
 
-    model = Model([valid_word_a,valid_word_b], recurrent_b) # decoder_b
+    model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
     ### encoder for inference ###
     model_encoder = Model(valid_word_a, lstm_a_states)
@@ -197,24 +207,24 @@ def embedding_model_lstm(words=20003):
 
     inputs_inference = [input_h, input_c]
 
-    outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
+    embed_b = embeddings_b(valid_word_b)
+
+    outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
                                                                          initial_state=inputs_inference)
 
     outputs_states = [outputs_inference_h, outputs_inference_c]
-
 
     dense_outputs_inference = dense_b(outputs_inference)
 
     model_inference = Model([valid_word_b] + inputs_inference,
                             [dense_outputs_inference] +
-                            #[] +
                             outputs_states)
 
     ### boilerplate ###
 
     adam = optimizers.Adam(lr=0.001)
 
-    model.compile(optimizer=adam, loss='mse')
+    model.compile(optimizer=adam, loss='categorical_crossentropy')
 
     return model, model_encoder, model_inference
 
@@ -338,6 +348,56 @@ def stack_sentences(xx):
     #out = np.expand_dims(out, 0)
     return out
 
+def stack_sentences_categorical(xx, vocab_list):
+    batch = 1# tokens_per_sentence
+    tot = batch #xx.shape[0] // batch
+    out = np.zeros((len(vocab_list), batch)) # [] #
+    #print(tot,'tot', xx.shape)
+    #mid = np.zeros((tot, batch, len(vocab_list)))
+    for i in range(tot):
+        start = i * batch
+        end = (i + 1) * batch
+        x = xx[start:end]
+        for j in range(len(x)):
+            out[:,i] = to_categorical(x[j], len(vocab_list))
+            #print(out)
+            #exit()
+
+    #out = np.array(out)
+    #print(out.shape, 'swap')
+    out = np.swapaxes(out,1,0)
+    #out = np.expand_dims(out, 0)
+    return out
+
+def train_model_categorical(model, list, dict, check_sentences=False):
+    print('stage: arrays prep for test/train')
+    if model is None: model, _, _ = embedding_model_lstm(len(list))
+    model.summary()
+    tot = len(open_sentences(train_fr))
+    length = tot // int(units) * batch_constant
+    steps = tot // length
+
+    for z in range(steps):
+        try:
+            s = (length) * z
+            print(s, s + length, 'start, stop', printable)
+            x1 = categorical_input_one(train_to,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
+            x2 = categorical_input_one(train_to,list,dict, length, s)
+            y =  categorical_input_one(train_to,list,dict, length, s, shift_output=True)
+
+            x1 = stack_sentences_categorical(x1,list)
+            x2 = stack_sentences_categorical(x2,list)
+            y = stack_sentences_categorical(y,list)
+            if check_sentences: check_sentence(x2, y, 0)
+            model.fit([x1, x2], y, batch_size=1)
+        except:
+            save_model(filename + ".backup")
+            pass
+        finally:
+
+            pass
+        # model.train_on_batch([x1, x2], y)
+    return model
 
 def train_model(model, check_sentences=False):
     print ('stage: arrays prep for test/train')
@@ -414,9 +474,9 @@ if True:
     print(l[5])
     print(to_categorical(5, len(l)))
     print(len(to_categorical(5, len(l))))
-    exit()
-    train_model(model, check_sentences=False)
 
+    train_model_categorical(model,l,d, check_sentences=False)
+    exit()
     save_model(model,filename)
 
 
