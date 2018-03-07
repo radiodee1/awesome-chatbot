@@ -131,10 +131,10 @@ def embedding_model_lstm(words):
 
     #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-    recurrent_a = lstm_a(embed_a) #valid_word_a
+    recurrent_a, reca_1, reca_2, reca_3, reca_4 = lstm_a(embed_a) #valid_word_a
     #print(len(recurrent_a),'len')
 
-    lstm_a_states = [recurrent_a[2] , recurrent_a[4] ]#, recurrent_a[1], recurrent_a[3]]
+    lstm_a_states = [reca_2 , reca_4 ]#, recurrent_a[1], recurrent_a[3]]
 
 
     ### decoder for training ###
@@ -208,7 +208,7 @@ def predict_word(txt, lst=None, dict=None):
     state = infer_enc.predict(source)
     #print(len(state),state[0].shape,state[1].shape,'source')
     #vec = source
-
+    txt_out = []
     switch = False
     vec = -1
     t = txt.lower().split()
@@ -217,7 +217,7 @@ def predict_word(txt, lst=None, dict=None):
     for i in range(0,len(t) * 3):
         if switch or t[i] in lst: #word2vec_book.wv.vocab:
             if not switch:
-                print(t[i])
+                #print(t[i])
                 steps = 1
                 #decode = True
             if vec == -1 :#len(vec) == 0:
@@ -229,16 +229,16 @@ def predict_word(txt, lst=None, dict=None):
             #print(vec)
             if len(state) > 0 :
                 #print(state[0][0])
-                predict = predict_sequence(infer_enc, infer_dec, state[0][0], steps,lst,dict)
+                predict , ws = predict_sequence(infer_enc, infer_dec, state[0][0], steps,lst,dict)
                 state = []
             else:
-                predict = predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
-
+                predict, ws = predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
+            txt_out.append(ws)
             if switch or t[i] == hparams['eol']:
                 #predict = np.expand_dims(predict,0)
                 #predict = np.expand_dims(predict,0)
                 vec = int(np.argmax(predict))
-                print(lst[vec])
+                #print(lst[vec])
                 #print(vec.shape)
                 switch = True
                 #decode = False
@@ -246,6 +246,7 @@ def predict_word(txt, lst=None, dict=None):
             elif not switch:
                 pass
                 vec = -1
+    print('output: ',' '.join(txt_out))
 
 
 def predict_sequence(infer_enc, infer_dec, source, n_steps,lst,dict, decode=False ,simple_reply=True):
@@ -257,31 +258,24 @@ def predict_sequence(infer_enc, infer_dec, source, n_steps,lst,dict, decode=Fals
     state = infer_enc.predict(source)
     # start of sequence input
     i = np.argmax(state[0])
-    w = lst[int(i)]
-    print(w, '< state[0]')
-    #print(len(state),state[0].shape, state[1].shape)
+    ws = lst[int(i)]
+    #print(ws, '< state[0]')
     yhat = np.zeros((1,1,units))
     target_seq = state[0] # np.zeros((1,1,units))
     state = [ np.expand_dims(state[0],0), np.expand_dims(state[1],0)  ]
     #target_seq = np.expand_dims(target_seq,0)
-    # collect predictions
     output = list()
     if not decode or True:
         for t in range(n_steps):
             target_values = [target_seq] + state
-            #print(target_values)
-            #target_values = _set_t_values(target_values)
             yhat, h, c = infer_dec.predict(target_values)
             output.append(yhat[0,:])
             state = [h, c]
             target_seq = h #yhat
-            #print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0][0])
-            #print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
             i = np.argmax(h[0,0,:])
             w = lst[int(i)]
-            print(w,'< h')
-    #if not simple_reply: return np.array(output)
-    return yhat[0,:]
+            #print(w,'< h')
+    return yhat[0,:], ws
 
 
 def _fill_vec(sent, lst, dict):
