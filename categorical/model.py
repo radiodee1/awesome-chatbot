@@ -427,7 +427,8 @@ if True:
 
     l, d = load_vocab(vocab_fr)
     model = load_model_file(model,filename, l)
-
+    model.summary()
+    exit()
     train_model_categorical(model,l,d, check_sentences=False)
 
     save_model(model,filename)

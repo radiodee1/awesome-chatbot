@@ -3,6 +3,7 @@
 hparams = {
     'save_dir': "../saved/",
     'data_dir': "../data/",
+    'embed_name':'embed.txt',
     'vocab_name': "vocab.big",
     'test_name': "test",
     'test_size': 100,
