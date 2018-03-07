@@ -12,11 +12,11 @@ print('first arg = files')
 print('next arg  = epochs')
 
 if len(sys.argv) > 1:
-    files = int(sys.argv[1])
+    files = int(sys.argv[1]) - 1
     pass
 
 if len(sys.argv) > 2:
-    epochs = int(sys.argv[2])
+    epochs = int(sys.argv[2]) - 1
 
 print('\nargs (files, epochs):',files,epochs)
 

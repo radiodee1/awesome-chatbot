@@ -200,69 +200,77 @@ def embedding_model_lstm(words):
 
 
 
-def predict_word(txt):
-    model, infer_enc, infer_dec = embedding_model_lstm()
+def predict_word(txt, lst=None, dict=None):
+    if lst is None or dict is None:
+        lst, dict = load_vocab(vocab_fr)
+    model, infer_enc, infer_dec = embedding_model_lstm(len(lst))
     switch = False
-    vec = []
+    vec = -1
     t = txt.lower().split()
     steps = 1
     #decode = False
     for i in range(0,len(t) * 3):
-        if switch or t[i] in word2vec_book.wv.vocab:
+        if switch or t[i] in lst: #word2vec_book.wv.vocab:
             if not switch:
                 print(t[i])
                 steps = 1
                 #decode = True
-            if len(vec) == 0:
-                vec = word2vec_book.wv[t[i]]
-                vec = vec[:units]
-                vec = np.expand_dims(vec, 0)
-                vec = np.expand_dims(vec, 0)
+            if vec == -1 :#len(vec) == 0:
+                vec = dict[t[i]] #word2vec_book.wv[t[i]]
+                #vec = vec[:units]
+                #vec = np.expand_dims(vec, 0)
+                #vec = np.expand_dims(vec, 0)
                 #print(vec[:,:,0:10])
-            predict = predict_sequence(infer_enc, infer_dec, vec, steps)
+            predict = predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
 
             if switch or t[i] == hparams['eol']:
-                predict = np.expand_dims(predict,0)
-                predict = np.expand_dims(predict,0)
-                vec = predict
-
+                #predict = np.expand_dims(predict,0)
+                #predict = np.expand_dims(predict,0)
+                vec = int(np.argmax(predict))
+                print(lst[vec])
                 #print(vec.shape)
                 switch = True
                 #decode = False
                 steps = 1
             elif not switch:
                 pass
-                vec = []
+                vec = -1
 
 
-def predict_sequence(infer_enc, infer_dec, source, n_steps,decode=False ,simple_reply=True):
+def predict_sequence(infer_enc, infer_dec, source, n_steps,lst,dict, decode=False ,simple_reply=True):
     # encode
     #print(source.shape,'s')
-    if len(source.shape) > 3: source = source[0]
+    #if len(source.shape) > 3: source = source[0]
+    source = np.array(source)
+    source = np.expand_dims(source,0)
     state = infer_enc.predict(source)
     # start of sequence input
-
+    i = np.argmax(state[0])
+    w = lst[int(i)]
+    print(w, '< state[0]')
+    #print(len(state),state[0].shape, state[1].shape)
     yhat = np.zeros((1,1,units))
     target_seq = state[0] # np.zeros((1,1,units))
+    state = [ np.expand_dims(state[0],0), np.expand_dims(state[1],0)  ]
+    #target_seq = np.expand_dims(target_seq,0)
     # collect predictions
     output = list()
     if not decode or True:
         for t in range(n_steps):
-            # predict next char
             target_values = [target_seq] + state
             #print(target_values)
-            target_values = _set_t_values(target_values)
+            #target_values = _set_t_values(target_values)
             yhat, h, c = infer_dec.predict(target_values)
-            # store prediction
             output.append(yhat[0,:])
-            # update state
             state = [h, c]
-            # update target sequence
             target_seq = h #yhat
             #print(word2vec_book.wv.most_similar(positive=[yhat[0,0,:]], topn=1)[0][0])
-            print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
-    if not simple_reply: return np.array(output)
-    else: return yhat[0,:]
+            #print(word2vec_book.wv.most_similar(positive=[h[0,0,:]], topn=1)[0],'< h')
+            i = np.argmax(h[0,0,:])
+            w = lst[int(i)]
+            print(w,'< h')
+    #if not simple_reply: return np.array(output)
+    return yhat[0,:]
 
 
 def _set_t_values(l):
@@ -277,12 +285,13 @@ def _set_t_values(l):
 
 def model_infer(filename):
     print('stage: try predict')
+    lst, dict = load_vocab(vocab_fr)
     c = open_sentences(filename)
     line = c[0]
     print(line)
-    predict_word(line)
+    predict_word(line, lst, dict)
     print('----------------')
-    predict_word('sol what is up ? eol')
+    predict_word('sol what is up ? eol', lst, dict)
 
 
 def check_sentence(x2, y, lst=None, start = 0):
@@ -333,20 +342,23 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
     return out
 
 def train_model_categorical(model, list, dict,train_model=True, check_sentences=False):
-    global batch_constant
     print('stage: arrays prep for test/train')
     if model is None: model, _, _ = embedding_model_lstm(words=len(list))
     if not check_sentences: model.summary()
     tot = len(open_sentences(train_fr))
-    if batch_constant > tot: batch_constant = batch_constant // 100
+
     #global batch_constant
-    length = batch_constant
+    length = int(hparams['batch_constant']) * int(hparams['units'])
     steps = tot // length
-    #if steps < 1.0: steps = 1
+    if steps * length < tot: steps += 1
     #print( steps, tot, length, batch_size)
     for z in range(steps):
         try:
             s = (length) * z
+            if tot < s + length: length = tot - s
+            if length % int(hparams['units']) != 0:
+                i = length // int(hparams['units'])
+                length = i * int(hparams['units'])
             print(s, s + length,steps,'at',z, 'start, stop, steps', printable)
             x1 = categorical_input_one(train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
             x2 = categorical_input_one(train_to,list,dict, length, s)
@@ -399,7 +411,7 @@ def load_vocab(filename):
     return list, dict
 
 
-if True:
+if False:
     print('stage: load vocab')
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
@@ -411,14 +423,9 @@ if True:
     save_model(model,filename)
 
 
-if False:
+if True:
     model_infer(train_to)
 
 
-    print ('\n',len(word2vec_book.wv.vocab))
 
-    vec = word2vec_book.wv['sol']
-    print ( word2vec_book.wv.most_similar(positive=[vec], topn=5))
-    #print ( word2vec_book.wv.most_similar(positive=["she's"], topn=5))
-    print ('k', word2vec_book.wv.most_similar(positive=['k'], topn=5))
 
