@@ -14,7 +14,7 @@ hparams = {
     'num_train_total': 500000,
     'num_vocab_total': 2000,
     'batch_size': 64, #256
-    #'steps_to_stats': 100,
+    'steps_to_stats': 100,
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',

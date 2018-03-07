@@ -215,17 +215,14 @@ def predict_word(txt, lst=None, dict=None):
     steps = 1
     #decode = False
     for i in range(0,len(t) * 3):
-        if switch or t[i] in lst: #word2vec_book.wv.vocab:
+        if switch or t[i] in lst:
             if not switch:
                 #print(t[i])
                 steps = 1
                 #decode = True
             if vec == -1 :#len(vec) == 0:
-                vec = dict[t[i]] #word2vec_book.wv[t[i]]
-                #vec = vec[:units]
-                #vec = np.expand_dims(vec, 0)
-                #vec = np.expand_dims(vec, 0)
-                #print(vec[:,:,0:10])
+                vec = dict[t[i]]
+
             #print(vec)
             if len(state) > 0 :
                 #print(state[0][0])
@@ -235,13 +232,9 @@ def predict_word(txt, lst=None, dict=None):
                 predict, ws = predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
             txt_out.append(ws)
             if switch or t[i] == hparams['eol']:
-                #predict = np.expand_dims(predict,0)
-                #predict = np.expand_dims(predict,0)
+                txt_out.append('|')
                 vec = int(np.argmax(predict))
-                #print(lst[vec])
-                #print(vec.shape)
                 switch = True
-                #decode = False
                 steps = 1
             elif not switch:
                 pass
@@ -296,11 +289,17 @@ def model_infer(filename):
     print('stage: try predict')
     lst, dict = load_vocab(vocab_fr)
     c = open_sentences(filename)
-    line = c[0]
-    print(line)
+    g = randint(0, len(c))
+    line = c[g]
+    line = line.strip('\n')
+    print('----------------')
+    print('index:',g)
+    print('input:',line)
     predict_word(line, lst, dict)
     print('----------------')
-    predict_word('sol what is up ? eol', lst, dict)
+    line = 'sol what is up ? eol'
+    print('input:', line)
+    predict_word(line, lst, dict)
 
 
 def check_sentence(x2, y, lst=None, start = 0):
@@ -368,7 +367,7 @@ def train_model_categorical(model, list, dict,train_model=True, check_sentences=
             if length % int(hparams['units']) != 0:
                 i = length // int(hparams['units'])
                 length = i * int(hparams['units'])
-            print(s, s + length,steps,'at',z, 'start, stop, steps', printable)
+            print(s, s + length,steps,'at',z+1, 'start, stop, steps', printable)
             x1 = categorical_input_one(train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
             x2 = categorical_input_one(train_to,list,dict, length, s)
             y =  categorical_input_one(train_to,list,dict, length, s, shift_output=True)
@@ -381,6 +380,8 @@ def train_model_categorical(model, list, dict,train_model=True, check_sentences=
                 exit()
             if train_model:
                 model.fit([x1, x2], y, batch_size=16)
+            if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
+                model_infer(train_to)
         except Exception as e:
             print(repr(e))
             save_model(model,filename + ".backup")
@@ -420,7 +421,7 @@ def load_vocab(filename):
     return list, dict
 
 
-if False:
+if True:
     print('stage: load vocab')
     filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
