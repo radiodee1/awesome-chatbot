@@ -361,7 +361,7 @@ def check_sentence(x2, y, lst=None, start = 0):
 
 def stack_sentences_categorical(xx, vocab_list, shift_output=False):
 
-    batch = units #batch_size #1#
+    batch = units 
     tot = xx.shape[0] // batch
     out = None
     if not shift_output:
@@ -378,6 +378,7 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
         else:
             out[i,:] = to_categorical(x, len(vocab_list))
     if not shift_output:
+        print(out.shape)
         #out = np.swapaxes(out,0,1)
         pass
     else:
