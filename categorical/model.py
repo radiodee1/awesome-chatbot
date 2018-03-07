@@ -106,7 +106,10 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
 
     return out_x1
 
-def embedding_model():
+def embedding_model(model=None, infer_encode=None, infer_decode=None):
+    if model is not None and infer_encode is not None and infer_decode is not None:
+        return model, infer_encode, infer_decode
+
     lst, dict = load_vocab(vocab_fr)
 
     embeddings_index = {}
@@ -120,17 +123,17 @@ def embedding_model():
             embeddings_index[word] = value
     f.close()
 
-    print('Loaded %s word vectors.' % len(embeddings_index))
-    
+    #print('Loaded %s word vectors.' % len(embeddings_index))
+
     embedding_matrix = np.zeros((len(lst) , units))
     for word, i in dict.items():
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
             # words not found in embedding index will be all-zeros.
             embedding_matrix[i] = embedding_vector[:units]
-
+    #print(embedding_matrix)
     return embedding_model_lstm(len(lst), embedding_matrix, embedding_matrix)
-    pass
+
 
 def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=None):
 
@@ -221,17 +224,17 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
     adam = optimizers.Adam(lr=0.001)
 
     # try 'sparse_categorical_crossentropy', 'mse'
-    model.compile(optimizer=adam, loss='categorical_crossentropy')
+    model.compile(optimizer=adam, loss='binary_crossentropy')
 
     return model, model_encoder, model_inference
 
 
 
-def predict_word(txt, lst=None, dict=None):
+def predict_word(txt, lst=None, dict=None, model=None, infer_enc=None, infer_dec=None):
     if lst is None or dict is None:
         lst, dict = load_vocab(vocab_fr)
-    #model, infer_enc, infer_dec = embedding_model_lstm(len(lst))
-    model, infer_enc, infer_dec = embedding_model()
+
+    model, infer_enc, infer_dec = embedding_model(model,infer_enc,infer_dec)
 
     source = _fill_vec(txt,lst,dict)
     state = infer_enc.predict(source)
@@ -321,14 +324,15 @@ def model_infer(filename):
     g = randint(0, len(c))
     line = c[g]
     line = line.strip('\n')
+    model, infer_enc, infer_dec = embedding_model()
     print('----------------')
     print('index:',g)
     print('input:',line)
-    predict_word(line, lst, dict)
+    predict_word(line, lst, dict, model,infer_enc,infer_dec)
     print('----------------')
     line = 'sol what is up ? eol'
     print('input:', line)
-    predict_word(line, lst, dict)
+    predict_word(line, lst, dict,model,infer_enc,infer_dec)
 
 
 def check_sentence(x2, y, lst=None, start = 0):
@@ -458,7 +462,6 @@ if True:
     l, d = load_vocab(vocab_fr)
     model = load_model_file(model,filename, l)
     #model.summary()
-
     train_model_categorical(model,l,d, check_sentences=False)
 
     save_model(model,filename)
