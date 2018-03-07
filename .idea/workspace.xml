@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
-      <change beforePath="$PROJECT_DIR$/categorical/settings.py" afterPath="$PROJECT_DIR$/categorical/settings.py" />
-      <change beforePath="$PROJECT_DIR$/do_launch_series.py" afterPath="$PROJECT_DIR$/do_launch_series.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="874">
-              <caret line="249" column="16" lean-forward="false" selection-start-line="249" selection-start-column="16" selection-end-line="249" selection-end-column="16" />
+            <state relative-caret-position="-271">
+              <caret line="230" column="17" lean-forward="false" selection-start-line="230" selection-start-column="17" selection-end-line="230" selection-end-column="17" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -140,6 +138,7 @@
       <find>batch_size</find>
       <find>categorical_input_one</find>
       <find>embedding_model_lstm</find>
+      <find>_set_t_values</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -658,8 +657,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="874">
-          <caret line="249" column="16" lean-forward="false" selection-start-line="249" selection-start-column="16" selection-end-line="249" selection-end-column="16" />
+        <state relative-caret-position="-271">
+          <caret line="230" column="17" lean-forward="false" selection-start-line="230" selection-start-column="17" selection-end-line="230" selection-end-column="17" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>

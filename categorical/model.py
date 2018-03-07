@@ -204,6 +204,11 @@ def predict_word(txt, lst=None, dict=None):
     if lst is None or dict is None:
         lst, dict = load_vocab(vocab_fr)
     model, infer_enc, infer_dec = embedding_model_lstm(len(lst))
+    source = _fill_vec(txt,lst,dict)
+    state = infer_enc.predict(source)
+    #print(len(state),state[0].shape,state[1].shape,'source')
+    #vec = source
+
     switch = False
     vec = -1
     t = txt.lower().split()
@@ -221,7 +226,13 @@ def predict_word(txt, lst=None, dict=None):
                 #vec = np.expand_dims(vec, 0)
                 #vec = np.expand_dims(vec, 0)
                 #print(vec[:,:,0:10])
-            predict = predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
+            #print(vec)
+            if len(state) > 0 :
+                #print(state[0][0])
+                predict = predict_sequence(infer_enc, infer_dec, state[0][0], steps,lst,dict)
+                state = []
+            else:
+                predict = predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
 
             if switch or t[i] == hparams['eol']:
                 #predict = np.expand_dims(predict,0)
@@ -273,13 +284,17 @@ def predict_sequence(infer_enc, infer_dec, source, n_steps,lst,dict, decode=Fals
     return yhat[0,:]
 
 
-def _set_t_values(l):
-    out = list([])
-    for i in l:
-        if len(i.shape) < 3:
-            i = np.expand_dims(i, 0)
-        #print(i.shape)
-        out.append(i)
+def _fill_vec(sent, lst, dict):
+    s = sent.lower().split()
+    out = []
+    l = np.zeros((hparams['units']))
+    for i in s:
+        if i in lst:
+            out.append( dict[i])
+        pass
+    out = np.array(out)
+    l[:out.shape[0]] = out
+    out = l
     return out
 
 
