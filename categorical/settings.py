@@ -14,16 +14,16 @@ hparams = {
     'base_file_num': 1,
     'num_train_total': 500000,
     'num_vocab_total': 2000,
-    'batch_size': 64, #256
+    'batch_size': 128,#64, #256
     'steps_to_stats': 100,
+    'embed_size':100,
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    #'layers': 2,
-    'units': 64, ##600
+    'units': 128 , #64, ##64
     'learning_rate': 0.001,
     'tokens_per_sentence': 25,
     'raw_embedding_filename': 'embedding',
-    'batch_constant': 320
+    'batch_constant': 384
     
 }

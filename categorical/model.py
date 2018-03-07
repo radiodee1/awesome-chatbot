@@ -110,6 +110,7 @@ def embedding_model(model=None, infer_encode=None, infer_decode=None):
     if model is not None and infer_encode is not None and infer_decode is not None:
         return model, infer_encode, infer_decode
 
+    embed_size = int(hparams['embed_size'])
     lst, dict = load_vocab(vocab_fr)
 
     embeddings_index = {}
@@ -125,12 +126,12 @@ def embedding_model(model=None, infer_encode=None, infer_decode=None):
 
     #print('Loaded %s word vectors.' % len(embeddings_index))
 
-    embedding_matrix = np.zeros((len(lst) , units))
+    embedding_matrix = np.zeros((len(lst) , embed_size))
     for word, i in dict.items():
         embedding_vector = embeddings_index.get(word)
         if embedding_vector is not None:
             # words not found in embedding index will be all-zeros.
-            embedding_matrix[i] = embedding_vector[:units]
+            embedding_matrix[i] = embedding_vector[:embed_size]
     #print(embedding_matrix)
     return embedding_model_lstm(len(lst), embedding_matrix, embedding_matrix)
 
@@ -139,11 +140,12 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
     x_shape = (None,units)
     lstm_unit =  units
+    embed_unit = int(hparams['embed_size'])
 
     valid_word_a = Input(shape=(None,))
     valid_word_b = Input(shape=(None,))
 
-    embeddings_a = Embedding(words,lstm_unit ,
+    embeddings_a = Embedding(words,embed_unit ,
                              weights=[embedding_weights_a],
                              input_length=lstm_unit,
                              #batch_size=batch_size,
@@ -167,7 +169,7 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
 
     ### decoder for training ###
-    embeddings_b = Embedding(words, lstm_unit,
+    embeddings_b = Embedding(words, embed_unit,
                              input_length=lstm_unit,
                              # batch_size=batch_size,
                              #input_shape=(words,),
