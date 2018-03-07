@@ -5,6 +5,7 @@ import sys
 
 epochs=2 #* 24
 files=17
+big_file= True
 
 #print(sys.argv)
 print()
@@ -24,5 +25,9 @@ for i in range(epochs):
     for j in range(files):
         print('### epoch', i+1,'###')
         os.system('echo "### epoch num: '+ str(i+1) + ' , step num: '+ str(j+1) + ' ### " >> saved/progress.txt')
-        os.system('./do_make_rename_train.sh ' + str(j + 1))
+        if not big_file:
+            os.system('./do_make_rename_train.sh ' + str(j + 1))
+        else:
+            os.system('./do_make_rename_train.sh ')
+
         os.system('./do_launch_categorical.sh ' + '--epoch:' + str(i+1)+',file:'+ str(j+1)+ '--')

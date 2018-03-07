@@ -127,7 +127,7 @@ def embedding_model_lstm(words):
     lstm_a = Bidirectional(LSTM(units=lstm_unit, #input_shape=(None,lstm_unit),
                                 return_sequences=True,
                                 return_state=True
-                                ), merge_mode='mul')
+                                ), merge_mode='concat')
 
     #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
