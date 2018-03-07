@@ -333,10 +333,13 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
     return out
 
 def train_model_categorical(model, list, dict,train_model=True, check_sentences=False):
+    global batch_constant
     print('stage: arrays prep for test/train')
     if model is None: model, _, _ = embedding_model_lstm(words=len(list))
     if not check_sentences: model.summary()
     tot = len(open_sentences(train_fr))
+    if batch_constant > tot: batch_constant = batch_constant // 100
+    #global batch_constant
     length = batch_constant
     steps = tot // length
     #if steps < 1.0: steps = 1
@@ -373,7 +376,7 @@ def save_model(model, filename):
     model.save(filename)
 
 
-def load_model_file(model, filename):
+def load_model_file(model, filename, lst):
     print('stage: checking for load')
     if filename == None:
         filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
@@ -381,6 +384,8 @@ def load_model_file(model, filename):
         model = load_model(filename)
         print ('stage: load works')
     else:
+        model, _, _ = embedding_model_lstm(words=len(lst))
+
         print('stage: load failed')
     return model
 
@@ -395,14 +400,13 @@ def load_vocab(filename):
 
 
 if True:
-    model = load_model_file(model,filename)
-
-
-if True:
     print('stage: load vocab')
-    l, d = load_vocab(vocab_fr)
+    filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
-    train_model_categorical(model,l,d, check_sentences=True)
+    l, d = load_vocab(vocab_fr)
+    model = load_model_file(model,filename, l)
+
+    train_model_categorical(model,l,d, check_sentences=False)
 
     save_model(model,filename)
 
