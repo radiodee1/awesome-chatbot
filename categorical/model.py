@@ -106,8 +106,33 @@ def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batc
 
     return out_x1
 
+def embedding_model():
+    lst, dict = load_vocab(vocab_fr)
 
-def embedding_model_lstm(words):
+    embeddings_index = {}
+    glove_data = hparams['data_dir'] + hparams['embed_name']
+    f = open(glove_data)
+    for line in f:
+        values = line.split()
+        word = values[0]
+        value = np.asarray(values[1:], dtype='float32')
+        if word in lst:
+            embeddings_index[word] = value
+    f.close()
+
+    print('Loaded %s word vectors.' % len(embeddings_index))
+    
+    embedding_matrix = np.zeros((len(lst) , units))
+    for word, i in dict.items():
+        embedding_vector = embeddings_index.get(word)
+        if embedding_vector is not None:
+            # words not found in embedding index will be all-zeros.
+            embedding_matrix[i] = embedding_vector[:units]
+
+    return embedding_model_lstm(len(lst), embedding_matrix, embedding_matrix)
+    pass
+
+def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=None):
 
     x_shape = (None,units)
     lstm_unit =  units
@@ -115,11 +140,12 @@ def embedding_model_lstm(words):
     valid_word_a = Input(shape=(None,))
     valid_word_b = Input(shape=(None,))
 
-    embeddings_a = Embedding(words,lstm_unit ,#, words,
+    embeddings_a = Embedding(words,lstm_unit ,
+                             weights=[embedding_weights_a],
                              input_length=lstm_unit,
                              #batch_size=batch_size,
                              #input_shape=(None,lstm_unit,words),
-                             #trainable=False
+                             trainable=False
                              )
     embed_a = embeddings_a(valid_word_a)
 
@@ -138,11 +164,12 @@ def embedding_model_lstm(words):
 
 
     ### decoder for training ###
-    embeddings_b = Embedding(words, lstm_unit, #, words,
+    embeddings_b = Embedding(words, lstm_unit,
                              input_length=lstm_unit,
                              # batch_size=batch_size,
                              #input_shape=(words,),
-                             # trainable=False
+                             weights=[embedding_weights_b],
+                             trainable=False
                              )
     embed_b = embeddings_b(valid_word_b)
 
@@ -203,7 +230,9 @@ def embedding_model_lstm(words):
 def predict_word(txt, lst=None, dict=None):
     if lst is None or dict is None:
         lst, dict = load_vocab(vocab_fr)
-    model, infer_enc, infer_dec = embedding_model_lstm(len(lst))
+    #model, infer_enc, infer_dec = embedding_model_lstm(len(lst))
+    model, infer_enc, infer_dec = embedding_model()
+
     source = _fill_vec(txt,lst,dict)
     state = infer_enc.predict(source)
     #print(len(state),state[0].shape,state[1].shape,'source')
@@ -351,7 +380,7 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
 
 def train_model_categorical(model, list, dict,train_model=True, check_sentences=False):
     print('stage: arrays prep for test/train')
-    if model is None: model, _, _ = embedding_model_lstm(words=len(list))
+    if model is None: model, _, _ = embedding_model()
     if not check_sentences: model.summary()
     tot = len(open_sentences(train_fr))
 
@@ -406,7 +435,8 @@ def load_model_file(model, filename, lst):
         model = load_model(filename)
         print ('stage: load works')
     else:
-        model, _, _ = embedding_model_lstm(words=len(lst))
+        #model, _, _ = embedding_model_lstm(words=len(lst))
+        model, _, _ = embedding_model()
 
         print('stage: load failed')
     return model
@@ -427,8 +457,8 @@ if True:
 
     l, d = load_vocab(vocab_fr)
     model = load_model_file(model,filename, l)
-    model.summary()
-    exit()
+    #model.summary()
+
     train_model_categorical(model,l,d, check_sentences=False)
 
     save_model(model,filename)
