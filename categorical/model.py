@@ -139,7 +139,8 @@ def embedding_model(model=None, infer_encode=None, infer_decode=None):
 def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=None):
 
     x_shape = (None,units)
-    lstm_unit =  units
+    lstm_unit_a =  units
+    lstm_unit_b = units * 2
     embed_unit = int(hparams['embed_size'])
 
     valid_word_a = Input(shape=(None,))
@@ -147,7 +148,7 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
     embeddings_a = Embedding(words,embed_unit ,
                              weights=[embedding_weights_a],
-                             input_length=lstm_unit,
+                             input_length=lstm_unit_a,
                              #batch_size=batch_size,
                              #input_shape=(None,lstm_unit,words),
                              trainable=False
@@ -155,7 +156,7 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
     embed_a = embeddings_a(valid_word_a)
 
     ### encoder for training ###
-    lstm_a = Bidirectional(LSTM(units=lstm_unit, #input_shape=(None,lstm_unit),
+    lstm_a = Bidirectional(LSTM(units=lstm_unit_a, #input_shape=(None,lstm_unit),
                                 return_sequences=True,
                                 return_state=True
                                 ), merge_mode='concat')
@@ -165,12 +166,14 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
     recurrent_a, reca_1, reca_2, reca_3, reca_4 = lstm_a(embed_a) #valid_word_a
     #print(len(recurrent_a),'len')
 
-    lstm_a_states = [reca_2 , reca_4 ]#, recurrent_a[1], recurrent_a[3]]
+    concat_a_1 = Concatenate(axis=-1)([reca_1, reca_3])
+    concat_a_2 = Concatenate(axis=-1)([reca_2, reca_4])
 
+    lstm_a_states = [concat_a_1, concat_a_2] # [reca_2 , reca_4 ]
 
     ### decoder for training ###
     embeddings_b = Embedding(words, embed_unit,
-                             input_length=lstm_unit,
+                             input_length=lstm_unit_a,
                              # batch_size=batch_size,
                              #input_shape=(words,),
                              weights=[embedding_weights_b],
@@ -178,7 +181,7 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
                              )
     embed_b = embeddings_b(valid_word_b)
 
-    lstm_b = LSTM(units=lstm_unit ,
+    lstm_b = LSTM(units=lstm_unit_b ,
                   #return_sequences=True,
                   return_state=True
                   )
@@ -203,8 +206,8 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
     ### decoder for inference ###
 
-    input_h = Input(shape=(None,lstm_unit))
-    input_c = Input(shape=(None,lstm_unit))
+    input_h = Input(shape=(None,lstm_unit_b))
+    input_c = Input(shape=(None,lstm_unit_b))
 
     inputs_inference = [input_h, input_c]
 
@@ -308,7 +311,7 @@ def predict_sequence(infer_enc, infer_dec, source, n_steps,lst,dict, decode=Fals
 def _fill_vec(sent, lst, dict):
     s = sent.lower().split()
     out = []
-    l = np.zeros((hparams['units']))
+    l = np.zeros((len(s)))
     for i in s:
         if i in lst:
             out.append( dict[i])
@@ -361,7 +364,7 @@ def check_sentence(x2, y, lst=None, start = 0):
 
 def stack_sentences_categorical(xx, vocab_list, shift_output=False):
 
-    batch = units 
+    batch = units
     tot = xx.shape[0] // batch
     out = None
     if not shift_output:
@@ -464,7 +467,10 @@ if True:
 
     l, d = load_vocab(vocab_fr)
     model = load_model_file(model,filename, l)
-    #model.summary()
+
+    model.summary()
+    exit()
+
     train_model_categorical(model,l,d, check_sentences=False)
 
     save_model(model,filename)
