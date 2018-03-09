@@ -65,7 +65,7 @@ def open_sentences(filename):
 
 
 def categorical_input_one(filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
-    tokens = units #tokens_per_sentence #units
+    tokens = tokens_per_sentence #units #tokens_per_sentence #units
     text_x1 = open_sentences(filename)
     out_x1 = np.zeros(( length * tokens))
     #if batch == -1: batch = batch_size
@@ -149,7 +149,7 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
     embeddings_a = Embedding(words,embed_unit ,
                              weights=[embedding_weights_a],
-                             input_length=lstm_unit_a,
+                             input_length=tokens_per_sentence, #lstm_unit_a,
                              #batch_size=batch_size,
                              #input_shape=(None,lstm_unit,words),
                              trainable=False
@@ -164,17 +164,17 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
     #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-    recurrent_a, reca_1, reca_2, reca_3, reca_4 = lstm_a(embed_a) #valid_word_a
+    recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
     #print(len(recurrent_a),'len')
 
-    concat_a_1 = Concatenate(axis=-1)([reca_1, reca_3])
-    concat_a_2 = Concatenate(axis=-1)([reca_2, reca_4])
+    concat_a_1 = Concatenate(axis=-1)([rec_a_1, rec_a_2])
+    concat_a_2 = Concatenate(axis=-1)([rec_a_3, rec_a_4])
 
-    lstm_a_states = [concat_a_1, concat_a_2] # [reca_2 , reca_4 ]
+    lstm_a_states = [concat_a_1, concat_a_2]
 
     ### decoder for training ###
     embeddings_b = Embedding(words, embed_unit,
-                             input_length=lstm_unit_a,
+                             input_length=tokens_per_sentence, #lstm_unit_a,
                              # batch_size=batch_size,
                              #input_shape=(words,),
                              weights=[embedding_weights_b],
@@ -343,7 +343,7 @@ def model_infer(filename):
 
 def check_sentence(x2, y, lst=None, start = 0):
     print(x2.shape, y.shape, train_to)
-    ii = 7
+    ii = tokens_per_sentence
     for k in range(10):
         print(k,lst[k])
     c = open_sentences(train_to)
@@ -352,15 +352,46 @@ def check_sentence(x2, y, lst=None, start = 0):
     for j in range(start, start + 8):
         print("x >",j,end=' ')
         for i in range(ii):
-            vec_x = x2[i + units * j]
+            vec_x = x2[i + tokens_per_sentence * j]
             print(lst[int(vec_x)], ' ' , int(vec_x),' ',end=' ')
         print()
         print("y >",j, end=' ')
         for i in range(ii):
-            vec_y = y[i + units * j,:]
+            vec_y = y[i + tokens_per_sentence * j,:]
             vec_y = np.argmax(vec_y)
             print(lst[int(vec_y)], ' ', vec_y,' ', end=' ')
         print()
+
+def three_input_mod(xx1, xx2, yy, dict):
+    tot = len(xx1)
+    steps = tot // tokens_per_sentence
+    x1 = []
+    x2 = []
+    y = []
+
+    for i in range(steps):
+
+        end1 = False
+        end2 = False
+        for j in range(tokens_per_sentence):
+
+            c = i * tokens_per_sentence + j
+            if j == 0:
+                if xx1[c] != dict[hparams['sol']]:
+                    print('bad sentence start')
+                if xx2[c] != dict[hparams['sol']]:
+                    print('bad sentence start')
+            if (not end1) and (not end2):
+                x1.append(xx1[c])
+                x2.append(xx2[c])
+                y.append(yy[c])
+            if xx1[c] == dict[hparams['eol']]: end1 = True
+            if xx2[c] == dict[hparams['eol']]: end2 = True
+
+    xx1 = np.array(x1)
+    xx2 = np.array(x2)
+    yy =  np.array(y)
+    return xx1, xx2, yy
 
 
 def stack_sentences_categorical(xx, vocab_list, shift_output=False):
@@ -415,6 +446,9 @@ def train_model_categorical(model, list, dict,train_model=True, check_sentences=
             x1 = stack_sentences_categorical(x1,list)
             x2 = stack_sentences_categorical(x2,list)
             y =  stack_sentences_categorical(y,list, shift_output=True)
+
+            x1, x2, y = three_input_mod(x1,x2,y, dict)
+
             if check_sentences:
                 check_sentence(x2, y,list, 0)
                 exit()
@@ -422,7 +456,7 @@ def train_model_categorical(model, list, dict,train_model=True, check_sentences=
                 model.fit([x1, x2], y, batch_size=16)
             if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                 model_infer(train_to)
-        except Exception as e:
+        except KeyboardInterrupt as e:
             print(repr(e))
             save_model(model,filename + ".backup")
         finally:

@@ -17,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="359">
-              <caret line="229" column="43" lean-forward="false" selection-start-line="229" selection-start-column="43" selection-end-line="229" selection-end-column="43" />
+            <state relative-caret-position="557">
+              <caret line="508" column="60" lean-forward="false" selection-start-line="508" selection-start-column="60" selection-end-line="508" selection-end-column="60" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -131,7 +131,6 @@
       <find>train_embedding_model_api</find>
       <find>word_and_vector_size_arrays</find>
       <find>get_dataset</find>
-      <find>tokens_per_sentence</find>
       <find>get_batch</find>
       <find>swap_axes</find>
       <find>batch_train</find>
@@ -145,6 +144,7 @@
       <find>embedding_model_lstm</find>
       <find>embedding_model</find>
       <find>print</find>
+      <find>tokens_per_sentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -196,7 +196,6 @@
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -228,6 +227,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -638,8 +638,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="359">
-          <caret line="229" column="43" lean-forward="false" selection-start-line="229" selection-start-column="43" selection-end-line="229" selection-end-column="43" />
+        <state relative-caret-position="557">
+          <caret line="508" column="60" lean-forward="false" selection-start-line="508" selection-start-column="60" selection-end-line="508" selection-end-column="60" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
