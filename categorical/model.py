@@ -37,6 +37,7 @@ raw_embedding_filename = hparams['raw_embedding_filename']
 
 base_file_num = str(hparams['base_file_num'])
 batch_constant = int(hparams['batch_constant'])
+learning_rate = hparams['learning_rate']
 filename = None
 model = None
 
@@ -226,7 +227,7 @@ def embedding_model_lstm(words, embedding_weights_a=None, embedding_weights_b=No
 
     ### boilerplate ###
 
-    adam = optimizers.Adam(lr=0.001)
+    adam = optimizers.Adam(lr=learning_rate)
 
     # try 'sparse_categorical_crossentropy', 'mse'
     model.compile(optimizer=adam, loss='binary_crossentropy')
@@ -381,7 +382,7 @@ def stack_sentences_categorical(xx, vocab_list, shift_output=False):
         else:
             out[i,:] = to_categorical(x, len(vocab_list))
     if not shift_output:
-        print(out.shape)
+        #print(out.shape)
         #out = np.swapaxes(out,0,1)
         pass
     else:
@@ -468,8 +469,8 @@ if True:
     l, d = load_vocab(vocab_fr)
     model = load_model_file(model,filename, l)
 
-    model.summary()
-    exit()
+    #model.summary()
+    #exit()
 
     train_model_categorical(model,l,d, check_sentences=False)
 
