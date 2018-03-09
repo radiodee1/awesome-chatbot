@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="557">
-              <caret line="508" column="60" lean-forward="false" selection-start-line="508" selection-start-column="60" selection-end-line="508" selection-end-column="60" />
+            <state relative-caret-position="468">
+              <caret line="524" column="4" lean-forward="false" selection-start-line="524" selection-start-column="4" selection-end-line="524" selection-end-column="4" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -62,8 +61,8 @@
       <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
-              <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
+            <state relative-caret-position="516">
+              <caret line="63" column="26" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="26" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
@@ -145,6 +144,7 @@
       <find>embedding_model</find>
       <find>print</find>
       <find>tokens_per_sentence</find>
+      <find>to_c</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -565,16 +565,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="39" column="5" lean-forward="false" selection-start-line="39" selection-start-column="5" selection-end-line="39" selection-end-column="5" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_launch_series.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
@@ -636,10 +626,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="516">
+          <caret line="63" column="26" lean-forward="false" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="26" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="557">
-          <caret line="508" column="60" lean-forward="false" selection-start-line="508" selection-start-column="60" selection-end-line="508" selection-end-column="60" />
+        <state relative-caret-position="468">
+          <caret line="524" column="4" lean-forward="false" selection-start-line="524" selection-start-column="4" selection-end-line="524" selection-end-column="4" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
