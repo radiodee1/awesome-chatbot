@@ -62,7 +62,6 @@ class ChatModel:
         # put everything here.
 
         self.word_embeddings = None
-        #self.word_matrix = None
         self.glove_model = None
         self.filename = None
 
@@ -158,7 +157,9 @@ class ChatModel:
     def find_vec(self,word):
 
         if self.vocab_dict[word] > len(self.vocab_list):
-            return np.random.random_sample((hparams['embed_size']))
+            return np.zeros((hparams['embed_size']))
+            #return np.random.uniform(size=(hparams['embed_size']))
+
         return self.word_embeddings[0][self.vocab_dict[word]]
         #return self.glove_model.wv[word]
         #return self.word_embeddings.loc[word].as_matrix()
@@ -184,16 +185,20 @@ class ChatModel:
 
     def load_word_vectors(self):
         ''' do after all training, before every eval. also before stack_sentences '''
-        self.word_embeddings = model.get_layer('embedding_2').get_weights()
+        self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
 
         #print(self.word_embeddings, len(self.word_embeddings[0]))
         #print(self.word_embeddings[0].shape)
         #for i in range(len(model.layers)):
         #    print(model.get_layer(i).name )
 
-    def embedding_model(self,model=None, infer_encode=None, infer_decode=None):
+    def embedding_model(self,model=None, infer_encode=None, infer_decode=None, global_check=False):
         if model is not None and infer_encode is not None and infer_decode is not None:
             return model, infer_encode, infer_decode
+
+        if (global_check and self.model is not None and
+                self.model_encoder  is not None and self.model_inference  is not None):
+            return self.model, self.model_encoder, self.model_inference
 
         embed_size = int(hparams['embed_size'])
         #lst, dict = self.load_vocab(vocab_fr)
@@ -211,25 +216,31 @@ class ChatModel:
                 word = self.vocab_list[line]
                 #print(word, line)
                 if word in self.glove_model.wv.vocab:
-                    values = self.glove_model.wv[word]
+                    values =  self.glove_model.wv[word]
 
                     value = np.asarray(values, dtype='float32')
 
+                    embeddings_index[word] = value
+                else:
+                    #value = np.random.uniform(size=(embed_size,))
+                    value = np.zeros((embed_size,))
                     embeddings_index[word] = value
             f.close()
 
             #print('Loaded %s word vectors.' % len(embeddings_index))
 
-            embedding_matrix = np.zeros((len(self.vocab_list) , embed_size))
+            embedding_matrix = np.zeros((len(self.vocab_list) +1, embed_size))
             for word, i in self.vocab_dict.items():
                 embedding_vector = embeddings_index.get(word)
                 if embedding_vector is not None:
                     # words not found in embedding index will be all random.
                     embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
-                    embedding_matrix[i] = np.random.random_sample((embed_size,))
+                    #embedding_matrix[i] = np.random.uniform(size=(embed_size,))
+                    embedding_matrix[i] = np.zeros((embed_size,))
 
-        return self.embedding_model_lstm(len(self.vocab_list) , embedding_matrix, embedding_matrix, trainable)
+
+        return self.embedding_model_lstm(len(self.vocab_list) +1, embedding_matrix, embedding_matrix, trainable)
 
 
     def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False):
@@ -353,11 +364,14 @@ class ChatModel:
         if lst is None or dict is None:
             lst, dict = self.load_vocab(vocab_fr)
 
-        model, infer_enc, infer_dec = self.embedding_model(model,infer_enc,infer_dec)
+        self.model,self.model_encoder,self.model_inference = self.embedding_model(self.model,
+                                                                                  self.model_encoder,
+                                                                                  self.model_inference,
+                                                                                  global_check=True)
 
         source = self._fill_vec(txt,lst,dict)
         #print(source.shape,'source')
-        state = infer_enc.predict(source)
+        state = self.model_encoder.predict(source)
 
         #vec = source
         txt_out = []
@@ -378,10 +392,10 @@ class ChatModel:
                 #print(vec)
                 if len(state) > 0 :
                     #print(state[0][0])
-                    predict , ws = self.predict_sequence(infer_enc, infer_dec, state[0][0], steps,lst,dict)
+                    predict , ws = self.predict_sequence(self.model_encoder, self.model_inference, state[0][0], steps,lst,dict)
                     state = []
                 else:
-                    predict, ws = self.predict_sequence(infer_enc, infer_dec, vec, steps, lst, dict)
+                    predict, ws = self.predict_sequence(self.model_encoder, self.model_inference, vec, steps, lst, dict)
                 txt_out.append(ws)
                 if switch or t[i] == hparams['eol']:
                     txt_out.append('|')
@@ -455,15 +469,18 @@ class ChatModel:
         g = randint(0, len(c))
         line = c[g]
         line = line.strip('\n')
-        model, infer_enc, infer_dec = self.embedding_model()
+        self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
+                                                                                    self.model_encoder,
+                                                                                    self.model_inference,
+                                                                                    global_check=True)
         print('----------------')
         print('index:',g)
         print('input:',line)
-        self.predict_word(line, lst, dict, model,infer_enc,infer_dec)
+        self.predict_word(line, lst, dict, self.model, self.model_encoder,self.model_inference)
         print('----------------')
         line = 'sol what is up ? eol'
         print('input:', line)
-        self.predict_word(line, lst, dict,model,infer_enc,infer_dec)
+        self.predict_word(line, lst, dict,self.model,self.model_encoder,self.model_inference)
 
 
     def check_sentence(self,x2, y, lst=None, start = 0):
@@ -553,11 +570,14 @@ class ChatModel:
             pass
         return out
 
-    def train_model_categorical(self, model, list, dict,train_model=True, check_sentences=False):
+    def train_model_categorical(self, model_in, list, dict,train_model=True, check_sentences=False):
         print('stage: arrays prep for test/train')
 
-        if model is None: model, _, _ = self.embedding_model()
-        if not check_sentences: model.summary()
+        if self.model is None: self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
+                                                                                                      self.model_encoder,
+                                                                                                      self.model_inference,
+                                                                                                      global_check=True)
+        if not check_sentences: self.model.summary()
         tot = len(self.open_sentences(train_fr))
 
         self.load_word_vectors()
@@ -588,12 +608,12 @@ class ChatModel:
                     self.check_sentence(x2, y, list, 0)
                     exit()
                 if train_model:
-                    model.fit([x1, x2], y, batch_size=16)
+                    self.model.fit([x1, x2], y, batch_size=16)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.model_infer(train_to)
             except KeyboardInterrupt as e:
                 print(repr(e))
-                self.save_model(model,filename + ".backup")
+                self.save_model(self.model,filename + ".backup")
                 exit()
             finally:
                 pass
@@ -622,13 +642,19 @@ class ChatModel:
             print('stage: load failed')
         return model
 
-    def load_vocab(self,filename):
+    def load_vocab(self,filename, global_check=False):
         ''' assume there is one word per line in vocab text file '''
+
+        if global_check and self.vocab_list is not None and self.vocab_dict is not None:
+            return self.vocab_list, self.vocab_dict
+
         dict = {}
         list = self.open_sentences(filename)
         for i in range(len(list)):
             list[i] = list[i].strip()
             dict[list[i]] = i
+        self.vocab_list = list
+        self.vocab_dict = dict
         return list, dict
 
 if __name__ == '__main__':
@@ -640,18 +666,19 @@ if __name__ == '__main__':
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
         l, d = c.load_vocab(vocab_fr)
-        model = c.load_model_file(model,filename, l)
+        c.model = c.load_model_file(model,filename, l)
 
         #model.summary()
         #exit()
 
         c.train_model_categorical(model,l,d, check_sentences=False)
 
-        c.save_model(model,filename)
+        c.save_model(c.model,filename)
 
         #print(c.find_closest_word(c.find_vec('str95bb')), 'str95bb')
 
     if True:
+
         c.load_word_vectors()
         c.model_infer(train_to)
 

@@ -17,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1">
-              <caret line="90" column="66" lean-forward="false" selection-start-line="90" selection-start-column="62" selection-end-line="90" selection-end-column="66" />
+            <state relative-caret-position="144">
+              <caret line="159" column="52" lean-forward="false" selection-start-line="159" selection-start-column="52" selection-end-line="159" selection-end-column="52" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -129,15 +129,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>batch_train</find>
-      <find>vector_input_one</find>
-      <find>recurrent_a</find>
-      <find>words</find>
-      <find>start</find>
       <find>batch_size</find>
       <find>_set_t_values</find>
       <find>embedding_model_lstm</find>
-      <find>embedding_model</find>
       <find>tokens_per_sentence</find>
       <find>to_c</find>
       <find>argmax</find>
@@ -153,12 +147,18 @@
       <find>load_words</find>
       <find>vocab_fr</find>
       <find>word_embeddings</find>
-      <find>model_infer</find>
       <find>predict_word</find>
       <find>find_closest_word</find>
       <find>vocab_dict</find>
-      <find>load_vocab</find>
       <find>dict</find>
+      <find>model_inference</find>
+      <find>embedding_model</find>
+      <find>global_check</find>
+      <find>load_model_file</find>
+      <find>load_vocab</find>
+      <find>load_word_vectors</find>
+      <find>model_infer</find>
+      <find>uniform</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -672,8 +672,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1">
-          <caret line="90" column="66" lean-forward="false" selection-start-line="90" selection-start-column="62" selection-end-line="90" selection-end-column="66" />
+        <state relative-caret-position="144">
+          <caret line="159" column="52" lean-forward="false" selection-start-line="159" selection-start-column="52" selection-end-line="159" selection-end-column="52" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
