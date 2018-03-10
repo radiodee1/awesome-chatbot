@@ -10,6 +10,8 @@ from keras.layers import Concatenate, Add, Multiply
 from keras.models import load_model
 from keras import optimizers
 from keras.utils import to_categorical
+from gensim.models.keyedvectors import KeyedVectors
+
 from random import randint
 from keras import backend as K
 import tensorflow as tf
@@ -131,8 +133,7 @@ class ChatModel:
 
     def load_words(self,filename):
         pass
-        #from gensim.models.keyedvectors import KeyedVectors
-        #self.glove_model = KeyedVectors.load_word2vec_format(filename, binary=False)
+        self.glove_model = KeyedVectors.load_word2vec_format(filename, binary=False)
 
         '''
         self.word_embeddings = pd.read_table(filename,
@@ -192,7 +193,7 @@ class ChatModel:
 
         embed_size = int(hparams['embed_size'])
         #lst, dict = self.load_vocab(vocab_fr)
-        trainable = False
+        trainable = True
         embeddings_index = {}
         glove_data = hparams['data_dir'] + hparams['embed_name']
         if not os.path.isfile(glove_data) or hparams['use_embed'] == False:
@@ -222,10 +223,10 @@ class ChatModel:
                     # words not found in embedding index will be all-zeros.
                     embedding_matrix[i] = embedding_vector[:embed_size]
 
-        return self.embedding_model_lstm(len(self.vocab_list), embedding_matrix, embedding_matrix)
+        return self.embedding_model_lstm(len(self.vocab_list), embedding_matrix, embedding_matrix, trainable)
 
 
-    def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None):
+    def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False):
 
         x_shape = (None,units)
         lstm_unit_a =  units
@@ -237,10 +238,10 @@ class ChatModel:
 
         if  embedding_weights_a is not None:
             embeddings_a = Embedding(words,embed_unit ,
-                                 weights=[embedding_weights_a],
-                                 input_length=tokens_per_sentence,
-                                 trainable=False
-                                 )
+                                     weights=[embedding_weights_a],
+                                     input_length=tokens_per_sentence,
+                                     trainable=trainable
+                                     )
         else:
             embeddings_a = Embedding(words, embed_unit,
                                      #weights=[embedding_weights_a],
@@ -270,10 +271,10 @@ class ChatModel:
 
         if embedding_weights_b is not None:
             embeddings_b = Embedding(words, embed_unit,
-                                 input_length=tokens_per_sentence, #lstm_unit_a,
-                                 weights=[embedding_weights_b],
-                                 trainable=False
-                                 )
+                                     input_length=tokens_per_sentence, #lstm_unit_a,
+                                     weights=[embedding_weights_b],
+                                     trainable=trainable
+                                     )
         else:
             embeddings_b = Embedding(words, embed_unit,
                                      input_length=tokens_per_sentence,  # lstm_unit_a,
@@ -638,7 +639,7 @@ if __name__ == '__main__':
         #model.summary()
         #exit()
 
-        c.train_model_categorical(model,l,d, check_sentences=True)
+        c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(model,filename)
 
