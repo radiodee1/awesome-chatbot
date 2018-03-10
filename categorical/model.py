@@ -158,7 +158,7 @@ class ChatModel:
     def find_vec(self,word):
 
         if self.vocab_dict[word] > len(self.vocab_list):
-            return np.zeros((hparams['embed_size']))
+            return np.random.random_sample((hparams['embed_size']))
         return self.word_embeddings[0][self.vocab_dict[word]]
         #return self.glove_model.wv[word]
         #return self.word_embeddings.loc[word].as_matrix()
@@ -168,6 +168,9 @@ class ChatModel:
         diff = self.word_embeddings[0] - vec
         delta = np.sum(diff * diff, axis=1)
         i = np.argmin(delta)
+        if i < 0 or i > len(self.vocab_list) :
+            print('unknown index',i)
+            i = 0
         #print(self.word_embeddings.iloc[i].name)
         return self.vocab_list[int(i)]
 
@@ -221,10 +224,12 @@ class ChatModel:
             for word, i in self.vocab_dict.items():
                 embedding_vector = embeddings_index.get(word)
                 if embedding_vector is not None:
-                    # words not found in embedding index will be all-zeros.
+                    # words not found in embedding index will be all random.
                     embedding_matrix[i] = embedding_vector[:embed_size]
+                else:
+                    embedding_matrix[i] = np.random.random_sample((embed_size,))
 
-        return self.embedding_model_lstm(len(self.vocab_list), embedding_matrix, embedding_matrix, trainable)
+        return self.embedding_model_lstm(len(self.vocab_list) , embedding_matrix, embedding_matrix, trainable)
 
 
     def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False):
@@ -577,10 +582,10 @@ class ChatModel:
                 x2 = self.stack_sentences_categorical(x2,list)
                 y =  self.stack_sentences_categorical(y,list, shift_output=True)
 
-                #x1, x2, y = self.three_input_mod(x1,x2,y, dict)
+                x1, x2, y = self.three_input_mod(x1,x2,y, dict)
 
                 if check_sentences:
-                    self.check_sentence(x2, y,list, 0)
+                    self.check_sentence(x2, y, list, 0)
                     exit()
                 if train_model:
                     model.fit([x1, x2], y, batch_size=16)

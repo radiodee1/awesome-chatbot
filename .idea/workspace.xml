@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="503">
-              <caret line="186" column="9" lean-forward="false" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
+            <state relative-caret-position="-1">
+              <caret line="90" column="66" lean-forward="false" selection-start-line="90" selection-start-column="62" selection-end-line="90" selection-end-column="66" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -128,11 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>train_embedding_model_api</find>
-      <find>word_and_vector_size_arrays</find>
-      <find>get_dataset</find>
-      <find>get_batch</find>
-      <find>swap_axes</find>
       <find>batch_train</find>
       <find>vector_input_one</find>
       <find>recurrent_a</find>
@@ -156,8 +152,13 @@
       <find>find_vec</find>
       <find>load_words</find>
       <find>vocab_fr</find>
-      <find>vocab_dict</find>
       <find>word_embeddings</find>
+      <find>model_infer</find>
+      <find>predict_word</find>
+      <find>find_closest_word</find>
+      <find>vocab_dict</find>
+      <find>load_vocab</find>
+      <find>dict</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -188,7 +189,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="523" />
+    <option name="x" value="522" />
     <option name="y" value="57" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -276,7 +277,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="523" y="57" width="1380" height="1000" extended-state="0" />
+    <frame x="522" y="57" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -671,8 +672,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="503">
-          <caret line="186" column="9" lean-forward="false" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
+        <state relative-caret-position="-1">
+          <caret line="90" column="66" lean-forward="false" selection-start-line="90" selection-start-column="62" selection-end-line="90" selection-end-column="66" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
