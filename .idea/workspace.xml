@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/categorical/do_prep_emmbedding.sh" afterPath="$PROJECT_DIR$/categorical/do_prep_emmbedding.sh" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
+      <change beforePath="$PROJECT_DIR$/categorical/settings.py" afterPath="$PROJECT_DIR$/categorical/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +19,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1601">
-              <caret line="359" column="32" lean-forward="false" selection-start-line="359" selection-start-column="32" selection-end-line="359" selection-end-column="32" />
+            <state relative-caret-position="107">
+              <caret line="258" column="43" lean-forward="false" selection-start-line="258" selection-start-column="43" selection-end-line="258" selection-end-column="43" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -51,8 +54,8 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/categorical/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="432">
-              <caret line="24" column="29" lean-forward="false" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
+            <state relative-caret-position="342">
+              <caret line="19" column="22" lean-forward="false" selection-start-line="19" selection-start-column="22" selection-end-line="19" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -66,6 +69,16 @@
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="do_prep_emmbedding.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/categorical/do_prep_emmbedding.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="7" column="135" lean-forward="false" selection-start-line="7" selection-start-column="135" selection-end-line="7" selection-end-column="135" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -118,11 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tokenize_text_to</find>
-      <find>tokenize_voc_to</find>
-      <find>model_generate_new</find>
-      <find>sentence_to_wordlist</find>
-      <find>word_count</find>
       <find>base_filename</find>
       <find>train_embedding_model_api</find>
       <find>word_and_vector_size_arrays</find>
@@ -135,11 +143,9 @@
       <find>words</find>
       <find>start</find>
       <find>batch_size</find>
-      <find>categorical_input_one</find>
       <find>_set_t_values</find>
       <find>embedding_model_lstm</find>
       <find>embedding_model</find>
-      <find>print</find>
       <find>tokens_per_sentence</find>
       <find>to_c</find>
       <find>argmax</find>
@@ -148,6 +154,13 @@
       <find>lstm_unit_b</find>
       <find>valid_word_b</find>
       <find>_fill_vec</find>
+      <find>three_input_mod</find>
+      <find>categorical_input_one</find>
+      <find>print</find>
+      <find>find_vec</find>
+      <find>load_words</find>
+      <find>vocab_fr</find>
+      <find>vocab_dict</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -179,7 +192,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="522" />
-    <option name="y" value="56" />
+    <option name="y" value="57" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
   </component>
@@ -198,7 +211,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -231,6 +243,7 @@
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -266,7 +279,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="522" y="56" width="1380" height="1000" extended-state="0" />
+    <frame x="522" y="57" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -614,13 +627,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/categorical/do_prep_emmbedding.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="17" lean-forward="false" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="516">
@@ -631,18 +637,26 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/categorical/do_prep_emmbedding.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="126">
+          <caret line="7" column="135" lean-forward="false" selection-start-line="7" selection-start-column="135" selection-end-line="7" selection-end-column="135" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/categorical/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="432">
-          <caret line="24" column="29" lean-forward="false" selection-start-line="24" selection-start-column="29" selection-end-line="24" selection-end-column="29" />
+        <state relative-caret-position="342">
+          <caret line="19" column="22" lean-forward="false" selection-start-line="19" selection-start-column="22" selection-end-line="19" selection-end-column="22" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1601">
-          <caret line="359" column="32" lean-forward="false" selection-start-line="359" selection-start-column="32" selection-end-line="359" selection-end-column="32" />
+        <state relative-caret-position="107">
+          <caret line="258" column="43" lean-forward="false" selection-start-line="258" selection-start-column="43" selection-end-line="258" selection-end-column="43" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
