@@ -165,7 +165,7 @@ class ChatModel:
 
     def find_closest_word(self,vec):
 
-        diff = self.word_embeddings - vec
+        diff = self.word_embeddings[0] - vec
         delta = np.sum(diff * diff, axis=1)
         i = np.argmin(delta)
         #print(self.word_embeddings.iloc[i].name)
@@ -174,7 +174,7 @@ class ChatModel:
         #return self.glove_model.wv.most_similar(positive=[vec],topn=1)[0][0]
 
     def find_closest_index(self,vec):
-        diff = self.word_embeddings - vec
+        diff = self.word_embeddings[0] - vec
         delta = np.sum(diff * diff, axis=1)
         i = np.argmin(delta)
         return i
@@ -184,6 +184,7 @@ class ChatModel:
         self.word_embeddings = model.get_layer('embedding_2').get_weights()
 
         #print(self.word_embeddings, len(self.word_embeddings[0]))
+        #print(self.word_embeddings[0].shape)
         #for i in range(len(model.layers)):
         #    print(model.get_layer(i).name )
 
