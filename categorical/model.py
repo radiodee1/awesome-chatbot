@@ -5,7 +5,7 @@ from settings import hparams
 from keras.preprocessing import text, sequence
 from keras.models import Sequential , Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
-from keras.layers import Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda
+from keras.layers import Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda, Dropout
 from keras.layers import Concatenate, Add, Multiply, Average
 from keras.models import load_model
 from keras import optimizers
@@ -244,6 +244,7 @@ class ChatModel:
     def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False):
 
         x_shape = (units,)
+        latent_dim = 64
         lstm_unit_a =  units
         lstm_unit_b = units # * 2
         embed_unit = int(hparams['embed_size'])
@@ -269,13 +270,15 @@ class ChatModel:
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
                                     return_sequences=True,
-                                    return_state=True
+                                    return_state=True,
+                                    recurrent_dropout=0.5
                                     ), merge_mode='mul')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
         recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
         #print(len(recurrent_a),'len')
+
 
         concat_a_1 = Multiply()([rec_a_1, rec_a_3])
         concat_a_2 = Multiply()([rec_a_2, rec_a_4])
@@ -300,14 +303,15 @@ class ChatModel:
         embed_b = embeddings_b(valid_word_b)
 
         lstm_b = LSTM(units=lstm_unit_b ,
+                      recurrent_dropout=0.5,
                       #return_sequences=True,
                       return_state=True
                       )
 
         recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
 
-        dense_b = Dense(embed_unit, #words
-                        activation='relu', #softmax
+        dense_b = Dense(embed_unit,
+                        activation='softmax', #softmax or relu
                         #name='dense_layer_b',
                         #batch_input_shape=(None,lstm_unit)
                         )
@@ -315,9 +319,9 @@ class ChatModel:
 
         decoder_b = dense_b(recurrent_b) # recurrent_b
 
+        dropout_b = Dropout(0.5)(decoder_b)
 
-
-        model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
+        model = Model([valid_word_a,valid_word_b], dropout_b) # decoder_b
 
         ### encoder for inference ###
         model_encoder = Model(valid_word_a, lstm_a_states)
@@ -387,17 +391,19 @@ class ChatModel:
                 txt_out.append(str(out))
                 if int(out) < len(self.vocab_list):
                     txt_out.append(self.vocab_list[int(out)])
+
         print('---greedy predict---')
         print(' '.join(txt_out))
 
-        print('---basic predict---')
-        out = self.model.predict([source_input, source_input])
-        t_out = []
-        for i in range(len(source_input)):
-            word = self.find_closest_word(out[i])
-            t_out.append(word)
-        print(' '.join(t_out))
-        print(self.find_closest_word(out[0]))
+        if False:
+            print('---basic predict---')
+            out = self.model.predict([source_input, source_input])
+            t_out = []
+            for i in range(len(source_input)):
+                word = self.find_closest_word(out[i])
+                t_out.append(word)
+            print(' '.join(t_out))
+            print(self.find_closest_word(out[0]))
         pass
 
     def _fill_vec(self, sent, lst, dict):
@@ -429,11 +435,19 @@ class ChatModel:
         print('----------------')
         print('index:',g)
         print('input:',line)
-        self.predict_words(line) #, lst, dict, self.model, self.model_encoder,self.model_inference)
+        self.predict_words(line)
         print('----------------')
         line = 'sol what is up ? eol'
         print('input:', line)
-        self.predict_words(line) #, lst, dict,self.model,self.model_encoder,self.model_inference)
+        self.predict_words(line)
+
+        if False:
+            word = 'the'
+            print(word)
+            vec = self.find_vec(word)
+            i = self.find_closest_index(vec)
+            print(self.vocab_list[i],self.find_closest_word(vec), 'close')
+
         if False:
             self.model_encoder.summary()
             self.model_inference.summary()
@@ -558,7 +572,7 @@ class ChatModel:
                 x2 = self.stack_sentences_categorical(x2,list)
                 y =  self.stack_sentences_categorical(y,list, shift_output=True)
 
-                #x1, x2, y = self.three_input_mod(x1,x2,y, dict)
+                #x1, x2, y = self.three_input_mod(x1,x2,y, dict) ## seems to work better without this.
 
                 if check_sentences:
                     self.check_sentence(x2, y, list, 0)
