@@ -270,15 +270,15 @@ class ChatModel:
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
                                     return_sequences=True,
                                     return_state=True
-                                    ), merge_mode='sum')
+                                    ), merge_mode='mul')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
         recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
         #print(len(recurrent_a),'len')
 
-        concat_a_1 = Add()([rec_a_1, rec_a_3])
-        concat_a_2 = Add()([rec_a_2, rec_a_4])
+        concat_a_1 = Multiply()([rec_a_1, rec_a_3])
+        concat_a_2 = Multiply()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
 
