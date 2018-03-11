@@ -311,9 +311,8 @@ class ChatModel:
         recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
 
         dense_b = Dense(embed_unit,
-                        activation='softmax', #softmax or relu
+                        activation='relu', #softmax or relu
                         #name='dense_layer_b',
-                        #batch_input_shape=(None,lstm_unit)
                         )
 
 
@@ -357,8 +356,8 @@ class ChatModel:
 
         adam = optimizers.Adam(lr=learning_rate)
 
-        # try 'sparse_categorical_crossentropy', 'mse', 'binary_crossentropy'
-        model.compile(optimizer=adam, loss='categorical_crossentropy')
+        # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
+        model.compile(optimizer=adam, loss='binary_crossentropy')
 
         return model, model_encoder, model_inference
 
