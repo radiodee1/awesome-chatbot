@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="683">
-              <caret line="236" column="104" lean-forward="false" selection-start-line="236" selection-start-column="104" selection-end-line="236" selection-end-column="104" />
+            <state relative-caret-position="341">
+              <caret line="386" column="26" lean-forward="false" selection-start-line="386" selection-start-column="26" selection-end-line="386" selection-end-column="26" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -128,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>batch_size</find>
       <find>_set_t_values</find>
       <find>embedding_model_lstm</find>
       <find>tokens_per_sentence</find>
@@ -158,6 +158,7 @@
       <find>load_word_vectors</find>
       <find>model_infer</find>
       <find>uniform</find>
+      <find>lstm_b</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -188,7 +189,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="521" />
+    <option name="x" value="520" />
     <option name="y" value="57" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -276,7 +277,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="521" y="57" width="1380" height="1000" extended-state="0" />
+    <frame x="520" y="57" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -671,8 +672,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="683">
-          <caret line="236" column="104" lean-forward="false" selection-start-line="236" selection-start-column="104" selection-end-line="236" selection-end-column="104" />
+        <state relative-caret-position="341">
+          <caret line="386" column="26" lean-forward="false" selection-start-line="386" selection-start-column="26" selection-end-line="386" selection-end-column="26" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
