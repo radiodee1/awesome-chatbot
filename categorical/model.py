@@ -6,7 +6,7 @@ from keras.preprocessing import text, sequence
 from keras.models import Sequential , Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
 from keras.layers import Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda
-from keras.layers import Concatenate, Add, Multiply
+from keras.layers import Concatenate, Add, Multiply, Average
 from keras.models import load_model
 from keras import optimizers
 from keras.utils import to_categorical
@@ -272,15 +272,15 @@ class ChatModel:
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
                                     return_sequences=True,
                                     return_state=True
-                                    ), merge_mode='mul')
+                                    ), merge_mode='ave')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
         recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
         #print(len(recurrent_a),'len')
 
-        concat_a_1 = Multiply()([rec_a_1, rec_a_3])
-        concat_a_2 = Multiply()([rec_a_2, rec_a_4])
+        concat_a_1 = Average()([rec_a_1, rec_a_3])
+        concat_a_2 = Average()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
 
@@ -399,8 +399,13 @@ class ChatModel:
                 txt_out.append(self.vocab_list[out])
         print(' '.join(txt_out))
 
+        print('------')
         out = self.model.predict([source_input, source_input])
-        print(out[0].shape,'model')
+        t_out = []
+        for i in range(len(source_input)):
+            word = self.find_closest_word(out[i])
+            t_out.append(word)
+        print(' '.join(t_out))
         print(self.find_closest_word(out[0]))
         pass
 
@@ -640,7 +645,7 @@ class ChatModel:
                 if length % int(hparams['units']) != 0:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
-                print('(',s,'= start,', s + length,'= stop)',steps,'at',z+1, ' steps', printable)
+                print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', printable)
                 x1 = self.categorical_input_one(train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
                 x2 = self.categorical_input_one(train_to,list,dict, length, s)
                 y =  self.categorical_input_one(train_to,list,dict, length, s, shift_output=True)
