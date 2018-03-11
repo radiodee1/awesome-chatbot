@@ -307,7 +307,7 @@ class ChatModel:
         recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
 
         dense_b = Dense(embed_unit, #words
-                        activation='softmax', #softmax
+                        activation='relu', #softmax
                         #name='dense_layer_b',
                         #batch_input_shape=(None,lstm_unit)
                         )
@@ -434,6 +434,9 @@ class ChatModel:
         line = 'sol what is up ? eol'
         print('input:', line)
         self.predict_words(line) #, lst, dict,self.model,self.model_encoder,self.model_inference)
+        if False:
+            self.model_encoder.summary()
+            self.model_inference.summary()
 
 
     def check_sentence(self,x2, y, lst=None, start = 0):

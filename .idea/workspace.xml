@@ -16,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="400" column="12" lean-forward="false" selection-start-line="400" selection-start-column="12" selection-end-line="400" selection-end-column="12" />
+            <state relative-caret-position="395">
+              <caret line="436" column="16" lean-forward="false" selection-start-line="436" selection-start-column="16" selection-end-line="436" selection-end-column="16" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -155,9 +155,9 @@
       <find>load_model_file</find>
       <find>load_vocab</find>
       <find>load_word_vectors</find>
-      <find>model_infer</find>
       <find>uniform</find>
       <find>lstm_b</find>
+      <find>model_infer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -671,8 +671,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="400" column="12" lean-forward="false" selection-start-line="400" selection-start-column="12" selection-end-line="400" selection-end-column="12" />
+        <state relative-caret-position="395">
+          <caret line="436" column="16" lean-forward="false" selection-start-line="436" selection-start-column="16" selection-end-line="436" selection-end-column="16" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
