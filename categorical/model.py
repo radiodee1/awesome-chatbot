@@ -359,6 +359,51 @@ class ChatModel:
         return model, model_encoder, model_inference
 
 
+    def predict_words(self,txt):
+
+        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
+
+        self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
+                                                                                    self.model_encoder,
+                                                                                    self.model_inference,
+                                                                                    global_check=True)
+        source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
+        state = self.model_encoder.predict(source_input)
+
+        state_out = [
+            np.expand_dims(np.expand_dims(state[-1][1],0),0),
+            np.expand_dims(np.expand_dims(state[-1][2],0),0)
+        ]
+        txt_out = []
+        t = txt.lower().split()
+        for i in range(len(t) - 1, len(t) * 3):
+            if i < len(t):
+                ## this should happen just once
+                vec = self.vocab_dict[t[i]]
+                print(vec,self.vocab_list[vec],'vec')
+                out = self.model_inference.predict([np.expand_dims(np.array([vec]),0)] + state_out)
+                state = [out[1], out[2]]
+                out = self.find_closest_index(out[0])
+                txt_out.append(str(out))
+            else:
+                ## this should be repeated
+                txt_out.append('|')
+                state_out = [
+                    np.expand_dims(state[0][-1], 0),
+                    np.expand_dims(state[1][-1], 0)
+                ]
+                out = self.model_inference.predict([np.array([out])] + state_out)
+                state = [out[1], out[2]]
+                out = self.find_closest_index(out[0])
+                txt_out.append(str(out))
+                txt_out.append(self.vocab_list[out])
+        print(' '.join(txt_out))
+
+        out = self.model.predict([source_input, source_input])
+        print(out[0].shape,'model')
+        print(self.find_closest_word(out[0]))
+        pass
+
 
     def predict_word(self,txt, lst=None, dict=None, model=None, infer_enc=None, infer_dec=None):
         if lst is None or dict is None:
@@ -369,10 +414,11 @@ class ChatModel:
                                                                                   self.model_inference,
                                                                                   global_check=True)
 
-        source = self._fill_vec(txt,lst,dict)
+        source_input = self._fill_vec(txt,lst,dict)
         #print(source.shape,'source')
-        state = self.model_encoder.predict(source)
+        state = self.model_encoder.predict(source_input)
 
+        print(source_input.shape,'state')
         #vec = source
         txt_out = []
         switch = False
@@ -396,7 +442,7 @@ class ChatModel:
                     state = []
                 else:
                     predict, ws = self.predict_sequence(self.model_encoder, self.model_inference, vec, steps, lst, dict)
-                txt_out.append(ws)
+                #txt_out.append(ws)
                 if switch or t[i] == hparams['eol']:
                     txt_out.append('|')
                     #vec = int(np.argmax(predict))
@@ -421,11 +467,12 @@ class ChatModel:
         source = np.expand_dims(source,0)
         state = infer_enc.predict(source)
         # start of sequence input
-        i = np.argmax(state[0])
+        #i = np.argmax(state[0])
         #ws = self.find_closest_word(state[0])# lst[int(i)]
-        #print(ws, '< state[0]')
+        #print(state[0].shape, '< state[0]', state[1].shape,source.shape, ' ')
         yhat = np.zeros((1,1,hparams['embed_size']))
-        target_seq = state[0] # np.zeros((1,1,units))
+        target_seq = source# self.vocab_dict[hparams['sol']] #state[0] # np.zeros((1,1,units))
+
         state = [ np.expand_dims(state[0],0), np.expand_dims(state[1],0)  ]
         #target_seq = np.expand_dims(target_seq,0)
         #output = list()
@@ -476,11 +523,11 @@ class ChatModel:
         print('----------------')
         print('index:',g)
         print('input:',line)
-        self.predict_word(line, lst, dict, self.model, self.model_encoder,self.model_inference)
+        self.predict_words(line) #, lst, dict, self.model, self.model_encoder,self.model_inference)
         print('----------------')
         line = 'sol what is up ? eol'
         print('input:', line)
-        self.predict_word(line, lst, dict,self.model,self.model_encoder,self.model_inference)
+        self.predict_words(line) #, lst, dict,self.model,self.model_encoder,self.model_inference)
 
 
     def check_sentence(self,x2, y, lst=None, start = 0):
@@ -671,6 +718,7 @@ if __name__ == '__main__':
         #model.summary()
         #exit()
 
+    if False:
         c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(c.model,filename)
