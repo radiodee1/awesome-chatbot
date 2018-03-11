@@ -169,7 +169,7 @@ class ChatModel:
         diff = self.word_embeddings[0] - vec
         delta = np.sum(diff * diff, axis=1)
         i = np.argmin(delta)
-        if i < 0 or i > len(self.vocab_list) :
+        if i < 0 or i >= len(self.vocab_list) :
             print('unknown index',i)
             i = 0
         #print(self.word_embeddings.iloc[i].name)
@@ -229,8 +229,9 @@ class ChatModel:
 
             #print('Loaded %s word vectors.' % len(embeddings_index))
 
-            embedding_matrix = np.zeros((len(self.vocab_list) +1, embed_size))
-            for word, i in self.vocab_dict.items():
+            embedding_matrix = np.zeros((len(self.vocab_list) , embed_size))
+            for i in range(len(self.vocab_list)): #word, i in self.vocab_dict.items():
+                word = self.vocab_list[i]
                 embedding_vector = embeddings_index.get(word)
                 if embedding_vector is not None:
                     # words not found in embedding index will be all random.
@@ -240,7 +241,7 @@ class ChatModel:
                     embedding_matrix[i] = np.zeros((embed_size,))
 
 
-        return self.embedding_model_lstm(len(self.vocab_list) +1, embedding_matrix, embedding_matrix, trainable)
+        return self.embedding_model_lstm(len(self.vocab_list) , embedding_matrix, embedding_matrix, trainable)
 
 
     def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False):
@@ -396,7 +397,8 @@ class ChatModel:
                 state = [out[1], out[2]]
                 out = self.find_closest_index(out[0])
                 txt_out.append(str(out))
-                txt_out.append(self.vocab_list[out])
+                if int(out) < len(self.vocab_list):
+                    txt_out.append(self.vocab_list[int(out)])
         print(' '.join(txt_out))
 
         print('------')
