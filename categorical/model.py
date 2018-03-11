@@ -68,6 +68,8 @@ class ChatModel:
         self.model = None
         self.model_encoder = None
         self.model_inference = None
+        self.uniform_low = -0.25
+        self.uniform_high = 0.25
 
         self.vocab_list = None
         self.vocab_dict = None
@@ -157,8 +159,8 @@ class ChatModel:
     def find_vec(self,word):
 
         if self.vocab_dict[word] > len(self.vocab_list):
-            return np.zeros((hparams['embed_size']))
-            #return np.random.uniform(size=(hparams['embed_size']))
+            #return np.zeros((hparams['embed_size']))
+            return np.random.uniform(low=self.uniform_low,high=self.uniform_high,size=(hparams['embed_size']))
 
         return self.word_embeddings[0][self.vocab_dict[word]]
         #return self.glove_model.wv[word]
@@ -186,11 +188,6 @@ class ChatModel:
     def load_word_vectors(self):
         ''' do after all training, before every eval. also before stack_sentences '''
         self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
-
-        #print(self.word_embeddings, len(self.word_embeddings[0]))
-        #print(self.word_embeddings[0].shape)
-        #for i in range(len(model.layers)):
-        #    print(model.get_layer(i).name )
 
     def embedding_model(self,model=None, infer_encode=None, infer_decode=None, global_check=False):
         if model is not None and infer_encode is not None and infer_decode is not None:
@@ -222,8 +219,8 @@ class ChatModel:
 
                     embeddings_index[word] = value
                 else:
-                    #value = np.random.uniform(size=(embed_size,))
-                    value = np.zeros((embed_size,))
+                    value = np.random.uniform(low=self.uniform_low,high=self.uniform_high,size=(embed_size,))
+                    #value = np.zeros((embed_size,))
                     embeddings_index[word] = value
             f.close()
 
@@ -237,8 +234,8 @@ class ChatModel:
                     # words not found in embedding index will be all random.
                     embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
-                    #embedding_matrix[i] = np.random.uniform(size=(embed_size,))
-                    embedding_matrix[i] = np.zeros((embed_size,))
+                    embedding_matrix[i] = np.random.uniform(high=self.uniform_high,low=self.uniform_low,size=(embed_size,))
+                    #embedding_matrix[i] = np.zeros((embed_size,))
 
 
         return self.embedding_model_lstm(len(self.vocab_list) , embedding_matrix, embedding_matrix, trainable)
