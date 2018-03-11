@@ -369,9 +369,6 @@ class ChatModel:
                                                                                     global_check=True)
         source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
         state = self.model_encoder.predict(source_input)
-
-
-        state_out = state
         h = state[0]
         c = state[1]
 
@@ -381,25 +378,19 @@ class ChatModel:
 
         for i in range(len(t) - 0, len(t) * 3):
             if True:
-                ## this should be repeated
-                #print(h.shape, c.shape)
                 txt_out.append('|')
-                state_outx = [
-                    np.expand_dims(h[0], 0),
-                    np.expand_dims(c[0], 0)
-                ]
+
                 state_out = [h,c]
-                #if out is None: out = vec
+
                 out, h, c = self.model_inference.predict([np.array([out])] + state_out)
-                state = [h, c]
-                #print(len(out), out[0].shape)
-                out = self.find_closest_index(out[-1])
+                out = self.find_closest_index(out)
                 txt_out.append(str(out))
                 if int(out) < len(self.vocab_list):
                     txt_out.append(self.vocab_list[int(out)])
+        print('---greedy predict---')
         print(' '.join(txt_out))
 
-        print('------')
+        print('---basic predict---')
         out = self.model.predict([source_input, source_input])
         t_out = []
         for i in range(len(source_input)):
@@ -412,7 +403,7 @@ class ChatModel:
     def _fill_vec(self, sent, lst, dict):
         s = sent.lower().split()
         out = []
-        l = np.zeros((units))
+        l = np.zeros((len(s)))
         for i in s:
             if i in lst:
                 out.append( dict[i])
