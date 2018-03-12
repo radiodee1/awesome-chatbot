@@ -64,13 +64,16 @@ class ChatModel:
         self.word_embeddings = None
         self.glove_model = None
         self.embedding_matrix = None
-        self.filename = None
+        self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
+
 
         self.model = None
         self.model_encoder = None
         self.model_inference = None
         self.uniform_low = -0.25
         self.uniform_high = 0.25
+        self.trainable = False
+        self.skip_embed = False
 
         self.vocab_list = None
         self.vocab_dict = None
@@ -189,64 +192,77 @@ class ChatModel:
 
     def load_word_vectors(self):
         ''' do after all training, before every eval. also before stack_sentences '''
-        if self.embed_mode != 'mod':
+        if self.embed_mode != 'mod' :
             self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
         else:
+            #print(self.word_embeddings.shape)
+            if self.word_embeddings is None: self.set_embedding_matrix()
             self.word_embeddings = np.expand_dims(self.embedding_matrix,0)
 
-
-    def embedding_model(self,model=None, infer_encode=None, infer_decode=None, global_check=False):
-        if model is not None and infer_encode is not None and infer_decode is not None:
-            return model, infer_encode, infer_decode
-
-        if (global_check and self.model is not None and
-                self.model_encoder  is not None and self.model_inference  is not None):
-            return self.model, self.model_encoder, self.model_inference
-
-        skip_embed=False
-        if self.embed_mode == 'mod': skip_embed = True
+    def set_embedding_matrix(self):
+        self.skip_embed = False
+        if self.embed_mode == 'mod': self.skip_embed = True
         embed_size = int(hparams['embed_size'])
-        #lst, dict = self.load_vocab(vocab_fr)
-        trainable = True
+        # lst, dict = self.load_vocab(vocab_fr)
+        self.trainable = True
         embeddings_index = {}
         glove_data = hparams['data_dir'] + hparams['embed_name']
-        if not os.path.isfile(glove_data)  or self.embed_mode == 'zero':
-            self.embedding_matrix = None # np.zeros((len(self.vocab_list),embed_size))
-            trainable = True
+        if not os.path.isfile(glove_data) or self.embed_mode == 'zero':
+            self.embedding_matrix = None  # np.zeros((len(self.vocab_list),embed_size))
+            self.trainable = True
         else:
             # load embedding
             f = open(glove_data)
             for line in range(len(self.vocab_list)):
                 if line == 0: continue
                 word = self.vocab_list[line]
-                #print(word, line)
+                # print(word, line)
                 if word in self.glove_model.wv.vocab:
-                    values =  self.glove_model.wv[word]
+                    values = self.glove_model.wv[word]
 
                     value = np.asarray(values, dtype='float32')
 
                     embeddings_index[word] = value
                 else:
-                    value = np.random.uniform(low=self.uniform_low,high=self.uniform_high,size=(embed_size,))
-                    #value = np.zeros((embed_size,))
+                    value = np.random.uniform(low=self.uniform_low, high=self.uniform_high, size=(embed_size,))
+                    # value = np.zeros((embed_size,))
                     embeddings_index[word] = value
             f.close()
 
-            #print('Loaded %s word vectors.' % len(embeddings_index))
+            # print('Loaded %s word vectors.' % len(embeddings_index))
 
-            self.embedding_matrix = np.zeros((len(self.vocab_list) , embed_size))
-            for i in range(len(self.vocab_list)): #word, i in self.vocab_dict.items():
+            self.embedding_matrix = np.zeros((len(self.vocab_list), embed_size))
+            for i in range(len(self.vocab_list)):  # word, i in self.vocab_dict.items():
                 word = self.vocab_list[i]
                 embedding_vector = embeddings_index.get(word)
                 if embedding_vector is not None:
                     # words not found in embedding index will be all random.
                     self.embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
-                    self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high,low=self.uniform_low,size=(embed_size,))
-                    #self.embedding_matrix[i] = np.zeros((embed_size,))
+                    self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
+                                                                 size=(embed_size,))
+                    # self.embedding_matrix[i] = np.zeros((embed_size,))
+
+        pass
 
 
-        return self.embedding_model_lstm(len(self.vocab_list) , self.embedding_matrix, self.embedding_matrix, trainable, skip_embed=skip_embed)
+    def embedding_model(self,model=None, infer_encode=None, infer_decode=None, global_check=False):
+        if not self.embed_mode == 'mod':
+            if model is not None and infer_encode is not None and infer_decode is not None:
+                return model, infer_encode, infer_decode
+
+            if (global_check and self.model is not None and
+                    self.model_encoder  is not None and self.model_inference  is not None):
+                return self.model, self.model_encoder, self.model_inference
+
+        self.set_embedding_matrix()
+
+
+        return self.embedding_model_lstm(len(self.vocab_list) ,
+                                         self.embedding_matrix,
+                                         self.embedding_matrix,
+                                         self.trainable,
+                                         skip_embed=self.skip_embed)
 
 
     def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False, skip_embed=False):
@@ -263,7 +279,7 @@ class ChatModel:
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
 
-        if not skip_embed:
+        if not skip_embed or True:
             if  embedding_weights_a is not None:
                 embeddings_a = Embedding(words,embed_unit ,
                                          weights=[embedding_weights_a],
@@ -303,7 +319,7 @@ class ChatModel:
 
         ### decoder for training ###
 
-        if not skip_embed:
+        if not skip_embed or True:
             if embedding_weights_b is not None:
                 embeddings_b = Embedding(words, embed_unit,
                                          input_length=tokens_per_sentence, #lstm_unit_a,
@@ -396,7 +412,11 @@ class ChatModel:
                                                                                     self.model_inference,
                                                                                     global_check=True)
         source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
+        if self.embed_mode == 'mod':
+            source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
         state = self.model_encoder.predict(source_input)
+        print(len(state))
+        print(state.shape)
         h = state[0]
         c = state[1]
 
@@ -447,6 +467,7 @@ class ChatModel:
 
     def model_infer(self,filename):
         print('stage: try predict')
+        self.load_word_vectors()
         lst, dict = self.load_vocab(vocab_fr)
         c = self.open_sentences(filename)
         g = randint(0, len(c))
@@ -621,8 +642,8 @@ class ChatModel:
                         self.model.fit([x1,x2], y)
                     else:
                         self.model.fit([x1, x2], y, batch_size=16)
-                    #self.model.train_on_batch([x1,x2], y)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
+                    self.save_model(self.model, self.filename)
                     self.model_infer(train_to)
             except KeyboardInterrupt as e:
                 print(repr(e))
@@ -693,7 +714,7 @@ if __name__ == '__main__':
 
     if True:
 
-        c.load_word_vectors()
+        #c.load_word_vectors()
         c.model_infer(train_to)
 
 

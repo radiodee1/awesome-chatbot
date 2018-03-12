@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="632" column="9" lean-forward="false" selection-start-line="632" selection-start-column="9" selection-end-line="632" selection-end-column="9" />
+            <state relative-caret-position="286">
+              <caret line="197" column="13" lean-forward="false" selection-start-line="197" selection-start-column="13" selection-end-line="197" selection-end-column="13" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -129,8 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>to_c</find>
-      <find>argmax</find>
       <find>to_</find>
       <find>np.z</find>
       <find>lstm_unit_b</find>
@@ -151,14 +148,16 @@
       <find>global_check</find>
       <find>load_model_file</find>
       <find>load_vocab</find>
-      <find>load_word_vectors</find>
       <find>uniform</find>
       <find>lstm_b</find>
-      <find>model_infer</find>
       <find>use_embed</find>
       <find>embedding_matrix</find>
       <find>categorical_input_one</find>
       <find>stack_sentences_categorical</find>
+      <find>filename</find>
+      <find>predict_words</find>
+      <find>model_infer</find>
+      <find>load_word_vectors</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -672,8 +671,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="632" column="9" lean-forward="false" selection-start-line="632" selection-start-column="9" selection-end-line="632" selection-end-column="9" />
+        <state relative-caret-position="286">
+          <caret line="197" column="13" lean-forward="false" selection-start-line="197" selection-start-column="13" selection-end-line="197" selection-end-column="13" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
