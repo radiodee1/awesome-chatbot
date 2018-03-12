@@ -253,12 +253,12 @@ class ChatModel:
 
 
         latent_dim = 64
-        lstm_unit_a =  units
+        lstm_unit_a = units
         lstm_unit_b = units # * 2
         embed_unit = int(hparams['embed_size'])
 
         x_shape = (None,)
-        if skip_embed: x_shape = (None,embed_unit,)
+        if skip_embed: x_shape = (tokens_per_sentence,embed_unit)
 
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
@@ -284,7 +284,7 @@ class ChatModel:
                                     return_sequences=True,
                                     return_state=True,
                                     recurrent_dropout=0.5,
-
+                                    input_shape=(None,),
                                     ), merge_mode='mul')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
@@ -294,15 +294,12 @@ class ChatModel:
         else:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
 
-        print(recurrent_a,recurrent_a.shape,'len')
-
 
         concat_a_1 = Multiply()([rec_a_1, rec_a_3])
         concat_a_2 = Multiply()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
 
-        print(concat_a_1.shape,'a1')
 
         ### decoder for training ###
 
@@ -323,8 +320,8 @@ class ChatModel:
             embed_b = embeddings_b(valid_word_b)
 
         lstm_b = LSTM(units=lstm_unit_b ,
-                      recurrent_dropout=0.5,
-                      #return_sequences=True,
+                      recurrent_dropout=0.2,
+                      return_sequences=True, ####
 
                       return_state=True
                       )
@@ -334,19 +331,18 @@ class ChatModel:
         else:
             recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
-        #flatten_b = Flatten()(recurrent_b)
 
-        dense_b = Dense(embed_unit,
-                        activation='relu', #softmax or relu
+        dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
+                        activation='softmax', #softmax or relu
                         #name='dense_layer_b',
                         )
 
 
         decoder_b = dense_b(recurrent_b) # recurrent_b
 
-        dropout_b = Dropout(0.5)(decoder_b)
 
-        model = Model([valid_word_a,valid_word_b], dropout_b) # decoder_b
+
+        model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
 
         ### encoder for inference ###
         model_encoder = Model(valid_word_a, lstm_a_states)
@@ -386,7 +382,7 @@ class ChatModel:
         adam = optimizers.Adam(lr=learning_rate)
 
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
-        model.compile(optimizer=adam, loss='binary_crossentropy')
+        model.compile(optimizer=adam, loss='mse')
 
         return model, model_encoder, model_inference
 
@@ -541,25 +537,27 @@ class ChatModel:
     def stack_sentences_categorical(self,xx, vocab_list, shift_output=False):
 
         batch = units
+        if self.embed_mode == 'mod':
+            batch = tokens_per_sentence
         tot = xx.shape[0] // batch
+        #print(xx.shape,'stack')
         out = None
         if not shift_output:
             out = np.zeros(( tot))
         else:
-            #out = np.zeros((tot,len(vocab_list)))
-            out = np.zeros((tot, hparams['embed_size']))
+            out = np.zeros((tot,batch, hparams['embed_size']))
+
         for i in range(tot):
-            #start = i * batch
-            #end = (i + 1) * batch
+            start = i * batch
+            end = (i + 1) * batch
             x = xx[i]
             if not shift_output:
                 out[i] = np.array(x)
             else:
-                #out[i,:] = to_categorical(x, len(vocab_list))
-                if (int(x) < len(self.vocab_list) and #self.vocab_list[int(x)] in self.vocab_list and
+                if (int(x) < len(self.vocab_list) and
                         self.vocab_dict[self.vocab_list[int(x)]] < len(self.vocab_list)):
-                    #print(x, int(x), self.vocab_list[int(x)])
-                    out[i,:] = self.find_vec(self.vocab_list[int(x)])
+                    for j in range(batch):
+                        out[i,j,:] = self.find_vec(self.vocab_list[int(x)])
         if not shift_output:
             #print(out.shape)
             #out = np.swapaxes(out,0,1)
@@ -568,7 +566,8 @@ class ChatModel:
             pass
 
         if self.embed_mode == 'mod' :
-            out = np.expand_dims(out,0)
+            pass
+            #out = np.expand_dims(out,0)
         return out
 
     def train_model_categorical(self, model_in, list, dict,train_model=True, check_sentences=False):
@@ -617,7 +616,11 @@ class ChatModel:
                     self.check_sentence(x2, y, list, 0)
                     exit()
                 if train_model:
-                    self.model.fit([x1, x2], y, batch_size=16)
+                    if self.embed_mode == 'mod':
+
+                        self.model.fit([x1,x2], y)
+                    else:
+                        self.model.fit([x1, x2], y, batch_size=16)
                     #self.model.train_on_batch([x1,x2], y)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.model_infer(train_to)

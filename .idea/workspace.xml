@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
-      <change beforePath="$PROJECT_DIR$/categorical/settings.py" afterPath="$PROJECT_DIR$/categorical/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1027">
-              <caret line="262" column="0" lean-forward="false" selection-start-line="262" selection-start-column="0" selection-end-line="262" selection-end-column="0" />
+            <state relative-caret-position="323">
+              <caret line="632" column="9" lean-forward="false" selection-start-line="632" selection-start-column="9" selection-end-line="632" selection-end-column="9" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -129,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tokens_per_sentence</find>
       <find>to_c</find>
       <find>argmax</find>
       <find>to_</find>
@@ -159,6 +158,7 @@
       <find>use_embed</find>
       <find>embedding_matrix</find>
       <find>categorical_input_one</find>
+      <find>stack_sentences_categorical</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -189,7 +189,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="520" />
+    <option name="x" value="519" />
     <option name="y" value="58" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -277,7 +277,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="520" y="58" width="1380" height="1000" extended-state="0" />
+    <frame x="519" y="58" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -672,8 +672,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1027">
-          <caret line="262" column="0" lean-forward="false" selection-start-line="262" selection-start-column="0" selection-end-line="262" selection-end-column="0" />
+        <state relative-caret-position="323">
+          <caret line="632" column="9" lean-forward="false" selection-start-line="632" selection-start-column="9" selection-end-line="632" selection-end-column="9" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
