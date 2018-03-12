@@ -63,6 +63,7 @@ class ChatModel:
 
         self.word_embeddings = None
         self.glove_model = None
+        self.embedding_matrix = None
         self.filename = None
 
         self.model = None
@@ -73,6 +74,7 @@ class ChatModel:
 
         self.vocab_list = None
         self.vocab_dict = None
+        self.embed_mode = hparams['embed_mode']
 
         self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
 
@@ -187,7 +189,11 @@ class ChatModel:
 
     def load_word_vectors(self):
         ''' do after all training, before every eval. also before stack_sentences '''
-        self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+        if self.embed_mode != 'mod':
+            self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+        else:
+            self.word_embeddings = np.expand_dims(self.embedding_matrix,0)
+
 
     def embedding_model(self,model=None, infer_encode=None, infer_decode=None, global_check=False):
         if model is not None and infer_encode is not None and infer_decode is not None:
@@ -197,13 +203,15 @@ class ChatModel:
                 self.model_encoder  is not None and self.model_inference  is not None):
             return self.model, self.model_encoder, self.model_inference
 
+        skip_embed=False
+        if self.embed_mode == 'mod': skip_embed = True
         embed_size = int(hparams['embed_size'])
         #lst, dict = self.load_vocab(vocab_fr)
         trainable = True
         embeddings_index = {}
         glove_data = hparams['data_dir'] + hparams['embed_name']
-        if not os.path.isfile(glove_data) or hparams['use_embed'] == False:
-            embedding_matrix = None # np.zeros((len(self.vocab_list),embed_size))
+        if not os.path.isfile(glove_data)  or self.embed_mode == 'zero':
+            self.embedding_matrix = None # np.zeros((len(self.vocab_list),embed_size))
             trainable = True
         else:
             # load embedding
@@ -226,58 +234,67 @@ class ChatModel:
 
             #print('Loaded %s word vectors.' % len(embeddings_index))
 
-            embedding_matrix = np.zeros((len(self.vocab_list) , embed_size))
+            self.embedding_matrix = np.zeros((len(self.vocab_list) , embed_size))
             for i in range(len(self.vocab_list)): #word, i in self.vocab_dict.items():
                 word = self.vocab_list[i]
                 embedding_vector = embeddings_index.get(word)
                 if embedding_vector is not None:
                     # words not found in embedding index will be all random.
-                    embedding_matrix[i] = embedding_vector[:embed_size]
+                    self.embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
-                    embedding_matrix[i] = np.random.uniform(high=self.uniform_high,low=self.uniform_low,size=(embed_size,))
-                    #embedding_matrix[i] = np.zeros((embed_size,))
+                    self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high,low=self.uniform_low,size=(embed_size,))
+                    #self.embedding_matrix[i] = np.zeros((embed_size,))
 
 
-        return self.embedding_model_lstm(len(self.vocab_list) , embedding_matrix, embedding_matrix, trainable)
+        return self.embedding_model_lstm(len(self.vocab_list) , self.embedding_matrix, self.embedding_matrix, trainable, skip_embed=skip_embed)
 
 
-    def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False):
+    def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False, skip_embed=False):
 
-        x_shape = (units,)
+
         latent_dim = 64
         lstm_unit_a =  units
         lstm_unit_b = units # * 2
         embed_unit = int(hparams['embed_size'])
 
-        valid_word_a = Input(shape=(None,))
-        valid_word_b = Input(shape=(None,))
+        x_shape = (None,)
+        if skip_embed: x_shape = (None,embed_unit,)
 
-        if  embedding_weights_a is not None:
-            embeddings_a = Embedding(words,embed_unit ,
-                                     weights=[embedding_weights_a],
-                                     input_length=tokens_per_sentence,
-                                     trainable=trainable
-                                     )
-        else:
-            embeddings_a = Embedding(words, embed_unit,
-                                     #weights=[embedding_weights_a],
-                                     input_length=tokens_per_sentence,
-                                     trainable=True
-                                     )
+        valid_word_a = Input(shape=x_shape)
+        valid_word_b = Input(shape=x_shape)
 
-        embed_a = embeddings_a(valid_word_a)
+        if not skip_embed:
+            if  embedding_weights_a is not None:
+                embeddings_a = Embedding(words,embed_unit ,
+                                         weights=[embedding_weights_a],
+                                         input_length=tokens_per_sentence,
+                                         trainable=trainable
+                                         )
+            else:
+                embeddings_a = Embedding(words, embed_unit,
+                                         #weights=[embedding_weights_a],
+                                         input_length=tokens_per_sentence,
+                                         trainable=True
+                                         )
+
+            embed_a = embeddings_a(valid_word_a)
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
                                     return_sequences=True,
                                     return_state=True,
-                                    recurrent_dropout=0.5
+                                    recurrent_dropout=0.5,
+
                                     ), merge_mode='mul')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-        recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
-        #print(len(recurrent_a),'len')
+        if not skip_embed:
+            recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
+        else:
+            recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
+
+        print(recurrent_a,recurrent_a.shape,'len')
 
 
         concat_a_1 = Multiply()([rec_a_1, rec_a_3])
@@ -285,30 +302,39 @@ class ChatModel:
 
         lstm_a_states = [concat_a_1, concat_a_2]
 
+        print(concat_a_1.shape,'a1')
+
         ### decoder for training ###
 
-        if embedding_weights_b is not None:
-            embeddings_b = Embedding(words, embed_unit,
-                                     input_length=tokens_per_sentence, #lstm_unit_a,
-                                     weights=[embedding_weights_b],
-                                     trainable=trainable
-                                     )
-        else:
-            embeddings_b = Embedding(words, embed_unit,
-                                     input_length=tokens_per_sentence,  # lstm_unit_a,
-                                     #weights=[embedding_weights_b],
-                                     trainable=True
-                                     )
+        if not skip_embed:
+            if embedding_weights_b is not None:
+                embeddings_b = Embedding(words, embed_unit,
+                                         input_length=tokens_per_sentence, #lstm_unit_a,
+                                         weights=[embedding_weights_b],
+                                         trainable=trainable
+                                         )
+            else:
+                embeddings_b = Embedding(words, embed_unit,
+                                         input_length=tokens_per_sentence,  # lstm_unit_a,
+                                         #weights=[embedding_weights_b],
+                                         trainable=True
+                                         )
 
-        embed_b = embeddings_b(valid_word_b)
+            embed_b = embeddings_b(valid_word_b)
 
         lstm_b = LSTM(units=lstm_unit_b ,
                       recurrent_dropout=0.5,
                       #return_sequences=True,
+
                       return_state=True
                       )
 
-        recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
+        if not skip_embed:
+            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
+        else:
+            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b, initial_state=lstm_a_states)
+
+        #flatten_b = Flatten()(recurrent_b)
 
         dense_b = Dense(embed_unit,
                         activation='relu', #softmax or relu
@@ -336,7 +362,10 @@ class ChatModel:
 
         #print(inputs_inference[0].shape,'zero')
 
-        embed_b = embeddings_b(valid_word_b)
+        if not skip_embed:
+            embed_b = embeddings_b(valid_word_b)
+        else:
+            embed_b = valid_word_b
 
         outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
                                                                              initial_state=inputs_inference)
@@ -537,6 +566,9 @@ class ChatModel:
             pass
         else:
             pass
+
+        if self.embed_mode == 'mod' :
+            out = np.expand_dims(out,0)
         return out
 
     def train_model_categorical(self, model_in, list, dict,train_model=True, check_sentences=False):
@@ -546,12 +578,20 @@ class ChatModel:
                                                                                                       self.model_encoder,
                                                                                                       self.model_inference,
                                                                                                       global_check=True)
+
+
         if not check_sentences: self.model.summary()
         tot = len(self.open_sentences(train_fr))
 
         self.load_word_vectors()
         #global batch_constant
-        length = int(hparams['batch_constant']) * int(hparams['units'])
+
+        all_vectors = False
+        if self.embed_mode == 'mod':
+            all_vectors = True
+            length = int(hparams['batch_constant'])
+        else:
+            length = int(hparams['batch_constant']) * int(hparams['units'])
         steps = tot // length
         if steps * length < tot: steps += 1
         #print( steps, tot, length, batch_size)
@@ -567,8 +607,8 @@ class ChatModel:
                 x2 = self.categorical_input_one(train_to,list,dict, length, s)
                 y =  self.categorical_input_one(train_to,list,dict, length, s, shift_output=True)
 
-                x1 = self.stack_sentences_categorical(x1,list)
-                x2 = self.stack_sentences_categorical(x2,list)
+                x1 = self.stack_sentences_categorical(x1,list, shift_output=all_vectors)
+                x2 = self.stack_sentences_categorical(x2,list, shift_output=all_vectors)
                 y =  self.stack_sentences_categorical(y,list, shift_output=True)
 
                 #x1, x2, y = self.three_input_mod(x1,x2,y, dict) ## seems to work better without this.
@@ -578,6 +618,7 @@ class ChatModel:
                     exit()
                 if train_model:
                     self.model.fit([x1, x2], y, batch_size=16)
+                    #self.model.train_on_batch([x1,x2], y)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.model_infer(train_to)
             except KeyboardInterrupt as e:
@@ -637,7 +678,7 @@ if __name__ == '__main__':
         l, d = c.load_vocab(vocab_fr)
         c.model = c.load_model_file(model,filename, l)
 
-        #model.summary()
+        #c.model.summary()
         #exit()
 
     if True:
