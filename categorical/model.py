@@ -279,7 +279,7 @@ class ChatModel:
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
 
-        if not skip_embed or True:
+        if not skip_embed:
             if  embedding_weights_a is not None:
                 embeddings_a = Embedding(words,embed_unit ,
                                          weights=[embedding_weights_a],
@@ -319,7 +319,7 @@ class ChatModel:
 
         ### decoder for training ###
 
-        if not skip_embed or True:
+        if not skip_embed:
             if embedding_weights_b is not None:
                 embeddings_b = Embedding(words, embed_unit,
                                          input_length=tokens_per_sentence, #lstm_unit_a,
@@ -376,11 +376,12 @@ class ChatModel:
 
         if not skip_embed:
             embed_b = embeddings_b(valid_word_b)
+            outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
+                                                                                 initial_state=inputs_inference)
         else:
-            embed_b = valid_word_b
+            outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
+                                                                                 initial_state=inputs_inference)
 
-        outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
-                                                                             initial_state=inputs_inference)
 
         outputs_states = [outputs_inference_h, outputs_inference_c]
 
@@ -414,8 +415,11 @@ class ChatModel:
         source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
         if self.embed_mode == 'mod':
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
+
+        print(source_input.shape,'si')
         state = self.model_encoder.predict(source_input)
         print(len(state))
+        self.model_encoder.summary()
         print(state.shape)
         h = state[0]
         c = state[1]
@@ -453,7 +457,7 @@ class ChatModel:
     def _fill_vec(self, sent, lst, dict):
         s = sent.lower().split()
         out = []
-        l = np.zeros((len(s)))
+        l = np.zeros((tokens_per_sentence))
         for i in s:
             if i in lst:
                 out.append( dict[i])
@@ -705,7 +709,7 @@ if __name__ == '__main__':
         #c.model.summary()
         #exit()
 
-    if True:
+    if False:
         c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(c.model,filename)

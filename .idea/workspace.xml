@@ -16,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="197" column="13" lean-forward="false" selection-start-line="197" selection-start-column="13" selection-end-line="197" selection-end-column="13" />
+            <state relative-caret-position="430">
+              <caret line="711" column="12" lean-forward="false" selection-start-line="711" selection-start-column="12" selection-end-line="711" selection-end-column="12" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -153,11 +153,11 @@
       <find>use_embed</find>
       <find>embedding_matrix</find>
       <find>categorical_input_one</find>
-      <find>stack_sentences_categorical</find>
       <find>filename</find>
       <find>predict_words</find>
       <find>model_infer</find>
       <find>load_word_vectors</find>
+      <find>stack_sentences_categorical</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -671,8 +671,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="197" column="13" lean-forward="false" selection-start-line="197" selection-start-column="13" selection-end-line="197" selection-end-column="13" />
+        <state relative-caret-position="430">
+          <caret line="711" column="12" lean-forward="false" selection-start-line="711" selection-start-column="12" selection-end-line="711" selection-end-column="12" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
