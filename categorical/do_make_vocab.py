@@ -112,7 +112,7 @@ if __name__ == '__main__':
     #global v
     v = []
     #global v
-    if False:
+    if True:
         make_vocab()
         save_vocab()
     if len(v) == 0:
