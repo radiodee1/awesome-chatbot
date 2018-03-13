@@ -141,25 +141,7 @@ class ChatModel:
         pass
         self.glove_model = KeyedVectors.load_word2vec_format(filename, binary=False)
 
-        '''
-        self.word_embeddings = pd.read_table(filename,
-                                             sep=' ',
-                                             index_col=0,
-                                             header=None,
-                                             quoting=csv.QUOTE_NONE,
-                                             na_values=None,
-                                             keep_default_na=False)
-        w = []
-        print(self.word_embeddings.shape)
-        for i in range(self.word_embeddings.shape[0]):
-            ii = self.word_embeddings[i,:]
-            if ii[0] in self.vocab_list:
-                w.extend(ii)
-                pass
-        self.word_embeddings = np.array(w)
-        print(self.word_embeddings[0:10], 'top 10')
-        self.word_matrix = self.word_embeddings.as_matrix()
-        '''
+
 
     def find_vec(self,word):
 
