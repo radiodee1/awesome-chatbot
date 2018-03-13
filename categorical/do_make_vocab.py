@@ -118,7 +118,7 @@ if __name__ == '__main__':
     if len(v) == 0:
         v = load_vocab()
     prep_glove(v)
-    
+
     if os.path.isfile(TO+'-temp'):
         os.system('rm ' + TO + '-temp')
         pass
