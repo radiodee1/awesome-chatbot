@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
+
 import sqlite3
 import pandas as pd
 import os
-import model.tokenize_weak as tokenize_weak
+import tokenize_weak
 import sys
-from model.settings import hparams
+from settings import hparams
 #import core.tokenizer as ct
 
 timeframes = ['input']
@@ -58,12 +59,12 @@ for timeframe in timeframes:
         cur_length = len(df)
 
         if not test_done:
-            with open('raw/test.from','a', encoding='utf8') as f:
+            with open('../raw/test.from','a', encoding='utf8') as f:
                 for content in df['parent'].values:
                     content = format(content)
                     f.write(str(content)+'\n')
 
-            with open('raw/test.to','a', encoding='utf8') as f:
+            with open('../raw/test.to','a', encoding='utf8') as f:
                 for content in df['comment'].values:
                     content = format(content)
                     f.write(str(content)+'\n')
@@ -75,23 +76,23 @@ for timeframe in timeframes:
 
         else:
 
-            with open('raw/train.big.from','a', encoding='utf8') as f:
+            with open('../raw/train.big.from','a', encoding='utf8') as f:
                 for content in df['parent'].values:
                     content = format(content)
                     f.write(str(content)+'\n')
 
-            with open('raw/train.big.to','a', encoding='utf8') as f:
+            with open('../raw/train.big.to','a', encoding='utf8') as f:
                 for content in df['comment'].values:
                     content = format(content)
                     f.write(str(content)+'\n')
 
             pull_num += 1
-            with open('raw/train.'+ str(pull_num) + '.from','a', encoding='utf8') as f:
+            with open('../raw/train.'+ str(pull_num) + '.from','a', encoding='utf8') as f:
                 for content in df['parent'].values:
                     content = format(content)
                     f.write(str(content)+'\n')
 
-            with open('raw/train.'+ str(pull_num) + '.to','a', encoding='utf8') as f:
+            with open('../raw/train.'+ str(pull_num) + '.to','a', encoding='utf8') as f:
                 for content in df['comment'].values:
                     content = format(content)
                     f.write(str(content)+'\n')
@@ -103,5 +104,5 @@ for timeframe in timeframes:
             print(counter * limit, counter, 'rows/iters completed so far')
             
     if not test_on_screen:
-        os.system('mv raw/t* data/.')
+        os.system('mv ../raw/t* ../data/.')
         pass
