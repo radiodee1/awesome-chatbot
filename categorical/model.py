@@ -349,7 +349,7 @@ class ChatModel:
 
 
         dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
-                        activation='softmax', #softmax or relu
+                        activation='relu', #softmax or relu
                         #name='dense_layer_b',
                         )
 
@@ -415,18 +415,20 @@ class ChatModel:
         source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
         if self.embed_mode == 'mod':
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
-
-        print(source_input.shape,'si')
         state = self.model_encoder.predict(source_input)
-        print(len(state))
-        self.model_encoder.summary()
-        print(state.shape)
+        #self.model_encoder.summary()
+        #self.model_inference.summary()
+
         h = state[0]
         c = state[1]
 
         txt_out = []
         t = txt.lower().split()
         out = self.vocab_dict[hparams['sol']]
+        if self.embed_mode == 'mod':
+            out = self.vocab_dict[hparams['sol']]
+            out = np.array([out])
+            out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
 
         for i in range(len(t) - 0, len(t) * 3):
             if True:
@@ -434,11 +436,19 @@ class ChatModel:
 
                 state_out = [h,c]
 
-                out, h, c = self.model_inference.predict([np.array([out])] + state_out)
-                out = self.find_closest_index(out)
-                txt_out.append(str(out))
-                if int(out) < len(self.vocab_list):
-                    txt_out.append(self.vocab_list[int(out)])
+                out, h, c = self.model_inference.predict([out] + state_out)
+                if self.embed_mode != 'mod':
+                    out = self.find_closest_index(out)
+                    txt_out.append(str(out))
+                    if int(out) < len(self.vocab_list):
+                        txt_out.append(self.vocab_list[int(out)])
+                else:
+                    out_word = self.find_closest_index(out[0,0,:])
+                    txt_out.append(str(out_word))
+                    if int(out_word) < len(self.vocab_list):
+                        txt_out.append(self.vocab_list[int(out_word)])
+                    out_word = np.array([out_word])
+                    out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
 
         print('---greedy predict---')
         print(' '.join(txt_out))
@@ -458,9 +468,9 @@ class ChatModel:
         s = sent.lower().split()
         out = []
         l = np.zeros((tokens_per_sentence))
-        for i in s:
-            if i in lst:
-                out.append( dict[i])
+        for i in range(tokens_per_sentence):
+            if i < len(s) and s[i] in self.vocab_list:
+                out.append( self.vocab_dict[s[i]])
             pass
         out = np.array(out)
         l[:out.shape[0]] = out
@@ -570,8 +580,8 @@ class ChatModel:
         if not shift_output:
             out = np.zeros(( tot))
         else:
+            if tot == 0: tot = 1
             out = np.zeros((tot,batch, hparams['embed_size']))
-
         for i in range(tot):
             start = i * batch
             end = (i + 1) * batch
@@ -709,7 +719,7 @@ if __name__ == '__main__':
         #c.model.summary()
         #exit()
 
-    if False:
+    if True:
         c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(c.model,filename)
