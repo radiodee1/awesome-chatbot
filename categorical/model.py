@@ -70,6 +70,7 @@ class ChatModel:
         self.model = None
         self.model_encoder = None
         self.model_inference = None
+        self.model_embedding = None
         self.uniform_low = -0.25
         self.uniform_high = 0.25
         self.trainable = False
@@ -209,18 +210,14 @@ class ChatModel:
                 if word in self.glove_model.wv.vocab:
                     #print('fill with values',line)
                     values = self.glove_model.wv[word]
-
                     value = np.asarray(values, dtype='float32')
-
                     embeddings_index[word] = value
                 else:
-                    print('fill with zeros',line)
+                    print('fill with zeros',line, word)
                     value = np.random.uniform(low=self.uniform_low, high=self.uniform_high, size=(embed_size,))
                     # value = np.zeros((embed_size,))
                     embeddings_index[word] = value
             f.close()
-
-            # print('Loaded %s word vectors.' % len(embeddings_index))
 
             self.embedding_matrix = np.zeros((len(self.vocab_list), embed_size))
             for i in range(len(self.vocab_list)):  # word, i in self.vocab_dict.items():
@@ -248,15 +245,20 @@ class ChatModel:
 
         self.set_embedding_matrix()
 
-
-        return self.embedding_model_lstm(len(self.vocab_list) ,
+        self.model, self.model_encoder, self.model_inference, self.model_embedding \
+            = self.embedding_model_lstm(len(self.vocab_list) ,
                                          self.embedding_matrix,
                                          self.embedding_matrix,
                                          self.trainable,
                                          skip_embed=self.skip_embed)
 
+        return self.model, self.model_encoder, self.model_inference
 
-    def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False, skip_embed=False):
+    def embedding_model_lstm(self, words,
+                             embedding_weights_a=None,
+                             embedding_weights_b=None,
+                             trainable=False,
+                             skip_embed=False):
 
 
         #latent_dim = 64
@@ -285,6 +287,16 @@ class ChatModel:
                                          )
 
             embed_a = embeddings_a(valid_word_a)
+
+        else:
+            ###### embedding test #####
+            embeddings_a = Embedding(words, embed_unit,
+                                     weights=[embedding_weights_a],
+                                     input_length=tokens_per_sentence,
+                                     trainable=False
+                                     )
+            embed_a = embeddings_a(valid_word_a)
+            ######### end ########
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
@@ -356,14 +368,11 @@ class ChatModel:
 
         ### decoder for inference ###
 
-        #input_h = Input(shape=(None,lstm_unit_b))
-        #input_c = Input(shape=(None,lstm_unit_b))
         input_h = Input(shape=(None, ))
+
         input_c = Input(shape=(None, ))
 
         inputs_inference = [input_h, input_c]
-
-        #print(inputs_inference[0].shape,'zero')
 
         if not skip_embed:
             embed_b = embeddings_b(valid_word_b)
@@ -373,17 +382,17 @@ class ChatModel:
             outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
                                                                                  initial_state=inputs_inference)
 
-
         outputs_states = [outputs_inference_h, outputs_inference_c]
 
         dense_outputs_inference = dense_b(outputs_inference)
-
-        #print(dense_outputs_inference.shape,'out')
 
         ### inference model ###
         model_inference = Model([valid_word_b] + inputs_inference,
                                 [dense_outputs_inference] +
                                 outputs_states)
+
+        ### test embedding model ###
+        model_embedding = Model(valid_word_a, embed_a)
 
         ### boilerplate ###
 
@@ -392,7 +401,7 @@ class ChatModel:
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
         model.compile(optimizer=adam, loss='mse')
 
-        return model, model_encoder, model_inference
+        return model, model_encoder, model_inference, model_embedding
 
 
     def predict_words(self,txt):
@@ -728,7 +737,7 @@ if __name__ == '__main__':
         #c.model.summary()
         #exit()
 
-    if False:
+    if True:
         c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(c.model,filename)
