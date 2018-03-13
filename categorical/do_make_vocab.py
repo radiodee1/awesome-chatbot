@@ -3,7 +3,7 @@
 from collections import Counter
 import tokenize_weak
 from settings import hparams
-import sys
+import sys, os
 from operator import itemgetter
 from gensim.scripts.glove2word2vec import glove2word2vec
 from gensim.models.keyedvectors import KeyedVectors
@@ -118,3 +118,7 @@ if __name__ == '__main__':
     if len(v) == 0:
         v = load_vocab()
     prep_glove(v)
+    
+    if os.path.isfile(TO+'-temp'):
+        os.system('rm ' + TO + '-temp')
+        pass

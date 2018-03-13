@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/categorical/tokenize_weak.py" afterPath="$PROJECT_DIR$/categorical/tokenize_weak.py" />
+      <change beforePath="$PROJECT_DIR$/categorical/do_make_vocab.py" afterPath="$PROJECT_DIR$/categorical/do_make_vocab.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -58,11 +58,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="610">
-              <caret line="114" column="11" lean-forward="false" selection-start-line="114" selection-start-column="11" selection-end-line="114" selection-end-column="11" />
+            <state relative-caret-position="700">
+              <caret line="120" column="4" lean-forward="false" selection-start-line="120" selection-start-column="4" selection-end-line="120" selection-end-column="4" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
@@ -70,7 +70,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="tokenize_weak.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="tokenize_weak.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/categorical/tokenize_weak.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="648">
@@ -105,11 +105,21 @@
       <file leaf-file-name="w2v_train.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3816">
+            <state relative-caret-position="-38">
               <caret line="231" column="11" lean-forward="false" selection-start-line="231" selection-start-column="11" selection-end-line="231" selection-end-column="11" />
               <folding>
                 <element signature="e#20#84#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="do_make_db_movie.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/do_make_db_movie.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2954">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -172,9 +182,9 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/categorical/settings.py" />
         <option value="$PROJECT_DIR$/categorical/do_prep_emmbedding.sh" />
-        <option value="$PROJECT_DIR$/categorical/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/categorical/model.py" />
         <option value="$PROJECT_DIR$/categorical/tokenize_weak.py" />
+        <option value="$PROJECT_DIR$/categorical/do_make_vocab.py" />
       </list>
     </option>
   </component>
@@ -297,13 +307,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="414">
-          <caret line="23" column="40" lean-forward="false" selection-start-line="23" selection-start-column="40" selection-end-line="23" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -597,16 +600,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3816">
-          <caret line="231" column="11" lean-forward="false" selection-start-line="231" selection-start-column="11" selection-end-line="231" selection-end-column="11" />
-          <folding>
-            <element signature="e#20#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/categorical/do_prep_emmbedding.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -620,16 +613,6 @@
         <state relative-caret-position="342">
           <caret line="19" column="5" lean-forward="false" selection-start-line="19" selection-start-column="5" selection-end-line="19" selection-end-column="5" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="610">
-          <caret line="114" column="11" lean-forward="false" selection-start-line="114" selection-start-column="11" selection-end-line="114" selection-end-column="11" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -648,6 +631,34 @@
         <state relative-caret-position="648">
           <caret line="88" column="13" lean-forward="false" selection-start-line="88" selection-start-column="13" selection-end-line="88" selection-end-column="13" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/w2v_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-38">
+          <caret line="231" column="11" lean-forward="false" selection-start-line="231" selection-start-column="11" selection-end-line="231" selection-end-column="11" />
+          <folding>
+            <element signature="e#20#84#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_db_movie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2954">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/categorical/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="700">
+          <caret line="120" column="4" lean-forward="false" selection-start-line="120" selection-start-column="4" selection-end-line="120" selection-end-column="4" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
