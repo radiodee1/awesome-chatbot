@@ -83,6 +83,18 @@ class ChatModel:
 
         self.load_words(hparams['data_dir'] + hparams['embed_name'])
 
+        self.train_fr = None
+        self.train_to = None
+
+    def task_autoencode(self):
+        self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        pass
+
+    def task_normal_train(self):
+        self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
+        pass
 
     def open_sentences(self, filename):
         t_yyy = []
@@ -91,8 +103,6 @@ class ChatModel:
                 t_yyy.append(xx)
         #r.close()
         return t_yyy
-
-
 
     def categorical_input_one(self,filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
         tokens = tokens_per_sentence #units #tokens_per_sentence #units
@@ -150,8 +160,7 @@ class ChatModel:
             return np.random.uniform(low=self.uniform_low,high=self.uniform_high,size=(hparams['embed_size']))
 
         return self.word_embeddings[0][self.vocab_dict[word]]
-        #return self.glove_model.wv[word]
-        #return self.word_embeddings.loc[word].as_matrix()
+
 
     def find_closest_word(self,vec):
 
@@ -163,8 +172,6 @@ class ChatModel:
             i = 0
         #print(self.word_embeddings.iloc[i].name)
         return self.vocab_list[int(i)]
-
-        #return self.glove_model.wv.most_similar(positive=[vec],topn=1)[0][0]
 
     def find_closest_index(self,vec):
         diff = self.word_embeddings[0] - vec
@@ -200,12 +207,14 @@ class ChatModel:
                 word = self.vocab_list[line]
                 # print(word, line)
                 if word in self.glove_model.wv.vocab:
+                    #print('fill with values',line)
                     values = self.glove_model.wv[word]
 
                     value = np.asarray(values, dtype='float32')
 
                     embeddings_index[word] = value
                 else:
+                    print('fill with zeros',line)
                     value = np.random.uniform(low=self.uniform_low, high=self.uniform_high, size=(embed_size,))
                     # value = np.zeros((embed_size,))
                     embeddings_index[word] = value
@@ -425,6 +434,13 @@ class ChatModel:
                     if int(out) < len(self.vocab_list):
                         txt_out.append(self.vocab_list[int(out)])
                 else:
+
+                    if False:
+                        z_list = []
+                        for z in range(tokens_per_sentence):
+                            close_word = out[0,z,:]
+                            z_list.append(self.find_closest_word(close_word))
+                        print('**','--'.join(z_list))
                     out_word = self.find_closest_index(out[0,0,:])
                     txt_out.append(str(out_word))
                     if int(out_word) < len(self.vocab_list):
@@ -496,11 +512,11 @@ class ChatModel:
 
     def check_sentence(self,x2, y, lst=None, start = 0):
         self.load_word_vectors()
-        print(x2.shape, y.shape, train_to)
+        print(x2.shape, y.shape, self.train_to)
         ii = tokens_per_sentence
         for k in range(10):
             print(k,lst[k])
-        c = self.open_sentences(train_to)
+        c = self.open_sentences(self.train_to)
         line = c[start]
         print(line)
         for j in range(start, start + 8):
@@ -597,7 +613,7 @@ class ChatModel:
 
 
         if not check_sentences: self.model.summary()
-        tot = len(self.open_sentences(train_fr))
+        tot = len(self.open_sentences(self.train_fr))
 
         self.load_word_vectors()
         #global batch_constant
@@ -619,9 +635,9 @@ class ChatModel:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
                 print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', printable)
-                x1 = self.categorical_input_one(train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
-                x2 = self.categorical_input_one(train_to,list,dict, length, s)
-                y =  self.categorical_input_one(train_to,list,dict, length, s, shift_output=True)
+                x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
+                x2 = self.categorical_input_one(self.train_to,list,dict, length, s)
+                y =  self.categorical_input_one(self.train_to,list,dict, length, s, shift_output=True)
 
                 x1 = self.stack_sentences_categorical(x1,list, shift_output=all_vectors)
                 x2 = self.stack_sentences_categorical(x2,list, shift_output=all_vectors)
@@ -640,7 +656,7 @@ class ChatModel:
                         self.model.fit([x1, x2], y, batch_size=16)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model(self.model, self.filename)
-                    self.model_infer(train_to)
+                    self.model_infer(self.train_to)
             except KeyboardInterrupt as e:
                 print(repr(e))
                 self.save_model(self.model,filename + ".backup")
@@ -692,6 +708,9 @@ if __name__ == '__main__':
     c = ChatModel()
 
     if True:
+        c.task_autoencode()
+        #c.task_normal_train()
+
         print('stage: load vocab')
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
@@ -711,7 +730,7 @@ if __name__ == '__main__':
     if True:
 
         #c.load_word_vectors()
-        c.model_infer(train_to)
+        c.model_infer(c.train_to)
 
 
 
