@@ -259,13 +259,13 @@ class ChatModel:
     def embedding_model_lstm(self, words, embedding_weights_a=None, embedding_weights_b=None, trainable=False, skip_embed=False):
 
 
-        latent_dim = 64
+        #latent_dim = 64
         lstm_unit_a = units
         lstm_unit_b = units # * 2
         embed_unit = int(hparams['embed_size'])
 
         x_shape = (None,)
-        if skip_embed: x_shape = (tokens_per_sentence,embed_unit)
+        if skip_embed: x_shape = (None,embed_unit)# (tokens_per_sentence,embed_unit)
 
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
@@ -407,6 +407,7 @@ class ChatModel:
         if self.embed_mode == 'mod':
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
         state = self.model_encoder.predict(source_input)
+
         #self.model_encoder.summary()
         #self.model_inference.summary()
 
@@ -417,9 +418,12 @@ class ChatModel:
         t = txt.lower().split()
         out = self.vocab_dict[hparams['sol']]
         if self.embed_mode == 'mod':
-            out = self.vocab_dict[hparams['sol']]
-            out = np.array([out])
-            out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
+            #out = self.vocab_dict[hparams['sol']]
+            out = self.find_vec(hparams['sol'])
+            out = np.expand_dims(out,0)
+            out = np.expand_dims(out,0)
+
+            #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
 
         for i in range(len(t) - 0, len(t) * 3):
             if True:
@@ -440,13 +444,17 @@ class ChatModel:
                         for z in range(tokens_per_sentence):
                             close_word = out[0,z,:]
                             z_list.append(self.find_closest_word(close_word))
-                        print('**','--'.join(z_list))
+                        print('**','--'.join(z_list),'**')
+
                     out_word = self.find_closest_index(out[0,0,:])
                     txt_out.append(str(out_word))
                     if int(out_word) < len(self.vocab_list):
                         txt_out.append(self.vocab_list[int(out_word)])
-                    out_word = np.array([out_word])
-                    out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
+                    #out_word = np.array([out_word])
+                    #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
+                    out = self.find_vec(self.vocab_list[int(out_word)])
+                    out = np.expand_dims(out,0)
+                    out = np.expand_dims(out,0)
 
         print('---greedy predict---')
         print(' '.join(txt_out))
@@ -720,7 +728,7 @@ if __name__ == '__main__':
         #c.model.summary()
         #exit()
 
-    if True:
+    if False:
         c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(c.model,filename)

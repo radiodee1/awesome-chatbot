@@ -94,7 +94,7 @@ def prep_glove(vocab_list):
             else:
                 vec = np.random.uniform(low=uniform_low, high=uniform_high, size=(int(hparams['embed_size']),))
                 num += 1
-                print(num ,'blanks')
+                print(num ,'blanks',word)
             vec_out = []
             for j in vec:
                 vec_out.append(str(round(j, 5)))
