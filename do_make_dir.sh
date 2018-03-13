@@ -8,11 +8,6 @@ else
 fi
 
 
-mkdir raw model
-
-
-pip3 install tqdm colorama regex unidecode
-
 
 if [ -f raw/RC_2015-01.bz2 ] ; then
     echo "found RC"

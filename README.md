@@ -8,3 +8,6 @@ Keras implementation of a chatbot
 # GloVe Word Embeddings Download
 * https://code.google.com/archive/p/word2vec/
 * http://nlp.stanford.edu/data/glove.6B.zip
+
+# REDDIT Download
+* http://files.pushshift.io/reddit/comments/RC_2017-11.bz2
