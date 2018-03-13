@@ -1,4 +1,4 @@
-#git clone https://github.com/tensorflow/nmt/
+REDDIT=RC_2017-11
 
 if [ -f raw/cornell_movie_dialogs_corpus.zip ] ; then
     echo "found movie corpus"
@@ -9,23 +9,21 @@ fi
 
 
 
-if [ -f raw/RC_2015-01.bz2 ] ; then
+if [ -f raw/$REDDIT.bz2 ] ; then
     echo "found RC"
     cd raw/
     
-    if [ -f RC_2015-01 ] ; then
+    if [ -f $REDDIT ] ; then
     
         echo "already unzipped"
-        #mv RC_2015-01 ..
-        
+
     else
-        if [ -f ../RC_2015-01 ] ; then
+        if [ -f ../$REDDIT ] ; then
             echo "already moved"
             
         else
             echo "unzip may take some time..."
-            bunzip2 -kv RC_2015-01.bz2
-            #mv RC_2015-01 ..    
+            bunzip2 -kv $REDDIT.bz2
         fi
   
     
@@ -33,7 +31,7 @@ if [ -f raw/RC_2015-01.bz2 ] ; then
     cd ../
 else
     
-    echo "nothing for RC_2015-01"
+    echo "nothing for $REDDIT"
 fi
 
 if [ -f raw/cornell_movie_dialogs_corpus.zip ] ; then
