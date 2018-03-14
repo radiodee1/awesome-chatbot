@@ -358,7 +358,7 @@ class ChatModel:
                                     return_state=True,
                                     recurrent_dropout=0.2,
                                     input_shape=(None,),
-                                    ), merge_mode='sum')
+                                    ), merge_mode='mul')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
@@ -367,8 +367,8 @@ class ChatModel:
         else:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
 
-        concat_a_1 = Add()([rec_a_1, rec_a_3])
-        concat_a_2 = Add()([rec_a_2, rec_a_4])
+        concat_a_1 = Multiply()([rec_a_1, rec_a_3])
+        concat_a_2 = Multiply()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
 
@@ -446,8 +446,7 @@ class ChatModel:
                                 [dense_outputs_inference] +
                                 outputs_states)
 
-        ### test embedding model ###
-        #model_embedding = Model(valid_word_c, embed_c)
+
 
         ### boilerplate ###
 
@@ -456,7 +455,7 @@ class ChatModel:
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
         model.compile(optimizer=adam, loss='mse')
 
-        return model, model_encoder, model_inference #, model_embedding
+        return model, model_encoder, model_inference
 
     def predict_words(self,txt,stop_at_eol=False):
         eol = hparams['eol']
@@ -771,7 +770,7 @@ class ChatModel:
                         self.model.fit([x1,x2], y)
                     else:
                         self.model.fit([x1, x2], y)
-                if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
+                if (z + 1) % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model( self.filename)
                     self.model_infer(self.train_to)
             except KeyboardInterrupt as e:

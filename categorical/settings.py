@@ -23,7 +23,7 @@ hparams = {
     'eol':'eol',
     'unk':'unk',
     'units': 128, #256 , #64,
-    'learning_rate': 0.001,
+    'learning_rate': 0.01, #0.001
     'tokens_per_sentence': 32,
     'raw_embedding_filename': 'embedding',
     'batch_constant': 512#384
