@@ -498,7 +498,7 @@ class ChatModel:
                 txt_out.append('|')
 
                 state_out = [h,c]
-                print(state_out,'so')
+                #print(state_out,'so')
 
                 if self.embed_mode == 'normal':
                     a = np.zeros((tokens_per_sentence))
@@ -855,7 +855,7 @@ if __name__ == '__main__':
         c.load_model_file()
 
 
-    if False:
+    if True:
         c.train_model_categorical( check_sentences=False)
 
         c.save_model(filename)
