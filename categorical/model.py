@@ -187,6 +187,7 @@ class ChatModel:
         ''' do after all training, before every eval. also before stack_sentences '''
         if self.embed_mode != 'mod' :
             self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+            self.set_embedding_matrix()
         else:
             #print(self.word_embeddings.shape)
             if self.word_embeddings is None: self.set_embedding_matrix()
@@ -246,9 +247,14 @@ class ChatModel:
                     self.model_encoder  is not None and self.model_inference  is not None):
                 return self.model, self.model_encoder, self.model_inference
 
+        return_sequences_b = False
+
         if self.embed_mode == 'normal':
             self.skip_embed = False
             self.set_embedding_matrix()
+            return_sequences_b = True
+        elif self.embed_mode == 'mod':
+            return_sequences_b = True
 
         if self.embedding_matrix is None:# and self.embed_mode != 'normal':
             self.load_word_vectors()
@@ -258,9 +264,10 @@ class ChatModel:
                                          self.embedding_matrix,
                                          self.embedding_matrix,
                                          self.trainable,
-                                         skip_embed=self.skip_embed)
+                                         skip_embed=self.skip_embed,
+                                        return_sequences_b=return_sequences_b)
 
-        #if self.vocab_dict is None: self.load_vocab_dict()
+        if self.vocab_dict is None: self.load_vocab()
 
         return self.model, self.model_encoder, self.model_inference
 
@@ -268,7 +275,8 @@ class ChatModel:
                              embedding_weights_a=None,
                              embedding_weights_b=None,
                              trainable=False,
-                             skip_embed=False):
+                             skip_embed=False,
+                             return_sequences_b=False):
 
 
         #latent_dim = 64
@@ -276,7 +284,7 @@ class ChatModel:
         lstm_unit_b = units # * 2
         embed_unit = int(hparams['embed_size'])
 
-        x_shape = (None,)
+        x_shape = (tokens_per_sentence,)
         if skip_embed: x_shape = (None,embed_unit)# (tokens_per_sentence,embed_unit)
 
         valid_word_a = Input(shape=x_shape)
@@ -312,7 +320,6 @@ class ChatModel:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
         else:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
-
 
         concat_a_1 = Multiply()([rec_a_1, rec_a_3])
         concat_a_2 = Multiply()([rec_a_2, rec_a_4])
@@ -352,7 +359,7 @@ class ChatModel:
 
         lstm_b = LSTM(units=lstm_unit_b ,
                       recurrent_dropout=0.2,
-                      return_sequences=skip_embed,
+                      return_sequences=return_sequences_b,
                       return_state=True
                       )
 
@@ -454,14 +461,22 @@ class ChatModel:
                 txt_out.append('|')
 
                 state_out = [h,c]
+                #print(state_out,'so')
 
+                if self.embed_mode == 'normal':
+                    a = np.zeros((tokens_per_sentence))
+                    a[0] = int(out)
+
+                    out = np.expand_dims(a,0)
+                    #print(out,'a')
                 out, h, c = self.model_inference.predict([out] + state_out)
-                if self.embed_mode != 'mod':
+                if self.embed_mode == 'normal':
+                    out = out[0,0,:]
                     out = self.find_closest_index(out)
                     txt_out.append(str(out))
                     if int(out) < len(self.vocab_list):
                         txt_out.append(self.vocab_list[int(out)])
-                else:
+                elif self.embed_mode == 'mod':
 
                     if False:
                         z_list = []
@@ -476,9 +491,12 @@ class ChatModel:
                         txt_out.append(self.vocab_list[int(out_word)])
                     #out_word = np.array([out_word])
                     #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
+                    #if self.embed_mode == 'mod':
                     out = self.find_vec(self.vocab_list[int(out_word)])
-                    out = np.expand_dims(out,0)
-                    out = np.expand_dims(out,0)
+                    out = np.expand_dims(out, 0)
+                    out = np.expand_dims(out, 0)
+
+
 
         print('---greedy predict---')
         print(' '.join(txt_out))
@@ -554,12 +572,18 @@ class ChatModel:
         for j in range(start, start + 8):
             print("x >",j,end=' ')
             for i in range(ii):
-                vec_x = x2[i + tokens_per_sentence * j]
+                if self.embed_mode == 'normal':
+                    vec_x = x2[j,i]
+                else:
+                    vec_x = x2[i + tokens_per_sentence * j]
                 print(lst[int(vec_x)], ' ' , int(vec_x),' ',end=' ')
             print()
             print("y >",j, end=' ')
             for i in range(ii):
-                vec_y = y[i + tokens_per_sentence * j,:]
+                if self.embed_mode == 'normal':
+                    vec_y = y[j,i,:]
+                else:
+                    vec_y = y[i + tokens_per_sentence * j,:]
                 vec_y2 = self.find_closest_index(vec_y)
                 print(self.find_closest_word(vec_y), ' ', vec_y2,' ', end=' ')
             print()
@@ -606,7 +630,7 @@ class ChatModel:
         if self.embed_mode == 'mod':
             batch = tokens_per_sentence
         tot = xx.shape[0] // batch
-        print(xx.shape,'stack')
+        #print(xx.shape,'stack')
         out = None
         if not shift_output:
             out = np.zeros(( tot))
@@ -747,13 +771,7 @@ class ChatModel:
         self.vocab_dict = dict # dict
         return list, dict
 
-    def load_vocab_dict(self):
-        dict = {}
-        for i in range(len(self.vocab_list)):
-            z = self.model_embedding.predict(np.array([i]))
-            dict[self.vocab_list[i]] = self.find_closest_index(z)
-        self.vocab_dict = dict
-        return dict
+
 
 
 if __name__ == '__main__':
@@ -774,7 +792,7 @@ if __name__ == '__main__':
         #exit()
 
     if True:
-        c.train_model_categorical(model,l,d, check_sentences=False)
+        c.train_model_categorical(model,l,d, check_sentences=True)
 
         c.save_model(c.model,filename)
 
