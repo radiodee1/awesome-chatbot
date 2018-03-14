@@ -16,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="857" column="11" lean-forward="false" selection-start-line="857" selection-start-column="11" selection-end-line="857" selection-end-column="11" />
+            <state relative-caret-position="358">
+              <caret line="847" column="27" lean-forward="false" selection-start-line="847" selection-start-column="27" selection-end-line="847" selection-end-column="27" />
               <folding />
             </state>
           </provider>
@@ -111,7 +111,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>uniform</find>
       <find>lstm_b</find>
       <find>use_embed</find>
       <find>categorical_input_one</find>
@@ -124,7 +123,6 @@
       <find>skip_embed</find>
       <find>stack_sentences_categorical</find>
       <find>model_infer</find>
-      <find>predict_words</find>
       <find>valid_word_b</find>
       <find>load_vocab</find>
       <find>vocab_dict</find>
@@ -141,6 +139,8 @@
       <find>load_word_vectors</find>
       <find>_fill_vec</find>
       <find>train_model_categorical</find>
+      <find>trainable</find>
+      <find>predict_words</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -635,8 +635,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="857" column="11" lean-forward="false" selection-start-line="857" selection-start-column="11" selection-end-line="857" selection-end-column="11" />
+        <state relative-caret-position="358">
+          <caret line="847" column="27" lean-forward="false" selection-start-line="847" selection-start-column="27" selection-end-line="847" selection-end-column="27" />
           <folding />
         </state>
       </provider>

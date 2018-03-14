@@ -77,7 +77,7 @@ class ChatModel:
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
-        self.trainable = False
+        self.trainable = True
         self.skip_embed = True
 
         self.vocab_list = None
@@ -458,8 +458,8 @@ class ChatModel:
 
         return model, model_encoder, model_inference #, model_embedding
 
-    def predict_words(self,txt):
-
+    def predict_words(self,txt,stop_at_eol=False):
+        eol = hparams['eol']
         self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
 
         self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
@@ -496,7 +496,7 @@ class ChatModel:
         for i in range(len(t) - 0, len(t) * 3):
             if True:
                 txt_out.append('|')
-
+                out_word = ''
                 state_out = [h,c]
                 #print(state_out,'so')
 
@@ -513,6 +513,7 @@ class ChatModel:
                     txt_out.append(str(out))
                     if int(out) < len(self.vocab_list):
                         txt_out.append(self.vocab_list[int(out)])
+                        out_word = self.vocab_list[int(out)]
                 elif self.embed_mode == 'mod':
 
                     if False:
@@ -532,7 +533,7 @@ class ChatModel:
                     out = self.find_vec(self.vocab_list[int(out_word)])
                     out = np.expand_dims(out, 0)
                     out = np.expand_dims(out, 0)
-
+                if stop_at_eol and out_word == eol: break
 
 
         print('---greedy predict---')
@@ -585,11 +586,11 @@ class ChatModel:
         print('----------------')
         print('index:',g)
         print('input:',line)
-        self.predict_words(line)
+        self.predict_words(line, stop_at_eol=True)
         print('----------------')
         line = 'sol what is up ? eol'
         print('input:', line)
-        self.predict_words(line)
+        self.predict_words(line, stop_at_eol=True)
 
         if False:
             word = 'the'
@@ -845,15 +846,12 @@ if __name__ == '__main__':
 
     if True:
         c.task_autoencode()
-        #c.task_normal_train()
 
         print('stage: load vocab')
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
-
         c.load_vocab(vocab_fr)
         c.load_model_file()
-
 
     if True:
         c.train_model_categorical( check_sentences=False)
