@@ -191,6 +191,7 @@ class ChatModel:
 
     def load_word_vectors(self):
         ''' do after all training, before every eval. also before stack_sentences '''
+        self.load_weights_to_matrix()
         if self.embed_mode != 'mod' :
             if self.load_good:
                 self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
@@ -248,7 +249,33 @@ class ChatModel:
                     self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
                                                                  size=(embed_size,))
                     # self.embedding_matrix[i] = np.zeros((embed_size,))
+        pass
 
+    def load_weights_to_matrix(self,embeddings_index=None):
+        ''' assume vectors in embedding layer 2 are in vocab_list order already. '''
+        if self.load_good:
+            print('stage: set embedding data after load.')
+            if embeddings_index is None:
+                self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+                embeddings_index = {}
+                for i in range(len(self.vocab_list)):
+                    word = self.vocab_list[i]
+                    value = self.word_embeddings[0][i]
+                    #print(value.shape, i, word)
+                    embeddings_index[word] = value
+            embed_size = int(hparams['embed_size'])
+            self.embedding_matrix = np.zeros((len(self.vocab_list), embed_size))
+            for i in range(len(self.vocab_list)):
+                word = self.vocab_list[i]
+                embedding_vector = embeddings_index.get(word)
+                if embedding_vector is not None:
+                    # words not found in embedding index will be all random.
+                    self.embedding_matrix[i] = embedding_vector[:embed_size]
+                else:
+                    print('fill with random values', i, word)
+                    self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
+                                                                 size=(embed_size,))
+                    # self.embedding_matrix[i] = np.zeros((embed_size,))
         pass
 
 
@@ -439,7 +466,7 @@ class ChatModel:
                                                                                     self.model_encoder,
                                                                                     self.model_inference,
                                                                                     global_check=True)
-        source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
+        source_input = self._fill_vec(txt, shift_right=False)
         if self.embed_mode == 'mod':
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
         else:
@@ -471,7 +498,7 @@ class ChatModel:
                 txt_out.append('|')
 
                 state_out = [h,c]
-                #print(state_out,'so')
+                print(state_out,'so')
 
                 if self.embed_mode == 'normal':
                     a = np.zeros((tokens_per_sentence))
@@ -522,7 +549,7 @@ class ChatModel:
             print(self.find_closest_word(out[0]))
         pass
 
-    def _fill_vec(self, sent, lst, dict):
+    def _fill_vec(self, sent, shift_right=False):
         s = sent.lower().split()
         out = []
         l = np.zeros((tokens_per_sentence))
@@ -531,7 +558,13 @@ class ChatModel:
                 out.append( self.vocab_dict[s[i]])
             pass
         out = np.array(out)
-        l[:out.shape[0]] = out
+        start = 0
+        stop = out.shape[0]
+        if shift_right:
+            start = tokens_per_sentence - out.shape[0]
+            stop = tokens_per_sentence
+        #l[:out.shape[0]] = out
+        l[start:stop] = out
         out = l
         #print(out.shape,'check')
         return out
@@ -678,8 +711,10 @@ class ChatModel:
             #out = np.expand_dims(out,0)
         return out
 
-    def train_model_categorical(self, model_in, list, dict,train_model=True, check_sentences=False):
+    def train_model_categorical(self, train_model=True, check_sentences=False):
         print('stage: arrays prep for test/train')
+        list = self.vocab_list
+        dict = self.vocab_dict
 
         if self.model is None: self.model, self.model_encoder, self.model_inference = \
             self.embedding_model(self.model,
@@ -816,12 +851,12 @@ if __name__ == '__main__':
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
 
-        l, d = c.load_vocab(vocab_fr)
+        c.load_vocab(vocab_fr)
         c.load_model_file()
 
 
-    if True:
-        c.train_model_categorical(model,l,d, check_sentences=False)
+    if False:
+        c.train_model_categorical( check_sentences=False)
 
         c.save_model(filename)
 

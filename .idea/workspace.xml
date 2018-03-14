@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="207" column="42" lean-forward="false" selection-start-line="207" selection-start-column="42" selection-end-line="207" selection-end-column="42" />
+            <state relative-caret-position="557">
+              <caret line="857" column="12" lean-forward="false" selection-start-line="857" selection-start-column="12" selection-end-line="857" selection-end-column="12" />
               <folding />
             </state>
           </provider>
@@ -111,12 +112,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>global_check</find>
       <find>uniform</find>
       <find>lstm_b</find>
       <find>use_embed</find>
       <find>categorical_input_one</find>
-      <find>train_model_categorical</find>
       <find>train_fr</find>
       <find>train_to</find>
       <find>find_closest_word</find>
@@ -141,6 +140,8 @@
       <find>load_good</find>
       <find>set_embedding_matrix</find>
       <find>load_word_vectors</find>
+      <find>_fill_vec</find>
+      <find>train_model_categorical</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -635,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="207" column="42" lean-forward="false" selection-start-line="207" selection-start-column="42" selection-end-line="207" selection-end-column="42" />
+        <state relative-caret-position="557">
+          <caret line="857" column="12" lean-forward="false" selection-start-line="857" selection-start-column="12" selection-end-line="857" selection-end-column="12" />
           <folding />
         </state>
       </provider>
