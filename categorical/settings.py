@@ -17,7 +17,7 @@ hparams = {
     'batch_size': 256,#64, #256
     'steps_to_stats': 100,
     'embed_size':100,
-    #'use_embed':True,
+    'infer_repeat': 3,
     'embed_mode':'normal', #values: mod, normal, zero
     'sol':'sol',
     'eol':'eol',

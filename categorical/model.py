@@ -471,73 +471,78 @@ class ChatModel:
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
         else:
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=False)
-        state = self.model_encoder.predict(source_input)
 
-        #self.model_encoder.summary()
-        #self.model_inference.summary()
+        repeats = hparams['infer_repeat']
 
-        h = state[0]
-        c = state[1]
+        for _ in range(repeats):
+            state = self.model_encoder.predict(source_input)
 
-        txt_out = []
-        t = txt.lower().split()
-        out = self.vocab_dict[hparams['sol']]
-        if self.embed_mode == 'mod':
-            #out = self.vocab_dict[hparams['sol']]
-            out = self.find_vec(hparams['sol'])
-            out = np.expand_dims(out,0)
-            out = np.expand_dims(out,0)
-        else:
-            out = np.expand_dims(out,0)
-            #out = np.expand_dims(out,0)
+            #self.model_encoder.summary()
+            #self.model_inference.summary()
 
-            #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
+            h = state[0]
+            c = state[1]
 
-        for i in range(len(t) - 0, len(t) * 3):
-            if True:
-                txt_out.append('|')
-                out_word = ''
-                state_out = [h,c]
-                #print(state_out,'so')
+            txt_out = []
+            t = txt.lower().split()
+            out = self.vocab_dict[hparams['sol']]
+            if self.embed_mode == 'mod':
+                #out = self.vocab_dict[hparams['sol']]
+                out = self.find_vec(hparams['sol'])
+                out = np.expand_dims(out,0)
+                out = np.expand_dims(out,0)
+            else:
+                out = np.expand_dims(out,0)
+                #out = np.expand_dims(out,0)
 
-                if self.embed_mode == 'normal':
-                    a = np.zeros((tokens_per_sentence))
-                    a[0] = int(out)
+                #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
 
-                    out = np.expand_dims(a,0)
-                    #print(out,'a')
-                out, h, c = self.model_inference.predict([out] + state_out)
-                if self.embed_mode == 'normal':
-                    out = out[0,0,:]
-                    out = self.find_closest_index(out)
-                    txt_out.append(str(out))
-                    if int(out) < len(self.vocab_list):
-                        txt_out.append(self.vocab_list[int(out)])
-                        out_word = self.vocab_list[int(out)]
-                elif self.embed_mode == 'mod':
+            for i in range(len(t) - 0, len(t) * 3):
+                if True:
+                    txt_out.append('|')
+                    out_word = ''
+                    state_out = [h,c]
+                    #print(state_out,'so')
 
-                    if False:
-                        z_list = []
-                        for z in range(tokens_per_sentence):
-                            close_word = out[0,z,:]
-                            z_list.append(self.find_closest_word(close_word))
-                        print('**','--'.join(z_list),'**')
+                    if self.embed_mode == 'normal':
+                        a = np.zeros((tokens_per_sentence))
+                        a[0] = int(out)
 
-                    out_word = self.find_closest_index(out[0,0,:])
-                    txt_out.append(str(out_word))
-                    if int(out_word) < len(self.vocab_list):
-                        txt_out.append(self.vocab_list[int(out_word)])
-                    #out_word = np.array([out_word])
-                    #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
-                    #if self.embed_mode == 'mod':
-                    out = self.find_vec(self.vocab_list[int(out_word)])
-                    out = np.expand_dims(out, 0)
-                    out = np.expand_dims(out, 0)
-                if stop_at_eol and out_word == eol: break
+                        out = np.expand_dims(a,0)
+                        #print(out,'a')
+                    out, h, c = self.model_inference.predict([out] + state_out)
+                    if self.embed_mode == 'normal':
+                        out = out[0,0,:]
+                        out = self.find_closest_index(out)
+                        txt_out.append(str(out))
+                        if int(out) < len(self.vocab_list):
+                            txt_out.append(self.vocab_list[int(out)])
+                            out_word = self.vocab_list[int(out)]
+                    elif self.embed_mode == 'mod':
+
+                        if False:
+                            z_list = []
+                            for z in range(tokens_per_sentence):
+                                close_word = out[0,z,:]
+                                z_list.append(self.find_closest_word(close_word))
+                            print('**','--'.join(z_list),'**')
+
+                        out_word = self.find_closest_index(out[0,0,:])
+                        txt_out.append(str(out_word))
+                        if int(out_word) < len(self.vocab_list):
+                            txt_out.append(self.vocab_list[int(out_word)])
+                        #out_word = np.array([out_word])
+                        #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
+                        #if self.embed_mode == 'mod':
+                        out = self.find_vec(self.vocab_list[int(out_word)])
+                        out = np.expand_dims(out, 0)
+                        out = np.expand_dims(out, 0)
+                    if stop_at_eol and out_word == eol: break
 
 
-        print('---greedy predict---')
-        print(' '.join(txt_out))
+            print('---greedy predict---')
+            print(' '.join(txt_out))
+            ####
 
         if False:
             print('---basic predict---')
@@ -845,7 +850,8 @@ if __name__ == '__main__':
     c = ChatModel()
 
     if True:
-        c.task_autoencode()
+        #c.task_autoencode()
+        c.task_normal_train()
 
         print('stage: load vocab')
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
