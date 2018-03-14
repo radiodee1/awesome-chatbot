@@ -69,7 +69,12 @@ class ChatModel:
         self.model = None
         self.model_encoder = None
         self.model_inference = None
-        self.model_embedding = None
+        #self.model_embedding = None
+
+        self.name_model = ''
+        self.name_encoder = '.encode'
+        self.name_infer = '.infer'
+
         self.uniform_low = -1.0
         self.uniform_high = 1.0
         self.trainable = False
@@ -83,15 +88,16 @@ class ChatModel:
 
         self.train_fr = None
         self.train_to = None
-        '''
+
+        self.load_good = False
+
+        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
+
         self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
                                                                                     self.model_encoder,
                                                                                     self.model_inference,
                                                                                     global_check=True)
-        '''
-        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
 
-        #self.set_embedding_matrix()
 
 
     def task_autoencode(self):
@@ -187,7 +193,7 @@ class ChatModel:
         ''' do after all training, before every eval. also before stack_sentences '''
         if self.embed_mode != 'mod' :
             self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
-            self.set_embedding_matrix()
+            if self.word_embeddings is None: self.set_embedding_matrix()
         else:
             #print(self.word_embeddings.shape)
             if self.word_embeddings is None: self.set_embedding_matrix()
@@ -217,7 +223,7 @@ class ChatModel:
                     value = np.asarray(values, dtype='float32')
                     embeddings_index[word] = value
                 else:
-                    print('fill with zeros',line, word)
+                    print('fill with random values',line, word)
                     value = np.random.uniform(low=self.uniform_low, high=self.uniform_high, size=(embed_size,))
                     # value = np.zeros((embed_size,))
                     embeddings_index[word] = value
@@ -231,6 +237,7 @@ class ChatModel:
                     # words not found in embedding index will be all random.
                     self.embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
+                    print('fill with random values',i,word)
                     self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
                                                                  size=(embed_size,))
                     # self.embedding_matrix[i] = np.zeros((embed_size,))
@@ -239,6 +246,19 @@ class ChatModel:
 
 
     def embedding_model(self,model=None, infer_encode=None, infer_decode=None, global_check=False):
+
+        return_sequences_b = False
+
+        if self.embed_mode == 'normal':
+            self.skip_embed = False
+            if self.word_embeddings is None: self.set_embedding_matrix()
+            return_sequences_b = True
+        elif self.embed_mode == 'mod':
+            return_sequences_b = True
+
+        if self.embedding_matrix is None:# and self.embed_mode != 'normal':
+            self.load_word_vectors()
+
         if not self.embed_mode == 'mod':
             if model is not None and infer_encode is not None and infer_decode is not None:
                 return model, infer_encode, infer_decode
@@ -247,27 +267,18 @@ class ChatModel:
                     self.model_encoder  is not None and self.model_inference  is not None):
                 return self.model, self.model_encoder, self.model_inference
 
-        return_sequences_b = False
+        if not self.load_good :
+            self.model, self.model_encoder, self.model_inference \
+                = self.embedding_model_lstm(words,
+                                             self.embedding_matrix,
+                                             self.embedding_matrix,
+                                             self.trainable,
+                                             skip_embed=self.skip_embed,
+                                            return_sequences_b=return_sequences_b)
 
-        if self.embed_mode == 'normal':
-            self.skip_embed = False
-            self.set_embedding_matrix()
-            return_sequences_b = True
-        elif self.embed_mode == 'mod':
-            return_sequences_b = True
+            if self.vocab_dict is None: self.load_vocab()
 
-        if self.embedding_matrix is None:# and self.embed_mode != 'normal':
-            self.load_word_vectors()
-
-        self.model, self.model_encoder, self.model_inference, self.model_embedding \
-            = self.embedding_model_lstm(words,
-                                         self.embedding_matrix,
-                                         self.embedding_matrix,
-                                         self.trainable,
-                                         skip_embed=self.skip_embed,
-                                        return_sequences_b=return_sequences_b)
-
-        if self.vocab_dict is None: self.load_vocab()
+        self.load_good = True
 
         return self.model, self.model_encoder, self.model_inference
 
@@ -346,16 +357,7 @@ class ChatModel:
             embed_b = embeddings_b(valid_word_b)
 
         #############
-        if embedding_weights_a is not None and True:
-            ###### embedding test #####
-            valid_word_c = Input(shape=(None,))
-            embeddings_c = Embedding(words, embed_unit,
-                                     weights=[embedding_weights_a],
-                                     input_length=tokens_per_sentence,
-                                     trainable=False
-                                     )
-            embed_c = embeddings_c(valid_word_c)
-            ######### end ########
+
 
         lstm_b = LSTM(units=lstm_unit_b ,
                       recurrent_dropout=0.2,
@@ -410,7 +412,7 @@ class ChatModel:
                                 outputs_states)
 
         ### test embedding model ###
-        model_embedding = Model(valid_word_c, embed_c)
+        #model_embedding = Model(valid_word_c, embed_c)
 
         ### boilerplate ###
 
@@ -419,7 +421,7 @@ class ChatModel:
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
         model.compile(optimizer=adam, loss='mse')
 
-        return model, model_encoder, model_inference, model_embedding
+        return model, model_encoder, model_inference #, model_embedding
 
     def predict_words(self,txt):
 
@@ -721,11 +723,11 @@ class ChatModel:
                     else:
                         self.model.fit([x1, x2], y)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
-                    self.save_model(self.model, self.filename)
+                    self.save_model( self.filename)
                     self.model_infer(self.train_to)
             except KeyboardInterrupt as e:
                 print(repr(e))
-                self.save_model(self.model,filename + ".backup")
+                self.save_model(filename + ".backup")
                 exit()
             finally:
                 pass
@@ -733,26 +735,46 @@ class ChatModel:
 
 
 
-    def save_model(self,model, filename):
+    def save_model(self, filename):
         print ('stage: save lstm model')
         if filename == None:
             filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
-        model.save(filename)
-
-
-    def load_model_file(self,model, filename, lst):
-        print('stage: checking for load')
-        if filename == None:
-            filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
-        if os.path.isfile(filename):
-            model = load_model(filename)
-            print ('stage: load works')
+        if filename.endswith('.h5'):
+            basename = filename[:- len('.h5')]
+            print(basename)
+            if self.model is not None:
+                self.model.save_weights(filename)
+            if self.model_encoder is not None:
+                self.model_encoder.save_weights(basename + self.name_encoder + '.h5')
+            if self.model_inference is not None:
+                self.model_inference.save_weights(basename + self.name_infer + '.h5')
         else:
-            #model, _, _ = embedding_model_lstm(words=len(lst))
-            model, _, _ = self.embedding_model()
+            self.model.save(filename)
 
+
+    def load_model_file(self, filename=None):
+        print('stage: checking for load')
+        basename = ''
+        if filename is None:
+            filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
+        if filename.endswith('.h5'):
+            basename = filename[:- len('.h5')]
+        if os.path.isfile(filename):
+            self.model.load_weights(filename)
+            #self.load_good = True
+            print ('stage: load works')
+        name_encoder = basename + self.name_encoder + '.h5'
+        name_inference = basename + self.name_infer + '.h5'
+        if os.path.isfile(name_encoder) :
+            self.model_encoder.load_weights(name_encoder)
+            print('load', name_encoder)
+        if os.path.isfile(name_inference) :
+            self.model_inference.load_weights(name_inference)
+            print('load', name_inference)
+        if not os.path.isfile(filename):
+            self.model, self.model_encoder, self.model_inference = self.embedding_model()
             print('stage: load failed')
-        return model
+        #return model
 
     def load_vocab(self,filename, global_check=False):
         ''' assume there is one word per line in vocab text file '''
@@ -785,16 +807,17 @@ if __name__ == '__main__':
         print('stage: load vocab')
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
+
         l, d = c.load_vocab(vocab_fr)
-        c.model = c.load_model_file(model,filename, l)
+        c.load_model_file()
 
         #c.model.summary()
         #exit()
 
     if True:
-        c.train_model_categorical(model,l,d, check_sentences=True)
+        c.train_model_categorical(model,l,d, check_sentences=False)
 
-        c.save_model(c.model,filename)
+        c.save_model(filename)
 
         #print(c.find_closest_word(c.find_vec('str95bb')), 'str95bb')
 
@@ -803,21 +826,5 @@ if __name__ == '__main__':
         #c.load_word_vectors()
         c.model_infer(c.train_to)
 
-        if c.model_embedding is not None and False:
-            c.model_embedding.summary()
-            i = np.array(c.vocab_dict['man'])
-            i = np.expand_dims(i,0)
-            i = np.expand_dims(i,0)
-            l = c.embedding_matrix[int(i)]
-            print(l.shape,'l')
-            z = c.find_closest_word(l)
-            print(z,'z')
-            out = c.model_embedding.predict(i)
-            print(out, out.shape)
-            z = c.find_closest_word(out)
-            print(z)
-            out = c.embedding_matrix[c.vocab_dict['man']]
-            print(out,out.shape)
-            z = c.find_closest_word(out)
-            print(z)
+
 
