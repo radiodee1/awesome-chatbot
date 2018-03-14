@@ -192,7 +192,12 @@ class ChatModel:
     def load_word_vectors(self):
         ''' do after all training, before every eval. also before stack_sentences '''
         if self.embed_mode != 'mod' :
-            self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+            if self.load_good:
+                self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+                print('stage: embedding_2')
+            else:
+                print('stage: early load...')
+                exit()
             if self.word_embeddings is None: self.set_embedding_matrix()
         else:
             #print(self.word_embeddings.shape)
@@ -200,6 +205,7 @@ class ChatModel:
             self.word_embeddings = np.expand_dims(self.embedding_matrix,0)
 
     def set_embedding_matrix(self):
+        print('stage: set_embedding_matrix')
         self.skip_embed = False
         if self.embed_mode == 'mod': self.skip_embed = True
         embed_size = int(hparams['embed_size'])
@@ -238,6 +244,7 @@ class ChatModel:
                     self.embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
                     print('fill with random values',i,word)
+
                     self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
                                                                  size=(embed_size,))
                     # self.embedding_matrix[i] = np.zeros((embed_size,))
@@ -268,6 +275,7 @@ class ChatModel:
                 return self.model, self.model_encoder, self.model_inference
 
         if not self.load_good :
+            print('stage: construct model here.')
             self.model, self.model_encoder, self.model_inference \
                 = self.embedding_model_lstm(words,
                                              self.embedding_matrix,
@@ -761,16 +769,16 @@ class ChatModel:
             basename = filename[:- len('.h5')]
         if os.path.isfile(filename):
             self.model.load_weights(filename)
-            #self.load_good = True
-            print ('stage: load works')
+
+            print ('stage: load works', filename)
         name_encoder = basename + self.name_encoder + '.h5'
         name_inference = basename + self.name_infer + '.h5'
         if os.path.isfile(name_encoder) :
             self.model_encoder.load_weights(name_encoder)
-            print('load', name_encoder)
+            print('stage: load', name_encoder)
         if os.path.isfile(name_inference) :
             self.model_inference.load_weights(name_inference)
-            print('load', name_inference)
+            print('stage: load', name_inference)
         if not os.path.isfile(filename):
             self.model, self.model_encoder, self.model_inference = self.embedding_model()
             print('stage: load failed')
@@ -811,19 +819,14 @@ if __name__ == '__main__':
         l, d = c.load_vocab(vocab_fr)
         c.load_model_file()
 
-        #c.model.summary()
-        #exit()
 
     if True:
         c.train_model_categorical(model,l,d, check_sentences=False)
 
         c.save_model(filename)
 
-        #print(c.find_closest_word(c.find_vec('str95bb')), 'str95bb')
-
     if True:
 
-        #c.load_word_vectors()
         c.model_infer(c.train_to)
 
 
