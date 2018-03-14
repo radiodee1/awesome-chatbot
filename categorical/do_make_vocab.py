@@ -52,7 +52,7 @@ def make_vocab():
     #print(v)
 
 def save_vocab():
-    ''' remember to leave zero spot blank '''
+    ''' remember to leave 3 spots blank '''
     sol = hparams['sol']
     eol = hparams['eol']
     unk = hparams['unk']
@@ -60,9 +60,10 @@ def save_vocab():
     if name == train_file[0]:
         name += '.voc.txt'
     with open(name, 'w') as x:
-        x.write('\n'+unk+'\n'+ sol+'\n'+eol+'\n')
-        for z in v:
-            x.write(z + "\n")
+        x.write(unk+'\n'+ sol+'\n'+eol+'\n')
+        for z in range(len(v)):
+            if z < int(hparams['num_vocab_total']) - 3: ## magic num for hparams tokens
+                x.write(v[z] + "\n")
         print('values written')
     pass
 
@@ -80,8 +81,8 @@ def load_vocab(filename=None):
 
 
 def prep_glove(vocab_list):
-    uniform_low = -0.25
-    uniform_high = 0.25
+    uniform_low = -1.0
+    uniform_high = 1.0
     glove2word2vec(glove_input_file=FROM, word2vec_output_file=TO+'-temp')
     glove_model = KeyedVectors.load_word2vec_format(TO+'-temp', binary=False)
     num = 0

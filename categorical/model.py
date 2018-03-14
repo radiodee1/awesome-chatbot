@@ -66,26 +66,33 @@ class ChatModel:
         self.embedding_matrix = None
         self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
-
         self.model = None
         self.model_encoder = None
         self.model_inference = None
         self.model_embedding = None
-        self.uniform_low = -0.25
-        self.uniform_high = 0.25
+        self.uniform_low = -1.0
+        self.uniform_high = 1.0
         self.trainable = False
-        self.skip_embed = False
+        self.skip_embed = True
 
         self.vocab_list = None
         self.vocab_dict = None
         self.embed_mode = hparams['embed_mode']
 
-        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
-
         self.load_words(hparams['data_dir'] + hparams['embed_name'])
 
         self.train_fr = None
         self.train_to = None
+        '''
+        self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
+                                                                                    self.model_encoder,
+                                                                                    self.model_inference,
+                                                                                    global_check=True)
+        '''
+        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
+
+        #self.set_embedding_matrix()
+
 
     def task_autoencode(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
@@ -129,13 +136,7 @@ class ChatModel:
                 else:
                     vec = 0
 
-                try:
-                    #out_x1[ index_i + (ii * tokens)] = vec
-                    pass
-                except:
-                    pass
-                    #print(out_x1.shape, index_i, tokens, ii, words, start, length)
-                    # exit()
+
 
         if shift_output:
             # print('stage: start shift y')
@@ -158,9 +159,11 @@ class ChatModel:
 
         if self.vocab_dict[word] > len(self.vocab_list):
             #return np.zeros((hparams['embed_size']))
-            return np.random.uniform(low=self.uniform_low,high=self.uniform_high,size=(hparams['embed_size']))
+            return np.random.uniform(low=self.uniform_low,
+                                     high=self.uniform_high,
+                                     size=(hparams['embed_size']))
 
-        return self.word_embeddings[0][self.vocab_dict[word]]
+        return self.embedding_matrix[self.vocab_dict[word]]
 
 
     def find_closest_word(self,vec):
@@ -193,7 +196,7 @@ class ChatModel:
         self.skip_embed = False
         if self.embed_mode == 'mod': self.skip_embed = True
         embed_size = int(hparams['embed_size'])
-        # lst, dict = self.load_vocab(vocab_fr)
+
         self.trainable = True
         embeddings_index = {}
         glove_data = hparams['data_dir'] + hparams['embed_name']
@@ -220,7 +223,7 @@ class ChatModel:
             f.close()
 
             self.embedding_matrix = np.zeros((len(self.vocab_list), embed_size))
-            for i in range(len(self.vocab_list)):  # word, i in self.vocab_dict.items():
+            for i in range(len(self.vocab_list)):
                 word = self.vocab_list[i]
                 embedding_vector = embeddings_index.get(word)
                 if embedding_vector is not None:
@@ -243,14 +246,21 @@ class ChatModel:
                     self.model_encoder  is not None and self.model_inference  is not None):
                 return self.model, self.model_encoder, self.model_inference
 
-        self.set_embedding_matrix()
+        if self.embed_mode == 'normal':
+            self.skip_embed = False
+            self.set_embedding_matrix()
+
+        if self.embedding_matrix is None:# and self.embed_mode != 'normal':
+            self.load_word_vectors()
 
         self.model, self.model_encoder, self.model_inference, self.model_embedding \
-            = self.embedding_model_lstm(len(self.vocab_list) ,
+            = self.embedding_model_lstm(words,
                                          self.embedding_matrix,
                                          self.embedding_matrix,
                                          self.trainable,
                                          skip_embed=self.skip_embed)
+
+        #if self.vocab_dict is None: self.load_vocab_dict()
 
         return self.model, self.model_encoder, self.model_inference
 
@@ -288,21 +298,11 @@ class ChatModel:
 
             embed_a = embeddings_a(valid_word_a)
 
-        else:
-            ###### embedding test #####
-            embeddings_a = Embedding(words, embed_unit,
-                                     weights=[embedding_weights_a],
-                                     input_length=tokens_per_sentence,
-                                     trainable=False
-                                     )
-            embed_a = embeddings_a(valid_word_a)
-            ######### end ########
-
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
                                     return_sequences=True,
                                     return_state=True,
-                                    recurrent_dropout=0.5,
+                                    recurrent_dropout=0.2,
                                     input_shape=(None,),
                                     ), merge_mode='mul')
 
@@ -338,10 +338,21 @@ class ChatModel:
 
             embed_b = embeddings_b(valid_word_b)
 
+        #############
+        if embedding_weights_a is not None and True:
+            ###### embedding test #####
+            valid_word_c = Input(shape=(None,))
+            embeddings_c = Embedding(words, embed_unit,
+                                     weights=[embedding_weights_a],
+                                     input_length=tokens_per_sentence,
+                                     trainable=False
+                                     )
+            embed_c = embeddings_c(valid_word_c)
+            ######### end ########
+
         lstm_b = LSTM(units=lstm_unit_b ,
                       recurrent_dropout=0.2,
-                      return_sequences=True, ####
-
+                      return_sequences=skip_embed,
                       return_state=True
                       )
 
@@ -392,7 +403,7 @@ class ChatModel:
                                 outputs_states)
 
         ### test embedding model ###
-        model_embedding = Model(valid_word_a, embed_a)
+        model_embedding = Model(valid_word_c, embed_c)
 
         ### boilerplate ###
 
@@ -402,7 +413,6 @@ class ChatModel:
         model.compile(optimizer=adam, loss='mse')
 
         return model, model_encoder, model_inference, model_embedding
-
 
     def predict_words(self,txt):
 
@@ -415,6 +425,8 @@ class ChatModel:
         source_input = self._fill_vec(txt, self.vocab_list, self.vocab_dict)
         if self.embed_mode == 'mod':
             source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
+        else:
+            source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=False)
         state = self.model_encoder.predict(source_input)
 
         #self.model_encoder.summary()
@@ -431,6 +443,9 @@ class ChatModel:
             out = self.find_vec(hparams['sol'])
             out = np.expand_dims(out,0)
             out = np.expand_dims(out,0)
+        else:
+            out = np.expand_dims(out,0)
+            #out = np.expand_dims(out,0)
 
             #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
 
@@ -585,29 +600,38 @@ class ChatModel:
 
 
     def stack_sentences_categorical(self,xx, vocab_list, shift_output=False):
-
-        batch = units
+        normal = False
+        if self.embed_mode == 'normal': normal = True
+        batch = tokens_per_sentence
         if self.embed_mode == 'mod':
             batch = tokens_per_sentence
         tot = xx.shape[0] // batch
-        #print(xx.shape,'stack')
+        print(xx.shape,'stack')
         out = None
         if not shift_output:
             out = np.zeros(( tot))
         else:
             if tot == 0: tot = 1
             out = np.zeros((tot,batch, hparams['embed_size']))
+        if normal and not shift_output:
+            out = np.zeros((tot,batch))
         for i in range(tot):
-            start = i * batch
-            end = (i + 1) * batch
-            x = xx[i]
-            if not shift_output:
-                out[i] = np.array(x)
-            else:
-                if (int(x) < len(self.vocab_list) and
-                        self.vocab_dict[self.vocab_list[int(x)]] < len(self.vocab_list)):
-                    for j in range(batch):
-                        out[i,j,:] = self.find_vec(self.vocab_list[int(x)])
+            for k in range(batch):
+                start = i * batch
+                end = (i + 1) * batch
+                x = xx[i * batch + k]
+
+                if not shift_output:
+                    if not normal:
+                        out[i] = np.array(x)
+                    else:
+                        #for j in range(batch):
+                        out[i,k] = int(x)
+                else:
+                    if (int(x) < len(self.vocab_list) and
+                            self.vocab_dict[self.vocab_list[int(x)]] < len(self.vocab_list)):
+                        #for j in range(batch):
+                        out[i,k,:] = self.find_vec(self.vocab_list[int(x)])
         if not shift_output:
             #print(out.shape)
             #out = np.swapaxes(out,0,1)
@@ -623,10 +647,11 @@ class ChatModel:
     def train_model_categorical(self, model_in, list, dict,train_model=True, check_sentences=False):
         print('stage: arrays prep for test/train')
 
-        if self.model is None: self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
-                                                                                                      self.model_encoder,
-                                                                                                      self.model_inference,
-                                                                                                      global_check=True)
+        if self.model is None: self.model, self.model_encoder, self.model_inference = \
+            self.embedding_model(self.model,
+                                  self.model_encoder,
+                                  self.model_inference,
+                                  global_check=True)
 
 
         if not check_sentences: self.model.summary()
@@ -640,7 +665,7 @@ class ChatModel:
             all_vectors = True
             length = int(hparams['batch_constant'])
         else:
-            length = int(hparams['batch_constant']) * int(hparams['units'])
+            length = int(hparams['batch_constant']) #* int(hparams['units'])
         steps = tot // length
         if steps * length < tot: steps += 1
         #print( steps, tot, length, batch_size)
@@ -670,7 +695,7 @@ class ChatModel:
 
                         self.model.fit([x1,x2], y)
                     else:
-                        self.model.fit([x1, x2], y, batch_size=16)
+                        self.model.fit([x1, x2], y)
                 if z % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model(self.model, self.filename)
                     self.model_infer(self.train_to)
@@ -715,10 +740,21 @@ class ChatModel:
         list = self.open_sentences(filename)
         for i in range(len(list)):
             list[i] = list[i].strip()
+            word = list[i]
+            #dict[word] = self.model_embedding.precict(np.array([i]))
             dict[list[i]] = i
         self.vocab_list = list
-        self.vocab_dict = dict
+        self.vocab_dict = dict # dict
         return list, dict
+
+    def load_vocab_dict(self):
+        dict = {}
+        for i in range(len(self.vocab_list)):
+            z = self.model_embedding.predict(np.array([i]))
+            dict[self.vocab_list[i]] = self.find_closest_index(z)
+        self.vocab_dict = dict
+        return dict
+
 
 if __name__ == '__main__':
 
@@ -749,6 +785,21 @@ if __name__ == '__main__':
         #c.load_word_vectors()
         c.model_infer(c.train_to)
 
-
-
+        if c.model_embedding is not None and False:
+            c.model_embedding.summary()
+            i = np.array(c.vocab_dict['man'])
+            i = np.expand_dims(i,0)
+            i = np.expand_dims(i,0)
+            l = c.embedding_matrix[int(i)]
+            print(l.shape,'l')
+            z = c.find_closest_word(l)
+            print(z,'z')
+            out = c.model_embedding.predict(i)
+            print(out, out.shape)
+            z = c.find_closest_word(out)
+            print(z)
+            out = c.embedding_matrix[c.vocab_dict['man']]
+            print(out,out.shape)
+            z = c.find_closest_word(out)
+            print(z)
 

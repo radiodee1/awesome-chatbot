@@ -18,11 +18,11 @@ hparams = {
     'steps_to_stats': 100,
     'embed_size':100,
     #'use_embed':True,
-    'embed_mode':'mod', #values: mod, normal, zero
+    'embed_mode':'normal', #values: mod, normal, zero
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    'units': 64, #256 , #64, ##64
+    'units': 128, #256 , #64,
     'learning_rate': 0.001,
     'tokens_per_sentence': 32,
     'raw_embedding_filename': 'embedding',
