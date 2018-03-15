@@ -16,6 +16,7 @@ hparams = {
     'num_vocab_total': 2000,
     'batch_size': 256,#64, #256
     'steps_to_stats': 100,
+    'epochs': 100,
     'embed_size':100,
     'infer_repeat': 2,
     'embed_mode':'normal', #values: mod, normal, zero

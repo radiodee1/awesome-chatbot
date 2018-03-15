@@ -115,15 +115,20 @@ class ChatModel:
             local_filename = hparams['save_dir'] + hparams['base_filename'] + '-' + str(num) + '.h5'
             if os.path.isfile(local_filename):
                 ''' load weights '''
+
+                print('==============================')
                 print('here:',local_filename)
                 self.load_model_file(local_filename)
-                self.model_infer(self.train_to)
+
+                self.model_infer(self.train_fr)
                 num = num + hparams['steps_to_stats'] * 10
             else:
                 if stop_at_fail: break
         pass
 
     def task_train_epochs(self,num):
+        if num == 0:
+            num = hparams['epochs']
         for i in range(num):
             self.train_model_categorical(check_sentences=False)
             self.save_model(self.filename)
@@ -616,9 +621,11 @@ class ChatModel:
 
     def model_infer(self,filename):
         print('stage: try predict')
+        f = filename.replace('from','to')
         self.load_word_vectors()
-        lst, dict = self.load_vocab(vocab_fr)
+        self.load_vocab(vocab_fr)
         c = self.open_sentences(filename)
+        f = self.open_sentences(f)
         g = randint(0, len(c))
         line = c[g]
         line = line.strip('\n')
@@ -629,6 +636,7 @@ class ChatModel:
         print('----------------')
         print('index:',g)
         print('input:',line)
+        print('ref:', f[g])
         self.predict_words(line, stop_at_eol=True)
         print('----------------')
         line = 'sol what is up ? eol'
@@ -818,7 +826,7 @@ class ChatModel:
                     pass
                 if (z + 1) % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model( self.filename)
-                    self.model_infer(self.train_to)
+                    self.model_infer(self.train_fr)
 
             except KeyboardInterrupt as e:
                 print(repr(e))
@@ -837,8 +845,21 @@ class ChatModel:
     def save_model(self, filename):
         print ('stage: save lstm model')
         if filename == None:
+            base_file_num = hparams['base_file_num']
             filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
         if filename.endswith('.h5'):
+            basename = filename[:- len('.h5')]
+            print(basename)
+            if self.model is not None:
+                self.model.save_weights(filename)
+            if self.model_encoder is not None:
+                self.model_encoder.save_weights(basename + self.name_encoder + '.h5')
+            if self.model_inference is not None:
+                self.model_inference.save_weights(basename + self.name_infer + '.h5')
+
+            ## update master file num 1 ##
+            filename = hparams['save_dir'] + hparams['base_filename']+'-'+str(1) +'.h5'
+
             basename = filename[:- len('.h5')]
             print(basename)
             if self.model is not None:
@@ -915,9 +936,9 @@ if __name__ == '__main__':
 
         c.save_model(filename)
 
-    if True:
+    if False:
 
-        c.model_infer(c.train_to)
+        c.model_infer(c.train_fr)
 
     if False:
         c.task_review_weights(True)
