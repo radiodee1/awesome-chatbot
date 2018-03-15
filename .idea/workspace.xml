@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
+      <change beforePath="$PROJECT_DIR$/categorical/settings.py" afterPath="$PROJECT_DIR$/categorical/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="120" column="47" lean-forward="false" selection-start-line="120" selection-start-column="47" selection-end-line="120" selection-end-column="47" />
+            <state relative-caret-position="772">
+              <caret line="436" column="60" lean-forward="false" selection-start-line="436" selection-start-column="60" selection-end-line="436" selection-end-column="60" />
               <folding />
             </state>
           </provider>
@@ -52,8 +53,8 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/categorical/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="25" column="24" lean-forward="false" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+            <state relative-caret-position="216">
+              <caret line="12" column="39" lean-forward="false" selection-start-line="12" selection-start-column="39" selection-end-line="12" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -127,8 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>find_closest_word</find>
-      <find>num_vocab_total</find>
       <find>find_closest_index</find>
       <find>load_vocab_dict</find>
       <find>skip_embed</find>
@@ -136,7 +135,6 @@
       <find>load_vocab</find>
       <find>vocab_dict</find>
       <find>vocab_list</find>
-      <find>embedding_matrix</find>
       <find>stack</find>
       <find>filename</find>
       <find>load_model_file</find>
@@ -157,6 +155,9 @@
       <find>model_infer</find>
       <find>train_model_categorical</find>
       <find>save_model</find>
+      <find>base_file_num</find>
+      <find>find_closest_word</find>
+      <find>embedding_matrix</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -622,16 +623,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="25" column="24" lean-forward="false" selection-start-line="25" selection-start-column="24" selection-end-line="25" selection-end-column="24" />
+        <state relative-caret-position="216">
+          <caret line="12" column="39" lean-forward="false" selection-start-line="12" selection-start-column="39" selection-end-line="12" selection-end-column="39" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="120" column="47" lean-forward="false" selection-start-line="120" selection-start-column="47" selection-end-line="120" selection-end-column="47" />
+        <state relative-caret-position="772">
+          <caret line="436" column="60" lean-forward="false" selection-start-line="436" selection-start-column="60" selection-end-line="436" selection-end-column="60" />
           <folding />
         </state>
       </provider>

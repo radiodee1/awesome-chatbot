@@ -10,7 +10,7 @@ hparams = {
     'train_name': "train",
     'src_ending': "from",
     'tgt_ending': "to",
-    'base_filename': "chatbot-categorical",
+    'base_filename': "chatbot-embedding",
     'base_file_num': 1,
     'num_train_total': 500000,
     'num_vocab_total': 2000,

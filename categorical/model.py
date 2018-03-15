@@ -69,7 +69,6 @@ class ChatModel:
         self.model = None
         self.model_encoder = None
         self.model_inference = None
-        #self.model_embedding = None
 
         self.name_model = ''
         self.name_encoder = '.encode'
@@ -113,7 +112,7 @@ class ChatModel:
     def task_review_weights(self, stop_at_fail=False):
         num = hparams['base_file_num']
         for i in range(100):
-            local_filename = hparams['save_dir'] + hparams['base_filename'] + '-' + num + '.h5'
+            local_filename = hparams['save_dir'] + hparams['base_filename'] + '-' + str(num) + '.h5'
             if os.path.isfile(local_filename):
                 ''' load weights '''
                 print('here:',local_filename)
@@ -425,17 +424,17 @@ class ChatModel:
             recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
 
-        dense_b = TimeDistributed(Dense(embed_unit, input_shape=(tokens_per_sentence,),
-                        activation='relu', #softmax or relu
+        dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
+                        activation='softmax', #softmax or relu
                         #name='dense_layer_b',
-                        ))
+                        )
 
 
         decoder_b = dense_b(recurrent_b) # recurrent_b
 
+        dropout_b = Dropout(0.15)(decoder_b)
 
-
-        model = Model([valid_word_a,valid_word_b], decoder_b) # decoder_b
+        model = Model([valid_word_a,valid_word_b], dropout_b) # decoder_b
 
         ### encoder for inference ###
         model_encoder = Model(valid_word_a, lstm_a_states)
@@ -831,7 +830,7 @@ class ChatModel:
 
     def _set_filename(self):
         self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + \
-                        hparams['base_file_num'] + '.h5'
+                        str(hparams['base_file_num']) + '.h5'
 
 
 
@@ -856,7 +855,7 @@ class ChatModel:
         print('stage: checking for load')
         basename = ''
         if filename is None:
-            base_file_num = hparams['base_file_num']
+            base_file_num = str(hparams['base_file_num'])
             filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
         if filename.endswith('.h5'):
             basename = filename[:- len('.h5')]
@@ -902,8 +901,8 @@ if __name__ == '__main__':
     c = ChatModel()
 
     if True:
-        c.task_autoencode()
-        #c.task_normal_train()
+        #c.task_autoencode()
+        c.task_normal_train()
 
         print('stage: load vocab')
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
@@ -920,6 +919,13 @@ if __name__ == '__main__':
 
         c.model_infer(c.train_to)
 
-    if True:
+    if False:
         c.task_review_weights(True)
 
+    if False:
+        c.load_word_vectors()
+        print(c.embedding_matrix[0])
+        z = c.embedding_matrix[0]
+        print(c.find_closest_word(z))
+        print(c.find_vec('unk'))
+        print(c.vocab_dict['unk'])
