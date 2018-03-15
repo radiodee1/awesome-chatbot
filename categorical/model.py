@@ -194,8 +194,8 @@ class ChatModel:
         self.load_weights_to_matrix()
         if self.embed_mode != 'mod' :
             if self.load_good:
-                self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
-                print('stage: embedding_2')
+                self.word_embeddings = self.model.get_layer('embedding_1').get_weights()
+                print('stage: embedding_1')
             else:
                 print('stage: early load...')
                 exit()
@@ -256,7 +256,7 @@ class ChatModel:
         if self.load_good:
             print('stage: set embedding data after load.')
             if embeddings_index is None:
-                self.word_embeddings = self.model.get_layer('embedding_2').get_weights()
+                self.word_embeddings = self.model.get_layer('embedding_1').get_weights()
                 embeddings_index = {}
                 for i in range(len(self.vocab_list)):
                     word = self.vocab_list[i]
@@ -356,7 +356,7 @@ class ChatModel:
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
                                     return_sequences=True,
                                     return_state=True,
-                                    recurrent_dropout=0.2,
+                                    #recurrent_dropout=0.2,
                                     input_shape=(None,),
                                     ), merge_mode='mul')
 
@@ -374,7 +374,7 @@ class ChatModel:
 
 
         ### decoder for training ###
-
+        '''
         if not skip_embed:
             if embedding_weights_b is not None:
                 embeddings_b = Embedding(words, embed_unit,
@@ -388,14 +388,15 @@ class ChatModel:
                                          #weights=[embedding_weights_b],
                                          trainable=True
                                          )
-
-            embed_b = embeddings_b(valid_word_b)
+        '''
+        if not skip_embed:
+            embed_b = embeddings_a(valid_word_b)
 
         #############
 
 
         lstm_b = LSTM(units=lstm_unit_b ,
-                      recurrent_dropout=0.2,
+                      #recurrent_dropout=0.2,
                       return_sequences=return_sequences_b,
                       return_state=True
                       )
@@ -430,7 +431,7 @@ class ChatModel:
         inputs_inference = [input_h, input_c]
 
         if not skip_embed:
-            embed_b = embeddings_b(valid_word_b)
+            embed_b = embeddings_a(valid_word_b)
             outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
                                                                                  initial_state=inputs_inference)
         else:
