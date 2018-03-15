@@ -110,6 +110,26 @@ class ChatModel:
         self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
         pass
 
+    def task_review_weights(self, stop_at_fail=False):
+        num = hparams['base_file_num']
+        for i in range(100):
+            local_filename = hparams['save_dir'] + hparams['base_filename'] + '-' + num + '.h5'
+            if os.path.isfile(local_filename):
+                ''' load weights '''
+                print('here:',local_filename)
+                self.load_model_file(local_filename)
+                self.model_infer(self.train_to)
+                num = num + hparams['steps_to_stats'] * 10
+            else:
+                if stop_at_fail: break
+        pass
+
+    def task_train_epochs(self,num):
+        for i in range(num):
+            self.train_model_categorical(check_sentences=False)
+            self.save_model(self.filename)
+        pass
+
     def open_sentences(self, filename):
         t_yyy = []
         with open(filename, 'r') as r:
@@ -481,11 +501,13 @@ class ChatModel:
             h = state[0]
             c = state[1]
 
+            infer_lst = []
             txt_out = []
             t = txt.lower().split()
             out = self.vocab_dict[hparams['sol']]
             if self.embed_mode == 'mod':
                 #out = self.vocab_dict[hparams['sol']]
+                infer_lst.append(self.vocab_dict[hparams['sol']])
                 out = self.find_vec(hparams['sol'])
                 out = np.expand_dims(out,0)
                 out = np.expand_dims(out,0)
@@ -506,13 +528,14 @@ class ChatModel:
                         #a = np.zeros((tokens_per_sentence))
                         #a[0] = int(out)
 
-                        a = self._fill_sentence(out)
+                        a = self._fill_sentence(out, infer_lst, pad_last_val=False)
                         out = np.expand_dims(a,0)
                         #print(out,'a')
                     out, h, c = self.model_inference.predict([out] + state_out)
                     if self.embed_mode == 'normal':
                         out = out[0,0,:]
                         out = self.find_closest_index(out)
+                        infer_lst.append(out)
                         txt_out.append(str(out))
                         if int(out) < len(self.vocab_list):
                             txt_out.append(self.vocab_list[int(out)])
@@ -574,10 +597,22 @@ class ChatModel:
         #print(out.shape,'check')
         return out
 
-    def _fill_sentence(self, word):
+    def _fill_sentence(self, word, infer_lst=[],pad_last_val=False):
+        #print(infer_lst,'<')
         out = np.zeros((tokens_per_sentence))
         for i in range(tokens_per_sentence):
-            out[i] = word
+            if len(infer_lst) == 0:
+                out[i] = word
+            elif i < len(infer_lst):
+                out[i] = infer_lst[i]
+            elif pad_last_val:
+                out[i] = infer_lst[-1]
+
+        if False:
+            print('---')
+            for i in out:
+                print(self.vocab_list[int(i)], ' ', end='')
+            print('---')
         return out
 
     def model_infer(self,filename):
@@ -778,8 +813,9 @@ class ChatModel:
                         self.model.fit([x1, x2], y)
 
                 if (z + 1) % (hparams['steps_to_stats'] * 10) == 0 and z != 0:
-                    hparams['base_file_num'] = hparams['base_file_num'] * 10
+                    hparams['base_file_num'] = hparams['base_file_num'] + hparams['steps_to_stats'] * 10
                     self._set_filename()
+                    print(self.filename)
                     pass
                 if (z + 1) % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model( self.filename)
@@ -820,6 +856,7 @@ class ChatModel:
         print('stage: checking for load')
         basename = ''
         if filename is None:
+            base_file_num = hparams['base_file_num']
             filename = hparams['save_dir'] + hparams['base_filename']+'-'+base_file_num +'.h5'
         if filename.endswith('.h5'):
             basename = filename[:- len('.h5')]
@@ -883,5 +920,6 @@ if __name__ == '__main__':
 
         c.model_infer(c.train_to)
 
-
+    if True:
+        c.task_review_weights(True)
 

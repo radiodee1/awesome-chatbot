@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="782" column="24" lean-forward="false" selection-start-line="782" selection-start-column="24" selection-end-line="782" selection-end-column="24" />
+            <state relative-caret-position="233">
+              <caret line="120" column="47" lean-forward="false" selection-start-line="120" selection-start-column="47" selection-end-line="120" selection-end-column="47" />
               <folding />
             </state>
           </provider>
@@ -133,7 +132,6 @@
       <find>find_closest_index</find>
       <find>load_vocab_dict</find>
       <find>skip_embed</find>
-      <find>model_infer</find>
       <find>valid_word_b</find>
       <find>load_vocab</find>
       <find>vocab_dict</find>
@@ -141,7 +139,6 @@
       <find>embedding_matrix</find>
       <find>stack</find>
       <find>filename</find>
-      <find>save_model</find>
       <find>load_model_file</find>
       <find>embedding_model</find>
       <find>word_embeddings</find>
@@ -149,7 +146,6 @@
       <find>set_embedding_matrix</find>
       <find>load_word_vectors</find>
       <find>_fill_vec</find>
-      <find>train_model_categorical</find>
       <find>trainable</find>
       <find>predict_words</find>
       <find>source_input</find>
@@ -158,6 +154,9 @@
       <find>categorical_input_one</find>
       <find>lstm_b</find>
       <find>dense_b</find>
+      <find>model_infer</find>
+      <find>train_model_categorical</find>
+      <find>save_model</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -631,8 +630,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="782" column="24" lean-forward="false" selection-start-line="782" selection-start-column="24" selection-end-line="782" selection-end-column="24" />
+        <state relative-caret-position="233">
+          <caret line="120" column="47" lean-forward="false" selection-start-line="120" selection-start-column="47" selection-end-line="120" selection-end-column="47" />
           <folding />
         </state>
       </provider>
