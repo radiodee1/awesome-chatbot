@@ -452,7 +452,7 @@ class ChatModel:
         adam = optimizers.Adam(lr=learning_rate)
 
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
-        model.compile(optimizer=adam, loss='mse')
+        model.compile(optimizer=adam, loss='mse',metrics=['acc'])
 
         return model, model_encoder, model_inference
 
@@ -503,9 +503,10 @@ class ChatModel:
                     #print(state_out,'so')
 
                     if self.embed_mode == 'normal':
-                        a = np.zeros((tokens_per_sentence))
-                        a[0] = int(out)
+                        #a = np.zeros((tokens_per_sentence))
+                        #a[0] = int(out)
 
+                        a = self._fill_sentence(out)
                         out = np.expand_dims(a,0)
                         #print(out,'a')
                     out, h, c = self.model_inference.predict([out] + state_out)
@@ -573,6 +574,11 @@ class ChatModel:
         #print(out.shape,'check')
         return out
 
+    def _fill_sentence(self, word):
+        out = np.zeros((tokens_per_sentence))
+        for i in range(tokens_per_sentence):
+            out[i] = word
+        return out
 
     def model_infer(self,filename):
         print('stage: try predict')
