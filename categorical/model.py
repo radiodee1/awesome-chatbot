@@ -126,7 +126,7 @@ class ChatModel:
                 if stop_at_fail: break
         pass
 
-    def task_train_epochs(self,num):
+    def task_train_epochs(self,num=0):
         if num == 0:
             num = hparams['epochs']
         for i in range(num):
@@ -941,6 +941,7 @@ if __name__ == '__main__':
         c.model_infer(c.train_fr)
 
     if False:
+        c.task_train_epochs()
         c.task_review_weights(True)
 
     if False:
