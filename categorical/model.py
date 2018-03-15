@@ -367,11 +367,11 @@ class ChatModel:
         else:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
 
-        concat_a_1 = Multiply()([rec_a_1, rec_a_3])
-        concat_a_2 = Multiply()([rec_a_2, rec_a_4])
+        concat_a_1 = Average()([rec_a_1, rec_a_3])
+        concat_a_2 = Average()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
-
+        #lstm_a_states = [rec_a_1, rec_a_2]
 
         ### decoder for training ###
         '''
