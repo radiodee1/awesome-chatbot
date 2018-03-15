@@ -933,7 +933,7 @@ if __name__ == '__main__':
         c.load_vocab(vocab_fr)
         c.load_model_file()
 
-    if True:
+    if False:
         c.train_model_categorical( check_sentences=False)
 
         c.save_model(filename)
@@ -942,8 +942,9 @@ if __name__ == '__main__':
 
         c.model_infer(c.train_fr)
 
-    if False:
+    if True:
         c.task_train_epochs()
+        c.save_model(c.filename)
         c.task_review_weights(True)
 
     if False:
