@@ -193,7 +193,7 @@ class ChatModel:
         if self.embed_mode != 'mod' :
             if self.load_good:
                 self.word_embeddings = self.model.get_layer('embedding_1').get_weights()
-                print('stage: embedding_1')
+                #print('stage: embedding_1')
             else:
                 print('stage: early load...')
                 exit()
@@ -252,7 +252,7 @@ class ChatModel:
     def load_weights_to_matrix(self,embeddings_index=None):
         ''' assume vectors in embedding layer 2 are in vocab_list order already. '''
         if self.load_good:
-            print('stage: set embedding data after load.')
+            #print('stage: set embedding data after load.')
             if embeddings_index is None:
                 self.word_embeddings = self.model.get_layer('embedding_1').get_weights()
                 embeddings_index = {}
@@ -405,10 +405,10 @@ class ChatModel:
             recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b, initial_state=lstm_a_states)
 
 
-        dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
+        dense_b = TimeDistributed(Dense(embed_unit, input_shape=(tokens_per_sentence,),
                         activation='relu', #softmax or relu
                         #name='dense_layer_b',
-                        )
+                        ))
 
 
         decoder_b = dense_b(recurrent_b) # recurrent_b
