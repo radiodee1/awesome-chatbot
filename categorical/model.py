@@ -142,8 +142,6 @@ class ChatModel:
                 else:
                     vec = 0
 
-
-
         if shift_output:
             # print('stage: start shift y')
             out_y_shift = np.zeros(( length * tokens))
@@ -327,7 +325,7 @@ class ChatModel:
 
         #latent_dim = 64
         lstm_unit_a = units
-        lstm_unit_b = units # * 2
+        lstm_unit_b = units  * 2
         embed_unit = int(hparams['embed_size'])
 
         x_shape = (tokens_per_sentence,)
@@ -358,7 +356,7 @@ class ChatModel:
                                     return_state=True,
                                     #recurrent_dropout=0.2,
                                     input_shape=(None,),
-                                    ), merge_mode='mul')
+                                    ), merge_mode='concat')
 
         #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
@@ -367,8 +365,8 @@ class ChatModel:
         else:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
 
-        concat_a_1 = Average()([rec_a_1, rec_a_3])
-        concat_a_2 = Average()([rec_a_2, rec_a_4])
+        concat_a_1 = Concatenate()([rec_a_1, rec_a_3])
+        concat_a_2 = Concatenate()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
         #lstm_a_states = [rec_a_1, rec_a_2]
@@ -673,6 +671,7 @@ class ChatModel:
 
 
     def stack_sentences_categorical(self,xx, vocab_list, shift_output=False):
+        self.load_word_vectors()
         normal = False
         if self.embed_mode == 'normal': normal = True
         batch = tokens_per_sentence

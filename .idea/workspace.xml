@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/categorical/model.py" afterPath="$PROJECT_DIR$/categorical/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/categorical/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="446" column="12" lean-forward="false" selection-start-line="446" selection-start-column="12" selection-end-line="446" selection-end-column="12" />
+            <state relative-caret-position="629">
+              <caret line="143" column="0" lean-forward="false" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -128,14 +127,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>train_fr</find>
       <find>train_to</find>
       <find>find_closest_word</find>
       <find>num_vocab_total</find>
       <find>find_closest_index</find>
       <find>load_vocab_dict</find>
       <find>skip_embed</find>
-      <find>stack_sentences_categorical</find>
       <find>model_infer</find>
       <find>valid_word_b</find>
       <find>load_vocab</find>
@@ -158,6 +155,8 @@
       <find>source_input</find>
       <find>lstm_b</find>
       <find>embedding_2</find>
+      <find>stack_sentences_categorical</find>
+      <find>categorical_input_one</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -282,6 +281,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="518" y="58" width="1380" height="1000" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -630,8 +630,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/categorical/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="446" column="12" lean-forward="false" selection-start-line="446" selection-start-column="12" selection-end-line="446" selection-end-column="12" />
+        <state relative-caret-position="629">
+          <caret line="143" column="0" lean-forward="false" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
           <folding />
         </state>
       </provider>
