@@ -47,8 +47,7 @@ model = None
 printable = ''
 
 print(sys.argv)
-if len(sys.argv) > 1:
-    printable = str(sys.argv[1])
+
     #print(printable)
 #exit()
 
@@ -96,7 +95,9 @@ class ChatModel:
                                                                                     self.model_encoder,
                                                                                     self.model_inference,
                                                                                     global_check=True)
-
+        self.printable = ''
+        if len(sys.argv) > 1:
+            self.printable = str(sys.argv[1])
 
 
     def task_autoencode(self):
@@ -130,6 +131,7 @@ class ChatModel:
         if num == 0:
             num = hparams['epochs']
         for i in range(num):
+            self.printable = ' epoch #' + str(i)
             self.train_model_categorical(check_sentences=False)
             self.save_model(self.filename)
         pass
@@ -798,7 +800,7 @@ class ChatModel:
                 if length % int(hparams['units']) != 0:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
-                print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', printable)
+                print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', self.printable)
                 x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
                 x2 = self.categorical_input_one(self.train_to,list,dict, length, s)
                 y =  self.categorical_input_one(self.train_to,list,dict, length, s, shift_output=True)
