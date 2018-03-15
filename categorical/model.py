@@ -776,9 +776,15 @@ class ChatModel:
                         self.model.fit([x1,x2], y)
                     else:
                         self.model.fit([x1, x2], y)
+
+                if (z + 1) % (hparams['steps_to_stats'] * 10) == 0 and z != 0:
+                    hparams['base_file_num'] = hparams['base_file_num'] * 10
+                    self._set_filename()
+                    pass
                 if (z + 1) % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model( self.filename)
                     self.model_infer(self.train_to)
+
             except KeyboardInterrupt as e:
                 print(repr(e))
                 self.save_model(filename + ".backup")
@@ -786,6 +792,10 @@ class ChatModel:
             finally:
                 pass
         return model
+
+    def _set_filename(self):
+        self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + \
+                        hparams['base_file_num'] + '.h5'
 
 
 
