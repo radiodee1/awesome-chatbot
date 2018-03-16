@@ -11,7 +11,7 @@ from keras.models import load_model
 from keras import optimizers
 from keras.utils import to_categorical
 from gensim.models.keyedvectors import KeyedVectors
-
+import argparse
 from random import randint
 from keras import backend as K
 import tensorflow as tf
@@ -87,6 +87,11 @@ class ChatModel:
         self.train_fr = None
         self.train_to = None
 
+        self.do_train = False
+        self.do_infer = False
+        self.do_review = False
+        self.do_train_long = False
+
         self.load_good = False
 
         self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
@@ -96,8 +101,20 @@ class ChatModel:
                                                                                     self.model_inference,
                                                                                     global_check=True)
         self.printable = ''
-        if len(sys.argv) > 1:
-            self.printable = str(sys.argv[1])
+
+
+        parser = argparse.ArgumentParser(description='Train some NMT values.')
+        parser.add_argument('--mode',help='mode of operation. (train, infer, review, long)')
+        parser.add_argument('--printable',help='a string to print during training for identification.' )
+        self.args = parser.parse_args()
+        self.args = vars(self.args)
+
+        if self.args['printable'] is not None:
+            self.printable = str(self.args['printable'])
+        if self.args['mode'] == 'train': self.do_train = True
+        if self.args['mode'] == 'infer': self.do_infer = True
+        if self.args['mode'] == 'review' : self.do_review = True
+        if self.args['mode'] == 'long': self.do_train_long = True
 
 
     def task_autoencode(self):
@@ -933,18 +950,20 @@ if __name__ == '__main__':
         c.load_vocab(vocab_fr)
         c.load_model_file()
 
-    if False:
+    if c.do_train:
         c.train_model_categorical( check_sentences=False)
 
         c.save_model(filename)
 
-    if False:
+    if c.do_infer:
 
         c.model_infer(c.train_fr)
 
-    if True:
+    if c.do_train_long:
         c.task_train_epochs()
         c.save_model(c.filename)
+
+    if c.do_review:
         c.task_review_weights(True)
 
     if False:

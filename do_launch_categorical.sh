@@ -2,4 +2,4 @@
 
 
 cd categorical
-python3 model.py $1
+python3 model.py $1 $2 $3 $4 $5

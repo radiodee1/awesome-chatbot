@@ -5,7 +5,7 @@ import sys
 
 epochs=2 #* 24
 files=17
-big_file= True
+big_file= False
 
 #print(sys.argv)
 print()
@@ -30,4 +30,4 @@ for i in range(epochs):
         else:
             os.system('./do_make_rename_train.sh ')
 
-        os.system('./do_launch_categorical.sh ' + '--epoch:' + str(i+1)+',file:'+ str(j+1)+ '--')
+        os.system('./do_launch_categorical.sh ' + '--mode=train --printable=[epoch:' + str(i+1)+',file:'+ str(j+1)+ ']')
