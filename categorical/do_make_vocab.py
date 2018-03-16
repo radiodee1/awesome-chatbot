@@ -104,7 +104,7 @@ def prep_glove(vocab_list):
     pass
 
 if __name__ == '__main__':
-    train_file = ['../data/train.big.from', '../data/train.big.to']
+    train_file = ['../data/train.big.from'] # , '../data/train.big.to']
 
     if len(sys.argv) > 1:
         train_file = str(sys.argv[1])
