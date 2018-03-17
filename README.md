@@ -4,6 +4,7 @@ Keras implementation of a chatbot
 # Suggested Reading
 * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
 * https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
+* https://medium.com/datalogue/attention-in-keras-1892773a4f22
 
 # GloVe and W2V Word Embeddings Download
 * https://code.google.com/archive/p/word2vec/
