@@ -12,7 +12,7 @@ https://medium.com/@zafarali
 '''
 
 
-tfPrint = lambda d, T: tf.Print(input_=T, data=[T, tf.shape(T)], message=d)
+# = lambda d, T: tf.Print(input_=T, data=[T, tf.shape(T)], message=d)
 
 def _time_distributed_dense(x, w, b=None, dropout=None,
                             input_dim=None, output_dim=None,
@@ -72,6 +72,7 @@ class AttentionDecoder(Recurrent):
                  activity_regularizer=None,
                  kernel_constraint=None,
                  bias_constraint=None,
+                 initial_state=None,
                  **kwargs):
         """
         Implements an AttentionDecoder that takes in a sequence encoded by an
@@ -105,6 +106,8 @@ class AttentionDecoder(Recurrent):
         self.name = name
         self.return_sequences = True  # must return sequences
 
+        self.initial_state=initial_state
+
     def build(self, input_shape):
         """
           See Appendix 2 of Bahdanau 2014, arXiv:1409.0473
@@ -113,10 +116,13 @@ class AttentionDecoder(Recurrent):
 
         self.batch_size, self.timesteps, self.input_dim = input_shape
 
+        #print(input_shape.shape,'att')
+
         if self.stateful:
             super(AttentionDecoder, self).reset_states()
 
         self.states = [None, None]  # y, s
+
 
         """
             Matrices for creating the context vector

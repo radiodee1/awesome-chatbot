@@ -2,12 +2,14 @@
 
 import numpy as np
 from settings import hparams
+from attention_decoder import AttentionDecoder
 from keras.preprocessing import text, sequence
 from keras.models import Sequential , Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
 from keras.layers import Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda, Dropout
 from keras.layers import Concatenate, Add, Multiply, Average
-from keras.models import load_model
+from keras.constraints import min_max_norm
+
 from keras import optimizers
 from keras.utils import to_categorical
 from gensim.models.keyedvectors import KeyedVectors
@@ -15,6 +17,8 @@ import argparse
 from random import randint
 from keras import backend as K
 import tensorflow as tf
+import tensorflow.contrib.eager as tfe
+
 #from keras.engine.topology import merge
 import pandas as pd
 import os
@@ -22,6 +26,9 @@ import sys
 import csv
 import tensorflow as tf
 #print(hparams)
+
+#tfe.enable_eager_execution()
+
 
 words = hparams['num_vocab_total']
 text_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
@@ -350,7 +357,7 @@ class ChatModel:
                                              self.embedding_matrix,
                                              self.trainable,
                                              skip_embed=self.skip_embed,
-                                            return_sequences_b=return_sequences_b)
+                                             return_sequences_b=return_sequences_b)
 
             if self.vocab_dict is None: self.load_vocab()
 
@@ -373,6 +380,7 @@ class ChatModel:
 
         x_shape = (tokens_per_sentence,)
         if skip_embed: x_shape = (None,embed_unit)# (tokens_per_sentence,embed_unit)
+        decoder_dim = units*2 # (tokens_per_sentence, units *2)
 
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
@@ -395,7 +403,7 @@ class ChatModel:
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
-                                    return_sequences=True,
+                                    #return_sequences=True,
                                     return_state=True,
                                     #recurrent_dropout=0.2,
                                     input_shape=(None,),
@@ -405,6 +413,7 @@ class ChatModel:
 
         if not skip_embed:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
+            pass
         else:
             recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
 
@@ -412,6 +421,10 @@ class ChatModel:
         concat_a_2 = Concatenate()([rec_a_2, rec_a_4])
 
         lstm_a_states = [concat_a_1, concat_a_2]
+
+        #recurrent_a = lstm_a(embed_a)  # valid_word_a
+
+        #print(len(recurrent_a),recurrent_a[0].shape)
         #lstm_a_states = [rec_a_1, rec_a_2]
 
         ### decoder for training ###
@@ -435,17 +448,19 @@ class ChatModel:
 
         #############
 
-
-        lstm_b = LSTM(units=lstm_unit_b ,
-                      #recurrent_dropout=0.2,
+        lstm_b = AttentionDecoder(units=lstm_unit_b , output_dim=decoder_dim,
+                      kernel_constraint=min_max_norm(),
                       return_sequences=return_sequences_b,
                       return_state=True
                       )
 
         if not skip_embed:
-            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(embed_b, initial_state=lstm_a_states)
+            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a , initial_state=lstm_a_states
+                                                                )
         else:
-            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b, initial_state=lstm_a_states)
+            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b,
+                                                                initial_state=lstm_a_states
+                                                                )
 
 
         dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
