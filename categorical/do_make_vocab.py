@@ -9,8 +9,9 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 from gensim.models.keyedvectors import KeyedVectors
 import numpy as np
 
+embed_size = hparams['embed_size']
 vocab_length = hparams['num_vocab_total']
-FROM = '../raw/glove.6B.100d.txt'
+FROM = '../raw/glove.6B.' + str(embed_size) +'d.txt' # 50, 100, 200, 300
 TO = '../data/embed.txt'
 train_file = ''
 v = []
