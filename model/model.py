@@ -4,9 +4,9 @@ import numpy as np
 from settings import hparams
 from attention_decoder import AttentionDecoder
 from keras.preprocessing import text, sequence
-from keras.models import Sequential , Model
+from keras.models import  Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
-from keras.layers import Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda, Dropout
+from keras.layers import Conv1D, Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda, Dropout
 from keras.layers import Concatenate, Add, Multiply, Average
 from keras.constraints import min_max_norm
 
@@ -380,87 +380,43 @@ class ChatModel:
 
         x_shape = (tokens_per_sentence,)
         if skip_embed: x_shape = (None,embed_unit)# (tokens_per_sentence,embed_unit)
-        decoder_dim = units*2 # (tokens_per_sentence, units *2)
+        decoder_dim = units * 2 # (tokens_per_sentence, units *2)
 
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
 
-        if not skip_embed:
-            if  embedding_weights_a is not None:
-                embeddings_a = Embedding(words,embed_unit ,
-                                         weights=[embedding_weights_a],
-                                         input_length=tokens_per_sentence,
-                                         trainable=trainable
-                                         )
-            else:
-                embeddings_a = Embedding(words, embed_unit,
-                                         #weights=[embedding_weights_a],
-                                         input_length=tokens_per_sentence,
-                                         trainable=True
-                                         )
+        embeddings_a = Embedding(words,embed_unit ,
+                                 weights=[embedding_weights_a],
+                                 input_length=tokens_per_sentence,
+                                 trainable=trainable
+                                 )
 
-            embed_a = embeddings_a(valid_word_a)
+
+        embed_a = embeddings_a(valid_word_a)
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
-                                    #return_sequences=True,
-                                    return_state=True,
+                                    return_sequences=True,
+                                    #return_state=True,
                                     #recurrent_dropout=0.2,
                                     input_shape=(None,),
-                                    ), merge_mode='concat')
+                                    ), merge_mode='concat', trainable=True)
 
-        #recurrent_a, lstm_a_h, lstm_a_c = lstm_a(valid_word_a)
 
-        if not skip_embed:
-            recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(embed_a) #valid_word_a
-            pass
-        else:
-            recurrent_a, rec_a_1, rec_a_2, rec_a_3, rec_a_4 = lstm_a(valid_word_a) #valid_word_a
-
-        concat_a_1 = Concatenate()([rec_a_1, rec_a_3])
-        concat_a_2 = Concatenate()([rec_a_2, rec_a_4])
-
-        lstm_a_states = [concat_a_1, concat_a_2]
-
-        #recurrent_a = lstm_a(embed_a)  # valid_word_a
-
-        #print(len(recurrent_a),recurrent_a[0].shape)
-        #lstm_a_states = [rec_a_1, rec_a_2]
-
-        ### decoder for training ###
-        '''
-        if not skip_embed:
-            if embedding_weights_b is not None:
-                embeddings_b = Embedding(words, embed_unit,
-                                         input_length=tokens_per_sentence, #lstm_unit_a,
-                                         weights=[embedding_weights_b],
-                                         trainable=trainable
-                                         )
-            else:
-                embeddings_b = Embedding(words, embed_unit,
-                                         input_length=tokens_per_sentence,  # lstm_unit_a,
-                                         #weights=[embedding_weights_b],
-                                         trainable=True
-                                         )
-        '''
-        if not skip_embed:
-            embed_b = embeddings_a(valid_word_b)
+        recurrent_a = lstm_a(embed_a)
 
         #############
+        #conv1d_b = Conv1D(lstm_unit_b,tokens_per_sentence)(recurrent_a)
 
         lstm_b = AttentionDecoder(units=lstm_unit_b , output_dim=decoder_dim,
                       kernel_constraint=min_max_norm(),
-                      return_sequences=return_sequences_b,
+                      #return_sequences=return_sequences_b,
                       return_state=True
                       )
 
-        if not skip_embed:
-            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a , initial_state=lstm_a_states
-                                                                )
-        else:
-            recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(valid_word_b,
-                                                                initial_state=lstm_a_states
-                                                                )
+
+        recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) ## <--- here
+
 
 
         dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),

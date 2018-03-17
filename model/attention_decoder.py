@@ -12,6 +12,7 @@ https://medium.com/@zafarali
 '''
 
 
+
 # = lambda d, T: tf.Print(input_=T, data=[T, tf.shape(T)], message=d)
 
 def _time_distributed_dense(x, w, b=None, dropout=None,
@@ -102,11 +103,12 @@ class AttentionDecoder(Recurrent):
         self.recurrent_constraint = constraints.get(kernel_constraint)
         self.bias_constraint = constraints.get(bias_constraint)
 
+        self.initial_state=initial_state
+
         super(AttentionDecoder, self).__init__(**kwargs)
         self.name = name
         self.return_sequences = True  # must return sequences
 
-        self.initial_state=initial_state
 
     def build(self, input_shape):
         """
