@@ -458,7 +458,7 @@ class ChatModel:
         adam = optimizers.Adam(lr=learning_rate)
 
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
-        model.compile(optimizer=adam, loss='mse',metrics=['acc'])
+        model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['acc'])
 
         return model , None, None #, None, model_inference
 
