@@ -408,10 +408,11 @@ class ChatModel:
         lstm_b = AttentionDecoder(units=lstm_unit_b , output_dim=decoder_dim,
                       kernel_constraint=min_max_norm(),
                       #return_sequences=return_sequences_b,
-                      return_state=True
+                      #return_state=True
                       )
 
-        recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
+        #recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
+        recurrent_b = lstm_b(recurrent_a) #recurrent_a ## <--- here
 
         dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
                         activation='softmax' #softmax or relu
@@ -436,13 +437,13 @@ class ChatModel:
 
         inputs_inference = [input_h, input_c]
 
-        embed_b = embeddings_a(valid_word_b)
-        outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
-                                                                            initial_state=inputs_inference)
+        #embed_b = embeddings_a(valid_word_b)
+        #outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b)# ,
+                                                                            #initial_state=inputs_inference)
 
-        outputs_states = [outputs_inference_h, outputs_inference_c]
+        #outputs_states = [outputs_inference_h, outputs_inference_c]
 
-        dense_outputs_inference = dense_b(outputs_inference)
+        #dense_outputs_inference = dense_b(outputs_inference)
 
         ### inference model ###
         '''
@@ -477,89 +478,91 @@ class ChatModel:
 
         repeats = hparams['infer_repeat']
 
-        for _ in range(repeats):
-            state = self.model_encoder.predict(source_input)
-
-            #self.model_encoder.summary()
-            #self.model_inference.summary()
-
-            h = state[0]
-            c = state[1]
-
-            infer_lst = []
-            txt_out = []
-            t = txt.lower().split()
-            out = self.vocab_dict[hparams['sol']]
-            if self.embed_mode == 'mod':
-                #out = self.vocab_dict[hparams['sol']]
-                infer_lst.append(self.vocab_dict[hparams['sol']])
-                out = self.find_vec(hparams['sol'])
-                out = np.expand_dims(out,0)
-                out = np.expand_dims(out,0)
-            else:
-                out = np.expand_dims(out,0)
-                #out = np.expand_dims(out,0)
-
-                #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
-
-            for i in range(len(t) - 0, len(t) * 3):
-                if True:
-                    txt_out.append('|')
-                    out_word = ''
-                    state_out = [h,c]
-                    #print(state_out,'so')
-
-                    if self.embed_mode == 'normal':
-                        #a = np.zeros((tokens_per_sentence))
-                        #a[0] = int(out)
-
-                        a = self._fill_sentence(out, infer_lst, pad_last_val=False)
-                        out = np.expand_dims(a,0)
-                        #print(out,'a')
-                    out, h, c = self.model_inference.predict([out] + state_out)
-                    if self.embed_mode == 'normal':
-                        out = out[0,0,:]
-                        out = self.find_closest_index(out)
-                        infer_lst.append(out)
-                        txt_out.append(str(out))
-                        if int(out) < len(self.vocab_list):
-                            txt_out.append(self.vocab_list[int(out)])
-                            out_word = self.vocab_list[int(out)]
-                    elif self.embed_mode == 'mod':
-
-                        if False:
-                            z_list = []
-                            for z in range(tokens_per_sentence):
-                                close_word = out[0,z,:]
-                                z_list.append(self.find_closest_word(close_word))
-                            print('**','--'.join(z_list),'**')
-
-                        out_word = self.find_closest_index(out[0,0,:])
-                        txt_out.append(str(out_word))
-                        if int(out_word) < len(self.vocab_list):
-                            txt_out.append(self.vocab_list[int(out_word)])
-                        #out_word = np.array([out_word])
-                        #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
-                        #if self.embed_mode == 'mod':
-                        out = self.find_vec(self.vocab_list[int(out_word)])
-                        out = np.expand_dims(out, 0)
-                        out = np.expand_dims(out, 0)
-                    if stop_at_eol and out_word == eol: break
-
-
-            print('---greedy predict---')
-            print(' '.join(txt_out))
-            ####
-
         if False:
+            for _ in range(repeats):
+                state = self.model_encoder.predict(source_input)
+
+                #self.model_encoder.summary()
+                #self.model_inference.summary()
+
+                h = state[0]
+                c = state[1]
+
+                infer_lst = []
+                txt_out = []
+                t = txt.lower().split()
+                out = self.vocab_dict[hparams['sol']]
+                if self.embed_mode == 'mod':
+                    #out = self.vocab_dict[hparams['sol']]
+                    infer_lst.append(self.vocab_dict[hparams['sol']])
+                    out = self.find_vec(hparams['sol'])
+                    out = np.expand_dims(out,0)
+                    out = np.expand_dims(out,0)
+                else:
+                    out = np.expand_dims(out,0)
+                    #out = np.expand_dims(out,0)
+
+                    #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
+
+                for i in range(len(t) - 0, len(t) * 3):
+                    if True:
+                        txt_out.append('|')
+                        out_word = ''
+                        state_out = [h,c]
+                        #print(state_out,'so')
+
+                        if self.embed_mode == 'normal':
+                            #a = np.zeros((tokens_per_sentence))
+                            #a[0] = int(out)
+
+                            a = self._fill_sentence(out, infer_lst, pad_last_val=False)
+                            out = np.expand_dims(a,0)
+                            #print(out,'a')
+                        out, h, c = self.model_inference.predict([out] + state_out)
+                        if self.embed_mode == 'normal':
+                            out = out[0,0,:]
+                            out = self.find_closest_index(out)
+                            infer_lst.append(out)
+                            txt_out.append(str(out))
+                            if int(out) < len(self.vocab_list):
+                                txt_out.append(self.vocab_list[int(out)])
+                                out_word = self.vocab_list[int(out)]
+                        elif self.embed_mode == 'mod':
+
+                            if False:
+                                z_list = []
+                                for z in range(tokens_per_sentence):
+                                    close_word = out[0,z,:]
+                                    z_list.append(self.find_closest_word(close_word))
+                                print('**','--'.join(z_list),'**')
+
+                            out_word = self.find_closest_index(out[0,0,:])
+                            txt_out.append(str(out_word))
+                            if int(out_word) < len(self.vocab_list):
+                                txt_out.append(self.vocab_list[int(out_word)])
+                            #out_word = np.array([out_word])
+                            #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
+                            #if self.embed_mode == 'mod':
+                            out = self.find_vec(self.vocab_list[int(out_word)])
+                            out = np.expand_dims(out, 0)
+                            out = np.expand_dims(out, 0)
+                        if stop_at_eol and out_word == eol: break
+
+
+                print('---greedy predict---')
+                print(' '.join(txt_out))
+                ####
+
+        if True:
             print('---basic predict---')
-            out = self.model.predict([source_input, source_input])
+            out = self.model.predict([source_input]) #, source_input])
+            print(out.shape)
             t_out = []
-            for i in range(len(source_input)):
-                word = self.find_closest_word(out[i])
+            for i in range(tokens_per_sentence):
+                word = self.find_closest_word(out[0,i,:])
                 t_out.append(word)
             print(' '.join(t_out))
-            print(self.find_closest_word(out[0]))
+            #print(self.find_closest_word(out[0]))
         pass
 
     def _fill_vec(self, sent, shift_right=False):
@@ -796,9 +799,9 @@ class ChatModel:
                 if train_model:
                     if self.embed_mode == 'mod':
 
-                        self.model.fit([x1,x2], y)
+                        self.model.fit([x1], y)
                     else:
-                        self.model.fit([x1, x2], y)
+                        self.model.fit([x1], y)
 
                 if (z + 1) % (hparams['steps_to_stats'] * 10) == 0 and z != 0:
                     hparams['base_file_num'] = hparams['base_file_num'] + hparams['steps_to_stats'] * 10
