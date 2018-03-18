@@ -18,6 +18,7 @@ hparams = {
     'steps_to_stats': 100,
     'epochs': 100,
     'embed_size':100, #values only: 50, 100, 200, 300
+    'embed_train':True,
     'infer_repeat': 2,
     'embed_mode':'normal', #values only: mod, normal, zero
     'sol':'sol',
