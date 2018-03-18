@@ -426,7 +426,7 @@ class ChatModel:
         model = Model([valid_word_a], dropout_b) # decoder_b
 
         ### encoder for inference ###
-        model_encoder = Model(valid_word_a, lstm_a_states)
+        #model_encoder = Model(valid_word_a, lstm_a_states)
 
         ### decoder for inference ###
 
@@ -436,23 +436,20 @@ class ChatModel:
 
         inputs_inference = [input_h, input_c]
 
-        if not skip_embed:
-            embed_b = embeddings_a(valid_word_b)
-            outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
-                                                                                 initial_state=inputs_inference)
-        else:
-            outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(valid_word_b,
-                                                                                 initial_state=inputs_inference)
+        embed_b = embeddings_a(valid_word_b)
+        outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b,
+                                                                            initial_state=inputs_inference)
 
         outputs_states = [outputs_inference_h, outputs_inference_c]
 
         dense_outputs_inference = dense_b(outputs_inference)
 
         ### inference model ###
+        '''
         model_inference = Model([valid_word_b] + inputs_inference,
                                 [dense_outputs_inference] +
                                 outputs_states)
-
+        '''
 
 
         ### boilerplate ###
@@ -462,7 +459,7 @@ class ChatModel:
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
         model.compile(optimizer=adam, loss='mse',metrics=['acc'])
 
-        return model, model_encoder, model_inference
+        return model , None, None #, None, model_inference
 
     def predict_words(self,txt,stop_at_eol=False):
         eol = hparams['eol']
