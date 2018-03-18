@@ -2,9 +2,12 @@
 Keras implementation of a chatbot
 
 # Suggested Reading
-* https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
-* https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
-* https://medium.com/datalogue/attention-in-keras-1892773a4f22
+* Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's blog.
+  * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
+  * https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
+* Specifically regarding attention decoders and a special hand written Keras layer designed just for that purpose. The author of the layer is Zafarali Ahmed. The code was designed for an earlier version of Keras and Tensorflow.
+  * https://medium.com/datalogue/attention-in-keras-1892773a4f22
+  * https://machinelearningmastery.com/encoder-decoder-attention-sequence-to-sequence-prediction-keras/
 
 # GloVe and W2V Word Embeddings Download
 * https://code.google.com/archive/p/word2vec/

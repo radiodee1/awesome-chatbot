@@ -9,6 +9,7 @@ from keras.engine import InputSpec
 This code originated with Zafarali Ahmed. See the following links:
 https://medium.com/datalogue/attention-in-keras-1892773a4f22
 https://medium.com/@zafarali
+https://machinelearningmastery.com/encoder-decoder-attention-sequence-to-sequence-prediction-keras/
 '''
 
 

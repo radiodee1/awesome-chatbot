@@ -380,7 +380,7 @@ class ChatModel:
 
         x_shape = (tokens_per_sentence,)
         if skip_embed: x_shape = (None,embed_unit)# (tokens_per_sentence,embed_unit)
-        decoder_dim = units * 2 # (tokens_per_sentence, units *2)
+        decoder_dim = units *2 # (tokens_per_sentence, units *2)
 
         valid_word_a = Input(shape=x_shape)
         valid_word_b = Input(shape=x_shape)
@@ -406,7 +406,7 @@ class ChatModel:
         recurrent_a = lstm_a(embed_a)
 
         #############
-        #conv1d_b = Conv1D(lstm_unit_b,tokens_per_sentence)(recurrent_a)
+        #conv1d_b = Conv1D(tokens_per_sentence,lstm_unit_b)(recurrent_a)
 
         lstm_b = AttentionDecoder(units=lstm_unit_b , output_dim=decoder_dim,
                       kernel_constraint=min_max_norm(),
@@ -415,7 +415,7 @@ class ChatModel:
                       )
 
 
-        recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) ## <--- here
+        recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
 
 
 
