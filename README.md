@@ -10,11 +10,14 @@ Keras implementation of a chatbot
   * https://machinelearningmastery.com/encoder-decoder-attention-sequence-to-sequence-prediction-keras/
 
 # GloVe and W2V Word Embeddings Download
-* https://code.google.com/archive/p/word2vec/
-* http://nlp.stanford.edu/data/glove.6B.zip
+* This link brings you to a page where you can download W2V embeddings that google makes available.
+  * https://code.google.com/archive/p/word2vec/
+* This link starts a download of the glove vectors in the `glove.6B` collection. The download takes a while and uses 823M.
+  * http://nlp.stanford.edu/data/glove.6B.zip
 
 # REDDIT Download
-* http://files.pushshift.io/reddit/comments/RC_2017-11.bz2
+* This link starts a download that takes several hours for the Reddit Comments file from November of 2017. The file is several gigabytes.
+  * http://files.pushshift.io/reddit/comments/RC_2017-11.bz2
 
 # Scripts For Setup
 Here is a list of scripts and their description and possibly their location. You must execute them in order.
