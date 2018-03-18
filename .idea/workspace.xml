@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/model/model.py" afterPath="$PROJECT_DIR$/model/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -26,11 +27,21 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="521">
-              <caret line="417" column="71" lean-forward="false" selection-start-line="417" selection-start-column="71" selection-end-line="417" selection-end-column="71" />
+            <state relative-caret-position="592">
+              <caret line="425" column="35" lean-forward="false" selection-start-line="425" selection-start-column="35" selection-end-line="425" selection-end-column="35" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/test.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-168">
+              <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -48,8 +59,8 @@
       <file leaf-file-name="attention_decoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="8" column="41" lean-forward="true" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="41" />
+            <state relative-caret-position="72">
+              <caret line="8" column="41" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="41" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -153,9 +164,10 @@
         <option value="$PROJECT_DIR$/categorical/attention_decoder.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/do_launch_model.sh" />
-        <option value="$PROJECT_DIR$/model/model.py" />
         <option value="$PROJECT_DIR$/model/attention_decoder.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/test.py" />
+        <option value="$PROJECT_DIR$/model/model.py" />
       </list>
     </option>
   </component>
@@ -278,13 +290,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="22" column="29" lean-forward="false" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -443,7 +448,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -557,8 +561,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="41" lean-forward="true" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="41" />
+        <state relative-caret-position="72">
+          <caret line="8" column="41" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="41" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -576,10 +580,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-168">
+          <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="521">
-          <caret line="417" column="71" lean-forward="false" selection-start-line="417" selection-start-column="71" selection-end-line="417" selection-end-column="71" />
+        <state relative-caret-position="592">
+          <caret line="425" column="35" lean-forward="false" selection-start-line="425" selection-start-column="35" selection-end-line="425" selection-end-column="35" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>

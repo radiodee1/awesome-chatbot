@@ -372,14 +372,11 @@ class ChatModel:
                              skip_embed=False,
                              return_sequences_b=False):
 
-
-        #latent_dim = 64
         lstm_unit_a = units
         lstm_unit_b = units  * 2
         embed_unit = int(hparams['embed_size'])
 
         x_shape = (tokens_per_sentence,)
-        if skip_embed: x_shape = (None,embed_unit)# (tokens_per_sentence,embed_unit)
         decoder_dim = units *2 # (tokens_per_sentence, units *2)
 
         valid_word_a = Input(shape=x_shape)
@@ -391,17 +388,17 @@ class ChatModel:
                                  trainable=trainable
                                  )
 
-
         embed_a = embeddings_a(valid_word_a)
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
-                                    return_sequences=True,
+                                    return_sequences=True#,
                                     #return_state=True,
                                     #recurrent_dropout=0.2,
-                                    input_shape=(None,),
-                                    ), merge_mode='concat', trainable=True)
-
+                                    #input_shape=(None,)
+                                    ),
+                               merge_mode='concat',
+                               trainable=True)
 
         recurrent_a = lstm_a(embed_a)
 
@@ -414,22 +411,19 @@ class ChatModel:
                       return_state=True
                       )
 
-
         recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
 
-
-
         dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
-                        activation='softmax', #softmax or relu
+                        activation='softmax' #softmax or relu
                         #name='dense_layer_b',
                         )
-
 
         decoder_b = dense_b(recurrent_b) # recurrent_b
 
         dropout_b = Dropout(0.15)(decoder_b)
 
-        model = Model([valid_word_a,valid_word_b], dropout_b) # decoder_b
+        #model = Model([valid_word_a,valid_word_b], dropout_b) # decoder_b
+        model = Model([valid_word_a], dropout_b) # decoder_b
 
         ### encoder for inference ###
         model_encoder = Model(valid_word_a, lstm_a_states)
