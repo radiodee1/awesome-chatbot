@@ -259,7 +259,7 @@ class ChatModel:
         if self.embed_mode == 'mod': self.skip_embed = True
         embed_size = int(hparams['embed_size'])
 
-        self.trainable = True
+        self.trainable = True ## toggle trainable here
         embeddings_index = {}
         glove_data = hparams['data_dir'] + hparams['embed_name']
         if not os.path.isfile(glove_data) or self.embed_mode == 'zero':

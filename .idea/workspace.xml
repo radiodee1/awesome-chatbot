@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/model.py" afterPath="$PROJECT_DIR$/model/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +26,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="460" column="68" lean-forward="false" selection-start-line="460" selection-start-column="68" selection-end-line="460" selection-end-column="68" />
+            <state relative-caret-position="179">
+              <caret line="261" column="29" lean-forward="false" selection-start-line="261" selection-start-column="29" selection-end-line="261" selection-end-column="29" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -107,7 +106,6 @@
       <find>set_embedding_matrix</find>
       <find>load_word_vectors</find>
       <find>_fill_vec</find>
-      <find>trainable</find>
       <find>predict_words</find>
       <find>source_input</find>
       <find>embedding_2</find>
@@ -132,6 +130,7 @@
       <find>output_dim</find>
       <find>decoder_dim</find>
       <find>stage: co</find>
+      <find>trainable</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -590,8 +589,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="460" column="68" lean-forward="false" selection-start-line="460" selection-start-column="68" selection-end-line="460" selection-end-column="68" />
+        <state relative-caret-position="179">
+          <caret line="261" column="29" lean-forward="false" selection-start-line="261" selection-start-column="29" selection-end-line="261" selection-end-column="29" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
