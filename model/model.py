@@ -922,6 +922,7 @@ if __name__ == '__main__':
         c.train_model_categorical( check_sentences=False)
 
         c.save_model(filename)
+        c.model_infer(c.train_fr)
 
     if c.do_infer:
 
