@@ -20,7 +20,7 @@ hparams = {
     'embed_size':100, #values only: 50, 100, 200, 300
     'embed_train':False,
     'autoencode':True,
-    'infer_repeat': 2,
+    'infer_repeat': 1,
     'embed_mode':'normal', #values only: mod, normal, zero
     'sol':'sol',
     'eol':'eol',

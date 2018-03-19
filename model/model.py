@@ -611,8 +611,8 @@ class ChatModel:
         f = filename.replace('from','to')
         self.load_word_vectors()
         self.load_vocab(vocab_fr)
-        c = self.open_sentences(filename)
-        f = self.open_sentences(f)
+        c = self.open_sentences(self.train_fr)
+        f = self.open_sentences(self.train_to)
         g = randint(0, len(c))
         line = c[g]
         line = line.strip('\n')
