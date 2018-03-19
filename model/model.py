@@ -415,7 +415,7 @@ class ChatModel:
         recurrent_b = lstm_b(recurrent_a) #recurrent_a ## <--- here
 
         dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
-                        activation='softmax' #softmax or relu
+                        activation='relu' #softmax or relu
                         #name='dense_layer_b',
                         )
 
