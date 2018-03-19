@@ -379,8 +379,11 @@ class ChatModel:
         x_shape = (tokens_per_sentence,)
         decoder_dim = units *2 # (tokens_per_sentence, units *2)
 
+        if hparams['dense_activation'] == 'none':
+            decoder_dim = embed_unit
+
         valid_word_a = Input(shape=x_shape)
-        valid_word_b = Input(shape=x_shape)
+        #valid_word_b = Input(shape=x_shape)
 
         embeddings_a = Embedding(words,embed_unit ,
                                  weights=[embedding_weights_a],
@@ -414,51 +417,27 @@ class ChatModel:
         #recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
         recurrent_b = lstm_b(recurrent_a) #recurrent_a ## <--- here
 
-        dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
-                        activation='relu' #softmax or relu
-                        #name='dense_layer_b',
-                        )
+        if hparams['dense_activation'] != 'none':
+            dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
+                            activation=hparams['dense_activation'] #softmax, tanh, or relu
+                            #name='dense_layer_b',
+                            )
 
-        decoder_b = dense_b(recurrent_b) # recurrent_b
+            decoder_b = dense_b(recurrent_b) # recurrent_b
 
-        dropout_b = Dropout(0.15)(decoder_b)
+            dropout_b = Dropout(0.15)(decoder_b)
 
-        #model = Model([valid_word_a,valid_word_b], dropout_b) # decoder_b
-        model = Model([valid_word_a], dropout_b) # decoder_b
+            model = Model([valid_word_a], dropout_b) # decoder_b
 
-        ### encoder for inference ###
-        #model_encoder = Model(valid_word_a, lstm_a_states)
-
-        ### decoder for inference ###
-
-        input_h = Input(shape=(None, ))
-
-        input_c = Input(shape=(None, ))
-
-        inputs_inference = [input_h, input_c]
-
-        #embed_b = embeddings_a(valid_word_b)
-        #outputs_inference, outputs_inference_h, outputs_inference_c = lstm_b(embed_b)# ,
-                                                                            #initial_state=inputs_inference)
-
-        #outputs_states = [outputs_inference_h, outputs_inference_c]
-
-        #dense_outputs_inference = dense_b(outputs_inference)
-
-        ### inference model ###
-        '''
-        model_inference = Model([valid_word_b] + inputs_inference,
-                                [dense_outputs_inference] +
-                                outputs_states)
-        '''
-
+        else:
+            model = Model([valid_word_a], recurrent_b)
 
         ### boilerplate ###
 
         adam = optimizers.Adam(lr=learning_rate)
 
         # try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
-        model.compile(optimizer=adam, loss='categorical_crossentropy',metrics=['acc'])
+        model.compile(optimizer=adam, loss='mse',metrics=['acc'])
 
         return model , None, None #, None, model_inference
 
