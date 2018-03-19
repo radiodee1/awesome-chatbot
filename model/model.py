@@ -536,7 +536,7 @@ class ChatModel:
             for _ in range(repeats):
                 print('---basic predict---')
                 out = self.model.predict([source_input]) #, source_input])
-                print(out.shape)
+                #print(out.shape)
                 t_out = []
                 for i in range(tokens_per_sentence):
                     word = self.find_closest_word(out[0,i,:])
