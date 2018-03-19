@@ -19,6 +19,7 @@ hparams = {
     'epochs': 100,
     'embed_size':100, #values only: 50, 100, 200, 300
     'embed_train':True,
+    'autoencode':False,
     'infer_repeat': 2,
     'embed_mode':'normal', #values only: mod, normal, zero
     'sol':'sol',

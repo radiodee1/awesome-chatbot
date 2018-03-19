@@ -909,8 +909,8 @@ if __name__ == '__main__':
     c = ChatModel()
 
     if True:
-        #c.task_autoencode()
-        c.task_normal_train()
+        if hparams['autoencode']: c.task_autoencode()
+        else: c.task_normal_train()
 
         print('stage: load vocab')
         filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
