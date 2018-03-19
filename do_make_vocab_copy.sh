@@ -1,5 +1,5 @@
 #!/bin/bash
 
 
-cp data/vocab.from model/saved_vocab.from
-cp data/vocab.to model/saved_vocab.to
+cp data/vocab.from saved/saved_vocab.from
+cp data/vocab.to saved/saved_vocab.to
