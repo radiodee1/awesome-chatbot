@@ -543,6 +543,7 @@ class ChatModel:
                     t_out.append(word)
                     t_out.append(str(self.find_closest_index(out[0,i,:])))
                     t_out.append('|')
+                    if word == hparams['eol'] : break
                 print(' '.join(t_out))
                 #print(self.find_closest_word(out[0]))
         pass
