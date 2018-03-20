@@ -450,10 +450,8 @@ class ChatModel:
                                                                                     self.model_inference,
                                                                                     global_check=True)
         source_input = self._fill_vec(txt, shift_right=False)
-        if self.embed_mode == 'mod':
-            source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
-        else:
-            source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=False)
+
+        source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
 
         repeats = hparams['infer_repeat']
 
@@ -766,9 +764,9 @@ class ChatModel:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
                 print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', self.printable)
-                x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)  ## change this to 'train_fr' when not autoencoding
+                x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)  
                 x2 = self.categorical_input_one(self.train_to,list,dict, length, s)
-                y =  self.categorical_input_one(self.train_to,list,dict, length, s, shift_output=True)
+                y =  self.categorical_input_one(self.train_to,list,dict, length, s, shift_output=False) ## shift_output True for teacher forcing.
 
                 x1 = self.stack_sentences_categorical(x1,list, shift_output=all_vectors)
                 x2 = self.stack_sentences_categorical(x2,list, shift_output=all_vectors)
