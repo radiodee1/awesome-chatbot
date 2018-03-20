@@ -48,3 +48,20 @@ This file is for additional parameters that can be set using a text editor befor
 * `tgt_ending` This is the filename ending for the target test and training files.
 * `base_filename` This is the base filename for when the program saves the network weights and biases.
 * `base_file_num` This is a number that is part of the final filename for the saved weights from the network.
+* `num_vocab_total` This number is the size of the vocabulary. It is also read by the `do_make_vocab.py` file. It can only be chhanged when the vocabulary is being created before training.
+* `batch_size` Training batch size. May be replaced by `batch_constant`.
+* `steps_to_stats` Number representing how many times the `fit` method is called before the stats are printed to the screen.
+* `epochs` Number of training epochs.
+* `embed_size` Dimensionality of the basic word vector length. Each word is represented by a vector of numbers and this vector is as long as `embed_size`. This can only take certain values. The GloVe download, mentioned above, has word embedding in only certain sizes. These sizes are: 50, 100, 200, and 300.
+* `embed_train` This is a True/False parameter that determines whether the model will allow the loaded word vector values to be modified at the time of training.
+* `autoencode` This is a True/False parameter that determines whether the model is set up for regular encoding or autoencoding during the training phase.
+* `infer_repeat` This parameter is a number higher than zero that determines how many times the program will run the `infer` method when stats are being printed.
+* `embed_mode` This is a string. Accepted values are 'mod' and 'normal'. This allows the development of code that will test out different testing scenarios. 'mod' is not supported at the time of this writing. Use 'normal' at all times.
+* `dense_activation` There is a dense layer in the model and this parameter tells that layer how to perform its activations. If the value None or 'none' is passed to the program the dense layer is skipped entirely. The value 'softmax' was used initially but produced poor results. The value 'tanh' produces some reasonable results.
+* `sol` This is the symbol used for the 'start of line' token.
+* `eol` This is the symbol used for the 'end of line' token.
+* `unk` This is the symbol used for the 'unknown word' token.
+* `units` This is the initial value for hidden units in the first LSTM cell in the model.
+* `learning_rate` This is the learning rate for the 'adam' optimizer.
+* `tokens_per_sentence` This is the number of tokens per sentence.
+* `batch_constant` This number serves as a batch size parameter.
