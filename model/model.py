@@ -43,7 +43,6 @@ oov_token = hparams['unk']
 batch_size = hparams['batch_size']
 units = hparams['units']
 tokens_per_sentence = hparams['tokens_per_sentence']
-#raw_embedding_filename = hparams['raw_embedding_filename']
 
 base_file_num = str(hparams['base_file_num'])
 batch_constant = int(hparams['batch_constant'])
@@ -97,6 +96,7 @@ class ChatModel:
         self.do_infer = False
         self.do_review = False
         self.do_train_long = False
+        self.do_interactive = False
 
         self.load_good = False
 
@@ -110,7 +110,7 @@ class ChatModel:
 
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
-        parser.add_argument('--mode',help='mode of operation. (train, infer, review, long)')
+        parser.add_argument('--mode',help='mode of operation. (train, infer, review, long, interactive)')
         parser.add_argument('--printable',help='a string to print during training for identification.' )
         parser.add_argument('--basename',help='base filename to use if it is different from settings file.')
         self.args = parser.parse_args()
@@ -122,6 +122,7 @@ class ChatModel:
         if self.args['mode'] == 'infer': self.do_infer = True
         if self.args['mode'] == 'review' : self.do_review = True
         if self.args['mode'] == 'long': self.do_train_long = True
+        if self.args['mode'] == 'interactive': self.do_interactive = True
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
             print(hparams['base_filename'], 'set name')
@@ -164,6 +165,16 @@ class ChatModel:
             self.train_model_categorical(check_sentences=False)
             self.save_model(self.filename)
         pass
+
+    def task_interactive(self):
+        self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
+                                                                                    self.model_encoder,
+                                                                                    self.model_inference,
+                                                                                    global_check=True)
+        print('-------------------')
+        while True:
+            line = input("> ")
+            self.predict_words(line,stop_at_eol=True)
 
     def open_sentences(self, filename):
         t_yyy = []
@@ -910,6 +921,9 @@ if __name__ == '__main__':
     if c.do_infer:
 
         c.model_infer(c.train_fr)
+
+    if c.do_interactive:
+        c.task_interactive()
 
     if c.do_train_long:
         c.task_train_epochs()
