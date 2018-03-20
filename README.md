@@ -1,5 +1,5 @@
 # awesome-chatbot
-Keras implementation of a chatbot
+Keras implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. 
 # Suggested Reading
 * Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's blog.
   * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/

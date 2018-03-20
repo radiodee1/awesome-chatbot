@@ -27,9 +27,6 @@ import csv
 import tensorflow as tf
 #print(hparams)
 
-#tfe.enable_eager_execution()
-
-
 words = hparams['num_vocab_total']
 text_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
 text_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
