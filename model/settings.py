@@ -22,7 +22,7 @@ hparams = {
     'autoencode':True,
     'infer_repeat': 1,
     'embed_mode':'normal', #values only: mod, normal, zero
-    'dense_activation':'tanh', #values only: tanh, relu, softmax, none
+    'dense_activation':None,#'tanh', #values only: tanh, relu, softmax, none
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',

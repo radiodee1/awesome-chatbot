@@ -451,7 +451,7 @@ class ChatModel:
                                                                                     global_check=True)
         source_input = self._fill_vec(txt, shift_right=False)
 
-        source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=True)
+        source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=False)
 
         repeats = hparams['infer_repeat']
 
