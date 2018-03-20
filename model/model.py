@@ -2,6 +2,7 @@
 
 import numpy as np
 from settings import hparams
+import tokenize_weak
 from attention_decoder import AttentionDecoder
 from keras.preprocessing import text, sequence
 from keras.models import  Model
@@ -171,6 +172,8 @@ class ChatModel:
         print('-------------------')
         while True:
             line = input("> ")
+            line = tokenize_weak.format(line)
+            print(line)
             self.predict_words(line,stop_at_eol=True)
 
     def open_sentences(self, filename):
