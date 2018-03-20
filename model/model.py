@@ -43,7 +43,7 @@ oov_token = hparams['unk']
 batch_size = hparams['batch_size']
 units = hparams['units']
 tokens_per_sentence = hparams['tokens_per_sentence']
-raw_embedding_filename = hparams['raw_embedding_filename']
+#raw_embedding_filename = hparams['raw_embedding_filename']
 
 base_file_num = str(hparams['base_file_num'])
 batch_constant = int(hparams['batch_constant'])
