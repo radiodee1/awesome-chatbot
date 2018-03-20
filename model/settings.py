@@ -17,11 +17,11 @@ hparams = {
     'steps_to_stats': 100,
     'epochs': 100,
     'embed_size':200, #values only: 50, 100, 200, 300
-    'embed_train':False,
+    'embed_train':True,
     'autoencode':True,
     'infer_repeat': 1,
     'embed_mode':'normal', #values only: mod, normal, zero
-    'dense_activation':'tanh',#'tanh', #values only: tanh, relu, softmax, none
+    'dense_activation':'tanh', #values only: tanh, relu, softmax, none
     'sol':'zzsolzz',
     'eol':'zzeolzz',
     'unk':'zzunkzz',
