@@ -379,7 +379,7 @@ class ChatModel:
         x_shape = (tokens_per_sentence,)
         decoder_dim = units *2 # (tokens_per_sentence, units *2)
 
-        if hparams['dense_activation'] == 'none':
+        if hparams['dense_activation'] is None or hparams['dense_activation'] == 'none':
             decoder_dim = embed_unit
 
         valid_word_a = Input(shape=x_shape)
@@ -417,7 +417,7 @@ class ChatModel:
         #recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
         recurrent_b = lstm_b(recurrent_a) #recurrent_a ## <--- here
 
-        if hparams['dense_activation'] != 'none':
+        if hparams['dense_activation'] is not None and hparams['dense_activation'] != 'none':
             dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
                             activation=hparams['dense_activation'] #softmax, tanh, or relu
                             #name='dense_layer_b',
@@ -602,11 +602,11 @@ class ChatModel:
         print('index:',g)
         print('input:',line)
         print('ref:', f[g])
-        self.predict_words(line, stop_at_eol=True)
+        self.predict_words(line, stop_at_eol=False)
         print('----------------')
         line = 'sol what is up ? eol'
         print('input:', line)
-        self.predict_words(line, stop_at_eol=True)
+        self.predict_words(line, stop_at_eol=False)
 
         if False:
             word = 'the'
@@ -764,7 +764,7 @@ class ChatModel:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
                 print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', self.printable)
-                x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)  
+                x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)
                 x2 = self.categorical_input_one(self.train_to,list,dict, length, s)
                 y =  self.categorical_input_one(self.train_to,list,dict, length, s, shift_output=False) ## shift_output True for teacher forcing.
 
