@@ -31,6 +31,7 @@ This is a script for running the `model.py` python file located in the `model` f
   * `long` This is for training the model for several epochs on the selected training files. It is the preferred method for doing extended training.
   * `infer` This just runs the program's `infer` method once so that the state of the model's training might be determined from observation.
   * `review` This loads all the saved model files and performs a `infer` on each of them in order. This way if you have several training files you can choose the best.
+  * `interactive` This allows for interactive input with the `predict` part of the program.
 * `--printable=STRING` This parameter allows you to set a string that is printed on the screen with every call of the `fit` function. It allows the `do_launch_series_model.py` script to inform the user what stage training is at, if for example the user looks at the screen between the switching of input files. (see description of `do_launch_series_model.py` below.)
 * `--baename=NAME` This allows you to specify what filename to use when the program loads a saved model file. This is useful if you want to load a filename that is different from the filename specified in the `settings.py` file. This parameter only sets the basename.
 # Scripts For Train - `do_launch_series_model.py`
