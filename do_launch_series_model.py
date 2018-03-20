@@ -25,4 +25,4 @@ for i in range(epochs):
         print('### epoch', i+1,'###')
         os.system('echo "### epoch num: '+ str(i+1) + ' , step num: '+ str(j+1) + ' ### " >> saved/progress.txt')
         os.system('./do_make_rename_train.sh ' + str(j + 1))
-        os.system('./do_launch_model.sh ' + '--epoch:' + str(i+1)+',file:'+ str(j+1)+ '--')
+        os.system('./do_launch_model.sh ' + '--mode=train --printable=**epoch:' + str(i+1)+',file:'+ str(j+1)+ '**')
