@@ -124,7 +124,7 @@ class ChatModel:
         if self.args['mode'] == 'long': self.do_train_long = True
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
-            print(hparams['base_filename'], 'set')
+            print(hparams['base_filename'], 'set name')
 
         self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
