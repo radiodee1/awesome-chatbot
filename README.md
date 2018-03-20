@@ -1,7 +1,7 @@
 # awesome-chatbot
-Keras implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. 
+Keras implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. The inspiration for this project is the tensorflow NMT project found at the following link: https://github.com/tensorflow/nmt 
 # Suggested Reading
-* Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's blog.
+* Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's Keras blog.
   * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
   * https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
 * Specifically regarding attention decoders and a special hand written Keras layer designed just for that purpose. The author of the layer is Zafarali Ahmed. The code was designed for an earlier version of Keras and Tensorflow.
