@@ -70,7 +70,6 @@ class ChatModel:
         self.word_embeddings = None
         self.glove_model = None
         self.embedding_matrix = None
-        self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
         self.model = None
         self.model_encoder = None
@@ -113,6 +112,7 @@ class ChatModel:
         parser = argparse.ArgumentParser(description='Train some NMT values.')
         parser.add_argument('--mode',help='mode of operation. (train, infer, review, long)')
         parser.add_argument('--printable',help='a string to print during training for identification.' )
+        parser.add_argument('--basename',help='base filename to use if it is different from settings file.')
         self.args = parser.parse_args()
         self.args = vars(self.args)
 
@@ -122,6 +122,11 @@ class ChatModel:
         if self.args['mode'] == 'infer': self.do_infer = True
         if self.args['mode'] == 'review' : self.do_review = True
         if self.args['mode'] == 'long': self.do_train_long = True
+        if self.args['basename'] is not None:
+            hparams['base_filename'] = self.args['basename']
+            print(hparams['base_filename'], 'set')
+
+        self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
 
     def task_autoencode(self):
