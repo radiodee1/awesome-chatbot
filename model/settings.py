@@ -22,9 +22,9 @@ hparams = {
     'infer_repeat': 1,
     'embed_mode':'normal', #values only: mod, normal, zero
     'dense_activation':'tanh', #values only: tanh, relu, softmax, none
-    'sol':'zzsolzz',
-    'eol':'zzeolzz',
-    'unk':'zzunkzz',
+    'sol':'sol',
+    'eol':'eol',
+    'unk':'unk',
     'units': 128, #128, #256 , #64,
     'learning_rate': 0.001, #0.001
     'tokens_per_sentence': 24, #32,
