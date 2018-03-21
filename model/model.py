@@ -801,9 +801,9 @@ class ChatModel:
                 if train_model:
                     if self.embed_mode == 'mod':
 
-                        self.model.fit([x1], y)
+                        self.model.fit([x1], y, verbose=1)
                     else:
-                        self.model.fit([x1], y)
+                        self.model.fit([x1], y, verbose=1)
 
                 if (z + 1) % (hparams['steps_to_stats'] * 10) == 0 and z != 0:
                     hparams['base_file_num'] = hparams['base_file_num'] + hparams['steps_to_stats'] * 10
