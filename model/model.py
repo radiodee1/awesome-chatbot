@@ -411,7 +411,8 @@ class ChatModel:
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
-                                    return_sequences=True#,
+                                    return_sequences=True,
+                                    dropout=0.5
                                     #return_state=True,
                                     #recurrent_dropout=0.2,
                                     #input_shape=(None,)
@@ -425,7 +426,7 @@ class ChatModel:
         #conv1d_b = Conv1D(tokens_per_sentence,lstm_unit_b)(recurrent_a)
 
         lstm_b = AttentionDecoder(units=lstm_unit_b , output_dim=decoder_dim,
-                      kernel_constraint=min_max_norm(),
+                      kernel_constraint=min_max_norm(), dropout=0.5
                       #return_sequences=return_sequences_b,
                       #return_state=True
                       )
@@ -441,7 +442,7 @@ class ChatModel:
 
             decoder_b = dense_b(recurrent_b) # recurrent_b
 
-            dropout_b = Dropout(0.15)(decoder_b)
+            dropout_b = Dropout(0.5)(decoder_b)
 
             model = Model([valid_word_a], dropout_b) # decoder_b
 

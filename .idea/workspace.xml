@@ -4,6 +4,9 @@
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
+      <change beforePath="$PROJECT_DIR$/model/attention_decoder.py" afterPath="$PROJECT_DIR$/model/attention_decoder.py" />
+      <change beforePath="$PROJECT_DIR$/model/model.py" afterPath="$PROJECT_DIR$/model/model.py" />
+      <change beforePath="$PROJECT_DIR$/model/settings.py" afterPath="$PROJECT_DIR$/model/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,11 +17,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="26" column="14" lean-forward="false" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
+            <state relative-caret-position="216">
+              <caret line="12" column="43" lean-forward="false" selection-start-line="12" selection-start-column="43" selection-end-line="12" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -37,8 +40,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="14004">
-              <caret line="803" column="57" lean-forward="false" selection-start-line="803" selection-start-column="57" selection-end-line="803" selection-end-column="57" />
+            <state relative-caret-position="396">
+              <caret line="428" column="67" lean-forward="false" selection-start-line="428" selection-start-column="67" selection-end-line="428" selection-end-column="67" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -59,8 +62,8 @@
       <file leaf-file-name="attention_decoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="8" column="41" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="41" />
+            <state relative-caret-position="756">
+              <caret line="271" column="65" lean-forward="false" selection-start-line="271" selection-start-column="65" selection-end-line="271" selection-end-column="65" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -68,12 +71,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="324">
-                <caret line="18" column="260" lean-forward="false" selection-start-line="18" selection-start-column="260" selection-end-line="18" selection-end-column="260" />
+              <first_editor relative-caret-position="0">
+                <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -173,13 +176,13 @@
         <option value="$PROJECT_DIR$/categorical/test.py" />
         <option value="$PROJECT_DIR$/categorical/attention_decoder.py" />
         <option value="$PROJECT_DIR$/do_launch_model.sh" />
-        <option value="$PROJECT_DIR$/model/attention_decoder.py" />
         <option value="$PROJECT_DIR$/model/test.py" />
         <option value="$PROJECT_DIR$/do_launch_series_model.py" />
-        <option value="$PROJECT_DIR$/model/model.py" />
         <option value="$PROJECT_DIR$/do_make_vocab_copy.sh" />
-        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/model.py" />
+        <option value="$PROJECT_DIR$/model/attention_decoder.py" />
+        <option value="$PROJECT_DIR$/model/settings.py" />
       </list>
     </option>
   </component>
@@ -204,6 +207,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -235,8 +240,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -471,16 +474,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="8" column="41" lean-forward="false" selection-start-line="8" selection-start-column="26" selection-end-line="8" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/test.py" />
     <entry file="file://$PROJECT_DIR$/categorical/test.py" />
     <entry file="file://$PROJECT_DIR$/do_launch_series_model.py">
@@ -499,16 +492,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14004">
-          <caret line="803" column="57" lean-forward="false" selection-start-line="803" selection-start-column="57" selection-end-line="803" selection-end-column="57" />
-          <folding>
-            <element signature="e#20#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -517,22 +500,42 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="26" column="14" lean-forward="false" selection-start-line="26" selection-start-column="14" selection-end-line="26" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="324">
-            <caret line="18" column="260" lean-forward="false" selection-start-line="18" selection-start-column="260" selection-end-line="18" selection-end-column="260" />
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="19" lean-forward="false" selection-start-line="0" selection-start-column="19" selection-end-line="0" selection-end-column="19" />
             <folding />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="428" column="67" lean-forward="false" selection-start-line="428" selection-start-column="67" selection-end-line="428" selection-end-column="67" />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="756">
+          <caret line="271" column="65" lean-forward="false" selection-start-line="271" selection-start-column="65" selection-end-line="271" selection-end-column="65" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="43" lean-forward="false" selection-start-line="12" selection-start-column="43" selection-end-line="12" selection-end-column="43" />
+          <folding />
         </state>
       </provider>
     </entry>

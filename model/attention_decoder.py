@@ -75,6 +75,7 @@ class AttentionDecoder(Recurrent):
                  kernel_constraint=None,
                  bias_constraint=None,
                  initial_state=None,
+                 dropout=None,
                  **kwargs):
         """
         Implements an AttentionDecoder that takes in a sequence encoded by an
@@ -105,6 +106,7 @@ class AttentionDecoder(Recurrent):
         self.bias_constraint = constraints.get(bias_constraint)
 
         self.initial_state=initial_state
+        self.dropout = dropout
 
         super(AttentionDecoder, self).__init__(**kwargs)
         self.name = name
@@ -266,7 +268,8 @@ class AttentionDecoder(Recurrent):
         self._uxpb = _time_distributed_dense(self.x_seq, self.U_a, b=self.b_a,
                                              input_dim=self.input_dim,
                                              timesteps=self.timesteps,
-                                             output_dim=self.units)
+                                             output_dim=self.units,
+                                             dropout=self.dropout)
 
         return super(AttentionDecoder, self).call(x)
 

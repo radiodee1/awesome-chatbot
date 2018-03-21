@@ -1,4 +1,4 @@
-# awesome-chatbot
+# `awesome-chatbot`
 Keras implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. The inspiration for this project is the tensorflow NMT project found at the following link: https://github.com/tensorflow/nmt 
 # Suggested Reading
 * Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's Keras blog.
