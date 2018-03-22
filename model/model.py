@@ -35,8 +35,8 @@ text_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending
 train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
 train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
 
-vocab_fr = hparams['data_dir'] + hparams['vocab_name'] + '.' + hparams['src_ending']
-vocab_to = hparams['data_dir'] + hparams['vocab_name'] + '.' + hparams['tgt_ending']
+vocab_fr = hparams['data_dir'] + hparams['vocab_name'] #+ '.' + hparams['src_ending']
+#vocab_to = hparams['data_dir'] + hparams['vocab_name'] + '.' + hparams['tgt_ending']
 oov_token = hparams['unk']
 batch_size = hparams['batch_size']
 units = hparams['units']

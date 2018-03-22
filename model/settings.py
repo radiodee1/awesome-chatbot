@@ -4,7 +4,7 @@ hparams = {
     'save_dir': "../saved/",
     'data_dir': "../data/",
     'embed_name':'embed.txt', #used for glove
-    'vocab_name': "vocab.big",
+    'vocab_name': "vocab.big.txt",
     'test_name': "test",
     'test_size': 100,
     'train_name': "train",

@@ -57,7 +57,9 @@ def save_vocab():
     sol = hparams['sol']
     eol = hparams['eol']
     unk = hparams['unk']
-    name = train_file[0].replace('train', 'vocab')
+    #name = train_file[0].replace('train', 'vocab')
+    name = hparams['data_dir'] + hparams['vocab_name']
+
     if name == train_file[0]:
         name += '.voc.txt'
     with open(name, 'w') as x:
@@ -71,7 +73,9 @@ def save_vocab():
 
 def load_vocab(filename=None):
     if filename is None:
-        filename = train_file[0].replace('train','vocab')
+        #filename = train_file[0].replace('train','vocab')
+        filename = hparams['data_dir'] + hparams['vocab_name']
+
     t = []
     with open(filename, 'r') as r:
         for xx in r:
