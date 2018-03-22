@@ -567,15 +567,14 @@ class ChatModel:
         s = sent.lower().split()
         out = []
         l = np.zeros((tokens_per_sentence))
-        eol = 0
+
         for i in range(tokens_per_sentence):
             if i < len(s) and s[i] in self.vocab_list:
                 out.append( self.vocab_dict[s[i]])
-                eol = i
+
             pass
-        if True: # eol >= tokens_per_sentence - 1:
-            out[-1] = self.vocab_dict[hparams['eol']]
-            #print(s)
+        #if True: # eol >= tokens_per_sentence - 1:
+        out[-1] = self.vocab_dict[hparams['eol']]
         out = np.array(out)
         start = 0
         stop = out.shape[0]
@@ -585,7 +584,7 @@ class ChatModel:
         #l[:out.shape[0]] = out
         l[start:stop] = out
         out = l
-        #print(out.shape,'check')
+        #print(out, out.shape,'check')
         return out
 
     def _fill_sentence(self, word, infer_lst=[],pad_last_val=False):
