@@ -149,7 +149,7 @@ class ChatModel:
                 print('here:',local_filename)
                 self.load_model_file(local_filename)
 
-                self.model_infer(self.train_fr)
+                self.model_infer()
                 num = num + hparams['steps_to_stats'] * 10
             else:
                 if stop_at_fail: break
@@ -361,8 +361,7 @@ class ChatModel:
             if model is not None and infer_encode is not None and infer_decode is not None:
                 return model, infer_encode, infer_decode
 
-            if (global_check and self.model is not None and
-                    self.model_encoder  is not None and self.model_inference  is not None):
+            if (global_check and self.model is not None ):
                 return self.model, self.model_encoder, self.model_inference
 
         if not self.load_good :
@@ -605,9 +604,9 @@ class ChatModel:
             print('---')
         return out
 
-    def model_infer(self,filename):
+    def model_infer(self):
         print('stage: try predict')
-        f = filename.replace('from','to')
+        #f = filename.replace('from','to')
         self.load_word_vectors()
         self.load_vocab(vocab_fr)
         c = self.open_sentences(self.train_fr)
@@ -812,7 +811,7 @@ class ChatModel:
                     pass
                 if (z + 1) % (hparams['steps_to_stats'] * 1) == 0 and z != 0:
                     self.save_model( self.filename)
-                    self.model_infer(self.train_fr)
+                    self.model_infer()
 
             except KeyboardInterrupt as e:
                 print(repr(e))
@@ -921,11 +920,11 @@ if __name__ == '__main__':
         c.train_model_categorical( check_sentences=False)
 
         c.save_model(filename)
-        c.model_infer(c.train_fr)
+        c.model_infer()
 
     if c.do_infer:
 
-        c.model_infer(c.train_fr)
+        c.model_infer()
 
     if c.do_interactive:
         c.task_interactive()
