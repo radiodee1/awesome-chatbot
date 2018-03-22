@@ -430,7 +430,7 @@ class ChatModel:
                       #return_state=True
                       )
 
-        recurrent_b = lstm_b(recurrent_a) 
+        recurrent_b = lstm_b(recurrent_a)
 
         if hparams['dense_activation'] is not None and hparams['dense_activation'] != 'none':
             dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
