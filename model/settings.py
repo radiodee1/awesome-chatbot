@@ -25,7 +25,7 @@ hparams = {
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    'units': 128, #128, #256 , #64,
+    'units': 256, #128, #256 , #64,
     'learning_rate': 0.001, #0.001
     'tokens_per_sentence': 24, #32,
     'batch_constant': 512 #
