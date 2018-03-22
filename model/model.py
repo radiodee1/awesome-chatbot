@@ -358,7 +358,7 @@ class ChatModel:
             self.load_word_vectors()
 
         if not self.embed_mode == 'mod':
-            if model is not None and infer_encode is not None and infer_decode is not None:
+            if model is not None :
                 return model, infer_encode, infer_decode
 
             if (global_check and self.model is not None ):
@@ -430,8 +430,7 @@ class ChatModel:
                       #return_state=True
                       )
 
-        #recurrent_b, inner_lstmb_h, inner_lstmb_c  = lstm_b(recurrent_a) #recurrent_a ## <--- here
-        recurrent_b = lstm_b(recurrent_a) #recurrent_a ## <--- here
+        recurrent_b = lstm_b(recurrent_a) 
 
         if hparams['dense_activation'] is not None and hparams['dense_activation'] != 'none':
             dense_b = Dense(embed_unit, input_shape=(tokens_per_sentence,),
