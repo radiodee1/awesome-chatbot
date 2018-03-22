@@ -4,13 +4,13 @@ Keras implementation of a chatbot. The basic idea is to start by setting up your
 * Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's Keras blog.
   * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
   * https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
-* Specifically regarding attention decoders and a special hand written Keras layer designed just for that purpose. The author of the layer is Zafarali Ahmed. The code was designed for an earlier version of Keras and Tensorflow.
+* Specifically regarding attention decoders and a special hand written Keras layer designed just for that purpose. The author of the layer is Zafarali Ahmed. The code was designed for an earlier version of Keras and Tensorflow. Zafarali's software is provided with the ['GNU Affero General Public License v3.0'](https://github.com/datalogue/keras-attention/blob/master/LICENSE) 
   * https://medium.com/datalogue/attention-in-keras-1892773a4f22
   * https://machinelearningmastery.com/encoder-decoder-attention-sequence-to-sequence-prediction-keras/
 # GloVe and W2V Word Embeddings Download
-* This link brings you to a page where you can download W2V embeddings that google makes available.
+* This link brings you to a page where you can download W2V embeddings that google makes available. At the time of this writing this project does not use w2v embeddings, but uses GloVe instead.
   * https://code.google.com/archive/p/word2vec/
-* This link starts a download of the glove vectors in the `glove.6B` collection. The download takes a while and uses 823M.
+* This link starts a download of the GloVe vectors in the `glove.6B` collection. The download takes a while and uses 823M.
   * http://nlp.stanford.edu/data/glove.6B.zip
 # REDDIT Download
 * This link starts a download that takes several hours for the Reddit Comments file from November of 2017. The file is several gigabytes.
