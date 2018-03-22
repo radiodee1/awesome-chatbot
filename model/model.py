@@ -12,20 +12,17 @@ from keras.layers import Concatenate, Add, Multiply, Average
 from keras.constraints import min_max_norm
 
 from keras import optimizers
-from keras.utils import to_categorical
+
 from gensim.models.keyedvectors import KeyedVectors
 import argparse
 from random import randint
 from keras import backend as K
 import tensorflow as tf
-import tensorflow.contrib.eager as tfe
 
 #from keras.engine.topology import merge
-import pandas as pd
 import os
 import sys
-import csv
-import tensorflow as tf
+
 #print(hparams)
 
 words = hparams['num_vocab_total']
