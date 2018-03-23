@@ -172,10 +172,10 @@ class ChatModel:
         pass
 
     def task_interactive(self):
-        self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
-                                                                                    self.model_encoder,
-                                                                                    self.model_inference,
-                                                                                    global_check=True)
+        self.model, _, _ = self.embedding_model(self.model,
+                                                self.model_encoder,
+                                                self.model_inference,
+                                                global_check=True)
         print('-------------------')
         while True:
             line = input("> ")
