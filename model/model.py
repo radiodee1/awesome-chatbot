@@ -628,7 +628,7 @@ class ChatModel:
         print('----------------')
         print('index:',g)
         print('input:',line)
-        print('ref:', f[g])
+        print('ref:  ', f[g])
         self.predict_words(line, stop_at_eol=False)
         print('----------------')
         line = 'sol what is up ? eol'
