@@ -166,7 +166,7 @@ class ChatModel:
         if num == 0:
             num = hparams['epochs']
         for i in range(num):
-            self.printable = ' epoch #' + str(i)
+            self.printable = ' epoch #' + str(i+1)
             self.train_model_categorical(check_sentences=False)
             self.save_model(self.filename)
         pass
