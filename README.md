@@ -1,5 +1,5 @@
 # `awesome-chatbot`
-Keras implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. The inspiration for this project is the tensorflow NMT project found at the following link: https://github.com/tensorflow/nmt Also, this was inspiring: https://pythonprogramming.net/chatbot-deep-learning-python-tensorflow/
+Keras implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. The inspiration for this project is the tensorflow NMT project found at the following link: https://github.com/tensorflow/nmt Also, this was inspiring: https://pythonprogramming.net/chatbot-deep-learning-python-tensorflow/ Finally there was a great deep learning youtube series from Siraj Raval. A link for that is [here](https://www.youtube.com/watch?v=t5qgjJIBy9g&index=17&list=PL-pLHOzIUduUSTkdsLkToPdegSbpFJXcX&t=40s) 
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
@@ -8,8 +8,8 @@ The folders and files in the project are organized in the following manor. The r
 * `saved` This folder holds the saved values from the training process.
 
 Description of the individual setup scripts is included below.
-# Suggested Reading
-* Some basic material on sequence to sequence NMT models. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's Keras blog.
+# Suggested Reading - Acknowledgements
+* Some basic material on sequence to sequence NMT models came from these sources. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's Keras blog.
   * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
   * https://blog.keras.io/a-ten-minute-introduction-to-sequence-to-sequence-learning-in-keras.html
 * Specifically regarding attention decoders and a special hand written Keras layer designed just for that purpose. The author of the layer is Zafarali Ahmed. The code was designed for an earlier version of Keras and Tensorflow. Zafarali's software is provided with the ['GNU Affero General Public License v3.0'](https://github.com/datalogue/keras-attention/blob/master/LICENSE) 
