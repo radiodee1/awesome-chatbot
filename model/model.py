@@ -75,7 +75,7 @@ class ChatModel:
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
-        self.trainable = True
+        self.trainable = hparams['embed_train']
         self.skip_embed = True
 
         self.vocab_list = None
@@ -95,12 +95,7 @@ class ChatModel:
 
         self.load_good = False
 
-        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
 
-        self.model, self.model_encoder, self.model_inference = self.embedding_model(self.model,
-                                                                                    self.model_encoder,
-                                                                                    self.model_inference,
-                                                                                    global_check=True)
         self.printable = ''
 
 
@@ -108,8 +103,11 @@ class ChatModel:
         parser.add_argument('--mode',help='mode of operation. (train, infer, review, long, interactive)')
         parser.add_argument('--printable',help='a string to print during training for identification.' )
         parser.add_argument('--basename',help='base filename to use if it is different from settings file.')
+        parser.add_argument('--autoencode', help='enable auto encode from the command line.',action='store_true')
+        parser.add_argument('--train-all', help='enable training of the embeddings layer from the command line', action='store_true')
         self.args = parser.parse_args()
         self.args = vars(self.args)
+        #print(self.args)
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
@@ -121,9 +119,21 @@ class ChatModel:
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
             print(hparams['base_filename'], 'set name')
+        if self.args['autoencode'] == True: hparams['autoencode'] = True
+        if self.args['train_all'] == True:
+            #hparams['embed_train'] = True
+            self.trainable = True
+        else:
+            self.trainable = False
 
         self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + base_file_num + '.h5'
 
+        self.vocab_list, self.vocab_dict = self.load_vocab(vocab_fr)
+
+        self.model, _, _ = self.embedding_model(self.model,
+                                                self.model_encoder,
+                                                self.model_inference,
+                                                global_check=True)
 
     def task_autoencode(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
@@ -272,7 +282,7 @@ class ChatModel:
         if self.embed_mode == 'mod': self.skip_embed = True
         embed_size = int(hparams['embed_size'])
 
-        self.trainable = hparams['embed_train']  ## toggle trainable here
+        #self.trainable = hparams['embed_train']  ## toggle trainable here
         embeddings_index = {}
         glove_data = hparams['data_dir'] + hparams['embed_name']
         if not os.path.isfile(glove_data) or self.embed_mode == 'zero':
@@ -756,7 +766,7 @@ class ChatModel:
                                   self.model_inference,
                                   global_check=True)
 
-
+        self.model.get_layer('embedding_1').trainable = self.trainable
         if not check_sentences: self.model.summary()
         tot = len(self.open_sentences(self.train_fr))
 
