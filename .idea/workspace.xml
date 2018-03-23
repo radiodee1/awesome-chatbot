@@ -36,8 +36,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="148">
-              <caret line="630" column="21" lean-forward="false" selection-start-line="630" selection-start-column="21" selection-end-line="630" selection-end-column="21" />
+            <state relative-caret-position="-649">
+              <caret line="197" column="0" lean-forward="true" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -128,7 +128,6 @@
       <find>stage: co</find>
       <find>_fill_vec</find>
       <find>stack_sentences_categorical</find>
-      <find>categorical_input_one</find>
       <find>load_model_file</find>
       <find>raw_embedding_filename</find>
       <find>task_normal_train</find>
@@ -139,6 +138,7 @@
       <find>embedding_model_lstm</find>
       <find>embed_train</find>
       <find>trainable</find>
+      <find>categorical_input_one</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -519,8 +519,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="148">
-          <caret line="630" column="21" lean-forward="false" selection-start-line="630" selection-start-column="21" selection-end-line="630" selection-end-column="21" />
+        <state relative-caret-position="-649">
+          <caret line="197" column="0" lean-forward="true" selection-start-line="197" selection-start-column="0" selection-end-line="197" selection-end-column="0" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>

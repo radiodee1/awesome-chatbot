@@ -191,45 +191,10 @@ class ChatModel:
         #r.close()
         return t_yyy
 
-    def categorical_input_one(self,filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
-        tokens = tokens_per_sentence #units #tokens_per_sentence #units
-        text_x1 = self.open_sentences(filename)
-        out_x1 = np.zeros(( length * tokens))
-        #if batch == -1: batch = batch_size
-        if start % units != 0 or (length + start) % units != 0:
-            print('bad batch size',start % units, start+length % units, units)
-            exit()
-        # print(filename)
-        for ii in range(length):
-            num = 0
-            i = text_x1[start + ii].split()
-            words = len(i)
-            if words >= tokens: words = tokens - 1
-            for index_i in range(words):
-
-                if index_i < words and i[index_i].lower() in vocab_list:
-                    vec = vocab_dict[i[index_i].lower()]
-                    #vec = to_categorical(vec,len(vocab_list))
-                    out_x1[ num + (ii * tokens)] = vec
-                    num += 1
-                else:
-                    vec = 0
-
-        if shift_output:
-            # print('stage: start shift y')
-            out_y_shift = np.zeros(( length * tokens))
-            out_y_shift[ : length * tokens - 1] = out_x1[ 1:]
-            out_x1 = out_y_shift
-
-        #### test ####
-        # print(out_x1.shape,  'sentences')
-
-        return out_x1
 
     def load_words(self,filename):
         pass
         self.glove_model = KeyedVectors.load_word2vec_format(filename, binary=False)
-
 
 
     def find_vec(self,word):
@@ -709,6 +674,40 @@ class ChatModel:
         #exit()
         return xx1, xx2, yy
 
+    def categorical_input_one(self,filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
+        tokens = tokens_per_sentence #units #tokens_per_sentence #units
+        text_x1 = self.open_sentences(filename)
+        out_x1 = np.zeros(( length * tokens))
+        #if batch == -1: batch = batch_size
+        if start % units != 0 or (length + start) % units != 0:
+            print('bad batch size',start % units, start+length % units, units)
+            exit()
+        # print(filename)
+        for ii in range(length):
+            num = 0
+            i = text_x1[start + ii].split()
+            words = len(i)
+            if words >= tokens: words = tokens - 1
+            for index_i in range(words):
+
+                if index_i < words and i[index_i].lower() in vocab_list:
+                    vec = vocab_dict[i[index_i].lower()]
+                    #vec = to_categorical(vec,len(vocab_list))
+                    out_x1[ num + (ii * tokens)] = vec
+                    num += 1
+                else:
+                    vec = 0
+
+        if shift_output:
+            # print('stage: start shift y')
+            out_y_shift = np.zeros(( length * tokens))
+            out_y_shift[ : length * tokens - 1] = out_x1[ 1:]
+            out_x1 = out_y_shift
+
+        #### test ####
+        # print(out_x1.shape,  'sentences')
+
+        return out_x1
 
     def stack_sentences_categorical(self,xx, vocab_list, shift_output=False):
         self.load_word_vectors()
