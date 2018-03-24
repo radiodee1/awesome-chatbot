@@ -469,7 +469,7 @@ class ChatModel:
                                                                                     global_check=True)
         source_input = self._fill_vec(txt, shift_right=False)
 
-        source_input = self.stack_sentences_categorical(source_input,self.vocab_list,shift_output=False)
+        source_input = self.stack_sentences(source_input,self.vocab_list,shift_output=False)
 
         repeats = hparams['infer_repeat']
 
@@ -596,41 +596,9 @@ class ChatModel:
                 print(self.find_closest_word(vec_y), ' ', vec_y2,' ', end=' ')
             print()
 
-    def three_input_mod(self,xx1, xx2, yy, dict):
-        tot = len(xx1)
-        steps = tot // tokens_per_sentence
-        x1 = []
-        x2 = []
-        y = []
 
-        for i in range(steps):
 
-            end1 = False
-            end2 = False
-            for j in range(tokens_per_sentence):
-
-                c = i * tokens_per_sentence + j
-                if j == 0:
-                    if xx1[c] != dict[hparams['sol']]:
-                        print('bad sentence start')
-                    if xx2[c] != dict[hparams['sol']]:
-                        print('bad sentence start')
-                if (not end1) and (not end2):
-                    x1.append(xx1[c])
-                    x2.append(xx2[c])
-                    y.append(yy[c])
-                    #print(yy[c].shape, 'yy')
-                if xx1[c] == dict[hparams['eol']]: end1 = True
-                if xx2[c] == dict[hparams['eol']]: end2 = True
-
-        xx1 = np.array(x1)
-        xx2 = np.array(x2)
-        yy =  np.array(y)
-        #print(yy.shape)
-        #exit()
-        return xx1, xx2, yy
-
-    def categorical_input_one(self,filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
+    def assemble_input_one(self,filename,vocab_list, vocab_dict, length, start=0, batch=-1, shift_output=False):
         tokens = tokens_per_sentence #units #tokens_per_sentence #units
         text_x1 = self.open_sentences(filename)
         out_x1 = np.zeros(( length * tokens))
@@ -665,7 +633,7 @@ class ChatModel:
 
         return out_x1
 
-    def stack_sentences_categorical(self,xx, vocab_list, shift_output=False):
+    def stack_sentences(self,xx, vocab_list, shift_output=False):
         self.load_word_vectors()
         normal = False
         if self.embed_mode == 'normal': normal = True
@@ -746,15 +714,14 @@ class ChatModel:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
                 print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', self.printable)
-                x1 = self.categorical_input_one(self.train_fr,list,dict, length, s)
-                x2 = self.categorical_input_one(self.train_to,list,dict, length, s)
-                y =  self.categorical_input_one(self.train_to,list,dict, length, s, shift_output=False) ## shift_output True for teacher forcing.
+                x1 = self.assemble_input_one(self.train_fr,list,dict, length, s)
+                x2 = self.assemble_input_one(self.train_to,list,dict, length, s)
+                y =  self.assemble_input_one(self.train_to,list,dict, length, s, shift_output=False) ## shift_output True for teacher forcing.
 
-                x1 = self.stack_sentences_categorical(x1,list, shift_output=all_vectors)
-                x2 = self.stack_sentences_categorical(x2,list, shift_output=all_vectors)
-                y =  self.stack_sentences_categorical(y,list, shift_output=True)
+                x1 = self.stack_sentences(x1,list, shift_output=all_vectors)
+                x2 = self.stack_sentences(x2,list, shift_output=all_vectors)
+                y =  self.stack_sentences(y,list, shift_output=True)
 
-                #x1, x2, y = self.three_input_mod(x1,x2,y, dict) ## seems to work better without this.
 
                 if check_sentences:
                     self.check_sentence(x2, y, list, 0)

@@ -37,8 +37,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="418" column="19" lean-forward="false" selection-start-line="418" selection-start-column="19" selection-end-line="418" selection-end-column="19" />
+            <state relative-caret-position="305">
+              <caret line="722" column="41" lean-forward="false" selection-start-line="722" selection-start-column="41" selection-end-line="722" selection-end-column="41" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -69,7 +69,7 @@
       <file leaf-file-name="attention_decoder.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
+            <state relative-caret-position="918">
               <caret line="55" column="33" lean-forward="false" selection-start-line="55" selection-start-column="23" selection-end-line="55" selection-end-column="33" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
@@ -122,7 +122,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>base_file_num</find>
       <find>find_closest_word</find>
       <find>embedding_matrix</find>
       <find>tf</find>
@@ -137,7 +136,6 @@
       <find>decoder_dim</find>
       <find>stage: co</find>
       <find>_fill_vec</find>
-      <find>stack_sentences_categorical</find>
       <find>load_model_file</find>
       <find>raw_embedding_filename</find>
       <find>task_normal_train</find>
@@ -152,6 +150,8 @@
       <find>predict</find>
       <find>reshape</find>
       <find>tensorflow</find>
+      <find>three_input_mod</find>
+      <find>stack_sentences_categorical</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -216,8 +216,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -245,6 +243,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -527,7 +527,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/attention_decoder.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
+        <state relative-caret-position="918">
           <caret line="55" column="33" lean-forward="false" selection-start-line="55" selection-start-column="23" selection-end-line="55" selection-end-column="33" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
@@ -537,8 +537,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="418" column="19" lean-forward="false" selection-start-line="418" selection-start-column="19" selection-end-line="418" selection-end-column="19" />
+        <state relative-caret-position="305">
+          <caret line="722" column="41" lean-forward="false" selection-start-line="722" selection-start-column="41" selection-end-line="722" selection-end-column="41" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
