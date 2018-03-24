@@ -7,6 +7,7 @@ hparams = {
     'vocab_name': "vocab.big.txt",
     'test_name': "test",
     'babi_name':'../raw/tasks/qa{}_train.txt',
+    'babi_train': True,
     'test_size': 100,
     'train_name': "train",
     'src_ending': "from",
@@ -15,14 +16,14 @@ hparams = {
     'base_file_num': 1,
     'num_vocab_total': 10000,
     'batch_size': 256,#64, #256
-    'steps_to_stats': 100,
+    'steps_to_stats':20,# 100,
     'epochs': 100,
     'embed_size':200, #values only: 50, 100, 200, 300
     'embed_train':False,
     'autoencode':True,
     'infer_repeat': 1,
     'embed_mode':'normal', #values only: mod, normal, zero
-    'dense_activation':'tanh', #values only: tanh, relu, softmax, none
+    'dense_activation':'none', #values only: tanh, relu, softmax, none
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
