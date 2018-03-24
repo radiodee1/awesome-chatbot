@@ -65,7 +65,7 @@ class ChatModel:
         self.glove_model = None
         self.embedding_matrix = None
 
-        self.empty = np.zeros((tokens_per_sentence * 10))
+        self.empty = np.zeros((1,tokens_per_sentence * 10))
 
         self.model = None
         self.model_encoder = None
@@ -372,7 +372,7 @@ class ChatModel:
             decoder_dim = embed_unit
 
         valid_word_a = Input(shape=x_shape)
-        valid_story_c = Input(shape=(None,))
+        valid_story_c = Input(shape=(tokens_per_sentence* 10,))
 
         embeddings_a = Embedding(words,embed_unit ,
                                  weights=[embedding_weights_a],
@@ -390,16 +390,18 @@ class ChatModel:
 
         embed_c = embeddings_c(valid_story_c)
 
-        lstm_c = AttentionDecoder(units= 10, output_dim=lstm_unit_b,
+        lstm_c = AttentionDecoder(units= lstm_unit_b, output_dim=lstm_unit_b,
                                   kernel_constraint=min_max_norm(), dropout=0.5,
                                   name='AttentionDecoder_2'
                                   # return_sequences=return_sequences_b,
                                   # return_state=True
                                   )
+
         recurrent_c = lstm_c(embed_c)
 
-        #recurrent_c = Flatten()(recurrent_c)
-        #recurrent_c = Dense(512)(recurrent_c)
+
+        recurrent_c = Permute((2,1))(recurrent_c)
+        recurrent_c = Dense(tokens_per_sentence)(recurrent_c)
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
@@ -414,7 +416,8 @@ class ChatModel:
 
         recurrent_a = lstm_a(embed_a)
 
-        recurrent_a = Concatenate(axis=1)([recurrent_a, recurrent_c])
+        recurrent_c = Permute((2,1))(recurrent_c)
+        recurrent_a = Add()([recurrent_a, recurrent_c])
 
         print(recurrent_a.shape)
         #############
