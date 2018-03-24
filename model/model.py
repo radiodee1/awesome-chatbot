@@ -8,7 +8,7 @@ from keras.preprocessing import text, sequence
 from keras.models import  Model
 from keras.layers import Embedding, Input, LSTM, Bidirectional, TimeDistributed, Flatten, dot
 from keras.layers import Conv1D, Activation, RepeatVector, Permute, Merge, Dense ,Reshape, Lambda, Dropout
-from keras.layers import Concatenate, Add, Multiply, Average
+from keras.layers import Concatenate, Add, Multiply, Average, Dot
 from keras.constraints import min_max_norm
 
 from keras import optimizers
@@ -64,6 +64,8 @@ class ChatModel:
         self.word_embeddings = None
         self.glove_model = None
         self.embedding_matrix = None
+
+        self.empty = np.zeros((tokens_per_sentence * 10))
 
         self.model = None
         self.model_encoder = None
@@ -370,7 +372,7 @@ class ChatModel:
             decoder_dim = embed_unit
 
         valid_word_a = Input(shape=x_shape)
-        #valid_word_b = Input(shape=x_shape)
+        valid_story_c = Input(shape=(None,))
 
         embeddings_a = Embedding(words,embed_unit ,
                                  weights=[embedding_weights_a],
@@ -379,6 +381,25 @@ class ChatModel:
                                  )
 
         embed_a = embeddings_a(valid_word_a)
+
+        embeddings_c = Embedding(words, embed_unit,
+                                 weights=[embedding_weights_b],
+                                 input_length=tokens_per_sentence * 10,
+                                 trainable=trainable
+                                 )
+
+        embed_c = embeddings_c(valid_story_c)
+
+        lstm_c = AttentionDecoder(units= 10, output_dim=lstm_unit_b,
+                                  kernel_constraint=min_max_norm(), dropout=0.5,
+                                  name='AttentionDecoder_2'
+                                  # return_sequences=return_sequences_b,
+                                  # return_state=True
+                                  )
+        recurrent_c = lstm_c(embed_c)
+
+        #recurrent_c = Flatten()(recurrent_c)
+        #recurrent_c = Dense(512)(recurrent_c)
 
         ### encoder for training ###
         lstm_a = Bidirectional(LSTM(units=lstm_unit_a,
@@ -393,6 +414,9 @@ class ChatModel:
 
         recurrent_a = lstm_a(embed_a)
 
+        recurrent_a = Concatenate(axis=1)([recurrent_a, recurrent_c])
+
+        print(recurrent_a.shape)
         #############
         #conv1d_b = Conv1D(tokens_per_sentence,lstm_unit_b)(recurrent_a)
 
@@ -414,10 +438,13 @@ class ChatModel:
 
             dropout_b = Dropout(0.5)(decoder_b)
 
-            model = Model([valid_word_a], dropout_b) # decoder_b
+            #model = Model([valid_word_a], dropout_b) # decoder_b
+            model_c = Model([valid_word_a,valid_story_c],dropout_b)
+
 
         else:
-            model = Model([valid_word_a], recurrent_b)
+            #model = Model([valid_word_a], recurrent_b)
+            model_c = Model([valid_word_a,valid_story_c],recurrent_b)
 
         ### boilerplate ###
 
@@ -425,9 +452,9 @@ class ChatModel:
 
         # loss try 'categorical_crossentropy', 'mse', 'binary_crossentropy'
         # optimizer try 'rmsprop'
-        model.compile(optimizer=adam, loss='mse',metrics=['acc'])
+        model_c.compile(optimizer=adam, loss='mse',metrics=['acc'])
 
-        return model , None, None #, None, model_inference
+        return model_c , None, None #, None, model_inference
 
     def predict_words(self,txt,stop_at_eol=False):
         eol = hparams['eol']
@@ -443,85 +470,11 @@ class ChatModel:
 
         repeats = hparams['infer_repeat']
 
-        if False:
-            for _ in range(repeats):
-                state = self.model_encoder.predict(source_input)
-
-                #self.model_encoder.summary()
-                #self.model_inference.summary()
-
-                h = state[0]
-                c = state[1]
-
-                infer_lst = []
-                txt_out = []
-                t = txt.lower().split()
-                out = self.vocab_dict[hparams['sol']]
-                if self.embed_mode == 'mod':
-                    #out = self.vocab_dict[hparams['sol']]
-                    infer_lst.append(self.vocab_dict[hparams['sol']])
-                    out = self.find_vec(hparams['sol'])
-                    out = np.expand_dims(out,0)
-                    out = np.expand_dims(out,0)
-                else:
-                    out = np.expand_dims(out,0)
-                    #out = np.expand_dims(out,0)
-
-                    #out = self.stack_sentences_categorical(out,self.vocab_list,shift_output=True)
-
-                for i in range(len(t) - 0, len(t) * 3):
-                    if True:
-                        txt_out.append('|')
-                        out_word = ''
-                        state_out = [h,c]
-                        #print(state_out,'so')
-
-                        if self.embed_mode == 'normal':
-                            #a = np.zeros((tokens_per_sentence))
-                            #a[0] = int(out)
-
-                            a = self._fill_sentence(out, infer_lst, pad_last_val=False)
-                            out = np.expand_dims(a,0)
-                            #print(out,'a')
-                        out, h, c = self.model_inference.predict([out] + state_out)
-                        if self.embed_mode == 'normal':
-                            out = out[0,0,:]
-                            out = self.find_closest_index(out)
-                            infer_lst.append(out)
-                            txt_out.append(str(out))
-                            if int(out) < len(self.vocab_list):
-                                txt_out.append(self.vocab_list[int(out)])
-                                out_word = self.vocab_list[int(out)]
-                        elif self.embed_mode == 'mod':
-
-                            if False:
-                                z_list = []
-                                for z in range(tokens_per_sentence):
-                                    close_word = out[0,z,:]
-                                    z_list.append(self.find_closest_word(close_word))
-                                print('**','--'.join(z_list),'**')
-
-                            out_word = self.find_closest_index(out[0,0,:])
-                            txt_out.append(str(out_word))
-                            if int(out_word) < len(self.vocab_list):
-                                txt_out.append(self.vocab_list[int(out_word)])
-                            #out_word = np.array([out_word])
-                            #out = self.stack_sentences_categorical(out_word, self.vocab_list,shift_output=True)
-                            #if self.embed_mode == 'mod':
-                            out = self.find_vec(self.vocab_list[int(out_word)])
-                            out = np.expand_dims(out, 0)
-                            out = np.expand_dims(out, 0)
-                        if stop_at_eol and out_word == eol: break
-
-
-                print('---greedy predict---')
-                print(' '.join(txt_out))
-                ####
 
         if True:
             for _ in range(repeats):
                 print('---basic predict---')
-                out = self.model.predict([source_input]) #, source_input])
+                out = self.model.predict([source_input, self.empty]) #, source_input])
                 #print(out.shape)
                 t_out = []
                 for i in range(tokens_per_sentence):
@@ -806,9 +759,9 @@ class ChatModel:
                 if train_model:
                     if self.embed_mode == 'mod':
 
-                        self.model.fit([x1], y, verbose=1)
+                        self.model.fit([x1,self.empty], y, verbose=1)
                     else:
-                        self.model.fit([x1], y, verbose=1)
+                        self.model.fit([x1,self.empty], y, verbose=1)
 
                 if (z + 1) % (hparams['steps_to_stats'] * 10) == 0 and z != 0:
                     hparams['base_file_num'] = hparams['base_file_num'] + hparams['steps_to_stats'] * 10

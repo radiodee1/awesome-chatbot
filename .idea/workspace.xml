@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/do_make_babi_download.sh" afterPath="$PROJECT_DIR$/do_make_babi_download.sh" />
       <change beforePath="$PROJECT_DIR$/model/model.py" afterPath="$PROJECT_DIR$/model/model.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -33,11 +34,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="model.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3547">
-              <caret line="177" column="48" lean-forward="false" selection-start-line="177" selection-start-column="48" selection-end-line="177" selection-end-column="48" />
+            <state relative-caret-position="287">
+              <caret line="386" column="33" lean-forward="false" selection-start-line="386" selection-start-column="33" selection-end-line="386" selection-end-column="33" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -45,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="do_make_babi_download.sh" pinned="false" current-in-tab="true">
+      <file leaf-file-name="do_make_babi_download.sh" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+            <state relative-caret-position="90">
+              <caret line="5" column="6" lean-forward="false" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -119,7 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>dense_b</find>
       <find>train_model_categorical</find>
       <find>save_model</find>
       <find>base_file_num</find>
@@ -149,6 +149,7 @@
       <find>embed_train</find>
       <find>trainable</find>
       <find>categorical_input_one</find>
+      <find>predict</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -187,8 +188,8 @@
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/model/model.py" />
         <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
+        <option value="$PROJECT_DIR$/model/model.py" />
       </list>
     </option>
   </component>
@@ -231,6 +232,12 @@
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="raw" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="raw" type="462c0819:PsiDirectoryNode" />
+              <item name="tasks" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -497,14 +504,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -516,21 +515,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model.py">
+    <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3547">
-          <caret line="177" column="48" lean-forward="false" selection-start-line="177" selection-start-column="48" selection-end-line="177" selection-end-column="48" />
-          <folding>
-            <element signature="e#20#38#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="90">
+          <caret line="5" column="6" lean-forward="false" selection-start-line="5" selection-start-column="6" selection-end-line="5" selection-end-column="6" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+        <state relative-caret-position="486">
+          <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="386" column="33" lean-forward="false" selection-start-line="386" selection-start-column="33" selection-end-line="386" selection-end-column="33" />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
