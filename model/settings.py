@@ -6,6 +6,7 @@ hparams = {
     'embed_name':'embed.txt', #used for glove
     'vocab_name': "vocab.big.txt",
     'test_name': "test",
+    'babi_name':'../raw/tasks/qa{}_train.txt',
     'test_size': 100,
     'train_name': "train",
     'src_ending': "from",

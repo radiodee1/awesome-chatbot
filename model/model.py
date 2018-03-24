@@ -169,7 +169,7 @@ class ChatModel:
             num = hparams['epochs']
         for i in range(num):
             self.printable = ' epoch #' + str(i+1)
-            self.train_model_categorical(check_sentences=False)
+            self.train_model(check_sentences=False)
             self.save_model(self.filename)
         pass
 
@@ -419,7 +419,6 @@ class ChatModel:
         recurrent_c = Permute((2,1))(recurrent_c)
         recurrent_a = Add()([recurrent_a, recurrent_c])
 
-        print(recurrent_a.shape)
         #############
         #conv1d_b = Conv1D(tokens_per_sentence,lstm_unit_b)(recurrent_a)
 
@@ -616,7 +615,6 @@ class ChatModel:
 
                 if index_i < words and i[index_i].lower() in vocab_list:
                     vec = vocab_dict[i[index_i].lower()]
-                    #vec = to_categorical(vec,len(vocab_list))
                     out_x1[ num + (ii * tokens)] = vec
                     num += 1
                 else:
@@ -679,19 +677,21 @@ class ChatModel:
             #out = np.expand_dims(out,0)
         return out
 
-    def train_model_categorical(self, train_model=True, check_sentences=False):
+    def train_model(self, train_model=True, check_sentences=False,dataset=None):
         print('stage: arrays prep for test/train')
         list = self.vocab_list
         dict = self.vocab_dict
 
-        if self.model is None: self.model, self.model_encoder, self.model_inference = \
-            self.embedding_model(self.model,
-                                  self.model_encoder,
-                                  self.model_inference,
-                                  global_check=True)
+        if self.model is None: self.model, _, _ = self.embedding_model(self.model,
+                                                                        self.model_encoder,
+                                                                        self.model_inference,
+                                                                        global_check=True)
 
         self.model.get_layer('embedding_1').trainable = self.trainable
         if not check_sentences: self.model.summary()
+
+
+        ## dataset??
         tot = len(self.open_sentences(self.train_fr))
 
         self.load_word_vectors()
@@ -714,24 +714,28 @@ class ChatModel:
                     i = length // int(hparams['units'])
                     length = i * int(hparams['units'])
                 print('(',s,'= start,', s + length,'= stop )',steps,'total, at',z+1, 'steps', self.printable)
-                x1 = self.assemble_input_one(self.train_fr,list,dict, length, s)
-                x2 = self.assemble_input_one(self.train_to,list,dict, length, s)
-                y =  self.assemble_input_one(self.train_to,list,dict, length, s, shift_output=False) ## shift_output True for teacher forcing.
+                if dataset != 'babi':
+                    x1 = self.assemble_input_one(self.train_fr,list,dict, length, s)
+                    #x2 = self.assemble_input_one(self.train_to,list,dict, length, s)
+                    y =  self.assemble_input_one(self.train_to,list,dict, length, s, shift_output=False) ## shift_output True for teacher forcing.
 
-                x1 = self.stack_sentences(x1,list, shift_output=all_vectors)
-                x2 = self.stack_sentences(x2,list, shift_output=all_vectors)
-                y =  self.stack_sentences(y,list, shift_output=True)
+                    x1 = self.stack_sentences(x1,list, shift_output=all_vectors)
+                    #x2 = self.stack_sentences(x2,list, shift_output=all_vectors)
+                    y =  self.stack_sentences(y,list, shift_output=True)
+                    x2 = np.zeros((length, tokens_per_sentence * 10))
 
-
+                if dataset=='babi':
+                    x1 , x2, y = self.assemble_input_babi(length,s)
+                    pass
                 if check_sentences:
-                    self.check_sentence(x2, y, list, 0)
+                    self.check_sentence(x1, y, list, 0)
                     exit()
                 if train_model:
                     if self.embed_mode == 'mod':
 
-                        self.model.fit([x1,self.empty], y, verbose=1)
+                        self.model.fit([x1,x2], y, verbose=1)
                     else:
-                        self.model.fit([x1,self.empty], y, verbose=1)
+                        self.model.fit([x1,x2], y, verbose=1)
 
                 if (z + 1) % (hparams['steps_to_stats'] * 10) == 0 and z != 0:
                     hparams['base_file_num'] = hparams['base_file_num'] + hparams['steps_to_stats'] * 10
@@ -754,7 +758,52 @@ class ChatModel:
         self.filename = hparams['save_dir'] + hparams['base_filename'] + '-' + \
                         str(hparams['base_file_num']) + '.h5'
 
+    def assemble_input_babi(self, l, start):
+        x1 = None
+        x2 = None
+        y = None
+        long = []
+        stories = []
+        questions = []
+        answers = []
+        a_story = []
+        a_question = []
+        a_answer = []
+        old_num = 0
+        for i in range(1,20):
+            filename = hparams['babi_name'].format(str(i))
+            list = self.open_sentences(filename)
+            long.extend(list)
+        for i in range(len(long)):
+            line = long[i].strip()
+            num = int(line.lower().split()[0])
 
+            if old_num +1 != num:
+                old_num = 0
+                a_story = []
+                a_question = []
+                a_answer = []
+                continue
+            else:
+                old_num = num
+            words = line.lower().split('\t')
+            if len(words) > 1:
+                q = tokenize_weak.format(words[0])
+                a = tokenize_weak.format(words[1])
+                ## note: tokenize_weak removes numbers!!
+
+                a_question = q.split()
+                a_answer = a.split()
+
+                stories.append(a_story[:])
+                questions.append(a_question[:])
+                answers.append(a_answer[:])
+            else:
+                s = tokenize_weak.format(words[0])
+                a_story.append(s.split())
+
+
+        return x1, x2, y
 
     def save_model(self, filename):
         print ('stage: save lstm model')
@@ -836,6 +885,11 @@ if __name__ == '__main__':
     c = ChatModel()
 
     if True:
+        c.assemble_input_babi(512,0)
+        exit()
+
+
+    if True:
         if hparams['autoencode']: c.task_autoencode()
         else: c.task_normal_train()
 
@@ -846,7 +900,7 @@ if __name__ == '__main__':
         c.load_model_file()
 
     if c.do_train:
-        c.train_model_categorical( check_sentences=False)
+        c.train_model( check_sentences=False)
 
         c.save_model(filename)
         c.model_infer()

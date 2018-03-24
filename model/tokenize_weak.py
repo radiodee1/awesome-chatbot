@@ -2,7 +2,7 @@
 
 import sqlite3
 import pandas as pd
-import os
+import types
 import re
 import unidecode
 
@@ -106,9 +106,47 @@ def format(content, do_tokenize=False):
     #if test_on_screen: print(x)
     return x
 
+def format_lists(content):
+    out_big = []
+    if not isinstance(content, str):
+        for k in content:
+            #print(k)
+            if not isinstance(k, str):
+                #print(1,k)
+                out_small = []
+                for i in k:
+                    out_mini = []
+                    if not isinstance(i, str):
+                        #print(2, i)
+                        for j in i:
+                            #print(3, j)
+                            out_mini.append(format(j))
+                        pass
+                        out_small.append(out_mini)
+                    else:
+                        out_small.append(format(i))
+                        pass
+                out_big.append(out_small)
+                    #out_big = out_small
+                pass
+    elif isinstance(content,str):
+        return format(content)
+    else:
+        print('list error.',  content)
+        return content
+    #print(out_big)
+    return out_big
+
+
 if __name__ == '__main__':
     ## try one line of text
     test_on_screen = True
+
+    list = [[['hello?','goodbye?'],['hi?', 'bye?','later!']]]
+    format_lists(list)
+
+    exit()
+
     print(format('here There we are www.here.com ... ? ! ? ?'))
     print(format("it's \"a\" very ''very' 'bad 'thing'."))
     print(format(' something like %%%, or $$$ , right?'))
