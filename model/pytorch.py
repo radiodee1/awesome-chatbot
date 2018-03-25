@@ -205,6 +205,7 @@ def filterPair(p):
 def filterPairs(pairs):
     return [pair for pair in pairs if filterPair(pair)]
 
+'''
 def count_len(sent):
     sent = sent.split()
 
@@ -213,6 +214,7 @@ def count_len(sent):
         sent[MAX_LENGTH-1] = hparams['eol']
     sent = ' '.join(sent)
     return sent
+'''
 
 def prepareData(lang1, lang2, reverse=False):
     input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
