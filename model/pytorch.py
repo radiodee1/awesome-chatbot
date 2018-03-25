@@ -396,6 +396,7 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
+                print('iter =',iter, 'num of iters =',n_iters)
                 if iter % (print_every * 10) == 0:
                     self.save_checkpoint(num=iter)
                     print('=======save file========')
