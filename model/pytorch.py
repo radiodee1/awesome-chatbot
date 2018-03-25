@@ -6,7 +6,7 @@ import unicodedata
 import string
 import re
 import random
-
+import os
 import torch
 import torch.nn as nn
 from torch.autograd import Variable
@@ -15,10 +15,12 @@ import torch.nn.functional as F
 import time
 import math
 
+from settings import hparams
+
 use_cuda = torch.cuda.is_available()
 SOS_token = 0
 EOS_token = 1
-MAX_LENGTH = 10
+MAX_LENGTH = hparams['tokens_per_sentence']
 
 eng_prefixes = (
     "i am ", "i m ",
@@ -137,6 +139,26 @@ class Lang:
         else:
             self.word2count[word] += 1
 
+def open_sentences( filename):
+    t_yyy = []
+    with open(filename, 'r') as r:
+        for xx in r:
+            t_yyy.append(xx)
+    return t_yyy
+
+def asMinutes(s):
+    m = math.floor(s / 60)
+    s -= m * 60
+    return '%dm %ds' % (m, s)
+
+
+def timeSince(since, percent):
+    now = time.time()
+    s = now - since
+    es = s / (percent)
+    rs = es - s
+    return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
+
 def unicodeToAscii(s):
     return ''.join(
         c for c in unicodedata.normalize('NFD', s)
@@ -155,12 +177,13 @@ def normalizeString(s):
 def readLangs(lang1, lang2, reverse=False):
     print("Reading lines...")
 
-    # Read the file and split into lines
-    lines = open('data/%s-%s.txt' % (lang1, lang2), encoding='utf-8').\
-        read().strip().split('\n')
+    l_in = open_sentences(hparams['data_dir'] + lang1)
+    l_out = open_sentences(hparams['data_dir'] + lang2)
 
-    # Split every line into pairs and normalize
-    pairs = [[normalizeString(s) for s in l.split('\t')] for l in lines]
+    pairs = []
+    for i in range(len(l_in)):
+        line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
+        pairs.append(line)
 
     # Reverse pairs, make Lang instances
     if reverse:
@@ -176,7 +199,7 @@ def readLangs(lang1, lang2, reverse=False):
 def filterPair(p):
     return len(p[0].split(' ')) < MAX_LENGTH and \
         len(p[1].split(' ')) < MAX_LENGTH and \
-        p[1].startswith(eng_prefixes)
+        p[1].startswith(eng_prefixes) or True
 
 
 def filterPairs(pairs):
@@ -216,151 +239,206 @@ def variablesFromPair(pair):
     target_variable = variableFromSentence(output_lang, pair[1])
     return (input_variable, target_variable)
 
-def train(input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
-    encoder_hidden = encoder.initHidden()
 
-    encoder_optimizer.zero_grad()
-    decoder_optimizer.zero_grad()
+class NMT:
+    def __init__(self):
+        self.model_1 = None
+        self.model_2 = None
+        self.opt_1 = None
+        self.opt_2 = None
 
-    input_length = input_variable.size()[0]
-    target_length = target_variable.size()[0]
+    def make_state(self):
+        z = [
+            {
+                'epoch':0,
+                'arch': None,
+                'state_dict': self.model_1.state_dict(),
+                'best_prec1': None,
+                'optimizer': self.opt_1.state_dict()
+            },
+            {
+                'epoch':0,
+                'arch':None,
+                'state_dict':self.model_2.state_dict(),
+                'best_prec1':None,
+                'optimizer': self.opt_2.state_dict()
+            }
+        ]
+        #print(z)
+        return z
+        pass
 
-    encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
-    encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+    def save_checkpoint(self,state=None, is_best=True,num=0):
+        if state is None: state = self.make_state()
+        basename = hparams['save_dir'] + hparams['base_filename']
+        torch.save(state, basename + '.' + str(num)+ '.pth.tar')
+        if is_best:
+            os.system('cp '+ basename + '.' + str(num) + '.pth.tar' + ' '  +
+                      basename + '.best.pth.tar')
 
-    loss = 0
+    def load_checkpoint(self):
+        if True:
+            basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth.tar'
+            if os.path.isfile(basename):
+                print("=> loading checkpoint '{}'".format(basename))
+                checkpoint = torch.load(basename)
+                #print(checkpoint)
+                self.model_1.load_state_dict(checkpoint[0]['state_dict'])
+                self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
 
-    for ei in range(input_length):
-        encoder_output, encoder_hidden = encoder(
-            input_variable[ei], encoder_hidden)
-        encoder_outputs[ei] = encoder_output[0][0]
+                self.model_2.load_state_dict(checkpoint[1]['state_dict'])
+                self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
 
-    decoder_input = Variable(torch.LongTensor([[SOS_token]]))
-    decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+                print("=> loaded checkpoint '"+ basename + "' ")
+            else:
+                print("=> no checkpoint found at '"+ basename + "'")
 
-    decoder_hidden = encoder_hidden
+    def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
+        encoder_hidden = encoder.initHidden()
 
-    use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
+        encoder_optimizer.zero_grad()
+        decoder_optimizer.zero_grad()
 
-    if use_teacher_forcing:
-        # Teacher forcing: Feed the target as the next input
-        for di in range(target_length):
+        input_length = input_variable.size()[0]
+        target_length = target_variable.size()[0]
+
+        if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
+        if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
+
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
+        encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+
+        loss = 0
+
+        for ei in range(input_length):
+            encoder_output, encoder_hidden = encoder(
+                input_variable[ei], encoder_hidden)
+            encoder_outputs[ei] = encoder_output[0][0]
+
+        decoder_input = Variable(torch.LongTensor([[SOS_token]]))
+        decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+
+        decoder_hidden = encoder_hidden
+
+        use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
+
+        if use_teacher_forcing:
+            # Teacher forcing: Feed the target as the next input
+            for di in range(target_length):
+                decoder_output, decoder_hidden, decoder_attention = decoder(
+                    decoder_input, decoder_hidden, encoder_outputs)
+                loss += criterion(decoder_output, target_variable[di])
+                decoder_input = target_variable[di]  # Teacher forcing
+
+        else:
+            # Without teacher forcing: use its own predictions as the next input
+            for di in range(target_length):
+                decoder_output, decoder_hidden, decoder_attention = decoder(
+                    decoder_input, decoder_hidden, encoder_outputs)
+                topv, topi = decoder_output.data.topk(1)
+                ni = topi[0][0]
+
+                decoder_input = Variable(torch.LongTensor([[ni]]))
+                decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+
+                loss += criterion(decoder_output, target_variable[di])
+                if ni == EOS_token:
+                    break
+
+        loss.backward()
+
+        encoder_optimizer.step()
+        decoder_optimizer.step()
+
+        return loss.data[0] / target_length
+
+    def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
+        self.model_1 = encoder
+        self.model_2 = decoder
+
+        start = time.time()
+        plot_losses = []
+        print_loss_total = 0  # Reset every print_every
+        plot_loss_total = 0  # Reset every plot_every
+
+        encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        training_pairs = [variablesFromPair(random.choice(pairs))
+                          for i in range(n_iters)]
+        criterion = nn.NLLLoss()
+
+        self.opt_1 = encoder_optimizer
+        self.opt_2 = decoder_optimizer
+
+        self.load_checkpoint()
+
+        for iter in range(1, n_iters + 1):
+            training_pair = training_pairs[iter - 1]
+            input_variable = training_pair[0]
+            target_variable = training_pair[1]
+
+            loss = self.train(input_variable, target_variable, encoder,
+                         decoder, encoder_optimizer, decoder_optimizer, criterion)
+            print_loss_total += loss
+            plot_loss_total += loss
+
+            if iter % print_every == 0:
+                print_loss_avg = print_loss_total / print_every
+                print_loss_total = 0
+                self.save_checkpoint(num=iter)
+                print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
+                                             iter, iter / n_iters * 100, print_loss_avg))
+
+            if iter % plot_every == 0 and False:
+                plot_loss_avg = plot_loss_total / plot_every
+                plot_losses.append(plot_loss_avg)
+                plot_loss_total = 0
+
+    def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
+        input_variable = variableFromSentence(input_lang, sentence)
+        input_length = input_variable.size()[0]
+        encoder_hidden = encoder.initHidden()
+
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
+        encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+
+        for ei in range(input_length):
+            encoder_output, encoder_hidden = encoder(input_variable[ei],
+                                                     encoder_hidden)
+            encoder_outputs[ei] = encoder_outputs[ei] + encoder_output[0][0]
+
+        decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
+        decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+
+        decoder_hidden = encoder_hidden
+
+        decoded_words = []
+        decoder_attentions = torch.zeros(max_length, max_length)
+
+        for di in range(max_length):
             decoder_output, decoder_hidden, decoder_attention = decoder(
                 decoder_input, decoder_hidden, encoder_outputs)
-            loss += criterion(decoder_output, target_variable[di])
-            decoder_input = target_variable[di]  # Teacher forcing
-
-    else:
-        # Without teacher forcing: use its own predictions as the next input
-        for di in range(target_length):
-            decoder_output, decoder_hidden, decoder_attention = decoder(
-                decoder_input, decoder_hidden, encoder_outputs)
+            decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
             ni = topi[0][0]
+            if ni == EOS_token:
+                xxx = hparams['eos']
+                decoded_words.append(xxx)
+                break
+            else:
+                decoded_words.append(output_lang.index2word[ni])
 
             decoder_input = Variable(torch.LongTensor([[ni]]))
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
-            loss += criterion(decoder_output, target_variable[di])
-            if ni == EOS_token:
-                break
-
-    loss.backward()
-
-    encoder_optimizer.step()
-    decoder_optimizer.step()
-
-    return loss.data[0] / target_length
-
-
-def asMinutes(s):
-    m = math.floor(s / 60)
-    s -= m * 60
-    return '%dm %ds' % (m, s)
-
-
-def timeSince(since, percent):
-    now = time.time()
-    s = now - since
-    es = s / (percent)
-    rs = es - s
-    return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
-
-def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
-    start = time.time()
-    plot_losses = []
-    print_loss_total = 0  # Reset every print_every
-    plot_loss_total = 0  # Reset every plot_every
-
-    encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
-    decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-    training_pairs = [variablesFromPair(random.choice(pairs))
-                      for i in range(n_iters)]
-    criterion = nn.NLLLoss()
-
-    for iter in range(1, n_iters + 1):
-        training_pair = training_pairs[iter - 1]
-        input_variable = training_pair[0]
-        target_variable = training_pair[1]
-
-        loss = train(input_variable, target_variable, encoder,
-                     decoder, encoder_optimizer, decoder_optimizer, criterion)
-        print_loss_total += loss
-        plot_loss_total += loss
-
-        if iter % print_every == 0:
-            print_loss_avg = print_loss_total / print_every
-            print_loss_total = 0
-            print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
-                                         iter, iter / n_iters * 100, print_loss_avg))
-
-        if iter % plot_every == 0:
-            plot_loss_avg = plot_loss_total / plot_every
-            plot_losses.append(plot_loss_avg)
-            plot_loss_total = 0
-
-def evaluate(encoder, decoder, sentence, max_length=MAX_LENGTH):
-    input_variable = variableFromSentence(input_lang, sentence)
-    input_length = input_variable.size()[0]
-    encoder_hidden = encoder.initHidden()
-
-    encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
-    encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
-
-    for ei in range(input_length):
-        encoder_output, encoder_hidden = encoder(input_variable[ei],
-                                                 encoder_hidden)
-        encoder_outputs[ei] = encoder_outputs[ei] + encoder_output[0][0]
-
-    decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
-    decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-
-    decoder_hidden = encoder_hidden
-
-    decoded_words = []
-    decoder_attentions = torch.zeros(max_length, max_length)
-
-    for di in range(max_length):
-        decoder_output, decoder_hidden, decoder_attention = decoder(
-            decoder_input, decoder_hidden, encoder_outputs)
-        decoder_attentions[di] = decoder_attention.data
-        topv, topi = decoder_output.data.topk(1)
-        ni = topi[0][0]
-        if ni == EOS_token:
-            decoded_words.append('<EOS>')
-            break
-        else:
-            decoded_words.append(output_lang.index2word[ni])
-
-        decoder_input = Variable(torch.LongTensor([[ni]]))
-        decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-
-    return decoded_words, decoder_attentions[:di + 1]
+        return decoded_words, decoder_attentions[:di + 1]
 
 
 if __name__ == '__main__':
 
-    input_lang, output_lang, pairs = prepareData('eng', 'fra', True)
+    train_fr = hparams['train_name'] + '.' + hparams['src_ending']
+    train_to = hparams['train_name'] + '.' + hparams['tgt_ending']
+    input_lang, output_lang, pairs = prepareData(train_fr, train_to, True)
     print(random.choice(pairs))
 
     hidden_size = 256
@@ -372,4 +450,7 @@ if __name__ == '__main__':
         encoder1 = encoder1.cuda()
         attn_decoder1 = attn_decoder1.cuda()
 
-    trainIters(encoder1, attn_decoder1, 75000, print_every=5000)
+    print_every = hparams['steps_to_stats']
+    epochs = hparams['epochs']
+    n = NMT()
+    n.trainIters(encoder1, attn_decoder1, 75000, print_every=print_every)

@@ -27,7 +27,7 @@ hparams = {
     'unk':'unk',
     'units': 256, #128, #256 , #64,
     'learning_rate': 0.001, #0.001
-    'tokens_per_sentence': 24, #32,
+    'tokens_per_sentence': 16, #32,
     'batch_constant': 512 #
     
 }
