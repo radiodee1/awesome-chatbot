@@ -10,7 +10,7 @@ hparams = {
     'train_name': "train",
     'src_ending': "from",
     'tgt_ending': "to",
-    'base_filename': "autoencode-dropout",
+    'base_filename': "autoencode-pytorch",
     'base_file_num': 1,
     'num_vocab_total': 10000,
     'batch_size': 256,#64, #256
