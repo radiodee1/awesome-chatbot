@@ -262,7 +262,16 @@ def prepareData(lang1, lang2, reverse=False):
 
 
 def indexesFromSentence(lang, sentence):
-    return [lang.word2index[word] for word in sentence.split(' ')]
+    s = sentence.split(' ')
+    sent = []
+    for word in s:
+        if word == hparams['eol']: word = EOS_token
+        elif word == hparams['sol']: word = SOS_token
+        else: word = lang.word2index[word]
+        sent.append(word)
+    return sent
+
+    #return [lang.word2index[word] for word in sentence.split(' ')]
 
 
 def variableFromSentence(lang, sentence, add_eol=False):
