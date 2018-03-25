@@ -15,6 +15,8 @@ Description of the individual setup scripts is included below.
 * Specifically regarding attention decoders and a special hand written Keras layer designed just for that purpose. The author of the layer is Zafarali Ahmed. The code was designed for an earlier version of Keras and Tensorflow. Zafarali's software is provided with the ['GNU Affero General Public License v3.0'](https://github.com/datalogue/keras-attention/blob/master/LICENSE) 
   * https://medium.com/datalogue/attention-in-keras-1892773a4f22
   * https://machinelearningmastery.com/encoder-decoder-attention-sequence-to-sequence-prediction-keras/
+* Pytorch code was originally written by Sean Robertson for the Pytorch demo and example site.
+  * http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html#sphx-glr-intermediate-seq2seq-translation-tutorial-py
 # GloVe and W2V Word Embeddings Download
 * This link brings you to a page where you can download W2V embeddings that google makes available. At the time of this writing this project does not use w2v embeddings, but uses GloVe instead.
   * https://code.google.com/archive/p/word2vec/

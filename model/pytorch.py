@@ -17,6 +17,13 @@ import math
 
 from settings import hparams
 
+
+'''
+This code is originally written by Sean Robertson and can be found at the following site:
+
+http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html#sphx-glr-intermediate-seq2seq-translation-tutorial-py
+'''
+
 use_cuda = torch.cuda.is_available()
 SOS_token = 0
 EOS_token = 1
