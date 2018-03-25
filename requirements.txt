@@ -6,3 +6,4 @@ unidecode
 keras
 gensim
 h5py
+## go to the pytorch web site to download the latest version of pytorch ##
