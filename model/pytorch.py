@@ -398,7 +398,7 @@ class NMT:
                 print_loss_total = 0
                 if iter % (print_every * 10) == 0:
                     self.save_checkpoint(num=iter)
-                    print('save file')
+                    print('=======save file========')
                 print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)
