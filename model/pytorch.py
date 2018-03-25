@@ -123,7 +123,7 @@ class Lang:
         self.name = name
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {0: "SOS", 1: "EOS"}
+        self.index2word = {0: hparams['sol'], 1: hparams['eol']}
         self.n_words = 2  # Count SOS and EOS
 
     def addSentence(self, sentence):
@@ -205,6 +205,15 @@ def filterPair(p):
 def filterPairs(pairs):
     return [pair for pair in pairs if filterPair(pair)]
 
+def count_len(sent):
+    sent = sent.split()
+
+    if len(sent) >= MAX_LENGTH:
+        sent = sent[:MAX_LENGTH]
+        sent[MAX_LENGTH-1] = hparams['eol']
+    sent = ' '.join(sent)
+    return sent
+
 def prepareData(lang1, lang2, reverse=False):
     input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
     print("Read %s sentence pairs" % len(pairs))
@@ -224,9 +233,9 @@ def indexesFromSentence(lang, sentence):
     return [lang.word2index[word] for word in sentence.split(' ')]
 
 
-def variableFromSentence(lang, sentence):
+def variableFromSentence(lang, sentence, add_eol=False):
     indexes = indexesFromSentence(lang, sentence)
-    indexes.append(EOS_token)
+    if add_eol: indexes.append(EOS_token)
     result = Variable(torch.LongTensor(indexes).view(-1, 1))
     if use_cuda:
         return result.cuda()
@@ -385,7 +394,9 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                if iter % (print_every * 10) == 0: self.save_checkpoint(num=iter)
+                if iter % (print_every * 10) == 0:
+                    self.save_checkpoint(num=iter)
+                    print('save file')
                 print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)

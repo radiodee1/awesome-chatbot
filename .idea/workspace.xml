@@ -48,8 +48,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="387" column="43" lean-forward="false" selection-start-line="387" selection-start-column="43" selection-end-line="387" selection-end-column="43" />
+            <state relative-caret-position="269">
+              <caret line="237" column="7" lean-forward="false" selection-start-line="237" selection-start-column="7" selection-end-line="237" selection-end-column="7" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -131,9 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>return_probabilities</find>
-      <find>output_dim</find>
-      <find>decoder_dim</find>
       <find>stage: co</find>
       <find>_fill_vec</find>
       <find>stack_sentences_categorical</find>
@@ -161,6 +158,9 @@
       <find>trainIters</find>
       <find>load_checkpoint</find>
       <find>MAX_LENGTH</find>
+      <find>pairs</find>
+      <find>SOS</find>
+      <find>EOS_token</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -567,8 +567,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="387" column="43" lean-forward="false" selection-start-line="387" selection-start-column="43" selection-end-line="387" selection-end-column="43" />
+        <state relative-caret-position="269">
+          <caret line="237" column="7" lean-forward="false" selection-start-line="237" selection-start-column="7" selection-end-line="237" selection-end-column="7" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
