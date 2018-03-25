@@ -453,6 +453,7 @@ class NMT:
             if ni == EOS_token:
                 xxx = hparams['eol']
                 decoded_words.append(xxx)
+                print('eol found.')
                 break
             else:
                 decoded_words.append(output_lang.index2word[ni])
