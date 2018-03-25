@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" afterPath="$PROJECT_DIR$/model/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -49,9 +48,11 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="10" column="7" lean-forward="false" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
-              <folding />
+            <state relative-caret-position="323">
+              <caret line="387" column="43" lean-forward="false" selection-start-line="387" selection-start-column="43" selection-end-line="387" selection-end-column="43" />
+              <folding>
+                <element signature="e#20#85#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -130,7 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>recurrent_a</find>
       <find>return_probabilities</find>
       <find>output_dim</find>
       <find>decoder_dim</find>
@@ -160,6 +160,7 @@
       <find>decoder</find>
       <find>trainIters</find>
       <find>load_checkpoint</find>
+      <find>MAX_LENGTH</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -205,8 +206,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="525" />
-    <option name="y" value="59" />
+    <option name="x" value="524" />
+    <option name="y" value="62" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
   </component>
@@ -288,7 +289,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="525" y="59" width="1380" height="1000" extended-state="0" />
+    <frame x="524" y="62" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -566,9 +567,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="7" lean-forward="false" selection-start-line="10" selection-start-column="7" selection-end-line="10" selection-end-column="7" />
-          <folding />
+        <state relative-caret-position="323">
+          <caret line="387" column="43" lean-forward="false" selection-start-line="387" selection-start-column="43" selection-end-line="387" selection-end-column="43" />
+          <folding>
+            <element signature="e#20#85#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

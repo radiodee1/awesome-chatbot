@@ -20,7 +20,7 @@ from settings import hparams
 use_cuda = torch.cuda.is_available()
 SOS_token = 0
 EOS_token = 1
-MAX_LENGTH = hparams['tokens_per_sentence']
+MAX_LENGTH = hparams['tokens_per_sentence'] + 2
 
 eng_prefixes = (
     "i am ", "i m ",
@@ -385,9 +385,15 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                self.save_checkpoint(num=iter)
+                if iter % (print_every * 10) == 0: self.save_checkpoint(num=iter)
                 print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
+                choice = random.choice(pairs)
+                print(choice[0])
+                words, _ = self.evaluate(self.model_1, self.model_2, choice[0])
+                #print(choice)
+                print(words)
+                print("-----")
 
             if iter % plot_every == 0 and False:
                 plot_loss_avg = plot_loss_total / plot_every
@@ -398,6 +404,8 @@ class NMT:
         input_variable = variableFromSentence(input_lang, sentence)
         input_length = input_variable.size()[0]
         encoder_hidden = encoder.initHidden()
+
+        if input_length >= max_length : input_length = max_length
 
         encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
@@ -422,7 +430,7 @@ class NMT:
             topv, topi = decoder_output.data.topk(1)
             ni = topi[0][0]
             if ni == EOS_token:
-                xxx = hparams['eos']
+                xxx = hparams['eol']
                 decoded_words.append(xxx)
                 break
             else:
