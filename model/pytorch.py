@@ -235,16 +235,7 @@ def filterPair(p):
 def filterPairs(pairs):
     return [pair for pair in pairs if filterPair(pair)]
 
-'''
-def count_len(sent):
-    sent = sent.split()
 
-    if len(sent) >= MAX_LENGTH:
-        sent = sent[:MAX_LENGTH]
-        sent[MAX_LENGTH-1] = hparams['eol']
-    sent = ' '.join(sent)
-    return sent
-'''
 
 def prepareData(lang1, lang2, reverse=False):
     input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
@@ -269,6 +260,10 @@ def indexesFromSentence(lang, sentence):
         elif word == hparams['sol']: word = SOS_token
         else: word = lang.word2index[word]
         sent.append(word)
+    if len(sent) >= MAX_LENGTH:
+        sent = sent[:MAX_LENGTH]
+        sent[-1] = EOS_token
+        #print(sent,'<<<<')
     return sent
 
     #return [lang.word2index[word] for word in sentence.split(' ')]
