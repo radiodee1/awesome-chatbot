@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
       <change beforePath="$PROJECT_DIR$/model/settings.py" afterPath="$PROJECT_DIR$/model/settings.py" />
     </list>
@@ -18,8 +17,8 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="324">
-              <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+            <state relative-caret-position="288">
+              <caret line="16" column="24" lean-forward="false" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
               <folding />
             </state>
           </provider>
@@ -28,8 +27,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="375" column="38" lean-forward="false" selection-start-line="375" selection-start-column="38" selection-end-line="375" selection-end-column="38" />
+            <state relative-caret-position="269">
+              <caret line="687" column="98" lean-forward="false" selection-start-line="687" selection-start-column="98" selection-end-line="687" selection-end-column="98" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -105,12 +104,12 @@
       <find>task_review_weights</find>
       <find>print_every</find>
       <find>save_checkpoint</find>
-      <find>prepareData</find>
       <find>input_lang</find>
       <find>NMT</find>
       <find>pairs</find>
       <find>word2count</find>
       <find>Lang</find>
+      <find>prepareData</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,7 +156,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="524" />
+    <option name="x" value="523" />
     <option name="y" value="62" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -240,7 +239,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="524" y="62" width="1380" height="1000" extended-state="0" />
+    <frame x="523" y="62" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -491,16 +490,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" column="21" lean-forward="false" selection-start-line="18" selection-start-column="21" selection-end-line="18" selection-end-column="21" />
+        <state relative-caret-position="288">
+          <caret line="16" column="24" lean-forward="false" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="375" column="38" lean-forward="false" selection-start-line="375" selection-start-column="38" selection-end-line="375" selection-end-column="38" />
+        <state relative-caret-position="269">
+          <caret line="687" column="98" lean-forward="false" selection-start-line="687" selection-start-column="98" selection-end-line="687" selection-end-column="98" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>

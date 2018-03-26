@@ -356,7 +356,7 @@ class NMT:
 
 
 
-    def prepareData(self,lang1, lang2, reverse=False):
+    def prepareData(self,lang1, lang2, reverse=False, omit_unk=False):
         v_name = hparams['data_dir'] + hparams['vocab_name']
         self.input_lang, self.output_lang, pairs = self.readLangs(lang1, lang2,
                                                                   reverse,
@@ -379,12 +379,12 @@ class NMT:
                 for word in pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
-                    else:
+                    elif not omit_unk:
                         a.append(hparams['unk'])
                 for word in pairs[p][1].split(' '):
                     if word in self.vocab_lang.word2index:
                         b.append(word)
-                    else:
+                    elif not omit_unk:
                         b.append(hparams['unk'])
                 new_pairs.append([' '.join(a), ' '.join(b)])
             pairs = new_pairs
@@ -617,10 +617,11 @@ class NMT:
                 print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)
-                print(choice[0])
+                print('src:',choice[0])
+                print('ref:',choice[1])
                 words, _ = self.evaluate(None, None, choice[0])
                 #print(choice)
-                print(words)
+                print('ans:',words)
                 print("-----")
 
             if iter % plot_every == 0 and False:
@@ -684,7 +685,7 @@ if __name__ == '__main__':
 
     n.task_normal_train()
 
-    n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True)
+    n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True, omit_unk=True)
     print(random.choice(pairs))
 
     n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
