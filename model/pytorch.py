@@ -711,3 +711,6 @@ if __name__ == '__main__':
     if n.do_convert:
         n.load_checkpoint()
         n.task_convert()
+
+    if False:
+        print(n.model_1.state_dict())

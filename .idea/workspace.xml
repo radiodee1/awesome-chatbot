@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="" afterPath="$PROJECT_DIR$/do_make_movie_download.sh" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" afterPath="$PROJECT_DIR$/model/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,14 +25,34 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="687" column="98" lean-forward="false" selection-start-line="687" selection-start-column="98" selection-end-line="687" selection-end-column="98" />
+            <state relative-caret-position="754">
+              <caret line="714" column="12" lean-forward="false" selection-start-line="714" selection-start-column="12" selection-end-line="714" selection-end-column="12" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="do_make_unpack_text.sh" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/do_make_unpack_text.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="709">
+              <caret line="46" column="2" lean-forward="true" selection-start-line="36" selection-start-column="0" selection-end-line="46" selection-end-column="2" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="do_make_movie_download.sh" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="450">
+              <caret line="25" column="4" lean-forward="false" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -62,7 +83,7 @@
       <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="988">
+            <state relative-caret-position="2286">
               <caret line="134" column="80" lean-forward="false" selection-start-line="134" selection-start-column="80" selection-end-line="134" selection-end-column="80" />
               <folding />
             </state>
@@ -152,6 +173,7 @@
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/pytorch.py" />
+        <option value="$PROJECT_DIR$/do_make_movie_download.sh" />
       </list>
     </option>
   </component>
@@ -176,6 +198,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
@@ -203,7 +226,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -269,20 +291,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="14" lean-forward="false" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="234">
@@ -415,7 +423,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="7" column="0" lean-forward="false" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -423,7 +430,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -439,7 +445,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="90">
           <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -447,7 +452,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
           <caret line="8" column="74" lean-forward="false" selection-start-line="8" selection-start-column="74" selection-end-line="8" selection-end-column="74" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -466,9 +470,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="706">
           <caret line="939" column="0" lean-forward="false" selection-start-line="939" selection-start-column="0" selection-end-line="939" selection-end-column="0" />
-          <folding>
-            <element signature="e#20#38#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -476,13 +477,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
           <caret line="4" column="15" lean-forward="false" selection-start-line="4" selection-start-column="15" selection-end-line="4" selection-end-column="15" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="988">
+        <state relative-caret-position="2286">
           <caret line="134" column="80" lean-forward="false" selection-start-line="134" selection-start-column="80" selection-end-line="134" selection-end-column="80" />
           <folding />
         </state>
@@ -498,11 +498,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="687" column="98" lean-forward="false" selection-start-line="687" selection-start-column="98" selection-end-line="687" selection-end-column="98" />
+        <state relative-caret-position="754">
+          <caret line="714" column="12" lean-forward="false" selection-start-line="714" selection-start-column="12" selection-end-line="714" selection-end-column="12" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_unpack_text.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="709">
+          <caret line="46" column="2" lean-forward="true" selection-start-line="36" selection-start-column="0" selection-end-line="46" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="25" column="4" lean-forward="false" selection-start-line="25" selection-start-column="4" selection-end-line="25" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
