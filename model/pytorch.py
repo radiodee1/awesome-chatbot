@@ -177,6 +177,11 @@ class NMT:
         self.model_2 = None
         self.opt_1 = None
         self.opt_2 = None
+        self.best_loss = None
+
+        self.print_every = hparams['steps_to_stats']
+        self.epochs = hparams['epochs']
+        self.hidden_size = hparams['units']
 
     def open_sentences(self, filename):
         t_yyy = []
@@ -299,14 +304,16 @@ class NMT:
                 'arch': None,
                 'state_dict': self.model_1.state_dict(),
                 'best_prec1': None,
-                'optimizer': self.opt_1.state_dict()
+                'optimizer': self.opt_1.state_dict(),
+                'best_loss': self.best_loss
             },
             {
                 'epoch':0,
                 'arch':None,
                 'state_dict':self.model_2.state_dict(),
                 'best_prec1':None,
-                'optimizer': self.opt_2.state_dict()
+                'optimizer': self.opt_2.state_dict(),
+                'best_loss': self.best_loss
             }
         ]
         #print(z)
@@ -328,6 +335,11 @@ class NMT:
                 print("=> loading checkpoint '{}'".format(basename))
                 checkpoint = torch.load(basename)
                 #print(checkpoint)
+                try:
+                    self.best_loss = checkpoint[0]['best_loss']
+                except:
+                    print('no best loss saved with checkpoint')
+                    pass
                 self.model_1.load_state_dict(checkpoint[0]['state_dict'])
                 self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
 
@@ -431,8 +443,9 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters))
-                if iter % (print_every * 10) == 0:
+                if iter % (print_every * 10) == 0 and (self.best_loss is None or print_loss_avg <= self.best_loss):
                     self.save_checkpoint(num=iter)
+                    self.best_loss = print_loss_avg
                     print('=======save file========')
                 print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
@@ -499,16 +512,14 @@ if __name__ == '__main__':
     input_lang, output_lang, pairs = n.prepareData(train_fr, train_to, True)
     print(random.choice(pairs))
 
-    hidden_size = 256
-    encoder1 = EncoderRNN(input_lang.n_words, hidden_size)
-    attn_decoder1 = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1)
+
+    encoder1 = EncoderRNN(input_lang.n_words, n.hidden_size)
+    attn_decoder1 = AttnDecoderRNN(n.hidden_size, output_lang.n_words, dropout_p=0.1)
 
 
     if use_cuda:
         encoder1 = encoder1.cuda()
         attn_decoder1 = attn_decoder1.cuda()
 
-    print_every = hparams['steps_to_stats']
-    epochs = hparams['epochs']
 
-    n.trainIters(encoder1, attn_decoder1, 75000, print_every=print_every)
+    n.trainIters(encoder1, attn_decoder1, 75000, print_every=n.print_every)
