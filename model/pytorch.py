@@ -341,6 +341,7 @@ class NMT:
             self.output_lang = Lang(lang2)
 
         if hparams['autoencode'] == True:
+            pairs = [ [p[0], p[0]] for p in pairs]
             self.output_lang = self.input_lang
 
         return self.input_lang, self.output_lang, pairs
