@@ -439,10 +439,10 @@ class NMT:
         return z
         pass
 
-    def save_checkpoint(self,state=None, is_best=True,num=0, converted=False):
+    def save_checkpoint(self, state=None, is_best=True, num=0, converted=False):
         if state is None:
             state = self.make_state(converted=converted)
-            print(converted, 'is converted.')
+            if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
         torch.save(state, basename + '.' + str(num)+ '.pth.tar')
         if is_best:
