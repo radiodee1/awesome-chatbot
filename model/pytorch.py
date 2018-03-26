@@ -14,8 +14,9 @@ from torch import optim
 import torch.nn.functional as F
 import time
 import math
-
+import argparse
 from settings import hparams
+import tokenize_weak
 
 
 '''
@@ -186,15 +187,90 @@ class NMT:
         self.train_fr = None
         self.train_to = None
 
-    def task_autoencode(self):
-        self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
-        self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
-        pass
+        self.do_train = False
+        self.do_infer = False
+        self.do_review = False
+        self.do_train_long = False
+        self.do_interactive = False
+
+        self.printable = ''
+
+        parser = argparse.ArgumentParser(description='Train some NMT values.')
+        parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive)')
+        parser.add_argument('--printable', help='a string to print during training for identification.')
+        parser.add_argument('--basename', help='base filename to use if it is different from settings file.')
+        parser.add_argument('--autoencode', help='(broken) enable auto encode from the command line.', action='store_true')
+        parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
+                            action='store_true')
+        self.args = parser.parse_args()
+        self.args = vars(self.args)
+        # print(self.args)
+
+        if self.args['printable'] is not None:
+            self.printable = str(self.args['printable'])
+        if self.args['mode'] == 'train': self.do_train = True
+        if self.args['mode'] == 'infer': self.do_infer = True
+        if self.args['mode'] == 'review': self.do_review = True
+        if self.args['mode'] == 'long': self.do_train_long = True
+        if self.args['mode'] == 'interactive': self.do_interactive = True
+        if self.args['basename'] is not None:
+            hparams['base_filename'] = self.args['basename']
+            print(hparams['base_filename'], 'set name')
+        if self.args['autoencode'] == True: hparams['autoencode'] = True
+        if self.args['train_all'] == True:
+            # hparams['embed_train'] = True
+            self.trainable = True
+        else:
+            self.trainable = False
+
+
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
         pass
+
+    def task_review_weights(self, pairs, stop_at_fail=False):
+        num = 0 # hparams['base_file_num']
+        for i in range(100):
+            local_filename = hparams['save_dir'] + hparams['base_filename'] + '.'+ str(num) + '.pth.tar'
+            if os.path.isfile(local_filename):
+                ''' load weights '''
+
+                print('==============================')
+                print('here:',local_filename)
+                self.load_checkpoint(local_filename)
+                choice = random.choice(pairs)
+                print(choice[0])
+                out, _ =self.evaluate(None,None,choice[0])
+                print(out)
+            else:
+                if stop_at_fail: break
+            num = 10 * self.print_every * i
+        pass
+
+    def task_train_epochs(self,num=0):
+        if num == 0:
+            num = hparams['epochs']
+        for i in range(num):
+            self.printable = ' epoch #' + str(i+1)
+            #self.train_model_categorical(check_sentences=False)
+            self.trainIters(None, None, 75000, print_every=self.print_every)
+            self.save_checkpoint()
+        pass
+
+    def task_interactive(self):
+
+        print('-------------------')
+        while True:
+            line = input("> ")
+            line = tokenize_weak.format(line)
+            print(line)
+            out , _ =self.evaluate(None, None, line)
+            print(out)
+
+
+    ################################################
 
 
     def open_sentences(self, filename):
@@ -249,6 +325,9 @@ class NMT:
         else:
             input_lang = Lang(lang1)
             output_lang = Lang(lang2)
+
+        if hparams['autoencode'] == True:
+            output_lang = input_lang
 
         return input_lang, output_lang, pairs
 
@@ -342,9 +421,10 @@ class NMT:
             os.system('cp '+ basename + '.' + str(num) + '.pth.tar' + ' '  +
                       basename + '.best.pth.tar')
 
-    def load_checkpoint(self):
+    def load_checkpoint(self, filename=None):
         if True:
             basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth.tar'
+            if filename is not None: basename = filename
             if os.path.isfile(basename):
                 print("=> loading checkpoint '{}'".format(basename))
                 checkpoint = torch.load(basename)
@@ -355,14 +435,18 @@ class NMT:
                     print('no best loss saved with checkpoint')
                     pass
                 self.model_1.load_state_dict(checkpoint[0]['state_dict'])
-                self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
+                if self.opt_1 is not None:
+                    self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
 
                 self.model_2.load_state_dict(checkpoint[1]['state_dict'])
-                self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
+                if self.opt_2 is not None:
+                    self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
 
                 print("=> loaded checkpoint '"+ basename + "' ")
             else:
                 print("=> no checkpoint found at '"+ basename + "'")
+
+
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
         encoder_hidden = encoder.initHidden()
@@ -424,8 +508,12 @@ class NMT:
         return loss.data[0] / target_length
 
     def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
-        self.model_1 = encoder
-        self.model_2 = decoder
+        if encoder is not None and decoder is not None:
+            self.model_1 = encoder
+            self.model_2 = decoder
+        else:
+            encoder = self.model_1
+            decoder = self.model_2
 
         start = time.time()
         plot_losses = []
@@ -456,7 +544,7 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters))
+                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) + ' ' + self.printable)
                 if iter % (print_every * 10) == 0 and (self.best_loss is None or print_loss_avg <= self.best_loss):
                     self.save_checkpoint(num=iter)
                     self.best_loss = print_loss_avg
@@ -465,7 +553,7 @@ class NMT:
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)
                 print(choice[0])
-                words, _ = self.evaluate(self.model_1, self.model_2, choice[0])
+                words, _ = self.evaluate(None, None, choice[0])
                 #print(choice)
                 print(words)
                 print("-----")
@@ -476,6 +564,13 @@ class NMT:
                 plot_loss_total = 0
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
+        if encoder is not None and decoder is not None:
+            self.model_1 = encoder
+            self.model_2 = decoder
+        else:
+            encoder = self.model_1
+            decoder = self.model_2
+
         input_variable = self.variableFromSentence(input_lang, sentence)
         input_length = input_variable.size()[0]
         encoder_hidden = encoder.initHidden()
@@ -527,14 +622,22 @@ if __name__ == '__main__':
     input_lang, output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True)
     print(random.choice(pairs))
 
-
-    encoder1 = EncoderRNN(input_lang.n_words, n.hidden_size)
-    attn_decoder1 = AttnDecoderRNN(n.hidden_size, output_lang.n_words, dropout_p=0.1)
-
+    n.model_1 = EncoderRNN(input_lang.n_words, n.hidden_size)
+    n.model_2 = AttnDecoderRNN(n.hidden_size, output_lang.n_words, dropout_p=0.1)
 
     if use_cuda:
-        encoder1 = encoder1.cuda()
-        attn_decoder1 = attn_decoder1.cuda()
+        n.model_1 = n.model_1.cuda()
+        n.model_2 = n.model_2.cuda()
 
+    if n.do_train:
 
-    n.trainIters(encoder1, attn_decoder1, 75000, print_every=n.print_every)
+        n.trainIters(None, None, 75000, print_every=n.print_every)
+    if n.do_train_long:
+        n.task_train_epochs()
+
+    if n.do_interactive:
+        n.load_checkpoint()
+        n.task_interactive()
+
+    if n.do_review:
+        n.task_review_weights(pairs,stop_at_fail=False)

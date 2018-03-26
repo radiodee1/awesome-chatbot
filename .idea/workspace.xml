@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
+      <change beforePath="$PROJECT_DIR$/model/settings.py" afterPath="$PROJECT_DIR$/model/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +18,8 @@
       <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="16" column="24" lean-forward="false" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
+            <state relative-caret-position="234">
+              <caret line="13" column="22" lean-forward="false" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -36,8 +38,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
-              <caret line="146" column="0" lean-forward="true" selection-start-line="137" selection-start-column="4" selection-end-line="146" selection-end-column="0" />
+            <state relative-caret-position="706">
+              <caret line="939" column="0" lean-forward="false" selection-start-line="939" selection-start-column="0" selection-end-line="939" selection-end-column="0" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -48,8 +50,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="502">
-              <caret line="527" column="4" lean-forward="false" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
+            <state relative-caret-position="521">
+              <caret line="243" column="30" lean-forward="false" selection-start-line="243" selection-start-column="30" selection-end-line="243" selection-end-column="30" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -131,20 +133,11 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>embedding_model_lstm</find>
-      <find>embed_train</find>
-      <find>trainable</find>
-      <find>categorical_input_one</find>
-      <find>name</find>
-      <find>eos</find>
-      <find>length</find>
       <find>eng_prefixes</find>
-      <find>evaluate</find>
       <find>nmt</find>
       <find>ChatModel</find>
       <find>decoder</find>
       <find>trainIters</find>
-      <find>load_checkpoint</find>
       <find>MAX_LENGTH</find>
       <find>pairs</find>
       <find>SOS</find>
@@ -161,6 +154,15 @@
       <find>open_sentences</find>
       <find>DecoderRNN</find>
       <find>EncoderRNN</find>
+      <find>evaluate</find>
+      <find>base_filename</find>
+      <find>load_checkpoint</find>
+      <find>do_review</find>
+      <find>task_normal_train</find>
+      <find>train_to</find>
+      <find>10</find>
+      <find>task_review_weights</find>
+      <find>print_every</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -199,8 +201,8 @@
         <option value="$PROJECT_DIR$/model/model.py" />
         <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/pytorch.py" />
       </list>
     </option>
@@ -546,28 +548,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="24" lean-forward="false" selection-start-line="16" selection-start-column="24" selection-end-line="16" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="146" column="0" lean-forward="true" selection-start-line="137" selection-start-column="4" selection-end-line="146" selection-end-column="0" />
+        <state relative-caret-position="706">
+          <caret line="939" column="0" lean-forward="false" selection-start-line="939" selection-start-column="0" selection-end-line="939" selection-end-column="0" />
           <folding>
             <element signature="e#20#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="13" column="22" lean-forward="false" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="502">
-          <caret line="527" column="4" lean-forward="false" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
+        <state relative-caret-position="521">
+          <caret line="243" column="30" lean-forward="false" selection-start-line="243" selection-start-column="30" selection-end-line="243" selection-end-column="30" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
