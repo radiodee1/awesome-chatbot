@@ -123,8 +123,13 @@ if __name__ == '__main__':
         save_vocab()
     if len(v) == 0:
         v = load_vocab()
-    prep_glove(v)
 
-    if os.path.isfile(TO+'-temp'):
-        os.system('rm ' + TO + '-temp')
-        pass
+    if hparams['embed_size'] is not None and hparams['embed_size'] != 0:
+        prep_glove(v)
+
+        if os.path.isfile(TO+'-temp'):
+            os.system('rm ' + TO + '-temp')
+            pass
+    else:
+        print('glove vectors disabled in settings.py')
+        print('set embed_size to usable value: 50, 100, 200, 300, None for none.')

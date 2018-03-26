@@ -16,7 +16,7 @@ hparams = {
     'batch_size': 256,#64, #256
     'steps_to_stats': 25,
     'epochs': 100,
-    'embed_size':200, #values only: 50, 100, 200, 300
+    'embed_size':None, #values only: 50, 100, 200, 300, None for none
     'embed_train':False,
     'autoencode':False,
     'infer_repeat': 1,

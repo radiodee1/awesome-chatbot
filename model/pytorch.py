@@ -182,6 +182,7 @@ class NMT:
 
         self.input_lang = None
         self.output_lang = None
+        self.vocab_lang = None
 
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
@@ -315,7 +316,7 @@ class NMT:
         s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
         return s
 
-    def readLangs(self,lang1, lang2, reverse=False):
+    def readLangs(self,lang1, lang2, reverse=False, load_vocab_file=None):
         print("Reading lines...")
 
         l_in = self.open_sentences(hparams['data_dir'] + lang1)
@@ -327,6 +328,10 @@ class NMT:
             pairs.append(line)
 
         # Reverse pairs, make Lang instances
+        if load_vocab_file is not None:
+            self.vocab_lang = Lang(load_vocab_file)
+            pass
+
         if reverse:
             pairs = [list(reversed(p)) for p in pairs]
             self.input_lang = Lang(lang2)
@@ -352,14 +357,43 @@ class NMT:
 
 
     def prepareData(self,lang1, lang2, reverse=False):
-        self.input_lang, self.output_lang, pairs = self.readLangs(lang1, lang2, reverse)
+        v_name = hparams['data_dir'] + hparams['vocab_name']
+        self.input_lang, self.output_lang, pairs = self.readLangs(lang1, lang2,
+                                                                  reverse,
+                                                                  load_vocab_file=v_name)
         print("Read %s sentence pairs" % len(pairs))
         pairs = self.filterPairs(pairs)
         print("Trimmed to %s sentence pairs" % len(pairs))
         print("Counting words...")
-        for pair in pairs:
-            self.input_lang.addSentence(pair[0])
-            self.output_lang.addSentence(pair[1])
+        if self.vocab_lang is not None:
+            v = self.open_sentences(self.vocab_lang.name)
+            for word in v:
+                self.vocab_lang.addSentence(word.strip())
+                #print(word)
+            self.input_lang = self.vocab_lang
+            self.output_lang = self.vocab_lang
+            new_pairs = []
+            for p in range(len(pairs)):
+                a = []
+                b = []
+                for word in pairs[p][0].split(' '):
+                    if word in self.vocab_lang.word2index:
+                        a.append(word)
+                    else:
+                        a.append(hparams['unk'])
+                for word in pairs[p][1].split(' '):
+                    if word in self.vocab_lang.word2index:
+                        b.append(word)
+                    else:
+                        b.append(hparams['unk'])
+                new_pairs.append([' '.join(a), ' '.join(b)])
+            pairs = new_pairs
+
+        else:
+            for pair in pairs:
+                self.input_lang.addSentence(pair[0])
+                self.output_lang.addSentence(pair[1])
+
         print("Counted words:")
         print(self.input_lang.name, self.input_lang.n_words)
         print(self.output_lang.name, self.output_lang.n_words)
