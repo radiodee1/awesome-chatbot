@@ -36,8 +36,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16038">
-              <caret line="912" column="17" lean-forward="false" selection-start-line="912" selection-start-column="8" selection-end-line="912" selection-end-column="17" />
+            <state relative-caret-position="460">
+              <caret line="146" column="0" lean-forward="true" selection-start-line="137" selection-start-column="4" selection-end-line="146" selection-end-column="0" />
               <folding>
                 <element signature="e#20#38#0" expanded="true" />
               </folding>
@@ -48,8 +48,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="516" column="49" lean-forward="false" selection-start-line="516" selection-start-column="49" selection-end-line="516" selection-end-column="49" />
+            <state relative-caret-position="502">
+              <caret line="527" column="4" lean-forward="false" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -131,7 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>oov_token</find>
       <find>embedding_model_lstm</find>
       <find>embed_train</find>
       <find>trainable</find>
@@ -161,6 +160,7 @@
       <find>timeSince</find>
       <find>open_sentences</find>
       <find>DecoderRNN</find>
+      <find>EncoderRNN</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -535,16 +535,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16038">
-          <caret line="912" column="17" lean-forward="false" selection-start-line="912" selection-start-column="8" selection-end-line="912" selection-end-column="17" />
-          <folding>
-            <element signature="e#20#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -564,10 +554,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="460">
+          <caret line="146" column="0" lean-forward="true" selection-start-line="137" selection-start-column="4" selection-end-line="146" selection-end-column="0" />
+          <folding>
+            <element signature="e#20#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="516" column="49" lean-forward="false" selection-start-line="516" selection-start-column="49" selection-end-line="516" selection-end-column="49" />
+        <state relative-caret-position="502">
+          <caret line="527" column="4" lean-forward="false" selection-start-line="527" selection-start-column="4" selection-end-line="527" selection-end-column="4" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>

@@ -183,6 +183,20 @@ class NMT:
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
 
+        self.train_fr = None
+        self.train_to = None
+
+    def task_autoencode(self):
+        self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        pass
+
+    def task_normal_train(self):
+        self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
+        pass
+
+
     def open_sentences(self, filename):
         t_yyy = []
         with open(filename, 'r') as r:
@@ -507,9 +521,10 @@ class NMT:
 if __name__ == '__main__':
 
     n = NMT()
-    train_fr = hparams['train_name'] + '.' + hparams['src_ending']
-    train_to = hparams['train_name'] + '.' + hparams['tgt_ending']
-    input_lang, output_lang, pairs = n.prepareData(train_fr, train_to, True)
+
+    n.task_normal_train()
+
+    input_lang, output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True)
     print(random.choice(pairs))
 
 
