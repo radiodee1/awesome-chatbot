@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -48,8 +49,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="629">
-              <caret line="265" column="9" lean-forward="false" selection-start-line="265" selection-start-column="9" selection-end-line="265" selection-end-column="9" />
+            <state relative-caret-position="1510">
+              <caret line="498" column="51" lean-forward="false" selection-start-line="498" selection-start-column="51" selection-end-line="498" selection-end-column="51" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -131,24 +132,13 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>stage: co</find>
-      <find>_fill_vec</find>
-      <find>stack_sentences_categorical</find>
-      <find>load_model_file</find>
-      <find>raw_embedding_filename</find>
-      <find>task_normal_train</find>
-      <find>model_infer</find>
-      <find>embedding_model</find>
-      <find>vocab_fr</find>
       <find>oov_token</find>
       <find>embedding_model_lstm</find>
       <find>embed_train</find>
       <find>trainable</find>
       <find>categorical_input_one</find>
-      <find>readLangs</find>
       <find>name</find>
       <find>eos</find>
-      <find>prepareData</find>
       <find>length</find>
       <find>eng_prefixes</find>
       <find>evaluate</find>
@@ -161,6 +151,17 @@
       <find>pairs</find>
       <find>SOS</find>
       <find>EOS_token</find>
+      <find>variablesFromPair</find>
+      <find>variableFromSentence</find>
+      <find>indexesFromSentence</find>
+      <find>prepareData</find>
+      <find>filterPair</find>
+      <find>readLangs</find>
+      <find>normalizeString</find>
+      <find>unicodeToAscii</find>
+      <find>timeSince</find>
+      <find>open_sentences</find>
+      <find>DecoderRNN</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -566,8 +567,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="265" column="9" lean-forward="false" selection-start-line="265" selection-start-column="9" selection-end-line="265" selection-end-column="9" />
+        <state relative-caret-position="1510">
+          <caret line="498" column="51" lean-forward="false" selection-start-line="498" selection-start-column="51" selection-end-line="498" selection-end-column="51" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>

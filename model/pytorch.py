@@ -169,128 +169,128 @@ class Lang:
         else:
             self.word2count[word] += 1
 
-def open_sentences( filename):
-    t_yyy = []
-    with open(filename, 'r') as r:
-        for xx in r:
-            t_yyy.append(xx)
-    return t_yyy
 
-def asMinutes(s):
-    m = math.floor(s / 60)
-    s -= m * 60
-    return '%dm %ds' % (m, s)
-
-
-def timeSince(since, percent):
-    now = time.time()
-    s = now - since
-    es = s / (percent)
-    rs = es - s
-    return '%s (- %s)' % (asMinutes(s), asMinutes(rs))
-
-def unicodeToAscii(s):
-    return ''.join(
-        c for c in unicodedata.normalize('NFD', s)
-        if unicodedata.category(c) != 'Mn'
-    )
-
-# Lowercase, trim, and remove non-letter characters
-
-
-def normalizeString(s):
-    s = unicodeToAscii(s.lower().strip())
-    s = re.sub(r"([.!?])", r" \1", s)
-    s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
-    return s
-
-def readLangs(lang1, lang2, reverse=False):
-    print("Reading lines...")
-
-    l_in = open_sentences(hparams['data_dir'] + lang1)
-    l_out = open_sentences(hparams['data_dir'] + lang2)
-
-    pairs = []
-    for i in range(len(l_in)):
-        line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
-        pairs.append(line)
-
-    # Reverse pairs, make Lang instances
-    if reverse:
-        pairs = [list(reversed(p)) for p in pairs]
-        input_lang = Lang(lang2)
-        output_lang = Lang(lang1)
-    else:
-        input_lang = Lang(lang1)
-        output_lang = Lang(lang2)
-
-    return input_lang, output_lang, pairs
-
-def filterPair(p):
-    return len(p[0].split(' ')) < MAX_LENGTH and \
-        len(p[1].split(' ')) < MAX_LENGTH and \
-        p[1].startswith(eng_prefixes) or True
-
-
-def filterPairs(pairs):
-    return [pair for pair in pairs if filterPair(pair)]
-
-
-
-def prepareData(lang1, lang2, reverse=False):
-    input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
-    print("Read %s sentence pairs" % len(pairs))
-    pairs = filterPairs(pairs)
-    print("Trimmed to %s sentence pairs" % len(pairs))
-    print("Counting words...")
-    for pair in pairs:
-        input_lang.addSentence(pair[0])
-        output_lang.addSentence(pair[1])
-    print("Counted words:")
-    print(input_lang.name, input_lang.n_words)
-    print(output_lang.name, output_lang.n_words)
-    return input_lang, output_lang, pairs
-
-
-def indexesFromSentence(lang, sentence):
-    s = sentence.split(' ')
-    sent = []
-    for word in s:
-        if word == hparams['eol']: word = EOS_token
-        elif word == hparams['sol']: word = SOS_token
-        else: word = lang.word2index[word]
-        sent.append(word)
-    if len(sent) >= MAX_LENGTH:
-        sent = sent[:MAX_LENGTH]
-        sent[-1] = EOS_token
-        #print(sent,'<<<<')
-    return sent
-
-    #return [lang.word2index[word] for word in sentence.split(' ')]
-
-
-def variableFromSentence(lang, sentence, add_eol=False):
-    indexes = indexesFromSentence(lang, sentence)
-    if add_eol: indexes.append(EOS_token)
-    result = Variable(torch.LongTensor(indexes).view(-1, 1))
-    if use_cuda:
-        return result.cuda()
-    else:
-        return result
-
-
-def variablesFromPair(pair):
-    input_variable = variableFromSentence(input_lang, pair[0])
-    target_variable = variableFromSentence(output_lang, pair[1])
-    return (input_variable, target_variable)
-
-
+################################
 class NMT:
     def __init__(self):
         self.model_1 = None
         self.model_2 = None
         self.opt_1 = None
         self.opt_2 = None
+
+    def open_sentences(self, filename):
+        t_yyy = []
+        with open(filename, 'r') as r:
+            for xx in r:
+                t_yyy.append(xx)
+        return t_yyy
+
+    def asMinutes(self,s):
+        m = math.floor(s / 60)
+        s -= m * 60
+        return '%dm %ds' % (m, s)
+
+
+    def timeSince(self,since, percent):
+        now = time.time()
+        s = now - since
+        es = s / (percent)
+        rs = es - s
+        return '%s (- %s)' % (self.asMinutes(s), self.asMinutes(rs))
+
+    def unicodeToAscii(self,s):
+        return ''.join(
+            c for c in unicodedata.normalize('NFD', s)
+            if unicodedata.category(c) != 'Mn'
+        )
+
+
+    def normalizeString(self,s):
+        s = self.unicodeToAscii(s.lower().strip())
+        s = re.sub(r"([.!?])", r" \1", s)
+        s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
+        return s
+
+    def readLangs(self,lang1, lang2, reverse=False):
+        print("Reading lines...")
+
+        l_in = self.open_sentences(hparams['data_dir'] + lang1)
+        l_out = self.open_sentences(hparams['data_dir'] + lang2)
+
+        pairs = []
+        for i in range(len(l_in)):
+            line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
+            pairs.append(line)
+
+        # Reverse pairs, make Lang instances
+        if reverse:
+            pairs = [list(reversed(p)) for p in pairs]
+            input_lang = Lang(lang2)
+            output_lang = Lang(lang1)
+        else:
+            input_lang = Lang(lang1)
+            output_lang = Lang(lang2)
+
+        return input_lang, output_lang, pairs
+
+    def filterPair(self,p):
+        return len(p[0].split(' ')) < MAX_LENGTH and \
+            len(p[1].split(' ')) < MAX_LENGTH and \
+            p[1].startswith(eng_prefixes) or True
+
+
+    def filterPairs(self,pairs):
+        return [pair for pair in pairs if self.filterPair(pair)]
+
+
+
+    def prepareData(self,lang1, lang2, reverse=False):
+        input_lang, output_lang, pairs = self.readLangs(lang1, lang2, reverse)
+        print("Read %s sentence pairs" % len(pairs))
+        pairs = self.filterPairs(pairs)
+        print("Trimmed to %s sentence pairs" % len(pairs))
+        print("Counting words...")
+        for pair in pairs:
+            input_lang.addSentence(pair[0])
+            output_lang.addSentence(pair[1])
+        print("Counted words:")
+        print(input_lang.name, input_lang.n_words)
+        print(output_lang.name, output_lang.n_words)
+        return input_lang, output_lang, pairs
+
+
+    def indexesFromSentence(self,lang, sentence):
+        s = sentence.split(' ')
+        sent = []
+        for word in s:
+            if word == hparams['eol']: word = EOS_token
+            elif word == hparams['sol']: word = SOS_token
+            else: word = lang.word2index[word]
+            sent.append(word)
+        if len(sent) >= MAX_LENGTH:
+            sent = sent[:MAX_LENGTH]
+            sent[-1] = EOS_token
+            #print(sent,'<<<<')
+        return sent
+
+        #return [lang.word2index[word] for word in sentence.split(' ')]
+
+
+    def variableFromSentence(self,lang, sentence, add_eol=False):
+        indexes = self.indexesFromSentence(lang, sentence)
+        if add_eol: indexes.append(EOS_token)
+        result = Variable(torch.LongTensor(indexes).view(-1, 1))
+        if use_cuda:
+            return result.cuda()
+        else:
+            return result
+
+
+    def variablesFromPair(self,pair):
+        input_variable = self.variableFromSentence(input_lang, pair[0])
+        target_variable = self.variableFromSentence(output_lang, pair[1])
+        return (input_variable, target_variable)
+
 
     def make_state(self):
         z = [
@@ -408,7 +408,7 @@ class NMT:
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-        training_pairs = [variablesFromPair(random.choice(pairs))
+        training_pairs = [self.variablesFromPair(random.choice(pairs))
                           for i in range(n_iters)]
         criterion = nn.NLLLoss()
 
@@ -434,7 +434,7 @@ class NMT:
                 if iter % (print_every * 10) == 0:
                     self.save_checkpoint(num=iter)
                     print('=======save file========')
-                print('%s (%d %d%%) %.4f' % (timeSince(start, iter / n_iters),
+                print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)
                 print(choice[0])
@@ -449,7 +449,7 @@ class NMT:
                 plot_loss_total = 0
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
-        input_variable = variableFromSentence(input_lang, sentence)
+        input_variable = self.variableFromSentence(input_lang, sentence)
         input_length = input_variable.size()[0]
         encoder_hidden = encoder.initHidden()
 
@@ -493,9 +493,10 @@ class NMT:
 
 if __name__ == '__main__':
 
+    n = NMT()
     train_fr = hparams['train_name'] + '.' + hparams['src_ending']
     train_to = hparams['train_name'] + '.' + hparams['tgt_ending']
-    input_lang, output_lang, pairs = prepareData(train_fr, train_to, True)
+    input_lang, output_lang, pairs = n.prepareData(train_fr, train_to, True)
     print(random.choice(pairs))
 
     hidden_size = 256
@@ -509,5 +510,5 @@ if __name__ == '__main__':
 
     print_every = hparams['steps_to_stats']
     epochs = hparams['epochs']
-    n = NMT()
+
     n.trainIters(encoder1, attn_decoder1, 75000, print_every=print_every)
