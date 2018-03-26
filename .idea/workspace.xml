@@ -48,8 +48,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="827">
-              <caret line="441" column="30" lean-forward="false" selection-start-line="441" selection-start-column="30" selection-end-line="441" selection-end-column="30" />
+            <state relative-caret-position="-1675">
+              <caret line="337" column="11" lean-forward="false" selection-start-line="337" selection-start-column="11" selection-end-line="337" selection-end-column="11" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -131,12 +131,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>nmt</find>
-      <find>ChatModel</find>
       <find>decoder</find>
       <find>trainIters</find>
       <find>MAX_LENGTH</find>
-      <find>pairs</find>
       <find>SOS</find>
       <find>EOS_token</find>
       <find>variablesFromPair</find>
@@ -161,6 +158,9 @@
       <find>print_every</find>
       <find>save_checkpoint</find>
       <find>prepareData</find>
+      <find>input_lang</find>
+      <find>NMT</find>
+      <find>pairs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -566,8 +566,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="827">
-          <caret line="441" column="30" lean-forward="false" selection-start-line="441" selection-start-column="30" selection-end-line="441" selection-end-column="30" />
+        <state relative-caret-position="-1675">
+          <caret line="337" column="11" lean-forward="false" selection-start-line="337" selection-start-column="11" selection-end-line="337" selection-end-column="11" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>

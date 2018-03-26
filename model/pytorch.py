@@ -180,6 +180,9 @@ class NMT:
         self.opt_2 = None
         self.best_loss = None
 
+        self.input_lang = None
+        self.output_lang = None
+
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
@@ -326,16 +329,16 @@ class NMT:
         # Reverse pairs, make Lang instances
         if reverse:
             pairs = [list(reversed(p)) for p in pairs]
-            input_lang = Lang(lang2)
-            output_lang = Lang(lang1)
+            self.input_lang = Lang(lang2)
+            self.output_lang = Lang(lang1)
         else:
-            input_lang = Lang(lang1)
-            output_lang = Lang(lang2)
+            self.input_lang = Lang(lang1)
+            self.output_lang = Lang(lang2)
 
         if hparams['autoencode'] == True:
-            output_lang = input_lang
+            self.output_lang = self.input_lang
 
-        return input_lang, output_lang, pairs
+        return self.input_lang, self.output_lang, pairs
 
     def filterPair(self,p):
         return len(p[0].split(' ')) < MAX_LENGTH and \
@@ -349,18 +352,18 @@ class NMT:
 
 
     def prepareData(self,lang1, lang2, reverse=False):
-        input_lang, output_lang, pairs = self.readLangs(lang1, lang2, reverse)
+        self.input_lang, self.output_lang, pairs = self.readLangs(lang1, lang2, reverse)
         print("Read %s sentence pairs" % len(pairs))
         pairs = self.filterPairs(pairs)
         print("Trimmed to %s sentence pairs" % len(pairs))
         print("Counting words...")
         for pair in pairs:
-            input_lang.addSentence(pair[0])
-            output_lang.addSentence(pair[1])
+            self.input_lang.addSentence(pair[0])
+            self.output_lang.addSentence(pair[1])
         print("Counted words:")
-        print(input_lang.name, input_lang.n_words)
-        print(output_lang.name, output_lang.n_words)
-        return input_lang, output_lang, pairs
+        print(self.input_lang.name, self.input_lang.n_words)
+        print(self.output_lang.name, self.output_lang.n_words)
+        return self.input_lang, self.output_lang, pairs
 
 
     def indexesFromSentence(self,lang, sentence):
@@ -391,8 +394,8 @@ class NMT:
 
 
     def variablesFromPair(self,pair):
-        input_variable = self.variableFromSentence(input_lang, pair[0])
-        target_variable = self.variableFromSentence(output_lang, pair[1])
+        input_variable = self.variableFromSentence(self.input_lang, pair[0])
+        target_variable = self.variableFromSentence(self.output_lang, pair[1])
         return (input_variable, target_variable)
 
 
@@ -599,7 +602,7 @@ class NMT:
             encoder = self.model_1
             decoder = self.model_2
 
-        input_variable = self.variableFromSentence(input_lang, sentence)
+        input_variable = self.variableFromSentence(self.input_lang, sentence)
         input_length = input_variable.size()[0]
         encoder_hidden = encoder.initHidden()
 
@@ -633,7 +636,7 @@ class NMT:
                 print('eol found.')
                 break
             else:
-                decoded_words.append(output_lang.index2word[ni])
+                decoded_words.append(self.output_lang.index2word[ni])
 
             decoder_input = Variable(torch.LongTensor([[ni]]))
             decoder_input = decoder_input.cuda() if use_cuda else decoder_input
@@ -647,11 +650,11 @@ if __name__ == '__main__':
 
     n.task_normal_train()
 
-    input_lang, output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True)
+    n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True)
     print(random.choice(pairs))
 
-    n.model_1 = EncoderRNN(input_lang.n_words, n.hidden_size)
-    n.model_2 = AttnDecoderRNN(n.hidden_size, output_lang.n_words, dropout_p=0.1)
+    n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
+    n.model_2 = AttnDecoderRNN(n.hidden_size, n.output_lang.n_words, dropout_p=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
