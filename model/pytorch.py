@@ -192,6 +192,7 @@ class NMT:
         self.do_review = False
         self.do_train_long = False
         self.do_interactive = False
+        self.do_convert = False
 
         self.printable = ''
 
@@ -202,6 +203,8 @@ class NMT:
         parser.add_argument('--autoencode', help='(broken) enable auto encode from the command line.', action='store_true')
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
+        parser.add_argument('--convert-weights',help='convert weights', action='store_true')
+
         self.args = parser.parse_args()
         self.args = vars(self.args)
         # print(self.args)
@@ -222,6 +225,7 @@ class NMT:
             self.trainable = True
         else:
             self.trainable = False
+        if self.args['convert_weights'] == True: self.do_convert = True
 
 
 
@@ -254,7 +258,6 @@ class NMT:
             num = hparams['epochs']
         for i in range(num):
             self.printable = ' epoch #' + str(i+1)
-            #self.train_model_categorical(check_sentences=False)
             self.trainIters(None, None, 75000, print_every=self.print_every)
             self.save_checkpoint()
         pass
@@ -269,6 +272,9 @@ class NMT:
             out , _ =self.evaluate(None, None, line)
             print(out)
 
+    def task_convert(self):
+        hparams['base_filename'] += '.small'
+        self.save_checkpoint(is_best=False,converted=True)
 
     ################################################
 
@@ -390,31 +396,53 @@ class NMT:
         return (input_variable, target_variable)
 
 
-    def make_state(self):
-        z = [
-            {
-                'epoch':0,
-                'arch': None,
-                'state_dict': self.model_1.state_dict(),
-                'best_prec1': None,
-                'optimizer': self.opt_1.state_dict(),
-                'best_loss': self.best_loss
-            },
-            {
-                'epoch':0,
-                'arch':None,
-                'state_dict':self.model_2.state_dict(),
-                'best_prec1':None,
-                'optimizer': self.opt_2.state_dict(),
-                'best_loss': self.best_loss
-            }
-        ]
+    def make_state(self, converted=False):
+        if not converted:
+            z = [
+                {
+                    'epoch':0,
+                    'arch': None,
+                    'state_dict': self.model_1.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': self.opt_1.state_dict(),
+                    'best_loss': self.best_loss
+                },
+                {
+                    'epoch':0,
+                    'arch':None,
+                    'state_dict':self.model_2.state_dict(),
+                    'best_prec1':None,
+                    'optimizer': self.opt_2.state_dict(),
+                    'best_loss': self.best_loss
+                }
+            ]
+        else:
+            z = [
+                {
+                    'epoch': 0,
+                    'arch': None,
+                    'state_dict': self.model_1.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': None , # self.opt_1.state_dict(),
+                    'best_loss': self.best_loss
+                },
+                {
+                    'epoch': 0,
+                    'arch': None,
+                    'state_dict': self.model_2.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': None, # self.opt_2.state_dict(),
+                    'best_loss': self.best_loss
+                }
+            ]
         #print(z)
         return z
         pass
 
-    def save_checkpoint(self,state=None, is_best=True,num=0):
-        if state is None: state = self.make_state()
+    def save_checkpoint(self,state=None, is_best=True,num=0, converted=False):
+        if state is None:
+            state = self.make_state(converted=converted)
+            print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
         torch.save(state, basename + '.' + str(num)+ '.pth.tar')
         if is_best:
@@ -641,3 +669,7 @@ if __name__ == '__main__':
 
     if n.do_review:
         n.task_review_weights(pairs,stop_at_fail=False)
+
+    if n.do_convert:
+        n.load_checkpoint()
+        n.task_convert()
