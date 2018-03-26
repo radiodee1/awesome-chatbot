@@ -4,6 +4,14 @@ import codecs
 import sqlite3
 import os
 from datetime import datetime
+import sys
+
+print(sys.argv)
+
+if len(sys.argv) > 1:
+    txtname = sys.argv[1]
+    print(txtname)
+    print('this first arg should be the path to the movie corpus file.')
 
 timeframe = 'input'
 sql_transaction = []
@@ -110,8 +118,8 @@ if __name__ == '__main__':
     create_table()
     row_counter = 0
     paired_rows = 0
-    txtname = 'movie_lines'
-    with codecs.open('{}.txt'.format(txtname), 'rb',encoding='cp1252' ,buffering=1000) as z: # cp1252
+    #txtname = 'movie_lines'
+    with codecs.open('{}'.format(txtname), 'rb',encoding='cp1252' ,buffering=1000) as z: # cp1252
         f = z.read()
         bucket = ''
         row = ''
