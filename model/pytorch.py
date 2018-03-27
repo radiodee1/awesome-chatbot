@@ -54,12 +54,12 @@ EOS_token = 1
 MAX_LENGTH = hparams['tokens_per_sentence']
 
 eng_prefixes = (
-    "i am ", "i m ",
-    "he is", "he s ",
-    "she is", "she s",
-    "you are", "you re ",
-    "we are", "we re ",
-    "they are", "they re "
+    "i am ", "i'm ",
+    "he is", "he's ",
+    "she is", "she's",
+    "you are", "you're ",
+    "we are", "we're ",
+    "they are", "they're "
 )
 teacher_forcing_ratio = 0.5
 
@@ -692,7 +692,7 @@ if __name__ == '__main__':
 
     n.task_normal_train()
 
-    n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True, omit_unk=True)
+    n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
     #print(random.choice(pairs))
 
     n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
