@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/do_make_french_download.sh" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/do_make_db_from_french.py" afterPath="$PROJECT_DIR$/do_make_db_from_french.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -49,8 +48,8 @@
       <file leaf-file-name="do_make_db_from_french.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/do_make_db_from_french.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1748">
-              <caret line="159" column="12" lean-forward="false" selection-start-line="159" selection-start-column="12" selection-end-line="159" selection-end-column="12" />
+            <state relative-caret-position="506">
+              <caret line="160" column="13" lean-forward="false" selection-start-line="160" selection-start-column="13" selection-end-line="160" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -134,7 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>normalizeString</find>
       <find>unicodeToAscii</find>
       <find>timeSince</find>
       <find>open_sentences</find>
@@ -164,6 +162,7 @@
       <find>evaluate</find>
       <find>load_checkpoint</find>
       <find>sql_insert_complete</find>
+      <find>format_data</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -579,8 +578,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_db_from_french.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1748">
-          <caret line="159" column="12" lean-forward="false" selection-start-line="159" selection-start-column="12" selection-end-line="159" selection-end-column="12" />
+        <state relative-caret-position="506">
+          <caret line="160" column="13" lean-forward="false" selection-start-line="160" selection-start-column="13" selection-end-line="160" selection-end-column="13" />
           <folding />
         </state>
       </provider>

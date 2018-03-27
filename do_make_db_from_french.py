@@ -144,10 +144,11 @@ if __name__ == '__main__':
         
             #print(f[j],'read')
 
-            num = j
-            comment_id = 'name-'+str(num)
-            parent_id = 'parent-'+ str(num+1)
+            num = j + 1
+            comment_id = 'name_'+str(num)
+            parent_id = 'parent_'+ str(num)
             #comment_id_name = comment_id + ' ' + str(num)
+            subreddit = 'subreddit_' + str(num)
 
             created_utc = num #'utc_'+ str(num)
             score = 5  
@@ -157,10 +158,10 @@ if __name__ == '__main__':
             reply = str(f[j])
 
             r = reply.strip('\n').split('\t')
-            print(r,'r')
+            #print(r,'r', j)
             if len(r) > 1:
-                reply = r[0]
-                body = r[1]
+                reply = format_data(r[0])
+                body = format_data(r[1])
 
                 paired_rows += 1
                 row_counter += 1
