@@ -358,7 +358,10 @@ class NMT:
 
 
     def prepareData(self,lang1, lang2, reverse=False, omit_unk=False):
-        v_name = hparams['data_dir'] + hparams['vocab_name']
+        if hparams['vocab_name'] is not None:
+            v_name = hparams['data_dir'] + hparams['vocab_name']
+        else:
+            v_name = None
         self.input_lang, self.output_lang, pairs = self.readLangs(lang1, lang2,
                                                                   reverse,
                                                                   load_vocab_file=v_name)
