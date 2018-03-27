@@ -3,7 +3,7 @@
 hparams = {
     'save_dir': "../saved/",
     'data_dir': "../data/",
-    'embed_name':'embed.txt', #used for glove
+    'embed_name':'embed.txt', #used for glove. Note: glove vectors don't have contractions!!
     'vocab_name': "vocab.big.txt",
     'test_name': "test",
     'test_size': 100,
@@ -27,7 +27,7 @@ hparams = {
     'unk':'unk',
     'units': 256, #128, #256 , #64,
     'learning_rate': 0.001, #0.001
-    'tokens_per_sentence': 16, #32,
+    'tokens_per_sentence': 18, #32,
     'batch_constant': 512 #
     
 }

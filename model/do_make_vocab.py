@@ -133,3 +133,4 @@ if __name__ == '__main__':
     else:
         print('glove vectors disabled in settings.py')
         print('set embed_size to usable value: 50, 100, 200, 300, None for none.')
+        print('note: glove vectors dont have contractions')

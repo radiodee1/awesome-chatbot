@@ -51,7 +51,7 @@ THE SOFTWARE.
 use_cuda = torch.cuda.is_available()
 SOS_token = 0
 EOS_token = 1
-MAX_LENGTH = hparams['tokens_per_sentence'] + 2
+MAX_LENGTH = hparams['tokens_per_sentence']
 
 eng_prefixes = (
     "i am ", "i m ",

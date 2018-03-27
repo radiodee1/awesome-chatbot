@@ -11,6 +11,8 @@ timeframe = 'raw/RC_2015-02'
 dbname = 'input'
 sql_transaction = []
 
+replace_some_comments = False
+
 add_simple_question = False
 newlinechar = ' '
 #newlinechar = ' newlinechar '
@@ -165,7 +167,7 @@ if __name__ == '__main__':
             elif int(score) >= 2:
                 existing_comment_score = find_existing_score(parent_id)
                 if existing_comment_score:
-                    if score > existing_comment_score:
+                    if score > existing_comment_score and replace_some_comments:
                         if acceptable(body):
                             sql_insert_replace_comment(comment_id,parent_id,parent_data,body,subreddit,created_utc,score)
                             
