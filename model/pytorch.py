@@ -53,14 +53,14 @@ SOS_token = 0
 EOS_token = 1
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-eng_prefixes = (
+eng_prefixes = [
     "i am ", "i'm ",
     "he is", "he's ",
     "she is", "she's",
     "you are", "you're ",
     "we are", "we're ",
     "they are", "they're "
-)
+]
 teacher_forcing_ratio = 0.5
 
 
@@ -347,9 +347,13 @@ class NMT:
         return self.input_lang, self.output_lang, pairs
 
     def filterPair(self,p):
+        ends = False
+        for j in eng_prefixes:
+            if p[1].startswith(j): ends = True
+
         return len(p[0].split(' ')) < MAX_LENGTH and \
-            len(p[1].split(' ')) < MAX_LENGTH and \
-            p[1].startswith(eng_prefixes) or True
+            len(p[1].split(' ')) < MAX_LENGTH and ends or True #\
+            #p[1].startswith(eng_prefixes) or True
 
 
     def filterPairs(self,pairs):
