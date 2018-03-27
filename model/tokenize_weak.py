@@ -5,6 +5,7 @@ import pandas as pd
 import os
 import re
 import unidecode
+from settings import hparams
 
 timeframes = ['input']
 
@@ -86,7 +87,8 @@ def format(content, do_tokenize=False):
     x = re.sub('[/]', '', x)
     x = re.sub("[`]", "'", x)
     x = re.sub('[.]', ' . ', x)
-    if True: x = re.sub("[']", " ' ", x)
+    if hparams['embed_size'] is not None and hparams['embed_size'] != 0:
+        x = re.sub("[']", " ' ", x) #contractions!!
 
     c = x.split()
 

@@ -574,7 +574,8 @@ class NMT:
         return loss.data[0] / target_length
 
     def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
-        if encoder is not None and decoder is not None:
+        if (encoder is not None and decoder is not None and
+                self.model_1 is None and self.model_2 is None):
             self.model_1 = encoder
             self.model_2 = decoder
         else:
@@ -592,8 +593,9 @@ class NMT:
                           for i in range(n_iters)]
         criterion = nn.NLLLoss()
 
-        self.opt_1 = encoder_optimizer
-        self.opt_2 = decoder_optimizer
+        if self.opt_1 is None and self.opt_2 is None:
+            self.opt_1 = encoder_optimizer
+            self.opt_2 = decoder_optimizer
 
         self.load_checkpoint()
 
@@ -631,7 +633,8 @@ class NMT:
                 plot_loss_total = 0
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
-        if encoder is not None and decoder is not None:
+        if (encoder is not None and decoder is not None and
+                self.model_1 is None and self.model_2 is None):
             self.model_1 = encoder
             self.model_2 = decoder
         else:
@@ -687,7 +690,7 @@ if __name__ == '__main__':
     n.task_normal_train()
 
     n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, True, omit_unk=True)
-    print(random.choice(pairs))
+    #print(random.choice(pairs))
 
     n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
     n.model_2 = AttnDecoderRNN(n.hidden_size, n.output_lang.n_words, dropout_p=0.1)
@@ -712,6 +715,13 @@ if __name__ == '__main__':
     if n.do_convert:
         n.load_checkpoint()
         n.task_convert()
+
+    if n.do_infer:
+        n.load_checkpoint()
+        choice = random.choice(pairs)[0]
+        print(choice)
+        words, _ = n.evaluate(None,None,choice)
+        print(words)
 
     if False:
         print(n.model_1.state_dict())
