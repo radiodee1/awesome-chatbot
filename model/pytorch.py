@@ -346,8 +346,10 @@ class NMT:
 
             #pairs = []
             for i in range(len(l_in)):
-                line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
-                pairs.append(line)
+                #print(i)
+                if i < len(l_out):
+                    line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
+                    pairs.append(line)
 
         # Reverse pairs, make Lang instances
         if load_vocab_file is not None:
@@ -395,7 +397,7 @@ class NMT:
         pairs = self.filterPairs(pairs)
         print("Trimmed to %s sentence pairs" % len(pairs))
         print("Counting words...")
-        if self.vocab_lang is not None:
+        if v_name is not None:
             v = self.open_sentences(self.vocab_lang.name)
             for word in v:
                 self.vocab_lang.addSentence(word.strip())
