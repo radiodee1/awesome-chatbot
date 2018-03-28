@@ -338,14 +338,16 @@ class NMT:
 
     def readLangs(self,lang1, lang2, reverse=False, load_vocab_file=None):
         print("Reading lines...")
-
-        l_in = self.open_sentences(hparams['data_dir'] + lang1)
-        l_out = self.open_sentences(hparams['data_dir'] + lang2)
-
         pairs = []
-        for i in range(len(l_in)):
-            line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
-            pairs.append(line)
+        if not self.do_interactive:
+
+            l_in = self.open_sentences(hparams['data_dir'] + lang1)
+            l_out = self.open_sentences(hparams['data_dir'] + lang2)
+
+            #pairs = []
+            for i in range(len(l_in)):
+                line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
+                pairs.append(line)
 
         # Reverse pairs, make Lang instances
         if load_vocab_file is not None:

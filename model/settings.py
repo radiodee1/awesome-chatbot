@@ -4,7 +4,7 @@ hparams = {
     'save_dir': "../saved/",
     'data_dir': "../data/",
     'embed_name':'embed.txt', #used for glove. Note: glove vectors don't have contractions!!
-    'vocab_name':None, # "vocab.big.txt", ## if you set this to None the pytorch model should work with 2 languages
+    'vocab_name': "vocab.big.txt", ## if you set this to None the pytorch model should work with 2 languages
     'test_name': "test",
     'test_size': 100,
     'train_name': "train",
