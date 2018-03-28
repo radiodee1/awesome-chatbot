@@ -67,7 +67,6 @@ class EncoderBiRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(EncoderBiRNN, self).__init__()
         self.hidden_size = hidden_size
-
         self.embedding = nn.Embedding(input_size, hidden_size)
         self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=True)
 
@@ -75,13 +74,11 @@ class EncoderBiRNN(nn.Module):
     def forward(self, input, hidden):
         embedded = self.embedding(input).view(1, 1, -1)
         output = embedded
-
         bi_output, bi_hidden = self.bi_gru(output,hidden)
-
         return bi_output, bi_hidden
 
     def initHidden(self):
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
+        result = Variable(torch.zeros(2, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
         else:
@@ -545,7 +542,7 @@ class NMT:
 
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
-        encoder_hidden = encoder.initHidden()
+        encoder_hidden =encoder.initHidden()# Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
@@ -564,19 +561,21 @@ class NMT:
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(
                 input_variable[ei], encoder_hidden)
+            print(encoder_output.size(),encoder_hidden.size(), '<--', ei)
             encoder_outputs[ei] = encoder_output[0][0]
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
+        #decoder_hidden = torch.cat((encoder_hidden[0], encoder_hidden[1]),1)
 
         use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
 
         if use_teacher_forcing:
             # Teacher forcing: Feed the target as the next input
             for di in range(target_length):
-                print(di,'di', decoder_input.size(),decoder_hidden.size(), encoder_outputs.size(), target_variable[di].size())
+                print(di,'di', decoder_hidden.size(),'<', encoder_outputs.size())
                 decoder_output, decoder_hidden, decoder_attention = decoder(
                     decoder_input, decoder_hidden, encoder_outputs)
                 loss += criterion(decoder_output, target_variable[di])
@@ -585,7 +584,7 @@ class NMT:
         else:
             # Without teacher forcing: use its own predictions as the next input
             for di in range(target_length):
-                print(di,'di', decoder_input.size(),decoder_hidden.size(), encoder_outputs.size(), target_variable[di].size())
+                print(di,'di', decoder_hidden.size(),'<', encoder_outputs.size() )
 
                 decoder_output, decoder_hidden, decoder_attention = decoder(
                     decoder_input, decoder_hidden, encoder_outputs)
