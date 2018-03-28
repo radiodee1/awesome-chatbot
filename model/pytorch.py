@@ -541,7 +541,8 @@ class NMT:
             else:
                 print("=> no checkpoint found at '"+ basename + "'")
 
-
+    def _mod_hidden(self, encoder_hidden):
+        return  torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
         encoder_hidden =encoder.initHidden()# Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
@@ -569,7 +570,7 @@ class NMT:
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
-        decoder_hidden = torch.cat((encoder_hidden, encoder_hidden),2)[0].view(1,1,512)
+        decoder_hidden =self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden),2)[0].view(1,1,512)
 
         use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
 
@@ -687,14 +688,13 @@ class NMT:
             encoder_output, encoder_hidden = encoder(input_variable[ei],
                                                      encoder_hidden)
 
-
             encoder_outputs[ei] = encoder_outputs[ei] + encoder_output[0][0]
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
-        decoder_hidden = torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
+        decoder_hidden = self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
 
         decoded_words = []
         decoder_attentions = torch.zeros(max_length, max_length)
