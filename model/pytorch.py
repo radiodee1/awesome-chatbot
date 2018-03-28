@@ -278,11 +278,12 @@ class NMT:
         pass
 
     def task_train_epochs(self,num=0):
+        lr = hparams['learning_rate']
         if num == 0:
             num = hparams['epochs']
         for i in range(num):
             self.printable = ' epoch #' + str(i+1)
-            self.trainIters(None, None, 75000, print_every=self.print_every)
+            self.trainIters(None, None, 75000, print_every=self.print_every, learning_rate=lr)
             self.save_checkpoint()
         pass
 
@@ -523,7 +524,7 @@ class NMT:
             basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth.tar'
             if filename is not None: basename = filename
             if os.path.isfile(basename):
-                print("=> loading checkpoint '{}'".format(basename))
+                print("loading checkpoint '{}'".format(basename))
                 checkpoint = torch.load(basename)
                 #print(checkpoint)
                 try:
@@ -539,12 +540,26 @@ class NMT:
                 if self.opt_2 is not None:
                     self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
 
-                print("=> loaded checkpoint '"+ basename + "' ")
+                print("loaded checkpoint '"+ basename + "' ")
             else:
-                print("=> no checkpoint found at '"+ basename + "'")
+                print("no checkpoint found at '"+ basename + "'")
 
     def _mod_hidden(self, encoder_hidden):
-        return  torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
+        return  torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, self.hidden_size * 2)
+
+    def _shorten(self,sentence):
+        #assume input is list already
+        saved = [hparams['eol']]
+        punct = ['.','!','?']
+        out = []
+        for i in sentence:
+            if i in saved: break
+            if i != hparams['sol']:
+                out.append(i)
+            if i in punct: break
+            saved.append(i)
+        return ' '.join(out)
+
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
         encoder_hidden =encoder.initHidden()# Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
@@ -661,6 +676,7 @@ class NMT:
                 words, _ = self.evaluate(None, None, choice[0])
                 #print(choice)
                 print('ans:',words)
+                print('try:',self._shorten(words))
                 print("-----")
 
             if iter % plot_every == 0 and False:
@@ -740,8 +756,8 @@ if __name__ == '__main__':
         n.model_2 = n.model_2.cuda()
 
     if n.do_train:
-
-        n.trainIters(None, None, 75000, print_every=n.print_every)
+        lr = hparams['learning_rate']
+        n.trainIters(None, None, 75000, print_every=n.print_every, learning_rate=lr)
     if n.do_train_long:
         n.task_train_epochs()
 
