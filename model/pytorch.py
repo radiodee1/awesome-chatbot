@@ -63,6 +63,29 @@ eng_prefixes = [
 ]
 teacher_forcing_ratio = 0.5
 
+class EncoderBiRNN(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(EncoderBiRNN, self).__init__()
+        self.hidden_size = hidden_size
+
+        self.embedding = nn.Embedding(input_size, hidden_size)
+        self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=True)
+
+
+    def forward(self, input, hidden):
+        embedded = self.embedding(input).view(1, 1, -1)
+        output = embedded
+
+        bi_output, bi_hidden = self.bi_gru(output,hidden)
+
+        return bi_output, bi_hidden
+
+    def initHidden(self):
+        result = Variable(torch.zeros(1, 1, self.hidden_size))
+        if use_cuda:
+            return result.cuda()
+        else:
+            return result
 
 class EncoderRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -533,7 +556,7 @@ class NMT:
         if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
         if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size *2 ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         loss = 0
@@ -553,6 +576,7 @@ class NMT:
         if use_teacher_forcing:
             # Teacher forcing: Feed the target as the next input
             for di in range(target_length):
+                print(di,'di', decoder_input.size(),decoder_hidden.size(), encoder_outputs.size(), target_variable[di].size())
                 decoder_output, decoder_hidden, decoder_attention = decoder(
                     decoder_input, decoder_hidden, encoder_outputs)
                 loss += criterion(decoder_output, target_variable[di])
@@ -561,6 +585,8 @@ class NMT:
         else:
             # Without teacher forcing: use its own predictions as the next input
             for di in range(target_length):
+                print(di,'di', decoder_input.size(),decoder_hidden.size(), encoder_outputs.size(), target_variable[di].size())
+
                 decoder_output, decoder_hidden, decoder_attention = decoder(
                     decoder_input, decoder_hidden, encoder_outputs)
                 topv, topi = decoder_output.data.topk(1)
@@ -654,7 +680,7 @@ class NMT:
 
         if input_length >= max_length : input_length = max_length
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size))
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         for ei in range(input_length):
@@ -699,8 +725,10 @@ if __name__ == '__main__':
     n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
     #print(random.choice(pairs))
 
-    n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
-    n.model_2 = AttnDecoderRNN(n.hidden_size, n.output_lang.n_words, dropout_p=0.1)
+    #n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
+
+    n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
+    n.model_2 = AttnDecoderRNN(n.hidden_size *2, n.output_lang.n_words, dropout_p=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()

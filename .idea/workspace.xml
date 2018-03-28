@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,8 +27,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2231">
-              <caret line="354" column="55" lean-forward="false" selection-start-line="354" selection-start-column="55" selection-end-line="354" selection-end-column="55" />
+            <state relative-caret-position="485">
+              <caret line="83" column="39" lean-forward="false" selection-start-line="83" selection-start-column="39" selection-end-line="83" selection-end-column="39" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -133,14 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>DecoderRNN</find>
-      <find>EncoderRNN</find>
-      <find>base_filename</find>
-      <find>do_review</find>
-      <find>task_normal_train</find>
-      <find>train_to</find>
-      <find>10</find>
-      <find>task_review_weights</find>
       <find>print_every</find>
       <find>save_checkpoint</find>
       <find>input_lang</find>
@@ -161,8 +154,16 @@
       <find>load_vocab_file</find>
       <find>reverse</find>
       <find>prepareData</find>
-      <find>variablesFromPair</find>
       <find>eng_prefixes</find>
+      <find>2</find>
+      <find>hidden_size</find>
+      <find>model_1</find>
+      <find>decoder_input</find>
+      <find>target_variable</find>
+      <find>variablesFromPair</find>
+      <find>Variable</find>
+      <find>AttnDecoderRNN</find>
+      <find>model_2</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -214,7 +215,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="524" />
+    <option name="x" value="525" />
     <option name="y" value="62" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -297,7 +298,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="524" y="62" width="1380" height="1000" extended-state="0" />
+    <frame x="525" y="62" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -576,8 +577,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2231">
-          <caret line="354" column="55" lean-forward="false" selection-start-line="354" selection-start-column="55" selection-end-line="354" selection-end-column="55" />
+        <state relative-caret-position="485">
+          <caret line="83" column="39" lean-forward="false" selection-start-line="83" selection-start-column="39" selection-end-line="83" selection-end-column="39" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
