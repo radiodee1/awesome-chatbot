@@ -75,6 +75,8 @@ class EncoderBiRNN(nn.Module):
         embedded = self.embedding(input).view(1, 1, -1)
         output = embedded
         bi_output, bi_hidden = self.bi_gru(output,hidden)
+        bi_output = (bi_output[:, :, :self.hidden_size] +
+                       bi_output[:, :, self.hidden_size:])
         return bi_output, bi_hidden
 
     def initHidden(self):
@@ -545,7 +547,9 @@ class NMT:
                 print("no checkpoint found at '"+ basename + "'")
 
     def _mod_hidden(self, encoder_hidden):
-        return  torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, self.hidden_size * 2)
+        z = torch.cat((encoder_hidden,), 2)[0].view(1, 1, self.hidden_size )
+        #print(z.size())
+        return z
 
     def _shorten(self,sentence):
         #assume input is list already
@@ -562,7 +566,7 @@ class NMT:
 
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
-        encoder_hidden =encoder.initHidden()# Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
+        encoder_hidden = Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
@@ -573,7 +577,7 @@ class NMT:
         if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
         if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size *2 ))
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size  ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         loss = 0
@@ -699,7 +703,7 @@ class NMT:
 
         if input_length >= max_length : input_length = max_length
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size *2 ))
+        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size  ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         for ei in range(input_length):
@@ -749,7 +753,7 @@ if __name__ == '__main__':
     #n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
 
     n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
-    n.model_2 = AttnDecoderRNN(n.hidden_size *2, n.output_lang.n_words, dropout_p=0.1)
+    n.model_2 = AttnDecoderRNN(n.hidden_size , n.output_lang.n_words, dropout_p=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()

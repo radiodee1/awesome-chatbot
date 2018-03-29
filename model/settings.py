@@ -10,7 +10,7 @@ hparams = {
     'train_name': "train",
     'src_ending': "from",
     'tgt_ending': "to",
-    'base_filename': "bidirectional-large",
+    'base_filename': "bidirectional-add",
     'base_file_num': 1,
     'num_vocab_total': 20000,
     'batch_size': 256,#64, #256
