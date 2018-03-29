@@ -671,7 +671,7 @@ class NMT:
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) + ' ' + self.printable)
                 if iter % (print_every * 10) == 0:
                     save_num +=1
-                    if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > 10):
+                    if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > 5):
                         save_num = 0
                         self.save_checkpoint(num=iter)
                         self.best_loss = print_loss_avg
