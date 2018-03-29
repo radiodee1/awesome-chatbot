@@ -20,6 +20,10 @@ import tokenize_weak
 
 
 '''
+Some code came from:
+
+https://github.com/A-Jacobson/minimal-nmt/blob/master/nmt_tutorial.ipynb
+
 This code is originally written by Sean Robertson and can be found at the following site:
 
 http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html#sphx-glr-intermediate-seq2seq-translation-tutorial-py
@@ -62,6 +66,33 @@ eng_prefixes = [
     "they are", "they're "
 ]
 teacher_forcing_ratio = 0.5
+
+class LuongAttention(nn.Module):
+    """
+    LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
+    https://arxiv.org/pdf/1508.04025.pdf
+    """
+
+    def __init__(self, dim):
+        super(LuongAttention, self).__init__()
+        self.W = nn.Linear(dim, dim, bias=False)
+
+    def score(self, decoder_hidden, encoder_out):
+        # linear transform encoder out (seq, batch, dim)
+        encoder_out = self.W(encoder_out)
+        # (batch, seq, dim) | (2, 15, 50)
+        encoder_out = encoder_out.permute(1, 0, 2)
+        # (2, 15, 50) @ (2, 50, 1)
+        return encoder_out @ decoder_hidden.permute(1, 2, 0)
+
+    def forward(self, decoder_hidden, encoder_out):
+        energies = self.score(decoder_hidden, encoder_out)
+        mask = F.softmax(energies, dim=1)  # batch, seq, 1
+        context = encoder_out.permute(
+            1, 2, 0) @ mask  # (2, 50, 15) @ (2, 15, 1)
+        context = context.permute(2, 0, 1)  # (seq, batch, dim)
+        mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
+        return context, mask
 
 class EncoderBiRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -170,6 +201,27 @@ class AttnDecoderRNN(nn.Module):
             return result.cuda()
         else:
             return result
+
+class Decoder(nn.Module):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
+        super(Decoder, self).__init__()
+        self.n_layers = n_layers
+        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        self.attention = LuongAttention(hidden_dim)
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
+                          dropout=dropout)
+        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
+
+    def forward(self, output, encoder_out, decoder_hidden):
+        """
+        decodes one output frame
+        """
+        embedded = self.embed(output)  # (1, batch, embed_dim)
+        context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
+                                              decoder_hidden)
+        output = self.out(torch.cat([rnn_output, context], 2))
+        return output, decoder_hidden, mask
 
 class Lang:
     def __init__(self, name):
@@ -609,7 +661,7 @@ class NMT:
             for di in range(target_length):
                 #print(di,'di', decoder_hidden.size(),'<', encoder_outputs.size() )
 
-                decoder_output, decoder_hidden, decoder_attention = decoder(
+                decoder_output, decoder_hidden, decoder_attention = decoder( #encoder_outputs, decoder_input, decoder_hidden)
                     decoder_input, decoder_hidden, encoder_outputs)
                 topv, topi = decoder_output.data.topk(1)
                 ni = topi[0][0]
@@ -728,8 +780,10 @@ class NMT:
         decoder_attentions = torch.zeros(max_length, max_length)
 
         for di in range(max_length):
-            decoder_output, decoder_hidden, decoder_attention = decoder(
+            decoder_output, decoder_hidden, decoder_attention = decoder( #encoder_outputs, decoder_input, decoder_hidden)
                 decoder_input, decoder_hidden, encoder_outputs)
+            #decoder_input, decoder_hidden, encoder_outputs)
+
             decoder_attentions[di] = decoder_attention.data
             topv, topi = decoder_output.data.topk(1)
             ni = topi[0][0]
@@ -760,6 +814,7 @@ if __name__ == '__main__':
 
     n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
     n.model_2 = AttnDecoderRNN(n.hidden_size , n.output_lang.n_words, dropout_p=0.1)
+    #n.model_2 = Decoder(n.output_lang.n_words, 100 ,n.hidden_size, 1 ,dropout=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
