@@ -12,7 +12,7 @@ hparams = {
     'tgt_ending': "to",
     'base_filename': "bidirectional-add",
     'base_file_num': 1,
-    'num_vocab_total': 20000,
+    'num_vocab_total': 15000,
     'batch_size': 256,#64, #256
     'steps_to_stats': 50,
     'epochs': 100,
