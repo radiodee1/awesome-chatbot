@@ -639,6 +639,7 @@ class NMT:
 
         start = time.time()
         plot_losses = []
+        save_num = 0
         print_loss_total = 0  # Reset every print_every
         plot_loss_total = 0  # Reset every plot_every
 
@@ -668,10 +669,13 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) + ' ' + self.printable)
-                if iter % (print_every * 10) == 0 and (self.best_loss is None or print_loss_avg <= self.best_loss):
-                    self.save_checkpoint(num=iter)
-                    self.best_loss = print_loss_avg
-                    print('=======save file========')
+                if iter % (print_every * 10) == 0:
+                    save_num +=1
+                    if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > 10):
+                        save_num = 0
+                        self.save_checkpoint(num=iter)
+                        self.best_loss = print_loss_avg
+                        print('=======save file========')
                 print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)

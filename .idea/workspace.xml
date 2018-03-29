@@ -4,7 +4,6 @@
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" afterPath="$PROJECT_DIR$/model/pytorch.py" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" afterPath="$PROJECT_DIR$/model/settings.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -28,8 +27,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="449">
-              <caret line="705" column="79" lean-forward="false" selection-start-line="705" selection-start-column="79" selection-end-line="705" selection-end-column="79" />
+            <state relative-caret-position="683">
+              <caret line="673" column="22" lean-forward="true" selection-start-line="673" selection-start-column="22" selection-end-line="673" selection-end-column="22" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -549,8 +548,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="449">
-          <caret line="705" column="79" lean-forward="false" selection-start-line="705" selection-start-column="79" selection-end-line="705" selection-end-column="79" />
+        <state relative-caret-position="683">
+          <caret line="673" column="22" lean-forward="true" selection-start-line="673" selection-start-column="22" selection-end-line="673" selection-end-column="22" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
