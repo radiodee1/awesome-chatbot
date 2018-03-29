@@ -26,8 +26,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="683">
-              <caret line="673" column="98" lean-forward="false" selection-start-line="673" selection-start-column="98" selection-end-line="673" selection-end-column="98" />
+            <state relative-caret-position="323">
+              <caret line="679" column="60" lean-forward="false" selection-start-line="679" selection-start-column="60" selection-end-line="679" selection-end-column="60" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -133,9 +133,7 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>word2count</find>
       <find>Lang</find>
-      <find>autoencode</find>
       <find>word2index</find>
       <find>addSentence</find>
       <find>sql_insert_replace_comment</find>
@@ -163,6 +161,8 @@
       <find>trainIters</find>
       <find>2</find>
       <find>_mod_hidden</find>
+      <find>save_checkpoint</find>
+      <find>autoencode</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -547,8 +547,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="683">
-          <caret line="673" column="98" lean-forward="false" selection-start-line="673" selection-start-column="98" selection-end-line="673" selection-end-column="98" />
+        <state relative-caret-position="323">
+          <caret line="679" column="60" lean-forward="false" selection-start-line="679" selection-start-column="60" selection-end-line="679" selection-end-column="60" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>

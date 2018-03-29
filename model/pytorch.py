@@ -511,12 +511,12 @@ class NMT:
         return z
         pass
 
-    def save_checkpoint(self, state=None, is_best=True, num=0, converted=False):
+    def save_checkpoint(self, state=None, is_best=True, num=0, converted=False, extra=''):
         if state is None:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
-        torch.save(state, basename + '.' + str(num)+ '.pth.tar')
+        torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
             os.system('cp '+ basename + '.' + str(num) + '.pth.tar' + ' '  +
                       basename + '.best.pth.tar')
@@ -673,9 +673,11 @@ class NMT:
                     save_num +=1
                     if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > 5):
                         save_num = 0
-                        self.save_checkpoint(num=iter)
+                        extra = ''
+                        if hparams['autoencode'] == True: extra = '.autoencode'
+                        self.save_checkpoint(num=iter,extra=extra)
                         self.best_loss = print_loss_avg
-                        print('=======save file========')
+                        print('======= save file '+ extra+' ========')
                 print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(pairs)
