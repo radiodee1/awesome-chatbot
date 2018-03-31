@@ -833,6 +833,10 @@ class NMT:
                 plot_losses.append(plot_loss_avg)
                 plot_loss_total = 0
             '''
+            loss.backward()
+
+            encoder_optimizer.step()
+            decoder_optimizer.step()
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
         if (encoder is not None and decoder is not None and
@@ -887,22 +891,27 @@ class NMT:
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
-            output = Variable(output.data.max(dim=2)[1])
-
+            output = Variable(output.data.max(dim=2)[1]) #1
+            #next_word_probs = F.softmax(output.data, dim=2)
+            #print(next_word_probs,'output')
+            #probabilities, next_words = next_word_probs.topk(1)
+            #print(next_words,'softmax')
+            #print(output,'max')
             #print(mask.data.size())
             if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
-            topv, topi = output.data.topk(1)
-            ni = topi[0][0]
-            if ni == EOS_token:
+            #topv, topi = output.data.topk(1)
+            ni = output # = next_words[0][0]
+            #print(ni,'ni')
+            if int(ni) == int(EOS_token):
                 xxx = hparams['eol']
                 decoded_words.append(xxx)
                 print('eol found.')
                 break
             else:
-                decoded_words.append(self.output_lang.index2word[ni])
+                decoded_words.append(self.output_lang.index2word[int(ni)])
 
-            decoder_input = Variable(torch.LongTensor([[ni]]))
-            decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+            #decoder_input = Variable(torch.LongTensor([[ni]]))
+            #decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         return decoded_words, decoder_attentions[:di + 1]
 
