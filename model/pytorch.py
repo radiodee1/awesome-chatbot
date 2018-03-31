@@ -649,7 +649,7 @@ class NMT:
             target = torch.cat([torch.LongTensor(target), t], 0)
         output = output.permute(1,0,2)[0]
         #target = Variable(target)
-        print(output.size(), target.size(),'o,t')
+        #print(output.size(), target.size(),'o,t')
         return output, target
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
@@ -695,7 +695,7 @@ class NMT:
 
         #encoder_outputs = encoder_outputs.view(1,max_length,self.hidden_size)
 
-        use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
+        #use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
 
         targets = input_variable
         outputs = []
@@ -703,7 +703,7 @@ class NMT:
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
         output = targets[0].unsqueeze(0)  # start token
         for t in range( max_length-1):
-            print(t,'t', targets.size())
+            #print(t,'t', targets.size())
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
@@ -711,7 +711,7 @@ class NMT:
             # teacher forcing
             is_teacher = random.random() < teacher_forcing_ratio
             if is_teacher and t < targets.size()[0]:
-                print(output,'out')
+                #print(output,'out')
                 output = targets[t].unsqueeze(0)
                 #print(output)
 
@@ -795,15 +795,13 @@ class NMT:
             outputs, masks = self.train(input_variable, target_variable, encoder,
                          decoder, encoder_optimizer, decoder_optimizer, criterion)
 
-            print(target_variable.size(),'tv2', outputs.size(),'out')
+            #print(target_variable.size(),'tv2', outputs.size(),'out')
 
             outputs, target_variable = self._match_padding(outputs,target_variable)
 
-            loss = criterion(outputs#.unsqueeze(0)#[iter].view(-1, outputs.size(2))
-                             ,
+            loss = criterion(outputs,
                             Variable(target_variable)#.unsqueeze(0)
-                                   #, ignore_index=0
-                                   )
+                            )
 
             print_loss_total += loss
             #plot_loss_total += loss
@@ -848,21 +846,27 @@ class NMT:
 
         input_variable = self.variableFromSentence(self.input_lang, sentence)
         input_length = input_variable.size()[0]
-        encoder_hidden = encoder.initHidden()
+        #encoder_hidden = encoder.initHidden()
+        encoder_hidden = torch.zeros((self.hidden_size * 2 * encoder.n_layers))
+        decoder_hidden = encoder_hidden.view(1,1,self.hidden_size * 2 * encoder.n_layers)
 
         if input_length >= max_length : input_length = max_length
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size  ))
+        encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
+        encoder_output, encoder_hidden = encoder(input_variable)
+        '''
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(input_variable[ei],
                                                      encoder_hidden)
-
+        
+        for ei in range (input_length):
             encoder_outputs[ei] = encoder_outputs[ei] + encoder_output[0][0]
-
+        '''
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+        output = decoder_input
 
         decoder_hidden = encoder_hidden
         #decoder_hidden = self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
@@ -870,13 +874,21 @@ class NMT:
         decoded_words = []
         decoder_attentions = torch.zeros(max_length, max_length)
 
+        outputs = []
+        masks = []
         for di in range(max_length):
-            decoder_output, decoder_hidden, decoder_attention = decoder( #encoder_outputs, decoder_input, decoder_hidden)
-                decoder_input, decoder_hidden, encoder_outputs)
+            #decoder_output, decoder_hidden, decoder_attention = decoder( #encoder_outputs, decoder_input, decoder_hidden)
+            #    decoder_input, decoder_hidden, encoder_outputs)
             #decoder_input, decoder_hidden, encoder_outputs)
+            #encoder_output = encoder_output.permute(1,0,2)
+            print(di,'di', output.size(), encoder_output.size(), decoder_hidden.size())
+            output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
+            outputs.append(output)
+            masks.append(mask.data)
+            output = Variable(output.data.max(dim=2)[1])
 
-            decoder_attentions[di] = decoder_attention.data
-            topv, topi = decoder_output.data.topk(1)
+            decoder_attentions[di] = mask.data
+            topv, topi = output.data.topk(1)
             ni = topi[0][0]
             if ni == EOS_token:
                 xxx = hparams['eol']
