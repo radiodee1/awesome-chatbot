@@ -637,6 +637,20 @@ class NMT:
             saved.append(i)
         return ' '.join(out)
 
+    def _match_padding(self, output, target):
+        #target = Variable(target)
+        target = target.view(-1).data
+        if len(target) > len(output):
+            target = target[0:len(output)]
+        if len(output) > len(target):
+            t = torch.zeros(len(output) - len(target)).long()
+            #t = Variable(t)
+            #print(t.size(), t.data.type(),'t-out', target.size(), target.data.type())
+            target = torch.cat([torch.LongTensor(target), t], 0)
+        output = output.permute(1,0,2)[0]
+        #target = Variable(target)
+        print(output.size(), target.size(),'o,t')
+        return output, target
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
         #encoder_hidden = Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
@@ -688,7 +702,7 @@ class NMT:
         masks = []
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
         output = targets[0].unsqueeze(0)  # start token
-        for t in range(1, max_length):
+        for t in range( max_length-1):
             print(t,'t', targets.size())
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
@@ -762,7 +776,10 @@ class NMT:
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
         training_pairs = [self.variablesFromPair(random.choice(pairs))
                           for i in range(n_iters)]
-        criterion = nn.NLLLoss()
+
+        #criterion = nn.NLLLoss()
+        criterion = nn.CrossEntropyLoss()
+        #criterion = nn.Class()
 
         if self.opt_1 is None and self.opt_2 is None:
             self.opt_1 = encoder_optimizer
@@ -775,12 +792,18 @@ class NMT:
             input_variable = training_pair[0]
             target_variable = training_pair[1]
 
-            print(target_variable,'tv2')
             outputs, masks = self.train(input_variable, target_variable, encoder,
                          decoder, encoder_optimizer, decoder_optimizer, criterion)
 
-            loss = F.cross_entropy(outputs.view(-1, outputs.size(2)),
-                            target_variable[1:].view(-1), ignore_index=1)
+            print(target_variable.size(),'tv2', outputs.size(),'out')
+
+            outputs, target_variable = self._match_padding(outputs,target_variable)
+
+            loss = criterion(outputs#.unsqueeze(0)#[iter].view(-1, outputs.size(2))
+                             ,
+                            Variable(target_variable)#.unsqueeze(0)
+                                   #, ignore_index=0
+                                   )
 
             print_loss_total += loss
             #plot_loss_total += loss
