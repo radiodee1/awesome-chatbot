@@ -670,7 +670,6 @@ class NMT:
         #encoder_hiddens = Variable(torch.zeros(max_length, self.hidden_size))
         #encoder_hiddens = encoder_hiddens.cuda() if use_cuda else encoder_hiddens
 
-        loss = 0
         '''
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(
@@ -799,11 +798,9 @@ class NMT:
 
             outputs, target_variable = self._match_padding(outputs,target_variable)
 
-            loss = criterion(outputs,
-                            Variable(target_variable)#.unsqueeze(0)
-                            )
+            loss = criterion(outputs, Variable(target_variable))
 
-            print_loss_total += loss
+            print_loss_total += float(loss)
             #plot_loss_total += loss
 
             if iter % print_every == 0:
@@ -830,10 +827,12 @@ class NMT:
                 print('try:',self._shorten(words))
                 print("-----")
 
+            '''
             if iter % plot_every == 0 and False:
                 plot_loss_avg = plot_loss_total / plot_every
                 plot_losses.append(plot_loss_avg)
                 plot_loss_total = 0
+            '''
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
         if (encoder is not None and decoder is not None and
@@ -846,14 +845,14 @@ class NMT:
 
         input_variable = self.variableFromSentence(self.input_lang, sentence)
         input_length = input_variable.size()[0]
-        #encoder_hidden = encoder.initHidden()
-        encoder_hidden = torch.zeros((self.hidden_size * 2 * encoder.n_layers))
-        decoder_hidden = encoder_hidden.view(1,1,self.hidden_size * 2 * encoder.n_layers)
 
-        if input_length >= max_length : input_length = max_length
+        decoder_hidden = torch.zeros((self.hidden_size  * encoder.n_layers))
+        decoder_hidden = decoder_hidden.view(1,1,self.hidden_size * encoder.n_layers)
 
-        encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
-        encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+        #if input_length >= max_length : input_length = max_length
+
+        #encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
+        #encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         encoder_output, encoder_hidden = encoder(input_variable)
         '''
@@ -868,11 +867,13 @@ class NMT:
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
         output = decoder_input
 
-        decoder_hidden = encoder_hidden
+        #decoder_hidden = encoder_hidden
         #decoder_hidden = self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
 
         decoded_words = []
-        decoder_attentions = torch.zeros(max_length, max_length)
+        decoder_attentions = torch.zeros(encoder_output.size()[0] , encoder_output.size()[0] )
+        decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
+
 
         outputs = []
         masks = []
@@ -881,13 +882,15 @@ class NMT:
             #    decoder_input, decoder_hidden, encoder_outputs)
             #decoder_input, decoder_hidden, encoder_outputs)
             #encoder_output = encoder_output.permute(1,0,2)
-            print(di,'di', output.size(), encoder_output.size(), decoder_hidden.size())
+
+            #print(di,'di', output.size(), encoder_output.size(), decoder_hidden.size())
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
             output = Variable(output.data.max(dim=2)[1])
 
-            decoder_attentions[di] = mask.data
+            #print(mask.data.size())
+            if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
             topv, topi = output.data.topk(1)
             ni = topi[0][0]
             if ni == EOS_token:
