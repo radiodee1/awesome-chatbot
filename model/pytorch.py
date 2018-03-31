@@ -202,6 +202,25 @@ class AttnDecoderRNN(nn.Module):
         else:
             return result
 
+class Encoder(nn.Module):
+    def __init__(self, source_vocab_size, embed_dim, hidden_dim,
+                 n_layers, dropout):
+        super(Encoder, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers,
+                          dropout=dropout, bidirectional=True)
+
+    def forward(self, source, hidden=None):
+        embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        encoder_out, encoder_hidden = self.gru(
+            embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        # sum bidirectional outputs, the other option is to retain concat features
+        encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+                       encoder_out[:, :, self.hidden_dim:])
+        return encoder_out, encoder_hidden
+
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
         super(Decoder, self).__init__()
@@ -217,7 +236,9 @@ class Decoder(nn.Module):
         decodes one output frame
         """
         embedded = self.embed(output)  # (1, batch, embed_dim)
-        context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        #context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+
         rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
                                               decoder_hidden)
         output = self.out(torch.cat([rnn_output, context], 2))
@@ -570,7 +591,7 @@ class NMT:
         basename = hparams['save_dir'] + hparams['base_filename']
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
-            os.system('cp '+ basename + '.' + str(num) + '.pth.tar' + ' '  +
+            os.system('cp '+ basename + extra +  '.' + str(num) + '.pth.tar' + ' '  +
                       basename + '.best.pth.tar')
 
     def load_checkpoint(self, filename=None):
@@ -618,7 +639,7 @@ class NMT:
 
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
-        encoder_hidden = Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
+        #encoder_hidden = Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
@@ -629,47 +650,88 @@ class NMT:
         if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
         if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
 
-        encoder_outputs = Variable(torch.zeros(max_length, encoder.hidden_size  ))
+        encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
-        loss = 0
+        #encoder_hiddens = Variable(torch.zeros(max_length, self.hidden_size))
+        #encoder_hiddens = encoder_hiddens.cuda() if use_cuda else encoder_hiddens
 
+        loss = 0
+        '''
         for ei in range(input_length):
             encoder_output, encoder_hidden = encoder(
                 input_variable[ei], encoder_hidden)
             encoder_outputs[ei] = encoder_output[0][0]
+            #encoder_hiddens[ei] = encoder_hidden[0][0]
+        '''
+        encoder_output, encoder_hidden = encoder(input_variable)
+
+        #encoder_output = encoder_output.permute(1,0,2)
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
+        #decoder_output = decoder_input
 
-        decoder_hidden = encoder_hidden
-        decoder_hidden =self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden),2)[0].view(1,1,512)
+        decoder_hidden = encoder_hidden.view(1,1,self.hidden_size * 2 * encoder.n_layers)
+        decoder_hidden = (decoder_hidden[:, :, :self.hidden_size * encoder.n_layers] +
+                          decoder_hidden[:, :, self.hidden_size * encoder.n_layers:])
+
+        #decoder_hidden =self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden),2)[0].view(1,1,512)
+        #decoder_hiddens = encoder_hiddens.view(1,max_length,self.hidden_size)
+
+        #encoder_outputs = encoder_outputs.view(1,max_length,self.hidden_size)
 
         use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
 
+        targets = input_variable
+        outputs = []
+        masks = []
+        decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
+        output = targets[0].unsqueeze(0)  # start token
+        for t in range(1, max_length):
+            print(t,'t', targets.size())
+            output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
+            outputs.append(output)
+            masks.append(mask.data)
+            output = Variable(output.data.max(dim=2)[1])
+            # teacher forcing
+            is_teacher = random.random() < teacher_forcing_ratio
+            if is_teacher and t < targets.size()[0]:
+                print(output,'out')
+                output = targets[t].unsqueeze(0)
+                #print(output)
+
+        return torch.cat(outputs), torch.cat(masks).permute(1, 2, 0)  # batch, src, trg
+
+        '''
         if use_teacher_forcing:
             # Teacher forcing: Feed the target as the next input
             for di in range(target_length):
-                #print(di,'di', decoder_hidden.size(),'<', encoder_outputs.size())
-                decoder_output, decoder_hidden, decoder_attention = decoder(
-                    decoder_input, decoder_hidden, encoder_outputs)
-                loss += criterion(decoder_output, target_variable[di])
+                print(di,'di - forcing', decoder_hidden.size(),'<', encoder_output.size(), decoder_input.size())
+                decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, encoder_output, decoder_hidden)
+                    #decoder_input, decoder_hidden, encoder_outputs)
+                print(target_variable[di],'tv')
+                loss += criterion(decoder_output.view(1,self.hidden_size), target_variable[di])
                 decoder_input = target_variable[di]  # Teacher forcing
+
+
 
         else:
             # Without teacher forcing: use its own predictions as the next input
             for di in range(target_length):
-                #print(di,'di', decoder_hidden.size(),'<', encoder_outputs.size() )
+                print(di,'di - no forcing', decoder_hidden.size(),'<', encoder_output.size(), decoder_input.size() )
 
-                decoder_output, decoder_hidden, decoder_attention = decoder( #encoder_outputs, decoder_input, decoder_hidden)
-                    decoder_input, decoder_hidden, encoder_outputs)
+                decoder_output, decoder_hidden, decoder_attention = decoder(  decoder_input,encoder_output, decoder_hidden)
+                    #decoder_input, decoder_hidden, encoder_outputs)
                 topv, topi = decoder_output.data.topk(1)
-                ni = topi[0][0]
-
+                ni = topi[0][0].integer()
+                print(ni,'ni')
                 decoder_input = Variable(torch.LongTensor([[ni]]))
                 decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
-                loss += criterion(decoder_output, target_variable[di])
+                print(target_variable[di],'tv')
+                loss += criterion(decoder_output.view(1,self.hidden_size), target_variable[di])
+
                 if ni == EOS_token:
                     break
 
@@ -679,6 +741,7 @@ class NMT:
         decoder_optimizer.step()
 
         return loss.data[0] / target_length
+        '''
 
     def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
         if (encoder is not None and decoder is not None and
@@ -712,10 +775,15 @@ class NMT:
             input_variable = training_pair[0]
             target_variable = training_pair[1]
 
-            loss = self.train(input_variable, target_variable, encoder,
+            print(target_variable,'tv2')
+            outputs, masks = self.train(input_variable, target_variable, encoder,
                          decoder, encoder_optimizer, decoder_optimizer, criterion)
+
+            loss = F.cross_entropy(outputs.view(-1, outputs.size(2)),
+                            target_variable[1:].view(-1), ignore_index=1)
+
             print_loss_total += loss
-            plot_loss_total += loss
+            #plot_loss_total += loss
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
@@ -774,7 +842,7 @@ class NMT:
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
 
         decoder_hidden = encoder_hidden
-        decoder_hidden = self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
+        #decoder_hidden = self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
 
         decoded_words = []
         decoder_attentions = torch.zeros(max_length, max_length)
@@ -811,10 +879,10 @@ if __name__ == '__main__':
     #print(random.choice(pairs))
 
     #n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
-
-    n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
-    n.model_2 = AttnDecoderRNN(n.hidden_size , n.output_lang.n_words, dropout_p=0.1)
-    #n.model_2 = Decoder(n.output_lang.n_words, 100 ,n.hidden_size, 1 ,dropout=0.1)
+    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,1, dropout=0.1)
+    #n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
+    #n.model_2 = AttnDecoderRNN(n.hidden_size , n.output_lang.n_words, dropout_p=0.1)
+    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, 1 ,dropout=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
