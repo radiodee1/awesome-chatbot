@@ -65,7 +65,7 @@ eng_prefixes = [
     "we are", "we're ",
     "they are", "they're "
 ]
-teacher_forcing_ratio = 0.5
+teacher_forcing_ratio = 0.1
 
 class LuongAttention(nn.Module):
     """
@@ -236,8 +236,8 @@ class Decoder(nn.Module):
         decodes one output frame
         """
         embedded = self.embed(output)  # (1, batch, embed_dim)
-        context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-        #context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        #context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
 
         rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
                                               decoder_hidden)
@@ -653,108 +653,92 @@ class NMT:
         return output, target
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
-        #encoder_hidden = Variable(torch.zeros(2, 1, self.hidden_size)) #encoder.initHidden()
+
+        def simple_max(t):
+            #print(t.size())
+            t = list(t.float()[0][0])
+            #print(len(t), 't after')
+            z = 0
+            max = 0
+            for x in range(len(t)):
+                #print('many')
+                if float(t[x]) > max:
+                    z = x
+                    max = float(t[x])
+                    #print('some')
+            return z
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
-        input_length = input_variable.size()[0]
-        target_length = target_variable.size()[0]
+        #input_length = input_variable.size()[0]
+        #target_length = target_variable.size()[0]
 
-        if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
-        if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
+        #if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
+        #if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
 
         encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
         encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
-        #encoder_hiddens = Variable(torch.zeros(max_length, self.hidden_size))
-        #encoder_hiddens = encoder_hiddens.cuda() if use_cuda else encoder_hiddens
 
-        '''
-        for ei in range(input_length):
-            encoder_output, encoder_hidden = encoder(
-                input_variable[ei], encoder_hidden)
-            encoder_outputs[ei] = encoder_output[0][0]
-            #encoder_hiddens[ei] = encoder_hidden[0][0]
-        '''
         encoder_output, encoder_hidden = encoder(input_variable)
 
         #encoder_output = encoder_output.permute(1,0,2)
 
+
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-        #decoder_output = decoder_input
 
         decoder_hidden = encoder_hidden.view(1,1,self.hidden_size * 2 * encoder.n_layers)
         decoder_hidden = (decoder_hidden[:, :, :self.hidden_size * encoder.n_layers] +
                           decoder_hidden[:, :, self.hidden_size * encoder.n_layers:])
-
-        #decoder_hidden =self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden),2)[0].view(1,1,512)
-        #decoder_hiddens = encoder_hiddens.view(1,max_length,self.hidden_size)
-
-        #encoder_outputs = encoder_outputs.view(1,max_length,self.hidden_size)
-
-        #use_teacher_forcing = True if random.random() < teacher_forcing_ratio else False
-
-        targets = input_variable
+        '''
+        print(input_variable)
+        print(target_variable)
+        for i in input_variable: print(self.input_lang.index2word[int(i)], end=' ')
+        print(' words ')
+        '''
+        targets = target_variable #input_variable
         outputs = []
         masks = []
+        outputs_index = []
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
         output = targets[0].unsqueeze(0)  # start token
-        for t in range( max_length-1):
+        #output = decoder_input
+        is_teacher = random.random() < teacher_forcing_ratio
+
+
+        for t in range( max_length - 1):
             #print(t,'t', targets.size())
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
-            output = Variable(output.data.max(dim=2)[1])
+            #print(output.size(),'size')
+            #print(torch.max(output.data,0),'data')
+
+            #output = Variable(output.data.max(dim=2)[1])
+            output = simple_max(output)
+            #print(output,'max')
+            output = Variable(torch.LongTensor([output])).view(1,1)
+            #outputs_index.append(int(output))
+            #print(output.size(),'label', is_teacher,'forcing')
             # teacher forcing
-            is_teacher = random.random() < teacher_forcing_ratio
+            #is_teacher = random.random() < teacher_forcing_ratio
             if is_teacher and t < targets.size()[0]:
                 #print(output,'out')
                 output = targets[t].unsqueeze(0)
                 #print(output)
 
+        #print(torch.cat(outputs).size(),'cat')
+        '''
+        print(outputs_index,'indexes' )
+        for i in outputs_index:
+            print(self.output_lang.index2word[i], end=' ')
+        print(is_teacher, 'is forcing')
+        '''
         return torch.cat(outputs), torch.cat(masks).permute(1, 2, 0)  # batch, src, trg
 
-        '''
-        if use_teacher_forcing:
-            # Teacher forcing: Feed the target as the next input
-            for di in range(target_length):
-                print(di,'di - forcing', decoder_hidden.size(),'<', encoder_output.size(), decoder_input.size())
-                decoder_output, decoder_hidden, decoder_attention = decoder(decoder_input, encoder_output, decoder_hidden)
-                    #decoder_input, decoder_hidden, encoder_outputs)
-                print(target_variable[di],'tv')
-                loss += criterion(decoder_output.view(1,self.hidden_size), target_variable[di])
-                decoder_input = target_variable[di]  # Teacher forcing
 
-
-
-        else:
-            # Without teacher forcing: use its own predictions as the next input
-            for di in range(target_length):
-                print(di,'di - no forcing', decoder_hidden.size(),'<', encoder_output.size(), decoder_input.size() )
-
-                decoder_output, decoder_hidden, decoder_attention = decoder(  decoder_input,encoder_output, decoder_hidden)
-                    #decoder_input, decoder_hidden, encoder_outputs)
-                topv, topi = decoder_output.data.topk(1)
-                ni = topi[0][0].integer()
-                print(ni,'ni')
-                decoder_input = Variable(torch.LongTensor([[ni]]))
-                decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-
-                print(target_variable[di],'tv')
-                loss += criterion(decoder_output.view(1,self.hidden_size), target_variable[di])
-
-                if ni == EOS_token:
-                    break
-
-        loss.backward()
-
-        encoder_optimizer.step()
-        decoder_optimizer.step()
-
-        return loss.data[0] / target_length
-        '''
 
     def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
         if (encoder is not None and decoder is not None and
@@ -790,6 +774,8 @@ class NMT:
             training_pair = training_pairs[iter - 1]
             input_variable = training_pair[0]
             target_variable = training_pair[1]
+
+
 
             outputs, masks = self.train(input_variable, target_variable, encoder,
                          decoder, encoder_optimizer, decoder_optimizer, criterion)
@@ -877,6 +863,10 @@ class NMT:
         decoded_words = []
         decoder_attentions = torch.zeros(encoder_output.size()[0] , encoder_output.size()[0] )
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
+
+        seq, batch, _ = encoder_output.size()
+
+        output = Variable(torch.zeros(1, batch).long() + SOS_token)  # start token
 
 
         outputs = []
