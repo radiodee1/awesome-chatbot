@@ -661,7 +661,7 @@ class NMT:
             #t = Variable(t)
             #print(t.size(), t.data.type(),'t-out', target.size(), target.data.type())
             target = torch.cat([torch.LongTensor(target), t], 0)
-        output = output.permute(1,0,2)[0]
+        output = output.permute(1,0)
         #target = Variable(target)
         #print(output.size(), target.size(),'o,t')
         return output, target
@@ -672,16 +672,7 @@ class NMT:
         decoder_optimizer.zero_grad()
 
         encoder_output, encoder_hidden = encoder(input_variable)
-        '''
-        #encoder_output = encoder_output.permute(1,0,2)
 
-        decoder_input = Variable(torch.LongTensor([[SOS_token]]))
-        decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-
-        decoder_hidden = encoder_hidden.view(1,1,self.hidden_size * 2 * encoder.n_layers)
-        decoder_hidden = (decoder_hidden[:, :, :self.hidden_size * encoder.n_layers] +
-                          decoder_hidden[:, :, self.hidden_size * encoder.n_layers:])
-        '''
         targets = target_variable #input_variable
         outputs = []
         masks = []
@@ -690,7 +681,8 @@ class NMT:
         output = targets[0].unsqueeze(0)  # start token
         #output = decoder_input
         is_teacher = random.random() < teacher_forcing_ratio
-
+        raw = 0
+        loss = 0
 
         for t in range(1, max_length - 1):
             #print(t,'t', decoder_hidden.size())
@@ -699,7 +691,12 @@ class NMT:
             outputs.append(output)
             masks.append(mask.data)
 
+            if t < len(target_variable):
+                loss += criterion(output.view(1,-1), target_variable[t])
+
+            #raw = output[:]
             output = Variable(output.data.max(dim=2)[1])
+            #raw.append(output)
 
             # teacher forcing
             if is_teacher and t < targets.size()[0]:
@@ -708,7 +705,12 @@ class NMT:
                 #print(self.output_lang.index2word[int(output)])
 
 
-        return torch.cat(outputs), torch.cat(masks).permute(1, 2, 0)  # batch, src, trg
+        loss.backward()
+
+        encoder_optimizer.step()
+        decoder_optimizer.step()
+
+        return torch.cat(outputs), torch.cat(masks).permute(1, 2, 0) , loss # batch, src, trg
 
 
 
@@ -736,7 +738,7 @@ class NMT:
 
         #criterion = nn.NLLLoss()
         criterion = nn.CrossEntropyLoss()
-        #criterion = nn.Class()
+        
 
         if self.opt_1 is None and self.opt_2 is None:
             self.opt_1 = encoder_optimizer
@@ -751,16 +753,12 @@ class NMT:
 
 
 
-            outputs, masks = self.train(input_variable, target_variable, encoder,
+            outputs, masks , l = self.train(input_variable, target_variable, encoder,
                          decoder, encoder_optimizer, decoder_optimizer, criterion)
 
-            #print(target_variable.size(),'tv2', outputs.size(),'out')
 
-            outputs, target_variable = self._match_padding(outputs,target_variable)
 
-            loss = criterion(outputs, Variable(target_variable))
-
-            print_loss_total += float(loss)
+            print_loss_total += float(l)
             #plot_loss_total += loss
 
             if iter % print_every == 0:
@@ -787,16 +785,8 @@ class NMT:
                 print('try:',self._shorten(words))
                 print("-----")
 
-            '''
-            if iter % plot_every == 0 and False:
-                plot_loss_avg = plot_loss_total / plot_every
-                plot_losses.append(plot_loss_avg)
-                plot_loss_total = 0
-            '''
-            loss.backward()
 
-            encoder_optimizer.step()
-            decoder_optimizer.step()
+
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
         if (encoder is not None and decoder is not None and
@@ -819,20 +809,11 @@ class NMT:
         #encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
         encoder_output, encoder_hidden = encoder(input_variable)
-        '''
-        for ei in range(input_length):
-            encoder_output, encoder_hidden = encoder(input_variable[ei],
-                                                     encoder_hidden)
-        
-        for ei in range (input_length):
-            encoder_outputs[ei] = encoder_outputs[ei] + encoder_output[0][0]
-        '''
+
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))  # SOS
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
         output = decoder_input
 
-        #decoder_hidden = encoder_hidden
-        #decoder_hidden = self._mod_hidden(encoder_hidden) # torch.cat((encoder_hidden, encoder_hidden), 2)[0].view(1, 1, 512)
 
         decoded_words = []
         decoder_attentions = torch.zeros(encoder_output.size()[0] , encoder_output.size()[0] )
