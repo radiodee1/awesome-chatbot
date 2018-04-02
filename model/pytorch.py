@@ -836,22 +836,12 @@ class NMT:
         outputs = []
         masks = []
         for di in range(max_length):
-            #decoder_output, decoder_hidden, decoder_attention = decoder( #encoder_outputs, decoder_input, decoder_hidden)
-            #    decoder_input, decoder_hidden, encoder_outputs)
-            #decoder_input, decoder_hidden, encoder_outputs)
-            #encoder_output = encoder_output.permute(1,0,2)
 
-            #print(di,'di',  decoder_hidden.size())
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
             output = Variable(output.data.max(dim=2)[1]) #1
-            #next_word_probs = F.softmax(output.data, dim=2)
-            #print(next_word_probs,'output')
-            #probabilities, next_words = next_word_probs.topk(1)
-            #print(next_words,'softmax')
-            #print(output,'max')
-            #print(mask.data.size())
+
             if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
             #topv, topi = output.data.topk(1)
             ni = output # = next_words[0][0]
@@ -864,9 +854,6 @@ class NMT:
             else:
                 decoded_words.append(self.output_lang.index2word[int(ni)])
 
-            #decoder_input = Variable(torch.LongTensor([[ni]]))
-            #decoder_input = decoder_input.cuda() if use_cuda else decoder_input
-
         return decoded_words, decoder_attentions[:di + 1]
 
 
@@ -877,12 +864,9 @@ if __name__ == '__main__':
     n.task_normal_train()
 
     n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
-    #print(random.choice(pairs))
 
-    #n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
     n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,2, dropout=0.1)
-    #n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
-    #n.model_2 = AttnDecoderRNN(n.hidden_size , n.output_lang.n_words, dropout_p=0.1)
+
     n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, 2 ,dropout=0.1)
 
     if use_cuda:
