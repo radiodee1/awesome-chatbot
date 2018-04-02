@@ -709,17 +709,19 @@ class NMT:
 
 
         for t in range( max_length - 1):
-            #print(t,'t', targets.size())
+            #print(t,'t', decoder_hidden.size())
+
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
             #print(output.size(),'size')
             #print(torch.max(output.data,0),'data')
 
-            #output = Variable(output.data.max(dim=2)[1])
-            output = simple_max(output)
+            output = Variable(output.data.max(dim=2)[1])
+
+            #output = simple_max(output)
             #print(output,'max')
-            output = Variable(torch.LongTensor([output])).view(1,1)
+            #output = Variable(torch.LongTensor([output])).view(1,1)
             #outputs_index.append(int(output))
             #print(output.size(),'label', is_teacher,'forcing')
             # teacher forcing
@@ -727,7 +729,7 @@ class NMT:
             if is_teacher and t < targets.size()[0]:
                 #print(output,'out')
                 output = targets[t].unsqueeze(0)
-                #print(output)
+                #print(self.output_lang.index2word[int(output)])
 
         #print(torch.cat(outputs).size(),'cat')
         '''
@@ -748,6 +750,8 @@ class NMT:
         else:
             encoder = self.model_1
             decoder = self.model_2
+
+        save_thresh = 2
 
         start = time.time()
         plot_losses = []
@@ -792,10 +796,10 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) + ' ' + self.printable)
+                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +" "+ str(save_thresh - save_num) + ' ' + self.printable)
                 if iter % (print_every * 10) == 0:
                     save_num +=1
-                    if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > 5):
+                    if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > save_thresh):
                         save_num = 0
                         extra = ''
                         if hparams['autoencode'] == True: extra = '.autoencode'
@@ -877,7 +881,7 @@ class NMT:
             #decoder_input, decoder_hidden, encoder_outputs)
             #encoder_output = encoder_output.permute(1,0,2)
 
-            #print(di,'di', output.size(), encoder_output.size(), decoder_hidden.size())
+            #print(di,'di',  decoder_hidden.size())
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
@@ -916,10 +920,10 @@ if __name__ == '__main__':
     #print(random.choice(pairs))
 
     #n.model_1 = EncoderRNN(n.input_lang.n_words, n.hidden_size)
-    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,1, dropout=0.1)
+    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,2, dropout=0.1)
     #n.model_1 = EncoderBiRNN(n.input_lang.n_words, n.hidden_size )
     #n.model_2 = AttnDecoderRNN(n.hidden_size , n.output_lang.n_words, dropout_p=0.1)
-    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, 1 ,dropout=0.1)
+    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, 2 ,dropout=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
