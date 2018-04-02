@@ -654,19 +654,7 @@ class NMT:
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
-        def simple_max(t):
-            #print(t.size())
-            t = list(t.float()[0][0])
-            #print(len(t), 't after')
-            z = 0
-            max = 0
-            for x in range(len(t)):
-                #print('many')
-                if float(t[x]) > max:
-                    z = x
-                    max = float(t[x])
-                    #print('some')
-            return z
+        
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
@@ -708,7 +696,7 @@ class NMT:
         is_teacher = random.random() < teacher_forcing_ratio
 
 
-        for t in range( max_length - 1):
+        for t in range(1, max_length - 1):
             #print(t,'t', decoder_hidden.size())
 
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
