@@ -931,7 +931,7 @@ if __name__ == '__main__':
 
     if n.do_train:
         lr = hparams['learning_rate']
-        n.trainIters(None, None, 75000, print_every=n.print_every, learning_rate=lr)
+        n.trainIters(None, None, len(pairs), print_every=n.print_every, learning_rate=lr)
     if n.do_train_long:
         n.task_train_epochs()
 

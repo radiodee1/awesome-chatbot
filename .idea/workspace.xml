@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/pytorch.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/pytorch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,8 +25,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="117">
-              <caret line="753" column="23" selection-start-line="753" selection-start-column="23" selection-end-line="753" selection-end-column="23" />
+            <state relative-caret-position="495">
+              <caret line="933" column="42" selection-start-line="933" selection-start-column="42" selection-end-line="933" selection-end-column="42" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -503,8 +501,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="117">
-          <caret line="753" column="23" selection-start-line="753" selection-start-column="23" selection-end-line="753" selection-end-column="23" />
+        <state relative-caret-position="495">
+          <caret line="933" column="42" selection-start-line="933" selection-start-column="42" selection-end-line="933" selection-end-column="42" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
