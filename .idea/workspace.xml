@@ -25,8 +25,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="477">
-              <caret line="869" selection-start-line="869" selection-end-line="869" />
+            <state relative-caret-position="557">
+              <caret line="640" lean-forward="true" selection-start-line="640" selection-end-line="641" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -114,13 +114,11 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variablesFromPair</find>
       <find>Variable</find>
       <find>readLangs</find>
       <find>train_fr</find>
       <find>task_normal_train</find>
       <find>pairs</find>
-      <find>trainIters</find>
       <find>2</find>
       <find>_mod_hidden</find>
       <find>save_checkpoint</find>
@@ -144,6 +142,8 @@
       <find>target_variable</find>
       <find>teacher_forcing_ratio</find>
       <find>input_variable</find>
+      <find>trainIters</find>
+      <find>_match_padding</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -501,8 +501,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="869" selection-start-line="869" selection-end-line="869" />
+        <state relative-caret-position="557">
+          <caret line="640" lean-forward="true" selection-start-line="640" selection-end-line="641" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>

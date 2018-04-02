@@ -624,8 +624,22 @@ class NMT:
         #print(z.size())
         return z
 
-    def _shorten(self,sentence):
+    def _shorten(self, sentence):
         #assume input is list already
+        # trim start!!!
+        j = 0
+        k = 0
+        while k < len(sentence):
+            if sentence[j] == hparams['sol'] :
+                j += 1
+            else:
+                break
+            k += 1
+            pass
+        sentence = sentence[j:]
+        #print('shorten:', sentence)
+
+        # trim end!!!
         saved = [hparams['eol']]
         punct = ['.','!','?']
         out = []
@@ -656,10 +670,6 @@ class NMT:
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
-
-        #encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
-        #encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
-
 
         encoder_output, encoder_hidden = encoder(input_variable)
         '''
