@@ -654,25 +654,16 @@ class NMT:
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
-        
-
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
-        #input_length = input_variable.size()[0]
-        #target_length = target_variable.size()[0]
-
-        #if input_length >= hparams['tokens_per_sentence'] : input_length = hparams['tokens_per_sentence']
-        #if target_length >= hparams['tokens_per_sentence'] : target_length = hparams['tokens_per_sentence']
-
-        encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
-        encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
+        #encoder_outputs = Variable(torch.zeros(max_length, self.hidden_size  ))
+        #encoder_outputs = encoder_outputs.cuda() if use_cuda else encoder_outputs
 
 
         encoder_output, encoder_hidden = encoder(input_variable)
-
+        '''
         #encoder_output = encoder_output.permute(1,0,2)
-
 
         decoder_input = Variable(torch.LongTensor([[SOS_token]]))
         decoder_input = decoder_input.cuda() if use_cuda else decoder_input
@@ -680,11 +671,6 @@ class NMT:
         decoder_hidden = encoder_hidden.view(1,1,self.hidden_size * 2 * encoder.n_layers)
         decoder_hidden = (decoder_hidden[:, :, :self.hidden_size * encoder.n_layers] +
                           decoder_hidden[:, :, self.hidden_size * encoder.n_layers:])
-        '''
-        print(input_variable)
-        print(target_variable)
-        for i in input_variable: print(self.input_lang.index2word[int(i)], end=' ')
-        print(' words ')
         '''
         targets = target_variable #input_variable
         outputs = []
@@ -702,30 +688,16 @@ class NMT:
             output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
-            #print(output.size(),'size')
-            #print(torch.max(output.data,0),'data')
 
             output = Variable(output.data.max(dim=2)[1])
 
-            #output = simple_max(output)
-            #print(output,'max')
-            #output = Variable(torch.LongTensor([output])).view(1,1)
-            #outputs_index.append(int(output))
-            #print(output.size(),'label', is_teacher,'forcing')
             # teacher forcing
-            #is_teacher = random.random() < teacher_forcing_ratio
             if is_teacher and t < targets.size()[0]:
                 #print(output,'out')
                 output = targets[t].unsqueeze(0)
                 #print(self.output_lang.index2word[int(output)])
 
-        #print(torch.cat(outputs).size(),'cat')
-        '''
-        print(outputs_index,'indexes' )
-        for i in outputs_index:
-            print(self.output_lang.index2word[i], end=' ')
-        print(is_teacher, 'is forcing')
-        '''
+
         return torch.cat(outputs), torch.cat(masks).permute(1, 2, 0)  # batch, src, trg
 
 
