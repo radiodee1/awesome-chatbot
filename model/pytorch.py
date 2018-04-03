@@ -738,7 +738,7 @@ class NMT:
 
         #criterion = nn.NLLLoss()
         criterion = nn.CrossEntropyLoss()
-        
+
 
         if self.opt_1 is None and self.opt_2 is None:
             self.opt_1 = encoder_optimizer
@@ -856,9 +856,11 @@ if __name__ == '__main__':
 
     n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
 
-    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,2, dropout=0.1)
+    layers = hparams['layers']
+    
+    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,layers, dropout=0.1)
 
-    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, 2 ,dropout=0.1)
+    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, layers ,dropout=0.1)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
