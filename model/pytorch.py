@@ -347,6 +347,7 @@ class NMT:
                 print('==============================')
                 print('here:',local_filename)
                 self.load_checkpoint(local_filename)
+                print('loss', self.best_loss)
                 choice = random.choice(pairs)
                 print(choice[0])
                 out, _ =self.evaluate(None,None,choice[0])
