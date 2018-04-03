@@ -65,7 +65,7 @@ eng_prefixes = [
     "we are", "we're ",
     "they are", "they're "
 ]
-teacher_forcing_ratio = 0.1
+teacher_forcing_ratio = 0.5
 
 class LuongAttention(nn.Module):
     """
