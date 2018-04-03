@@ -652,20 +652,7 @@ class NMT:
             saved.append(i)
         return ' '.join(out)
 
-    def _match_padding(self, output, target):
-        #target = Variable(target)
-        target = target.view(-1).data
-        if len(target) > len(output):
-            target = target[0:len(output)]
-        if len(output) > len(target):
-            t = torch.zeros(len(output) - len(target)).long()
-            #t = Variable(t)
-            #print(t.size(), t.data.type(),'t-out', target.size(), target.data.type())
-            target = torch.cat([torch.LongTensor(target), t], 0)
-        output = output.permute(1,0)
-        #target = Variable(target)
-        #print(output.size(), target.size(),'o,t')
-        return output, target
+    
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
