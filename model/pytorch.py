@@ -65,7 +65,8 @@ eng_prefixes = [
     "we are", "we're ",
     "they are", "they're "
 ]
-teacher_forcing_ratio = 0.5
+
+teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 
 class LuongAttention(nn.Module):
     """
@@ -857,10 +858,11 @@ if __name__ == '__main__':
     n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
 
     layers = hparams['layers']
+    dropout = hparams['dropout']
 
-    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,layers, dropout=0.1)
+    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, layers ,dropout=0.1)
+    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, layers ,dropout=dropout)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
