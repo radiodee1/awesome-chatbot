@@ -10,7 +10,7 @@ hparams = {
     'train_name': "train",
     'src_ending': "from",
     'tgt_ending': "to",
-    'base_filename': "weights-layers",
+    'base_filename': "weights",
     'base_file_num': 1,
     'num_vocab_total': 15000,
     'batch_size': 256,#64, #256
@@ -26,7 +26,7 @@ hparams = {
     'eol':'eol',
     'unk':'unk',
     'units': 512, #128, #256 , #64,
-    'layers':1,
+    'layers':2,
     'teacher_forcing_ratio': 0.5,
     'dropout': 0.2,
     'learning_rate': 0.001, #0.001
