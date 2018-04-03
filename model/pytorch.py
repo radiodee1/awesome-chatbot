@@ -286,6 +286,7 @@ class NMT:
 
         self.train_fr = None
         self.train_to = None
+        self.pairs = []
 
         self.do_train = False
         self.do_infer = False
@@ -415,7 +416,7 @@ class NMT:
 
     def readLangs(self,lang1, lang2, reverse=False, load_vocab_file=None):
         print("Reading lines...")
-        pairs = []
+        self.pairs = []
         if not self.do_interactive:
 
             l_in = self.open_sentences(hparams['data_dir'] + lang1)
@@ -426,7 +427,7 @@ class NMT:
                 #print(i)
                 if i < len(l_out):
                     line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
-                    pairs.append(line)
+                    self.pairs.append(line)
 
         # Reverse pairs, make Lang instances
         if load_vocab_file is not None:
@@ -434,7 +435,7 @@ class NMT:
             pass
 
         if reverse:
-            pairs = [list(reversed(p)) for p in pairs]
+            self.pairs = [list(reversed(p)) for p in self.pairs]
             self.input_lang = Lang(lang2)
             self.output_lang = Lang(lang1)
         else:
@@ -442,10 +443,10 @@ class NMT:
             self.output_lang = Lang(lang2)
 
         if hparams['autoencode'] == True:
-            pairs = [ [p[0], p[0]] for p in pairs]
+            self.pairs = [ [p[0], p[0]] for p in self.pairs]
             self.output_lang = self.input_lang
 
-        return self.input_lang, self.output_lang, pairs
+        return self.input_lang, self.output_lang, self.pairs
 
     def filterPair(self,p):
         ends = False
@@ -467,12 +468,12 @@ class NMT:
             v_name = hparams['data_dir'] + hparams['vocab_name']
         else:
             v_name = None
-        self.input_lang, self.output_lang, pairs = self.readLangs(lang1, lang2,
+        self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2,
                                                                   reverse,
                                                                   load_vocab_file=v_name)
-        print("Read %s sentence pairs" % len(pairs))
-        pairs = self.filterPairs(pairs)
-        print("Trimmed to %s sentence pairs" % len(pairs))
+        print("Read %s sentence pairs" % len(self.pairs))
+        self.pairs = self.filterPairs(self.pairs)
+        print("Trimmed to %s sentence pairs" % len(self.pairs))
         print("Counting words...")
         if v_name is not None:
             v = self.open_sentences(self.vocab_lang.name)
@@ -482,31 +483,31 @@ class NMT:
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
             new_pairs = []
-            for p in range(len(pairs)):
+            for p in range(len(self.pairs)):
                 a = []
                 b = []
-                for word in pairs[p][0].split(' '):
+                for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
                     elif not omit_unk:
                         a.append(hparams['unk'])
-                for word in pairs[p][1].split(' '):
+                for word in self.pairs[p][1].split(' '):
                     if word in self.vocab_lang.word2index:
                         b.append(word)
                     elif not omit_unk:
                         b.append(hparams['unk'])
                 new_pairs.append([' '.join(a), ' '.join(b)])
-            pairs = new_pairs
+            self.pairs = new_pairs
 
         else:
-            for pair in pairs:
+            for pair in self.pairs:
                 self.input_lang.addSentence(pair[0])
                 self.output_lang.addSentence(pair[1])
 
         print("Counted words:")
         print(self.input_lang.name, self.input_lang.n_words)
         print(self.output_lang.name, self.output_lang.n_words)
-        return self.input_lang, self.output_lang, pairs
+        return self.input_lang, self.output_lang, self.pairs
 
 
     def indexesFromSentence(self,lang, sentence):
@@ -652,7 +653,7 @@ class NMT:
             saved.append(i)
         return ' '.join(out)
 
-    
+
 
     def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
@@ -721,7 +722,7 @@ class NMT:
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-        training_pairs = [self.variablesFromPair(random.choice(pairs))
+        training_pairs = [self.variablesFromPair(random.choice(self.pairs))
                           for i in range(n_iters)]
 
         #criterion = nn.NLLLoss()
@@ -764,7 +765,7 @@ class NMT:
                         print('======= save file '+ extra+' ========')
                 print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
-                choice = random.choice(pairs)
+                choice = random.choice(self.pairs)
                 print('src:',choice[0])
                 print('ref:',choice[1])
                 words, _ = self.evaluate(None, None, choice[0])
@@ -842,7 +843,7 @@ if __name__ == '__main__':
 
     n.task_normal_train()
 
-    n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
+    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
 
     layers = hparams['layers']
     dropout = hparams['dropout']
@@ -857,7 +858,7 @@ if __name__ == '__main__':
 
     if n.do_train:
         lr = hparams['learning_rate']
-        n.trainIters(None, None, len(pairs), print_every=n.print_every, learning_rate=lr)
+        n.trainIters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
     if n.do_train_long:
         n.task_train_epochs()
 
@@ -866,7 +867,7 @@ if __name__ == '__main__':
         n.task_interactive()
 
     if n.do_review:
-        n.task_review_weights(pairs,stop_at_fail=False)
+        n.task_review_weights(n.pairs,stop_at_fail=False)
 
     if n.do_convert:
         n.load_checkpoint()
@@ -874,7 +875,7 @@ if __name__ == '__main__':
 
     if n.do_infer:
         n.load_checkpoint()
-        choice = random.choice(pairs)[0]
+        choice = random.choice(n.pairs)[0]
         print(choice)
         words, _ = n.evaluate(None,None,choice)
         print(words)

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/pytorch.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/pytorch.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,8 +37,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="376">
-              <caret line="864" column="100" selection-start-line="864" selection-start-column="100" selection-end-line="864" selection-end-column="100" />
+            <state relative-caret-position="772">
+              <caret line="883" column="37" lean-forward="true" selection-start-line="883" selection-start-column="37" selection-end-line="883" selection-end-column="37" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
@@ -128,7 +130,6 @@
       <find>readLangs</find>
       <find>train_fr</find>
       <find>task_normal_train</find>
-      <find>pairs</find>
       <find>2</find>
       <find>_mod_hidden</find>
       <find>save_checkpoint</find>
@@ -154,6 +155,7 @@
       <find>_match_padding</find>
       <find>target_variable</find>
       <find>teacher_forcing_ratio</find>
+      <find>pairs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -522,8 +524,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="376">
-          <caret line="864" column="100" selection-start-line="864" selection-start-column="100" selection-end-line="864" selection-end-column="100" />
+        <state relative-caret-position="772">
+          <caret line="883" column="37" lean-forward="true" selection-start-line="883" selection-start-column="37" selection-end-line="883" selection-end-column="37" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
