@@ -729,7 +729,7 @@ class NMT:
         criterion = nn.CrossEntropyLoss()
 
 
-        if self.opt_1 is None and self.opt_2 is None:
+        if (self.opt_1 is None and self.opt_2 is None) or True:
             self.opt_1 = encoder_optimizer
             self.opt_2 = decoder_optimizer
 
