@@ -857,7 +857,7 @@ if __name__ == '__main__':
     n.input_lang, n.output_lang, pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
 
     layers = hparams['layers']
-    
+
     n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,layers, dropout=0.1)
 
     n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, layers ,dropout=0.1)
