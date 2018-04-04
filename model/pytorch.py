@@ -750,6 +750,11 @@ class NMT:
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+
+        #adam_optimizer = optim.Adam([encoder.parameters() ,decoder.parameters()], lr=learning_rate)
+        #encoder_optimizer = adam_optimizer
+        #decoder_optimizer = None
+
         training_pairs = [self.variablesFromPair(random.choice(self.pairs))
                           for i in range(n_iters)]
 
@@ -760,6 +765,7 @@ class NMT:
         if (self.opt_1 is None and self.opt_2 is None) or True:
             self.opt_1 = encoder_optimizer
             self.opt_2 = decoder_optimizer
+            #self.opt_1 = adam_optimizer
 
         self.load_checkpoint()
 
@@ -875,10 +881,11 @@ if __name__ == '__main__':
 
     layers = hparams['layers']
     dropout = hparams['dropout']
+    pytorch_embed_size = hparams['pytorch_embed_size']
 
-    n.model_1 = Encoder(n.input_lang.n_words, n.hidden_size, n.hidden_size,layers, dropout=dropout)
+    n.model_1 = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_2 = Decoder(n.output_lang.n_words, n.hidden_size ,n.hidden_size, layers ,dropout=dropout)
+    n.model_2 = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
