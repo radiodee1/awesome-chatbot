@@ -69,14 +69,14 @@ This file is for additional parameters that can be set using a text editor befor
 * `embed_train` This is a True/False parameter that determines whether the model will allow the loaded word vector values to be modified at the time of training.
 * `autoencode` This is a True/False parameter that determines whether the model is set up for regular encoding or autoencoding during the training phase.
 * `infer_repeat` This parameter is a number higher than zero that determines how many times the program will run the `infer` method when stats are being printed.
-* `embed_mode` This is a string. Accepted values are 'mod' and 'normal'. This allows the development of code that will test out different testing scenarios. 'mod' is not supported at the time of this writing. Use 'normal' at all times.
+* `embed_mode` This is a string. Accepted values are 'mod' and 'normal' and only the keras model is effected. This originally allowed the development of code that used different testing scenarios. 'mod' is not supported at the time of this writing. Use 'normal' at all times.
 * `dense_activation` There is a dense layer in the model and this parameter tells that layer how to perform its activations. If the value None or 'none' is passed to the program the dense layer is skipped entirely. The value 'softmax' was used initially but produced poor results. The value 'tanh' produces some reasonable results.
 * `sol` This is the symbol used for the 'start of line' token.
 * `eol` This is the symbol used for the 'end of line' token.
 * `unk` This is the symbol used for the 'unknown word' token.
-* `units` This is the initial value for hidden units in the first LSTM cell in the model.
+* `units` This is the initial value for hidden units in the first LSTM cell in the keras model. In the pytorch model this is the hidden units value used by both the encoder and the decoder. For the pytorch model GRU cells are used.
 * `layers` This is the number of layers for both the encoder and decoder in the pytorch model.
-* `learning_rate` This is the learning rate for the 'adam' optimizer.
+* `learning_rate` This is the learning rate for the 'adam' optimizer. In the pytorch model SGD is used.
 * `tokens_per_sentence` This is the number of tokens per sentence.
 * `batch_constant` This number serves as a batch size parameter.
 * `teacher_forcing_ratio` This number tells the pytorch version of the model exactly how often to use teacher forcing during training.
