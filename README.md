@@ -79,3 +79,5 @@ This file is for additional parameters that can be set using a text editor befor
 * `learning_rate` This is the learning rate for the 'adam' optimizer.
 * `tokens_per_sentence` This is the number of tokens per sentence.
 * `batch_constant` This number serves as a batch size parameter.
+* `teacher_forcing_ratio` This number tells the pytorch version of the model exactly how often to use teacher forcing during training.
+* `dropout` This number tells the pytorch version of the model how much dropout to use.
