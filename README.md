@@ -17,6 +17,8 @@ Description of the individual setup scripts is included below.
   * https://machinelearningmastery.com/encoder-decoder-attention-sequence-to-sequence-prediction-keras/
 * Pytorch code was originally written by Sean Robertson for the Pytorch demo and example site.
   * http://pytorch.org/tutorials/intermediate/seq2seq_translation_tutorial.html#sphx-glr-intermediate-seq2seq-translation-tutorial-py
+* Additional Pytorch code was written by Austin Jacobson. A link to his NMT project is included here:
+  * https://github.com/A-Jacobson/minimal-nmt
 # GloVe and W2V Word Embeddings Download
 * This link brings you to a page where you can download W2V embeddings that google makes available. At the time of this writing this project does not use w2v embeddings, but uses GloVe instead.
   * https://code.google.com/archive/p/word2vec/
