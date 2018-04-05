@@ -83,3 +83,4 @@ This file is for additional parameters that can be set using a text editor befor
 * `batch_constant` This number serves as a batch size parameter.
 * `teacher_forcing_ratio` This number tells the pytorch version of the model exactly how often to use teacher forcing during training.
 * `dropout` This number tells the pytorch version of the model how much dropout to use.
+* `pytorch_embed_size` This number tells the pytorch model how big to make the embedding vector.
