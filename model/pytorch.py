@@ -388,7 +388,7 @@ class NMT:
             num = hparams['epochs']
         for i in range(num):
             self.printable = ' epoch #' + str(i+1)
-            self.trainIters(None, None, 75000, print_every=self.print_every, learning_rate=lr)
+            self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.save_checkpoint()
         pass
 
