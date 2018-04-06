@@ -32,6 +32,6 @@ hparams = {
     'dropout': 0.2,
     'learning_rate': 0.001, #0.0001
     'tokens_per_sentence': 18, #32,
-    'batch_constant': 512 #
-    
+    'batch_constant': 512, #
+    'zero_start': False
 }

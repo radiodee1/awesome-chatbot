@@ -647,6 +647,8 @@ class NMT:
                 except:
                     print('no start saved with checkpoint')
                     pass
+                if hparams['zero_start'] is True:
+                    self.start = 0
                 self.model_1.load_state_dict(checkpoint[0]['state_dict'])
                 if self.opt_1 is not None:
                     self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
