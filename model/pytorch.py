@@ -728,6 +728,9 @@ class NMT:
             #raw = output[:]
             output = Variable(output.data.max(dim=2)[1])
             #raw.append(output)
+            if int(output.data[0].int()) == EOS_token:
+                #print('eos token',t)
+                break
 
             # teacher forcing
             if is_teacher and t < targets.size()[0]:
