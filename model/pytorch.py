@@ -310,6 +310,7 @@ class NMT:
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
+        self.start = 0
 
         self.train_fr = None
         self.train_to = None
@@ -576,6 +577,7 @@ class NMT:
             z = [
                 {
                     'epoch':0,
+                    'start': self.start,
                     'arch': None,
                     'state_dict': self.model_1.state_dict(),
                     'best_prec1': None,
@@ -584,6 +586,7 @@ class NMT:
                 },
                 {
                     'epoch':0,
+                    'start': self.start,
                     'arch':None,
                     'state_dict':self.model_2.state_dict(),
                     'best_prec1':None,
@@ -595,6 +598,7 @@ class NMT:
             z = [
                 {
                     'epoch': 0,
+                    'start': self.start,
                     'arch': None,
                     'state_dict': self.model_1.state_dict(),
                     'best_prec1': None,
@@ -603,6 +607,7 @@ class NMT:
                 },
                 {
                     'epoch': 0,
+                    'start': self.start,
                     'arch': None,
                     'state_dict': self.model_2.state_dict(),
                     'best_prec1': None,
@@ -636,6 +641,11 @@ class NMT:
                     self.best_loss = checkpoint[0]['best_loss']
                 except:
                     print('no best loss saved with checkpoint')
+                    pass
+                try:
+                    self.start = checkpoint[0]['start']
+                except:
+                    print('no start saved with checkpoint')
                     pass
                 self.model_1.load_state_dict(checkpoint[0]['state_dict'])
                 if self.opt_1 is not None:
@@ -769,17 +779,17 @@ class NMT:
 
         self.load_checkpoint()
 
-        for iter in range(1, n_iters + 1):
+        start = 1
+        if self.start != 0 and self.start is not None:
+            start = self.start + 1
+
+        for iter in range(start, n_iters + 1):
             training_pair = training_pairs[iter - 1]
             input_variable = training_pair[0]
             target_variable = training_pair[1]
 
-
-
             outputs, masks , l = self.train(input_variable, target_variable, encoder,
-                         decoder, encoder_optimizer, decoder_optimizer, criterion)
-
-
+                                            decoder, encoder_optimizer, decoder_optimizer, criterion)
 
             print_loss_total += float(l)
             #plot_loss_total += loss
@@ -791,12 +801,15 @@ class NMT:
                 if iter % (print_every * 10) == 0:
                     save_num +=1
                     if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > save_thresh):
+                        self.start = iter
                         save_num = 0
                         extra = ''
                         if hparams['autoencode'] == True: extra = '.autoencode'
                         self.save_checkpoint(num=iter,extra=extra)
                         self.best_loss = print_loss_avg
                         print('======= save file '+ extra+' ========')
+                    else:
+                        print('skip save!')
                 print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(self.pairs)
