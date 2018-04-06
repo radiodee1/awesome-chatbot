@@ -86,3 +86,4 @@ This file is for additional parameters that can be set using a text editor befor
 * `teacher_forcing_ratio` This number tells the pytorch version of the model exactly how often to use teacher forcing during training.
 * `dropout` This number tells the pytorch version of the model how much dropout to use.
 * `pytorch_embed_size` This number tells the pytorch model how big to make the embedding vector.
+* `zero_start` True/False variable that tells the pytorch model to start at the beginning of the training corpus files every time the program is restarted. Overrides the saved line number that allows the pytorch model to start training where it left off after each restart.
