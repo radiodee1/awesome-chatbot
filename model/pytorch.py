@@ -787,7 +787,7 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +" "+ str(save_thresh - save_num) + ' ' + self.printable)
+                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num) + ' ' + self.printable)
                 if iter % (print_every * 10) == 0:
                     save_num +=1
                     if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > save_thresh):
