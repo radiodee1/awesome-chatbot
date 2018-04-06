@@ -722,6 +722,8 @@ class NMT:
 
             if t < len(target_variable):
                 loss += criterion(output.view(1,-1), target_variable[t])
+            else:
+                loss += criterion(output.view(1,-1), Variable(torch.LongTensor([0])))
 
             #raw = output[:]
             output = Variable(output.data.max(dim=2)[1])
