@@ -19,7 +19,7 @@ hparams = {
     'embed_size':None, #values only: 50, 100, 200, 300, None for none
     'pytorch_embed_size': 250,
     'embed_train':False,
-    'autoencode':False,
+    'autoencode':0.0,
     'infer_repeat': 1,
     'embed_mode':'normal', #values only: mod, normal, zero
     'dense_activation':'tanh', #values only: tanh, relu, softmax, none

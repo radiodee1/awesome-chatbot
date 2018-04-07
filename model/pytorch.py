@@ -329,7 +329,7 @@ class NMT:
         parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive)')
         parser.add_argument('--printable', help='a string to print during training for identification.')
         parser.add_argument('--basename', help='base filename to use if it is different from settings file.')
-        parser.add_argument('--autoencode', help='(broken) enable auto encode from the command line.', action='store_true')
+        parser.add_argument('--autoencode', help='enable auto encode from the command line with a ratio.')
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
         parser.add_argument('--convert-weights',help='convert weights', action='store_true')
@@ -348,7 +348,9 @@ class NMT:
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
             print(hparams['base_filename'], 'set name')
-        if self.args['autoencode'] == True: hparams['autoencode'] = True
+        if self.args['autoencode'] is not  None and float(self.args['autoencode']) > 0.0:
+            hparams['autoencode'] = float(self.args['autoencode'])
+        else: hparams['autoencode'] = 0.0
         if self.args['train_all'] == True:
             # hparams['embed_train'] = True
             self.trainable = True
@@ -390,7 +392,10 @@ class NMT:
         for i in range(num):
             self.printable = ' epoch #' + str(i+1)
             self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
-            self.save_checkpoint()
+            self.start = 0
+            self.save_checkpoint(num=len(self.pairs))
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=True)
+
         pass
 
     def task_interactive(self):
@@ -471,7 +476,7 @@ class NMT:
             self.input_lang = Lang(lang1)
             self.output_lang = Lang(lang2)
 
-        if hparams['autoencode'] == True:
+        if hparams['autoencode'] == 1.0:
             self.pairs = [ [p[0], p[0]] for p in self.pairs]
             self.output_lang = self.input_lang
 
@@ -795,6 +800,11 @@ class NMT:
             input_variable = training_pair[0]
             target_variable = training_pair[1]
 
+            is_auto = random.random() < hparams['autoencode']
+            if is_auto:
+                target_variable = training_pair[0]
+                #print('is auto')
+
             outputs, masks , l = self.train(input_variable, target_variable, encoder,
                                             decoder, encoder_optimizer, decoder_optimizer, criterion)
 
@@ -811,7 +821,7 @@ class NMT:
                         self.start = iter
                         save_num = 0
                         extra = ''
-                        if hparams['autoencode'] == True: extra = '.autoencode'
+                        #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
                         self.save_checkpoint(num=iter,extra=extra)
 
