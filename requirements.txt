@@ -6,4 +6,9 @@ unidecode
 keras
 gensim
 h5py
+gtts
+google-api-python-client
+google-cloud-speech
+PyAudio
 ## go to the pytorch web site to download the latest version of pytorch ##
+## install mpg321 from your linux repository ##

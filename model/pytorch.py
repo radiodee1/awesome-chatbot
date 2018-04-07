@@ -706,6 +706,10 @@ class NMT:
         decoder_optimizer.zero_grad()
 
         encoder_output, encoder_hidden = encoder(input_variable)
+        '''
+        for ei in range(1,max_length):
+            encoder_output, encoder_hidden = encoder(input_variable[ei], encoder_hidden)
+        '''
 
         targets = target_variable #input_variable
         outputs = []
