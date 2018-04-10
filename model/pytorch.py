@@ -672,7 +672,8 @@ class NMT:
         return z
 
     def _shorten(self, sentence):
-        #assume input is list already
+        # assume input is list already
+        # get longest mutter possible!!
         # trim start!!!
         j = 0
         k = 0
@@ -687,15 +688,18 @@ class NMT:
         #print('shorten:', sentence)
 
         # trim end!!!
+        last = ''
         saved = [hparams['eol']]
         punct = ['.','!','?']
         out = []
         for i in sentence:
-            if i in saved: break
-            if i != hparams['sol']:
+            if i in saved and last != i: break
+            if i != hparams['sol'] and last != i:
                 out.append(i)
             if i in punct: break
-            saved.append(i)
+            if last != i :
+                saved.append(i)
+            last = i
         return ' '.join(out)
 
 
@@ -904,6 +908,14 @@ class NMT:
                 decoded_words.append(self.output_lang.index2word[int(ni)])
 
         return decoded_words, decoder_attentions[:di + 1]
+
+    def get_sentence(self, s_in):
+        wordlist, _ = self.evaluate(None,None,s_in)
+
+        ## filter words ##
+        wordlist = self._shorten(wordlist)
+
+        return wordlist
 
 
 if __name__ == '__main__':
