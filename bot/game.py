@@ -3,7 +3,10 @@
 from __future__ import unicode_literals, print_function, division
 
 import sys
+import os
 sys.path.append('..')
+sys.path.append(os.path.abspath('../model/'))
+
 import model.pytorch as model
 import game_sr as sr
 import game_voice as v

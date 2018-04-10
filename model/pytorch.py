@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function, division
 
 import sys
-sys.path.append('..')
+#sys.path.append('..')
 from io import open
 import unicodedata
 import string
@@ -17,8 +17,7 @@ import torch.nn.functional as F
 import time
 import math
 import argparse
-from model.settings import hparams
-import model.tokenize_weak
+from settings import hparams
 
 
 '''
