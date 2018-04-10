@@ -1,11 +1,10 @@
 #!/usr/bin/python3
 
-import sqlite3
-import pandas as pd
-import os
+import sys
+sys.path.append('..')
 import re
 import unidecode
-from settings import hparams
+from model.settings import hparams
 
 timeframes = ['input']
 

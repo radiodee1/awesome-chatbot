@@ -1,6 +1,8 @@
 #!/usr/bin/python3
-
 from __future__ import unicode_literals, print_function, division
+
+import sys
+sys.path.append('..')
 from io import open
 import unicodedata
 import string
@@ -15,8 +17,8 @@ import torch.nn.functional as F
 import time
 import math
 import argparse
-from settings import hparams
-import tokenize_weak
+from model.settings import hparams
+import model.tokenize_weak
 
 
 '''
@@ -916,6 +918,18 @@ class NMT:
         wordlist = self._shorten(wordlist)
 
         return wordlist
+
+    def setup_for_interactive(self):
+        self.do_interactive = True
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=True)
+        layers = hparams['layers']
+        dropout = hparams['dropout']
+        pytorch_embed_size = hparams['pytorch_embed_size']
+
+        self.model_1 = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+
+        self.model_2 = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+        self.load_checkpoint()
 
 
 if __name__ == '__main__':
