@@ -1,3 +1,5 @@
+
+## keras ##
 tensorflow>=1.4.0
 tqdm
 colorama
@@ -6,9 +8,15 @@ unidecode
 keras
 gensim
 h5py
+
+## both ##
 gtts
 google-api-python-client
 google-cloud-speech
 PyAudio
+
+## pytorch ##
 ## go to the pytorch web site to download the latest version of pytorch ##
+
+## text-to-speech ##
 ## install mpg321 from your linux repository ##
