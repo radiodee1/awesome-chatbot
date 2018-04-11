@@ -4,7 +4,6 @@ tensorflow>=1.4.0
 tqdm
 colorama
 regex
-unidecode
 keras
 gensim
 h5py
@@ -14,6 +13,7 @@ gtts
 google-api-python-client
 google-cloud-speech
 PyAudio
+unidecode
 
 ## pytorch ##
 ## go to the pytorch web site to download the latest version of pytorch ##
