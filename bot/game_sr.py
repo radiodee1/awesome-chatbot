@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # Requires PyAudio and PySpeech.
 from __future__ import division, print_function
 
