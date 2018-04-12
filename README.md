@@ -92,13 +92,15 @@ This file is for additional parameters that can be set using a text editor befor
 # Raspberry Pi and Speech Recognition
 The goal of this part of the project is to provide for comprehensive speech-to-text and text-to-speech for the use of the chatbot when it is installed on a Raspberry Pi. For this purpose we use the excellent google api. The google api 'Cloud Speech API' costs money to operate. If you want to use it you must sign up for Google Cloud services and enable the Speech API for the project. This document will attempt to direct a developer how to setup the account, but may not go into intimate detail. Use this document as a guide, but not necessarily the last word. After everything is set up the project will require internet access to perform speech recognition.
 
+### PyTorch
 An important part of the process of porting this project to the Raspberry Pi is compiling Pytorch for the Pi. At the time of this writing the compiling of Pytorch is possible following the urls below. You do not need to compile Pytorch before you test the speech recognition, but it is required for later steps.
 * http://book.duckietown.org/master/duckiebook/pytorch_install.html
 * https://gist.github.com/fgolemo/b973a3fa1aaa67ac61c480ae8440e754
 
+### Speech Recognition -- Google
 The Google Cloud api is complicated and not all of the things you need to do are covered in this document. I will be as detailed as possible if I can. The basic idea is to install the software on a regular computer to establish your account and permissions. You will need to create a special json authentication file and tell google where to find it on your computer. Then install as much software as possible on the Raspberry Pi along with another special authentication json file. This second file will refer to the same account and will allow google to charge you normally as it would for a regular x86 or x86_64 computer. The speech recognition code in this project should run on the regular computer before you proceed to testing it on the Raspberry Pi.
 
-Install all the recommended python packages on both computers and make sure they install without error. This includes `gtts`, `google-api-python-client`, and `google-cloud-speech`. Install the Google Cload SDK on the regular computer. The following link shows where to download the SDK. 
+Install all the recommended python packages on both computers and make sure they install without error. This includes `gtts`, `google-api-python-client`, and `google-cloud-speech`. Install the Google Cloud SDK on the regular computer. The following link shows where to download the SDK. 
 * https://cloud.google.com/sdk/docs/
 
 ### Resources
@@ -108,11 +110,12 @@ You may need to set up a billing account with Google for yourself. Here are some
 * https://console.cloud.google.com/apis/ Try this url and see if it works for you. If you see a dashboard where you can manipulate your google cloud account you are ready to proceed. You want to enable 'Cloud Speech API'.
 
 ### Steps for the cloud
+* Use Google Cloud Platform Console to create a project and download a project json file. 
+  1. Setup a google cloud platform account and project. For a project name I used `awesome-sr`. 
+  2. Before downloading the json file, make sure the 'Cloud Speech API' is enabled.
 * Download and install the Google-Cloud-Sdk. This package has the `gcloud` command. 
-* This includes downloading the `google-cloud-sdk` file, unpacking it, and executing the command `./google-cloud-sdk/install.sh`
+* This download includes the `google-cloud-sdk` file. Unpack it, and executing the command `./google-cloud-sdk/install.sh`
 * You must also restart your terminal.
-* Use Google Cloud Platform Console to create a project and download a project json file.
-* Setup a google cloud platform account and project. For a project name I used `awesome-sr`
 * I put my project json file in a directory called `/home/<myname>/bin` .
 * Use the `gcloud` command to set up your authentication. I used the following: `gcloud auth activate-service-account --key-file=bin/awesome-sr-*.json`
 * Use the Google Cloud Platform Console to create a second project json file for the Raspberry Pi. Go to the Downloads folder and identify the Raspberry Pi json file. Transfer the file to the Pi with a command like `scp`.
