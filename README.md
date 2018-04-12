@@ -129,3 +129,4 @@ Test google speech recognition with the `bot/game_sr.py` script. The script may 
 * Add the following to the  last line of the `.bashrc` file: `export GOOGLE_APPLICATION_CREDENTIALS=/path/to/json/awesome-sr-XXXXXX.json` A link follows that might be helpful: https://cloud.google.com/docs/authentication/getting-started#setting_the_environment_variable
 * Save the changes.
 * You must exit and re-enter the bash shell in a new terminal for the changes to take effect. After that you should be able to run the `game_sr.py` file. You will be charged for the service.
+* On the Raspberry Pi use the same general technique as above. Edit the `.basshrc` file to contain the line `export GOOGLE_APPLICATION_CREDENTIALS=/opt/bot/awesome-sr-XXXXXX.json` where `XXXXXX` is the hexadecimal label on the json file on the Rapberry Pi. This number will be different from the one on your regular computer.
