@@ -108,7 +108,7 @@ You may need to set up a billing account with Google for yourself. Here are some
 * https://console.cloud.google.com/apis/ Try this url and see if it works for you. If you see a dashboard where you can manipulate your google cloud account you are ready to proceed. You want to enable 'Cloud Speech API'.
 
 ### Steps for the cloud
-* Download and install the Google-Cloud-Sdk. This package has the gcloud command. 
+* Download and install the Google-Cloud-Sdk. This package has the `gcloud` command. 
 * This includes downloading the `google-cloud-sdk` file, unpacking it, and executing the command `./google-cloud-sdk/install.sh`
 * You must also restart your terminal.
 * Use Google Cloud Platform Console to create a project and download a project json file.
@@ -116,6 +116,16 @@ You may need to set up a billing account with Google for yourself. Here are some
 * I put my project json file in a directory called `/home/<myname>/bin` .
 * Use the `gcloud` command to set up your authentication. I used the following: `gcloud auth activate-service-account --key-file=bin/awesome-sr-*.json`
 * Use the Google Cloud Platform Console to create a second project json file for the Raspberry Pi. Go to the Downloads folder and identify the Raspberry Pi json file. Transfer the file to the Pi with a command like `scp`.
-
+* Finally you must set up a bash shell variable for both json files so that google can find the json files when you want to do speech recognition. The process for setting up this shell variable is outlined below.
 
 Test google speech recognition with the `bot/game_sr.py` script. The script may be helpful at different times to tell if your setup attempt is working. To execute the script, switch to the `bot/` folder and execute the command `python3 game_sr.py`. 
+
+### Setup Bash Variable
+* This guide assumes you are using a linux computer. It also assumes that if you downloaded the json file from the internet and it was stored in your `Downloads` folder, that you have moved it to the root of your home directory. 
+* For convenience I made a folder in my home directory called `bin`. This will be the folder for the json file on my  regular computer.
+* On the Raspberry Pi I navigated to the `/opt` directory and made a folder called `bot`. I placed the json file at `/opt/bot/`.
+* For simplicity I will refer to the json file on my regular computer as `awesome-sr-XXXXXX.json`. In this scheme `awesome-sr` is the name of my project and `XXXXXX` is the hexadecimal number that google appends to the json file name. Because this name is long and the hex digits are hard to type I will copy and paste them when possible as I set up the Bash shell variable.
+* Edit the `.bashrc` file with your favorite editor.
+* Add the following to the  last line of the `.bashrc` file: `export GOOGLE_APPLICATION_CREDENTIALS=/path/to/json/awesome-sr-XXXXXX.json`
+* Save the changes.
+* You must exit and re-enter the bash shell in a new terminal for the changes to take effect. After that you should be able to run the `game_sr.py` file. You will be charged for the service.
