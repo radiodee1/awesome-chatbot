@@ -116,7 +116,7 @@ You may need to set up a billing account with Google for yourself. Here are some
   1. Setup a google cloud platform account and project. For a project name I used `awesome-sr`. 
   2. Before downloading the json file, make sure the 'Cloud Speech API' is enabled.
 * Download and install the Google-Cloud-Sdk. This package has the `gcloud` command. 
-* This download includes the `google-cloud-sdk` file. Unpack it, and executing the command `./google-cloud-sdk/install.sh`
+* This download includes the `google-cloud-sdk` folder. Unpack it, and execute the command `./google-cloud-sdk/install.sh`
 * You must also restart your terminal.
 * I put my project json file in a directory called `/home/<myname>/bin` .
 * Use the `gcloud` command to set up your authentication. I used the following: `gcloud auth activate-service-account --key-file=bin/awesome-sr-*.json`
