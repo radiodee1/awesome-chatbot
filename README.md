@@ -92,6 +92,8 @@ This file is for additional parameters that can be set using a text editor befor
 # Raspberry Pi and Speech Recognition
 The goal of this part of the project is to provide for comprehensive speech-to-text and text-to-speech for the use of the chatbot when it is installed on a Raspberry Pi. For this purpose we use the excellent google api. The google api 'Cloud Speech API' costs money to operate. If you want to use it you must sign up for Google Cloud services and enable the Speech API for the project. This document will attempt to direct a developer how to setup the account, but may not go into intimate detail. Use this document as a guide, but not necessarily the last word. After everything is set up the project will require internet access to perform speech recognition.
 
+As of this writing the Keras model does not work on the Raspberry Pi because Tensorflow is so difficult to compile for Pi. Tensorflow is the Keras backend that we use in this project.
+
 ### PyTorch
 An important part of the process of porting this project to the Raspberry Pi is compiling Pytorch for the Pi. At the time of this writing the compiling of Pytorch is possible following the urls below. You do not need to compile Pytorch before you test the speech recognition, but it is required for later steps.
 * http://book.duckietown.org/master/duckiebook/pytorch_install.html
