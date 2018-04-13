@@ -21,6 +21,7 @@ if len(sys.argv) > 1:
 to_lower = True
 test_on_screen = False
 remove_caps = True
+subdevide_into_batches = False
 
 batch_size = 64 #32 # 64 #256
 steps_per_stats = 100
@@ -87,15 +88,16 @@ for timeframe in timeframes:
                     f.write(str(content)+'\n')
 
             pull_num += 1
-            with open('../raw/train.'+ str(pull_num) + '.from','a', encoding='utf8') as f:
-                for content in df['parent'].values:
-                    content = format(content)
-                    f.write(str(content)+'\n')
+            if subdevide_into_batches:
+                with open('../raw/train.'+ str(pull_num) + '.from','a', encoding='utf8') as f:
+                    for content in df['parent'].values:
+                        content = format(content)
+                        f.write(str(content)+'\n')
 
-            with open('../raw/train.'+ str(pull_num) + '.to','a', encoding='utf8') as f:
-                for content in df['comment'].values:
-                    content = format(content)
-                    f.write(str(content)+'\n')
+                with open('../raw/train.'+ str(pull_num) + '.to','a', encoding='utf8') as f:
+                    for content in df['comment'].values:
+                        content = format(content)
+                        f.write(str(content)+'\n')
 
 
         counter += 1
