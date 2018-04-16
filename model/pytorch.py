@@ -840,8 +840,8 @@ class NMT:
                     save_num +=1
                     if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > save_thresh):
 
-                        self.tag = 'performance'
-                        if save_num > save_thresh: self.tag = 'timeout'
+                        self.tag = 'timeout'
+                        if self.best_loss is None or print_loss_avg <= self.best_loss: self.tag = 'performance'
 
                         self.start = iter
                         save_num = 0
