@@ -976,7 +976,7 @@ if __name__ == '__main__':
     else:
         n.task_review_set()
 
-    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
+    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=False)
 
     layers = hparams['layers']
     dropout = hparams['dropout']
