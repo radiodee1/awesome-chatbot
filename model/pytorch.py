@@ -852,7 +852,7 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num) + ' ' + self.printable)
-                if iter % (print_every * 10) == 0:
+                if iter % (print_every * 500) == 0:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
 

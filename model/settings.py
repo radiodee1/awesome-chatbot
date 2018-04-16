@@ -14,7 +14,7 @@ hparams = {
     'base_file_num': 1,
     'num_vocab_total': 15000,
     'batch_size': 256,#64, #256
-    'steps_to_stats': 250,
+    'steps_to_stats': 50,
     'epochs': 100,
     'embed_size':None, #values only: 50, 100, 200, 300, None for none
     'pytorch_embed_size': 250,
