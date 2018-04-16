@@ -803,16 +803,17 @@ class NMT:
         saved_files = 0
 
         start = time.time()
-        plot_losses = []
+        #plot_losses = []
         save_num = 0
         print_loss_total = 0  # Reset every print_every
-        plot_loss_total = 0  # Reset every plot_every
+
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        #adam_optimizer = optim.Adam(filter(lambda p: p.requires_grad, [encoder.parameters(), decoder.parameters()]),
+        #                            lr=learning_rate)
+        #self.opt_1 = adam_optimizer
 
-        #adam_optimizer = optim.Adam([encoder.parameters() ,decoder.parameters()], lr=learning_rate)
-        #encoder_optimizer = adam_optimizer
         #decoder_optimizer = None
 
         training_pairs = [self.variablesFromPair(random.choice(self.pairs))
@@ -843,11 +844,13 @@ class NMT:
                 target_variable = training_pair[0]
                 #print('is auto')
 
+
+
             outputs, masks , l = self.train(input_variable, target_variable, encoder,
                                             decoder, encoder_optimizer, decoder_optimizer, criterion)
 
             print_loss_total += float(l)
-            #plot_loss_total += loss
+
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
