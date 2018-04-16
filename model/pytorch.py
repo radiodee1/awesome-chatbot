@@ -18,6 +18,9 @@ import time
 import math
 import argparse
 from settings import hparams
+import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
+import numpy as np
 
 
 '''
@@ -303,6 +306,7 @@ class NMT:
         self.opt_1 = None
         self.opt_2 = None
         self.best_loss = None
+        self.long_term_loss = None
         self.tag = ''
 
         self.input_lang = None
@@ -324,11 +328,12 @@ class NMT:
         self.do_train_long = False
         self.do_interactive = False
         self.do_convert = False
+        self.do_plot = False
 
         self.printable = ''
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
-        parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive)')
+        parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot)')
         parser.add_argument('--printable', help='a string to print during training for identification.')
         parser.add_argument('--basename', help='base filename to use if it is different from settings file.')
         parser.add_argument('--autoencode', help='enable auto encode from the command line with a ratio.')
@@ -347,6 +352,9 @@ class NMT:
         if self.args['mode'] == 'review': self.do_review = True
         if self.args['mode'] == 'long': self.do_train_long = True
         if self.args['mode'] == 'interactive': self.do_interactive = True
+        if self.args['mode'] == 'plot':
+            self.do_review = True
+            self.do_plot = True
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
             print(hparams['base_filename'], 'set name')
@@ -367,7 +375,13 @@ class NMT:
         self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
         pass
 
+    def task_review_set(self):
+        self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
+        pass
+
     def task_review_weights(self, pairs, stop_at_fail=False):
+        plot_losses = []
         num = 0 # hparams['base_file_num']
         for i in range(100):
             local_filename = hparams['save_dir'] + hparams['base_filename'] + '.'+ str(num) + '.pth.tar'
@@ -375,18 +389,29 @@ class NMT:
                 ''' load weights '''
 
                 print('==============================')
+                print(str(i)+'.')
                 print('here:',local_filename)
                 self.load_checkpoint(local_filename)
                 print('loss', self.best_loss)
+                plot_losses.append(self.best_loss)
                 print('tag', self.tag)
                 choice = random.choice(pairs)
                 print(choice[0])
                 out, _ =self.evaluate(None,None,choice[0])
                 print(out)
             else:
+                plot_losses.append(self.best_loss)
                 if stop_at_fail: break
             num = 10 * self.print_every * i
         pass
+        if self.do_plot:
+            plt.figure()
+            fig, ax = plt.subplots()
+            loc = ticker.MultipleLocator(base=2)
+            ax.yaxis.set_major_locator(loc)
+            plt.plot(plot_losses)
+            plt.show()
+
 
     def task_train_epochs(self,num=0):
         lr = hparams['learning_rate']
@@ -591,6 +616,7 @@ class NMT:
                     'best_prec1': None,
                     'optimizer': self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
+                    'long_term_loss' : self.long_term_loss,
                     'tag': self.tag
                 },
                 {
@@ -601,6 +627,7 @@ class NMT:
                     'best_prec1':None,
                     'optimizer': self.opt_2.state_dict(),
                     'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
                     'tag': self.tag
                 }
             ]
@@ -614,6 +641,7 @@ class NMT:
                     'best_prec1': None,
                     'optimizer': None , # self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
                     'tag': self.tag
                 },
                 {
@@ -624,6 +652,7 @@ class NMT:
                     'best_prec1': None,
                     'optimizer': None, # self.opt_2.state_dict(),
                     'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
                     'tag': self.tag
                 }
             ]
@@ -650,10 +679,16 @@ class NMT:
                 checkpoint = torch.load(basename)
                 #print(checkpoint)
                 try:
-                    self.best_loss = checkpoint[0]['best_loss']
+                    bl = checkpoint[0]['best_loss']
+                    if self.best_loss is None or self.best_loss == 0 or bl < self.best_loss or self.do_review: self.best_loss = bl
                 except:
                     print('no best loss saved with checkpoint')
                     pass
+                try:
+                    l = checkpoint[0]['long_term_loss']
+                    self.long_term_loss = l
+                except:
+                    print('no long term loss saved with checkpoint')
                 try:
                     self.start = checkpoint[0]['start']
                 except:
@@ -838,10 +873,14 @@ class NMT:
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num) + ' ' + self.printable)
                 if iter % (print_every * 10) == 0:
                     save_num +=1
-                    if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > save_thresh):
+                    if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
 
                         self.tag = 'timeout'
-                        if self.best_loss is None or print_loss_avg <= self.best_loss: self.tag = 'performance'
+                        if self.long_term_loss is None or print_loss_avg <= self.long_term_loss:
+                            self.tag = 'performance'
+
+                        if self.long_term_loss is None or print_loss_avg <= self.long_term_loss:
+                            self.long_term_loss = print_loss_avg
 
                         self.start = iter
                         save_num = 0
@@ -951,7 +990,10 @@ if __name__ == '__main__':
 
     n = NMT()
 
-    n.task_normal_train()
+    if not n.do_review:
+        n.task_normal_train()
+    else:
+        n.task_review_set()
 
     n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=True)
 

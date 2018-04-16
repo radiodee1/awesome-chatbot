@@ -16,8 +16,11 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="640">
-              <caret line="843" column="110" selection-start-line="843" selection-start-column="110" selection-end-line="843" selection-end-column="110" />
+            <state relative-caret-position="329">
+              <caret line="391" column="28" selection-start-line="391" selection-start-column="28" selection-end-line="391" selection-end-column="28" />
+              <folding>
+                <element signature="e#21#86#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -120,16 +123,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_2</find>
-      <find>Decoder</find>
-      <find>initHidden</find>
       <find>opt_1</find>
       <find>out</find>
       <find>encoder</find>
       <find>decoder</find>
       <find>decoder(</find>
       <find>encoder_output</find>
-      <find>best_loss</find>
       <find>encoder_optimizer</find>
       <find>decoder_input</find>
       <find>train</find>
@@ -150,6 +149,10 @@
       <find>types</find>
       <find>prepareData</find>
       <find>cons</find>
+      <find>load_checkpoint</find>
+      <find>best_loss</find>
+      <find>task_review_weights</find>
+      <find>task_normal_train</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -533,8 +536,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="640">
-          <caret line="843" column="110" selection-start-line="843" selection-start-column="110" selection-end-line="843" selection-end-column="110" />
+        <state relative-caret-position="329">
+          <caret line="391" column="28" selection-start-line="391" selection-start-column="28" selection-end-line="391" selection-end-column="28" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
