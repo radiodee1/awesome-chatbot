@@ -303,6 +303,7 @@ class NMT:
         self.opt_1 = None
         self.opt_2 = None
         self.best_loss = None
+        self.tag = ''
 
         self.input_lang = None
         self.output_lang = None
@@ -377,6 +378,7 @@ class NMT:
                 print('here:',local_filename)
                 self.load_checkpoint(local_filename)
                 print('loss', self.best_loss)
+                print('tag', self.tag)
                 choice = random.choice(pairs)
                 print(choice[0])
                 out, _ =self.evaluate(None,None,choice[0])
@@ -588,7 +590,8 @@ class NMT:
                     'state_dict': self.model_1.state_dict(),
                     'best_prec1': None,
                     'optimizer': self.opt_1.state_dict(),
-                    'best_loss': self.best_loss
+                    'best_loss': self.best_loss,
+                    'tag': self.tag
                 },
                 {
                     'epoch':0,
@@ -597,7 +600,8 @@ class NMT:
                     'state_dict':self.model_2.state_dict(),
                     'best_prec1':None,
                     'optimizer': self.opt_2.state_dict(),
-                    'best_loss': self.best_loss
+                    'best_loss': self.best_loss,
+                    'tag': self.tag
                 }
             ]
         else:
@@ -609,7 +613,8 @@ class NMT:
                     'state_dict': self.model_1.state_dict(),
                     'best_prec1': None,
                     'optimizer': None , # self.opt_1.state_dict(),
-                    'best_loss': self.best_loss
+                    'best_loss': self.best_loss,
+                    'tag': self.tag
                 },
                 {
                     'epoch': 0,
@@ -618,7 +623,8 @@ class NMT:
                     'state_dict': self.model_2.state_dict(),
                     'best_prec1': None,
                     'optimizer': None, # self.opt_2.state_dict(),
-                    'best_loss': self.best_loss
+                    'best_loss': self.best_loss,
+                    'tag': self.tag
                 }
             ]
         #print(z)
@@ -652,6 +658,12 @@ class NMT:
                     self.start = checkpoint[0]['start']
                 except:
                     print('no start saved with checkpoint')
+                    pass
+                try:
+                    self.tag = checkpoint[0]['tag']
+                except:
+                    print('no tag saved with checkpoint')
+                    self.tag = ''
                     pass
                 if hparams['zero_start'] is True:
                     self.start = 0
@@ -827,6 +839,10 @@ class NMT:
                 if iter % (print_every * 10) == 0:
                     save_num +=1
                     if (self.best_loss is None or print_loss_avg <= self.best_loss or save_num > save_thresh):
+
+                        self.tag = 'performance'
+                        if save_num > save_thresh: self.tag = 'timeout'
+
                         self.start = iter
                         save_num = 0
                         extra = ''
