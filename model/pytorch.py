@@ -800,6 +800,7 @@ class NMT:
             decoder = self.model_2
 
         save_thresh = 2
+        saved_files = 0
 
         start = time.time()
         plot_losses = []
@@ -851,8 +852,9 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num) + ' ' + self.printable)
-                if iter % (print_every * 50) == 0:
+                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
+                      + ' ' + self.printable + ', saved files = ' + str(saved_files) + ', low = ' + str(self.long_term_loss))
+                if iter % (print_every * 20) == 0:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
 
@@ -869,7 +871,7 @@ class NMT:
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
                         self.save_checkpoint(num=iter,extra=extra)
-
+                        saved_files += 1
                         print('======= save file '+ extra+' ========')
                     else:
                         print('skip save!')
