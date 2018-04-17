@@ -86,16 +86,42 @@ SOS_token = 0
 EOS_token = 1
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-eng_prefixes = [
-    "i am ", "i'm ",
-    "he is", "he's ",
-    "she is", "she's",
-    "you are", "you're ",
-    "we are", "we're ",
-    "they are", "they're "
-]
 
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
+
+class EpisodicAttn(nn.Module):
+
+    def __init__(self,  hidden_size, a_list_size=7):
+        super(EpisodicAttn, self).__init__()
+
+        self.hidden_size = hidden_size
+
+        self.a_list_size = a_list_size
+
+        self.W_b = nn.Parameter(torch.FloatTensor(hidden_size, hidden_size))
+        self.W_1 = nn.Parameter(torch.FloatTensor(hidden_size, self.a_list_size * hidden_size))
+        self.W_2 = nn.Parameter(torch.FloatTensor(1, hidden_size))
+        self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
+        self.b_2 = nn.Parameter(torch.FloatTensor(1,))
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            weight.data.uniform_(-stdv, stdv)
+
+    def forward(self,concat_list):
+
+        assert len(concat_list) == self.a_list_size
+        ''' attention list '''
+        self.c_list_z = torch.cat(concat_list)
+        self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
+        self.l_1 = torch.tanh(self.l_1)
+        self.l_2 = torch.mm(self.W_2, self.l_1) + self.b_2
+        self.G = torch.sigmoid(self.l_2)
+
+        return  self.G
+
 
 class LuongAttention(nn.Module):
     """
@@ -124,20 +150,20 @@ class LuongAttention(nn.Module):
         mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
         return context, mask
 
-class EncoderBiRNN(nn.Module):
+class MemRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
-        super(EncoderBiRNN, self).__init__()
+        super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.embedding = nn.Embedding(input_size, hidden_size)
-        self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=True)
+        self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
 
 
     def forward(self, input, hidden):
         embedded = self.embedding(input).view(1, 1, -1)
         output = embedded
         bi_output, bi_hidden = self.bi_gru(output,hidden)
-        bi_output = (bi_output[:, :, :self.hidden_size] +
-                       bi_output[:, :, self.hidden_size:])
+        #bi_output = (bi_output[:, :, :self.hidden_size] +
+        #               bi_output[:, :, self.hidden_size:])
         return bi_output, bi_hidden
 
     def initHidden(self):
@@ -147,71 +173,6 @@ class EncoderBiRNN(nn.Module):
         else:
             return result
 
-
-
-class DecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size):
-        super(DecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-
-        self.embedding = nn.Embedding(output_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size)
-        self.out = nn.Linear(hidden_size, output_size)
-        self.softmax = nn.LogSoftmax(dim=1)
-
-    def forward(self, input, hidden):
-        output = self.embedding(input).view(1, 1, -1)
-        output = F.relu(output)
-        output, hidden = self.gru(output, hidden)
-        output = self.softmax(self.out(output[0]))
-        return output, hidden
-
-    def initHidden(self):
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
-        if use_cuda:
-            return result.cuda()
-        else:
-            return result
-
-class AttnDecoderRNN(nn.Module):
-    def __init__(self, hidden_size, output_size, dropout_p=0.1, max_length=MAX_LENGTH):
-        super(AttnDecoderRNN, self).__init__()
-        self.hidden_size = hidden_size
-        self.output_size = output_size
-        self.dropout_p = dropout_p
-        self.max_length = max_length
-
-        self.embedding = nn.Embedding(self.output_size, self.hidden_size)
-        self.attn = nn.Linear(self.hidden_size * 2, self.max_length)
-        self.attn_combine = nn.Linear(self.hidden_size * 2, self.hidden_size)
-        self.dropout = nn.Dropout(self.dropout_p)
-        self.gru = nn.GRU(self.hidden_size, self.hidden_size)
-        self.out = nn.Linear(self.hidden_size, self.output_size)
-
-    def forward(self, input, hidden, encoder_outputs):
-        embedded = self.embedding(input).view(1, 1, -1)
-        embedded = self.dropout(embedded)
-
-        attn_weights = F.softmax(
-            self.attn(torch.cat((embedded[0], hidden[0]), 1)), dim=1)
-        attn_applied = torch.bmm(attn_weights.unsqueeze(0),
-                                 encoder_outputs.unsqueeze(0))
-
-        output = torch.cat((embedded[0], attn_applied[0]), 1)
-        output = self.attn_combine(output).unsqueeze(0)
-
-        output = F.relu(output)
-        output, hidden = self.gru(output, hidden)
-
-        output = F.log_softmax(self.out(output[0]), dim=1)
-        return output, hidden, attn_weights
-
-    def initHidden(self):
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
-        if use_cuda:
-            return result.cuda()
-        else:
-            return result
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
@@ -297,6 +258,7 @@ class NMT:
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
+        self.memory_hops = 5
         self.start = 0
 
         self.train_fr = None
@@ -457,7 +419,7 @@ class NMT:
         s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
         return s
 
-    def readLangs(self,lang1, lang2, reverse=False, load_vocab_file=None):
+    def readLangs(self,lang1, lang2, reverse=False, load_vocab_file=None, babi_ending=False):
         print("Reading lines...")
         self.pairs = []
         if not self.do_interactive:
@@ -469,7 +431,19 @@ class NMT:
             for i in range(len(l_in)):
                 #print(i)
                 if i < len(l_out):
-                    line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
+                    if not babi_ending:
+                        line = [ l_in[i].strip('\n'), l_out[i].strip('\n') ]
+                    else:
+                        lin = l_in[i].strip('\n')
+
+                        lques = l_in[i].strip('\n')
+                        lques = lques.split(' ')
+                        if len(lques) > MAX_LENGTH:
+                            lques = lques[: - MAX_LENGTH]
+                        lques = ' '.join(lques)
+
+                        lans = l_out[i].strip('\n')
+                        line = [ lin, lques , lans]
                     self.pairs.append(line)
 
         # Reverse pairs, make Lang instances
@@ -492,13 +466,11 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
     def filterPair(self,p):
-        ends = False
-        for j in eng_prefixes:
-            if p[1].startswith(j): ends = True
+
 
         return len(p[0].split(' ')) < MAX_LENGTH and \
-            len(p[1].split(' ')) < MAX_LENGTH and ends or True #\
-            #p[1].startswith(eng_prefixes) or True
+            len(p[1].split(' ')) < MAX_LENGTH  or True #\
+
 
 
     def filterPairs(self,pairs):
@@ -976,6 +948,11 @@ if __name__ == '__main__':
 
     n = NMT()
 
+    if True:
+        att = EpisodicAttn(5, 7)
+        print(att([' ',' ']))
+        exit()
+
     if not n.do_review:
         n.task_normal_train()
     else:
@@ -1019,5 +996,3 @@ if __name__ == '__main__':
         words, _ = n.evaluate(None,None,choice)
         print(words)
 
-    if False:
-        print(n.model_1.state_dict())

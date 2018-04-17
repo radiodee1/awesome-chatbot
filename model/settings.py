@@ -10,6 +10,7 @@ hparams = {
     'train_name': "train",
     'src_ending': "from",
     'tgt_ending': "to",
+    'babi_ending':'ques',
     'base_filename': "weight",
     'base_file_num': 1,
     'num_vocab_total': 15000,
