@@ -3,6 +3,7 @@
 
 import os as os
 import sys
+from settings import hparams
 
 '''
 The MIT License (MIT)
@@ -116,4 +117,42 @@ if __name__ == '__main__':
         id = sys.argv[1]
     print(id)
     train, test = get_babi_raw(id,id)
-    print(test)
+
+    data_dir = hparams['data_dir']
+    train_name = hparams['train_name']
+    test_name = hparams['test_name']
+    babi_name = hparams['babi_name']
+    src_ending = hparams['src_ending']
+    tgt_ending = hparams['tgt_ending']
+    question_ending = hparams['question_ending']
+
+    with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, 'w') as z:
+        for i in range(len(train)):
+            z.write(train[i]['C'] + '\n')
+            pass
+
+    with open(data_dir + train_name +'.'+ babi_name + '.' + tgt_ending, 'w') as z:
+        for i in range(len(train)):
+            z.write(train[i]['A'] + '\n')
+            pass
+
+    with open(data_dir + train_name +'.'+ babi_name + '.' + question_ending, 'w') as z:
+        for i in range(len(train)):
+            z.write(train[i]['Q'] + '\n')
+            pass
+
+    ######################
+    with open(data_dir + test_name + '.' + babi_name + '.' + src_ending, 'w') as z:
+        for i in range(len(test)):
+            z.write(test[i]['C'] + '\n')
+            pass
+
+    with open(data_dir + test_name + '.' + babi_name + '.' + tgt_ending, 'w') as z:
+        for i in range(len(test)):
+            z.write(test[i]['A'] + '\n')
+            pass
+
+    with open(data_dir + test_name + '.' + babi_name + '.' + question_ending, 'w') as z:
+        for i in range(len(test)):
+            z.write(test[i]['Q'] + '\n')
+            pass
