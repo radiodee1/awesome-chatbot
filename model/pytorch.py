@@ -672,6 +672,7 @@ class NMT:
                     print('no long term loss saved with checkpoint')
                 try:
                     self.start = checkpoint[0]['start']
+                    if self.start >= len(self.pairs): self.start = 0
                 except:
                     print('no start saved with checkpoint')
                     pass
@@ -816,8 +817,8 @@ class NMT:
 
         #decoder_optimizer = None
 
-        training_pairs = [self.variablesFromPair(random.choice(self.pairs))
-                          for i in range(n_iters)]
+        #training_pairs = [self.variablesFromPair(random.choice(self.pairs)) for i in range(n_iters)]
+        training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
         #criterion = nn.NLLLoss()
         criterion = nn.CrossEntropyLoss()

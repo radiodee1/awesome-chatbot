@@ -243,8 +243,10 @@ class Lang:
 ################################
 class NMT:
     def __init__(self):
-        self.model_1 = None
-        self.model_2 = None
+        self.model_1_enc = None
+        self.model_2_dec = None
+        self.model_3_mem = None
+        self.model_4_att = None
         self.opt_1 = None
         self.opt_2 = None
         self.best_loss = None
@@ -596,7 +598,7 @@ class NMT:
                     'epoch':0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_1.state_dict(),
+                    'state_dict': self.model_1_enc.state_dict(),
                     'best_prec1': None,
                     'optimizer': self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
@@ -607,7 +609,7 @@ class NMT:
                     'epoch':0,
                     'start': self.start,
                     'arch':None,
-                    'state_dict':self.model_2.state_dict(),
+                    'state_dict':self.model_2_dec.state_dict(),
                     'best_prec1':None,
                     'optimizer': self.opt_2.state_dict(),
                     'best_loss': self.best_loss,
@@ -621,7 +623,7 @@ class NMT:
                     'epoch': 0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_1.state_dict(),
+                    'state_dict': self.model_1_enc.state_dict(),
                     'best_prec1': None,
                     'optimizer': None , # self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
@@ -632,7 +634,7 @@ class NMT:
                     'epoch': 0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_2.state_dict(),
+                    'state_dict': self.model_2_dec.state_dict(),
                     'best_prec1': None,
                     'optimizer': None, # self.opt_2.state_dict(),
                     'best_loss': self.best_loss,
@@ -675,6 +677,7 @@ class NMT:
                     print('no long term loss saved with checkpoint')
                 try:
                     self.start = checkpoint[0]['start']
+                    if self.start >= len(self.pairs): self.start = 0
                 except:
                     print('no start saved with checkpoint')
                     pass
@@ -686,11 +689,11 @@ class NMT:
                     pass
                 if hparams['zero_start'] is True:
                     self.start = 0
-                self.model_1.load_state_dict(checkpoint[0]['state_dict'])
+                self.model_1_enc.load_state_dict(checkpoint[0]['state_dict'])
                 if self.opt_1 is not None:
                     self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
 
-                self.model_2.load_state_dict(checkpoint[1]['state_dict'])
+                self.model_2_dec.load_state_dict(checkpoint[1]['state_dict'])
                 if self.opt_2 is not None:
                     self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
 
@@ -795,18 +798,16 @@ class NMT:
 
     def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
         if (encoder is not None and decoder is not None and
-                self.model_1 is None and self.model_2 is None):
-            self.model_1 = encoder
-            self.model_2 = decoder
+                self.model_1_enc is None and self.model_2_dec is None):
+            self.model_1_enc = encoder
+            self.model_2_dec = decoder
         else:
-            encoder = self.model_1
-            decoder = self.model_2
+            encoder = self.model_1_enc
+            decoder = self.model_2_dec
 
         save_thresh = 2
         saved_files = 0
 
-        start = time.time()
-        #plot_losses = []
         save_num = 0
         print_loss_total = 0  # Reset every print_every
 
@@ -903,12 +904,12 @@ class NMT:
 
     def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
         if (encoder is not None and decoder is not None and
-                self.model_1 is None and self.model_2 is None):
-            self.model_1 = encoder
-            self.model_2 = decoder
+                self.model_1_enc is None and self.model_2_dec is None):
+            self.model_1_enc = encoder
+            self.model_2_dec = decoder
         else:
-            encoder = self.model_1
-            decoder = self.model_2
+            encoder = self.model_1_enc
+            decoder = self.model_2_dec
 
         input_variable = self.variableFromSentence(self.input_lang, sentence)
         input_length = input_variable.size()[0]
@@ -975,9 +976,9 @@ class NMT:
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
 
-        self.model_1 = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+        self.model_1_enc = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
 
-        self.model_2 = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+        self.model_2_dec = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
         self.load_checkpoint()
 
 
@@ -1003,13 +1004,17 @@ if __name__ == '__main__':
     dropout = hparams['dropout']
     pytorch_embed_size = hparams['pytorch_embed_size']
 
-    n.model_1 = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
+    n.model_1_enc = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_2 = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
+    n.model_2_dec = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
+
+    n.model_3_mem = MemRNN(n.hidden_size,n.hidden_size)
+
+    n.model_4_att = EpisodicAttn(n.hidden_size, a_list_size=7)
 
     if use_cuda:
-        n.model_1 = n.model_1.cuda()
-        n.model_2 = n.model_2.cuda()
+        n.model_1_enc = n.model_1_enc.cuda()
+        n.model_2_dec = n.model_2_dec.cuda()
 
     if n.do_train:
         lr = hparams['learning_rate']
