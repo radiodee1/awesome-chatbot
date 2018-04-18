@@ -494,6 +494,7 @@ class NMT:
     def prepareData(self,lang1, lang2, reverse=False, omit_unk=False):
         if hparams['vocab_name'] is not None:
             v_name = hparams['data_dir'] + hparams['vocab_name']
+            v_name = v_name.replace('big', hparams['babi_name'])
         else:
             v_name = None
 
@@ -818,7 +819,7 @@ class NMT:
 
         #decoder_optimizer = None
 
-        training_pairs = [self.variablesFromPair(random.choice(self.pairs)) for i in range(n_iters)]
+        training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
         #training_pairs = self.pairs
 
         #criterion = nn.NLLLoss()
