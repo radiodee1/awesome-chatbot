@@ -253,6 +253,7 @@ class NMT:
 
         self.input_lang = None
         self.output_lang = None
+        self.question_lang = None
         self.vocab_lang = None
 
         self.print_every = hparams['steps_to_stats']
@@ -263,6 +264,7 @@ class NMT:
 
         self.train_fr = None
         self.train_to = None
+        self.train_ques = None
         self.pairs = []
 
         self.do_train = False
@@ -272,6 +274,7 @@ class NMT:
         self.do_interactive = False
         self.do_convert = False
         self.do_plot = False
+        self.do_load_babi = False
 
         self.printable = ''
 
@@ -283,7 +286,8 @@ class NMT:
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
         parser.add_argument('--convert-weights',help='convert weights', action='store_true')
-
+        parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
+                            action='store_true')
         self.args = parser.parse_args()
         self.args = vars(self.args)
         # print(self.args)
@@ -310,7 +314,7 @@ class NMT:
         else:
             self.trainable = False
         if self.args['convert_weights'] == True: self.do_convert = True
-
+        if self.args['load_babi'] == True: self.do_load_babi = True
 
 
     def task_normal_train(self):
@@ -321,6 +325,12 @@ class NMT:
     def task_review_set(self):
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
+        pass
+
+    def task_babi_files(self):
+        self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
+        self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
         pass
 
     def task_review_weights(self, pairs, stop_at_fail=False):
@@ -419,13 +429,15 @@ class NMT:
         s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
         return s
 
-    def readLangs(self,lang1, lang2, reverse=False, load_vocab_file=None, babi_ending=False):
+    def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
         print("Reading lines...")
         self.pairs = []
         if not self.do_interactive:
 
             l_in = self.open_sentences(hparams['data_dir'] + lang1)
             l_out = self.open_sentences(hparams['data_dir'] + lang2)
+            if lang3 is not None:
+                l_ques = self.open_sentences(hparams['data_dir'] + lang3)
 
             #pairs = []
             for i in range(len(l_in)):
@@ -436,11 +448,14 @@ class NMT:
                     else:
                         lin = l_in[i].strip('\n')
 
-                        lques = l_in[i].strip('\n')
-                        lques = lques.split(' ')
-                        if len(lques) > MAX_LENGTH:
-                            lques = lques[: - MAX_LENGTH]
-                        lques = ' '.join(lques)
+                        if lang3 is not None:
+                            lques = l_ques[i].strip('\n')
+                        else:
+                            lques = l_in[i].strip('\n')
+                            lques = lques.split(' ')
+                            if len(lques) > MAX_LENGTH:
+                                lques = lques[: - MAX_LENGTH]
+                            lques = ' '.join(lques)
 
                         lans = l_out[i].strip('\n')
                         line = [ lin, lques , lans]
@@ -460,16 +475,14 @@ class NMT:
             self.output_lang = Lang(lang2)
 
         if hparams['autoencode'] == 1.0:
-            self.pairs = [ [p[0], p[0]] for p in self.pairs]
+            self.pairs = [ [p[0], p[0], p[0]] for p in self.pairs]
             self.output_lang = self.input_lang
 
         return self.input_lang, self.output_lang, self.pairs
 
     def filterPair(self,p):
-
-
-        return len(p[0].split(' ')) < MAX_LENGTH and \
-            len(p[1].split(' ')) < MAX_LENGTH  or True #\
+        return (len(p[0].split(' ')) < MAX_LENGTH and \
+            len(p[1].split(' ')) < MAX_LENGTH)  or True #\
 
 
 
@@ -483,9 +496,16 @@ class NMT:
             v_name = hparams['data_dir'] + hparams['vocab_name']
         else:
             v_name = None
-        self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2,
-                                                                  reverse,
-                                                                  load_vocab_file=v_name)
+
+        if not self.do_load_babi:
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2,
+                                                                           reverse,
+                                                                           load_vocab_file=v_name)
+        else:
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, self.train_ques,
+                                                                           reverse=False,
+                                                                           babi_ending=True,
+                                                                           load_vocab_file=v_name)
         print("Read %s sentence pairs" % len(self.pairs))
         self.pairs = self.filterPairs(self.pairs)
         print("Trimmed to %s sentence pairs" % len(self.pairs))
@@ -497,10 +517,13 @@ class NMT:
                 #print(word)
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
+
             new_pairs = []
             for p in range(len(self.pairs)):
+                #print(self.pairs[p])
                 a = []
                 b = []
+                c = []
                 for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
@@ -511,7 +534,12 @@ class NMT:
                         b.append(word)
                     elif not omit_unk:
                         b.append(hparams['unk'])
-                new_pairs.append([' '.join(a), ' '.join(b)])
+                for word in self.pairs[p][2].split(' '):
+                    if word in self.vocab_lang.word2index:
+                        c.append(word)
+                    elif not omit_unk:
+                        c.append(hparams['unk'])
+                new_pairs.append([' '.join(a), ' '.join(b), ' '.join(c)])
             self.pairs = new_pairs
 
         else:
@@ -554,8 +582,10 @@ class NMT:
 
     def variablesFromPair(self,pair):
         input_variable = self.variableFromSentence(self.input_lang, pair[0])
-        target_variable = self.variableFromSentence(self.output_lang, pair[1])
-        return (input_variable, target_variable)
+        question_variable = self.variableFromSentence(self.output_lang, pair[1])
+        target_variable = self.variableFromSentence(self.output_lang, pair[2])
+
+        return (input_variable,question_variable, target_variable)
 
 
     def make_state(self, converted=False):
@@ -705,7 +735,7 @@ class NMT:
 
 
 
-    def train(self,input_variable, target_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
+    def train(self,input_variable, target_variable,question_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
@@ -788,8 +818,8 @@ class NMT:
 
         #decoder_optimizer = None
 
-        training_pairs = [self.variablesFromPair(random.choice(self.pairs))
-                          for i in range(n_iters)]
+        training_pairs = [self.variablesFromPair(random.choice(self.pairs)) for i in range(n_iters)]
+        #training_pairs = self.pairs
 
         #criterion = nn.NLLLoss()
         criterion = nn.CrossEntropyLoss()
@@ -808,8 +838,13 @@ class NMT:
 
         for iter in range(start, n_iters + 1):
             training_pair = training_pairs[iter - 1]
+
+            #print(training_pair)
+            #exit()
+
             input_variable = training_pair[0]
-            target_variable = training_pair[1]
+            question_variable = training_pair[1]
+            target_variable = training_pair[2]
 
             is_auto = random.random() < hparams['autoencode']
             if is_auto:
@@ -818,7 +853,7 @@ class NMT:
 
 
 
-            outputs, masks , l = self.train(input_variable, target_variable, encoder,
+            outputs, masks , l = self.train(input_variable, target_variable,question_variable, encoder,
                                             decoder, encoder_optimizer, decoder_optimizer, criterion)
 
             print_loss_total += float(l)
@@ -854,7 +889,8 @@ class NMT:
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(self.pairs)
                 print('src:',choice[0])
-                print('ref:',choice[1])
+                print('ques:', choice[1])
+                print('ref:',choice[2])
                 words, _ = self.evaluate(None, None, choice[0])
                 #print(choice)
                 print('ans:',words)
@@ -948,15 +984,17 @@ if __name__ == '__main__':
 
     n = NMT()
 
-    if True:
+    if False:
         att = EpisodicAttn(5, 7)
         print(att([' ',' ']))
         exit()
 
-    if not n.do_review:
+    if not n.do_review and not n.do_load_babi:
         n.task_normal_train()
-    else:
+    elif not n.do_load_babi:
         n.task_review_set()
+    elif n.do_load_babi:
+        n.task_babi_files()
 
     n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=False)
 
