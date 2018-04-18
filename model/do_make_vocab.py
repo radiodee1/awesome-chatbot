@@ -8,6 +8,7 @@ from operator import itemgetter
 from gensim.scripts.glove2word2vec import glove2word2vec
 from gensim.models.keyedvectors import KeyedVectors
 import numpy as np
+import argparse
 
 embed_size = hparams['embed_size']
 vocab_length = hparams['num_vocab_total']
@@ -52,7 +53,7 @@ def make_vocab():
     #v = vv
     #print(v)
 
-def save_vocab():
+def save_vocab(babi=False):
     ''' remember to leave 3 spots blank '''
     sol = hparams['sol']
     eol = hparams['eol']
@@ -62,6 +63,10 @@ def save_vocab():
 
     if name == train_file[0]:
         name += '.voc.txt'
+
+    if babi:
+        name = name.replace('big', hparams['babi_name'])
+
     with open(name, 'w') as x:
         x.write(unk+'\n'+ sol+'\n'+eol+'\n')
         for z in range(len(v)):
@@ -109,20 +114,33 @@ def prep_glove(vocab_list):
     pass
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Make vocab file.')
+    parser.add_argument('basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
+    parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
+    args = parser.parse_args()
+    args = vars(args)
+    print(args)
+    #exit()
     train_file = ['../data/train.big.from'] # , '../data/train.big.to']
 
-    if len(sys.argv) > 1:
-        train_file = str(sys.argv[1])
+    train_file = [args['basefile']]
+    #if len(sys.argv) > 1:
+    #    train_file = str(sys.argv[1])
+    babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
 
+    if args['babi'] == True:
+        train_file.append(babi_file)
     print(train_file)
-    #global v
+
     v = []
     #global v
     if True:
         make_vocab()
-        save_vocab()
+        save_vocab(args['babi'])
     if len(v) == 0:
-        v = load_vocab()
+        filename = hparams['data_dir'] + hparams['vocab_name']
+        if args['babi'] == True: filename = filename.replace('big', hparams['babi_name'])
+        v = load_vocab(filename)
 
     if hparams['embed_size'] is not None and hparams['embed_size'] != 0:
         prep_glove(v)
