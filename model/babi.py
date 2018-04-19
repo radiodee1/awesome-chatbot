@@ -154,17 +154,17 @@ class MemRNN(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
-        self.embedding = nn.Embedding(input_size, hidden_size)
+        #self.embedding = nn.Embedding(input_size, hidden_size)
         self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
 
 
     def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
-        bi_output, bi_hidden = self.bi_gru(output,hidden)
+        #embedded = self.embedding(input).view(1, 1, -1)
+        #output = embedded
+        output, hidden = self.gru(input,hidden)
         #bi_output = (bi_output[:, :, :self.hidden_size] +
         #               bi_output[:, :, self.hidden_size:])
-        return bi_output, bi_hidden
+        return output, hidden
 
     def initHidden(self):
         result = Variable(torch.zeros(2, 1, self.hidden_size))
