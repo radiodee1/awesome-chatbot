@@ -99,7 +99,7 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
 
         self.W_b = nn.Parameter(torch.FloatTensor(hidden_size, hidden_size))
-        self.W_1 = nn.Parameter(torch.FloatTensor(hidden_size, self.a_list_size * hidden_size))
+        self.W_1 = nn.Parameter(torch.FloatTensor(hidden_size, self.a_list_size))# self.a_list_size * hidden_size))
         self.W_2 = nn.Parameter(torch.FloatTensor(1, hidden_size))
         self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
@@ -112,10 +112,10 @@ class EpisodicAttn(nn.Module):
 
     def forward(self,concat_list):
 
-        assert len(concat_list) == self.a_list_size
+        #assert len(concat_list) == self.a_list_size
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list)
-        print(self.c_list_z.size(), 'list')
+        print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
         self.l_1 = torch.mm(self.W_1, self.c_list_z.view(-1, self.hidden_size)) + self.b_1
         self.l_1 = torch.tanh(self.l_1)
         self.l_2 = torch.mm(self.W_2, self.l_1) + self.b_2
@@ -156,7 +156,7 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         #self.embedding = nn.Embedding(input_size, hidden_size)
-        self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
 
 
     def forward(self, input, hidden=None):
@@ -759,21 +759,34 @@ class NMT:
 
 
     def new_input_module(self, input_variable, question_variable):
-
-        out1, hidden1 = self.model_1_enc(input_variable)
-        self.inp_c = out1
-        out2, hidden2 = self.model_1_enc(question_variable)
+        outlist1 = []
+        hidden1 = None
+        for i in input_variable:
+            i = i.view(1,-1)
+            out1, hidden1 = self.model_1_enc(i)
+            outlist1.append(out1)
+        #self.inp_c = torch.cat(outlist1)
+        self.inp_c = outlist1
+        outlist2 = []
+        hidden2 = None
+        for i in question_variable:
+            i = i.view(1,-1)
+            out2, hidden2 = self.model_1_enc(i)
+            outlist2.append(out2)
+        #self.q_q = torch.cat(outlist2)
         self.q_q = out2
         return out1, hidden1
         pass
 
     def new_episodic_module(self):
         if self.q_q is not None:
-            print(self.q_q.size(),'qq')
+            #print(self.q_q.size(),'qq')
             memory = [self.q_q]
             for iter in range(1, self.memory_hops+1):
                 current_episode = self.new_episode_big_step(memory[iter - 1])
                 out,  _ = self.model_3_mem(memory[iter - 1], current_episode)
+
+                #print(out,'out')
                 memory.append(out)
             self.last_mem = memory[-1]
         pass
@@ -781,7 +794,7 @@ class NMT:
     def new_episode_big_step(self, mem):
         g_record = []
         sequences = self.inp_c
-        print(sequences.size(),'seq')
+        #print(sequences.size(),'seq')
         for i in range(len(sequences)):
             g = self.new_attention_step(sequences[i],None,mem,self.q_q)
             g_record.append(g)
@@ -796,19 +809,19 @@ class NMT:
 
     def new_episode_small_step(self, ct, g, prev_h):
         gru, _ = self.model_3_mem(ct, prev_h)
-        h = g * gru + (1 - g) * prev_h
+        h = g * gru + (1 - g) #* prev_h
         return h
         pass
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         ct = ct.view(1,1,-1)
-        print(ct.size(), mem.size(), q_q.size(),'all')
+        #print(ct.size(), mem.size(), q_q.size(),'all')
         concat_list = [ct, mem, q_q, ct * q_q, ct * mem, torch.abs(ct - q_q), torch.abs(ct - mem)]
         return self.model_4_att(concat_list)
 
     def new_answer_feed_forward(self):
         # do something with last_mem
-        y = torch.mm(self.W_a, self.last_mem)
+        y = torch.mm(self.W_a, self.last_mem.view(1,-1))
         y = nn.Softmax(y)
         return y
         pass
