@@ -115,7 +115,8 @@ class EpisodicAttn(nn.Module):
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list)
-        self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
+        print(self.c_list_z.size(), 'list')
+        self.l_1 = torch.mm(self.W_1, self.c_list_z.view(-1, self.hidden_size)) + self.b_1
         self.l_1 = torch.tanh(self.l_1)
         self.l_2 = torch.mm(self.W_2, self.l_1) + self.b_2
         self.G = torch.sigmoid(self.l_2)[0]
@@ -285,6 +286,11 @@ class NMT:
         self.answer_var = None    # for answer
         self.q_q = None           # extra question
         self.inp_c = None         # extra input
+        self.last_mem = None      # output of mem unit
+        self.prediction = None    # final single word prediction
+
+        # part of output
+        self.W_a = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
 
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
@@ -508,14 +514,16 @@ class NMT:
             v_name = None
 
         if not self.do_load_babi:
-            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2,
-                                                                           reverse,
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=None,
+                                                                           reverse=reverse,
                                                                            load_vocab_file=v_name)
+            lang3 = None
         else:
             self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, self.train_ques,
                                                                            reverse=False,
                                                                            babi_ending=True,
                                                                            load_vocab_file=v_name)
+            lang3 = self.train_ques
         print("Read %s sentence pairs" % len(self.pairs))
         self.pairs = self.filterPairs(self.pairs)
         print("Trimmed to %s sentence pairs" % len(self.pairs))
@@ -544,12 +552,15 @@ class NMT:
                         b.append(word)
                     elif not omit_unk:
                         b.append(hparams['unk'])
-                for word in self.pairs[p][2].split(' '):
-                    if word in self.vocab_lang.word2index:
-                        c.append(word)
-                    elif not omit_unk:
-                        c.append(hparams['unk'])
-                new_pairs.append([' '.join(a), ' '.join(b), ' '.join(c)])
+                pairs = [' '.join(a), ' '.join(b)]
+                if lang3 is not None:
+                    for word in self.pairs[p][2].split(' '):
+                        if word in self.vocab_lang.word2index:
+                            c.append(word)
+                        elif not omit_unk:
+                            c.append(hparams['unk'])
+                    pairs.append( ' '.join(c) )
+                new_pairs.append(pairs)
             self.pairs = new_pairs
 
         else:
@@ -593,8 +604,10 @@ class NMT:
     def variablesFromPair(self,pair):
         input_variable = self.variableFromSentence(self.input_lang, pair[0])
         question_variable = self.variableFromSentence(self.output_lang, pair[1])
-        target_variable = self.variableFromSentence(self.output_lang, pair[2])
-
+        if len(pair) > 2:
+            target_variable = self.variableFromSentence(self.output_lang, pair[2])
+        else:
+            return (input_variable, question_variable)
         return (input_variable,question_variable, target_variable)
 
 
@@ -747,25 +760,28 @@ class NMT:
 
     def new_input_module(self, input_variable, question_variable):
 
-        out, _ = self.model_1_enc(input_variable)
-        self.inp_c = out
-        out, _ = self.model_1_enc(question_variable)
-        self.q_q = out
+        out1, hidden1 = self.model_1_enc(input_variable)
+        self.inp_c = out1
+        out2, hidden2 = self.model_1_enc(question_variable)
+        self.q_q = out2
+        return out1, hidden1
         pass
 
     def new_episodic_module(self):
         if self.q_q is not None:
+            print(self.q_q.size(),'qq')
             memory = [self.q_q]
             for iter in range(1, self.memory_hops+1):
                 current_episode = self.new_episode_big_step(memory[iter - 1])
-                out = self.model_3_mem(memory[iter - 1], current_episode)
+                out,  _ = self.model_3_mem(memory[iter - 1], current_episode)
                 memory.append(out)
-            last_mem = memory[-1]
+            self.last_mem = memory[-1]
         pass
 
     def new_episode_big_step(self, mem):
         g_record = []
         sequences = self.inp_c
+        print(sequences.size(),'seq')
         for i in range(len(sequences)):
             g = self.new_attention_step(sequences[i],None,mem,self.q_q)
             g_record.append(g)
@@ -779,25 +795,85 @@ class NMT:
         pass
 
     def new_episode_small_step(self, ct, g, prev_h):
-        gru = self.model_3_mem(ct, prev_h)
+        gru, _ = self.model_3_mem(ct, prev_h)
         h = g * gru + (1 - g) * prev_h
         return h
         pass
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
+        ct = ct.view(1,1,-1)
+        print(ct.size(), mem.size(), q_q.size(),'all')
         concat_list = [ct, mem, q_q, ct * q_q, ct * mem, torch.abs(ct - q_q), torch.abs(ct - mem)]
         return self.model_4_att(concat_list)
+
+    def new_answer_feed_forward(self):
+        # do something with last_mem
+        y = torch.mm(self.W_a, self.last_mem)
+        y = nn.Softmax(y)
+        return y
+        pass
+
+    def new_answer_module(self, target_variable, encoder_hidden, criterion, max_length=MAX_LENGTH):
+        targets = target_variable  # input_variable
+        outputs = []
+        masks = []
+        outputs_index = []
+        decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
+        output = targets[0].unsqueeze(0)  # start token
+        print(output)
+
+        self.prediction = self.new_answer_feed_forward()
+
+        is_teacher = random.random() < teacher_forcing_ratio
+        raw = 0
+        loss = 0
+
+        for t in range(1, max_length - 1):
+            # print(t,'t', decoder_hidden.size())
+
+            if len(targets) > 1 and t == 2: output = self.prediction
+
+            output, decoder_hidden, mask = self.model_2_dec(output, self.inp_c, decoder_hidden)
+            outputs.append(output)
+            masks.append(mask.data)
+
+            if t < len(target_variable):
+                loss += criterion(output.view(1, -1), target_variable[t])
+            else:
+                loss += criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
+
+            # raw = output[:]
+            output = Variable(output.data.max(dim=2)[1])
+            # raw.append(output)
+            if int(output.data[0].int()) == EOS_token:
+                # print('eos token',t)
+                break
+
+            # teacher forcing
+            if is_teacher and t < targets.size()[0]:
+                # print(output,'out')
+                output = targets[t].unsqueeze(0)
+                # print(self.output_lang.index2word[int(output)])
+
+        return output, masks, loss
+        pass
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
 
+        encoder_output , encoder_hidden = self.new_input_module(input_variable, question_variable)
+
+        self.new_episodic_module()
+
+        outputs, masks, loss = self.new_answer_module(target_variable, encoder_hidden, criterion)
+
+
+        '''
         encoder_output, encoder_hidden = encoder(input_variable)
-        '''
-        for ei in range(1,max_length):
-            encoder_output, encoder_hidden = encoder(input_variable[ei], encoder_hidden)
-        '''
+        
+        
 
         targets = target_variable #input_variable
         outputs = []
@@ -834,7 +910,7 @@ class NMT:
                 #print(output,'out')
                 output = targets[t].unsqueeze(0)
                 #print(self.output_lang.index2word[int(output)])
-
+        '''
 
         loss.backward()
 
@@ -895,7 +971,10 @@ class NMT:
 
             input_variable = training_pair[0]
             question_variable = training_pair[1]
-            target_variable = training_pair[2]
+            if len(training_pair) > 2:
+                target_variable = training_pair[2]
+            else:
+                target_variable = training_pair[1]
 
             is_auto = random.random() < hparams['autoencode']
             if is_auto:

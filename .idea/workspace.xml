@@ -17,8 +17,8 @@
       <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="12006">
-              <caret line="688" column="9" selection-start-line="688" selection-start-column="9" selection-end-line="688" selection-end-column="9" />
+            <state relative-caret-position="269">
+              <caret line="560" column="57" selection-start-line="560" selection-start-column="48" selection-end-line="560" selection-end-column="57" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -29,8 +29,8 @@
       <file leaf-file-name="babi.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1">
-              <caret line="755" column="32" selection-start-line="755" selection-start-column="32" selection-end-line="755" selection-end-column="32" />
+            <state relative-caret-position="-55">
+              <caret line="771" selection-start-line="771" selection-end-line="771" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -50,7 +50,7 @@
       <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2394">
+            <state relative-caret-position="1720">
               <caret line="141" column="60" selection-start-line="141" selection-start-column="53" selection-end-line="141" selection-end-column="60" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
@@ -121,11 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>replace_some_comments</find>
-      <find>opt_2</find>
-      <find>trainIters</find>
-      <find>autoencode</find>
-      <find>speech</find>
       <find>enums</find>
       <find>types</find>
       <find>cons</find>
@@ -145,12 +140,17 @@
       <find>output_lang</find>
       <find>filterPairs</find>
       <find>pairs</find>
-      <find>readLangs</find>
       <find>input_lang</find>
       <find>model_1</find>
       <find>model_2</find>
-      <find>EpisodicAttn</find>
       <find>model_4_att</find>
+      <find>MAX_LENGTH</find>
+      <find>SOS_token</find>
+      <find>prediction</find>
+      <find>train_ques</find>
+      <find>task_babi_files</find>
+      <find>readLangs</find>
+      <find>EpisodicAttn</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -296,22 +296,22 @@
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -473,17 +473,17 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="846">
             <caret line="47" column="130" selection-start-line="47" selection-start-column="130" selection-end-line="47" selection-end-column="130" />
           </first_editor>
           <second_editor />
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
@@ -527,10 +527,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2394">
+        <state relative-caret-position="1720">
           <caret line="141" column="60" selection-start-line="141" selection-start-column="53" selection-end-line="141" selection-end-column="60" />
           <folding>
             <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/pytorch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="560" column="57" selection-start-line="560" selection-start-column="48" selection-end-line="560" selection-end-column="57" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -542,20 +552,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/pytorch.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12006">
-          <caret line="688" column="9" selection-start-line="688" selection-start-column="9" selection-end-line="688" selection-end-column="9" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1">
-          <caret line="755" column="32" selection-start-line="755" selection-start-column="32" selection-end-line="755" selection-end-column="32" />
+        <state relative-caret-position="-55">
+          <caret line="771" selection-start-line="771" selection-end-line="771" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
