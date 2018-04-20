@@ -158,7 +158,7 @@ class MemRNN(nn.Module):
         self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
 
 
-    def forward(self, input, hidden):
+    def forward(self, input, hidden=None):
         #embedded = self.embedding(input).view(1, 1, -1)
         #output = embedded
         output, hidden = self.gru(input,hidden)
@@ -167,7 +167,7 @@ class MemRNN(nn.Module):
         return output, hidden
 
     def initHidden(self):
-        result = Variable(torch.zeros(2, 1, self.hidden_size))
+        result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
         else:
@@ -279,6 +279,13 @@ class NMT:
         self.do_load_babi = False
 
         self.printable = ''
+
+        self.input_var = None     # for input
+        self.q_var = None         # for question
+        self.answer_var = None    # for answer
+        self.q_q = None           # extra question
+        self.inp_c = None         # extra input
+
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
         parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot)')
@@ -738,6 +745,48 @@ class NMT:
         return ' '.join(out)
 
 
+    def new_input_module(self, input_variable, question_variable):
+
+        out, _ = self.model_1_enc(input_variable)
+        self.inp_c = out
+        out, _ = self.model_1_enc(question_variable)
+        self.q_q = out
+        pass
+
+    def new_episodic_module(self):
+        if self.q_q is not None:
+            memory = [self.q_q]
+            for iter in range(1, self.memory_hops+1):
+                current_episode = self.new_episode_big_step(memory[iter - 1])
+                out = self.model_3_mem(memory[iter - 1], current_episode)
+                memory.append(out)
+            last_mem = memory[-1]
+        pass
+
+    def new_episode_big_step(self, mem):
+        g_record = []
+        sequences = self.inp_c
+        for i in range(len(sequences)):
+            g = self.new_attention_step(sequences[i],None,mem,self.q_q)
+            g_record.append(g)
+            ## do something with g!!
+            pass
+        sequences = self.inp_c
+        for i in range(len(sequences)):
+            e = self.new_episode_small_step(sequences[i], g_record[i], None) ## something goes here!!
+            pass
+        return e
+        pass
+
+    def new_episode_small_step(self, ct, g, prev_h):
+        gru = self.model_3_mem(ct, prev_h)
+        h = g * gru + (1 - g) * prev_h
+        return h
+        pass
+
+    def new_attention_step(self, ct, prev_g, mem, q_q):
+        concat_list = [ct, mem, q_q, ct * q_q, ct * mem, torch.abs(ct - q_q), torch.abs(ct - mem)]
+        return self.model_4_att(concat_list)
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
 
