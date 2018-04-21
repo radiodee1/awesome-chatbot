@@ -100,7 +100,7 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
 
         self.W_b = nn.Parameter(torch.FloatTensor(hidden_size, hidden_size))
-        self.W_1 = nn.Parameter(torch.FloatTensor(hidden_size, self.a_list_size))# self.a_list_size * hidden_size))
+        self.W_1 = nn.Parameter(torch.FloatTensor(hidden_size, self.a_list_size * hidden_size))
         self.W_2 = nn.Parameter(torch.FloatTensor(1, hidden_size))
         self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
@@ -113,11 +113,13 @@ class EpisodicAttn(nn.Module):
 
     def forward(self,concat_list):
 
-        #assert len(concat_list) == self.a_list_size
+        assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list)
+        self.c_list_z = torch.cat(concat_list,dim=2).view(1,-1)
+        self.c_list_z = self.c_list_z.permute(1,0)
         print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
-        self.l_1 = torch.mm(self.W_1, self.c_list_z.view(-1, self.hidden_size)) + self.b_1
+        self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
+
         self.l_1 = torch.tanh(self.l_1)
         self.l_2 = torch.mm(self.W_2, self.l_1) + self.b_2
         self.G = torch.sigmoid(self.l_2)[0]
@@ -199,6 +201,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
+        self.hidden_dim = hidden_dim
         self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
         self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
@@ -220,8 +223,12 @@ class Decoder(nn.Module):
         output = self.out(torch.cat([rnn_output, context], 2))
         return output, decoder_hidden, mask
 
-    def get_embeddings(self):
-        return self.weight
+    def get_index_from_vec(self, vec):
+        diff = self.embed.weight[0] - vec[:self.embed.weight.size()[1]]
+        delta = torch.sum(diff * diff, dim=0)
+        i = np.argmin(delta)
+        return i
+
 
 class Lang:
     def __init__(self, name):
@@ -789,7 +796,7 @@ class NMT:
     def new_episodic_module(self):
         if self.q_q is not None:
             #print(self.q_q.size(),'qq')
-            memory = [self.q_q]
+            memory = [self.q_q.clone()]
             for iter in range(1, self.memory_hops+1):
                 current_episode = self.new_episode_big_step(memory[iter - 1])
                 out,  _ = self.model_3_mem(memory[iter - 1], current_episode)
@@ -802,7 +809,7 @@ class NMT:
     def new_episode_big_step(self, mem):
         g_record = []
         sequences = self.inp_c
-        #print(sequences.size(),'seq')
+        print(len(sequences),sequences[0].size(),'seq')
         for i in range(len(sequences)):
             g = self.new_attention_step(sequences[i],None,mem,self.q_q)
             g_record.append(g)
@@ -822,15 +829,20 @@ class NMT:
         pass
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        ct = ct.view(1,1,-1)
+        #ct = ct.view(1,1,-1)
         #print(ct.size(), mem.size(), q_q.size(),'all')
         concat_list = [ct, mem, q_q, ct * q_q, ct * mem, torch.abs(ct - q_q), torch.abs(ct - mem)]
+        #for i in concat_list: print(i.size(),'<')
+        #exit()
         return self.model_4_att(concat_list)
 
     def new_answer_feed_forward(self):
         # do something with last_mem
-        y = torch.mm(self.W_a, self.last_mem.view(1,-1))
-        y = nn.Softmax(y)
+        y = self.model_2_dec.get_index_from_vec(self.last_mem.view(-1))
+
+        #print(self.model_2_dec.get_embeddings())
+        #y = torch.mm(self.W_a, self.last_mem.view(1,-1))
+        #y = nn.Softmax(y)
         return y
         pass
 
@@ -844,6 +856,7 @@ class NMT:
         print(output)
 
         self.prediction = self.new_answer_feed_forward()
+        print(self.input_lang.index2word[self.prediction])
 
         is_teacher = random.random() < teacher_forcing_ratio
         raw = 0
@@ -854,7 +867,7 @@ class NMT:
 
             if len(targets) > 1 and t == 2: output = self.prediction
 
-            output, decoder_hidden, mask = self.model_2_dec(output, self.inp_c, decoder_hidden)
+            output, decoder_hidden, mask = self.model_2_dec(output, self.inp_c[t], decoder_hidden)
             outputs.append(output)
             masks.append(mask.data)
 

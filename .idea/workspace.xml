@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/pytorch.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/pytorch.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,10 +14,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="pytorch.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/pytorch.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
+            <state relative-caret-position="6966">
               <caret line="408" column="143" selection-start-line="408" selection-start-column="143" selection-end-line="408" selection-end-column="143" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -29,17 +29,17 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret column="20" selection-start-column="20" selection-end-column="20" />
+            <state relative-caret-position="702">
+              <caret line="225" column="16" selection-start-line="222" selection-start-column="8" selection-end-line="225" selection-end-column="16" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="babi.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="621">
-              <caret line="1149" column="118" selection-start-line="1149" selection-start-column="118" selection-end-line="1149" selection-end-column="118" />
+            <state relative-caret-position="269">
+              <caret line="869" column="81" selection-start-line="869" selection-start-column="81" selection-end-line="869" selection-end-column="81" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -59,7 +59,7 @@
       <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1432">
+            <state relative-caret-position="2394">
               <caret line="141" column="60" selection-start-line="141" selection-start-column="53" selection-end-line="141" selection-end-column="60" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
@@ -130,7 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>types</find>
       <find>cons</find>
       <find>load_checkpoint</find>
       <find>best_loss</find>
@@ -143,7 +142,6 @@
       <find>load_vocab</find>
       <find>save_vocab</find>
       <find>replace</find>
-      <find>prepareData</find>
       <find>variablesFromPair</find>
       <find>output_lang</find>
       <find>filterPairs</find>
@@ -159,6 +157,8 @@
       <find>readLangs</find>
       <find>EpisodicAttn</find>
       <find>SOS_token</find>
+      <find>prepareData</find>
+      <find>Decoder</find>
       <find>inp_c</find>
     </findStrings>
   </component>
@@ -212,8 +212,8 @@
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/babi.py" />
         <option value="$PROJECT_DIR$/model/pytorch.py" />
+        <option value="$PROJECT_DIR$/model/babi.py" />
       </list>
     </option>
   </component>
@@ -305,22 +305,22 @@
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -527,16 +527,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="20" selection-start-column="20" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1432">
+        <state relative-caret-position="2394">
           <caret line="141" column="60" selection-start-line="141" selection-start-column="53" selection-end-line="141" selection-end-column="60" />
           <folding>
             <element signature="e#20#51#0" expanded="true" />
@@ -551,20 +544,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi.py">
+    <entry file="file://$PROJECT_DIR$/model/pytorch.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="621">
-          <caret line="1149" column="118" selection-start-line="1149" selection-start-column="118" selection-end-line="1149" selection-end-column="118" />
+        <state relative-caret-position="6966">
+          <caret line="408" column="143" selection-start-line="408" selection-start-column="143" selection-end-line="408" selection-end-column="143" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/pytorch.py">
+    <entry file="file://$PROJECT_DIR$/model/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="702">
+          <caret line="225" column="16" selection-start-line="222" selection-start-column="8" selection-end-line="225" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
-          <caret line="408" column="143" selection-start-line="408" selection-start-column="143" selection-end-line="408" selection-end-column="143" />
+          <caret line="869" column="81" selection-start-line="869" selection-start-column="81" selection-end-line="869" selection-end-column="81" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
