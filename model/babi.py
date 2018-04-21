@@ -282,6 +282,7 @@ class NMT:
         self.do_convert = False
         self.do_plot = False
         self.do_load_babi = False
+        self.do_hide_unk = False
 
         self.printable = ''
 
@@ -307,6 +308,8 @@ class NMT:
         parser.add_argument('--convert-weights',help='convert weights', action='store_true')
         parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
                             action='store_true')
+        parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
+
         self.args = parser.parse_args()
         self.args = vars(self.args)
         # print(self.args)
@@ -334,6 +337,7 @@ class NMT:
             self.trainable = False
         if self.args['convert_weights'] == True: self.do_convert = True
         if self.args['load_babi'] == True: self.do_load_babi = True
+        if self.args['hide_unk'] == True: self.do_hide_unk = True
 
 
     def task_normal_train(self):
@@ -1143,7 +1147,7 @@ if __name__ == '__main__':
     elif n.do_load_babi:
         n.task_babi_files()
 
-    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=False)
+    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
 
     layers = hparams['layers']
     dropout = hparams['dropout']
