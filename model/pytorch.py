@@ -259,8 +259,9 @@ class Decoder(nn.Module):
         return output, decoder_hidden, mask
 
 class Lang:
-    def __init__(self, name):
+    def __init__(self, name, limit=None):
         self.name = name
+        self.limit = limit
         self.word2index = {}
         self.word2count = {}
         self.index2word = {0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
@@ -271,13 +272,14 @@ class Lang:
             self.addWord(word)
 
     def addWord(self, word):
-        if word not in self.word2index:
-            self.word2index[word] = self.n_words
-            self.word2count[word] = 1
-            self.index2word[self.n_words] = word
-            self.n_words += 1
-        else:
-            self.word2count[word] += 1
+        if self.limit is None or self.n_words < self.limit :
+            if word not in self.word2index:
+                self.word2index[word] = self.n_words
+                self.word2count[word] = 1
+                self.index2word[self.n_words] = word
+                self.n_words += 1
+            else:
+                self.word2count[word] += 1
 
 
 ################################
@@ -477,16 +479,16 @@ class NMT:
 
         # Reverse pairs, make Lang instances
         if load_vocab_file is not None:
-            self.vocab_lang = Lang(load_vocab_file)
+            self.vocab_lang = Lang(load_vocab_file, limit=hparams['num_vocab_total'])
             pass
 
         if reverse:
             self.pairs = [list(reversed(p)) for p in self.pairs]
-            self.input_lang = Lang(lang2)
-            self.output_lang = Lang(lang1)
+            self.input_lang = Lang(lang2, limit=hparams['num_vocab_total'])
+            self.output_lang = Lang(lang1, limit=hparams['num_vocab_total'])
         else:
-            self.input_lang = Lang(lang1)
-            self.output_lang = Lang(lang2)
+            self.input_lang = Lang(lang1, limit=hparams['num_vocab_total'])
+            self.output_lang = Lang(lang2, limit=hparams['num_vocab_total'])
 
         if hparams['autoencode'] == 1.0:
             self.pairs = [ [p[0], p[0]] for p in self.pairs]
