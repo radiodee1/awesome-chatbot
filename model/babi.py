@@ -225,9 +225,9 @@ class Decoder(nn.Module):
 
     def get_index_from_vec(self, vec):
         diff = self.embed.weight[0] - vec[:self.embed.weight.size()[1]]
-        delta = np.sum(diff * diff, axis=0)
+        delta = np.sum( diff * diff, axis=0)
         i = np.argmin(delta)
-        
+
         return i
 
     def test_embed(self, index):
@@ -238,8 +238,8 @@ class Lang:
         self.name = name
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {0: hparams['sol'], 1: hparams['eol']}
-        self.n_words = 2  # Count SOS and EOS
+        self.index2word = {0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
+        self.n_words = 3  # Count SOS and EOS
 
     def addSentence(self, sentence):
         for word in sentence.split(' '):

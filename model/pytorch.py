@@ -263,8 +263,8 @@ class Lang:
         self.name = name
         self.word2index = {}
         self.word2count = {}
-        self.index2word = {0: hparams['sol'], 1: hparams['eol']}
-        self.n_words = 2  # Count SOS and EOS
+        self.index2word = {0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
+        self.n_words = 3  # Count SOS and EOS
 
     def addSentence(self, sentence):
         for word in sentence.split(' '):
