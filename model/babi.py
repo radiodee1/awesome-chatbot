@@ -398,7 +398,7 @@ class NMT:
             self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
             self.save_checkpoint(num=len(self.pairs))
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=True)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
 
         pass
 
@@ -1120,7 +1120,7 @@ class NMT:
 
     def setup_for_interactive(self):
         self.do_interactive = True
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=True)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
