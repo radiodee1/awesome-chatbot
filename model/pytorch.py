@@ -125,28 +125,6 @@ class LuongAttention(nn.Module):
         mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
         return context, mask
 
-class EncoderBiRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(EncoderBiRNN, self).__init__()
-        self.hidden_size = hidden_size
-        self.embedding = nn.Embedding(input_size, hidden_size)
-        self.bi_gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=True)
-
-
-    def forward(self, input, hidden):
-        embedded = self.embedding(input).view(1, 1, -1)
-        output = embedded
-        bi_output, bi_hidden = self.bi_gru(output,hidden)
-        bi_output = (bi_output[:, :, :self.hidden_size] +
-                       bi_output[:, :, self.hidden_size:])
-        return bi_output, bi_hidden
-
-    def initHidden(self):
-        result = Variable(torch.zeros(2, 1, self.hidden_size))
-        if use_cuda:
-            return result.cuda()
-        else:
-            return result
 
 
 
@@ -251,7 +229,7 @@ class Decoder(nn.Module):
         if self.n_layers == 1:
             context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
         else:
-           context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context, mask = self.attention(decoder_hidden[-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
 
         rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
                                               decoder_hidden)
@@ -974,7 +952,7 @@ class NMT:
 
         self.model_1 = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
 
-        self.model_2 = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+        self.model_2 = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size , layers, dropout=dropout)
         self.load_checkpoint()
 
 
@@ -995,7 +973,7 @@ if __name__ == '__main__':
 
     n.model_1 = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_2 = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
+    n.model_2 = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size , layers ,dropout=dropout)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()
