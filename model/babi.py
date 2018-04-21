@@ -225,8 +225,9 @@ class Decoder(nn.Module):
 
     def get_index_from_vec(self, vec):
         diff = self.embed.weight[0] - vec[:self.embed.weight.size()[1]]
-        delta = torch.sum(diff * diff, dim=0)
+        delta = np.sum(diff * diff, axis=0)
         i = np.argmin(delta)
+        
         return i
 
     def test_embed(self, index):
