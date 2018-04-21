@@ -117,7 +117,7 @@ class EpisodicAttn(nn.Module):
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=2).view(1,-1)
         self.c_list_z = self.c_list_z.permute(1,0)
-        print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
+        #print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
         self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
 
         self.l_1 = torch.tanh(self.l_1)
@@ -229,6 +229,8 @@ class Decoder(nn.Module):
         i = np.argmin(delta)
         return i
 
+    def test_embed(self, index):
+        return self.embed(index)
 
 class Lang:
     def __init__(self, name):
@@ -790,6 +792,7 @@ class NMT:
             outlist2.append(out2)
         #self.q_q = torch.cat(outlist2)
         self.q_q = out2
+        #print(self.q_q.size(),'qq')
         return out1, hidden1
         pass
 
@@ -809,7 +812,7 @@ class NMT:
     def new_episode_big_step(self, mem):
         g_record = []
         sequences = self.inp_c
-        print(len(sequences),sequences[0].size(),'seq')
+        #print(len(sequences),sequences[0].size(),'seq')
         for i in range(len(sequences)):
             g = self.new_attention_step(sequences[i],None,mem,self.q_q)
             g_record.append(g)
@@ -838,6 +841,7 @@ class NMT:
 
     def new_answer_feed_forward(self):
         # do something with last_mem
+        #print(self.last_mem.size(), self.last_mem)
         y = self.model_2_dec.get_index_from_vec(self.last_mem.view(-1))
 
         #print(self.model_2_dec.get_embeddings())
@@ -847,37 +851,54 @@ class NMT:
         pass
 
     def new_answer_module(self, target_variable, encoder_hidden, criterion, max_length=MAX_LENGTH):
+
+        if len(target_variable) == 1:
+            target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
+            target_variable = Variable(torch.LongTensor(target_variable))
+
         targets = target_variable  # input_variable
         outputs = []
         masks = []
         outputs_index = []
         decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
         output = targets[0].unsqueeze(0)  # start token
-        print(output)
 
         self.prediction = self.new_answer_feed_forward()
-        print(self.input_lang.index2word[self.prediction])
+        print(self.output_lang.index2word[self.prediction],'<pred',0)
 
         is_teacher = random.random() < teacher_forcing_ratio
         raw = 0
-        loss = 0
+        loss_num = 0
+        loss = None
 
         for t in range(1, max_length - 1):
             # print(t,'t', decoder_hidden.size())
 
-            if len(targets) > 1 and t == 2: output = self.prediction
 
-            output, decoder_hidden, mask = self.model_2_dec(output, self.inp_c[t], decoder_hidden)
+            if t == 1:
+                output = Variable(torch.LongTensor([int(self.prediction)])).view(1,-1)
+                #print(self.prediction,'num')
+
+            output, decoder_hidden, mask = self.model_2_dec(output, self.inp_c[-1].view(1,1,-1), decoder_hidden)
+
             outputs.append(output)
             masks.append(mask.data)
 
             if t < len(target_variable):
-                loss += criterion(output.view(1, -1), target_variable[t])
-            else:
-                loss += criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
+                loss = criterion(output.view(1, -1), target_variable[t])
+                print('work', t)
+            elif False:
+                loss = criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
 
+            loss_num += loss.data[0]
             # raw = output[:]
             output = Variable(output.data.max(dim=2)[1])
+
+            if t == 1:
+                #print(output.size())
+                print(self.output_lang.index2word[int(output.int())], '<word', t)
+                print()
+
             # raw.append(output)
             if int(output.data[0].int()) == EOS_token:
                 # print('eos token',t)
@@ -889,69 +910,32 @@ class NMT:
                 output = targets[t].unsqueeze(0)
                 # print(self.output_lang.index2word[int(output)])
 
-        return output, masks, loss
+        return output, masks, loss, loss_num
         pass
 
-    def train(self,input_variable, target_variable,question_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion, max_length=MAX_LENGTH):
+    def train(self,input_variable, target_variable,question_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         encoder_optimizer.zero_grad()
         decoder_optimizer.zero_grad()
+        memory_optimizer.zero_grad()
+        attention_optimizer.zero_grad()
 
         encoder_output , encoder_hidden = self.new_input_module(input_variable, question_variable)
 
         self.new_episodic_module()
 
-        outputs, masks, loss = self.new_answer_module(target_variable, encoder_hidden, criterion)
+        outputs, masks, loss, loss_num = self.new_answer_module(target_variable, encoder_hidden, criterion)
 
-
-        '''
-        encoder_output, encoder_hidden = encoder(input_variable)
-        
-        
-
-        targets = target_variable #input_variable
-        outputs = []
-        masks = []
-        outputs_index = []
-        decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
-        output = targets[0].unsqueeze(0)  # start token
-        #output = decoder_input
-        is_teacher = random.random() < teacher_forcing_ratio
-        raw = 0
-        loss = 0
-
-        for t in range(1, max_length - 1):
-            #print(t,'t', decoder_hidden.size())
-
-            output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
-            outputs.append(output)
-            masks.append(mask.data)
-
-            if t < len(target_variable):
-                loss += criterion(output.view(1,-1), target_variable[t])
-            else:
-                loss += criterion(output.view(1,-1), Variable(torch.LongTensor([0])))
-
-            #raw = output[:]
-            output = Variable(output.data.max(dim=2)[1])
-            #raw.append(output)
-            if int(output.data[0].int()) == EOS_token:
-                #print('eos token',t)
-                break
-
-            # teacher forcing
-            if is_teacher and t < targets.size()[0]:
-                #print(output,'out')
-                output = targets[t].unsqueeze(0)
-                #print(self.output_lang.index2word[int(output)])
-        '''
 
         loss.backward()
 
         encoder_optimizer.step()
         decoder_optimizer.step()
+        memory_optimizer.step()
+        attention_optimizer.step()
 
-        return torch.cat(outputs), torch.cat(masks).permute(1, 2, 0) , loss # batch, src, trg
+
+        return outputs, masks , loss_num # batch, src, trg
 
 
 
@@ -973,20 +957,18 @@ class NMT:
 
         encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
         decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        memory_optimizer = optim.SGD(self.model_3_mem.parameters(), lr=learning_rate)
+        attention_optimizer = optim.SGD(self.model_4_att.parameters(), lr=learning_rate)
+
         #adam_optimizer = optim.Adam(filter(lambda p: p.requires_grad, [encoder.parameters(), decoder.parameters()]),
         #                            lr=learning_rate)
-        #self.opt_1 = adam_optimizer
 
-        #decoder_optimizer = None
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
-        #training_pairs = self.pairs
 
-        #criterion = nn.NLLLoss()
         criterion = nn.CrossEntropyLoss()
 
-
-        if (self.opt_1 is None and self.opt_2 is None) or True:
+        if True:
             self.opt_1 = encoder_optimizer
             self.opt_2 = decoder_optimizer
             #self.opt_1 = adam_optimizer
@@ -1018,7 +1000,8 @@ class NMT:
 
 
             outputs, masks , l = self.train(input_variable, target_variable,question_variable, encoder,
-                                            decoder, encoder_optimizer, decoder_optimizer, criterion)
+                                            decoder, encoder_optimizer, decoder_optimizer,
+                                            memory_optimizer, attention_optimizer, criterion)
 
             print_loss_total += float(l)
 
@@ -1059,6 +1042,7 @@ class NMT:
                 #print(choice)
                 print('ans:',words)
                 print('try:',self._shorten(words))
+                #print(self.output_lang.word2index['ignoring'],'ignoring')
                 print("-----")
 
 

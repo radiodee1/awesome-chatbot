@@ -29,7 +29,7 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
+            <state relative-caret-position="3672">
               <caret line="225" column="16" selection-start-line="222" selection-start-column="8" selection-end-line="225" selection-end-column="16" />
             </state>
           </provider>
@@ -38,8 +38,8 @@
       <file leaf-file-name="babi.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="869" column="81" selection-start-line="869" selection-start-column="81" selection-end-line="869" selection-end-column="81" />
+            <state relative-caret-position="772">
+              <caret line="881" column="78" selection-start-line="881" selection-start-column="78" selection-end-line="881" selection-end-column="78" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -130,8 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cons</find>
-      <find>load_checkpoint</find>
       <find>best_loss</find>
       <find>task_review_weights</find>
       <find>task_normal_train</find>
@@ -160,6 +158,8 @@
       <find>prepareData</find>
       <find>Decoder</find>
       <find>inp_c</find>
+      <find>new_answer_feed_forward</find>
+      <find>get_index_from_vec</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -306,21 +306,21 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -556,15 +556,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
+        <state relative-caret-position="3672">
           <caret line="225" column="16" selection-start-line="222" selection-start-column="8" selection-end-line="225" selection-end-column="16" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="869" column="81" selection-start-line="869" selection-start-column="81" selection-end-line="869" selection-end-column="81" />
+        <state relative-caret-position="772">
+          <caret line="881" column="78" selection-start-line="881" selection-start-column="78" selection-end-line="881" selection-end-column="78" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
