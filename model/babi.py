@@ -82,8 +82,9 @@ THE SOFTWARE.
 '''
 
 use_cuda = torch.cuda.is_available()
-SOS_token = 0
-EOS_token = 1
+UNK_token = 0
+SOS_token = 1
+EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
 
@@ -218,6 +219,9 @@ class Decoder(nn.Module):
                                               decoder_hidden)
         output = self.out(torch.cat([rnn_output, context], 2))
         return output, decoder_hidden, mask
+
+    def get_embeddings(self):
+        return self.weight
 
 class Lang:
     def __init__(self, name):

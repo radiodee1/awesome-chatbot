@@ -82,8 +82,9 @@ THE SOFTWARE.
 '''
 
 use_cuda = torch.cuda.is_available()
-SOS_token = 0
-EOS_token = 1
+UNK_token = 0
+SOS_token = 1
+EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
 eng_prefixes = [
@@ -310,6 +311,7 @@ class NMT:
         self.do_interactive = False
         self.do_convert = False
         self.do_plot = False
+        self.do_hide_unk = False
 
         self.printable = ''
 
@@ -321,6 +323,7 @@ class NMT:
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
         parser.add_argument('--convert-weights',help='convert weights', action='store_true')
+        parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -348,7 +351,7 @@ class NMT:
         else:
             self.trainable = False
         if self.args['convert_weights'] == True: self.do_convert = True
-
+        if self.args['hide_unk'] == True: self.do_hide_unk = True
 
 
     def task_normal_train(self):
@@ -982,7 +985,7 @@ if __name__ == '__main__':
     else:
         n.task_review_set()
 
-    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=False)
+    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
 
     layers = hparams['layers']
     dropout = hparams['dropout']
