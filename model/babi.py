@@ -1098,7 +1098,7 @@ class NMT:
         #masks = []
         decoded_words = []
         for di in range(len(outputs)):
-            print(di,'di')
+            #print(di,'di')
             #output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
             #outputs.append(output)
             #masks.append(mask.data)
@@ -1120,7 +1120,7 @@ class NMT:
                 print('eol found.')
                 if True: break
             else:
-                print(int(ni),self.output_lang.index2word[int(ni)],end=' ')
+                print(int(ni), self.output_lang.index2word[int(ni)])
                 decoded_words.append(self.output_lang.index2word[int(ni)])
 
 
