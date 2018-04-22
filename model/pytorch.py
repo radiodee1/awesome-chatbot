@@ -207,8 +207,8 @@ class Encoder(nn.Module):
         encoder_out, encoder_hidden = self.gru(
             embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         # sum bidirectional outputs, the other option is to retain concat features
-        encoder_out = (encoder_out[:, :, :self.hidden_dim] +
-                       encoder_out[:, :, self.hidden_dim:])
+        #encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+        #               encoder_out[:, :, self.hidden_dim:])
         return encoder_out, encoder_hidden
 
 class Decoder(nn.Module):
@@ -733,6 +733,8 @@ class NMT:
         masks = []
         outputs_index = []
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
+        decoder_hidden = torch.cat([decoder_hidden,decoder_hidden], dim=2)
+
         output = targets[0].unsqueeze(0)  # start token
         #output = decoder_input
         is_teacher = random.random() < teacher_forcing_ratio
@@ -906,6 +908,7 @@ class NMT:
         decoded_words = []
         decoder_attentions = torch.zeros(encoder_output.size()[0] , encoder_output.size()[0] )
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
+        decoder_hidden = torch.cat([decoder_hidden,decoder_hidden], dim=2)
 
         seq, batch, _ = encoder_output.size()
 
@@ -952,7 +955,7 @@ class NMT:
 
         self.model_1 = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
 
-        self.model_2 = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size , layers, dropout=dropout)
+        self.model_2 = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size * 2, layers, dropout=dropout)
         self.load_checkpoint()
 
 
@@ -973,7 +976,7 @@ if __name__ == '__main__':
 
     n.model_1 = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_2 = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size , layers ,dropout=dropout)
+    n.model_2 = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size * 2, layers ,dropout=dropout)
 
     if use_cuda:
         n.model_1 = n.model_1.cuda()

@@ -28,7 +28,7 @@ hparams = {
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    'units': 512, #128, #256 , #64,
+    'units': 256, #128, #256 , #64,
     'layers':2,
     'teacher_forcing_ratio': 0.5,
     'dropout': 0.2,
