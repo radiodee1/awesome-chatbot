@@ -215,6 +215,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
+        self.hidden_dim = hidden_dim
         self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
         self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
@@ -733,7 +734,8 @@ class NMT:
         masks = []
         outputs_index = []
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
-        decoder_hidden = torch.cat([decoder_hidden,decoder_hidden], dim=2)
+        if not encoder.hidden_dim == decoder.hidden_dim:
+            decoder_hidden = torch.cat([decoder_hidden,decoder_hidden], dim=2)
 
         output = targets[0].unsqueeze(0)  # start token
         #output = decoder_input
@@ -908,7 +910,8 @@ class NMT:
         decoded_words = []
         decoder_attentions = torch.zeros(encoder_output.size()[0] , encoder_output.size()[0] )
         decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
-        decoder_hidden = torch.cat([decoder_hidden,decoder_hidden], dim=2)
+        if not encoder.hidden_dim == decoder.hidden_dim :
+            decoder_hidden = torch.cat([decoder_hidden,decoder_hidden], dim=2)
 
         seq, batch, _ = encoder_output.size()
 
