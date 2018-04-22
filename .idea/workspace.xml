@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,8 +38,8 @@
       <file leaf-file-name="babi.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="869" column="9" selection-start-line="869" selection-start-column="9" selection-end-line="869" selection-end-column="9" />
+            <state relative-caret-position="233">
+              <caret line="855" column="9" selection-start-line="855" selection-start-column="9" selection-end-line="855" selection-end-column="9" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -129,9 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>replace</find>
-      <find>output_lang</find>
-      <find>filterPairs</find>
       <find>pairs</find>
       <find>model_1</find>
       <find>model_4_att</find>
@@ -143,7 +141,6 @@
       <find>EpisodicAttn</find>
       <find>SOS_token</find>
       <find>prepareData</find>
-      <find>inp_c</find>
       <find>new_answer_feed_forward</find>
       <find>input_lang</find>
       <find>Lang</find>
@@ -159,6 +156,10 @@
       <find>evaluate</find>
       <find>new_answer_module</find>
       <find>print</find>
+      <find>inp_c</find>
+      <find>new_input_module</find>
+      <find>W_a</find>
+      <find>last_mem</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -562,8 +563,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="869" column="9" selection-start-line="869" selection-start-column="9" selection-end-line="869" selection-end-column="9" />
+        <state relative-caret-position="233">
+          <caret line="855" column="9" selection-start-line="855" selection-start-column="9" selection-end-line="855" selection-end-column="9" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
