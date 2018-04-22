@@ -845,12 +845,12 @@ class NMT:
     def new_answer_feed_forward(self):
         # do something with last_mem
         #print(self.last_mem.size(), self.last_mem)
-        y = self.model_2_dec.get_index_from_vec(self.last_mem.view(-1))
+        #y = self.model_2_dec.get_index_from_vec(self.last_mem.view(-1))
 
         #print(self.model_2_dec.get_embeddings())
         #y = torch.mm(self.W_a, self.last_mem.view(1,-1))
         #y = nn.Softmax(y)
-        return y
+        return 0 #y
         pass
 
     def new_answer_module(self, target_variable, encoder_hidden, criterion, max_length=MAX_LENGTH):
@@ -867,7 +867,7 @@ class NMT:
         output = targets[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
-        print(self.output_lang.index2word[self.prediction],'<pred',0)
+        print(self.output_lang.index2word[self.prediction],'<prediction',0)
 
         is_teacher = random.random() < teacher_forcing_ratio
         raw = 0
@@ -887,13 +887,16 @@ class NMT:
             outputs.append(output)
             masks.append(mask.data)
 
-            if t < len(target_variable):
-                loss = criterion(output.view(1, -1), target_variable[t])
-                print('work', t)
-            elif False:
-                loss = criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
+            if criterion is not None:
+                if t < len(target_variable):
+                    loss = criterion(output.view(1, -1), target_variable[t])
+                    #print('work', t)
+                elif False:
+                    loss = criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
 
-            loss_num += loss.data[0]
+            if loss is not None:
+                loss_num += loss.data[0]
+
             # raw = output[:]
             output = Variable(output.data.max(dim=2)[1])
 
@@ -1039,9 +1042,15 @@ class NMT:
                                              iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(self.pairs)
                 print('src:',choice[0])
-                print('ques:', choice[1])
-                print('ref:',choice[2])
-                words, _ = self.evaluate(None, None, choice[0])
+                question = None
+                if self.do_load_babi:
+                    print('ques:', choice[1])
+                    print('ref:',choice[2])
+                else:
+                    print('tgt:',choice[1])
+                nums = self.variablesFromPair(choice)
+                if self.do_load_babi: question = nums[1]
+                words, _ = self.evaluate(None, None, nums[0], question=question)
                 #print(choice)
                 print('ans:',words)
                 print('try:',self._shorten(words))
@@ -1051,15 +1060,27 @@ class NMT:
 
 
 
-    def evaluate(self, encoder, decoder, sentence, max_length=MAX_LENGTH):
-        if (encoder is not None and decoder is not None and
-                self.model_1_enc is None and self.model_2_dec is None):
-            self.model_1_enc = encoder
-            self.model_2_dec = decoder
-        else:
-            encoder = self.model_1_enc
-            decoder = self.model_2_dec
+    def evaluate(self, encoder, decoder, sentence,question=None, max_length=MAX_LENGTH):
 
+
+        input_variable = sentence
+        question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
+
+        if question is not None:
+            question_variable = question
+
+        sos_token = Variable(torch.LongTensor([SOS_token]))
+
+
+        encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
+
+        self.new_episodic_module()
+
+        outputs, masks, loss, loss_num = self.new_answer_module(sos_token, encoder_hidden, None)
+
+        '''
+        
+        
         input_variable = self.variableFromSentence(self.input_lang, sentence)
         input_length = input_variable.size()[0]
 
@@ -1086,17 +1107,20 @@ class NMT:
 
         output = Variable(torch.zeros(1, batch).long() + SOS_token)  # start token
 
-
-        outputs = []
-        masks = []
+        '''
+        #outputs = []
+        #masks = []
+        decoded_words = []
         for di in range(max_length):
 
-            output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
-            outputs.append(output)
-            masks.append(mask.data)
-            output = Variable(output.data.max(dim=2)[1]) #1
+            #output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
+            #outputs.append(output)
+            #masks.append(mask.data)
+            output = outputs[di]
+            #output = Variable(output.data.max(dim=2)[1]) #1
+            print(output.size(),'output')
 
-            if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
+            #if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
             #topv, topi = output.data.topk(1)
             ni = output # = next_words[0][0]
             #print(ni,'ni')
@@ -1108,7 +1132,8 @@ class NMT:
             else:
                 decoded_words.append(self.output_lang.index2word[int(ni)])
 
-        return decoded_words, decoder_attentions[:di + 1]
+
+        return decoded_words, None #decoder_attentions[:di + 1]
 
     def get_sentence(self, s_in):
         wordlist, _ = self.evaluate(None,None,s_in)
