@@ -267,6 +267,8 @@ class NMT:
         self.model_4_att = None
         self.opt_1 = None
         self.opt_2 = None
+        self.opt_3 = None
+        self.opt_4 = None
         self.best_loss = None
         self.long_term_loss = None
         self.tag = ''
@@ -656,6 +658,28 @@ class NMT:
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
                     'tag': self.tag
+                },
+                {
+                    'epoch': 0,
+                    'start': self.start,
+                    'arch': None,
+                    'state_dict': self.model_3_mem.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': self.opt_3.state_dict(),
+                    'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
+                    'tag': self.tag
+                },
+                {
+                    'epoch': 0,
+                    'start': self.start,
+                    'arch': None,
+                    'state_dict': self.model_4_att.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': self.opt_4.state_dict(),
+                    'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
+                    'tag': self.tag
                 }
             ]
         else:
@@ -678,6 +702,28 @@ class NMT:
                     'state_dict': self.model_2_dec.state_dict(),
                     'best_prec1': None,
                     'optimizer': None, # self.opt_2.state_dict(),
+                    'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
+                    'tag': self.tag
+                },
+                {
+                    'epoch': 0,
+                    'start': self.start,
+                    'arch': None,
+                    'state_dict': self.model_3_mem.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': self.opt_3.state_dict(),
+                    'best_loss': self.best_loss,
+                    'long_term_loss': self.long_term_loss,
+                    'tag': self.tag
+                },
+                {
+                    'epoch': 0,
+                    'start': self.start,
+                    'arch': None,
+                    'state_dict': self.model_4_att.state_dict(),
+                    'best_prec1': None,
+                    'optimizer': self.opt_4.state_dict(),
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
                     'tag': self.tag
@@ -737,6 +783,14 @@ class NMT:
                 self.model_2_dec.load_state_dict(checkpoint[1]['state_dict'])
                 if self.opt_2 is not None:
                     self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
+
+                self.model_3_mem.load_state_dict(checkpoint[2]['state_dict'])
+                if self.opt_3 is not None:
+                    self.opt_3.load_state_dict(checkpoint[2]['optimizer'])
+
+                self.model_4_att.load_state_dict(checkpoint[3]['state_dict'])
+                if self.opt_4 is not None:
+                    self.opt_4.load_state_dict(checkpoint[3]['optimizer'])
 
                 print("loaded checkpoint '"+ basename + "' ")
             else:
@@ -861,23 +915,31 @@ class NMT:
     def new_answer_module(self, target_variable, encoder_hidden, criterion, max_length=MAX_LENGTH):
 
         if len(target_variable) == 1:
+            single_predict = target_variable.clone()
+            #single_predict = single_predict
             target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
             target_variable = Variable(torch.LongTensor(target_variable))
+            #print(target_variable)
 
-        targets = target_variable  # input_variable
+        #targets = target_variable  # input_variable
         outputs = []
         masks = []
         outputs_index = []
+        loss = None
+        loss_num = 0
+
         decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
-        output = targets[0].unsqueeze(0)  # start token
+        output = target_variable[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
+        if criterion is not None and False:
+            #print(single_predict)
+            loss = criterion(self.last_mem.view(1, -1), single_predict)
+            loss_num += loss.data[0]
+
         #print(self.output_lang.index2word[self.prediction],'<prediction',0)
 
         is_teacher = random.random() < teacher_forcing_ratio
-        raw = 0
-        loss_num = 0
-        loss = None
 
         masks = None
         skip_me = 2
@@ -886,12 +948,10 @@ class NMT:
             # print(t,'t', decoder_hidden.size())
 
 
-            if t == skip_me  :
+            if t == skip_me:
                 #output = Variable(torch.FloatTensor(self.prediction.float())) #torch.FloatTensor([self.prediction]).view(1,-1)
                 if criterion is not None: loss = criterion(self.last_mem.view(1, -1), target_variable[t])
 
-                #print(self.prediction,'num')
-                #loss = criterion(output, target_variable[0])
             else:
                 ## self.inp_c  ??
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
@@ -900,8 +960,8 @@ class NMT:
             outputs.append(output)
             #masks.append(mask.data)
 
-            if criterion is not None:
-                if t < len(target_variable) and t != skip_me:
+            if criterion is not None and t != skip_me:
+                if t < len(target_variable) :
                     loss = criterion(output.view(1, -1), target_variable[t])
                     #print('work', t)
                 elif False:
@@ -916,17 +976,15 @@ class NMT:
                 output = Variable(output.data.max(dim=2)[1])
                 #print(output.size(),'p',t)
 
-
-
             # raw.append(output)
             if True and int(output.data[0].int()) == EOS_token :
                 # print('eos token',t)
                 break
 
             # teacher forcing
-            if is_teacher and t < targets.size()[0]:
+            if is_teacher and t < target_variable.size()[0]:
                 # print(output,'out')
-                output = targets[t].unsqueeze(0)
+                output = target_variable[t].unsqueeze(0)
                 # print(self.output_lang.index2word[int(output)])
 
         return outputs, masks, loss, loss_num
@@ -974,8 +1032,8 @@ class NMT:
         print_loss_total = 0  # Reset every print_every
 
 
-        encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
-        decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+        encoder_optimizer = optim.SGD(self.model_1_enc.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.SGD(self.model_2_dec.parameters(), lr=learning_rate)
         memory_optimizer = optim.SGD(self.model_3_mem.parameters(), lr=learning_rate)
         attention_optimizer = optim.SGD(self.model_4_att.parameters(), lr=learning_rate)
 
@@ -990,6 +1048,8 @@ class NMT:
         if True:
             self.opt_1 = encoder_optimizer
             self.opt_2 = decoder_optimizer
+            self.opt_3 = memory_optimizer
+            self.opt_4 = attention_optimizer
             #self.opt_1 = adam_optimizer
 
         self.load_checkpoint()
@@ -1120,7 +1180,8 @@ class NMT:
                 print('eol found.')
                 if True: break
             else:
-                print(int(ni), self.output_lang.index2word[int(ni)])
+                if di < 4:
+                    print(int(ni), self.output_lang.index2word[int(ni)])
                 decoded_words.append(self.output_lang.index2word[int(ni)])
 
 
@@ -1177,7 +1238,7 @@ if __name__ == '__main__':
 
     n.model_4_att = EpisodicAttn(n.hidden_size, a_list_size=7)
 
-    if use_cuda:
+    if use_cuda and False:
         n.model_1_enc = n.model_1_enc.cuda()
         n.model_2_dec = n.model_2_dec.cuda()
 
