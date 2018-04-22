@@ -867,7 +867,7 @@ class NMT:
         output = targets[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
-        print(self.output_lang.index2word[self.prediction],'<prediction',0)
+        #print(self.output_lang.index2word[self.prediction],'<prediction',0)
 
         is_teacher = random.random() < teacher_forcing_ratio
         raw = 0
@@ -882,7 +882,8 @@ class NMT:
                 output = Variable(torch.LongTensor([int(self.prediction)])).view(1,-1)
                 #print(self.prediction,'num')
 
-            output, decoder_hidden, mask = self.model_2_dec(output, self.inp_c[-1].view(1,1,-1), decoder_hidden)
+            ## self.inp_c  ??
+            output, decoder_hidden, mask = self.model_2_dec(output, self.last_mem[-1].view(1,1,-1), decoder_hidden)
 
             outputs.append(output)
             masks.append(mask.data)
@@ -902,8 +903,9 @@ class NMT:
 
             if t == 1:
                 #print(output.size())
-                print(self.output_lang.index2word[int(output.int())], '<word', t)
-                print()
+                #print(self.output_lang.index2word[int(output.int())], '<word',int(output.int()), t)
+                #print()
+                pass
 
             # raw.append(output)
             if int(output.data[0].int()) == EOS_token:
@@ -1118,7 +1120,7 @@ class NMT:
             #masks.append(mask.data)
             output = outputs[di]
             #output = Variable(output.data.max(dim=2)[1]) #1
-            print(output.size(),'output')
+            #print(output.size(),'output')
 
             #if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
             #topv, topi = output.data.topk(1)
