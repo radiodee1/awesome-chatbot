@@ -173,13 +173,14 @@ class MemRNN(nn.Module):
         #               bi_output[:, :, self.hidden_size:])
         return output, hidden
 
+    '''
     def initHidden(self):
         result = Variable(torch.zeros(1, 1, self.hidden_size))
         if use_cuda:
             return result.cuda()
         else:
             return result
-
+    '''
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
@@ -833,6 +834,10 @@ class NMT:
             last = i
         return ' '.join(out)
 
+    def _word_from_prediction(self):
+        num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
+        print('>',num, self.output_lang.index2word[num],'<')
+
 
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
@@ -958,7 +963,7 @@ class NMT:
                 ## self.inp_c  ??
                 ## self.last_mem ??
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
-                #print(output.size(), self.last_mem.size(), output,'three')
+                #print(output.size(), self.last_mem[-1].size(),'two')
 
             outputs.append(output)
             #masks.append(mask.data)
@@ -1128,6 +1133,7 @@ class NMT:
                 #print(choice)
                 print('ans:',words)
                 print('try:',self._shorten(words))
+                self._word_from_prediction()
                 #print(self.output_lang.word2index['ignoring'],'ignoring')
                 print("-----")
 
