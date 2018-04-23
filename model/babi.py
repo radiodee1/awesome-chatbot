@@ -904,13 +904,10 @@ class NMT:
         y = self.last_mem.view(-1,1)
 
         y = torch.mm(self.model_4_att.W_a, y)
-        #print(self.model_2_dec.get_embeddings())
+
         lsoftmax = nn.Softmax(dim=1)
         y = lsoftmax(y)
-        #y = y.float().view(-1)
-        #y = y.data.max(dim=1,keepdim=True)[1]
-        #y = Variable(y.data.float())
-        print(y)
+
         return y
         pass
 
@@ -940,8 +937,6 @@ class NMT:
             loss = criterion(self.prediction.view( 1,-1), single_predict)
             loss_num += loss.data[0]
 
-        #print(self.output_lang.index2word[self.prediction],'<prediction',0)
-
         is_teacher = random.random() < teacher_forcing_ratio
 
         masks = None
@@ -950,15 +945,13 @@ class NMT:
         for t in range(1, max_length - 1):
             # print(t,'t', decoder_hidden.size())
 
-
             if t == skip_me:
-                #output = Variable(torch.FloatTensor(self.prediction.float())) #torch.FloatTensor([self.prediction]).view(1,-1)
                 if criterion is not None: loss = criterion(self.last_mem.view(1, -1), target_variable[t])
 
             else:
                 ## self.inp_c  ??
                 ## self.last_mem ??
-                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.inp_c[-1].view(1,1,-1), decoder_hidden)
+                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
                 #print(output.size(), self.last_mem.size(), decoder_hidden.size(),'three')
 
             outputs.append(output)
@@ -966,8 +959,8 @@ class NMT:
 
             if criterion is not None and t != skip_me:
                 if t < len(target_variable) :
+                    #print(output.size(),'os',target_variable[t].size(), target_variable[t])
                     loss = criterion(output.view(1, -1), target_variable[t])
-                    #print('work', t)
                 elif False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
 
@@ -975,7 +968,6 @@ class NMT:
                 loss_num += loss.data[0]
                 #print(loss_num)
 
-            # raw = output[:]
             if t != skip_me:
                 output = Variable(output.data.max(dim=2)[1])
                 #print(output.size(),'p',t)
