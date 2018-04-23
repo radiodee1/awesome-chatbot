@@ -104,6 +104,9 @@ class EpisodicAttn(nn.Module):
         self.W_2 = nn.Parameter(torch.FloatTensor(1, hidden_size))
         self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
+
+        self.W_a = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -309,8 +312,6 @@ class NMT:
         self.last_mem = None      # output of mem unit
         self.prediction = None    # final single word prediction
 
-        # part of output
-        self.W_a = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
 
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
@@ -900,22 +901,24 @@ class NMT:
     def new_answer_feed_forward(self):
         # do something with last_mem
         #print(self.last_mem.size(), self.last_mem)
-        #y = self.model_2_dec.get_index_from_vec(self.last_mem.view(-1))
-        y = self.last_mem.view(1,-1)
+        y = self.last_mem.view(-1,1)
+
+        y = torch.mm(self.model_4_att.W_a, y)
         #print(self.model_2_dec.get_embeddings())
-        #y = torch.mm(self.W_a, self.last_mem.view(1,-1))
-        s = nn.LogSoftmax(dim=1)
-        y = s(y)
-        y = y.data.max(dim=1,keepdim=True)[1]
-        #print(self.output_lang.index2word[int(y.int())],'y')
-        #print(y, 's(y)')
+        lsoftmax = nn.Softmax(dim=1)
+        y = lsoftmax(y)
+        #y = y.float().view(-1)
+        #y = y.data.max(dim=1,keepdim=True)[1]
+        #y = Variable(y.data.float())
+        print(y)
         return y
         pass
 
     def new_answer_module(self, target_variable, encoder_hidden, criterion, max_length=MAX_LENGTH):
 
+        single_predict = target_variable[0].clone()
+
         if len(target_variable) == 1:
-            single_predict = target_variable.clone()
             #single_predict = single_predict
             target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
             target_variable = Variable(torch.LongTensor(target_variable))
@@ -932,9 +935,9 @@ class NMT:
         output = target_variable[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
-        if criterion is not None and False:
+        if criterion is not None and True:
             #print(single_predict)
-            loss = criterion(self.last_mem.view(1, -1), single_predict)
+            loss = criterion(self.prediction.view( 1,-1), single_predict)
             loss_num += loss.data[0]
 
         #print(self.output_lang.index2word[self.prediction],'<prediction',0)
@@ -954,7 +957,8 @@ class NMT:
 
             else:
                 ## self.inp_c  ??
-                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
+                ## self.last_mem ??
+                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.inp_c[-1].view(1,1,-1), decoder_hidden)
                 #print(output.size(), self.last_mem.size(), decoder_hidden.size(),'three')
 
             outputs.append(output)
