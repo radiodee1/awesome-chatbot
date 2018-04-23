@@ -284,7 +284,7 @@ class NMT:
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
-        self.memory_hops = 5
+        self.memory_hops = 15
         self.start = 0
 
         self.train_fr = None
@@ -856,7 +856,7 @@ class NMT:
         pass
 
     def new_episodic_module(self):
-        if self.q_q is not None:
+        if self.q_q is not None or True:
             #print(self.q_q.size(),'qq')
             memory = [self.q_q.clone()]
             for iter in range(1, self.memory_hops+1):
@@ -938,8 +938,8 @@ class NMT:
             loss_num += loss.data[0]
             ##########################
             #print(self.prediction)
-            num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
-            print('>',num, self.output_lang.index2word[num],'<')
+            #num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
+            #print('>',num, self.output_lang.index2word[num],'<')
             #########################
 
         is_teacher = random.random() < teacher_forcing_ratio
@@ -947,7 +947,7 @@ class NMT:
         masks = None
         skip_me = 2
 
-        for t in range(1, max_length - 1):
+        for t in range(0, max_length - 1):
             # print(t,'t', decoder_hidden.size())
 
             if t == skip_me and False:
@@ -965,6 +965,7 @@ class NMT:
 
             if criterion is not None : #and t != skip_me:
                 if t < len(target_variable) :
+                    #print('work', t)
                     #print(output.size(),'os',target_variable[t].size(), target_variable[t])
                     loss = criterion(output.view(1, -1), target_variable[t])
                 elif False:
@@ -980,7 +981,7 @@ class NMT:
 
             # raw.append(output)
             if True and int(output.data[0].int()) == EOS_token :
-                # print('eos token',t)
+                #print('eos token',t)
                 break
 
             # teacher forcing
@@ -1158,18 +1159,12 @@ class NMT:
         #masks = []
         decoded_words = []
         for di in range(len(outputs)):
-            #print(di,'di')
-            #output, decoder_hidden, mask = decoder(output, encoder_output, decoder_hidden)
-            #outputs.append(output)
-            #masks.append(mask.data)
+
             output = outputs[di]
             #print(output.size(),'out')
             if len(output.size()) != 2:
                 output = Variable(output.data.max(dim=2)[1]) #1
-            #print(output.size(),'output')
 
-            #if di -1 < len(decoder_attentions) : decoder_attentions[di-1] = mask.data
-            #topv, topi = output.data.topk(1)
             ni = output # = next_words[0][0]
 
             #print(outputs[di].size(),'ni', int(ni))
@@ -1182,6 +1177,8 @@ class NMT:
             else:
                 if di < 4:
                     print(int(ni), self.output_lang.index2word[int(ni)])
+                if di == 5 and len(outputs) > 5:
+                    print('...etc')
                 decoded_words.append(self.output_lang.index2word[int(ni)])
 
 
