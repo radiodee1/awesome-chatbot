@@ -311,6 +311,7 @@ class NMT:
         self.answer_var = None    # for answer
         self.q_q = None           # extra question
         self.inp_c = None         # extra input
+        self.all_mem = None
         self.last_mem = None      # output of mem unit
         self.prediction = None    # final single word prediction
 
@@ -416,7 +417,7 @@ class NMT:
             self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
             print('auto save.')
-            print(self.score,'score')
+            print('%.2f' % self.score,'score')
             self.save_checkpoint(num=len(self.pairs))
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -873,6 +874,7 @@ class NMT:
 
                 #print(out,'out')
                 memory.append(out)
+            self.all_mem = memory
             self.last_mem = memory[-1]
         pass
 
@@ -936,7 +938,10 @@ class NMT:
         loss = None
         loss_num = 0
 
-        decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
+        #decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
+
+        decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:]) # alternately take info from mem unit
+
         output = target_variable[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
@@ -1128,8 +1133,7 @@ class NMT:
                         print('======= save file '+ extra+' ========')
                     else:
                         print('skip save!')
-                print('%s (%d %d%%) %.4f' % (self.timeSince(start, iter / n_iters),
-                                             iter, iter / n_iters * 100, print_loss_avg))
+                print('(%d %d%%) %.4f' % (iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(self.pairs)
                 print('src:',choice[0])
                 question = None
@@ -1144,7 +1148,7 @@ class NMT:
                 #print(choice)
                 print('ans:',words)
                 print('try:',self._shorten(words))
-                self._word_from_prediction()
+                #self._word_from_prediction()
 
                 print('current training: %.2f' % self.score)
                 #print(self.output_lang.word2index['ignoring'],'ignoring')
