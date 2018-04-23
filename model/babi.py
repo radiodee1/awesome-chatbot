@@ -905,7 +905,7 @@ class NMT:
 
         y = torch.mm(self.model_4_att.W_a, y)
 
-        lsoftmax = nn.Softmax(dim=1)
+        lsoftmax = nn.Softmax(dim=0)
         y = lsoftmax(y)
 
         return y
@@ -932,10 +932,15 @@ class NMT:
         output = target_variable[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
-        if criterion is not None and True:
-            #print(single_predict)
+        if criterion is not None:
+
             loss = criterion(self.prediction.view( 1,-1), single_predict)
             loss_num += loss.data[0]
+            ##########################
+            #print(self.prediction)
+            num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
+            print('>',num, self.output_lang.index2word[num],'<')
+            #########################
 
         is_teacher = random.random() < teacher_forcing_ratio
 
@@ -945,19 +950,20 @@ class NMT:
         for t in range(1, max_length - 1):
             # print(t,'t', decoder_hidden.size())
 
-            if t == skip_me:
-                if criterion is not None: loss = criterion(self.last_mem.view(1, -1), target_variable[t])
+            if t == skip_me and False:
+                print(t, self.prediction.view(1,-1).size() , target_variable[t].size() )
+                if criterion is not None: loss = criterion(self.prediction.view(1, -1), target_variable[t])
 
             else:
                 ## self.inp_c  ??
                 ## self.last_mem ??
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
-                #print(output.size(), self.last_mem.size(), decoder_hidden.size(),'three')
+                #print(output.size(), self.last_mem.size(), output,'three')
 
             outputs.append(output)
             #masks.append(mask.data)
 
-            if criterion is not None and t != skip_me:
+            if criterion is not None : #and t != skip_me:
                 if t < len(target_variable) :
                     #print(output.size(),'os',target_variable[t].size(), target_variable[t])
                     loss = criterion(output.view(1, -1), target_variable[t])
@@ -968,7 +974,7 @@ class NMT:
                 loss_num += loss.data[0]
                 #print(loss_num)
 
-            if t != skip_me:
+            if True: # t != skip_me:
                 output = Variable(output.data.max(dim=2)[1])
                 #print(output.size(),'p',t)
 
