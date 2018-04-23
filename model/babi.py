@@ -287,6 +287,7 @@ class NMT:
         self.hidden_size = hparams['units']
         self.memory_hops = 15
         self.start = 0
+        self.score = 0
 
         self.train_fr = None
         self.train_to = None
@@ -414,6 +415,8 @@ class NMT:
             self.printable = ' epoch #' + str(i+1)
             self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
+            print('auto save.')
+            print(self.score,'score')
             self.save_checkpoint(num=len(self.pairs))
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -965,8 +968,8 @@ class NMT:
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
                 #print(output.size(), self.last_mem[-1].size(),'two')
 
-            outputs.append(output)
-            #masks.append(mask.data)
+            #outputs.append(output)
+
 
             if criterion is not None : #and t != skip_me:
                 if t < len(target_variable) :
@@ -983,6 +986,7 @@ class NMT:
             if True: # t != skip_me:
                 output = Variable(output.data.max(dim=2)[1])
                 #print(output.size(),'p',t)
+            outputs.append(output)
 
             # raw.append(output)
             if True and int(output.data[0].int()) == EOS_token :
@@ -1038,6 +1042,8 @@ class NMT:
 
         save_num = 0
         print_loss_total = 0  # Reset every print_every
+        num_right = 0
+        num_tot = 0 #len(self.pairs)
 
 
         encoder_optimizer = optim.SGD(self.model_1_enc.parameters(), lr=learning_rate)
@@ -1089,13 +1095,18 @@ class NMT:
                                             decoder, encoder_optimizer, decoder_optimizer,
                                             memory_optimizer, attention_optimizer, criterion)
 
+            if int(outputs[0].int()) == int(target_variable):
+                num_right += 1
+            num_tot += 1
+            self.score = float(num_right/num_tot) * 100
+
             print_loss_total += float(l)
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
-                      + ' ' + self.printable + ', saved files = ' + str(saved_files) + ', low = ' + str(self.long_term_loss))
+                      + ' ' + self.printable + ', saved files = ' + str(saved_files) + ', low = %.4f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
@@ -1134,6 +1145,8 @@ class NMT:
                 print('ans:',words)
                 print('try:',self._shorten(words))
                 self._word_from_prediction()
+
+                print('current training: %.2f' % self.score)
                 #print(self.output_lang.word2index['ignoring'],'ignoring')
                 print("-----")
 
