@@ -1062,6 +1062,7 @@ class NMT:
 
             input_variable = training_pair[0]
             question_variable = training_pair[1]
+
             if len(training_pair) > 2:
                 target_variable = training_pair[2]
             else:
@@ -1072,14 +1073,11 @@ class NMT:
                 target_variable = training_pair[0]
                 #print('is auto')
 
-
-
             outputs, masks , l = self.train(input_variable, target_variable,question_variable, encoder,
                                             decoder, encoder_optimizer, decoder_optimizer,
                                             memory_optimizer, attention_optimizer, criterion)
 
             print_loss_total += float(l)
-
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
