@@ -895,8 +895,8 @@ class NMT:
         pass
 
     def new_episode_small_step(self, ct, g, prev_h):
-        gru, _ = self.model_3_mem(ct, prev_h)
-        h = g * gru + (1 - g) #* prev_h
+        gru, prev_h = self.model_3_mem(ct, prev_h)
+        h = g * gru + (1 - g) * prev_h
         return h
         pass
 
