@@ -1111,7 +1111,7 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
-                      + ' ' + self.printable + ', saved files = ' + str(saved_files) + ', low = %.4f' % self.long_term_loss)
+                      + ' ' + self.printable + ', saved files = ' + str(saved_files) + ', low loss = %.4f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
@@ -1133,7 +1133,7 @@ class NMT:
                         print('======= save file '+ extra+' ========')
                     else:
                         print('skip save!')
-                print('(%d %d%%) %.4f' % (iter, iter / n_iters * 100, print_loss_avg))
+                print('(%d %d%%) %.4f loss' % (iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(self.pairs)
                 print('src:',choice[0])
                 question = None
