@@ -848,7 +848,7 @@ class NMT:
         hidden1 = None
         for i in input_variable:
             i = i.view(1,-1)
-            out1, hidden1 = self.model_1_enc(i)
+            out1, hidden1 = self.model_1_enc(i,hidden1)
             outlist1.append(out1)
         #self.inp_c = torch.cat(outlist1)
         self.inp_c = outlist1
@@ -856,7 +856,7 @@ class NMT:
         hidden2 = None
         for i in question_variable:
             i = i.view(1,-1)
-            out2, hidden2 = self.model_1_enc(i)
+            out2, hidden2 = self.model_1_enc(i,hidden2)
             outlist2.append(out2)
         #self.q_q = torch.cat(outlist2)
         self.q_q = out2
@@ -887,6 +887,13 @@ class NMT:
             g_record.append(g)
             ## do something with g!!
             pass
+
+        if True:
+            g_out = torch.cat(g_record)
+            g_soft = nn.Softmax(dim=0)
+            g_out = g_soft(g_out)
+            g_record = g_out
+
         sequences = self.inp_c
         for i in range(len(sequences)):
             e = self.new_episode_small_step(sequences[i], g_record[i], None) ## something goes here!!
@@ -896,7 +903,7 @@ class NMT:
 
     def new_episode_small_step(self, ct, g, prev_h):
         gru, prev_h = self.model_3_mem(ct, prev_h)
-        h = g * gru + (1 - g) * prev_h
+        h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
         return h
         pass
 
@@ -1100,10 +1107,11 @@ class NMT:
                                             decoder, encoder_optimizer, decoder_optimizer,
                                             memory_optimizer, attention_optimizer, criterion)
 
-            if int(outputs[0].int()) == int(target_variable):
-                num_right += 1
-            num_tot += 1
-            self.score = float(num_right/num_tot) * 100
+            if self.do_load_babi:
+                if int(outputs[0].int()) == int(target_variable):
+                    num_right += 1
+                num_tot += 1
+                self.score = float(num_right/num_tot) * 100
 
             print_loss_total += float(l)
 
