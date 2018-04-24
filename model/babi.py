@@ -186,10 +186,31 @@ class WrapMemRNN(nn.Module):
         self.last_mem = None
         pass
 
-    def forward(self, q_q):
-        self.q_q = q_q
-        c = self.new_episodic_module(q_q)
+    def forward(self, input_variable, question_variable):
+        self.new_input_module(input_variable, question_variable)
+        c = self.new_episodic_module(self.q_q)
         return c, self.all_mem , self.q_q
+
+    def new_input_module(self, input_variable, question_variable):
+        outlist1 = []
+        hidden1 = None
+        for i in input_variable:
+            i = i.view(1,-1)
+            out1, hidden1 = self.model_1_enc(i,hidden1)
+            outlist1.append(out1)
+        #self.inp_c = torch.cat(outlist1)
+        self.inp_c = outlist1
+        outlist2 = []
+        hidden2 = None
+        for i in question_variable:
+            i = i.view(1,-1)
+            out2, hidden2 = self.model_1_enc(i,hidden2)
+            outlist2.append(out2)
+        #self.q_q = torch.cat(outlist2)
+        self.q_q = out2
+        #print(self.q_q.size(),'qq')
+        return out2, hidden2
+
 
     def new_episodic_module(self, q_q):
         if q_q is not None:
@@ -327,7 +348,7 @@ class NMT:
         self.opt_3 = None
         self.opt_4 = None
         self.best_loss = None
-        self.long_term_loss = None
+        self.long_term_loss = 0
         self.tag = ''
 
         self.input_lang = None
@@ -929,7 +950,9 @@ class NMT:
                 memory.append(out)
             self.all_mem = memory
             self.last_mem = memory[-1]
+        return torch.cat(self.all_mem)
         pass
+
 
     def new_episode_big_step(self, mem):
         g_record = []
@@ -1078,7 +1101,8 @@ class NMT:
 
         encoder_output , encoder_hidden = self.new_input_module(input_variable, question_variable)
 
-        self.new_episodic_module()
+        c = self.new_episodic_module()
+        #print(c.size(),'c')
 
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable, encoder_hidden,encoder_output, criterion)
 
