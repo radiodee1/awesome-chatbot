@@ -130,6 +130,7 @@ class EpisodicAttn(nn.Module):
         return  self.G
 
 
+
 class LuongAttention(nn.Module):
     """
     LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
@@ -173,14 +174,67 @@ class MemRNN(nn.Module):
         #               bi_output[:, :, self.hidden_size:])
         return output, hidden
 
-    '''
-    def initHidden(self):
-        result = Variable(torch.zeros(1, 1, self.hidden_size))
-        if use_cuda:
-            return result.cuda()
-        else:
-            return result
-    '''
+class WrapMemRNN(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(WrapMemRNN, self).__init__()
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.model_3_mem = MemRNN(input_size, hidden_size)
+        self.model_4_att = EpisodicAttn(hidden_size)
+        self.q_q = None
+        self.all_mem = None
+        self.last_mem = None
+        pass
+
+    def forward(self, q_q):
+        self.q_q = q_q
+        c = self.new_episodic_module(q_q)
+        return c, self.all_mem , self.q_q
+
+    def new_episodic_module(self, q_q):
+        if q_q is not None:
+            self.q_q = q_q
+            memory = [q_q.clone()]
+            for iter in range(1, self.memory_hops+1):
+                current_episode = self.new_episode_big_step(memory[iter - 1])
+                out,  _ = self.model_3_mem(memory[iter - 1], current_episode)
+
+                memory.append(out)
+            self.all_mem = memory
+            self.last_mem = memory[-1]
+        return torch.cat(self.all_mem)
+
+    def new_episode_big_step(self, mem):
+        g_record = []
+        sequences = self.inp_c
+        for i in range(len(sequences)):
+            g = self.new_attention_step(sequences[i],None,mem,self.q_q)
+            g_record.append(g)
+            ## do something with g!!
+            pass
+
+        if True:
+            g_out = torch.cat(g_record)
+            g_soft = nn.Softmax(dim=0)
+            g_out = g_soft(g_out)
+            g_record = g_out
+
+        sequences = self.inp_c
+        for i in range(len(sequences)):
+            e = self.new_episode_small_step(sequences[i], g_record[i], None) ## something goes here!!
+            pass
+        return e
+
+    def new_episode_small_step(self, ct, g, prev_h):
+        gru, prev_h = self.model_3_mem(ct, prev_h)
+        h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
+        return h
+
+    def new_attention_step(self, ct, prev_g, mem, q_q):
+        concat_list = [ct, mem, q_q, ct * q_q, ct * mem, torch.abs(ct - q_q), torch.abs(ct - mem)]
+        #exit()
+        return self.model_4_att(concat_list)
+
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
@@ -200,6 +254,11 @@ class Encoder(nn.Module):
         encoder_out = (encoder_out[:, :, :self.hidden_dim] +
                        encoder_out[:, :, self.hidden_dim:])
         return encoder_out, encoder_hidden
+
+class WrapEncoder(nn.Module):
+    def __init__(self):
+        super(WrapEncoder, self).__init__()
+        pass
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
@@ -226,17 +285,11 @@ class Decoder(nn.Module):
                                               decoder_hidden)
         output = self.out(torch.cat([rnn_output, context], 2))
         return output, decoder_hidden, mask
-    '''
-    def get_index_from_vec(self, vec):
-        diff = self.embed.weight[0] - vec[:self.embed.weight.size()[1]]
-        delta = np.sum( diff * diff, axis=0)
-        i = np.argmin(delta)
 
-        return i
-
-    def test_embed(self, index):
-        return self.embed(index)
-    '''
+class WrapDecoder(nn.Module):
+    def __init__(self):
+        super(WrapDecoder, self).__init__()
+        pass
 
 class Lang:
     def __init__(self, name, limit=None):
