@@ -285,7 +285,7 @@ class NMT:
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
-        self.memory_hops = 15
+        self.memory_hops = 5
         self.start = 0
         self.score = 0
 
@@ -861,7 +861,7 @@ class NMT:
         #self.q_q = torch.cat(outlist2)
         self.q_q = out2
         #print(self.q_q.size(),'qq')
-        return out1, hidden1
+        return out2, hidden2
         pass
 
     def new_episodic_module(self):
@@ -924,9 +924,8 @@ class NMT:
 
         lsoftmax = nn.Softmax(dim=0)
         y = lsoftmax(y)
-
         return y
-        pass
+
 
     def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
@@ -951,7 +950,8 @@ class NMT:
         decoder_static = self.last_mem[-1].view(1,1,-1)
         if self.model_2_dec.n_layers == 2:
             decoder_hidden = torch.cat([self.all_mem[-1], self.all_mem[-1]]) # combine, but only use second value
-            decoder_static = encoder_hidden[-1].view(1,1,-1)
+            #print(encoder_output.size())
+            decoder_static = encoder_output #self.all_mem[-1].view(1,1,-1)
 
 
         output = target_variable[0].unsqueeze(0)  # start token
@@ -1183,7 +1183,7 @@ class NMT:
 
         self.new_episodic_module()
 
-        outputs, masks, loss, loss_num = self.new_answer_module(sos_token, encoder_hidden, None)
+        outputs, masks, loss, loss_num = self.new_answer_module(sos_token, encoder_hidden,encoder_output, None)
 
         '''
         ############
