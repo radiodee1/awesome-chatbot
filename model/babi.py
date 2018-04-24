@@ -928,7 +928,7 @@ class NMT:
         return y
         pass
 
-    def new_answer_module(self, target_variable, encoder_hidden, criterion, max_length=MAX_LENGTH):
+    def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
         single_predict = target_variable[0].clone()
 
@@ -948,6 +948,11 @@ class NMT:
         #decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
 
         decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:]) # alternately take info from mem unit
+        decoder_static = self.last_mem[-1].view(1,1,-1)
+        if self.model_2_dec.n_layers == 2:
+            decoder_hidden = torch.cat([self.all_mem[-1], self.all_mem[-1]]) # combine, but only use second value
+            decoder_static = encoder_hidden[-1].view(1,1,-1)
+
 
         output = target_variable[0].unsqueeze(0)  # start token
 
@@ -970,14 +975,11 @@ class NMT:
         for t in range(0, max_length - 1):
             # print(t,'t', decoder_hidden.size())
 
-            if t == skip_me and False:
-                print(t, self.prediction.view(1,-1).size() , target_variable[t].size() )
-                if criterion is not None: loss = criterion(self.prediction.view(1, -1), target_variable[t])
-
-            else:
+            if True:
                 ## self.inp_c  ??
                 ## self.last_mem ??
-                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), self.last_mem[-1].view(1,1,-1), decoder_hidden)
+                #print(self.last_mem[-1].size(), decoder_hidden.size())
+                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
                 #print(output.size(), self.last_mem[-1].size(),'two')
 
             #outputs.append(output)
@@ -1025,7 +1027,7 @@ class NMT:
 
         self.new_episodic_module()
 
-        outputs, masks, loss, loss_num = self.new_answer_module(target_variable, encoder_hidden, criterion)
+        outputs, masks, loss, loss_num = self.new_answer_module(target_variable, encoder_hidden,encoder_output, criterion)
 
 
         loss.backward()
@@ -1156,7 +1158,7 @@ class NMT:
                 #print(choice)
                 print('ans:',words)
                 print('try:',self._shorten(words))
-                #self._word_from_prediction()
+                self._word_from_prediction()
 
                 print('current training: %.2f' % self.score)
                 #print(self.output_lang.word2index['ignoring'],'ignoring')
