@@ -1178,7 +1178,7 @@ class NMT:
         num_right = 0
         num_tot = 0 #len(self.pairs)
 
-        wrapper_optimizer = optim.SGD(self.model_0_wra.parameters(), lr=learning_rate)
+        wrapper_optimizer = optim.Adam(self.model_0_wra.parameters(), lr=learning_rate)
         #encoder_optimizer = optim.SGD(self.model_1_enc.parameters(), lr=learning_rate)
         #decoder_optimizer = optim.SGD(self.model_2_dec.parameters(), lr=learning_rate)
         #memory_optimizer = optim.SGD(self.model_3_mem.parameters(), lr=learning_rate)
