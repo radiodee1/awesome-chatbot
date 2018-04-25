@@ -37,8 +37,8 @@
       <file leaf-file-name="babi.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="1180" column="38" selection-start-line="1180" selection-start-column="38" selection-end-line="1180" selection-end-column="38" />
+            <state relative-caret-position="297">
+              <caret line="338" column="42" selection-start-line="338" selection-start-column="42" selection-end-line="338" selection-end-column="42" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -129,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>get_index_from_vec</find>
       <find>variablesFromPair</find>
       <find>variableFromSentence</find>
       <find>evaluate</find>
@@ -154,11 +153,12 @@
       <find>new_input_module</find>
       <find>criterion</find>
       <find>forward</find>
-      <find>new_answer_module</find>
       <find>train</find>
       <find>_word_from_prediction</find>
       <find>model_0_wra</find>
       <find>opt_1</find>
+      <find>new_answer_module</find>
+      <find>Encoder</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -217,7 +217,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="531" />
+    <option name="x" value="530" />
     <option name="y" value="60" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -281,7 +281,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="531" y="60" width="1380" height="1000" extended-state="0" />
+    <frame x="530" y="60" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
@@ -562,8 +562,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="1180" column="38" selection-start-line="1180" selection-start-column="38" selection-end-line="1180" selection-end-column="38" />
+        <state relative-caret-position="297">
+          <caret line="338" column="42" selection-start-line="338" selection-start-column="42" selection-end-line="338" selection-end-column="42" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
