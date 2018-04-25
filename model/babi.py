@@ -90,6 +90,8 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 
+################# pytorch modules ###############
+
 class EpisodicAttn(nn.Module):
 
     def __init__(self,  hidden_size, a_list_size=7):
@@ -128,7 +130,6 @@ class EpisodicAttn(nn.Module):
         self.G = torch.sigmoid(self.l_2)[0]
 
         return  self.G
-
 
 
 class LuongAttention(nn.Module):
@@ -174,22 +175,77 @@ class MemRNN(nn.Module):
         #               bi_output[:, :, self.hidden_size:])
         return output, hidden
 
+########## Encoder Decoder #############
+
+class Encoder(nn.Module):
+    def __init__(self, source_vocab_size, embed_dim, hidden_dim,
+                 n_layers, dropout):
+        super(Encoder, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers,
+                          dropout=dropout, bidirectional=True)
+
+    def forward(self, source, hidden=None):
+        embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        encoder_out, encoder_hidden = self.gru(
+            embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        # sum bidirectional outputs, the other option is to retain concat features
+        encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+                       encoder_out[:, :, self.hidden_dim:])
+        return encoder_out, encoder_hidden
+
+
+class Decoder(nn.Module):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
+        super(Decoder, self).__init__()
+        self.n_layers = n_layers
+        self.hidden_dim = hidden_dim
+        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        self.attention = LuongAttention(hidden_dim)
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
+                          dropout=dropout)
+        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
+
+    def forward(self, output, encoder_out, decoder_hidden):
+        """
+        decodes one output frame
+        """
+        embedded = self.embed(output)  # (1, batch, embed_dim)
+        if self.n_layers == 1:
+            context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        else:
+           context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+
+        rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
+                                              decoder_hidden)
+        output = self.out(torch.cat([rnn_output, context], 2))
+        return output, decoder_hidden, mask
+
+#################### Wrapper ####################
+
 class WrapMemRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self,vocab_size, embed_dim, input_size, hidden_size, n_layers, dropout):
         super(WrapMemRNN, self).__init__()
         self.input_size = input_size
         self.hidden_size = hidden_size
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
+        self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
         self.model_3_mem = MemRNN(input_size, hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
         self.q_q = None
         self.all_mem = None
         self.last_mem = None
+        #self.criterion = nn.CrossEntropyLoss()
+
         pass
 
-    def forward(self, input_variable, question_variable):
-        self.new_input_module(input_variable, question_variable)
+    def forward(self, input_variable, question_variable, target_variable, criterion=None):
+        encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
-        return c, self.all_mem , self.q_q
+        outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
+        return outputs, masks, loss, loss_num
 
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
@@ -256,61 +312,108 @@ class WrapMemRNN(nn.Module):
         #exit()
         return self.model_4_att(concat_list)
 
+    def new_answer_feed_forward(self):
+        # do something with last_mem
+        #print(self.last_mem.size(), self.last_mem)
+        y = self.last_mem.view(-1,1)
 
-class Encoder(nn.Module):
-    def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout):
-        super(Encoder, self).__init__()
-        self.hidden_dim = hidden_dim
-        self.n_layers = n_layers
-        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers,
-                          dropout=dropout, bidirectional=True)
+        y = torch.mm(self.model_4_att.W_a, y)
 
-    def forward(self, source, hidden=None):
-        embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
-        encoder_out, encoder_hidden = self.gru(
-            embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-        # sum bidirectional outputs, the other option is to retain concat features
-        encoder_out = (encoder_out[:, :, :self.hidden_dim] +
-                       encoder_out[:, :, self.hidden_dim:])
-        return encoder_out, encoder_hidden
+        lsoftmax = nn.Softmax(dim=0)
+        y = lsoftmax(y)
+        return y
 
-class WrapEncoder(nn.Module):
-    def __init__(self):
-        super(WrapEncoder, self).__init__()
+
+    def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
+
+        single_predict = target_variable[0].clone()
+
+        if len(target_variable) == 1:
+            #single_predict = single_predict
+            target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
+            target_variable = Variable(torch.LongTensor(target_variable))
+            #print(target_variable)
+
+        #targets = target_variable  # input_variable
+        outputs = []
+        masks = []
+        outputs_index = []
+        loss = None
+        loss_num = 0
+
+        #decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
+
+        decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:]) # alternately take info from mem unit
+        decoder_static = self.last_mem[-1].view(1,1,-1)
+        if self.model_2_dec.n_layers == 2:
+            decoder_hidden = torch.cat([self.all_mem[-1], self.all_mem[-1]]) # combine, but only use second value
+            #print(encoder_output.size())
+            decoder_static = encoder_output #self.all_mem[-1].view(1,1,-1)
+
+
+        output = target_variable[0].unsqueeze(0)  # start token
+
+        self.prediction = self.new_answer_feed_forward()
+        if criterion is not None:
+
+            loss = criterion(self.prediction.view( 1,-1), single_predict)
+            loss_num += loss.data[0]
+            ##########################
+            #print(self.prediction)
+            #num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
+            #print('>',num, self.output_lang.index2word[num],'<')
+            #########################
+
+        is_teacher = random.random() < teacher_forcing_ratio
+
+        masks = None
+        skip_me = 2
+
+        for t in range(0, max_length - 1):
+            # print(t,'t', decoder_hidden.size())
+
+            if True:
+                ## self.inp_c  ??
+                ## self.last_mem ??
+                #print(self.last_mem[-1].size(), decoder_hidden.size())
+                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
+                #print(output.size(), self.last_mem[-1].size(),'two')
+
+            #outputs.append(output)
+
+
+            if criterion is not None : #and t != skip_me:
+                if t < len(target_variable) :
+                    #print('work', t)
+                    #print(output.size(),'os',target_variable[t].size(), target_variable[t])
+                    loss = criterion(output.view(1, -1), target_variable[t])
+                elif False:
+                    loss = criterion(output.view(1, -1), Variable(torch.LongTensor([0])))
+
+            if loss is not None:
+                loss_num += loss.data[0]
+                #print(loss_num)
+
+            if True: # t != skip_me:
+                output = Variable(output.data.max(dim=2)[1])
+                #print(output.size(),'p',t)
+            outputs.append(output)
+
+            # raw.append(output)
+            if True and int(output.data[0].int()) == EOS_token :
+                #print('eos token',t)
+                break
+
+            # teacher forcing
+            if is_teacher and t < target_variable.size()[0]:
+                # print(output,'out')
+                output = target_variable[t].unsqueeze(0)
+                # print(self.output_lang.index2word[int(output)])
+
+        return outputs, masks, loss, loss_num
         pass
 
-class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
-        super(Decoder, self).__init__()
-        self.n_layers = n_layers
-        self.hidden_dim = hidden_dim
-        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
-                          dropout=dropout)
-        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
-
-    def forward(self, output, encoder_out, decoder_hidden):
-        """
-        decodes one output frame
-        """
-        embedded = self.embed(output)  # (1, batch, embed_dim)
-        if self.n_layers == 1:
-            context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-        else:
-           context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-
-        rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
-                                              decoder_hidden)
-        output = self.out(torch.cat([rnn_output, context], 2))
-        return output, decoder_hidden, mask
-
-class WrapDecoder(nn.Module):
-    def __init__(self):
-        super(WrapDecoder, self).__init__()
-        pass
+######################## end pytorch modules ####################
 
 class Lang:
     def __init__(self, name, limit=None):
@@ -361,7 +464,9 @@ class NMT:
         self.hidden_size = hparams['units']
         self.memory_hops = 5
         self.start = 0
+        self.this_epoch = 0
         self.score = 0
+        self.saved_files = 0
 
         self.train_fr = None
         self.train_to = None
@@ -487,12 +592,14 @@ class NMT:
         if num == 0:
             num = hparams['epochs']
         for i in range(num):
+            self.this_epoch = i
             self.printable = ' epoch #' + str(i+1)
             self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
             print('auto save.')
             print('%.2f' % self.score,'score')
             self.save_checkpoint(num=len(self.pairs))
+            self.saved_files += 1
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
 
         pass
@@ -818,6 +925,9 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
+        if self.do_load_babi:
+            num = self.this_epoch * len(self.pairs) + num
+
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth.tar' + ' '  +
@@ -1129,7 +1239,7 @@ class NMT:
             decoder = self.model_2_dec
 
         save_thresh = 2
-        saved_files = 0
+        #self.saved_files = 0
 
         save_num = 0
         print_loss_total = 0  # Reset every print_every
@@ -1198,7 +1308,7 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
-                      + ' ' + self.printable + ', saved files = ' + str(saved_files) + ', low loss = %.4f' % self.long_term_loss)
+                      + ' ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.4f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
@@ -1216,7 +1326,7 @@ class NMT:
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
                         self.save_checkpoint(num=iter,extra=extra)
-                        saved_files += 1
+                        self.saved_files += 1
                         print('======= save file '+ extra+' ========')
                     else:
                         print('skip save!')
