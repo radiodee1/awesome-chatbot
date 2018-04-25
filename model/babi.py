@@ -292,7 +292,7 @@ class WrapMemRNN(nn.Module):
                 current_episode = self.new_episode_big_step(memory[iter - 1])
                 if True:
                     hidden = memory[iter - z]
-                out,  h2 = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))# memory[iter - 1])
+                _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))# memory[iter - 1])
 
                 memory.append(out) #out
             self.all_mem = memory
@@ -322,7 +322,7 @@ class WrapMemRNN(nn.Module):
         return e
 
     def new_episode_small_step(self, ct, g, prev_h):
-        gru, _ = self.model_3_mem(ct, prev_h)
+        _ , gru = self.model_3_mem(ct, prev_h)
         h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
         #print(h.size())
 
@@ -379,8 +379,8 @@ class WrapMemRNN(nn.Module):
         output = target_variable[0].unsqueeze(0)  # start token
 
         self.prediction = self.new_answer_feed_forward()
-        if criterion is not None:
 
+        if criterion is not None and False:
             loss = criterion(self.prediction.view( 1,-1), single_predict)
             loss_num += loss.data[0]
 
@@ -397,9 +397,11 @@ class WrapMemRNN(nn.Module):
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
 
             if criterion is not None :
+                loss = criterion(self.prediction.view(1, -1), single_predict)
+
                 if t < len(target_variable):
                     loss = criterion(output.view(1, -1), target_variable[t])
-                elif True:
+                elif False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
 
             if loss is not None:
