@@ -160,7 +160,7 @@ class LuongAttention(nn.Module):
         return context, mask
 
 class MemRNN(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, hidden_size):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         #self.embedding = nn.Embedding(input_size, hidden_size)
@@ -226,17 +226,24 @@ class Decoder(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim, input_size, hidden_size, n_layers, dropout):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0):
         super(WrapMemRNN, self).__init__()
-        self.input_size = input_size
         self.hidden_size = hidden_size
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
-        self.model_3_mem = MemRNN(input_size, hidden_size)
+        self.model_3_mem = MemRNN( hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
-        self.q_q = None
+
+        self.input_var = None  # for input
+        self.q_var = None  # for question
+        self.answer_var = None  # for answer
+        self.q_q = None  # extra question
+        self.inp_c = None  # extra input
         self.all_mem = None
-        self.last_mem = None
+        self.last_mem = None  # output of mem unit
+        self.prediction = None  # final single word prediction
+        self.memory_hops = hparams['babi_memory_hops']
+
         #self.criterion = nn.CrossEntropyLoss()
 
         pass
@@ -245,7 +252,7 @@ class WrapMemRNN(nn.Module):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
-        return outputs, masks, loss, loss_num
+        return outputs, masks, loss, loss_num, self.prediction
 
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
@@ -442,10 +449,14 @@ class Lang:
 ################################
 class NMT:
     def __init__(self):
+
+        self.model_0_wra = None
+        '''
         self.model_1_enc = None
         self.model_2_dec = None
         self.model_3_mem = None
         self.model_4_att = None
+        '''
         self.opt_1 = None
         self.opt_2 = None
         self.opt_3 = None
@@ -485,6 +496,7 @@ class NMT:
 
         self.printable = ''
 
+        '''
         self.input_var = None     # for input
         self.q_var = None         # for question
         self.answer_var = None    # for answer
@@ -493,7 +505,7 @@ class NMT:
         self.all_mem = None
         self.last_mem = None      # output of mem unit
         self.prediction = None    # final single word prediction
-
+        '''
 
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
@@ -828,44 +840,11 @@ class NMT:
                     'epoch':0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_1_enc.state_dict(),
+                    'state_dict': self.model_0_wra.state_dict(),
                     'best_prec1': None,
                     'optimizer': self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
                     'long_term_loss' : self.long_term_loss,
-                    'tag': self.tag
-                },
-                {
-                    'epoch':0,
-                    'start': self.start,
-                    'arch':None,
-                    'state_dict':self.model_2_dec.state_dict(),
-                    'best_prec1':None,
-                    'optimizer': self.opt_2.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
-                    'tag': self.tag
-                },
-                {
-                    'epoch': 0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict': self.model_3_mem.state_dict(),
-                    'best_prec1': None,
-                    'optimizer': self.opt_3.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
-                    'tag': self.tag
-                },
-                {
-                    'epoch': 0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict': self.model_4_att.state_dict(),
-                    'best_prec1': None,
-                    'optimizer': self.opt_4.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
                     'tag': self.tag
                 }
             ]
@@ -875,42 +854,9 @@ class NMT:
                     'epoch': 0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_1_enc.state_dict(),
+                    'state_dict': self.model_0_wra.state_dict(),
                     'best_prec1': None,
                     'optimizer': None , # self.opt_1.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
-                    'tag': self.tag
-                },
-                {
-                    'epoch': 0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict': self.model_2_dec.state_dict(),
-                    'best_prec1': None,
-                    'optimizer': None, # self.opt_2.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
-                    'tag': self.tag
-                },
-                {
-                    'epoch': 0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict': self.model_3_mem.state_dict(),
-                    'best_prec1': None,
-                    'optimizer': self.opt_3.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
-                    'tag': self.tag
-                },
-                {
-                    'epoch': 0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict': self.model_4_att.state_dict(),
-                    'best_prec1': None,
-                    'optimizer': self.opt_4.state_dict(),
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
                     'tag': self.tag
@@ -966,21 +912,10 @@ class NMT:
                     pass
                 if hparams['zero_start'] is True:
                     self.start = 0
-                self.model_1_enc.load_state_dict(checkpoint[0]['state_dict'])
+
+                self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
                 if self.opt_1 is not None:
                     self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
-
-                self.model_2_dec.load_state_dict(checkpoint[1]['state_dict'])
-                if self.opt_2 is not None:
-                    self.opt_2.load_state_dict(checkpoint[1]['optimizer'])
-
-                self.model_3_mem.load_state_dict(checkpoint[2]['state_dict'])
-                if self.opt_3 is not None:
-                    self.opt_3.load_state_dict(checkpoint[2]['optimizer'])
-
-                self.model_4_att.load_state_dict(checkpoint[3]['state_dict'])
-                if self.opt_4 is not None:
-                    self.opt_4.load_state_dict(checkpoint[3]['optimizer'])
 
                 print("loaded checkpoint '"+ basename + "' ")
             else:
@@ -1026,7 +961,7 @@ class NMT:
         num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
         print('>',num, self.output_lang.index2word[num],'<')
 
-
+    '''
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
         hidden1 = None
@@ -1201,28 +1136,31 @@ class NMT:
 
         return outputs, masks, loss, loss_num
         pass
+    '''
 
-    def train(self,input_variable, target_variable,question_variable, encoder, decoder, encoder_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
+    def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
-        encoder_optimizer.zero_grad()
-        decoder_optimizer.zero_grad()
-        memory_optimizer.zero_grad()
-        attention_optimizer.zero_grad()
+        wrapper_optimizer.zero_grad()
+        #decoder_optimizer.zero_grad()
+        #memory_optimizer.zero_grad()
+        #attention_optimizer.zero_grad()
 
+        outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+        self.prediction = prediction
+
+        '''
         encoder_output , encoder_hidden = self.new_input_module(input_variable, question_variable)
-
         c = self.new_episodic_module()
         #print(c.size(),'c')
-
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable, encoder_hidden,encoder_output, criterion)
-
+        '''
 
         loss.backward()
 
-        encoder_optimizer.step()
-        decoder_optimizer.step()
-        memory_optimizer.step()
-        attention_optimizer.step()
+        wrapper_optimizer.step()
+        #decoder_optimizer.step()
+        #memory_optimizer.step()
+        #attention_optimizer.step()
 
 
         return outputs, masks , loss_num # batch, src, trg
@@ -1230,13 +1168,7 @@ class NMT:
 
 
     def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
-        if (encoder is not None and decoder is not None and
-                self.model_1_enc is None and self.model_2_dec is None):
-            self.model_1_enc = encoder
-            self.model_2_dec = decoder
-        else:
-            encoder = self.model_1_enc
-            decoder = self.model_2_dec
+
 
         save_thresh = 2
         #self.saved_files = 0
@@ -1246,11 +1178,11 @@ class NMT:
         num_right = 0
         num_tot = 0 #len(self.pairs)
 
-
-        encoder_optimizer = optim.SGD(self.model_1_enc.parameters(), lr=learning_rate)
-        decoder_optimizer = optim.SGD(self.model_2_dec.parameters(), lr=learning_rate)
-        memory_optimizer = optim.SGD(self.model_3_mem.parameters(), lr=learning_rate)
-        attention_optimizer = optim.SGD(self.model_4_att.parameters(), lr=learning_rate)
+        wrapper_optimizer = optim.SGD(self.model_0_wra.parameters(), lr=learning_rate)
+        #encoder_optimizer = optim.SGD(self.model_1_enc.parameters(), lr=learning_rate)
+        #decoder_optimizer = optim.SGD(self.model_2_dec.parameters(), lr=learning_rate)
+        #memory_optimizer = optim.SGD(self.model_3_mem.parameters(), lr=learning_rate)
+        #attention_optimizer = optim.SGD(self.model_4_att.parameters(), lr=learning_rate)
 
         #adam_optimizer = optim.Adam(filter(lambda p: p.requires_grad, [encoder.parameters(), decoder.parameters()]),
         #                            lr=learning_rate)
@@ -1261,10 +1193,10 @@ class NMT:
         criterion = nn.CrossEntropyLoss()
 
         if True:
-            self.opt_1 = encoder_optimizer
-            self.opt_2 = decoder_optimizer
-            self.opt_3 = memory_optimizer
-            self.opt_4 = attention_optimizer
+            self.opt_1 = wrapper_optimizer
+            self.opt_2 = None #decoder_optimizer
+            self.opt_3 = None #memory_optimizer
+            self.opt_4 = None #attention_optimizer
             #self.opt_1 = adam_optimizer
 
         self.load_checkpoint()
@@ -1293,8 +1225,8 @@ class NMT:
                 #print('is auto')
 
             outputs, masks , l = self.train(input_variable, target_variable,question_variable, encoder,
-                                            decoder, encoder_optimizer, decoder_optimizer,
-                                            memory_optimizer, attention_optimizer, criterion)
+                                            decoder, wrapper_optimizer, None,
+                                            None, None, criterion)
 
             if self.do_load_babi:
                 if int(outputs[0].int()) == int(target_variable):
@@ -1365,12 +1297,16 @@ class NMT:
 
         sos_token = Variable(torch.LongTensor([SOS_token]))
 
-
+        '''
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
 
         self.new_episodic_module()
 
         outputs, masks, loss, loss_num = self.new_answer_module(sos_token, encoder_hidden,encoder_output, None)
+        '''
+
+        outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, sos_token, None)
+        self.prediction = prediction
 
         '''
         ############
@@ -1419,9 +1355,11 @@ class NMT:
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
 
-        self.model_1_enc = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout)
 
-        self.model_2_dec = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+        #self.model_1_enc = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
+
+        #self.model_2_dec = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
         self.load_checkpoint()
 
 
@@ -1447,17 +1385,20 @@ if __name__ == '__main__':
     dropout = hparams['dropout']
     pytorch_embed_size = hparams['pytorch_embed_size']
 
-    n.model_1_enc = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
+    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_2_dec = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
+    #n.model_1_enc = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    n.model_3_mem = MemRNN(n.hidden_size,n.hidden_size)
+    #n.model_2_dec = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
 
-    n.model_4_att = EpisodicAttn(n.hidden_size, a_list_size=7)
+    #n.model_3_mem = MemRNN(n.hidden_size)
+
+    #n.model_4_att = EpisodicAttn(n.hidden_size, a_list_size=7)
 
     if use_cuda and False:
-        n.model_1_enc = n.model_1_enc.cuda()
-        n.model_2_dec = n.model_2_dec.cuda()
+        #n.model_1_enc = n.model_1_enc.cuda()
+        #n.model_2_dec = n.model_2_dec.cuda()
+        n.model_0_wra = n.model_0_wra.cuda()
 
     if n.do_train:
         lr = hparams['learning_rate']
