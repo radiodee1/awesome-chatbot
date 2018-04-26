@@ -93,6 +93,38 @@ hparams['layers'] = 1
 
 ################# pytorch modules ###############
 
+class MGRU(nn.Module):
+    def __init__(self,hidden_size):
+        super(MGRU, self).__init__()
+        self.dim = hidden_size
+        self.W_mem_res_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_res_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.b_mem_res = nn.Parameter(torch.FloatTensor(self.dim,))
+
+        self.W_mem_upd_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_upd_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.b_mem_upd = nn.Parameter(torch.FloatTensor(self.dim,))
+
+        self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.b_mem_hid = nn.Parameter(torch.FloatTensor(self.dim,))
+        pass
+
+    def forward(self, input, hidden):
+        input = input.view(self.dim,-1)
+        hidden = hidden.view(self.dim,-1)
+        #a = torch.mm(self.W_mem_upd_in, input)
+        #b = torch.mm(self.W_mem_upd_hid, hidden)
+        #c = torch.sigmoid(a + b + self.b_mem_upd)
+        #print(input.size(), hidden.size(),'pass here')
+        z = torch.sigmoid(torch.mm(self.W_mem_upd_in, input) + torch.mm(self.W_mem_upd_hid, hidden) + self.b_mem_upd)
+        r = torch.sigmoid(torch.mm(self.W_mem_res_in, input) + torch.mm(self.W_mem_res_hid, hidden) + self.b_mem_res)
+        _h = torch.tanh(torch.mm(self.W_mem_hid_in, input) + r * torch.mm(self.W_mem_hid_hid, hidden) + self.b_mem_hid)
+        out = z * hidden + (1 - z) * _h
+        return out
+        pass
+
+
 class EpisodicAttn(nn.Module):
 
     def __init__(self,  hidden_size, a_list_size=7):
@@ -122,7 +154,7 @@ class EpisodicAttn(nn.Module):
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=1)#.view(-1)
-        self.c_list_z = self.c_list_z.view(-1, 1)#.permute(1,0)#.squeeze(0)
+        self.c_list_z = self.c_list_z.view(self.hidden_size,-1)#.permute(1,0)#.squeeze(0)
 
         #print(self.c_list_z.size(), self.W_1.size(),'two')
 
@@ -168,15 +200,16 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         #self.embedding = nn.Embedding(input_size, hidden_size)
-        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
-
+        #self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = MGRU(hidden_size)
 
     def forward(self, input, hidden=None):
         #embedded = self.embedding(input).view(1, 1, -1)
         #output = embedded
-        output, hidden = self.gru(input,hidden)
+        hidden = self.gru(input,hidden)
         #bi_output = (bi_output[:, :, :self.hidden_size] +
         #               bi_output[:, :, self.hidden_size:])
+        output = 0
         return output, hidden
 
 ########## Encoder Decoder #############

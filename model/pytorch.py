@@ -21,7 +21,7 @@ from settings import hparams
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 import numpy as np
-
+import tokenize_weak
 
 '''
 Some code was originally written by Austin Jacobson. This refers specifically 
@@ -397,9 +397,15 @@ class NMT:
         while True:
             line = input("> ")
             line = tokenize_weak.format(line)
-            print(line)
-            out , _ =self.evaluate(None, None, line)
-            print(out)
+            ll = []
+            for l in line.split():
+                if l in self.vocab_lang.word2index:
+                    ll.append(l)
+            if len(ll) > 0:
+                line = ' '.join(ll)
+                print(line)
+                out , _ =self.evaluate(None, None, line)
+                print(out)
 
     def task_convert(self):
         hparams['base_filename'] += '.small'
