@@ -555,6 +555,7 @@ class NMT:
         parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
                             action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
+        parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -584,7 +585,9 @@ class NMT:
         if self.args['convert_weights'] == True: self.do_convert = True
         if self.args['load_babi'] == True: self.do_load_babi = True
         if self.args['hide_unk'] == True or self.do_load_babi: self.do_hide_unk = True
-
+        if self.args['use_filename'] == True:
+            hparams['basename'] = sys.argv[0].split('.')[0]
+            print(hparams['basename'], 'basename')
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
