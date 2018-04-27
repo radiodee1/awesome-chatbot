@@ -588,6 +588,7 @@ class NMT:
         if self.args['use_filename'] == True:
             hparams['basename'] = sys.argv[0].split('.')[0]
             print(hparams['basename'], 'basename')
+            exit()
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
