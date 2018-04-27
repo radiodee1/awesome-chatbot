@@ -90,6 +90,8 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
+hparams['pytorch_embed_size'] = hparams['units']
+hparams['dropout'] = 0.0
 
 ################# pytorch modules ###############
 
@@ -116,11 +118,12 @@ class MGRU(nn.Module):
         #a = torch.mm(self.W_mem_upd_in, input)
         #b = torch.mm(self.W_mem_upd_hid, hidden)
         #c = torch.sigmoid(a + b + self.b_mem_upd)
-        #print(input.size(), hidden.size(),'pass here')
         z = torch.sigmoid(torch.mm(self.W_mem_upd_in, input) + torch.mm(self.W_mem_upd_hid, hidden) + self.b_mem_upd)
         r = torch.sigmoid(torch.mm(self.W_mem_res_in, input) + torch.mm(self.W_mem_res_hid, hidden) + self.b_mem_res)
         _h = torch.tanh(torch.mm(self.W_mem_hid_in, input) + r * torch.mm(self.W_mem_hid_hid, hidden) + self.b_mem_hid)
         out = z * hidden + (1 - z) * _h
+        #print(input.size(), hidden.size(), out.size(), 'pass here')
+
         return out
         pass
 
@@ -140,7 +143,8 @@ class EpisodicAttn(nn.Module):
         self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
 
-        self.W_a = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
+        self.W_a1 = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
+        #self.W_a2 = nn.Parameter(torch.FloatTensor(self.hidden_size, 1 ))# hparams['num_vocab_total']))
 
         self.reset_parameters()
 
@@ -154,7 +158,7 @@ class EpisodicAttn(nn.Module):
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=1)#.view(-1)
-        self.c_list_z = self.c_list_z.view(self.hidden_size,-1)#.permute(1,0)#.squeeze(0)
+        self.c_list_z = self.c_list_z.view(-1,1)#.permute(1,0)#.squeeze(0)
 
         #print(self.c_list_z.size(), self.W_1.size(),'two')
 
@@ -221,16 +225,18 @@ class Encoder(nn.Module):
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers,
-                          dropout=dropout, bidirectional=False)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=False)
+        #self.gru = MGRU(self.hidden_dim)
 
     def forward(self, source, hidden=None):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
-        encoder_out, encoder_hidden = self.gru(
-            embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+
         # sum bidirectional outputs, the other option is to retain concat features
         #encoder_out = (encoder_out[:, :, :self.hidden_dim] +
         #               encoder_out[:, :, self.hidden_dim:])
+        #encoder_out = 0
         return encoder_out, encoder_hidden
 
 
@@ -320,11 +326,11 @@ class WrapMemRNN(nn.Module):
             memory = [q_q.clone()]
             hidden = None
             for iter in range(1, self.memory_hops+1):
-                z = 1
-                if len(memory) > 1: z = 1
-                current_episode = self.new_episode_big_step(memory[iter - 1])
+
+                #print(iter, memory[iter -1][-1].size(),'mem')
+                current_episode = self.new_episode_big_step(torch.sum(memory[iter - 1], dim=0))
                 if True:
-                    hidden = memory[iter - z]
+                    hidden = memory[iter - 1]
                 _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))# memory[iter - 1])
 
                 memory.append(out) #out
@@ -363,13 +369,13 @@ class WrapMemRNN(nn.Module):
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         concat_list = [
-            ct.view(1,-1),
-            mem.view(1,-1),
-            q_q.view(1,-1),
-            (ct * q_q).view(1,-1),
-            (ct * mem).view(1,-1),
-            torch.abs(ct - q_q).view(1,-1),
-            torch.abs(ct - mem).view(1,-1)
+            ct.view(self.hidden_size,-1),
+            mem.view(self.hidden_size,-1),
+            q_q.view(self.hidden_size,-1),
+            (ct * q_q).view(self.hidden_size,-1),
+            (ct * mem).view(self.hidden_size, -1),
+            torch.abs(ct - q_q).view(self.hidden_size,-1),
+            torch.abs(ct - mem).view(self.hidden_size, -1)
         ]
         #for i in concat_list: print(i.size(),  end=' / ')
         #print()
@@ -377,12 +383,15 @@ class WrapMemRNN(nn.Module):
 
     def new_answer_feed_forward(self):
         # do something with last_mem
-        y = self.last_mem.view(-1,1)
+        y = self.last_mem.view(self.hidden_size, -1)
 
-        y = torch.mm(self.model_4_att.W_a, y)
+        y = torch.mm(self.model_4_att.W_a1, y)
 
-        lsoftmax = nn.Softmax(dim=0)
-        y = lsoftmax(y)
+        y = torch.sum(y, dim=1)
+
+        y2softmax = nn.Softmax(dim=0)
+        y = y2softmax(y)
+
         return y
 
 
@@ -392,8 +401,9 @@ class WrapMemRNN(nn.Module):
 
         if len(target_variable) == 1:
             target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
+            #print(target_variable,'1')
             target_variable = Variable(torch.LongTensor(target_variable))
-            #print(target_variable)
+            #print(target_variable,'2')
 
         outputs = []
 
@@ -401,7 +411,8 @@ class WrapMemRNN(nn.Module):
         loss_num = 0
 
 
-        decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:]) # alternately take info from mem unit
+        decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:])[-1].view(1,1,-1) # alternately take info from mem unit
+
         decoder_static = self.last_mem[-1].view(1,1,-1)
         if self.model_2_dec.n_layers == 2:
             #decoder_hidden = torch.cat([self.all_mem[-1], self.all_mem[-1]]) # combine, but only use second value
@@ -413,9 +424,10 @@ class WrapMemRNN(nn.Module):
 
         self.prediction = self.new_answer_feed_forward()
 
-        if criterion is not None and False:
+        if criterion is not None and True:
             loss = criterion(self.prediction.view( 1,-1), single_predict)
-            loss_num += loss.data[0]
+            loss_num += loss.item()#.data[0]
+            #print(self.prediction.size(), single_predict)
 
         is_teacher = random.random() < teacher_forcing_ratio
 
@@ -427,18 +439,20 @@ class WrapMemRNN(nn.Module):
             if True:
                 ## self.inp_c  ??
                 ## self.last_mem ??
+                #print(output.size(), decoder_static.size(), decoder_hidden.size(),'decoder')
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
 
             if criterion is not None :
-                loss = criterion(self.prediction.view(1, -1), single_predict)
-
+                if False: loss = criterion(self.prediction.view(1, -1), single_predict)
+                #print(target_variable[0].val(),'var')
+                #print(output.size(), target_variable[t].size(), 'loss')
                 if t < len(target_variable):
-                    loss = criterion(output.view(1, -1), target_variable[t])
+                    if True: loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
                 elif False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
 
             if loss is not None:
-                loss_num += loss.data[0]
+                loss_num += loss.item()#.data[0]
                 #print(loss_num)
 
             if True: # t != skip_me:
