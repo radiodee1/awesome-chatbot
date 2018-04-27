@@ -203,14 +203,14 @@ class MemRNN(nn.Module):
     def __init__(self, hidden_size):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
-        #self.embedding = nn.Embedding(input_size, hidden_size)
-        #self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = MGRU(hidden_size)
+
+        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = MGRU(hidden_size)
 
     def forward(self, input, hidden=None):
         #embedded = self.embedding(input).view(1, 1, -1)
         #output = embedded
-        hidden = self.gru(input,hidden)
+        _, hidden = self.gru(input,hidden)
         #bi_output = (bi_output[:, :, :self.hidden_size] +
         #               bi_output[:, :, self.hidden_size:])
         output = 0
@@ -355,7 +355,7 @@ class WrapMemRNN(nn.Module):
 
         for i in range(len(sequences)):
             #print(sequences[i].size(),'seq', g_record[i].size(), e.size())
-            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e) ## something goes here!!
+            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e.view(1,1,-1)) ## something goes here!!
             #print(e.size(),'e')
             pass
         return e
@@ -433,7 +433,7 @@ class WrapMemRNN(nn.Module):
 
         masks = None
 
-        for t in range(0, max_length - 1):
+        for t in range(0, len(target_variable) - 1):
             # print(t,'t', decoder_hidden.size())
 
             if True:
@@ -443,11 +443,13 @@ class WrapMemRNN(nn.Module):
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
 
             if criterion is not None :
-                if False: loss = criterion(self.prediction.view(1, -1), single_predict)
+                if True: loss = criterion(self.prediction.view(1, -1), single_predict)
                 #print(target_variable[0].val(),'var')
                 #print(output.size(), target_variable[t].size(), 'loss')
+                
                 if t < len(target_variable):
                     if True: loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
+                    pass
                 elif False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
 
@@ -838,9 +840,11 @@ class NMT:
             elif word == hparams['sol']: word = SOS_token
             else: word = lang.word2index[word]
             sent.append(word)
-        if len(sent) >= MAX_LENGTH:
+        if len(sent) >= MAX_LENGTH and not self.do_load_babi:
             sent = sent[:MAX_LENGTH]
             sent[-1] = EOS_token
+        if self.do_load_babi and False:
+            sent.append(EOS_token)
             #print(sent,'<<<<')
         return sent
 
