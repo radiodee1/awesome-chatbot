@@ -18,8 +18,8 @@ import time
 import math
 import argparse
 from settings import hparams
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
+#import matplotlib.pyplot as plt
+#import matplotlib.ticker as ticker
 import numpy as np
 import tokenize_weak
 
@@ -370,6 +370,9 @@ class NMT:
             num = 10 * self.print_every * i
         pass
         if self.do_plot:
+            import matplotlib.pyplot as plt
+            import matplotlib.ticker as ticker
+
             plt.figure()
             fig, ax = plt.subplots()
             loc = ticker.MultipleLocator(base=2)
