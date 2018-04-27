@@ -446,7 +446,7 @@ class WrapMemRNN(nn.Module):
                 if True: loss = criterion(self.prediction.view(1, -1), single_predict)
                 #print(target_variable[0].val(),'var')
                 #print(output.size(), target_variable[t].size(), 'loss')
-                
+
                 if t < len(target_variable):
                     if True: loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
                     pass
@@ -583,7 +583,7 @@ class NMT:
             self.trainable = False
         if self.args['convert_weights'] == True: self.do_convert = True
         if self.args['load_babi'] == True: self.do_load_babi = True
-        if self.args['hide_unk'] == True: self.do_hide_unk = True
+        if self.args['hide_unk'] == True or self.do_load_babi: self.do_hide_unk = True
 
 
     def task_normal_train(self):
@@ -1184,20 +1184,13 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout)
 
-        #self.model_1_enc = Encoder(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
 
-        #self.model_2_dec = Decoder(self.output_lang.n_words, pytorch_embed_size, self.hidden_size, layers, dropout=dropout)
         self.load_checkpoint()
 
 
 if __name__ == '__main__':
 
     n = NMT()
-
-    if False:
-        att = EpisodicAttn(5, 7)
-        print(att([' ',' ']))
-        exit()
 
     if not n.do_review and not n.do_load_babi:
         n.task_normal_train()
@@ -1214,13 +1207,6 @@ if __name__ == '__main__':
 
     n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
 
-    #n.model_1_enc = Encoder(n.input_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
-
-    #n.model_2_dec = Decoder(n.output_lang.n_words, pytorch_embed_size ,n.hidden_size, layers ,dropout=dropout)
-
-    #n.model_3_mem = MemRNN(n.hidden_size)
-
-    #n.model_4_att = EpisodicAttn(n.hidden_size, a_list_size=7)
 
     if use_cuda and False:
         #n.model_1_enc = n.model_1_enc.cuda()
