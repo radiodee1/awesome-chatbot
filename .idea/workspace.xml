@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -40,23 +41,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="babi.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/babi.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="719">
-              <caret line="595" column="12" selection-start-line="595" selection-start-column="12" selection-end-line="595" selection-end-column="12" />
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="269">
-              <caret line="597" column="30" selection-start-line="597" selection-start-column="30" selection-end-line="597" selection-end-column="30" />
+            <state relative-caret-position="773">
+              <caret line="136" column="9" selection-start-line="136" selection-start-column="9" selection-end-line="136" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -123,7 +112,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>timeSince</find>
       <find>teacher_forcing_ratio</find>
       <find>model_4_attn</find>
       <find>model</find>
@@ -141,18 +129,19 @@
       <find>opt_1</find>
       <find>new_answer_module</find>
       <find>Encoder</find>
-      <find>MemRNN</find>
-      <find>MGRU</find>
       <find>GRU</find>
-      <find>print</find>
       <find>W_a</find>
       <find>MemRN</find>
-      <find>model_3_mem</find>
       <find>train</find>
       <find>model_0_wra</find>
       <find>MAX_LENGTH</find>
       <find>EpisodicAttn</find>
       <find>load_checkpoint</find>
+      <find>model_3_mem</find>
+      <find>MemRNN</find>
+      <find>MGRU</find>
+      <find>last_mem</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -206,8 +195,8 @@
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/pytorch.py" />
-        <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/model/babi.py" />
+        <option value="$PROJECT_DIR$/model/babi_ii.py" />
       </list>
     </option>
   </component>
@@ -551,20 +540,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="269">
-          <caret line="597" column="30" selection-start-line="597" selection-start-column="30" selection-end-line="597" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="719">
-          <caret line="595" column="12" selection-start-line="595" selection-start-column="12" selection-end-line="595" selection-end-column="12" />
+        <state relative-caret-position="737">
+          <caret line="590" column="9" selection-start-line="590" selection-start-column="9" selection-end-line="590" selection-end-column="9" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="773">
+          <caret line="136" column="9" selection-start-line="136" selection-start-column="9" selection-end-line="136" selection-end-column="9" />
         </state>
       </provider>
     </entry>

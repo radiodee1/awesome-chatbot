@@ -110,6 +110,9 @@ class MGRU(nn.Module):
         self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
         self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
         self.b_mem_hid = nn.Parameter(torch.FloatTensor(self.dim,))
+
+        self.out = nn.Linear(self.dim,1)
+
         self.reset_parameters()
         pass
 
@@ -129,7 +132,10 @@ class MGRU(nn.Module):
         _h = torch.tanh(torch.mm(self.W_mem_hid_in, input) + r * torch.mm(self.W_mem_hid_hid, hidden) + self.b_mem_hid)
         out = z * hidden + (1 - z) * _h
         #print(input.size(), hidden.size(), out.size(), 'pass here')
-
+        #print(out.size(),'before')
+        out = self.out(out)
+        #print(out.size(),'after')
+        out.permute(1,0)
         return out
         pass
 
@@ -150,7 +156,6 @@ class EpisodicAttn(nn.Module):
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
 
         self.W_a1 = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
-        #self.W_a2 = nn.Parameter(torch.FloatTensor(self.hidden_size, 1 ))# hparams['num_vocab_total']))
 
         self.reset_parameters()
 
@@ -163,12 +168,14 @@ class EpisodicAttn(nn.Module):
 
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=1)#.view(-1)
-        self.c_list_z = self.c_list_z.view(-1,1)#.permute(1,0)#.squeeze(0)
-
-        #print(self.c_list_z.size(), self.W_1.size(),'two')
+        self.c_list_z = torch.cat(concat_list,dim=1)# dim=1
 
         #print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
+
+        self.c_list_z = self.c_list_z.view(self.hidden_size * self.a_list_size,-1)#.permute(1,0)#.squeeze(0)
+        #self.c_list_z = self.c_list_z.permute(1,0)
+        #print(self.c_list_z.size(), self.W_1.size(),'two')
+
         self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
 
         self.l_1 = torch.tanh(self.l_1)
@@ -255,8 +262,7 @@ class Decoder(nn.Module):
         self.hidden_dim = hidden_dim
         self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
-                          dropout=dropout)
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout)
         self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
 
     def forward(self, output, encoder_out, decoder_hidden):
@@ -264,6 +270,7 @@ class Decoder(nn.Module):
         decodes one output frame
         """
         embedded = self.embed(output)  # (1, batch, embed_dim)
+        #print(decoder_hidden.size(), encoder_out.size(), 'Decoder forward')
         if self.n_layers == 1:
             context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
         else:
@@ -335,13 +342,13 @@ class WrapMemRNN(nn.Module):
             hidden = None
             for iter in range(1, self.memory_hops+1):
 
-                #print(iter, memory[iter -1][-1].size(),'mem')
-                current_episode = self.new_episode_big_step(torch.sum(memory[iter - 1], dim=0))
+                #print(iter, memory[iter -1].size(),'mem', iter -1)
+                current_episode = self.new_episode_big_step(memory[iter - 1])
                 if True:
                     hidden = memory[iter - 1]
-                _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))# memory[iter - 1])
-
-                memory.append(out) #out
+                _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))
+                #print(out.size(),'loop before memory')
+                memory.append(out.view(1,-1)) #out
             self.all_mem = memory
             self.last_mem = memory[-1]
         return self.all_mem
@@ -377,6 +384,8 @@ class WrapMemRNN(nn.Module):
         return h
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
+        mem = mem.view(-1,self.hidden_size)
+        #print(mem.size(),'attention mem')
         concat_list = [
             ct.view(self.hidden_size,-1),
             mem.view(self.hidden_size,-1),
@@ -560,7 +569,7 @@ class NMT:
         parser.add_argument('--autoencode', help='enable auto encode from the command line with a ratio.')
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
-        parser.add_argument('--convert-weights',help='convert weights', action='store_true')
+        #parser.add_argument('--convert-weights',help='convert weights', action='store_true')
         parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
                             action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
@@ -591,7 +600,7 @@ class NMT:
             self.trainable = True
         else:
             self.trainable = False
-        if self.args['convert_weights'] == True: self.do_convert = True
+        #if self.args['convert_weights'] == True: self.do_convert = True
         if self.args['load_babi'] == True: self.do_load_babi = True
         if self.args['hide_unk'] == True or self.do_load_babi: self.do_hide_unk = True
         if self.args['use_filename'] == True:
