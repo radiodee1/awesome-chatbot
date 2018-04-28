@@ -592,7 +592,10 @@ class NMT:
         if self.args['load_babi'] == True: self.do_load_babi = True
         if self.args['hide_unk'] == True or self.do_load_babi: self.do_hide_unk = True
         if self.args['use_filename'] == True:
-            hparams['base_filename'] = sys.argv[0].split('.')[0]
+            z = sys.argv[0]
+            if z.startswith('./'): z = z[2:]
+            hparams['base_filename'] = z.split('.')[0]
+            print(hparams['base_filename'], 'basename')
 
 
     def task_normal_train(self):
