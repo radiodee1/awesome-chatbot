@@ -87,7 +87,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-
+hparams['teacher_forcing_ratio'] = 1.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
@@ -275,10 +275,11 @@ class Decoder(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
+        self.do_babi = do_babi
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
         self.model_3_mem = MemRNN( hidden_size)
@@ -454,7 +455,11 @@ class WrapMemRNN(nn.Module):
                 #print(output.size(), target_variable[t].size(), 'loss')
 
                 if t < len(target_variable):
-                    if True: loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
+
+                    if self.do_babi:
+                        loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
+                    else:
+                        loss = criterion(output.view(1, -1), target_variable[t])
                     pass
                 elif False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
@@ -1055,6 +1060,8 @@ class NMT:
         if self.start != 0 and self.start is not None:
             start = self.start + 1
 
+        print("-----")
+
         for iter in range(start, n_iters + 1):
             training_pair = training_pairs[iter - 1]
 
@@ -1194,7 +1201,7 @@ class NMT:
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
 
-        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout)
+        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout,do_babi=self.do_load_babi)
 
 
         self.load_checkpoint()
@@ -1217,7 +1224,7 @@ if __name__ == '__main__':
     dropout = hparams['dropout']
     pytorch_embed_size = hparams['pytorch_embed_size']
 
-    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
+    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout, do_babi=n.do_load_babi)
 
 
     if use_cuda and False:

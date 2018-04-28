@@ -99,16 +99,16 @@ class MGRU(nn.Module):
     def __init__(self,hidden_size):
         super(MGRU, self).__init__()
         self.dim = hidden_size
-        self.W_mem_res_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.W_mem_res_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_res_in = nn.Parameter(torch.FloatTensor(1, self.dim))
+        self.W_mem_res_hid = nn.Parameter(torch.FloatTensor(1, self.dim))
         self.b_mem_res = nn.Parameter(torch.FloatTensor(self.dim,))
 
-        self.W_mem_upd_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.W_mem_upd_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_upd_in = nn.Parameter(torch.FloatTensor(1, self.dim))
+        self.W_mem_upd_hid = nn.Parameter(torch.FloatTensor(1, self.dim))
         self.b_mem_upd = nn.Parameter(torch.FloatTensor(self.dim,))
 
-        self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(1, self.dim))
+        self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(1, self.dim))
         self.b_mem_hid = nn.Parameter(torch.FloatTensor(self.dim,))
 
         self.out = nn.Linear(self.dim,1)
@@ -124,17 +124,14 @@ class MGRU(nn.Module):
     def forward(self, input, hidden):
         input = input.view(self.dim,-1)
         hidden = hidden.view(self.dim,-1)
-        #a = torch.mm(self.W_mem_upd_in, input)
-        #b = torch.mm(self.W_mem_upd_hid, hidden)
-        #c = torch.sigmoid(a + b + self.b_mem_upd)
+
         z = torch.sigmoid(torch.mm(self.W_mem_upd_in, input) + torch.mm(self.W_mem_upd_hid, hidden) + self.b_mem_upd)
         r = torch.sigmoid(torch.mm(self.W_mem_res_in, input) + torch.mm(self.W_mem_res_hid, hidden) + self.b_mem_res)
         _h = torch.tanh(torch.mm(self.W_mem_hid_in, input) + r * torch.mm(self.W_mem_hid_hid, hidden) + self.b_mem_hid)
         out = z * hidden + (1 - z) * _h
-        #print(input.size(), hidden.size(), out.size(), 'pass here')
-        #print(out.size(),'before')
+        #print('here',out.size())
         out = self.out(out)
-        #print(out.size(),'after')
+
         out.permute(1,0)
         return out
         pass
@@ -384,7 +381,7 @@ class WrapMemRNN(nn.Module):
         return h
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        mem = mem.view(-1,self.hidden_size)
+        mem = mem.view(-1, self.hidden_size)
         #print(mem.size(),'attention mem')
         concat_list = [
             ct.view(self.hidden_size,-1),
@@ -1066,6 +1063,8 @@ class NMT:
         start = 1
         if self.start != 0 and self.start is not None:
             start = self.start + 1
+
+        print("-----")
 
         for iter in range(start, n_iters + 1):
             training_pair = training_pairs[iter - 1]
