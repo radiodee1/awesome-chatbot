@@ -417,7 +417,6 @@ class WrapMemRNN(nn.Module):
         loss = None
         loss_num = 0
 
-
         decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:])[-1].view(1,1,-1) # alternately take info from mem unit
 
         decoder_static = self.last_mem[-1].view(1,1,-1)
@@ -441,7 +440,7 @@ class WrapMemRNN(nn.Module):
         masks = None
 
         for t in range(0, len(target_variable) - 1):
-            # print(t,'t', decoder_hidden.size())
+            #print(t,'t', decoder_hidden.size())
 
             if True:
                 ## self.inp_c  ??
@@ -789,7 +788,7 @@ class NMT:
             v_name = None
 
         if not self.do_load_babi:
-            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=None,
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=None,# babi_ending=True,
                                                                            reverse=reverse,
                                                                            load_vocab_file=v_name)
             lang3 = None
@@ -1025,6 +1024,7 @@ class NMT:
         outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
         self.prediction = prediction
 
+        #print(len(outputs), outputs)
         #self._word_from_prediction()
 
         loss.backward()
@@ -1130,6 +1130,7 @@ class NMT:
                     print('tgt:',choice[1])
                 nums = self.variablesFromPair(choice)
                 if self.do_load_babi: question = nums[1]
+                if not self.do_load_babi: question = nums[1]
                 words, _ = self.evaluate(None, None, nums[0], question=question)
                 #print(choice)
                 print('ans:',words)
@@ -1149,10 +1150,11 @@ class NMT:
         input_variable = sentence
         question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
 
+        sos_token = Variable(torch.LongTensor([SOS_token]))
+
         if question is not None:
             question_variable = question
-
-        sos_token = Variable(torch.LongTensor([SOS_token]))
+            if not self.do_load_babi: sos_token = question_variable
 
         outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, sos_token, None)
         self.prediction = prediction
