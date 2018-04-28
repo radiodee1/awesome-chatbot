@@ -87,7 +87,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-hparams['teacher_forcing_ratio'] = 1.0
+#hparams['teacher_forcing_ratio'] = 1.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
