@@ -363,13 +363,14 @@ class WrapMemRNN(nn.Module):
 
         for i in range(len(sequences)):
             #print(sequences[i].size(),'seq', g_record[i].size(), e.size())
-            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e.view(1,1,-1)) ## something goes here!!
+            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e.view(1,-1,self.hidden_size)) ## something goes here!!
             #print(e.size(),'e')
             pass
         return e
 
     def new_episode_small_step(self, ct, g, prev_h):
         _ , gru = self.model_3_mem(ct, prev_h)
+
         h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
         #print(h.size())
 
@@ -594,9 +595,8 @@ class NMT:
         if self.args['load_babi'] == True: self.do_load_babi = True
         if self.args['hide_unk'] == True or self.do_load_babi: self.do_hide_unk = True
         if self.args['use_filename'] == True:
-            hparams['basename'] = sys.argv[0].split('.')[0]
-            print(hparams['basename'], 'basename')
-            exit()
+            hparams['base_filename'] = sys.argv[0].split('.')[0]
+
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
