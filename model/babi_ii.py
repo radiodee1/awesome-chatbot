@@ -210,13 +210,15 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = MGRU(hidden_size)
+        #self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = MGRU(hidden_size)
 
     def forward(self, input, hidden=None):
-        #embedded = self.embedding(input).view(1, 1, -1)
-        #output = embedded
-        _, hidden = self.gru(input,hidden)
+
+        #_, hidden = self.gru(input,hidden)
+
+        hidden = self.gru(input,hidden)
+
         #bi_output = (bi_output[:, :, :self.hidden_size] +
         #               bi_output[:, :, self.hidden_size:])
         output = 0
