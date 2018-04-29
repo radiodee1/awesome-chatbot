@@ -87,7 +87,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-#hparams['teacher_forcing_ratio'] = 1.0
+hparams['teacher_forcing_ratio'] = 1.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
@@ -252,7 +252,7 @@ class Decoder(nn.Module):
         self.n_layers = n_layers
         self.hidden_dim = hidden_dim
         self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim)
+        self.attention = LuongAttention(hidden_dim )
         self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
                           dropout=dropout)
         self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
@@ -335,7 +335,9 @@ class WrapMemRNN(nn.Module):
             for iter in range(1, self.memory_hops+1):
 
                 #print(iter, memory[iter -1][-1].size(),'mem')
-                current_episode = self.new_episode_big_step(torch.sum(memory[iter - 1], dim=0))
+                #current_episode = self.new_episode_big_step(torch.sum(memory[iter - 1], dim=0))
+
+                current_episode = self.new_episode_big_step(memory[iter - 1])
                 if True:
                     hidden = memory[iter - 1]
                 _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))# memory[iter - 1])
@@ -375,6 +377,8 @@ class WrapMemRNN(nn.Module):
         return h
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
+        mem = mem.view(-1, self.hidden_size)
+
         concat_list = [
             ct.view(self.hidden_size,-1),
             mem.view(self.hidden_size,-1),

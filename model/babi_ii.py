@@ -87,7 +87,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-
+hparams['teacher_forcing_ratio'] = 1.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
@@ -99,20 +99,17 @@ class MGRU(nn.Module):
     def __init__(self,hidden_size):
         super(MGRU, self).__init__()
         self.dim = hidden_size
-        self.W_mem_res_in = nn.Parameter(torch.FloatTensor(1, self.dim))
-        self.W_mem_res_hid = nn.Parameter(torch.FloatTensor(1, self.dim))
+        self.W_mem_res_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_res_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
         self.b_mem_res = nn.Parameter(torch.FloatTensor(self.dim,))
 
-        self.W_mem_upd_in = nn.Parameter(torch.FloatTensor(1, self.dim))
-        self.W_mem_upd_hid = nn.Parameter(torch.FloatTensor(1, self.dim))
+        self.W_mem_upd_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_upd_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
         self.b_mem_upd = nn.Parameter(torch.FloatTensor(self.dim,))
 
-        self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(1, self.dim))
-        self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(1, self.dim))
+        self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
+        self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
         self.b_mem_hid = nn.Parameter(torch.FloatTensor(self.dim,))
-
-        self.out = nn.Linear(self.dim,1)
-
         self.reset_parameters()
         pass
 
@@ -124,15 +121,15 @@ class MGRU(nn.Module):
     def forward(self, input, hidden):
         input = input.view(self.dim,-1)
         hidden = hidden.view(self.dim,-1)
-
+        #a = torch.mm(self.W_mem_upd_in, input)
+        #b = torch.mm(self.W_mem_upd_hid, hidden)
+        #c = torch.sigmoid(a + b + self.b_mem_upd)
         z = torch.sigmoid(torch.mm(self.W_mem_upd_in, input) + torch.mm(self.W_mem_upd_hid, hidden) + self.b_mem_upd)
         r = torch.sigmoid(torch.mm(self.W_mem_res_in, input) + torch.mm(self.W_mem_res_hid, hidden) + self.b_mem_res)
         _h = torch.tanh(torch.mm(self.W_mem_hid_in, input) + r * torch.mm(self.W_mem_hid_hid, hidden) + self.b_mem_hid)
         out = z * hidden + (1 - z) * _h
-        #print('here',out.size())
-        out = self.out(out)
+        #print(input.size(), hidden.size(), out.size(), 'pass here')
 
-        out.permute(1,0)
         return out
         pass
 
@@ -153,6 +150,7 @@ class EpisodicAttn(nn.Module):
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
 
         self.W_a1 = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
+        #self.W_a2 = nn.Parameter(torch.FloatTensor(self.hidden_size, 1 ))# hparams['num_vocab_total']))
 
         self.reset_parameters()
 
@@ -165,14 +163,12 @@ class EpisodicAttn(nn.Module):
 
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=1)# dim=1
+        self.c_list_z = torch.cat(concat_list,dim=1)#.view(-1)
+        self.c_list_z = self.c_list_z.view(-1,1)#.permute(1,0)#.squeeze(0)
 
-        #print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
-
-        self.c_list_z = self.c_list_z.view(self.hidden_size * self.a_list_size,-1)#.permute(1,0)#.squeeze(0)
-        #self.c_list_z = self.c_list_z.permute(1,0)
         #print(self.c_list_z.size(), self.W_1.size(),'two')
 
+        #print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
         self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
 
         self.l_1 = torch.tanh(self.l_1)
@@ -214,15 +210,13 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        #self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = MGRU(hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = MGRU(hidden_size)
 
     def forward(self, input, hidden=None):
-
-        #_, hidden = self.gru(input,hidden)
-
-        hidden = self.gru(input,hidden)
-
+        #embedded = self.embedding(input).view(1, 1, -1)
+        #output = embedded
+        _, hidden = self.gru(input,hidden)
         #bi_output = (bi_output[:, :, :self.hidden_size] +
         #               bi_output[:, :, self.hidden_size:])
         output = 0
@@ -258,8 +252,9 @@ class Decoder(nn.Module):
         self.n_layers = n_layers
         self.hidden_dim = hidden_dim
         self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout)
+        self.attention = LuongAttention(hidden_dim )
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
+                          dropout=dropout)
         self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
 
     def forward(self, output, encoder_out, decoder_hidden):
@@ -267,7 +262,6 @@ class Decoder(nn.Module):
         decodes one output frame
         """
         embedded = self.embed(output)  # (1, batch, embed_dim)
-        #print(decoder_hidden.size(), encoder_out.size(), 'Decoder forward')
         if self.n_layers == 1:
             context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
         else:
@@ -281,10 +275,11 @@ class Decoder(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
+        self.do_babi = do_babi
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
         self.model_3_mem = MemRNN( hidden_size)
@@ -339,13 +334,15 @@ class WrapMemRNN(nn.Module):
             hidden = None
             for iter in range(1, self.memory_hops+1):
 
-                #print(iter, memory[iter -1].size(),'mem', iter -1)
+                #print(iter, memory[iter -1][-1].size(),'mem')
+                #current_episode = self.new_episode_big_step(torch.sum(memory[iter - 1], dim=0))
+
                 current_episode = self.new_episode_big_step(memory[iter - 1])
                 if True:
                     hidden = memory[iter - 1]
-                _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))
-                #print(out.size(),'loop before memory')
-                memory.append(out.view(1,-1)) #out
+                _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))# memory[iter - 1])
+
+                memory.append(out) #out
             self.all_mem = memory
             self.last_mem = memory[-1]
         return self.all_mem
@@ -367,14 +364,13 @@ class WrapMemRNN(nn.Module):
 
         for i in range(len(sequences)):
             #print(sequences[i].size(),'seq', g_record[i].size(), e.size())
-            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e.view(1,-1,self.hidden_size)) ## something goes here!!
+            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e.view(1,1,-1)) ## something goes here!!
             #print(e.size(),'e')
             pass
         return e
 
     def new_episode_small_step(self, ct, g, prev_h):
         _ , gru = self.model_3_mem(ct, prev_h)
-
         h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
         #print(h.size())
 
@@ -382,7 +378,7 @@ class WrapMemRNN(nn.Module):
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         mem = mem.view(-1, self.hidden_size)
-        #print(mem.size(),'attention mem')
+
         concat_list = [
             ct.view(self.hidden_size,-1),
             mem.view(self.hidden_size,-1),
@@ -425,7 +421,6 @@ class WrapMemRNN(nn.Module):
         loss = None
         loss_num = 0
 
-
         decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:])[-1].view(1,1,-1) # alternately take info from mem unit
 
         decoder_static = self.last_mem[-1].view(1,1,-1)
@@ -449,7 +444,7 @@ class WrapMemRNN(nn.Module):
         masks = None
 
         for t in range(0, len(target_variable) - 1):
-            # print(t,'t', decoder_hidden.size())
+            #print(t,'t', decoder_hidden.size())
 
             if True:
                 ## self.inp_c  ??
@@ -463,7 +458,11 @@ class WrapMemRNN(nn.Module):
                 #print(output.size(), target_variable[t].size(), 'loss')
 
                 if t < len(target_variable):
-                    if True: loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
+
+                    if self.do_babi:
+                        loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
+                    else:
+                        loss = criterion(output.view(1, -1), target_variable[t])
                     pass
                 elif False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
@@ -604,7 +603,7 @@ class NMT:
             z = sys.argv[0]
             if z.startswith('./'): z = z[2:]
             hparams['base_filename'] = z.split('.')[0]
-            print(hparams['base_filename'],'basename')
+            print(hparams['base_filename'], 'basename')
 
 
     def task_normal_train(self):
@@ -793,7 +792,7 @@ class NMT:
             v_name = None
 
         if not self.do_load_babi:
-            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=None,
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=None,# babi_ending=True,
                                                                            reverse=reverse,
                                                                            load_vocab_file=v_name)
             lang3 = None
@@ -1029,6 +1028,7 @@ class NMT:
         outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
         self.prediction = prediction
 
+        #print(len(outputs), outputs)
         #self._word_from_prediction()
 
         loss.backward()
@@ -1134,6 +1134,7 @@ class NMT:
                     print('tgt:',choice[1])
                 nums = self.variablesFromPair(choice)
                 if self.do_load_babi: question = nums[1]
+                if not self.do_load_babi: question = nums[1]
                 words, _ = self.evaluate(None, None, nums[0], question=question)
                 #print(choice)
                 print('ans:',words)
@@ -1153,10 +1154,11 @@ class NMT:
         input_variable = sentence
         question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
 
+        sos_token = Variable(torch.LongTensor([SOS_token]))
+
         if question is not None:
             question_variable = question
-
-        sos_token = Variable(torch.LongTensor([SOS_token]))
+            if not self.do_load_babi: sos_token = question_variable
 
         outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, sos_token, None)
         self.prediction = prediction
@@ -1205,7 +1207,7 @@ class NMT:
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
 
-        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout)
+        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout,do_babi=self.do_load_babi)
 
 
         self.load_checkpoint()
@@ -1228,7 +1230,7 @@ if __name__ == '__main__':
     dropout = hparams['dropout']
     pytorch_embed_size = hparams['pytorch_embed_size']
 
-    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout)
+    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout, do_babi=n.do_load_babi)
 
 
     if use_cuda and False:
