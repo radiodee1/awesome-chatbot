@@ -46,8 +46,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="179">
-              <caret line="450" column="30" selection-start-line="450" selection-start-column="30" selection-end-line="450" selection-end-column="30" />
+            <state relative-caret-position="386">
+              <caret line="471" column="47" selection-start-line="471" selection-start-column="47" selection-end-line="471" selection-end-column="47" />
             </state>
           </provider>
         </entry>
@@ -126,7 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>new_input_module</find>
       <find>criterion</find>
       <find>forward</find>
       <find>_word_from_prediction</find>
@@ -156,6 +155,7 @@
       <find>model_0_wra</find>
       <find>Decoder</find>
       <find>model_1_enc</find>
+      <find>save_checkpoint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -569,8 +569,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="179">
-          <caret line="450" column="30" selection-start-line="450" selection-start-column="30" selection-end-line="450" selection-end-column="30" />
+        <state relative-caret-position="386">
+          <caret line="471" column="47" selection-start-line="471" selection-start-column="47" selection-end-line="471" selection-end-column="47" />
         </state>
       </provider>
     </entry>

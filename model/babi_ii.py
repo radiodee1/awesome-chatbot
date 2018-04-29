@@ -93,7 +93,7 @@ hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
 hparams['dropout'] = 0.0
 
-word_lst = ['.', ',', '!', '?', "'"]
+word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 
 ################# pytorch modules ###############
@@ -469,14 +469,14 @@ class WrapMemRNN(nn.Module):
                     else:
                         loss = criterion(output.view(1, -1), target_variable[t])
                     pass
-                elif False:
+                elif not self.do_babi and False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
 
             if loss is not None:
                 loss_num += loss.item()#.data[0]
                 #print(loss_num)
 
-            if True and not self.do_babi and criterion is not None:
+            if False and not self.do_babi and criterion is not None:
                 if  int(output.data.max(dim=2)[1].int()) in self.bad_token_lst:
 
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
@@ -1122,7 +1122,7 @@ class NMT:
                         if self.long_term_loss is None or print_loss_avg <= self.long_term_loss:
                             self.tag = 'performance'
 
-                        if self.long_term_loss is None or print_loss_avg <= self.long_term_loss:
+                        if self.long_term_loss is None or self.long_term_loss == 0 or print_loss_avg <= self.long_term_loss:
                             self.long_term_loss = print_loss_avg
 
                         self.start = iter
