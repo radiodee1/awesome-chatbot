@@ -424,7 +424,8 @@ class WrapMemRNN(nn.Module):
         decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:])[-1].view(1,1,-1) # alternately take info from mem unit
 
         decoder_static = self.last_mem[-1].view(1,1,-1)
-        if self.model_2_dec.n_layers == 2:
+        if self.model_2_dec.n_layers == 2 or not self.do_babi:
+
             #decoder_hidden = torch.cat([self.all_mem[-1], self.all_mem[-1]]) # combine, but only use second value
             #print(encoder_output.size())
             #decoder_static = encoder_output #self.all_mem[-1].view(1,1,-1)
@@ -480,6 +481,12 @@ class WrapMemRNN(nn.Module):
             if True and int(output.data[0].int()) == EOS_token :
                 #print('eos token',t)
                 break
+
+            if not self.do_babi and criterion is not None:
+                lst = ['.',',','!', '?',"'"]
+                if int(output.data[0].int()) in lst:
+                    loss = criterion(output.view(1,-1), target_variable[t])
+                    loss_num += loss.item()
 
             # teacher forcing
             if is_teacher and t < target_variable.size()[0]:
