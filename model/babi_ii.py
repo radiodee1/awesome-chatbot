@@ -229,12 +229,12 @@ class MemRNN(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout):
+                 n_layers, dropout, bidirectional=False):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=False)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
         #self.gru = MGRU(self.hidden_dim)
 
     def forward(self, source, hidden=None):
@@ -288,6 +288,7 @@ class WrapMemRNN(nn.Module):
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
         self.model_3_mem = MemRNN( hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
+        self.model_5_enc2 = Encoder(vocab_size,embed_dim,hidden_size,2,dropout, bidirectional=True)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -306,8 +307,24 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
+        if not self.do_babi:
+            encoder_o, encoder_h = self.new_input_shadow_module(input_variable, question_variable)
+            encoder_hidden = encoder_o[-1]
+            encoder_hidden = (encoder_hidden[:, :, :self.hidden_size] +
+                              encoder_hidden[:, :, self.hidden_size:])
+
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
+
         return outputs, masks, loss, loss_num, self.prediction
+
+    def new_input_shadow_module(self, input_variable, question_variable):
+        outs = []
+        hidden = None
+        for i in input_variable:
+            i = i.view(1,-1)
+            out, hidden = self.model_5_enc2(i,hidden)
+            outs.append(out)
+        return  outs, hidden
 
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
@@ -468,6 +485,8 @@ class WrapMemRNN(nn.Module):
                         loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
                     else:
                         loss = criterion(output.view(1, -1), target_variable[t])
+                        #loss_num += loss.item()
+                        #loss = criterion(self.prediction.view(1, -1), target_variable[t])
                     pass
                 elif not self.do_babi and False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
