@@ -309,9 +309,15 @@ class WrapMemRNN(nn.Module):
         c = self.new_episodic_module(self.q_q)
         if not self.do_babi:
             encoder_o, encoder_h = self.new_input_shadow_module(input_variable, question_variable)
-            encoder_hidden = encoder_o[-1]
-            encoder_hidden = (encoder_hidden[:, :, :self.hidden_size] +
-                              encoder_hidden[:, :, self.hidden_size:])
+            #print(encoder_h.size(), encoder_hidden.size(),'compare')
+
+            encoder_hidden = encoder_h #encoder_o[-1]
+
+            encoder_hidden = (encoder_hidden[0,:,:] + encoder_hidden[1,:,:] +
+                              encoder_hidden[2,:,:] + encoder_hidden[3,:,:]).view(1,1,self.hidden_size)
+            #print(encoder_hidden.size(),'hidden')
+            #encoder_hidden = (encoder_hidden[:, :, :self.hidden_size] +
+            #                  encoder_hidden[:, :, self.hidden_size:])
 
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
