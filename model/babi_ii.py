@@ -93,6 +93,9 @@ hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
 hparams['dropout'] = 0.0
 
+word_lst = ['.', ',', '!', '?', "'"]
+
+
 ################# pytorch modules ###############
 
 class MGRU(nn.Module):
@@ -275,11 +278,12 @@ class Decoder(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True, bad_token_lst=[]):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
         self.do_babi = do_babi
+        self.bad_token_lst = bad_token_lst
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
         self.model_3_mem = MemRNN( hidden_size)
@@ -444,7 +448,7 @@ class WrapMemRNN(nn.Module):
 
         masks = None
 
-        for t in range(0, len(target_variable) - 1):
+        for t in range(0, 3 * len(target_variable) - 1):
             #print(t,'t', decoder_hidden.size())
 
             if True:
@@ -472,6 +476,13 @@ class WrapMemRNN(nn.Module):
                 loss_num += loss.item()#.data[0]
                 #print(loss_num)
 
+            if True and not self.do_babi and criterion is not None:
+                if  int(output.data.max(dim=2)[1].int()) in self.bad_token_lst:
+
+                    loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
+
+                    loss_num += loss.item()
+
             if True: # t != skip_me:
                 output = Variable(output.data.max(dim=2)[1])
                 #print(output.size(),'p',t)
@@ -481,12 +492,6 @@ class WrapMemRNN(nn.Module):
             if True and int(output.data[0].int()) == EOS_token :
                 #print('eos token',t)
                 break
-
-            if not self.do_babi and criterion is not None:
-                lst = ['.',',','!', '?',"'"]
-                if int(output.data[0].int()) in lst:
-                    loss = criterion(output.view(1,-1), target_variable[t])
-                    loss_num += loss.item()
 
             # teacher forcing
             if is_teacher and t < target_variable.size()[0]:
@@ -1237,7 +1242,10 @@ if __name__ == '__main__':
     dropout = hparams['dropout']
     pytorch_embed_size = hparams['pytorch_embed_size']
 
-    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout, do_babi=n.do_load_babi)
+    token_list = []
+    for i in word_lst: token_list.append(n.output_lang.word2index[i])
+
+    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list)
 
 
     if use_cuda and False:
