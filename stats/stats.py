@@ -73,7 +73,7 @@ class Stats:
             if j != 0:
                 row.append(str(j))
                 for i in range(0,len(self.heading) -1):
-                    if self.heading[i].strip() == self.column_name.strip() and str(j) == str(self.test):
+                    if self.heading[i+1].strip() == self.column_name.strip() and str(j) == str(self.test):
                         row.append(str(self.score))
                     elif j -1 < len(self.body) and i < len(self.body[j-1]):
                         row.append(self.body[j-1][i])
