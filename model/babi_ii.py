@@ -20,7 +20,7 @@ import argparse
 from settings import hparams
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
-import numpy as np
+#import numpy as np
 
 
 '''
@@ -87,7 +87,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-hparams['teacher_forcing_ratio'] = 1.0
+#hparams['teacher_forcing_ratio'] = 1.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
@@ -471,7 +471,11 @@ class WrapMemRNN(nn.Module):
 
         masks = None
 
-        for t in range(0, 3 * len(target_variable) - 1):
+        end_len = len(target_variable)
+        if not self.do_babi:
+            end_len = end_len * 3
+
+        for t in range(0, end_len - 1):
             #print(t,'t', decoder_hidden.size())
 
             if True:
@@ -577,6 +581,7 @@ class NMT:
         self.this_epoch = 0
         self.score = 0
         self.saved_files = 0
+        self.babi_num = '1'
 
         self.train_fr = None
         self.train_to = None
@@ -593,6 +598,7 @@ class NMT:
         self.do_load_babi = False
         self.do_hide_unk = False
         self.do_conserve_space = False
+        self.do_test_not_train = False
 
         self.printable = ''
 
@@ -610,6 +616,7 @@ class NMT:
         parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
         parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
                             action='store_true')
+        parser.add_argument('--babi-num', help='number of which babi test set is being worked on')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -645,6 +652,7 @@ class NMT:
             hparams['base_filename'] = z.split('.')[0]
             print(hparams['base_filename'], 'basename')
         if self.args['conserve_space'] == True: self.do_conserve_space = True
+        if self.args['babi_num'] is not None: self.babi_num = self.args['babi_num']
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
@@ -952,7 +960,8 @@ class NMT:
                     'optimizer': self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
                     'long_term_loss' : self.long_term_loss,
-                    'tag': self.tag
+                    'tag': self.tag,
+                    'score': self.score
                 }
             ]
         else:
@@ -966,7 +975,8 @@ class NMT:
                     'optimizer': None , # self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
-                    'tag': self.tag
+                    'tag': self.tag,
+                    'score': self.score
                 }
             ]
         #print(z)
@@ -1018,6 +1028,12 @@ class NMT:
                     print('no tag saved with checkpoint')
                     self.tag = ''
                     pass
+                try:
+                    self.score = checkpoint[0]['score']
+                except:
+                    print('no score saved with checkpoint')
+                    self.score = 0
+
                 if hparams['zero_start'] is True:
                     self.start = 0
 
@@ -1073,7 +1089,8 @@ class NMT:
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
-        wrapper_optimizer.zero_grad()
+        if criterion is not None:
+            wrapper_optimizer.zero_grad()
 
         outputs, masks, loss, loss_num, prediction = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
         self.prediction = prediction
@@ -1081,9 +1098,10 @@ class NMT:
         #print(len(outputs), outputs)
         #self._word_from_prediction()
 
-        loss.backward()
+        if criterion is not None:
+            loss.backward()
 
-        wrapper_optimizer.step()
+            wrapper_optimizer.step()
 
         return outputs, masks , loss_num # batch, src, trg
 
@@ -1104,7 +1122,10 @@ class NMT:
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
-        criterion = nn.CrossEntropyLoss()
+        if not self.do_test_not_train:
+            criterion = nn.CrossEntropyLoss()
+        else:
+            criterion = None
 
         self.opt_1 = wrapper_optimizer
 
@@ -1140,8 +1161,10 @@ class NMT:
                                             None, None, criterion)
 
             if self.do_load_babi:
+                #print(outputs[0] ,'out', target_variable,'tar')
                 if int(outputs[0].int()) == int(target_variable):
                     num_right += 1
+
                 num_tot += 1
                 self.score = float(num_right/num_tot) * 100
 
@@ -1259,8 +1282,22 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout,do_babi=self.do_load_babi)
 
-
         self.load_checkpoint()
+
+    def setup_for_babi_test(self):
+        #hparams['base_filename'] = filename
+        self.do_test_not_train = True
+        self.task_babi_files()
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False,
+                                                                         omit_unk=self.do_hide_unk)
+        layers = hparams['layers']
+        dropout = hparams['dropout']
+        pytorch_embed_size = hparams['pytorch_embed_size']
+
+        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
+                                      dropout=dropout, do_babi=self.do_load_babi)
+        lr = hparams['learning_rate']
+        self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
 
 if __name__ == '__main__':
