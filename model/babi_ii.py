@@ -18,8 +18,8 @@ import time
 import math
 import argparse
 from settings import hparams
-import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
+#import matplotlib.pyplot as plt
+#import matplotlib.ticker as ticker
 import numpy as np
 
 
@@ -662,6 +662,12 @@ class NMT:
         self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
         pass
 
+    def task_babi_test_files(self):
+        self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
+        self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
+        pass
+
     def task_review_weights(self, pairs, stop_at_fail=False):
         plot_losses = []
         num = 0 # hparams['base_file_num']
@@ -687,6 +693,9 @@ class NMT:
             num = 10 * self.print_every * i
         pass
         if self.do_plot:
+            import matplotlib.pyplot as plt
+            import matplotlib.ticker as ticker
+
             plt.figure()
             fig, ax = plt.subplots()
             loc = ticker.MultipleLocator(base=2)
@@ -1276,15 +1285,14 @@ if __name__ == '__main__':
 
     n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list)
 
-
     if use_cuda and False:
-        #n.model_1_enc = n.model_1_enc.cuda()
-        #n.model_2_dec = n.model_2_dec.cuda()
+
         n.model_0_wra = n.model_0_wra.cuda()
 
     if n.do_train:
         lr = hparams['learning_rate']
         n.trainIters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
+
     if n.do_train_long:
         n.task_train_epochs()
 
