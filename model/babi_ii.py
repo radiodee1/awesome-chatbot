@@ -602,6 +602,7 @@ class NMT:
 
         self.printable = ''
 
+
         parser = argparse.ArgumentParser(description='Train some NMT values.')
         parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot)')
         parser.add_argument('--printable', help='a string to print during training for identification.')
@@ -1286,6 +1287,8 @@ class NMT:
 
     def setup_for_babi_test(self):
         #hparams['base_filename'] = filename
+        self.printable = hparams['base_filename']
+
         self.do_test_not_train = True
         self.task_babi_files()
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False,

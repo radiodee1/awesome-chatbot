@@ -14,12 +14,12 @@ class Stats:
         self.num_of_tests = 20
         self.heading = []
         self.body = []
-        self.score = 0
-        self.test = 1
-        self.column_name = ''
-        self.skip_new_score = False
-        #if len(sys.argv) > 1:
-        #    self.test = int(sys.argv[1])
+        self.score = 555
+        self.test = '5'
+        self.column_name = 'babi'
+        self.skip_new_score = True
+        self.table_out = []
+        self.b = None
 
     def read_stats(self):
         found_heading = False
@@ -62,12 +62,32 @@ class Stats:
     def update_stats(self):
         if not self.skip_new_score:
             self.get_score()
+        table = []
 
+        if self.column_name not in self.heading: self.heading.append(self.column_name)
+        for j in range(self.num_of_tests + 1):
+            row = []
+            if j == 0:
+                self.heading = [' '] + self.heading
+                table.append(self.heading)
+            if j != 0:
+                row.append(str(j))
+                for i in range(1,len(self.heading) ):
+                    if self.heading[i].strip() == self.column_name.strip() and str(j) == str(self.test):
+                        row.append(self.score)
+                    elif j -1 < len(self.body) and i < len(self.body[j-1]):
+                        row.append(self.body[j-1][i])
+                    else:
+                        row.append('0')
+                table.append(row)
+        self.table_out = table
+        print(table)
 
     def get_score(self):
         import model.babi_ii as babi
 
         b = babi.NMT()
+        print(b.printable,'print')
         self.column_name = b.printable
         b.setup_for_babi_test()
         print(b.score,'score!!')
