@@ -130,7 +130,6 @@
       <find>last_mem</find>
       <find>max_length</find>
       <find>MAX_LENGTH</find>
-      <find>trainIters</find>
       <find>mgru</find>
       <find>print</find>
       <find>variablesFromPair</find>
@@ -139,7 +138,6 @@
       <find>model_0_wra</find>
       <find>Decoder</find>
       <find>model_1_enc</find>
-      <find>save_checkpoint</find>
       <find>Encoder</find>
       <find>WrapMemRNN</find>
       <find>do_conserve_space</find>
@@ -149,6 +147,8 @@
       <find>do_load_babi</find>
       <find>skip_new_score</find>
       <find>criterion</find>
+      <find>trainIters</find>
+      <find>save_checkpoint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
