@@ -15,6 +15,7 @@ hparams = {
     'babi_memory_hops': 5,
     'base_filename': "weight",
     'base_file_num': 1,
+    'stats_filename':'stats',
     'num_vocab_total': 15000,
     'batch_size': 256,#64, #256
     'steps_to_stats': 50,
