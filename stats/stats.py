@@ -72,9 +72,9 @@ class Stats:
                 table.append(self.heading)
             if j != 0:
                 row.append(str(j))
-                for i in range(1,len(self.heading) ):
+                for i in range(0,len(self.heading) -1):
                     if self.heading[i].strip() == self.column_name.strip() and str(j) == str(self.test):
-                        row.append(self.score)
+                        row.append(str(self.score))
                     elif j -1 < len(self.body) and i < len(self.body[j-1]):
                         row.append(self.body[j-1][i])
                     else:
@@ -97,6 +97,21 @@ class Stats:
         pass
 
     def write_stats(self):
+        with open(self.filename+'.txt.md','w') as z:
+            for i in range(len(self.table_out)):
+                if i == 0:
+                    l = ' | ' + ' | '.join(self.table_out[i]) + ' | ' + '\n'
+                    z.write(l)
+                    l = ''
+                    for _ in range(len(self.table_out[i])):
+                        l = l + '-|'
+                    l = '|' + l + ' \n'
+                    z.write(l)
+                else:
+
+                    l = ' | ' + ' | '.join(self.table_out[i]) + ' | ' + '\n'
+                    z.write(l)
+            z.close()
         pass
 
     def print_stats(self):
@@ -108,4 +123,5 @@ if __name__ == '__main__':
     s = Stats()
     s.read_stats()
     s.update_stats()
+    s.write_stats()
     s.print_stats()
