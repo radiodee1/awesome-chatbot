@@ -555,6 +555,8 @@ class NMT:
         self.do_plot = False
         self.do_load_babi = False
         self.do_hide_unk = False
+        self.do_conserve_space = False
+
 
         self.printable = ''
 
@@ -570,6 +572,8 @@ class NMT:
                             action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
         parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
+        parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
+                            action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -604,6 +608,8 @@ class NMT:
             if z.startswith('./'): z = z[2:]
             hparams['base_filename'] = z.split('.')[0]
             print(hparams['base_filename'], 'basename')
+        if self.args['conserve_space'] == True: self.do_conserve_space = True
+
 
 
     def task_normal_train(self):
@@ -929,7 +935,7 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
-        if self.do_load_babi:
+        if self.do_load_babi or self.do_conserve_space:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state, basename + '.best.pth.tar')
             return
