@@ -17,7 +17,7 @@ class Stats:
         self.score = 555
         self.test = '5'
         self.column_name = 'babi'
-        self.skip_new_score = True
+        self.skip_new_score = False
         self.table_out = []
         self.b = None
 
