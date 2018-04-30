@@ -20,6 +20,7 @@ class Stats:
         self.skip_new_score = False
         self.table_out = []
         self.b = None
+        print('python3.6 stats.py --load-babi --basename=babi --conserve-space --babi-num=1')
 
     def read_stats(self):
         found_heading = False
