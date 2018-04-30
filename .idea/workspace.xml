@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,8 +44,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="683">
-              <caret line="317" column="13" selection-start-line="317" selection-start-column="13" selection-end-line="317" selection-end-column="13" />
+            <state relative-caret-position="269">
+              <caret line="281" column="24" selection-start-line="281" selection-start-column="14" selection-end-line="281" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -146,7 +144,6 @@
       <find>base_filename</find>
       <find>trainIters</find>
       <find>mgru</find>
-      <find>WrapMemRNN</find>
       <find>print</find>
       <find>variablesFromPair</find>
       <find>prepareData</find>
@@ -156,6 +153,7 @@
       <find>model_1_enc</find>
       <find>save_checkpoint</find>
       <find>Encoder</find>
+      <find>WrapMemRNN</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -550,8 +548,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="683">
-          <caret line="317" column="13" selection-start-line="317" selection-start-column="13" selection-end-line="317" selection-end-column="13" />
+        <state relative-caret-position="269">
+          <caret line="281" column="24" selection-start-line="281" selection-start-column="14" selection-end-line="281" selection-end-column="24" />
         </state>
       </provider>
     </entry>

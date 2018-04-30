@@ -968,7 +968,8 @@ class NMT:
         basename = hparams['save_dir'] + hparams['base_filename']
         if self.do_load_babi:
             num = self.this_epoch * len(self.pairs) + num
-
+            torch.save(state,basename+ '.best.pth.tar')
+            return 
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth.tar' + ' '  +
