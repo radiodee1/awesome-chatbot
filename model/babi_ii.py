@@ -619,6 +619,7 @@ class NMT:
         parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
                             action='store_true')
         parser.add_argument('--babi-num', help='number of which babi test set is being worked on')
+        parser.add_argument('--units', help='override UNITS hyper parameter.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -655,6 +656,7 @@ class NMT:
             print(hparams['base_filename'], 'basename')
         if self.args['conserve_space'] == True: self.do_conserve_space = True
         if self.args['babi_num'] is not None: self.babi_num = self.args['babi_num']
+        if self.args['units'] is not None: hparams['units'] = self.args['units']
         if self.printable == '': self.printable = hparams['base_filename']
 
 
