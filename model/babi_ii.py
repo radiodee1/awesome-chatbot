@@ -1222,7 +1222,8 @@ class NMT:
                     #print(self.output_lang.word2index['ignoring'],'ignoring')
                 print("-----")
 
-        if self.do_load_babi: print('list:', self.score_list)
+        if self.do_load_babi and not self.do_test_not_train:
+            print('list:', self.score_list)
 
     def evaluate(self, encoder, decoder, sentence,question=None, max_length=MAX_LENGTH):
 
