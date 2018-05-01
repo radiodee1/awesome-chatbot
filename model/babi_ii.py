@@ -656,7 +656,10 @@ class NMT:
             print(hparams['base_filename'], 'basename')
         if self.args['conserve_space'] == True: self.do_conserve_space = True
         if self.args['babi_num'] is not None: self.babi_num = self.args['babi_num']
-        if self.args['units'] is not None: hparams['units'] = int(self.args['units'])
+        if self.args['units'] is not None:
+            hparams['units'] = int(self.args['units'])
+            hparams['pytorch_embed_size'] = hparams['units']
+            self.hidden_size = hparams['units']
         if self.printable == '': self.printable = hparams['base_filename']
 
 
@@ -1144,6 +1147,7 @@ class NMT:
 
         if self.do_load_babi and not self.do_test_not_train:
             print('list:', ', '.join(self.score_list))
+            print('hidden:', hparams['units'])
 
         print("-----")
 
