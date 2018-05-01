@@ -95,7 +95,7 @@ class Stats:
         b.setup_for_babi_test()
         print(b.score,'score!!')
         self.test = b.babi_num
-        self.score = b.score
+        self.score = '%.2f' % b.score
         print(self.test,'num')
         pass
 
