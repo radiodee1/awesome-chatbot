@@ -1140,7 +1140,7 @@ class NMT:
 
         if self.do_load_babi and not self.do_test_not_train:
             print('list:', ', '.join(self.score_list))
-            
+
         print("-----")
 
         for iter in range(start, n_iters + 1):

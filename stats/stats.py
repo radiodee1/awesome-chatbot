@@ -22,6 +22,7 @@ class Stats:
         self.b = None
         print('try:')
         print('python3.6 stats.py --load-babi --basename=babi --conserve-space --babi-num=1')
+        if len(sys.argv) == 1: exit()
 
     def read_stats(self):
         found_heading = False
