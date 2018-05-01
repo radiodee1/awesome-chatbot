@@ -582,6 +582,7 @@ class NMT:
         self.score = 0
         self.saved_files = 0
         self.babi_num = '1'
+        self.score_list = []
 
         self.train_fr = None
         self.train_to = None
@@ -992,6 +993,7 @@ class NMT:
         if self.do_load_babi or self.do_conserve_space:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth.tar')
+            self.score_list.append(self.score)
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
@@ -1215,12 +1217,12 @@ class NMT:
                 print('try:',self._shorten(words))
                 self._word_from_prediction()
 
-                print('current training: %.2f' % self.score)
-                #print(self.output_lang.word2index['ignoring'],'ignoring')
+                if self.do_load_babi:
+                    print('current training: %.2f' % self.score)
+                    #print(self.output_lang.word2index['ignoring'],'ignoring')
                 print("-----")
 
-
-
+        if self.do_load_babi: print('list:', self.score_list)
 
     def evaluate(self, encoder, decoder, sentence,question=None, max_length=MAX_LENGTH):
 
