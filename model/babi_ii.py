@@ -655,6 +655,8 @@ class NMT:
             print(hparams['base_filename'], 'basename')
         if self.args['conserve_space'] == True: self.do_conserve_space = True
         if self.args['babi_num'] is not None: self.babi_num = self.args['babi_num']
+        if self.printable == '': self.printable = hparams['base_filename']
+
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
