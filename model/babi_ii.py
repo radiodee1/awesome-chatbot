@@ -387,11 +387,11 @@ class WrapMemRNN(nn.Module):
             pass
 
         #sequences = self.inp_c
-        e = nn.Parameter(torch.zeros(1,1, self.hidden_size))
+        ee = nn.Parameter(torch.zeros(1,1, self.hidden_size))
 
         for i in range(len(sequences)):
             #print(sequences[i].size(),'seq', g_record[i].size(), e.size())
-            e = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), e.view(1,1,-1)) ## something goes here!!
+            e, ee = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), ee.view(1,1,-1)) ## something goes here!!
             #print(e.size(),'e')
             pass
         return e
@@ -401,7 +401,7 @@ class WrapMemRNN(nn.Module):
         h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
         #print(h.size())
 
-        return h
+        return h, gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         mem = mem.view(-1, self.hidden_size)
