@@ -656,7 +656,7 @@ class NMT:
             print(hparams['base_filename'], 'basename')
         if self.args['conserve_space'] == True: self.do_conserve_space = True
         if self.args['babi_num'] is not None: self.babi_num = self.args['babi_num']
-        if self.args['units'] is not None: hparams['units'] = self.args['units']
+        if self.args['units'] is not None: hparams['units'] = int(self.args['units'])
         if self.printable == '': self.printable = hparams['base_filename']
 
 
