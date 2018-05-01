@@ -993,7 +993,7 @@ class NMT:
         if self.do_load_babi or self.do_conserve_space:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth.tar')
-            self.score_list.append(self.score)
+            self.score_list.append('%.2f' % self.score)
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
@@ -1138,6 +1138,9 @@ class NMT:
         if self.start != 0 and self.start is not None:
             start = self.start + 1
 
+        if self.do_load_babi and not self.do_test_not_train:
+            print('list:', ', '.join(self.score_list))
+            
         print("-----")
 
         for iter in range(start, n_iters + 1):
@@ -1222,8 +1225,7 @@ class NMT:
                     #print(self.output_lang.word2index['ignoring'],'ignoring')
                 print("-----")
 
-        if self.do_load_babi and not self.do_test_not_train:
-            print('list:', self.score_list)
+
 
     def evaluate(self, encoder, decoder, sentence,question=None, max_length=MAX_LENGTH):
 
