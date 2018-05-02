@@ -1127,6 +1127,7 @@ class NMT:
         print_loss_total = 0  # Reset every print_every
         num_right = 0
         num_tot = 0 #len(self.pairs)
+        num_right_small = 0
 
         wrapper_optimizer = optim.Adam(self.model_0_wra.parameters(), lr=learning_rate)
 
@@ -1175,9 +1176,10 @@ class NMT:
                                             None, None, criterion)
 
             if self.do_load_babi:
-                #print(outputs[0] ,'out', target_variable,'tar')
+
                 if int(outputs[0].int()) == int(target_variable):
                     num_right += 1
+                    num_right_small += 1
 
                 num_tot += 1
                 self.score = float(num_right/num_tot) * 100
@@ -1187,6 +1189,7 @@ class NMT:
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
+
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
                       + ' ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.4f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0:
@@ -1229,8 +1232,10 @@ class NMT:
                 self._word_from_prediction()
 
                 if self.do_load_babi:
-                    print('current training: %.2f' % self.score)
-                    #print(self.output_lang.word2index['ignoring'],'ignoring')
+
+                    print('current training: %.2f' % self.score, '- num right '+ str(num_right_small))
+                    num_right_small = 0
+
                 print("-----")
 
 
