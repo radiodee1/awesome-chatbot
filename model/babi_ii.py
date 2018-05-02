@@ -649,6 +649,8 @@ class NMT:
                             action='store_true')
         parser.add_argument('--babi-num', help='number of which babi test set is being worked on')
         parser.add_argument('--units', help='override UNITS hyper parameter.')
+        parser.add_argument('--test',help='disable all training. No weights will be changed and no new weights will be saved.',
+                            action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -689,6 +691,7 @@ class NMT:
             hparams['units'] = int(self.args['units'])
             hparams['pytorch_embed_size'] = hparams['units']
             self.hidden_size = hparams['units']
+        if self.args['test'] == True: self.do_test_not_train = True
         if self.printable == '': self.printable = hparams['base_filename']
 
 
