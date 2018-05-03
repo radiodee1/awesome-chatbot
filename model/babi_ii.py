@@ -307,12 +307,13 @@ class Decoder(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True, bad_token_lst=[]):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True, bad_token_lst=[], freeze_embedding=False):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
         self.do_babi = do_babi
         self.bad_token_lst = bad_token_lst
+        self.freeze_embedding = freeze_embedding
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
         self.model_3_mem = MemRNN( hidden_size)
@@ -329,6 +330,8 @@ class WrapMemRNN(nn.Module):
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
 
+        if self.freeze_embedding:
+            self.new_freeze_embedding()
         #self.criterion = nn.CrossEntropyLoss()
 
         pass
@@ -351,6 +354,11 @@ class WrapMemRNN(nn.Module):
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
         return outputs, masks, loss, loss_num, self.prediction
+
+    def new_freeze_embedding(self):
+        self.model_1_enc.embed.weight.requires_grad = False
+        self.model_2_dec.embed.weight.requires_grad = False
+        pass
 
     def new_input_shadow_module(self, input_variable, question_variable):
         outs = []
@@ -630,6 +638,7 @@ class NMT:
         self.do_hide_unk = False
         self.do_conserve_space = False
         self.do_test_not_train = False
+        self.do_freeze_embedding = False
 
         self.printable = ''
 
@@ -653,6 +662,7 @@ class NMT:
         parser.add_argument('--test',help='disable all training. No weights will be changed and no new weights will be saved.',
                             action='store_true')
         parser.add_argument('--lr', help='learning rate')
+        parser.add_argument('--freeze-embedding', help='stop training on embedding elements',action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -695,6 +705,7 @@ class NMT:
             self.hidden_size = hparams['units']
         if self.args['test'] == True: self.do_test_not_train = True
         if self.args['lr'] is not None: hparams['learning_rate'] = float(self.args['lr'])
+        if self.args['freeze_embedding'] == True: self.do_freeze_embedding = True
         if self.printable == '': self.printable = hparams['base_filename']
 
 
@@ -1084,6 +1095,8 @@ class NMT:
                     self.start = 0
 
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
+                if self.do_freeze_embedding:
+                    self.model_0_wra.new_freeze_embedding()
                 if self.opt_1 is not None:
                     self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
 
@@ -1165,9 +1178,13 @@ class NMT:
         num_tot = 0 #len(self.pairs)
         num_right_small = 0
 
-        if self.opt_1 is None:
-            wrapper_optimizer = optim.Adam(self.model_0_wra.parameters(), lr=learning_rate)
+        if self.opt_1 is None or self.first_load: #or self.args['lr'] is not None:
+            parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+
+            wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
             self.opt_1 = wrapper_optimizer
+
+
 
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
@@ -1185,7 +1202,9 @@ class NMT:
 
         if self.do_load_babi and not self.do_test_not_train:
             print('list:', ', '.join(self.score_list))
-            print('hidden:', hparams['units'], 'lr:', hparams['learning_rate'])
+            print('hidden:', hparams['units'])
+            for param_group in self.opt_1.param_groups:
+                print(param_group['lr'], 'lr')
 
         print("-----")
 
@@ -1336,7 +1355,8 @@ class NMT:
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
 
-        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers, dropout=dropout,do_babi=self.do_load_babi)
+        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers,
+                                      dropout=dropout,do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
 
         self.load_checkpoint()
 
@@ -1353,7 +1373,7 @@ class NMT:
         pytorch_embed_size = hparams['pytorch_embed_size']
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
-                                      dropout=dropout, do_babi=self.do_load_babi)
+                                      dropout=dropout, do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
         lr = hparams['learning_rate']
         self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
@@ -1378,7 +1398,9 @@ if __name__ == '__main__':
     token_list = []
     for i in word_lst: token_list.append(n.output_lang.word2index[i])
 
-    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers, dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list)
+    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
+                               dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
+                               freeze_embedding=n.do_freeze_embedding)
 
     if use_cuda and False:
 
