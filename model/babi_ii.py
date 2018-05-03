@@ -605,6 +605,7 @@ class NMT:
         self.print_every = hparams['steps_to_stats']
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
+        self.first_load = True
         self.memory_hops = 5
         self.start = 0
         self.this_epoch = 0
@@ -1042,7 +1043,8 @@ class NMT:
                       basename + '.best.pth.tar')
 
     def load_checkpoint(self, filename=None):
-        if True:
+        if self.first_load:
+            self.first_load = False
             basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth.tar'
             if filename is not None: basename = filename
             if os.path.isfile(basename):
