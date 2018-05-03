@@ -1163,7 +1163,10 @@ class NMT:
         num_tot = 0 #len(self.pairs)
         num_right_small = 0
 
-        wrapper_optimizer = optim.Adam(self.model_0_wra.parameters(), lr=learning_rate)
+        if self.opt_1 is None:
+            wrapper_optimizer = optim.Adam(self.model_0_wra.parameters(), lr=learning_rate)
+            self.opt_1 = wrapper_optimizer
+
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
@@ -1171,8 +1174,6 @@ class NMT:
             criterion = nn.CrossEntropyLoss()
         else:
             criterion = None
-
-        self.opt_1 = wrapper_optimizer
 
         self.load_checkpoint()
 
@@ -1182,7 +1183,7 @@ class NMT:
 
         if self.do_load_babi and not self.do_test_not_train:
             print('list:', ', '.join(self.score_list))
-            print('hidden:', hparams['units'])
+            print('hidden:', hparams['units'], 'lr:', hparams['learning_rate'])
 
         print("-----")
 
@@ -1206,7 +1207,7 @@ class NMT:
                 #print('is auto')
 
             outputs, masks , l = self.train(input_variable, target_variable,question_variable, encoder,
-                                            decoder, wrapper_optimizer, None,
+                                            decoder, self.opt_1, None,
                                             None, None, criterion)
 
             if self.do_load_babi:

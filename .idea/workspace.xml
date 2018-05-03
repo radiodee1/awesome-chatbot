@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -47,8 +46,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="377">
-              <caret line="1174" column="18" selection-start-line="1174" selection-start-column="13" selection-end-line="1174" selection-end-column="18" />
+            <state relative-caret-position="269">
+              <caret line="1166" column="29" selection-start-line="1166" selection-start-column="12" selection-end-line="1166" selection-end-column="29" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -131,8 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>EpisodicAttn</find>
-      <find>load_checkpoint</find>
       <find>model_3_mem</find>
       <find>MemRNN</find>
       <find>MGRU</find>
@@ -155,12 +152,14 @@
       <find>target_variable</find>
       <find>skip_new_score</find>
       <find>criterion</find>
-      <find>trainIters</find>
       <find>save_checkpoint</find>
       <find>do_load_babi</find>
       <find>score_list</find>
       <find>pytorch_embed_size</find>
       <find>do_test_not_train</find>
+      <find>opt_1</find>
+      <find>trainIters</find>
+      <find>wrapper_optimizer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -578,8 +577,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="377">
-          <caret line="1174" column="18" selection-start-line="1174" selection-start-column="13" selection-end-line="1174" selection-end-column="18" />
+        <state relative-caret-position="269">
+          <caret line="1166" column="29" selection-start-line="1166" selection-start-column="12" selection-end-line="1166" selection-end-column="29" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
