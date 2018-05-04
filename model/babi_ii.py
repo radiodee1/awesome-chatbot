@@ -1376,7 +1376,7 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
-
+        
 
         lr = hparams['learning_rate']
         self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
@@ -1413,13 +1413,15 @@ if __name__ == '__main__':
 
         n.model_0_wra = n.model_0_wra.cuda()
 
+    if n.do_test_not_train: ## <--- this is not working right!!
+        print('test not train')
+        n.setup_for_babi_test()
+        exit()
+
     if n.do_train:
         lr = hparams['learning_rate']
         n.trainIters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
 
-    if n.do_test_not_train: ## <--- this is not working right!!
-        n.setup_for_babi_test()
-        exit()
 
     if n.do_train_long:
         n.task_train_epochs()
