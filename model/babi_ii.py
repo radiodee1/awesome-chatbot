@@ -1414,7 +1414,7 @@ if __name__ == '__main__':
 
         n.model_0_wra = n.model_0_wra.cuda()
 
-    if n.do_test_not_train: ## <--- this is not working right!!
+    if n.do_test_not_train: 
         print('test not train')
         n.setup_for_babi_test()
         exit()
