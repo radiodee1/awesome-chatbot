@@ -116,7 +116,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-#hparams['teacher_forcing_ratio'] = 1.0
+hparams['teacher_forcing_ratio'] = 0.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
@@ -1182,14 +1182,11 @@ class NMT:
         num_tot = 0 #len(self.pairs)
         num_right_small = 0
 
-        if self.opt_1 is None or self.first_load: #or self.args['lr'] is not None:
+        if self.opt_1 is None or self.first_load:
             parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
 
             wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
             self.opt_1 = wrapper_optimizer
-
-
-
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
@@ -1379,6 +1376,8 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
+
+
         lr = hparams['learning_rate']
         self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
@@ -1417,6 +1416,10 @@ if __name__ == '__main__':
     if n.do_train:
         lr = hparams['learning_rate']
         n.trainIters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
+
+    if n.do_test_not_train: ## <--- this is not working right!!
+        n.setup_for_babi_test()
+        exit()
 
     if n.do_train_long:
         n.task_train_epochs()
