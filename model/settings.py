@@ -21,7 +21,7 @@ hparams = {
     'steps_to_stats': 50,
     'epochs': 500,
     'embed_size':None, #values only: 50, 100, 200, 300, None for none
-    'pytorch_embed_size': 250,
+    'pytorch_embed_size': 100,
     'embed_train':False,
     'autoencode':0.0,
     'infer_repeat': 1,
@@ -30,7 +30,7 @@ hparams = {
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
-    'units': 256, #128, #256 , #64,
+    'units': 100, #128, #256 , #64,
     'layers':2,
     'teacher_forcing_ratio': 0.5,
     'dropout': 0.2,
