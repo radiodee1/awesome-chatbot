@@ -17,14 +17,18 @@ class Stats:
         self.score = 555
         self.test = '5'
         self.column_name = 'babi'
-        self.skip_new_score = False
+        self.skip_new_score = True
         self.table_out = []
+        self.text_before = []
+        self.text_after = []
         self.b = None
         print('try:')
         print('python3.6 stats.py --load-babi --basename=babi --conserve-space --babi-num=1')
         if len(sys.argv) == 1: exit()
 
     def read_stats(self):
+        found_text_before = False
+        found_text_after = False
         found_heading = False
         found_divider = False
         print(self.filename)
@@ -33,9 +37,15 @@ class Stats:
                 zz = z.readlines()
                 #print(len(zz))
                 for i in range(len(zz)):
+                    if '|' not in zz[i] and found_text_before == False:
+                        self.text_before.append(zz[i])
+                        continue
+                    if '|' not in zz[i] and found_text_before:
+                        self.text_after.append(zz[i])
+                        continue
                     if found_heading is False:
                         line = zz[i].strip('\n').split('|')
-
+                        found_text_before = True
                         found_divider = False
                         found_heading = True
                         for l in range(len(line)):
@@ -84,7 +94,9 @@ class Stats:
                         row.append('0')
                 table.append(row)
         self.table_out = table
+        print(self.text_before)
         print(table)
+        print(self.text_after)
 
     def get_score(self):
         import model.babi_ii as babi
@@ -101,6 +113,8 @@ class Stats:
 
     def write_stats(self):
         with open(self.filename+'.txt.md','w') as z:
+            for i in self.text_before:
+                z.write(i)
             for i in range(len(self.table_out)):
                 if i == 0:
                     l = ' | ' + ' | '.join(self.table_out[i]) + ' | ' + '\n'
@@ -114,6 +128,8 @@ class Stats:
 
                     l = ' | ' + ' | '.join(self.table_out[i]) + ' | ' + '\n'
                     z.write(l)
+            for i in self.text_after:
+                z.write(i)
             z.close()
         pass
 
