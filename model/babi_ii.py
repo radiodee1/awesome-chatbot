@@ -18,6 +18,7 @@ import time
 import math
 import argparse
 from settings import hparams
+import tokenize_weak
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
 #import numpy as np
@@ -1376,7 +1377,7 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
-        
+
 
         lr = hparams['learning_rate']
         self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
