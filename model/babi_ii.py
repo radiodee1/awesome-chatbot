@@ -1268,9 +1268,10 @@ class NMT:
                         extra = ''
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
-                        if not self.do_test_not_train: self.save_checkpoint(num=iter,extra=extra)
-                        self.saved_files += 1
-                        print('======= save file '+ extra+' ========')
+                        if not self.do_test_not_train:
+                            self.save_checkpoint(num=iter,extra=extra)
+                            self.saved_files += 1
+                            print('======= save file '+ extra+' ========')
                     else:
                         print('skip save!')
                 print('(%d %d%%) %.4f loss' % (iter, iter / n_iters * 100, print_loss_avg))
