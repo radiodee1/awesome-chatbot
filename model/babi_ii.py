@@ -1390,8 +1390,11 @@ if __name__ == '__main__':
         n.task_normal_train()
     elif not n.do_load_babi:
         n.task_review_set()
-    elif n.do_load_babi:
+    elif n.do_load_babi and not n.do_test_not_train:
         n.task_babi_files()
+    elif n.do_load_babi and n.do_test_not_train:
+        n.task_babi_test_files()
+        print('load test set -- no training.')
 
     n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
 
