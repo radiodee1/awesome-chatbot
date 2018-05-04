@@ -18,6 +18,7 @@ class Stats:
         self.test = '5'
         self.column_name = 'babi'
         self.skip_new_score = True
+        self.skip_row_number = True
         self.table_out = []
         self.text_before = []
         self.text_after = []
@@ -53,7 +54,8 @@ class Stats:
                             if len(ll) > 0:
                                 self.heading.append(ll)
                             elif l != 0 and l != len(line) -1 :
-                                self.heading.append('blank')
+                                #self.heading.append('blank')
+                                pass
                     elif found_heading is True and found_divider is False:
                         ''' consume divider '''
                         found_divider = True
@@ -64,6 +66,8 @@ class Stats:
                         data = []
                         for l in range(len(line)):
                             ll = line[l].strip()
+                            if self.skip_row_number and l == 1:
+                                continue
                             if len(ll) > 0:
                                 data.append(ll)
                             elif l != 0 and l != len(line) -1:

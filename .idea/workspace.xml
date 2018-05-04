@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saved/test.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/test.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saved/test.md.txt.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/test.md.txt.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/stats/stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/stats/stats.py" afterDir="false" />
@@ -33,15 +32,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="90">
               <caret line="8" selection-start-line="6" selection-end-line="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3672">
-              <caret line="225" column="16" selection-start-line="222" selection-start-column="8" selection-end-line="225" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -91,11 +81,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stats.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="stats.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/stats/stats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="42" column="43" selection-start-line="42" selection-start-column="43" selection-end-line="42" selection-end-column="43" />
+            <state relative-caret-position="518">
+              <caret line="68" column="62" selection-start-line="68" selection-start-column="62" selection-end-line="68" selection-end-column="62" />
               <folding>
                 <element signature="e#22#32#0" expanded="true" />
               </folding>
@@ -103,12 +93,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="test.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="test.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/test.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="36">
-                <caret line="2" column="11" selection-start-line="2" selection-start-column="11" selection-end-line="2" selection-end-column="11" />
+              <first_editor relative-caret-position="522">
+                <caret line="29" column="12" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="12" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="test.md.txt.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/saved/test.md.txt.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="504">
+                <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
               </first_editor>
               <second_editor />
             </state>
@@ -221,6 +223,7 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/babi_ii.py" />
+        <option value="$PROJECT_DIR$/saved/test.md.txt.md" />
         <option value="$PROJECT_DIR$/saved/test.md" />
         <option value="$PROJECT_DIR$/stats/stats.py" />
       </list>
@@ -332,7 +335,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/w2v_train.py" />
     <entry file="file://$PROJECT_DIR$/do_make_db_movie.py" />
     <entry file="file://$PROJECT_DIR$/do_make_dir.sh" />
     <entry file="file://$PROJECT_DIR$/do_make_reddit_download.sh">
@@ -572,23 +574,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stats/stats.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="42" column="43" selection-start-line="42" selection-start-column="43" selection-end-line="42" selection-end-column="43" />
-          <folding>
-            <element signature="e#22#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/saved/test.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="36">
-            <caret line="2" column="11" selection-start-line="2" selection-start-column="11" selection-end-line="2" selection-end-column="11" />
+          <first_editor relative-caret-position="522">
+            <caret line="29" column="12" selection-start-line="29" selection-start-column="12" selection-end-line="29" selection-end-column="12" />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/test.md.txt.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="504">
+            <caret line="28" lean-forward="true" selection-start-line="28" selection-end-line="28" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/stats/stats.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="518">
+          <caret line="68" column="62" selection-start-line="68" selection-start-column="62" selection-end-line="68" selection-end-column="62" />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
