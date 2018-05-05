@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="251">
-              <caret line="425" column="8" selection-start-line="425" selection-start-column="8" selection-end-line="425" selection-end-column="8" />
+            <state relative-caret-position="269">
+              <caret line="449" column="47" selection-start-line="449" selection-start-column="40" selection-end-line="449" selection-end-column="47" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -120,8 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variablesFromPair</find>
-      <find>prepareData</find>
       <find>readLangs</find>
       <find>Decoder</find>
       <find>model_1_enc</find>
@@ -150,6 +148,8 @@
       <find>MGRU</find>
       <find>EpisodicAttn</find>
       <find>new_input_second_module</find>
+      <find>memory_hops</find>
+      <find>all_mem</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -576,8 +576,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="251">
-          <caret line="425" column="8" selection-start-line="425" selection-start-column="8" selection-end-line="425" selection-end-column="8" />
+        <state relative-caret-position="269">
+          <caret line="449" column="47" selection-start-line="449" selection-start-column="40" selection-end-line="449" selection-end-column="47" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

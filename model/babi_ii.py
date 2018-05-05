@@ -311,9 +311,8 @@ class WrapMemRNN(nn.Module):
 
             encoder_hidden = (encoder_hidden[0,:,:] + encoder_hidden[1,:,:] +
                               encoder_hidden[2,:,:] + encoder_hidden[3,:,:]).view(1,1,self.hidden_size)
-            #print(encoder_hidden.size(),'hidden')
-            #encoder_hidden = (encoder_hidden[:, :, :self.hidden_size] +
-            #                  encoder_hidden[:, :, self.hidden_size:])
+
+            if len(target_variable) > self.memory_hops: self.memory_hops = len(target_variable)
 
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
@@ -361,9 +360,6 @@ class WrapMemRNN(nn.Module):
             memory = [q_q.clone()]
             hidden = None
             for iter in range(1, self.memory_hops+1):
-
-                #print(iter, memory[iter -1][-1].size(),'mem')
-                #current_episode = self.new_episode_big_step(torch.sum(memory[iter - 1], dim=0))
 
                 current_episode = self.new_episode_big_step(memory[iter - 1])
                 if True:
@@ -423,7 +419,7 @@ class WrapMemRNN(nn.Module):
     def new_answer_feed_forward(self, num=-1):
         # do something with last_mem
         #y = self.last_mem.view(self.hidden_size, -1)
-        
+
         y = self.all_mem[num].view(self.hidden_size, -1)
 
         y = torch.mm(self.model_4_att.W_a1, y)
@@ -480,6 +476,10 @@ class WrapMemRNN(nn.Module):
 
         for t in range(0, end_len - 1):
             #print(t,'t', decoder_hidden.size())
+
+            if not self.do_babi:
+                if t < len(self.all_mem) -1:
+                    decoder_static = self.all_mem[t].view(1,1,-1)
 
             if True:
                 ## self.inp_c  ??
