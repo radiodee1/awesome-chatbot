@@ -128,43 +128,6 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 ################# pytorch modules ###############
 
-class MGRU(nn.Module):
-    def __init__(self,hidden_size):
-        super(MGRU, self).__init__()
-        self.dim = hidden_size
-        self.W_mem_res_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.W_mem_res_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.b_mem_res = nn.Parameter(torch.FloatTensor(self.dim,))
-
-        self.W_mem_upd_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.W_mem_upd_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.b_mem_upd = nn.Parameter(torch.FloatTensor(self.dim,))
-
-        self.W_mem_hid_in = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.W_mem_hid_hid = nn.Parameter(torch.FloatTensor(self.dim, self.dim))
-        self.b_mem_hid = nn.Parameter(torch.FloatTensor(self.dim,))
-        self.reset_parameters()
-        pass
-
-    def reset_parameters(self):
-        stdv = 1.0 / math.sqrt(self.dim)
-        for weight in self.parameters():
-            weight.data.uniform_(-stdv, stdv)
-
-    def forward(self, input, hidden):
-        input = input.view(self.dim,-1)
-        hidden = hidden.view(self.dim,-1)
-        #a = torch.mm(self.W_mem_upd_in, input)
-        #b = torch.mm(self.W_mem_upd_hid, hidden)
-        #c = torch.sigmoid(a + b + self.b_mem_upd)
-        z = torch.sigmoid(torch.mm(self.W_mem_upd_in, input) + torch.mm(self.W_mem_upd_hid, hidden) + self.b_mem_upd)
-        r = torch.sigmoid(torch.mm(self.W_mem_res_in, input) + torch.mm(self.W_mem_res_hid, hidden) + self.b_mem_res)
-        _h = torch.tanh(torch.mm(self.W_mem_hid_in, input) + r * torch.mm(self.W_mem_hid_hid, hidden) + self.b_mem_hid)
-        out = z * hidden + (1 - z) * _h
-        #print(input.size(), hidden.size(), out.size(), 'pass here')
-
-        return out
-        pass
 
 
 class EpisodicAttn(nn.Module):
@@ -341,7 +304,7 @@ class WrapMemRNN(nn.Module):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
         if not self.do_babi:
-            encoder_o, encoder_h = self.new_input_shadow_module(input_variable, question_variable)
+            encoder_o, encoder_h = self.new_input_second_module(input_variable, question_variable)
             #print(encoder_h.size(), encoder_hidden.size(),'compare')
 
             encoder_hidden = encoder_h #encoder_o[-1]
@@ -361,7 +324,7 @@ class WrapMemRNN(nn.Module):
         self.model_2_dec.embed.weight.requires_grad = False
         pass
 
-    def new_input_shadow_module(self, input_variable, question_variable):
+    def new_input_second_module(self, input_variable, question_variable):
         outs = []
         hidden = None
         for i in input_variable:
@@ -1414,7 +1377,7 @@ if __name__ == '__main__':
 
         n.model_0_wra = n.model_0_wra.cuda()
 
-    if n.do_test_not_train: 
+    if n.do_test_not_train:
         print('test not train')
         n.setup_for_babi_test()
         exit()
