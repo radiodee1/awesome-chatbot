@@ -420,9 +420,11 @@ class WrapMemRNN(nn.Module):
         #print()
         return self.model_4_att(concat_list)
 
-    def new_answer_feed_forward(self):
+    def new_answer_feed_forward(self, num=-1):
         # do something with last_mem
-        y = self.last_mem.view(self.hidden_size, -1)
+        #y = self.last_mem.view(self.hidden_size, -1)
+        
+        y = self.all_mem[num].view(self.hidden_size, -1)
 
         y = torch.mm(self.model_4_att.W_a1, y)
 
