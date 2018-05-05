@@ -452,9 +452,6 @@ class WrapMemRNN(nn.Module):
         decoder_static = self.last_mem[-1].view(1,1,-1)
         if self.model_2_dec.n_layers == 2 or not self.do_babi:
 
-            #decoder_hidden = torch.cat([self.all_mem[-1], self.all_mem[-1]]) # combine, but only use second value
-            #print(encoder_output.size())
-            #decoder_static = encoder_output #self.all_mem[-1].view(1,1,-1)
             decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
 
         output = target_variable[0].unsqueeze(0)  # start token
@@ -472,14 +469,15 @@ class WrapMemRNN(nn.Module):
 
         end_len = len(target_variable)
         if not self.do_babi:
-            end_len = end_len * 3
+            #end_len = end_len * 3
+            end_len = len(self.all_mem)
 
         for t in range(0, end_len - 1):
             #print(t,'t', decoder_hidden.size())
 
             if not self.do_babi:
                 if t < len(self.all_mem) -1:
-                    decoder_static = self.all_mem[t].view(1,1,-1)
+                    decoder_hidden = self.all_mem[t].view(1,1,-1)
 
             if True:
                 ## self.inp_c  ??
