@@ -38,6 +38,15 @@ The table is included here:
 
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
+Training benefits from stopping the training process and restarting it with a much lower 'learning_rate' at the end.
 
+#### The `model` Directory:
 
-more after text
+This is a list of the models from the project. The first few are seq2seq models. In the case where the model is for seq2seq the two languages are both english. The reason for this is that the original project was aimed at making a neural network chatbot.
+It was felt that a seq2seq translation model might function as a chatbot if both languages were english.
+* `model/model.py` This is a Keras seq2seq model that uses a simple attention mechanism. The attention code is found in the file `model/attention_decoder.py`.
+* `model/pytorch.py` This is the first pytorch model. It too is a seq2seq model. 
+* `model/babi.py` This is an early version of the pytorch code for training on the babi data set. It does not have all the bells and whistles that are present in the later babi pytorch model.
+* `model/babi_ii.py` This is the current version of the code meant to work with the babi dataset.
+* `model/settings.py` This file holds all the hyper parameters for all the models from various versions of the project.
+* `model/tokenize_weak.py` This file holds some common code for tokenizing sentences. It is used by all the models.
