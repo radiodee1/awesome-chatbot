@@ -15,26 +15,26 @@ The table is included here:
 
  |   | baseline_dmn | Mem_NN | babi_ii100a | babi_ii100b | babi_ii100c | babi | 
 |-|-|-|-|-|-|-| 
- | 1 | 1 | 2 | 3 | 0 | 0 | 0 | 
- | QA2: Category 2 | 1 | 2 | 3 | 0 | 0 | 0 | 
- | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | QA5: Catefory 5 | 0 | 0 | 0 | 0 | 0 | 555 | 
- | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 9 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 10 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 11 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 12 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 13 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 14 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 15 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 16 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 17 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 18 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 19 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA1: Single Supporting Fact | 1 | 2 | 3 | 0 | 0 | 0 | 
+ | QA2: Two Supporting Facts | 1 | 2 | 3 | 0 | 0 | 0 | 
+ | QA3: Three Supporting Facts | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA4: Two Argument Relations | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA5: Three Argument Relations | 0 | 0 | 0 | 0 | 0 | 555 | 
+ | QA6: Yes/No Questions | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA7: Counting | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA8: Lists/Sets | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA9: Simple Negation | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA10: Indefinite Knowledge | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA11: Basic Coreference | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA12: Conjunction | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA13: Compound Coreference | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA14: Time Reasoning | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA15: Basic Deduction | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA16: Basic Induction | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA17: Positional Reasoning | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA18: Size Reasoning | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA19: Path Finding | 0 | 0 | 0 | 0 | 0 | 0 | 
+ | QA20: Agent's Motivation | 0 | 0 | 0 | 0 | 0 | 0 | 
 
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
