@@ -20,7 +20,7 @@ class Stats:
         self.skip_new_score = True
         self.skip_row_number = True
         self.has_labeled_row_number = True
-        self.table_first_col = []
+        self.table_first_col = [' ']
         self.table_out = []
         self.text_before = []
         self.text_after = []
@@ -69,6 +69,7 @@ class Stats:
                         for l in range(len(line)):
                             ll = line[l].strip()
                             if self.skip_row_number and l == 1 and not self.has_labeled_row_number:
+                                data.append(ll)
                                 continue
                             elif l == 1 and self.has_labeled_row_number:
                                 self.table_first_col.append(ll)
@@ -149,6 +150,7 @@ class Stats:
     def print_stats(self):
         print(self.heading)
         print(self.body)
+        print(self.table_first_col)
 
 
 if __name__ == '__main__':

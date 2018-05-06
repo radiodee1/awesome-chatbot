@@ -15,11 +15,12 @@ The table is included here:
 
  |   | baseline_dmn | Mem_NN | babi_ii100a | babi_ii100b | babi_ii100c | babi | 
 |-|-|-|-|-|-|-| 
+ | 1 | 1 | 2 | 3 | 0 | 0 | 0 | 
  | QA2: Category 2 | 1 | 2 | 3 | 0 | 0 | 0 | 
- | 3 | 1 | 2 | 3 | 0 | 0 | 0 | 
+ | 3 | 0 | 0 | 0 | 0 | 0 | 0 | 
  | 4 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | QA5: Catefory 5 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 6 | 0 | 0 | 0 | 0 | 0 | 555 | 
+ | QA5: Catefory 5 | 0 | 0 | 0 | 0 | 0 | 555 | 
+ | 6 | 0 | 0 | 0 | 0 | 0 | 0 | 
  | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 
  | 8 | 0 | 0 | 0 | 0 | 0 | 0 | 
  | 9 | 0 | 0 | 0 | 0 | 0 | 0 | 
@@ -34,7 +35,6 @@ The table is included here:
  | 18 | 0 | 0 | 0 | 0 | 0 | 0 | 
  | 19 | 0 | 0 | 0 | 0 | 0 | 0 | 
  | 20 | 0 | 0 | 0 | 0 | 0 | 0 | 
- | 0 | 0 | 0 | 0 | 0 | 0 | 
 
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
