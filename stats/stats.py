@@ -125,7 +125,7 @@ class Stats:
         pass
 
     def write_stats(self):
-        with open(self.filename,'w') as z:
+        with open(self.filename+'.md','w') as z:
             for i in self.text_before:
                 z.write(i)
             for i in range(len(self.table_out)):
