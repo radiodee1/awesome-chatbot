@@ -6,14 +6,14 @@ This page is for results of the various tests in the BABI set and for explaining
 There are 20 tests. One at a time we will try to fill in the results that we achieve in the table below. Also below is a list of filenames. Though one model is meant to complete all the tests with the same saved weights, we willl assume that each test is done seperately. At the end we may include a result for testing on all the categories at once.
 
 * `baseline_dmn` This would be a figure for comparrison that was taken from literature on the subject. It does not reflect work done with this project. It is generally used with heavy supervision. [See here.](https://arxiv.org/pdf/1506.07285.pdf)
-* `Mem_NN` This would be a figure for comparrison. [See here.](https://yerevann.github.io/2016/02/05/implementing-dynamic-memory-networks/)
+* `small_embedding` This would be a figure for comparrison. Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable.
 * `babi_ii100a` Since the 'babi_ii.py' file is the most complete model it will be the starting base filename for out tests. This column reflects testing done with 100 hidden units and trainable embeddings. 
 * `babi_ii100b` This would reflect 100 hidden units but frozen non-trainable embeddings. Note that this does not mean pre-trained embeddings but rather frozen embeddings with entirely random contents.
-* `babi_ii100c` If it is included, this would have trained embeddings and 100 units in the hidden layer.
+* `babi_ii100c` If it is included, this would have pre-trained embeddings and 100 units in the hidden layer. Other words would be included in the vocabulary not specific to the question answering task.
 
 The table is included here:
 
- |   | baseline_dmn | Mem_NN | babi_ii100a | babi_ii100b | babi_ii100c | babi | 
+ |   | baseline_dmn | small_embedding | babi_ii100a | babi_ii100b | babi_ii100c | babi | 
 |-|-|-|-|-|-|-| 
  | QA1: Single Supporting Fact | 1 | 2 | 3 | 0 | 0 | 0 | 
  | QA2: Two Supporting Facts | 1 | 2 | 3 | 0 | 0 | 0 | 
