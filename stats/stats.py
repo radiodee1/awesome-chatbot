@@ -17,8 +17,10 @@ class Stats:
         self.score = 555
         self.test = '5'
         self.column_name = 'babi'
-        self.skip_new_score = False
+        self.skip_new_score = True
         self.skip_row_number = True
+        self.has_labeled_row_number = True
+        self.table_first_col = []
         self.table_out = []
         self.text_before = []
         self.text_after = []
@@ -66,9 +68,12 @@ class Stats:
                         data = []
                         for l in range(len(line)):
                             ll = line[l].strip()
-                            if self.skip_row_number and l == 1:
+                            if self.skip_row_number and l == 1 and not self.has_labeled_row_number:
                                 continue
-                            if len(ll) > 0:
+                            elif l == 1 and self.has_labeled_row_number:
+                                self.table_first_col.append(ll)
+                                continue
+                            if len(ll) > 0 :
                                 data.append(ll)
                             elif l != 0 and l != len(line) -1:
                                 data.append('0')
@@ -88,7 +93,11 @@ class Stats:
                 self.heading = [' '] + self.heading
                 table.append(self.heading)
             if j != 0:
-                row.append(str(j))
+                if not self.has_labeled_row_number:
+                    row.append(str(j))
+                elif len(self.table_first_col) > j:
+                    row.append(self.table_first_col[j])
+
                 for i in range(0,len(self.heading) -1):
                     if self.heading[i+1].strip() == self.column_name.strip() and str(j) == str(self.test):
                         row.append(str(self.score))
