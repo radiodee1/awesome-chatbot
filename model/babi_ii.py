@@ -222,12 +222,15 @@ class MemRNN(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout, bidirectional=False):
+                 n_layers, dropout, bidirectional=False, embedding=None):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        if embedding is not None:
+            self.embed.weight.data.copy_(torch.from_numpy(embedding))
+            print('embedding encoder')
         #self.gru = MGRU(self.hidden_dim)
 
     def forward(self, source, hidden=None):
@@ -243,7 +246,7 @@ class Encoder(nn.Module):
 
 
 class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embedding=None):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
         self.hidden_dim = hidden_dim
@@ -252,6 +255,9 @@ class Decoder(nn.Module):
         self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
                           dropout=dropout)
         self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
+        if embedding is not None:
+            self.embed.weight.data.copy_(torch.from_numpy(embedding))
+            print('embedding decoder')
 
     def forward(self, output, encoder_out, decoder_hidden):
         """
@@ -271,15 +277,16 @@ class Decoder(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True, bad_token_lst=[], freeze_embedding=False):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True, bad_token_lst=[], freeze_embedding=False, embedding=None):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
         self.do_babi = do_babi
         self.bad_token_lst = bad_token_lst
+        self.embedding = embedding
         self.freeze_embedding = freeze_embedding
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout)
-        self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding)
+        self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
         self.model_3_mem = MemRNN( hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
         self.model_5_enc2 = Encoder(vocab_size,embed_dim,hidden_size,2,dropout, bidirectional=True)
@@ -294,7 +301,7 @@ class WrapMemRNN(nn.Module):
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
 
-        if self.freeze_embedding:
+        if self.freeze_embedding or self.embedding is not None:
             self.new_freeze_embedding()
         #self.criterion = nn.CrossEntropyLoss()
 
@@ -534,8 +541,8 @@ class Lang:
     def __init__(self, name, limit=None):
         self.name = name
         self.limit = limit
-        self.word2index = {}
-        self.word2count = {}
+        self.word2index = {hparams['unk']:0, hparams['sol']: 1, hparams['eol']: 2}
+        self.word2count = {hparams['unk']:1, hparams['sol']: 1, hparams['eol']: 1}
         self.index2word = {0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
         self.n_words = 3  # Count SOS and EOS
 
@@ -560,6 +567,7 @@ class NMT:
 
         self.model_0_wra = None
         self.opt_1 = None
+        self.embedding_matrix = None
 
         self.best_loss = None
         self.long_term_loss = 0
@@ -581,6 +589,9 @@ class NMT:
         self.saved_files = 0
         self.babi_num = '1'
         self.score_list = []
+
+        self.uniform_low = -1.0
+        self.uniform_high = 1.0
 
         self.train_fr = None
         self.train_to = None
@@ -671,6 +682,7 @@ class NMT:
         if self.args['load_embed_size'] is not None:
             hparams['embed_size'] = int(self.args['load_embed_size'])
             self.do_load_embeddings = True
+            self.do_freeze_embedding = True
         if self.printable == '': self.printable = hparams['base_filename']
 
 
@@ -694,6 +706,54 @@ class NMT:
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
         self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
+        pass
+
+    def task_set_embedding_matrix(self):
+        print('stage: set_embedding_matrix')
+        glove_data = hparams['data_dir'] + hparams['embed_name']
+        from gensim.models.keyedvectors import KeyedVectors
+        import numpy as np
+
+        embed_size = int(hparams['embed_size'])
+
+        embeddings_index = {}
+        if not os.path.isfile(glove_data) :
+            self.embedding_matrix = None  # np.zeros((len(self.vocab_list),embed_size))
+            #self.trainable = True
+        else:
+            # load embedding
+            glove_model = KeyedVectors.load_word2vec_format(glove_data, binary=False)
+
+            f = open(glove_data)
+            for line in range(self.output_lang.n_words): #len(self.vocab_list)):
+                if line == 0: continue
+                word = self.output_lang.index2word[line]
+                # print(word, line)
+                if word in glove_model.wv.vocab:
+                    #print('fill with values',line)
+                    values = glove_model.wv[word]
+                    value = np.asarray(values, dtype='float32')
+                    embeddings_index[word] = value
+                else:
+                    print('fill with random values',line, word)
+                    value = np.random.uniform(low=self.uniform_low, high=self.uniform_high, size=(embed_size,))
+                    # value = np.zeros((embed_size,))
+                    embeddings_index[word] = value
+            f.close()
+
+            self.embedding_matrix = np.zeros((self.output_lang.n_words, embed_size))
+            for i in range( self.output_lang.n_words ):#len(self.vocab_list)):
+                word = self.output_lang.index2word[i]
+                embedding_vector = embeddings_index.get(word)
+                if embedding_vector is not None:
+                    # words not found in embedding index will be all random.
+                    self.embedding_matrix[i] = embedding_vector[:embed_size]
+                else:
+                    print('fill with random values',i,word)
+
+                    self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
+                                                                 size=(embed_size,))
+                    # self.embedding_matrix[i] = np.zeros((embed_size,))
         pass
 
     def task_review_weights(self, pairs, stop_at_fail=False):
@@ -926,6 +986,10 @@ class NMT:
         print("Counted words:")
         print(self.input_lang.name, self.input_lang.n_words)
         print(self.output_lang.name, self.output_lang.n_words)
+
+        if self.do_load_embeddings:
+            self.task_set_embedding_matrix()
+
         return self.input_lang, self.output_lang, self.pairs
 
 
@@ -1323,7 +1387,8 @@ class NMT:
         pytorch_embed_size = hparams['pytorch_embed_size']
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers,
-                                      dropout=dropout,do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
+                                      dropout=dropout,do_babi=self.do_load_babi,
+                                      freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix)
 
         self.load_checkpoint()
 
@@ -1340,7 +1405,8 @@ class NMT:
         pytorch_embed_size = hparams['pytorch_embed_size']
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
-                                      dropout=dropout, do_babi=self.do_load_babi, freeze_embedding=self.do_freeze_embedding)
+                                      dropout=dropout, do_babi=self.do_load_babi,
+                                      freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix)
 
 
         lr = hparams['learning_rate']
@@ -1376,7 +1442,7 @@ if __name__ == '__main__':
 
     n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
                                dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
-                               freeze_embedding=n.do_freeze_embedding)
+                               freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix)
 
     if use_cuda and False:
 
