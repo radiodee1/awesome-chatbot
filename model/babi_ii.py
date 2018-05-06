@@ -480,15 +480,12 @@ class WrapMemRNN(nn.Module):
                     decoder_hidden = self.all_mem[t].view(1,1,-1)
 
             if True:
-                ## self.inp_c  ??
-                ## self.last_mem ??
-                #print(output.size(), decoder_static.size(), decoder_hidden.size(),'decoder')
+
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
 
             if criterion is not None :
                 if True: loss = criterion(self.prediction.view(1, -1), single_predict)
-                #print(target_variable[0].val(),'var')
-                #print(output.size(), target_variable[t].size(), 'loss')
+
 
                 if t < len(target_variable):
 
@@ -496,8 +493,7 @@ class WrapMemRNN(nn.Module):
                         loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
                     else:
                         loss = criterion(output.view(1, -1), target_variable[t])
-                        #loss_num += loss.item()
-                        #loss = criterion(self.prediction.view(1, -1), target_variable[t])
+
                     pass
                 elif not self.do_babi and False:
                     loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
