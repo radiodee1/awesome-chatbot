@@ -117,20 +117,37 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Make vocab file.')
     parser.add_argument('basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
     parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
+    parser.add_argument('--babi-only', help='Load words from the babi set only', action='store_true')
+    parser.add_argument('--load-embed-size', help='Override settings embed-size hparam.')
     args = parser.parse_args()
     args = vars(args)
     print(args)
     #exit()
     train_file = ['../data/train.big.from'] # , '../data/train.big.to']
 
-    train_file = [args['basefile']]
-    #if len(sys.argv) > 1:
-    #    train_file = str(sys.argv[1])
-    babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
+    if args['babi_only']:
+        train_file = []
+        args['babi'] = True
+    else :
+        train_file = [args['basefile']]
 
-    if args['babi'] == True:
+    if args['load_embed_size'] is not None:
+        hparams['embed_size'] = int(args['load_embed_size'])
+
+    babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
+    babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
+    babi_file3 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
+
+    if args['babi'] or args['babi_only']:
         train_file.append(babi_file)
+        train_file.append(babi_file2)
+        train_file.append(babi_file3)
     print(train_file)
+
+    embed_size = hparams['embed_size']
+    vocab_length = hparams['num_vocab_total']
+    FROM = '../raw/glove.6B.' + str(embed_size) + 'd.txt'  # 50, 100, 200, 300
+    TO = '../data/embed.txt'
 
     v = []
     #global v

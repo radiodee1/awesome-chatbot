@@ -599,6 +599,7 @@ class NMT:
         self.do_conserve_space = False
         self.do_test_not_train = False
         self.do_freeze_embedding = False
+        self.do_load_embeddings = False
 
         self.printable = ''
 
@@ -618,11 +619,12 @@ class NMT:
         parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
                             action='store_true')
         parser.add_argument('--babi-num', help='number of which babi test set is being worked on')
-        parser.add_argument('--units', help='override UNITS hyper parameter.')
-        parser.add_argument('--test',help='disable all training. No weights will be changed and no new weights will be saved.',
+        parser.add_argument('--units', help='Override UNITS hyper parameter.')
+        parser.add_argument('--test',help='Disable all training. No weights will be changed and no new weights will be saved.',
                             action='store_true')
         parser.add_argument('--lr', help='learning rate')
-        parser.add_argument('--freeze-embedding', help='stop training on embedding elements',action='store_true')
+        parser.add_argument('--freeze-embedding', help='Stop training on embedding elements',action='store_true')
+        parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -666,6 +668,9 @@ class NMT:
         if self.args['test'] == True: self.do_test_not_train = True
         if self.args['lr'] is not None: hparams['learning_rate'] = float(self.args['lr'])
         if self.args['freeze_embedding'] == True: self.do_freeze_embedding = True
+        if self.args['load_embed_size'] is not None:
+            hparams['embed_size'] = int(self.args['load_embed_size'])
+            self.do_load_embeddings = True
         if self.printable == '': self.printable = hparams['base_filename']
 
 
@@ -1358,12 +1363,16 @@ if __name__ == '__main__':
 
     n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
 
+    if n.do_load_babi:
+        hparams['num_vocab_total'] = n.output_lang.n_words
+
     layers = hparams['layers']
     dropout = hparams['dropout']
     pytorch_embed_size = hparams['pytorch_embed_size']
 
     token_list = []
-    for i in word_lst: token_list.append(n.output_lang.word2index[i])
+    if False:
+        for i in word_lst: token_list.append(n.output_lang.word2index[i])
 
     n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
                                dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
