@@ -16,7 +16,7 @@ class Stats:
         self.body = []
         self.score = 555
         self.test = '5'
-        self.column_name = 'babi'
+        self.column_name = 'small_embedding'
         self.skip_new_score = True
         self.skip_row_number = True
         self.has_labeled_row_number = True

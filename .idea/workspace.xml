@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/saved/stat.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -67,7 +65,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stats.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="stats.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/stats/stats.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="233">
@@ -91,7 +89,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stat.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stat.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/stat.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
@@ -548,13 +546,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/stats/stats.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="22" column="34" selection-start-line="22" selection-start-column="34" selection-end-line="22" selection-end-column="34" />
-          <folding>
-            <element signature="e#22#32#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/saved/stat.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="198">
+            <caret line="11" column="201" selection-start-line="11" selection-start-column="201" selection-end-line="11" selection-end-column="201" />
+          </first_editor>
+          <second_editor />
         </state>
       </provider>
     </entry>
@@ -568,13 +566,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/saved/stat.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="198">
-            <caret line="11" column="201" selection-start-line="11" selection-start-column="201" selection-end-line="11" selection-end-column="201" />
-          </first_editor>
-          <second_editor />
+    <entry file="file://$PROJECT_DIR$/stats/stats.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="233">
+          <caret line="22" column="34" selection-start-line="22" selection-start-column="34" selection-end-line="22" selection-end-column="34" />
+          <folding>
+            <element signature="e#22#32#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
