@@ -816,6 +816,7 @@ class NMT:
             line = input("> ")
             line = tokenize_weak.format(line)
             print(line)
+            line = self.variableFromSentence(self.input_lang, line, add_eol=True)
             out , _ =self.evaluate(None, None, line)
             print(out)
 
