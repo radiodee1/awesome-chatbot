@@ -11,7 +11,7 @@ hparams = settings.hparams
 class Stats:
     def __init__(self):
         self.filename = hparams['save_dir'] + hparams['stats_filename'] +'.md'
-        self.num_of_tests = 20
+        self.num_of_tests = 20 + 2
         self.heading = []
         self.body = []
         self.score = 555
