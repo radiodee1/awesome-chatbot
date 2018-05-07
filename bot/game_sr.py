@@ -226,6 +226,6 @@ class VoiceGoogleSR:
 
 if __name__ == '__main__':
     v = VoiceGoogleSR()
-    for i in range(3):  # test three iterations
+    for i in range(300):  # test three iterations
         words = v.voice_detection()
         print(words)
