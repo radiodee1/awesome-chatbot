@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="431">
-              <caret line="818" column="68" selection-start-line="818" selection-start-column="68" selection-end-line="818" selection-end-column="68" />
+            <state relative-caret-position="215">
+              <caret line="1006" column="56" selection-start-line="1006" selection-start-column="56" selection-end-line="1006" selection-end-column="56" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -132,10 +132,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pytorch_embed_size</find>
-      <find>opt_1</find>
-      <find>wrapper_optimizer</find>
-      <find>model_0_wra</find>
       <find>task_babi_test_files</find>
       <find>trainIters</find>
       <find>teacher_forcing_ratio</find>
@@ -162,6 +158,10 @@
       <find>W_a1</find>
       <find>num_vocab_total</find>
       <find>setup_for_babi_test</find>
+      <find>evaluate</find>
+      <find>pairs</find>
+      <find>variablesFromPair</find>
+      <find>variableFromSentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -581,8 +581,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="431">
-          <caret line="818" column="68" selection-start-line="818" selection-start-column="68" selection-end-line="818" selection-end-column="68" />
+        <state relative-caret-position="215">
+          <caret line="1006" column="56" selection-start-line="1006" selection-start-column="56" selection-end-line="1006" selection-end-column="56" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

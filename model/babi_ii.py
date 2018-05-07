@@ -998,10 +998,13 @@ class NMT:
         s = sentence.split(' ')
         sent = []
         for word in s:
-            if word == hparams['eol']: word = EOS_token
-            elif word == hparams['sol']: word = SOS_token
-            else: word = lang.word2index[word]
-            sent.append(word)
+            if word in lang.word2index:
+                if word == hparams['eol']: word = EOS_token
+                elif word == hparams['sol']: word = SOS_token
+                else: word = lang.word2index[word]
+                sent.append(word)
+            elif not self.do_hide_unk:
+                sent.append(lang.word2index[hparams['unk']])
         if len(sent) >= MAX_LENGTH and not self.do_load_babi:
             sent = sent[:MAX_LENGTH]
             sent[-1] = EOS_token
