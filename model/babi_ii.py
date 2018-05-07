@@ -484,7 +484,7 @@ class WrapMemRNN(nn.Module):
 
             if not self.do_babi:
                 if t < len(self.all_mem) -1:
-                    decoder_hidden = self.all_mem[t].view(1,1,-1)
+                    decoder_static = self.all_mem[t].view(1,1,-1)
 
             if True:
 
