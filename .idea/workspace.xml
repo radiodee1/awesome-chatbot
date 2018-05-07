@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="233">
-              <caret line="232" column="36" selection-start-line="232" selection-start-column="36" selection-end-line="232" selection-end-column="36" />
+            <state relative-caret-position="261">
+              <caret line="1314" column="59" selection-start-line="1314" selection-start-column="59" selection-end-line="1314" selection-end-column="59" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -28,8 +29,8 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
-              <caret line="76" column="31" lean-forward="true" selection-start-line="75" selection-start-column="8" selection-end-line="76" selection-end-column="31" />
+            <state relative-caret-position="990">
+              <caret line="76" column="31" selection-start-line="75" selection-start-column="8" selection-end-line="76" selection-end-column="31" />
               <folding>
                 <element signature="e#22#40#0" expanded="true" />
               </folding>
@@ -61,7 +62,7 @@
       <file leaf-file-name="stats.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stats/stats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="161">
+            <state relative-caret-position="306">
               <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
               <folding>
                 <element signature="e#22#32#0" expanded="true" />
@@ -309,22 +310,22 @@
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -478,9 +479,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="14598">
           <caret line="832" selection-start-line="832" selection-end-line="832" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -528,7 +526,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stats/stats.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="161">
+        <state relative-caret-position="306">
           <caret line="18" column="43" selection-start-line="18" selection-start-column="43" selection-end-line="18" selection-end-column="43" />
           <folding>
             <element signature="e#22#32#0" expanded="true" />
@@ -562,8 +560,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="76" column="31" lean-forward="true" selection-start-line="75" selection-start-column="8" selection-end-line="76" selection-end-column="31" />
+        <state relative-caret-position="990">
+          <caret line="76" column="31" selection-start-line="75" selection-start-column="8" selection-end-line="76" selection-end-column="31" />
           <folding>
             <element signature="e#22#40#0" expanded="true" />
           </folding>
@@ -579,8 +577,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="233">
-          <caret line="232" column="36" selection-start-line="232" selection-start-column="36" selection-end-line="232" selection-end-column="36" />
+        <state relative-caret-position="261">
+          <caret line="1314" column="59" selection-start-line="1314" selection-start-column="59" selection-end-line="1314" selection-end-column="59" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

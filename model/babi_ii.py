@@ -1250,6 +1250,7 @@ class NMT:
             if len(training_pair) > 2:
                 target_variable = training_pair[2]
             else:
+                question_variable = training_pair[0]
                 target_variable = training_pair[1]
 
             is_auto = random.random() < hparams['autoencode']
@@ -1311,7 +1312,7 @@ class NMT:
                     print('tgt:',choice[1])
                 nums = self.variablesFromPair(choice)
                 if self.do_load_babi: question = nums[1]
-                if not self.do_load_babi: question = nums[1]
+                if not self.do_load_babi: question = nums[0]
                 words, _ = self.evaluate(None, None, nums[0], question=question)
                 #print(choice)
                 print('ans:',words)
