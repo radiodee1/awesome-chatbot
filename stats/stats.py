@@ -17,7 +17,7 @@ class Stats:
         self.score = 555
         self.test = '5'
         self.column_name = 'small_e'
-        self.skip_new_score = True
+        self.skip_new_score = False
         self.skip_row_number = True
         self.has_labeled_row_number = True
         self.table_first_col = [' ']
@@ -26,7 +26,7 @@ class Stats:
         self.text_after = []
         self.b = None
         print('try:')
-        print('python3.6 stats.py --load-babi --basename=babi --conserve-space --babi-num=1')
+        print('python3.6 stats.py --load-babi --basename=babi --conserve-space --babi-num=1 --test')
         if len(sys.argv) == 1: exit()
 
     def read_stats(self):
@@ -118,7 +118,8 @@ class Stats:
         b = babi.NMT()
         print(b.printable,'print')
         self.column_name = b.printable
-        b.setup_for_babi_test()
+        if b.do_test_not_train:
+            b.setup_for_babi_test()
         print(b.score,'score!!')
         self.test = b.babi_num
         self.score = '%.2f' % b.score

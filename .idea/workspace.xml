@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saved/stat.md.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/stats/stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/stats/stats.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -13,11 +15,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="49">
-              <caret line="606" selection-start-line="606" selection-end-line="606" />
+            <state relative-caret-position="323">
+              <caret line="1403" column="41" selection-start-line="1403" selection-start-column="41" selection-end-line="1403" selection-end-column="41" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -61,8 +63,8 @@
       <file leaf-file-name="stats.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/stats/stats.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+            <state relative-caret-position="136">
+              <caret line="19" column="35" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
               <folding>
                 <element signature="e#22#32#0" expanded="true" />
               </folding>
@@ -70,7 +72,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stat.md.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stat.md.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/stat.md.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
@@ -114,12 +116,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>criterion</find>
-      <find>save_checkpoint</find>
-      <find>do_load_babi</find>
       <find>score_list</find>
       <find>pytorch_embed_size</find>
-      <find>do_test_not_train</find>
       <find>opt_1</find>
       <find>wrapper_optimizer</find>
       <find>model_0_wra</find>
@@ -138,12 +136,16 @@
       <find>KeyedVectors</find>
       <find>glove_model</find>
       <find>train_file</find>
-      <find>W_a1</find>
       <find>embedding_matrix</find>
       <find>prepareData</find>
       <find>readLangs</find>
       <find>new_freeze_embedding</find>
       <find>WrapMemRNN</find>
+      <find>do_test_not_train</find>
+      <find>task_babi_files</find>
+      <find>task_set_embedding_matrix</find>
+      <find>W_a1</find>
+      <find>num_vocab_total</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -199,10 +201,10 @@
         <option value="$PROJECT_DIR$/do_launch_babi.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
-        <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
-        <option value="$PROJECT_DIR$/stats/stats.py" />
         <option value="$PROJECT_DIR$/saved/stat.md.md" />
+        <option value="$PROJECT_DIR$/stats/stats.py" />
+        <option value="$PROJECT_DIR$/model/babi_ii.py" />
       </list>
     </option>
   </component>
@@ -537,16 +539,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="49">
-          <caret line="606" selection-start-line="606" selection-end-line="606" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
@@ -566,8 +558,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/stats/stats.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" column="35" selection-start-line="18" selection-start-column="35" selection-end-line="18" selection-end-column="35" />
+        <state relative-caret-position="136">
+          <caret line="19" column="35" selection-start-line="19" selection-start-column="35" selection-end-line="19" selection-end-column="35" />
           <folding>
             <element signature="e#22#32#0" expanded="true" />
           </folding>
@@ -581,6 +573,16 @@
             <caret line="9" column="309" selection-start-line="9" selection-start-column="309" selection-end-line="9" selection-end-column="309" />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="1403" column="41" selection-start-line="1403" selection-start-column="41" selection-end-line="1403" selection-end-column="41" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

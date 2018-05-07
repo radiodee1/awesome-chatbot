@@ -15,7 +15,7 @@ The table is included here:
 
  |   | baseline_dmn | small_e | ii_a | ii_b | ii_c | 
 |-|-|-|-|-|-| 
- | QA1: Single Supporting Fact | 1 | 2 | 3 | 0 | 0 | 
+ | QA1: Single Supporting Fact | 1 | 0.00 | 3 | 0 | 0 | 
  | QA2: Two Supporting Facts | 1 | 2 | 3 | 0 | 0 | 
  | QA3: Three Supporting Facts | 0 | 0 | 0 | 0 | 0 | 
  | QA4: Two Argument Relations | 0 | 0 | 0 | 0 | 0 | 

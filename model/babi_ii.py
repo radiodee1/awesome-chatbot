@@ -1401,6 +1401,8 @@ class NMT:
         self.task_babi_files()
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False,
                                                                          omit_unk=self.do_hide_unk)
+        hparams['num_vocab_total'] = self.output_lang.n_words
+
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
