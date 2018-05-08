@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/saved/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_babi_download.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_babi_download.sh" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -64,11 +64,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="do_make_babi_download.sh" pinned="false" current-in-tab="false">
+      <file leaf-file-name="do_make_babi_download.sh" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
+            <state relative-caret-position="108">
+              <caret line="6" column="30" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -106,12 +106,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stat.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stat.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/stat.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="414">
-                <caret line="23" column="52" lean-forward="true" selection-start-line="23" selection-start-column="52" selection-end-line="23" selection-end-column="52" />
+                <caret line="23" column="52" selection-start-line="23" selection-start-column="52" selection-end-line="23" selection-end-column="52" />
               </first_editor>
               <second_editor />
             </state>
@@ -212,12 +212,12 @@
         <option value="$PROJECT_DIR$/saved/stat.md.md" />
         <option value="$PROJECT_DIR$/bot/game_sr.py" />
         <option value="$PROJECT_DIR$/do_make_sr_test.sh" />
-        <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/stats/stats.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/saved/README.md" />
+        <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
       </list>
     </option>
   </component>
@@ -515,13 +515,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="680">
@@ -594,9 +587,16 @@
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="414">
-            <caret line="23" column="52" lean-forward="true" selection-start-line="23" selection-start-column="52" selection-end-line="23" selection-end-column="52" />
+            <caret line="23" column="52" selection-start-line="23" selection-start-column="52" selection-end-line="23" selection-end-column="52" />
           </first_editor>
           <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="6" column="30" selection-start-line="6" selection-start-column="30" selection-end-line="6" selection-end-column="30" />
         </state>
       </provider>
     </entry>
