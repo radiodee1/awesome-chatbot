@@ -6,37 +6,38 @@ This page is for results of the various tests in the BABI set and for explaining
 There are 20 tests. One at a time we will try to fill in the results that we achieve in the table below. Also below is a list of filenames. Though one model is meant to complete all the tests with the same saved weights, we willl assume that each test is done seperately. At the end we may include a result for testing on all the categories at once.
 
 * `baseline_dmn` This would be a figure for comparrison that was taken from literature on the subject. It does not reflect work done with this project. It is generally used with heavy supervision. [See here](https://arxiv.org/pdf/1506.07285.pdf) and [here.](https://yerevann.github.io/2016/02/05/implementing-dynamic-memory-networks/#initial-experiments)
-* `small_e` This would be a figure for comparrison. Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable.
-* `ii_a` Since the 'babi_ii.py' file is the most complete model `ii_` will be the starting base filename for out tests. This column reflects testing done with 100 hidden units and a large set of trainable embeddings. The words in the vocabulary would include those not specific to the question answering task.
+* `small_e` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download.
+* `small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
+* `ii_a` Since the 'babi_ii.py' file is the most complete model `ii_` will be the starting base filename for out tests. This column reflects testing done with 100 hidden units and a large set of non trainable embeddings. The individual word vectors will come from the glove download. The words in the vocabulary would include those not specific to the question answering task.
 * `ii_b` This would reflect 100 hidden units but frozen non-trainable embeddings. Note that this does not mean pre-trained embeddings but rather frozen embeddings with entirely random contents.
-* `ii_c` This column would have pre-trained embeddings and 100 units in the hidden layer. Other words would be included in the vocabulary not specific to the question answering task.
+* `ii_tr` This column would have trainable embeddings and 100 units in the hidden layer. Other words would be included in the vocabulary not specific to the question answering task. Glove word vectors would not be used.
 
 The table is included here:
 
- |   | baseline_dmn | small_e | ii_a | ii_b | ii_c | 
-|-|-|-|-|-|-| 
- | QA1: Single Supporting Fact | 100 | 0 | 0 | 0 | 0 | 
- | QA2: Two Supporting Facts | 98.2 | 0 | 0 | 0 | 0 | 
- | QA3: Three Supporting Facts | 95.2 | 0 | 0 | 0 | 0 | 
- | QA4: Two Argument Relations | 100 | 0 | 0 | 0 | 0 | 
- | QA5: Three Argument Relations | 99.3 | 555 | 0 | 0 | 0 | 
- | QA6: Yes/No Questions | 100 | 0 | 0 | 0 | 0 | 
- | QA7: Counting | 96.9 | 0 | 0 | 0 | 0 | 
- | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 | 0 | 
- | QA9: Simple Negation | 100 | 0 | 0 | 0 | 0 | 
- | QA10: Indefinite Knowledge | 97.5 | 0 | 0 | 0 | 0 | 
- | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 | 0 | 
- | QA12: Conjunction | 100 | 0 | 0 | 0 | 0 | 
- | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 | 0 | 
- | QA14: Time Reasoning | 100 | 0 | 0 | 0 | 0 | 
- | QA15: Basic Deduction | 100 | 0 | 0 | 0 | 0 | 
- | QA16: Basic Induction | 99.4 | 0 | 0 | 0 | 0 | 
- | QA17: Positional Reasoning | 59.6 | 0 | 0 | 0 | 0 | 
- | QA18: Size Reasoning | 95.3 | 0 | 0 | 0 | 0 | 
- | QA19: Path Finding | 34.5 | 0 | 0 | 0 | 0 | 
- | QA20: Agent's Motivation | 100 | 0 | 0 | 0 | 0 | 
- | Average | 93.605 | 0 | 0 | 0 | 0 | 
- | Combined | 0 | 0 | 0 | 0 | 0 | 
+ |   | baseline_dmn | small_e | small_tr | ii_a | ii_b | ii_tr | 
+|-|-|-|-|-|-|-|
+ | QA1: Single Supporting Fact | 100 | 0 | 0 | 0 | 0 | 0 | 
+ | QA2: Two Supporting Facts | 98.2 | 0 | 0 | 0 | 0 | 0 |
+ | QA3: Three Supporting Facts | 95.2 | 0 | 0 | 0 | 0 | 0 |
+ | QA4: Two Argument Relations | 100 | 0 | 0 | 0 | 0 | 0 |
+ | QA5: Three Argument Relations | 99.3 | 0 | 0 | 0 | 0 | 0 |
+ | QA6: Yes/No Questions | 100 | 0 | 0 | 0 | 0 | 0 |
+ | QA7: Counting | 96.9 | 0 | 0 | 0 | 0 | 0 |
+ | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 | 0 | 0 |
+ | QA9: Simple Negation | 100 | 0 | 0 | 0 | 0 | 0 |
+ | QA10: Indefinite Knowledge | 97.5 | 0 | 0 | 0 | 0 | 0 | 
+ | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 | 0 | 0 |
+ | QA12: Conjunction | 100 | 0 | 0 | 0 | 0 | 0 |
+ | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 | 0 | 0 |
+ | QA14: Time Reasoning | 100 | 0 | 0 | 0 | 0 | 0 |
+ | QA15: Basic Deduction | 100 | 0 | 0 | 0 | 0 | 0 |
+ | QA16: Basic Induction | 99.4 | 0 | 0 | 0 | 0 | 0 |
+ | QA17: Positional Reasoning | 59.6 | 0 | 0 | 0 | 0 | 0 | 
+ | QA18: Size Reasoning | 95.3 | 0 | 0 | 0 | 0 | 0 |
+ | QA19: Path Finding | 34.5 | 0 | 0 | 0 | 0 | 0|
+ | QA20: Agent's Motivation | 100 | 0 | 0 | 0 | 0 | 0 |
+ | Average | 93.605 | 0 | 0 | 0 | 0 | 0 |
+ | Combined | 0 | 0 | 0 | 0 | 0 | 0 |
 
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.

@@ -27,6 +27,7 @@ class Stats:
         self.b = None
         print('try:')
         print('python3.6 stats.py --load-babi --basename=babi --conserve-space --babi-num=1 --test')
+        print('leave out "--test" if you do not want to run the model program.')
         if len(sys.argv) == 1: exit()
 
     def read_stats(self):
