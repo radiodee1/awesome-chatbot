@@ -328,6 +328,7 @@ class WrapMemRNN(nn.Module):
     def new_freeze_embedding(self):
         self.model_1_enc.embed.weight.requires_grad = False
         self.model_2_dec.embed.weight.requires_grad = False
+        print('freeze embedding')
         pass
 
     def new_input_second_module(self, input_variable, question_variable):
