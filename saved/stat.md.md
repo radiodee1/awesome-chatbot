@@ -15,27 +15,27 @@ The table is included here:
 
  |   | baseline_dmn | small_e | ii_a | ii_b | ii_c | 
 |-|-|-|-|-|-| 
- | QA1: Single Supporting Fact | 1 | 0.00 | 3 | 0 | 0 | 
- | QA2: Two Supporting Facts | 1 | 2 | 3 | 0 | 0 | 
- | QA3: Three Supporting Facts | 0 | 0 | 0 | 0 | 0 | 
- | QA4: Two Argument Relations | 0 | 0 | 0 | 0 | 0 | 
- | QA5: Three Argument Relations | 0 | 555 | 0 | 0 | 0 | 
- | QA6: Yes/No Questions | 0 | 0 | 0 | 0 | 0 | 
- | QA7: Counting | 0 | 0 | 0 | 0 | 0 | 
- | QA8: Lists/Sets | 0 | 0 | 0 | 0 | 0 | 
- | QA9: Simple Negation | 0 | 0 | 0 | 0 | 0 | 
- | QA10: Indefinite Knowledge | 0 | 0 | 0 | 0 | 0 | 
- | QA11: Basic Coreference | 0 | 0 | 0 | 0 | 0 | 
- | QA12: Conjunction | 0 | 0 | 0 | 0 | 0 | 
- | QA13: Compound Coreference | 0 | 0 | 0 | 0 | 0 | 
- | QA14: Time Reasoning | 0 | 0 | 0 | 0 | 0 | 
- | QA15: Basic Deduction | 0 | 0 | 0 | 0 | 0 | 
- | QA16: Basic Induction | 0 | 0 | 0 | 0 | 0 | 
- | QA17: Positional Reasoning | 0 | 0 | 0 | 0 | 0 | 
- | QA18: Size Reasoning | 0 | 0 | 0 | 0 | 0 | 
- | QA19: Path Finding | 0 | 0 | 0 | 0 | 0 | 
- | QA20: Agent's Motivation | 0 | 0 | 0 | 0 | 0 | 
- | Average | 0 | 0 | 0 | 0 | 0 | 
+ | QA1: Single Supporting Fact | 100 | 0 | 0.00 | 0 | 0 | 
+ | QA2: Two Supporting Facts | 98.2 | 0 | 0 | 0 | 0 | 
+ | QA3: Three Supporting Facts | 95.2 | 0 | 0 | 0 | 0 | 
+ | QA4: Two Argument Relations | 100 | 0 | 0 | 0 | 0 | 
+ | QA5: Three Argument Relations | 99.3 | 555 | 0 | 0 | 0 | 
+ | QA6: Yes/No Questions | 100 | 0 | 0 | 0 | 0 | 
+ | QA7: Counting | 96.9 | 0 | 0 | 0 | 0 | 
+ | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 | 0 | 
+ | QA9: Simple Negation | 100 | 0 | 0 | 0 | 0 | 
+ | QA10: Indefinite Knowledge | 97.5 | 0 | 0 | 0 | 0 | 
+ | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 | 0 | 
+ | QA12: Conjunction | 100 | 0 | 0 | 0 | 0 | 
+ | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 | 0 | 
+ | QA14: Time Reasoning | 100 | 0 | 0 | 0 | 0 | 
+ | QA15: Basic Deduction | 100 | 0 | 0 | 0 | 0 | 
+ | QA16: Basic Induction | 99.4 | 0 | 0 | 0 | 0 | 
+ | QA17: Positional Reasoning | 59.6 | 0 | 0 | 0 | 0 | 
+ | QA18: Size Reasoning | 95.3 | 0 | 0 | 0 | 0 | 
+ | QA19: Path Finding | 34.5 | 0 | 0 | 0 | 0 | 
+ | QA20: Agent's Motivation | 100 | 0 | 0 | 0 | 0 | 
+ | Average | 93.605 | 0 | 0 | 0 | 0 | 
  | Combined | 0 | 0 | 0 | 0 | 0 | 
 
 #### Training and Testing:
