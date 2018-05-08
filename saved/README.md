@@ -27,6 +27,6 @@ Here we are interested in creating the same conditions as above but with a large
 11. Start at step number 5 above.
 12. `./do_make_train_test_from_babi.py 1` NOTE: replace '1' with current test.
 13. `cd ..`
-14. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=small_e --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. Change '--basename=ii_a' as necessary.
+14. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=ii_a --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. Change '--basename=ii_a' as necessary.
 15. `cd stats`
-16. `./stats.py --test --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=small_e --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. *THIS WILL PLACE A TESTING VALUE IN THE 'STAT.MD' CHART.*
+16. `./stats.py --test --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=ii_a --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. *THIS WILL PLACE A TESTING VALUE IN THE 'STAT.MD' CHART.*
