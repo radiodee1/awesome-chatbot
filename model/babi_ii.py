@@ -1239,6 +1239,7 @@ class NMT:
             print('hidden:', hparams['units'])
             for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr')
+            print(self.output_lang.n_words, 'num words')
 
         print("-----")
 
@@ -1436,7 +1437,6 @@ if __name__ == '__main__':
 
     n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
 
-    print(n.output_lang.n_words, 'num words')
 
     if n.do_load_babi:
         hparams['num_vocab_total'] = n.output_lang.n_words
