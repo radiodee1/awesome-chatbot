@@ -111,48 +111,65 @@ def get_babi_raw(id, test_id):
     return babi_train_raw, babi_test_raw
 
 if __name__ == '__main__':
-    print('do make train test')
+    print('do make train and test')
+
+    print('usage:')
+    print(sys.argv[0], 'NUM')
+    print('NUM is either a number between 1 and 20 or the keyword "all". ')
+    print('"all" produces a set of files with all 20 tests, in original order.')
+
     id = '1'
     if len(sys.argv) > 1:
         id = sys.argv[1]
     print(id)
-    train, test = get_babi_raw(id,id)
+    if id == 'all': id_lst = [ str(i+1) for i in range(20)]
+    else: id_lst = [id]
+    print(id_lst)
 
-    data_dir = hparams['data_dir']
-    train_name = hparams['train_name']
-    test_name = hparams['test_name']
-    babi_name = hparams['babi_name']
-    src_ending = hparams['src_ending']
-    tgt_ending = hparams['tgt_ending']
-    question_ending = hparams['question_ending']
 
-    with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, 'w') as z:
-        for i in range(len(train)):
-            z.write(train[i]['C'] + '\n')
-            pass
+    mode = 'w'
 
-    with open(data_dir + train_name +'.'+ babi_name + '.' + tgt_ending, 'w') as z:
-        for i in range(len(train)):
-            z.write(train[i]['A'] + '\n')
-            pass
+    for id in id_lst:
 
-    with open(data_dir + train_name +'.'+ babi_name + '.' + question_ending, 'w') as z:
-        for i in range(len(train)):
-            z.write(train[i]['Q'] + '\n')
-            pass
+        train, test = get_babi_raw(id,id)
 
-    ######################
-    with open(data_dir + test_name + '.' + babi_name + '.' + src_ending, 'w') as z:
-        for i in range(len(test)):
-            z.write(test[i]['C'] + '\n')
-            pass
+        data_dir = hparams['data_dir']
+        train_name = hparams['train_name']
+        test_name = hparams['test_name']
+        babi_name = hparams['babi_name']
+        src_ending = hparams['src_ending']
+        tgt_ending = hparams['tgt_ending']
+        question_ending = hparams['question_ending']
 
-    with open(data_dir + test_name + '.' + babi_name + '.' + tgt_ending, 'w') as z:
-        for i in range(len(test)):
-            z.write(test[i]['A'] + '\n')
-            pass
+        with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, mode) as z:
+            for i in range(len(train)):
+                z.write(train[i]['C'] + '\n')
+                pass
 
-    with open(data_dir + test_name + '.' + babi_name + '.' + question_ending, 'w') as z:
-        for i in range(len(test)):
-            z.write(test[i]['Q'] + '\n')
-            pass
+        with open(data_dir + train_name +'.'+ babi_name + '.' + tgt_ending, mode) as z:
+            for i in range(len(train)):
+                z.write(train[i]['A'] + '\n')
+                pass
+
+        with open(data_dir + train_name +'.'+ babi_name + '.' + question_ending, mode) as z:
+            for i in range(len(train)):
+                z.write(train[i]['Q'] + '\n')
+                pass
+
+        ######################
+        with open(data_dir + test_name + '.' + babi_name + '.' + src_ending, mode) as z:
+            for i in range(len(test)):
+                z.write(test[i]['C'] + '\n')
+                pass
+
+        with open(data_dir + test_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
+            for i in range(len(test)):
+                z.write(test[i]['A'] + '\n')
+                pass
+
+        with open(data_dir + test_name + '.' + babi_name + '.' + question_ending, mode) as z:
+            for i in range(len(test)):
+                z.write(test[i]['Q'] + '\n')
+                pass
+
+        if len(id_lst) > 1: mode = 'a'
