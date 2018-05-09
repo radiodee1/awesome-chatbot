@@ -450,6 +450,8 @@ class WrapMemRNN(nn.Module):
             target_variable = Variable(torch.LongTensor(target_variable))
             #print(target_variable,'2')
 
+        #print(target_variable,'tv')
+
         outputs = []
 
         loss = None
@@ -463,6 +465,8 @@ class WrapMemRNN(nn.Module):
             decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
 
         output = target_variable[0].unsqueeze(0)  # start token
+
+        #print(output,'output')
 
         self.prediction = self.new_answer_feed_forward()
 
@@ -612,6 +616,7 @@ class NMT:
         self.do_test_not_train = False
         self.do_freeze_embedding = False
         self.do_load_embeddings = False
+        self.do_auto_stop = False
 
         self.printable = ''
 
@@ -637,6 +642,7 @@ class NMT:
         parser.add_argument('--lr', help='learning rate')
         parser.add_argument('--freeze-embedding', help='Stop training on embedding elements',action='store_true')
         parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
+        parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -684,6 +690,7 @@ class NMT:
             hparams['embed_size'] = int(self.args['load_embed_size'])
             self.do_load_embeddings = True
             self.do_freeze_embedding = True
+        if self.args['auto_stop'] == True: self.do_auto_stop = True
         if self.printable == '': self.printable = hparams['base_filename']
 
 
@@ -1142,6 +1149,12 @@ class NMT:
             else:
                 print("no checkpoint found at '"+ basename + "'")
 
+    def _auto_stop(self):
+        if ((len(self.score_list) > 5 and self.score_list[-2] > self.score_list[-1]) or
+                (self.score_list[-2] == 100 and self.score_list[-1] == 100)):
+            print('list:',self.score_list)
+            exit()
+
     def _mod_hidden(self, encoder_hidden):
         z = torch.cat((encoder_hidden,), 2)[0].view(1, 1, self.hidden_size )
         #print(z.size())
@@ -1241,6 +1254,8 @@ class NMT:
             for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr')
             print(self.output_lang.n_words, 'num words')
+            if self.do_auto_stop:
+                self._auto_stop()
 
         print("-----")
 
