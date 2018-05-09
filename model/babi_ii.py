@@ -529,7 +529,7 @@ class WrapMemRNN(nn.Module):
 
             # teacher forcing
             if is_teacher and t < target_variable.size()[0]:
-                # print(output,'out')
+                #print('teacher out')
                 output = target_variable[t].unsqueeze(0)
                 # print(self.output_lang.index2word[int(output)])
 
