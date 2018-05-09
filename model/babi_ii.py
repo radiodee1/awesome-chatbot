@@ -470,7 +470,7 @@ class WrapMemRNN(nn.Module):
 
         self.prediction = self.new_answer_feed_forward()
 
-        if criterion is not None and True:
+        if criterion is not None and False:
             loss = criterion(self.prediction.view( 1,-1), single_predict)
             loss_num += loss.item()#.data[0]
             #print(self.prediction.size(), single_predict)
@@ -1150,10 +1150,15 @@ class NMT:
                 print("no checkpoint found at '"+ basename + "'")
 
     def _auto_stop(self):
-        if ((len(self.score_list) > 5 and self.score_list[-2] > self.score_list[-1]) or
-                (self.score_list[-2] == 100 and self.score_list[-1] == 100)):
-            print('list:',self.score_list)
-            exit()
+        if len(self.score_list) > 5:
+
+            if (( float(self.score_list[-2]) > float(self.score_list[-1])) or
+                    (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
+                    (float(self.score_list[-2]) == float(self.score_list[-1]) and
+                     float(self.score_list[-3]) == float(self.score_list[-1]))):
+                print('list:',self.score_list)
+                exit()
+
 
     def _mod_hidden(self, encoder_hidden):
         z = torch.cat((encoder_hidden,), 2)[0].view(1, 1, self.hidden_size )
