@@ -470,7 +470,7 @@ class WrapMemRNN(nn.Module):
 
         self.prediction = self.new_answer_feed_forward()
 
-        if criterion is not None and False:
+        if criterion is not None and True:
             loss = criterion(self.prediction.view( 1,-1), single_predict)
             loss_num += loss.item()#.data[0]
             #print(self.prediction.size(), single_predict)
