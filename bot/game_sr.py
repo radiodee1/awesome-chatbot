@@ -28,7 +28,7 @@ from six.moves import queue
 # limitations under the License.
 
 # Audio recording parameters
-RATE = 16000
+RATE = 41800 #16000
 CHUNK = int(RATE / 10)  # 100ms
 
 
