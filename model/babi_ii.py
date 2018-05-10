@@ -1156,6 +1156,9 @@ class NMT:
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
                      float(self.score_list[-3]) == float(self.score_list[-1]))):
+                time.ctime()
+                time.strftime('%l:%M%p %Z on %b %d, %Y')
+
                 print('list:',self.score_list)
                 exit()
 
