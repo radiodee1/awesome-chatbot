@@ -29,6 +29,9 @@ from six.moves import queue
 
 # Audio recording parameters
 RATE = 44100 #16000
+# note: 44100 works with device on raspberry pi
+# Bus 001 Device 005: ID 0d8c:013c C-Media Electronics, Inc. CM108 Audio Controller
+
 CHUNK = int(RATE / 10)  # 100ms
 
 
