@@ -11,11 +11,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10440">
-              <caret line="599" selection-start-line="599" selection-end-line="599" />
+            <state relative-caret-position="261">
+              <caret line="1160" column="24" selection-start-line="1160" selection-start-column="24" selection-end-line="1160" selection-end-column="24" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -86,7 +86,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="settings.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="settings.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="414">
@@ -204,9 +204,9 @@
         <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
         <option value="$PROJECT_DIR$/saved/README.md" />
         <option value="$PROJECT_DIR$/saved/saved_commands.txt" />
-        <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/bot/game_sr.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
+        <option value="$PROJECT_DIR$/model/babi_ii.py" />
       </list>
     </option>
   </component>
@@ -221,7 +221,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -263,6 +262,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -551,16 +551,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10440">
-          <caret line="599" selection-start-line="599" selection-end-line="599" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2430">
@@ -592,6 +582,16 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="414">
           <caret line="23" column="29" selection-start-line="23" selection-start-column="29" selection-end-line="23" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="261">
+          <caret line="1160" column="24" selection-start-line="1160" selection-start-column="24" selection-end-line="1160" selection-end-column="24" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
