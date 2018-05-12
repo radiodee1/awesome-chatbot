@@ -1239,7 +1239,7 @@ class NMT:
             if self.do_auto_stop:
                 self._auto_stop()
 
-        print(self.train_fr,'train name')
+        print(self.train_fr,'loaded file')
 
         print("-----")
 

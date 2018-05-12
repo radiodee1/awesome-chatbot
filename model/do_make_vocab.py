@@ -54,11 +54,12 @@ def make_vocab():
 
     vv = [hparams['unk'], hparams['sol'], hparams['eol']]
     for z in v:
-        if len(vv) < vocab_length: vv.append(z)
+        if len(vv) < vocab_length and z not in vv: vv.append(z)
     v = vv
     #print(v)
+    return v
 
-def save_vocab(babi=False):
+def save_vocab(v, babi=False):
     ''' remember to leave 3 spots blank '''
     sol = hparams['sol']
     eol = hparams['eol']
@@ -73,7 +74,7 @@ def save_vocab(babi=False):
         name = name.replace('big', hparams['babi_name'])
 
     with open(name, 'w') as x:
-        x.write(unk+'\n'+ sol+'\n'+eol+'\n')
+        #x.write(unk+'\n'+ sol+'\n'+eol+'\n')
         for z in range(len(v)):
             if z < int(hparams['num_vocab_total']) - 3: ## magic num for hparams tokens
                 x.write(v[z] + "\n")
@@ -155,10 +156,10 @@ if __name__ == '__main__':
     TO = '../data/embed.txt'
 
     v = []
-    #global v
+
     if True:
-        make_vocab()
-        save_vocab(args['babi'])
+        v = make_vocab()
+        save_vocab(v, args['babi'])
     if len(v) == 0:
         filename = hparams['data_dir'] + hparams['vocab_name']
         if args['babi'] == True: filename = filename.replace('big', hparams['babi_name'])
