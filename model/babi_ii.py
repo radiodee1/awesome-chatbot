@@ -433,13 +433,12 @@ class WrapMemRNN(nn.Module):
 
     def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
-        single_predict = target_variable[0].clone()
+        #single_predict = target_variable[0].clone()
 
         if len(target_variable) == 1:
             if not self.do_babi:
                 target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
             target_variable = Variable(torch.LongTensor([target_variable]))
-
         #print(target_variable,'tv')
 
         outputs = []
@@ -454,9 +453,14 @@ class WrapMemRNN(nn.Module):
 
             decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
 
-        output = target_variable[0].unsqueeze(0)  # start token
+        output = Variable(torch.LongTensor([SOS_token]))
+
+        #print(output,'out')
 
         is_teacher = random.random() < teacher_forcing_ratio
+
+        if is_teacher:
+            output = target_variable[0].unsqueeze(0)  # start token
 
         masks = None
 
