@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_iii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iii.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -44,11 +43,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="do_make_vocab.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2430">
-              <caret line="143" column="36" selection-start-line="143" selection-start-column="36" selection-end-line="143" selection-end-column="36" />
+            <state relative-caret-position="234">
+              <caret line="21" selection-start-line="21" selection-end-line="21" />
             </state>
           </provider>
         </entry>
@@ -110,11 +109,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="babi_iii.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="babi_iii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="1441" column="24" selection-start-line="1441" selection-start-column="24" selection-end-line="1441" selection-end-column="24" />
+            <state relative-caret-position="269">
+              <caret line="1410" column="9" selection-start-line="1410" selection-start-column="9" selection-end-line="1410" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -130,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>skip_row_number</find>
       <find>table_first_col</find>
       <find>KeyedVectors</find>
       <find>glove_model</find>
@@ -141,11 +139,9 @@
       <find>new_freeze_embedding</find>
       <find>WrapMemRNN</find>
       <find>do_test_not_train</find>
-      <find>task_babi_files</find>
       <find>task_set_embedding_matrix</find>
       <find>W_a1</find>
       <find>num_vocab_total</find>
-      <find>setup_for_babi_test</find>
       <find>evaluate</find>
       <find>pairs</find>
       <find>variablesFromPair</find>
@@ -160,6 +156,9 @@
       <find>outputs</find>
       <find>train</find>
       <find>model_0_wra</find>
+      <find>task_babi_test_files</find>
+      <find>setup_for_babi_test</find>
+      <find>task_babi_files</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -207,7 +206,6 @@
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/do_launch_babi.sh" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/saved/stat.md.md" />
         <option value="$PROJECT_DIR$/do_make_sr_test.sh" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
@@ -219,6 +217,7 @@
         <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/babi_iii.py" />
+        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
       </list>
     </option>
   </component>
@@ -553,13 +552,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2430">
-          <caret line="143" column="36" selection-start-line="143" selection-start-column="36" selection-end-line="143" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="20538">
@@ -599,8 +591,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="1441" column="24" selection-start-line="1441" selection-start-column="24" selection-end-line="1441" selection-end-column="24" />
+        <state relative-caret-position="269">
+          <caret line="1410" column="9" selection-start-line="1410" selection-start-column="9" selection-end-line="1410" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="21" selection-start-line="21" selection-end-line="21" />
         </state>
       </provider>
     </entry>

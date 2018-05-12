@@ -18,6 +18,7 @@ train_file = ''
 v = []
 
 def make_vocab():
+    global v
     wordlist = []
     for filename in train_file:
         with open(filename, 'r') as x:
@@ -50,7 +51,11 @@ def make_vocab():
         num +=1
     #vv = list(set(v))
     v.sort()
-    #v = vv
+
+    vv = [hparams['unk'], hparams['sol'], hparams['eol']]
+    for z in v:
+        if len(vv) < vocab_length: vv.append(z)
+    v = vv
     #print(v)
 
 def save_vocab(babi=False):
