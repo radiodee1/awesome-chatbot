@@ -378,19 +378,17 @@ class WrapMemRNN(nn.Module):
                 sequences = self.inp_c
                 for i in range(len(sequences)):
                     g = self.new_attention_step(sequences[i], None, mem, self.q_q)
-                    # g = self.new_attention_step(sequences[i], mem,self.q_q, g)
+
                     g_record.append(g)
-                    ## do something with g!!
+
                     pass
 
-                # sequences = self.inp_c
                 ee = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 for i in range(len(sequences)):
-                    # print(sequences[i].size(),'seq', g_record[i].size(), e.size())
+
                     e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g_record[i].view(1, 1, -1),
                                                         ee.view(1, 1, -1))  ## something goes here!!
-                    # print(e.size(),'e')
                     pass
                 current_episode = e
                 ######
@@ -403,29 +401,7 @@ class WrapMemRNN(nn.Module):
             self.last_mem = memory[-1]
         return self.all_mem
 
-    '''
-    def new_episode_big_step(self, mem):
-        g_record = []
 
-        #g = nn.Parameter(torch.FloatTensor(1,1, self.hidden_size))
-        sequences = self.inp_c
-        for i in range(len(sequences)):
-            g = self.new_attention_step(sequences[i],None,mem,self.q_q)
-            #g = self.new_attention_step(sequences[i], mem,self.q_q, g)
-            g_record.append(g)
-            ## do something with g!!
-            pass
-
-        #sequences = self.inp_c
-        ee = nn.Parameter(torch.zeros(1,1, self.hidden_size))
-
-        for i in range(len(sequences)):
-            #print(sequences[i].size(),'seq', g_record[i].size(), e.size())
-            e, ee = self.new_episode_small_step(sequences[i].view(1,1,-1), g_record[i].view(1,1,-1), ee.view(1,1,-1)) ## something goes here!!
-            #print(e.size(),'e')
-            pass
-        return e
-    '''
 
     def new_episode_small_step(self, ct, g, prev_h):
         _ , gru = self.model_3_mem(ct, prev_h)
@@ -450,22 +426,7 @@ class WrapMemRNN(nn.Module):
         #print()
         return self.model_4_att(concat_list)
 
-    '''
-    def new_answer_feed_forward(self, num=-1):
-        # do something with last_mem
-        #y = self.last_mem.view(self.hidden_size, -1)
 
-        y = self.all_mem[num].view(self.hidden_size, -1)
-
-        y = torch.mm(self.model_4_att.W_a1, y)
-
-        y = torch.sum(y, dim=1)
-
-        y2softmax = nn.Softmax(dim=0)
-        y = y2softmax(y)
-
-        return y
-    '''
 
     def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
@@ -492,21 +453,16 @@ class WrapMemRNN(nn.Module):
 
         output = target_variable[0].unsqueeze(0)  # start token
 
-        #print(output,'output')
-
-
-
         is_teacher = random.random() < teacher_forcing_ratio
 
         masks = None
 
-        end_len = 2 #len(target_variable)
+        end_len = 2
         if not self.do_babi:
-            #end_len = end_len * 3
+
             end_len = len(self.all_mem)
 
         for t in range(0, end_len - 1):
-            #print(t,'t', decoder_hidden.size())
 
             if not self.do_babi:
                 if t < len(self.all_mem) -1:
@@ -517,8 +473,6 @@ class WrapMemRNN(nn.Module):
                 output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
 
             if criterion is not None :
-                #if False: loss = criterion(self.prediction.view(1, -1), single_predict)
-
 
                 if t < len(target_variable):
 
@@ -1173,7 +1127,7 @@ class NMT:
                 print("no checkpoint found at '"+ basename + "'")
 
     def _auto_stop(self):
-        if len(self.score_list) > 5:
+        if len(self.score_list) >= 3 :
 
             if (( float(self.score_list[-2]) > float(self.score_list[-1])) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
@@ -1222,11 +1176,7 @@ class NMT:
             last = i
         return ' '.join(out)
 
-    '''
-    def _word_from_prediction(self):
-        num = int(Variable(self.prediction.data.max(dim=0)[1]).int())
-        print('>',num, self.output_lang.index2word[num],'<')
-    '''
+
     #######################################
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
@@ -1288,6 +1238,8 @@ class NMT:
             print(self.output_lang.n_words, 'num words')
             if self.do_auto_stop:
                 self._auto_stop()
+
+        print(self.train_fr,'train name')
 
         print("-----")
 
@@ -1373,13 +1325,14 @@ class NMT:
                     target = None
                 words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
                 #print(choice)
-                print('ans:',words)
-                print('try:',self._shorten(words))
-                #self._word_from_prediction()
+                if not self.do_load_babi:
+                    print('ans:',words)
+                    print('try:',self._shorten(words))
+                    #self._word_from_prediction()
 
                 if self.do_load_babi:
 
-                    print('current training: %.2f' % self.score, '- num right '+ str(num_right_small))
+                    print('current average: %.2f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
 
                 print("-----")
@@ -1455,7 +1408,8 @@ class NMT:
         self.printable = hparams['base_filename']
 
         self.do_test_not_train = True
-        self.task_babi_files()
+        #self.task_babi_files()
+        self.task_babi_test_files()
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False,
                                                                          omit_unk=self.do_hide_unk)
         hparams['num_vocab_total'] = self.output_lang.n_words
@@ -1486,6 +1440,7 @@ if __name__ == '__main__':
     elif n.do_load_babi and n.do_test_not_train:
         n.task_babi_test_files()
         print('load test set -- no training.')
+        print(n.train_fr)
 
     n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
 
