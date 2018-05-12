@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="629">
-              <caret line="1253" column="70" selection-start-line="1253" selection-start-column="70" selection-end-line="1253" selection-end-column="70" />
+            <state relative-caret-position="988">
+              <caret line="673" column="30" selection-start-line="673" selection-start-column="9" selection-end-line="673" selection-end-column="30" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -121,9 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>KeyedVectors</find>
-      <find>glove_model</find>
-      <find>train_file</find>
       <find>embedding_matrix</find>
       <find>readLangs</find>
       <find>new_freeze_embedding</find>
@@ -142,7 +138,6 @@
       <find>prediction</find>
       <find>outputs</find>
       <find>train</find>
-      <find>model_0_wra</find>
       <find>task_babi_test_files</find>
       <find>setup_for_babi_test</find>
       <find>task_babi_files</find>
@@ -151,6 +146,10 @@
       <find>prepareData</find>
       <find>task_set_embedding_matrix</find>
       <find>teacher_forcing_ratio</find>
+      <find>model_0_wra</find>
+      <find>model_3_mem</find>
+      <find>mem</find>
+      <find>last_mem</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -594,8 +593,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="1253" column="70" selection-start-line="1253" selection-start-column="70" selection-end-line="1253" selection-end-column="70" />
+        <state relative-caret-position="988">
+          <caret line="673" column="30" selection-start-line="673" selection-start-column="9" selection-end-line="673" selection-end-column="30" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

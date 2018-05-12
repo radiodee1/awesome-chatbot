@@ -373,8 +373,6 @@ class WrapMemRNN(nn.Module):
             hidden = None
             for iter in range(1, self.memory_hops+1):
 
-                #current_episode = self.new_episode_big_step(memory[iter - 1])
-
                 ######
                 g_record = []
                 mem = memory[iter -1]
@@ -387,12 +385,12 @@ class WrapMemRNN(nn.Module):
 
                     pass
 
-                ee = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+                e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 for i in range(len(sequences)):
 
                     e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g_record[i].view(1, 1, -1),
-                                                        ee.view(1, 1, -1))  ## something goes here!!
+                                                        e.view(1, 1, -1))  ## something goes here!!
                     pass
                 current_episode = e
                 ######
