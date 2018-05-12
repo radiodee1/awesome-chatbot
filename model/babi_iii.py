@@ -310,6 +310,7 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
+        '''
         if not self.do_babi:
             encoder_o, encoder_h = self.new_input_second_module(input_variable, question_variable)
             #print(encoder_h.size(), encoder_hidden.size(),'compare')
@@ -320,7 +321,7 @@ class WrapMemRNN(nn.Module):
                               encoder_hidden[2,:,:] + encoder_hidden[3,:,:]).view(1,1,self.hidden_size)
 
             if len(target_variable) > self.memory_hops: self.memory_hops = len(target_variable)
-
+        '''
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
         return outputs, masks, loss, loss_num #, self.prediction
@@ -331,6 +332,7 @@ class WrapMemRNN(nn.Module):
         print('freeze embedding')
         pass
 
+    '''
     def new_input_second_module(self, input_variable, question_variable):
         outs = []
         hidden = None
@@ -339,6 +341,7 @@ class WrapMemRNN(nn.Module):
             out, hidden = self.model_5_enc2(i,hidden)
             outs.append(out)
         return  outs, hidden
+    '''
 
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
@@ -711,7 +714,7 @@ class NMT:
 
             f = open(glove_data)
             for line in range(self.output_lang.n_words): #len(self.vocab_list)):
-                if line == 0: continue
+                #if line == 0: continue
                 word = self.output_lang.index2word[line]
                 # print(word, line)
                 if word in glove_model.wv.vocab:
@@ -734,7 +737,7 @@ class NMT:
                     # words not found in embedding index will be all random.
                     self.embedding_matrix[i] = embedding_vector[:embed_size]
                 else:
-                    print('fill with random values',i,word)
+                    print('also fill with random values',i,word)
 
                     self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
                                                                  size=(embed_size,))
