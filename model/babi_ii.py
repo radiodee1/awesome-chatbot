@@ -117,7 +117,7 @@ SOS_token = 1
 EOS_token = 2
 MAX_LENGTH = hparams['tokens_per_sentence']
 
-hparams['teacher_forcing_ratio'] = 0.0
+#hparams['teacher_forcing_ratio'] = 0.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
@@ -285,6 +285,7 @@ class WrapMemRNN(nn.Module):
         self.bad_token_lst = bad_token_lst
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
+        self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
         self.model_3_mem = MemRNN( hidden_size)
@@ -457,7 +458,7 @@ class WrapMemRNN(nn.Module):
 
         #print(output,'out')
 
-        is_teacher = random.random() < teacher_forcing_ratio
+        is_teacher = random.random() < self.teacher_forcing_ratio
 
         if is_teacher:
             output = target_variable[0].unsqueeze(0)  # start token
@@ -578,6 +579,7 @@ class NMT:
         self.saved_files = 0
         self.babi_num = '1'
         self.score_list = []
+        self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -667,7 +669,9 @@ class NMT:
             hparams['units'] = int(self.args['units'])
             hparams['pytorch_embed_size'] = hparams['units']
             self.hidden_size = hparams['units']
-        if self.args['test'] == True: self.do_test_not_train = True
+        if self.args['test'] == True:
+            self.do_test_not_train = True
+            hparams['teacher_forcing_ratio'] = 0.0
         if self.args['lr'] is not None: hparams['learning_rate'] = float(self.args['lr'])
         if self.args['freeze_embedding'] == True: self.do_freeze_embedding = True
         if self.args['load_embed_size'] is not None:
@@ -1134,7 +1138,7 @@ class NMT:
                 print("no checkpoint found at '"+ basename + "'")
 
     def _auto_stop(self):
-        if len(self.score_list) >= 3 :
+        if len(self.score_list) >= 5 : ## 3 ??
 
             if (( float(self.score_list[-2]) > float(self.score_list[-1])) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
@@ -1247,6 +1251,7 @@ class NMT:
                 self._auto_stop()
 
         print(self.train_fr,'loaded file')
+        print(hparams['teacher_forcing_ratio'], 'teacher forcing ratio')
 
         print("-----")
 
