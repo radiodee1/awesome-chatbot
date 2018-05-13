@@ -311,18 +311,7 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
-        '''
-        if not self.do_babi:
-            encoder_o, encoder_h = self.new_input_second_module(input_variable, question_variable)
-            #print(encoder_h.size(), encoder_hidden.size(),'compare')
-
-            encoder_hidden = encoder_h #encoder_o[-1]
-
-            encoder_hidden = (encoder_hidden[0,:,:] + encoder_hidden[1,:,:] +
-                              encoder_hidden[2,:,:] + encoder_hidden[3,:,:]).view(1,1,self.hidden_size)
-
-            if len(target_variable) > self.memory_hops: self.memory_hops = len(target_variable)
-        '''
+        
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
         return outputs, masks, loss, loss_num #, self.prediction
@@ -333,36 +322,29 @@ class WrapMemRNN(nn.Module):
         print('freeze embedding')
         pass
 
-    '''
-    def new_input_second_module(self, input_variable, question_variable):
-        outs = []
-        hidden = None
-        for i in input_variable:
-            i = i.view(1,-1)
-            out, hidden = self.model_5_enc2(i,hidden)
-            outs.append(out)
-        return  outs, hidden
-    '''
-
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
+        hidlist1 = []
         hidden1 = None
         for i in input_variable:
             i = i.view(1,-1)
             out1, hidden1 = self.model_1_enc(i,hidden1)
-            outlist1.append(hidden1.view(1,-1)) #out1
-            #print(hidden1.size(),'hid', out1.size(),'out')
-        #self.inp_c = torch.cat(outlist1)
+            outlist1.append(out1.view(1,-1))
+            hidlist1.append(hidden1.view(1,-1)) #out1
+
+
         self.inp_c = outlist1
         outlist2 = []
+        hidlist2 = []
         hidden2 = None
         for i in question_variable:
             i = i.view(1,-1)
             out2, hidden2 = self.model_1_enc(i,hidden2)
-            outlist2.append(hidden2.view(1,-1)) #out2
-        #self.q_q = torch.cat(outlist2)
-        self.q_q = hidden2.view(1,-1)#[-1].view(-1,1) # out2
-        #print(self.q_q.size(),'qq')
+            hidlist2.append(hidden2.view(1,-1))
+            outlist2.append(out2.view(1,-1)) #out2
+
+        self.q_q = out2.view(1,-1)#[-1].view(-1,1) # out2
+
         return out1 + out2, hidden1 + hidden2
 
 
