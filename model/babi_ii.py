@@ -277,6 +277,26 @@ class Decoder(nn.Module):
         output = self.out(torch.cat([rnn_output, context], 2))
         return output, decoder_hidden, mask
 
+class AnswerModule(nn.Module):
+    def __init__(self, vocab_size, hidden_size):
+        super(AnswerModule, self).__init__()
+        self.hidden_size = hidden_size
+        self.vocab_size = vocab_size
+        self.out = nn.Linear(hidden_size * 2, vocab_size)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            weight.data.uniform_(-stdv, stdv)
+
+    def forward(self, mem, question_h):
+        mem = mem.view(1,-1)
+        question_h = question_h.view(1,-1)
+        concat = torch.cat([mem, question_h], dim=1)#.squeeze(1)
+        out = self.out(concat)
+        return out
+
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
@@ -289,10 +309,11 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=True)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=False)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
         self.model_3_mem = MemRNN( hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size)
         #self.model_5_enc2 = Encoder(vocab_size,embed_dim,hidden_size,2,dropout, bidirectional=True)
 
         self.input_var = None  # for input
@@ -313,9 +334,11 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
-        c = self.new_episodic_module(self.q_q)
+        self.new_episodic_module(self.q_q)
 
-        outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
+        #outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
+
+        outputs, masks, loss, loss_num = self.new_answer_module_simple(target_variable, criterion)
 
         return outputs, masks, loss, loss_num #, self.prediction
 
@@ -347,6 +370,7 @@ class WrapMemRNN(nn.Module):
             outlist2.append(out2.view(1,-1)) #out2
 
         z = hidden2.view(1,-1) # out2
+
         if self.model_1_enc.bidirectional:
             z = (z[:,self.hidden_size:] + z[:,:self.hidden_size])
 
@@ -417,7 +441,19 @@ class WrapMemRNN(nn.Module):
         #print()
         return self.model_4_att(concat_list)
 
+    def new_answer_module_simple(self,target_var, criterion):
+        loss_num = 0
+        loss = None
+        ansx = self.model_5_ans(self.last_mem, self.q_q)
+        ans = ansx.data.max(dim=1)[1]
+        #print(ans, 'ans')
+        if criterion is not None:
+            loss = criterion(ansx,target_var[0])
+        if loss is not None:
+            loss_num += loss.item()  # .data[0]
+        return [ans], None, loss, loss_num
 
+        pass
 
     def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
