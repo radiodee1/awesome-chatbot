@@ -243,8 +243,7 @@ class Encoder(nn.Module):
         if self.bidirectional:
             encoder_out = (encoder_out[:, :, :self.hidden_dim] +
                            encoder_out[:, :, self.hidden_dim:])
-            #encoder_hidden = (encoder_hidden[0,:,:self.hidden_dim] +
-            #                  encoder_hidden[1,:, self.hidden_dim:])
+
         #encoder_out = 0
         return encoder_out, encoder_hidden
 
