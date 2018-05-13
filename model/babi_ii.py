@@ -226,6 +226,7 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
+        self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
         if embedding is not None:
@@ -239,8 +240,11 @@ class Encoder(nn.Module):
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
         # sum bidirectional outputs, the other option is to retain concat features
-        #encoder_out = (encoder_out[:, :, :self.hidden_dim] +
-        #               encoder_out[:, :, self.hidden_dim:])
+        if self.bidirectional:
+            encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+                           encoder_out[:, :, self.hidden_dim:])
+            #encoder_hidden = (encoder_hidden[0,:,:self.hidden_dim] +
+            #                  encoder_hidden[1,:, self.hidden_dim:])
         #encoder_out = 0
         return encoder_out, encoder_hidden
 
@@ -286,7 +290,7 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=True)
         self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
         self.model_3_mem = MemRNN( hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
@@ -343,7 +347,11 @@ class WrapMemRNN(nn.Module):
             hidlist2.append(hidden2.view(1,-1))
             outlist2.append(out2.view(1,-1)) #out2
 
-        self.q_q = hidden2.view(1,-1) # out2
+        z = hidden2.view(1,-1) # out2
+        if self.model_1_enc.bidirectional:
+            z = (z[:,self.hidden_size:] + z[:,:self.hidden_size])
+
+        self.q_q = z
 
         return out1 + out2, hidden1 + hidden2
 
