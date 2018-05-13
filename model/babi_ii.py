@@ -145,9 +145,6 @@ class EpisodicAttn(nn.Module):
         self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
 
-        #self.W_a1 = nn.Parameter(torch.FloatTensor(hparams['num_vocab_total'], self.hidden_size))
-        #self.W_a2 = nn.Parameter(torch.FloatTensor(self.hidden_size, 1 ))# hparams['num_vocab_total']))
-
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -162,9 +159,6 @@ class EpisodicAttn(nn.Module):
         self.c_list_z = torch.cat(concat_list,dim=1)#.view(-1)
         self.c_list_z = self.c_list_z.view(-1,1)#.permute(1,0)#.squeeze(0)
 
-        #print(self.c_list_z.size(), self.W_1.size(),'two')
-
-        #print(self.c_list_z.size(), 'list', self.W_1.size(),'W1')
         self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
 
         self.l_1 = torch.tanh(self.l_1)
@@ -173,12 +167,12 @@ class EpisodicAttn(nn.Module):
 
         return  self.G
 
-
+'''
 class LuongAttention(nn.Module):
-    """
-    LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
-    https://arxiv.org/pdf/1508.04025.pdf
-    """
+    
+    #LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
+    #https://arxiv.org/pdf/1508.04025.pdf
+    
 
     def __init__(self, dim):
         super(LuongAttention, self).__init__()
@@ -200,6 +194,7 @@ class LuongAttention(nn.Module):
         context = context.permute(2, 0, 1)  # (seq, batch, dim)
         mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
         return context, mask
+'''
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size):
@@ -247,7 +242,7 @@ class Encoder(nn.Module):
         #encoder_out = 0
         return encoder_out, encoder_hidden
 
-
+'''
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embedding=None):
         super(Decoder, self).__init__()
@@ -276,6 +271,7 @@ class Decoder(nn.Module):
                                               decoder_hidden)
         output = self.out(torch.cat([rnn_output, context], 2))
         return output, decoder_hidden, mask
+'''
 
 class AnswerModule(nn.Module):
     def __init__(self, vocab_size, hidden_size):
@@ -310,11 +306,10 @@ class WrapMemRNN(nn.Module):
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=False)
-        self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
+        #self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
         self.model_3_mem = MemRNN( hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size)
-        #self.model_5_enc2 = Encoder(vocab_size,embed_dim,hidden_size,2,dropout, bidirectional=True)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -344,7 +339,7 @@ class WrapMemRNN(nn.Module):
 
     def new_freeze_embedding(self):
         self.model_1_enc.embed.weight.requires_grad = False
-        self.model_2_dec.embed.weight.requires_grad = False
+        #self.model_2_dec.embed.weight.requires_grad = False
         print('freeze embedding')
         pass
 
@@ -455,6 +450,7 @@ class WrapMemRNN(nn.Module):
 
         pass
 
+    '''
     def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
         #single_predict = target_variable[0].clone()
@@ -547,6 +543,7 @@ class WrapMemRNN(nn.Module):
 
         return outputs, masks, loss, loss_num
         pass
+        '''
 
 ######################## end pytorch modules ####################
 
@@ -1274,7 +1271,7 @@ class NMT:
                 self._auto_stop()
 
         print(self.train_fr,'loaded file')
-        print(hparams['teacher_forcing_ratio'], 'teacher forcing ratio')
+        #print(hparams['teacher_forcing_ratio'], 'teacher forcing ratio')
 
         print("-----")
 
