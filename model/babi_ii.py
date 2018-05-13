@@ -311,7 +311,7 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         c = self.new_episodic_module(self.q_q)
-        
+
         outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
         return outputs, masks, loss, loss_num #, self.prediction
@@ -332,8 +332,8 @@ class WrapMemRNN(nn.Module):
             outlist1.append(out1.view(1,-1))
             hidlist1.append(hidden1.view(1,-1)) #out1
 
-
         self.inp_c = outlist1
+
         outlist2 = []
         hidlist2 = []
         hidden2 = None
@@ -343,7 +343,7 @@ class WrapMemRNN(nn.Module):
             hidlist2.append(hidden2.view(1,-1))
             outlist2.append(out2.view(1,-1)) #out2
 
-        self.q_q = out2.view(1,-1)#[-1].view(-1,1) # out2
+        self.q_q = hidden2.view(1,-1) # out2
 
         return out1 + out2, hidden1 + hidden2
 
