@@ -30,8 +30,8 @@ SOFTWARE.
 '''
 
 def init_babi(fname):
-    print
-    "==> Loading test from %s" % fname
+    print("==> Loading file from %s" % fname)
+
     tasks = []
     task = None
     for i, line in enumerate(open(fname)):

@@ -167,49 +167,49 @@ class EpisodicAttn(nn.Module):
 
         return  self.G
 
-'''
-class LuongAttention(nn.Module):
-    
-    #LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
-    #https://arxiv.org/pdf/1508.04025.pdf
-    
 
-    def __init__(self, dim):
-        super(LuongAttention, self).__init__()
-        self.W = nn.Linear(dim, dim, bias=False)
 
-    def score(self, decoder_hidden, encoder_out):
-        # linear transform encoder out (seq, batch, dim)
-        encoder_out = self.W(encoder_out)
-        # (batch, seq, dim) | (2, 15, 50)
-        encoder_out = encoder_out.permute(1, 0, 2)
-        # (2, 15, 50) @ (2, 50, 1)
-        return encoder_out @ decoder_hidden.permute(1, 2, 0)
+class CustomGRU(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(CustomGRU, self).__init__()
+        self.hidden_size = hidden_size
+        self.Wr = nn.Linear(input_size, hidden_size)
 
-    def forward(self, decoder_hidden, encoder_out):
-        energies = self.score(decoder_hidden, encoder_out)
-        mask = F.softmax(energies, dim=1)  # batch, seq, 1
-        context = encoder_out.permute(
-            1, 2, 0) @ mask  # (2, 50, 15) @ (2, 15, 1)
-        context = context.permute(2, 0, 1)  # (seq, batch, dim)
-        mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
-        return context, mask
-'''
+        self.Ur = nn.Linear(hidden_size, hidden_size)
+
+        self.W = nn.Linear(input_size, hidden_size)
+
+        self.U = nn.Linear(hidden_size, hidden_size)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            weight.data.uniform_(-stdv, stdv)
+
+    def forward(self, fact, C):
+
+
+        r = F.sigmoid(self.Wr(fact) + self.Ur(C))
+        h_tilda = F.tanh(self.W(fact) + r * self.U(C))
+        #g = g.unsqueeze(1).expand_as(h_tilda)
+        #h = g * h_tilda + (1 - g) * C
+        return h_tilda
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = MGRU(hidden_size)
+        #self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
-        #embedded = self.embedding(input).view(1, 1, -1)
-        #output = embedded
-        _, hidden = self.gru(input,hidden)
-        #bi_output = (bi_output[:, :, :self.hidden_size] +
-        #               bi_output[:, :, self.hidden_size:])
+
+
+        #_, hidden = self.gru(input,hidden)
+        hidden = self.gru(input, hidden)
         output = 0
         return output, hidden
 
@@ -241,37 +241,6 @@ class Encoder(nn.Module):
 
         #encoder_out = 0
         return encoder_out, encoder_hidden
-
-'''
-class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embedding=None):
-        super(Decoder, self).__init__()
-        self.n_layers = n_layers
-        self.hidden_dim = hidden_dim
-        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim )
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers,
-                          dropout=dropout)
-        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
-        if embedding is not None:
-            self.embed.weight.data.copy_(torch.from_numpy(embedding))
-            print('embedding decoder')
-
-    def forward(self, output, encoder_out, decoder_hidden):
-        """
-        decodes one output frame
-        """
-        embedded = self.embed(output)  # (1, batch, embed_dim)
-        if self.n_layers == 1:
-            context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-        else:
-           context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-
-        rnn_output, decoder_hidden = self.gru(torch.cat([embedded, context], dim=2),
-                                              decoder_hidden)
-        output = self.out(torch.cat([rnn_output, context], 2))
-        return output, decoder_hidden, mask
-'''
 
 class AnswerModule(nn.Module):
     def __init__(self, vocab_size, hidden_size):
@@ -306,8 +275,10 @@ class WrapMemRNN(nn.Module):
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=False)
-        #self.model_2_dec = Decoder(vocab_size, embed_dim, hidden_size, n_layers, dropout,embedding=embedding)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout, embedding=embedding, bidirectional=False)
+
         self.model_3_mem = MemRNN( hidden_size)
+        self.model_3_mem_b = MemRNN(hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size)
 
@@ -330,8 +301,6 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
         encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
         self.new_episodic_module(self.q_q)
-
-        #outputs, masks, loss, loss_num = self.new_answer_module(target_variable,encoder_hidden, encoder_output, criterion)
 
         outputs, masks, loss, loss_num = self.new_answer_module_simple(target_variable, criterion)
 
@@ -360,14 +329,12 @@ class WrapMemRNN(nn.Module):
         hidden2 = None
         for i in question_variable:
             i = i.view(1,-1)
-            out2, hidden2 = self.model_1_enc(i,hidden2)
+            out2, hidden2 = self.model_2_enc(i,hidden2)
             hidlist2.append(hidden2.view(1,-1))
             outlist2.append(out2.view(1,-1)) #out2
 
         z = hidden2.view(1,-1) # out2
 
-        if self.model_1_enc.bidirectional:
-            z = (z[:,self.hidden_size:] + z[:,:self.hidden_size])
 
         self.q_q = z
 
@@ -404,7 +371,7 @@ class WrapMemRNN(nn.Module):
                 ######
 
                 hidden = mem # memory[ iter - 1]
-                _, out = self.model_3_mem(current_episode.view(1,1,-1), hidden.view(1,1,-1))
+                _, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
 
                 memory.append(out) #out
             self.all_mem = memory
@@ -450,100 +417,8 @@ class WrapMemRNN(nn.Module):
 
         pass
 
-    '''
-    def new_answer_module(self, target_variable, encoder_hidden, encoder_output, criterion, max_length=MAX_LENGTH):
 
-        #single_predict = target_variable[0].clone()
 
-        if len(target_variable) == 1:
-            if not self.do_babi:
-                target_variable = [ SOS_token, int(target_variable[0].int()), EOS_token]
-            target_variable = Variable(torch.LongTensor([target_variable]))
-        #print(target_variable,'tv')
-
-        outputs = []
-
-        loss = None
-        loss_num = 0
-
-        decoder_hidden = torch.cat(self.all_mem[- self.model_2_dec.n_layers:])[-1].view(1,1,-1) # alternately take info from mem unit
-
-        decoder_static = self.last_mem[-1].view(1,1,-1)
-        if self.model_2_dec.n_layers == 2 or not self.do_babi:
-
-            decoder_hidden = encoder_hidden[- self.model_2_dec.n_layers:]  # take what we need from encoder
-
-        output = Variable(torch.LongTensor([SOS_token]))
-
-        #print(output,'out')
-
-        is_teacher = random.random() < self.teacher_forcing_ratio
-
-        if is_teacher:
-            output = target_variable[0].unsqueeze(0)  # start token
-
-        masks = None
-
-        end_len = 2
-        if not self.do_babi:
-
-            end_len = len(self.all_mem)
-
-        for t in range(0, end_len - 1):
-
-            if not self.do_babi:
-                if t < len(self.all_mem) -1:
-                    decoder_static = self.all_mem[t].view(1,1,-1)
-
-            if True:
-
-                output, decoder_hidden, mask = self.model_2_dec(output.view(1,-1), decoder_static, decoder_hidden)
-
-            if criterion is not None :
-
-                if t < len(target_variable):
-
-                    if self.do_babi:
-                        loss = criterion(output.view(1, -1), target_variable[t].unsqueeze(dim=0))
-                        #print(output)
-                    else:
-                        loss = criterion(output.view(1, -1), target_variable[t])
-
-                    pass
-                elif not self.do_babi and False:
-                    loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
-
-            if loss is not None:
-                loss_num += loss.item()#.data[0]
-                #print(loss_num)
-
-            if False and not self.do_babi and criterion is not None:
-                if int(output.data.max(dim=2)[1].int()) in self.bad_token_lst:
-
-                    loss = criterion(output.view(1, -1), Variable(torch.LongTensor([EOS_token])))
-
-                    loss_num += loss.item()
-
-            if True: # t != skip_me:
-                output = Variable(output.data.max(dim=2)[1])
-                output = int(output[0][0].int())
-                #print(output.size(),'p',t, output)
-            outputs.append(output)
-
-            # raw.append(output)
-            if True and output == EOS_token: # int(output.data[0].int()) == EOS_token :
-                #print('eos token',t)
-                break
-
-            # teacher forcing
-            if is_teacher and t < target_variable.size()[0]:
-                #print('teacher out')
-                output = target_variable[t].unsqueeze(0)
-                # print(self.output_lang.index2word[int(output)])
-
-        return outputs, masks, loss, loss_num
-        pass
-        '''
 
 ######################## end pytorch modules ####################
 
