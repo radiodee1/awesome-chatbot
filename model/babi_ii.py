@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=7):
+    def __init__(self,  hidden_size, a_list_size=8):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -277,7 +277,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout, embedding=embedding, bidirectional=False)
 
-        self.model_3_mem = MemRNN( hidden_size)
+        self.model_3_mem_a = MemRNN( hidden_size)
         self.model_3_mem_b = MemRNN(hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size)
@@ -351,10 +351,11 @@ class WrapMemRNN(nn.Module):
                 ######
                 g_record = []
                 mem = memory[iter -1]
+                g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 sequences = self.inp_c
                 for i in range(len(sequences)):
-                    g = self.new_attention_step(sequences[i], None, mem, self.q_q)
+                    g = self.new_attention_step(sequences[i], g, mem, self.q_q)
 
                     g_record.append(g)
 
@@ -381,7 +382,7 @@ class WrapMemRNN(nn.Module):
 
 
     def new_episode_small_step(self, ct, g, prev_h):
-        _ , gru = self.model_3_mem(ct, prev_h)
+        _ , gru = self.model_3_mem_a(ct, prev_h)
         h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
         #print(h.size())
 
@@ -391,6 +392,7 @@ class WrapMemRNN(nn.Module):
         mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
+            prev_g.view(self.hidden_size, -1),
             ct.view(self.hidden_size,-1),
             mem.view(self.hidden_size,-1),
             q_q.view(self.hidden_size,-1),
