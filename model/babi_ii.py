@@ -709,6 +709,7 @@ class NMT:
             self.this_epoch = i
             self.printable = ' epoch #' + str(i+1)
             self.do_test_not_train = False
+            #self.score = 0.0
             self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
             self.validate_iters()
@@ -1234,7 +1235,7 @@ class NMT:
                     print('try:',self._shorten(words))
                     #self._word_from_prediction()
 
-                if self.do_load_babi:
+                if self.do_load_babi and self.do_test_not_train:
 
                     print('current accuracy: %.2f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
