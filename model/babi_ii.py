@@ -710,6 +710,10 @@ class NMT:
             self.printable = ' epoch #' + str(i+1)
             self.do_test_not_train = False
             #self.score = 0.0
+            self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
+                                                                             lang3=self.train_ques, reverse=False,
+                                                                             omit_unk=self.do_hide_unk)
+
             self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
             self.validate_iters()
