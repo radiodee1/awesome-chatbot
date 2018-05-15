@@ -1138,7 +1138,7 @@ class NMT:
         start = 1
         if self.do_load_babi:
             self.start = 0
-            start = 0
+            
 
         if self.start != 0 and self.start is not None:
             start = self.start + 1

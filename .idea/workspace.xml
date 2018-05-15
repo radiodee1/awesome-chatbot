@@ -148,8 +148,8 @@
       <find>prepareData</find>
       <find>do_test_not_train</find>
       <find>validate_iters</find>
-      <find>train_iters</find>
       <find>score</find>
+      <find>train_iters</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
