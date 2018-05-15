@@ -8,6 +8,7 @@ hparams = {
     'test_name': "test",
     'test_size': 100,
     'train_name': "train",
+    'valid_name':'valid',
     'src_ending': "from",
     'tgt_ending': "to",
     'question_ending':'ques',

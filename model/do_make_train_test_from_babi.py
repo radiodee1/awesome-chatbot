@@ -136,10 +136,13 @@ if __name__ == '__main__':
         data_dir = hparams['data_dir']
         train_name = hparams['train_name']
         test_name = hparams['test_name']
+        valid_name = hparams['valid_name']
         babi_name = hparams['babi_name']
         src_ending = hparams['src_ending']
         tgt_ending = hparams['tgt_ending']
         question_ending = hparams['question_ending']
+
+        split = len(test) / 2
 
         with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, mode) as z:
             for i in range(len(train)):
@@ -159,17 +162,39 @@ if __name__ == '__main__':
         ######################
         with open(data_dir + test_name + '.' + babi_name + '.' + src_ending, mode) as z:
             for i in range(len(test)):
-                z.write(test[i]['C'] + '\n')
+                if i < split:
+                    z.write(test[i]['C'] + '\n')
                 pass
 
         with open(data_dir + test_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
             for i in range(len(test)):
-                z.write(test[i]['A'] + '\n')
+                if i < split:
+                    z.write(test[i]['A'] + '\n')
                 pass
 
         with open(data_dir + test_name + '.' + babi_name + '.' + question_ending, mode) as z:
             for i in range(len(test)):
-                z.write(test[i]['Q'] + '\n')
+                if i < split:
+                    z.write(test[i]['Q'] + '\n')
+                pass
+
+        ######################
+        with open(data_dir + valid_name + '.' + babi_name + '.' + src_ending, mode) as z:
+            for i in range(len(test)):
+                if i >= split:
+                    z.write(test[i]['C'] + '\n')
+                pass
+
+        with open(data_dir + valid_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
+            for i in range(len(test)):
+                if i >= split:
+                    z.write(test[i]['A'] + '\n')
+                pass
+
+        with open(data_dir + valid_name + '.' + babi_name + '.' + question_ending, mode) as z:
+            for i in range(len(test)):
+                if i >= split:
+                    z.write(test[i]['Q'] + '\n')
                 pass
 
         if len(id_lst) > 1: mode = 'a'

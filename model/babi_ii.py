@@ -611,6 +611,12 @@ class NMT:
         self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
         pass
 
+    def task_babi_valid_files(self):
+        self.train_fr = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
+        self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
+        pass
+
     def task_set_embedding_matrix(self):
         print('stage: set_embedding_matrix')
         glove_data = hparams['data_dir'] + hparams['embed_name']
@@ -702,13 +708,17 @@ class NMT:
         for i in range(num):
             self.this_epoch = i
             self.printable = ' epoch #' + str(i+1)
-            self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+            self.do_test_not_train = False
+            self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+            self.start = 0
+            self.validate_iters()
             self.start = 0
             print('auto save.')
             print('%.2f' % self.score,'score')
             self.save_checkpoint(num=len(self.pairs))
             self.saved_files += 1
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
+            self.task_babi_files()
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
         pass
 
@@ -800,7 +810,7 @@ class NMT:
     '''
 
 
-    def prepareData(self,lang1, lang2, reverse=False, omit_unk=False):
+    def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False):
         if hparams['vocab_name'] is not None:
             v_name = hparams['data_dir'] + hparams['vocab_name']
             v_name = v_name.replace('big', hparams['babi_name'])
@@ -811,13 +821,13 @@ class NMT:
             self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=None,# babi_ending=True,
                                                                            reverse=reverse,
                                                                            load_vocab_file=v_name)
-            lang3 = None
+            #lang3 = None
         else:
-            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=self.train_ques,
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=lang3, #self.train_ques,
                                                                            reverse=False,
                                                                            babi_ending=True,
                                                                            load_vocab_file=v_name)
-            lang3 = self.train_ques
+            #lang3 = self.train_ques
         print("Read %s sentence pairs" % len(self.pairs))
         #self.pairs = self.filterPairs(self.pairs)
         #print("Trimmed to %s sentence pairs" % len(self.pairs))
@@ -1094,8 +1104,7 @@ class NMT:
 
 
 
-    def trainIters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
-
+    def train_iters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.001):
 
         save_thresh = 2
         #self.saved_files = 0
@@ -1125,7 +1134,7 @@ class NMT:
         if self.start != 0 and self.start is not None:
             start = self.start + 1
 
-        if self.do_load_babi and not self.do_test_not_train:
+        if self.do_load_babi and  self.do_test_not_train:
             print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
             for param_group in self.opt_1.param_groups:
@@ -1135,7 +1144,6 @@ class NMT:
                 self._auto_stop()
 
         print(self.train_fr,'loaded file')
-        #print(hparams['teacher_forcing_ratio'], 'teacher forcing ratio')
 
         print("-----")
 
@@ -1163,7 +1171,7 @@ class NMT:
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
-            if self.do_load_babi:
+            if self.do_load_babi and self.do_test_not_train:
 
                 #print(outputs[0].int(), int(target_variable[0][0].int()),'out v target')
                 if int(outputs[0].int()) == int(target_variable[0][0].int()):
@@ -1288,9 +1296,19 @@ class NMT:
         return wordlist
     '''
 
+    def validate_iters(self):
+        self.task_babi_valid_files()
+        self.printable = 'validate'
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.do_test_not_train = True
+        lr = hparams['learning_rate']
+        self.start = 0
+        self.train_iters(None,None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+        pass
+
     def setup_for_interactive(self):
         self.do_interactive = True
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
@@ -1308,7 +1326,7 @@ class NMT:
         self.do_test_not_train = True
         #self.task_babi_files()
         self.task_babi_test_files()
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to, reverse=False,
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False,
                                                                          omit_unk=self.do_hide_unk)
         hparams['num_vocab_total'] = self.output_lang.n_words
 
@@ -1323,7 +1341,7 @@ class NMT:
         self.first_load = True
         self.load_checkpoint()
         lr = hparams['learning_rate']
-        self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+        self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
 
 if __name__ == '__main__':
@@ -1341,7 +1359,7 @@ if __name__ == '__main__':
         print('load test set -- no training.')
         print(n.train_fr)
 
-    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to, reverse=False, omit_unk=n.do_hide_unk)
+    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False, omit_unk=n.do_hide_unk)
 
 
     if n.do_load_babi:
@@ -1370,7 +1388,7 @@ if __name__ == '__main__':
 
     if n.do_train:
         lr = hparams['learning_rate']
-        n.trainIters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
+        n.train_iters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
 
 
     if n.do_train_long:
