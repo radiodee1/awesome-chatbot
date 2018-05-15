@@ -1037,7 +1037,7 @@ class NMT:
     def _auto_stop(self):
         if len(self.score_list) >= 5 : ## 3 ??
 
-            if (( float(self.score_list[-2]) > float(self.score_list[-1])) or
+            if ((False and float(self.score_list[-2]) > float(self.score_list[-1])) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
                      float(self.score_list[-3]) == float(self.score_list[-1]))):
