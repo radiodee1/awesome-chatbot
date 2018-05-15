@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=8):
+    def __init__(self,  hidden_size, a_list_size=7):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -156,7 +156,7 @@ class EpisodicAttn(nn.Module):
 
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=1)#.view(-1)
+        self.c_list_z = torch.cat(concat_list,dim=0)# dim=1
         self.c_list_z = self.c_list_z.view(-1,1)#.permute(1,0)#.squeeze(0)
 
         self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
@@ -392,7 +392,7 @@ class WrapMemRNN(nn.Module):
         mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            prev_g.view(self.hidden_size, -1),
+            #prev_g.view(self.hidden_size, -1),
             ct.view(self.hidden_size,-1),
             mem.view(self.hidden_size,-1),
             q_q.view(self.hidden_size,-1),
@@ -418,8 +418,6 @@ class WrapMemRNN(nn.Module):
         return [ans], None, loss, loss_num
 
         pass
-
-
 
 
 ######################## end pytorch modules ####################
@@ -727,32 +725,6 @@ class NMT:
                 t_yyy.append(xx)
         return t_yyy
 
-    def asMinutes(self,s):
-        m = math.floor(s / 60)
-        s -= m * 60
-        return '%dm %ds' % (m, s)
-
-
-    def timeSince(self,since, percent):
-        now = time.time()
-        s = now - since
-        es = s / (percent)
-        rs = es - s
-        return '%s (- %s)' % (self.asMinutes(s), self.asMinutes(rs))
-
-    def unicodeToAscii(self,s):
-        return ''.join(
-            c for c in unicodedata.normalize('NFD', s)
-            if unicodedata.category(c) != 'Mn'
-        )
-
-
-    def normalizeString(self,s):
-        s = self.unicodeToAscii(s.lower().strip())
-        s = re.sub(r"([.!?])", r" \1", s)
-        s = re.sub(r"[^a-zA-Z.!?]+", r" ", s)
-        return s
-
     def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
         print("Reading lines...")
         self.pairs = []
@@ -804,6 +776,7 @@ class NMT:
 
         return self.input_lang, self.output_lang, self.pairs
 
+    '''
     def filterPair(self,p):
         return (len(p[0].split(' ')) < MAX_LENGTH and \
             len(p[1].split(' ')) < MAX_LENGTH)  or True #\
@@ -812,7 +785,7 @@ class NMT:
 
     def filterPairs(self,pairs):
         return [pair for pair in pairs if self.filterPair(pair)]
-
+    '''
 
 
     def prepareData(self,lang1, lang2, reverse=False, omit_unk=False):
@@ -828,14 +801,14 @@ class NMT:
                                                                            load_vocab_file=v_name)
             lang3 = None
         else:
-            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, self.train_ques,
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=self.train_ques,
                                                                            reverse=False,
                                                                            babi_ending=True,
                                                                            load_vocab_file=v_name)
             lang3 = self.train_ques
         print("Read %s sentence pairs" % len(self.pairs))
-        self.pairs = self.filterPairs(self.pairs)
-        print("Trimmed to %s sentence pairs" % len(self.pairs))
+        #self.pairs = self.filterPairs(self.pairs)
+        #print("Trimmed to %s sentence pairs" % len(self.pairs))
         print("Counting words...")
         if v_name is not None:
             v = self.open_sentences(self.vocab_lang.name)
@@ -1047,11 +1020,12 @@ class NMT:
                 print('list:',self.score_list)
                 exit()
 
-
+    '''
     def _mod_hidden(self, encoder_hidden):
         z = torch.cat((encoder_hidden,), 2)[0].view(1, 1, self.hidden_size )
         #print(z.size())
         return z
+    '''
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1092,8 +1066,9 @@ class NMT:
         if criterion is not None:
             wrapper_optimizer.zero_grad()
 
+
         outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
-        #self.prediction = prediction
+
 
         #print(len(outputs), outputs)
         #self._word_from_prediction()
@@ -1241,7 +1216,7 @@ class NMT:
 
                 if self.do_load_babi:
 
-                    print('current average: %.2f' % self.score, '- num right '+ str(num_right_small))
+                    print('current accuracy: %.2f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
 
                 print("-----")
@@ -1291,6 +1266,7 @@ class NMT:
 
         return decoded_words, None #decoder_attentions[:di + 1]
 
+    '''
     def get_sentence(self, s_in):
         wordlist, _ = self.evaluate(None,None,s_in)
 
@@ -1298,6 +1274,7 @@ class NMT:
         wordlist = self._shorten(wordlist)
 
         return wordlist
+    '''
 
     def setup_for_interactive(self):
         self.do_interactive = True
@@ -1331,7 +1308,8 @@ class NMT:
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix)
 
-
+        self.first_load = True
+        self.load_checkpoint()
         lr = hparams['learning_rate']
         self.trainIters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
@@ -1373,7 +1351,7 @@ if __name__ == '__main__':
 
         n.model_0_wra = n.model_0_wra.cuda()
 
-    if n.do_test_not_train:
+    if n.do_test_not_train and n.do_load_babi:
         print('test not train')
         n.setup_for_babi_test()
         exit()
