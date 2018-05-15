@@ -145,6 +145,8 @@ class EpisodicAttn(nn.Module):
         self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
         self.b_2 = nn.Parameter(torch.FloatTensor(1,))
 
+        self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -213,7 +215,7 @@ class MemRNN(nn.Module):
         output = 0
         return output, hidden
 
-########## Encoder Decoder #############
+
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
@@ -372,7 +374,8 @@ class WrapMemRNN(nn.Module):
                 ######
 
                 hidden = mem # memory[ iter - 1]
-                _, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
+                #_, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
+                out = self.new_memory_from_episode(current_episode.view(1,-1), self.q_q.view(1,-1), hidden.view(1,-1))
 
                 memory.append(out) #out
             self.all_mem = memory
@@ -404,6 +407,15 @@ class WrapMemRNN(nn.Module):
         #for i in concat_list: print(i.size(),  end=' / ')
         #print()
         return self.model_4_att(concat_list)
+
+    def new_memory_from_episode(self, facts, question, prev_mem):
+        #print(facts.size(), question.size(), prev_mem.size(),'size')
+        concat = torch.cat([facts, question, prev_mem], dim=1)
+        linear = self.model_4_att.next_mem(concat.view(1,-1))
+        next = F.relu(linear)
+        next = next.unsqueeze(1)
+        return next
+        pass
 
     def new_answer_module_simple(self,target_var, criterion):
         loss_num = 0
@@ -1153,8 +1165,8 @@ class NMT:
 
             if self.do_load_babi:
 
-                #print(outputs[0], int(target_variable[0][0].int()),'out v target')
-                if int(outputs[0]) == int(target_variable[0][0].int()):
+                #print(outputs[0].int(), int(target_variable[0][0].int()),'out v target')
+                if int(outputs[0].int()) == int(target_variable[0][0].int()):
                     num_right += 1
                     num_right_small += 1
 

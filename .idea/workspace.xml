@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="395">
-              <caret line="1353" column="45" selection-start-line="1353" selection-start-column="45" selection-end-line="1353" selection-end-column="45" />
+            <state relative-caret-position="611">
+              <caret line="412" column="58" selection-start-line="412" selection-start-column="58" selection-end-line="412" selection-end-column="58" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -121,17 +120,12 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setup_for_babi_test</find>
-      <find>task_babi_files</find>
-      <find>new_input_second_module</find>
-      <find>WrapMemRNN</find>
       <find>task_set_embedding_matrix</find>
       <find>teacher_forcing_ratio</find>
       <find>model_0_wra</find>
       <find>model_3_mem</find>
       <find>mem</find>
       <find>last_mem</find>
-      <find>MemRNN</find>
       <find>Encoder</find>
       <find>LuongAttention</find>
       <find>get_babi_raw</find>
@@ -151,6 +145,11 @@
       <find>input_lang</find>
       <find>_shorten</find>
       <find>get_sentence</find>
+      <find>model_3_mem_b</find>
+      <find>MemRNN</find>
+      <find>criterion</find>
+      <find>torch.cat(</find>
+      <find>new_answer_module_simple</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -594,8 +593,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="395">
-          <caret line="1353" column="45" selection-start-line="1353" selection-start-column="45" selection-end-line="1353" selection-end-column="45" />
+        <state relative-caret-position="611">
+          <caret line="412" column="58" selection-start-line="412" selection-start-column="58" selection-end-line="412" selection-end-column="58" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
