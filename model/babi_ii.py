@@ -976,7 +976,7 @@ class NMT:
         if self.do_load_babi or self.do_conserve_space:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth.tar')
-            self.score_list.append('%.2f' % self.score)
+            if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
