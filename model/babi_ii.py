@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=8):
+    def __init__(self,  hidden_size, a_list_size=5):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -346,24 +346,19 @@ class WrapMemRNN(nn.Module):
     def new_episodic_module(self, q_q):
         if True:
             self.q_q = q_q
-            memory = [q_q.clone()]
-            hidden = None
-            for iter in range(1, self.memory_hops+1):
+            #memory = [q_q.clone()]
+            mem = q_q
+            g = q_q
+            #hidden = None
+            e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
-                ######
-                g_record = []
-                mem = memory[iter -1]
-                g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            for iter in range(1, self.memory_hops+1):
 
                 sequences = self.inp_c
                 for i in range(len(sequences)):
                     g = self.new_attention_step(sequences[i], g, mem, self.q_q)
-                    g_record.append(g)
-                    pass
-
-                g = F.softmax(g,dim=0)
-                #print(g,'g')
-                e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+                    #g_record.append(g)
+                    g = F.softmax(g,dim=0)
 
                 for i in range(len(sequences)):
                     e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1),# g_record[i].view(1, 1, -1),
@@ -371,15 +366,17 @@ class WrapMemRNN(nn.Module):
                     pass
 
                 current_episode = e
-                ######
-                hidden = mem # memory[ iter - 1]
-                _, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
+
+                #hidden = mem # memory[ iter - 1]
+                _, out = self.model_3_mem_b(current_episode.view(1,1,-1), mem.view(1,1,-1))
                 #out = self.new_memory_from_episode(current_episode.view(1,-1), self.q_q.view(1,-1), hidden.view(1,-1))
 
-                memory.append(out) #out
-            self.all_mem = memory
-            self.last_mem = memory[-1]
-        return self.all_mem
+                mem = out
+                #memory.append(out) #out
+            #self.all_mem = memory
+            #print(mem,'m')
+            self.last_mem = mem #ory[-1]
+        return mem
 
 
 
@@ -395,9 +392,9 @@ class WrapMemRNN(nn.Module):
 
         concat_list = [
             prev_g.view(self.hidden_size, -1),
-            ct.view(self.hidden_size,-1),
-            mem.view(self.hidden_size,-1),
-            q_q.view(self.hidden_size,-1),
+            #ct.view(self.hidden_size,-1),
+            #mem.view(self.hidden_size,-1),
+            #q_q.view(self.hidden_size,-1),
             (ct * q_q).view(self.hidden_size,-1),
             (ct * mem).view(self.hidden_size, -1),
             torch.abs(ct - q_q).view(self.hidden_size,-1),
