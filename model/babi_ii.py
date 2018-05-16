@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=7):
+    def __init__(self,  hidden_size, a_list_size=8):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -324,7 +324,7 @@ class WrapMemRNN(nn.Module):
             outlist1.append(out1.view(1,-1))
             hidlist1.append(hidden1.view(1,-1)) #out1
 
-        self.inp_c = hidlist1 # outlist1
+        self.inp_c = outlist1 # outlist1
 
         outlist2 = []
         hidlist2 = []
@@ -358,21 +358,20 @@ class WrapMemRNN(nn.Module):
                 sequences = self.inp_c
                 for i in range(len(sequences)):
                     g = self.new_attention_step(sequences[i], g, mem, self.q_q)
-
                     g_record.append(g)
-
                     pass
 
+                g = F.softmax(g,dim=0)
+                #print(g,'g')
                 e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 for i in range(len(sequences)):
-
-                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g_record[i].view(1, 1, -1),
+                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1),# g_record[i].view(1, 1, -1),
                                                         e.view(1, 1, -1))  ## something goes here!!
                     pass
+
                 current_episode = e
                 ######
-
                 hidden = mem # memory[ iter - 1]
                 _, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
                 #out = self.new_memory_from_episode(current_episode.view(1,-1), self.q_q.view(1,-1), hidden.view(1,-1))
@@ -395,7 +394,7 @@ class WrapMemRNN(nn.Module):
         mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            #prev_g.view(self.hidden_size, -1),
+            prev_g.view(self.hidden_size, -1),
             ct.view(self.hidden_size,-1),
             mem.view(self.hidden_size,-1),
             q_q.view(self.hidden_size,-1),
@@ -976,7 +975,7 @@ class NMT:
         if self.do_load_babi or self.do_conserve_space:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth.tar')
-            if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
+            #if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
         if is_best:
@@ -1149,11 +1148,14 @@ class NMT:
             start = self.start + 1
 
         if self.do_load_babi and  self.do_test_not_train:
+            self.score_list.append('%.2f' % self.score)
+
             print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
             for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr')
             print(self.output_lang.n_words, 'num words')
+
             if self.do_auto_stop:
                 self._auto_stop()
 
