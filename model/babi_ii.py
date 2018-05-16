@@ -324,7 +324,7 @@ class WrapMemRNN(nn.Module):
             outlist1.append(out1.view(1,-1))
             hidlist1.append(hidden1.view(1,-1)) #out1
 
-        self.inp_c = outlist1
+        self.inp_c = hidlist1 # outlist1
 
         outlist2 = []
         hidlist2 = []
