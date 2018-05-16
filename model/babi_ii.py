@@ -374,8 +374,8 @@ class WrapMemRNN(nn.Module):
                 ######
 
                 hidden = mem # memory[ iter - 1]
-                #_, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
-                out = self.new_memory_from_episode(current_episode.view(1,-1), self.q_q.view(1,-1), hidden.view(1,-1))
+                _, out = self.model_3_mem_b(current_episode.view(1,1,-1), hidden.view(1,1,-1))
+                #out = self.new_memory_from_episode(current_episode.view(1,-1), self.q_q.view(1,-1), hidden.view(1,-1))
 
                 memory.append(out) #out
             self.all_mem = memory
@@ -465,6 +465,7 @@ class NMT:
         self.model_0_wra = None
         self.opt_1 = None
         self.embedding_matrix = None
+        self.criterion = None
 
         self.best_loss = None
         self.long_term_loss = 0
@@ -716,12 +717,13 @@ class NMT:
 
             self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
-            self.validate_iters()
-            self.start = 0
+
             print('auto save.')
             print('%.2f' % self.score,'score')
             self.save_checkpoint(num=len(self.pairs))
             self.saved_files += 1
+            self.validate_iters()
+            self.start = 0
             self.task_babi_files()
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -1125,11 +1127,12 @@ class NMT:
 
             wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
             self.opt_1 = wrapper_optimizer
+            self.criterion = nn.CrossEntropyLoss()
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
         if not self.do_test_not_train:
-            criterion = nn.CrossEntropyLoss()
+            criterion = self.criterion #nn.CrossEntropyLoss()
         else:
             criterion = None
 
@@ -1310,6 +1313,8 @@ class NMT:
         self.printable = 'validate'
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
         self.do_test_not_train = True
+        self.first_load = True
+        self.load_checkpoint()
         lr = hparams['learning_rate']
         self.start = 0
         self.train_iters(None,None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
