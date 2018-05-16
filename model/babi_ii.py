@@ -1248,7 +1248,12 @@ class NMT:
 
                 if self.do_load_babi and self.do_test_not_train:
 
-                    print('current accuracy: %.2f' % self.score, '- num right '+ str(num_right_small))
+                    print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
+                    num_right_small = 0
+
+                if self.do_load_babi and not self.do_test_not_train:
+
+                    print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
 
                 print("-----")
