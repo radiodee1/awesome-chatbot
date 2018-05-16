@@ -1183,7 +1183,7 @@ class NMT:
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
-            if self.do_load_babi and self.do_test_not_train:
+            if self.do_load_babi:# and self.do_test_not_train:
 
                 #print(outputs[0].int(), int(target_variable[0][0].int()),'out v target')
                 if int(outputs[0].int()) == int(target_variable[0][0].int()):
