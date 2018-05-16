@@ -1148,7 +1148,6 @@ class NMT:
             start = self.start + 1
 
         if self.do_load_babi and  self.do_test_not_train:
-            self.score_list.append('%.2f' % self.score)
 
             print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
@@ -1156,8 +1155,7 @@ class NMT:
                 print(param_group['lr'], 'lr')
             print(self.output_lang.n_words, 'num words')
 
-            if self.do_auto_stop:
-                self._auto_stop()
+
 
         print(self.train_fr,'loaded file')
 
@@ -1195,6 +1193,7 @@ class NMT:
                     num_right_small += 1
 
                 num_tot += 1
+
                 self.score = float(num_right/num_tot) * 100
 
             print_loss_total += float(l)
@@ -1261,6 +1260,12 @@ class NMT:
                     num_right_small = 0
 
                 print("-----")
+
+        if self.do_test_not_train and self.do_load_babi:
+            self.score_list.append('%.2f' % self.score)
+            print('list', ', '.join(self.score_list))
+            if self.do_auto_stop:
+                self._auto_stop()
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
