@@ -337,7 +337,6 @@ class WrapMemRNN(nn.Module):
 
         z = hidden2.view(1,-1) # out2
 
-
         self.q_q = z
 
         return out1 + out2, hidden1 + hidden2
@@ -350,31 +349,27 @@ class WrapMemRNN(nn.Module):
             mem = q_q
             g = q_q
             #hidden = None
-            e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
-            for iter in range(1, self.memory_hops+1):
+            for iter in range( self.memory_hops):
 
                 sequences = self.inp_c
                 for i in range(len(sequences)):
                     g = self.new_attention_step(sequences[i], g, mem, self.q_q)
-                    #g_record.append(g)
-                    g = F.softmax(g,dim=0)
+                    #g = F.sigmoid(g)
+
+                ee = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 for i in range(len(sequences)):
                     e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1),# g_record[i].view(1, 1, -1),
-                                                        e.view(1, 1, -1))  ## something goes here!!
+                                                        ee.view(1, 1, -1))  ## something goes here!!
                     pass
 
                 current_episode = e
 
-                #hidden = mem # memory[ iter - 1]
                 _, out = self.model_3_mem_b(current_episode.view(1,1,-1), mem.view(1,1,-1))
-                #out = self.new_memory_from_episode(current_episode.view(1,-1), self.q_q.view(1,-1), hidden.view(1,-1))
 
                 mem = out
-                #memory.append(out) #out
-            #self.all_mem = memory
-            #print(mem,'m')
+
             self.last_mem = mem #ory[-1]
         return mem
 
@@ -404,7 +399,7 @@ class WrapMemRNN(nn.Module):
         #print()
         return self.model_4_att(concat_list)
 
-    def new_memory_from_episode(self, facts, question, prev_mem):
+    def new_process_from_attn(self, facts, question, prev_mem):
         #print(facts.size(), question.size(), prev_mem.size(),'size')
         concat = torch.cat([facts, question, prev_mem], dim=1)
         linear = self.model_4_att.next_mem(concat.view(1,-1))
