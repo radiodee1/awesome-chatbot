@@ -478,6 +478,7 @@ class NMT:
         self.saved_files = 0
         self.babi_num = '1'
         self.score_list = []
+        self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
 
         self.uniform_low = -1.0
@@ -1253,6 +1254,10 @@ class NMT:
 
                 print("-----")
 
+        if not self.do_test_not_train and self.do_load_babi:
+            self.score_list_training.append('%.2f' % self.score)
+            print('training:', ', '.join(self.score_list_training))
+            
         if self.do_test_not_train and self.do_load_babi:
             self.score_list.append('%.2f' % self.score)
             print('list', ', '.join(self.score_list))
