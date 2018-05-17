@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="395">
-              <caret line="329" column="11" selection-start-line="329" selection-start-column="11" selection-end-line="329" selection-end-column="11" />
+            <state relative-caret-position="629">
+              <caret line="239" lean-forward="true" selection-start-line="239" selection-end-line="239" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -120,20 +120,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>input_lang</find>
-      <find>_shorten</find>
-      <find>get_sentence</find>
-      <find>torch.cat(</find>
-      <find>new_answer_module_simple</find>
-      <find>trainIters</find>
-      <find>prepareData</find>
-      <find>score</find>
-      <find>train_iters</find>
       <find>opt_1</find>
       <find>first_load</find>
       <find>load_checkpoint</find>
       <find>validate_iters</find>
-      <find>do_test_not_train</find>
       <find>save_checkpoint</find>
       <find>model_3_mem_b</find>
       <find>CustomGRU</find>
@@ -150,6 +140,16 @@
       <find>FloatTensor</find>
       <find>score_list_training</find>
       <find>concat_list</find>
+      <find>task_babi_valid_files</find>
+      <find>do_test_not_train</find>
+      <find>outputs</find>
+      <find>loss</find>
+      <find>loss_num</find>
+      <find>new_answer_module_simple</find>
+      <find>train_iters</find>
+      <find>Adam</find>
+      <find>model_0_wra</find>
+      <find>dropout</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -550,8 +550,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="395">
-          <caret line="329" column="11" selection-start-line="329" selection-start-column="11" selection-end-line="329" selection-end-column="11" />
+        <state relative-caret-position="629">
+          <caret line="239" lean-forward="true" selection-start-line="239" selection-end-line="239" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

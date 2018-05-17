@@ -202,13 +202,13 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        #self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU(hidden_size,hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
         #_, hidden = self.gru(input,hidden)
-        hidden = self.gru(input, hidden)
-        output = 0
+        output,hidden = self.gru(input, hidden)
+        #output = 0
         return output, hidden
 
 class Encoder(nn.Module):
@@ -298,49 +298,26 @@ class WrapMemRNN(nn.Module):
         self.new_input_module(input_variable, question_variable)
         self.new_episodic_module(self.q_q)
 
-        outputs, masks, loss, loss_num = self.new_answer_module_simple(target_variable, criterion)
+        outputs,  loss = self.new_answer_module_simple(target_variable, criterion)
 
-        return outputs, masks, loss, loss_num #, self.prediction
+        return outputs, None, loss, None
 
     def new_freeze_embedding(self):
         self.model_1_enc.embed.weight.requires_grad = False
-        #self.model_2_dec.embed.weight.requires_grad = False
+
         print('freeze embedding')
         pass
 
     def new_input_module(self, input_variable, question_variable):
-        outlist1 = []
-        hidlist1 = []
-        #hidden1 = None
-        hidden1 = Variable(torch.zeros(1, 1, self.hidden_size))
 
-        '''
-        for i in input_variable:
-            i = i.view(1,-1)
-            out1, hidden1 = self.model_1_enc(i,hidden1)
-            outlist1.append(out1.view(1,-1))
-            hidlist1.append(hidden1.view(1,-1)) #out1
-        '''
         out1, hidden1 = self.model_1_enc(input_variable)
 
         self.inp_c = out1 # outlist1
 
-
-        outlist2 = []
-        hidlist2 = []
-        hidden2 = None
-
-        '''
-        for i in question_variable:
-            i = i.view(1,-1)
-            out2, hidden2 = self.model_2_enc(i)
-            hidlist2.append(hidden2.view(1,-1))
-            outlist2.append(out2.view(1,-1)) #out2
-        '''
         out2, hidden2 = self.model_2_enc(question_variable)
 
         z = hidden2.view(1,-1) # out2
-        
+
         self.q_q = z
 
         return
@@ -351,28 +328,28 @@ class WrapMemRNN(nn.Module):
             self.q_q = q_q
             #memory = [q_q.clone()]
             mem = q_q
-            g = q_q
+            #g = q_q
             #hidden = None
             g_list = []
             for iter in range(self.memory_hops):
 
                 e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+                g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 sequences = self.inp_c
                 for i in range(len(sequences)):
                     g = self.new_attention_step(sequences[i], g, mem, self.q_q)
 
-                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1),
-                                                        e.view(1, 1, -1))  ## something goes here!!
+                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1), e.view(1, 1, -1))
                     pass
 
                 current_episode = e
 
-                #_, out = self.model_3_mem_b(current_episode.view(1,1,-1), mem.view(1,1,-1))
-                out = self.new_process_from_attn(current_episode.view(1,1,-1),self.q_q.view(1,1,-1), mem.view(1,1,-1))
+                _, out = self.model_3_mem_a(current_episode.view(1,1,-1), mem.view(1,1,-1))
+                #out = self.new_process_from_attn(current_episode.view(1,1,-1),self.q_q.view(1,1,-1), mem.view(1,1,-1))
                 mem = out
 
-            self.last_mem = mem #ory[-1]
+            self.last_mem = mem
         return mem
 
 
@@ -397,8 +374,7 @@ class WrapMemRNN(nn.Module):
             torch.abs(ct - q_q).view(self.hidden_size,-1),
             torch.abs(ct - mem).view(self.hidden_size, -1)
         ]
-        #for i in concat_list: print(i.size(),  end=' / ')
-        #print()
+
         return self.model_4_att(concat_list)
 
     def new_process_from_attn(self, facts, question, prev_mem):
@@ -411,16 +387,15 @@ class WrapMemRNN(nn.Module):
         pass
 
     def new_answer_module_simple(self,target_var, criterion):
-        loss_num = 0
-        loss = None
+
+        loss = 0
         ansx = self.model_5_ans(self.last_mem, self.q_q)
         ans = ansx.data.max(dim=1)[1]
-        #print(ans, 'ans')
+
         if criterion is not None:
-            loss = criterion(ansx,target_var[0])
-        if loss is not None:
-            loss_num += loss.item()  # .data[0]
-        return [ans], None, loss, loss_num
+            loss = criterion(ansx, target_var[0])
+
+        return [ans], loss
 
         pass
 
@@ -1027,7 +1002,7 @@ class NMT:
                         print('new optimizer')
                         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
 
-                        self.opt_1 =  optim.Adam(parameters, lr=hparams['learning_rate'])
+                        self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
                 print("loaded checkpoint '"+ basename + "' ")
             else:
                 print("no checkpoint found at '"+ basename + "'")
@@ -1045,12 +1020,7 @@ class NMT:
                 print('list:',self.score_list)
                 exit()
 
-    '''
-    def _mod_hidden(self, encoder_hidden):
-        z = torch.cat((encoder_hidden,), 2)[0].view(1, 1, self.hidden_size )
-        #print(z.size())
-        return z
-    '''
+
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1091,19 +1061,17 @@ class NMT:
         if criterion is not None:
             wrapper_optimizer.zero_grad()
 
+        else:
+            pass
 
         outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
-
-
-        #print(len(outputs), outputs)
-        #self._word_from_prediction()
 
         if criterion is not None:
             loss.backward()
 
             wrapper_optimizer.step()
 
-        return outputs, masks , loss_num
+        return outputs, masks , loss
 
 
 
@@ -1115,7 +1083,7 @@ class NMT:
         save_num = 0
         print_loss_total = 0  # Reset every print_every
         num_right = 0
-        num_tot = 0 #len(self.pairs)
+        num_tot = 0
         num_right_small = 0
 
         if self.opt_1 is None or self.first_load:
@@ -1123,12 +1091,13 @@ class NMT:
 
             wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
             self.opt_1 = wrapper_optimizer
-            self.criterion = nn.CrossEntropyLoss(size_average=False)
+
+        self.criterion = nn.CrossEntropyLoss(size_average=False)
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
         if not self.do_test_not_train:
-            criterion = self.criterion #nn.CrossEntropyLoss()
+            criterion = self.criterion
         else:
             criterion = None
 
@@ -1137,7 +1106,6 @@ class NMT:
         start = 1
         if self.do_load_babi:
             self.start = 0
-
 
         if self.start != 0 and self.start is not None:
             start = self.start + 1
@@ -1150,17 +1118,18 @@ class NMT:
                 print(param_group['lr'], 'lr')
             print(self.output_lang.n_words, 'num words')
 
-
-
         print(self.train_fr,'loaded file')
 
         print("-----")
 
+        if self.do_load_babi:
+            if self.do_test_not_train:
+                self.model_0_wra.eval()
+            else:
+                self.model_0_wra.train()
+
         for iter in range(start, n_iters + 1):
             training_pair = training_pairs[iter - 1]
-
-            #print(training_pair)
-            #exit()
 
             input_variable = training_pair[0]
             question_variable = training_pair[1]
@@ -1180,9 +1149,8 @@ class NMT:
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
-            if self.do_load_babi:# and self.do_test_not_train:
+            if self.do_load_babi:
 
-                #print(outputs[0].int(), int(target_variable[0][0].int()),'out v target')
                 if int(outputs[0].int()) == int(target_variable[0][0].int()):
                     num_right += 1
                     num_right_small += 1
@@ -1283,6 +1251,7 @@ class NMT:
             question_variable = question
             if not self.do_load_babi: sos_token = question_variable
 
+
         outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, sos_token, None)
 
         #####################
@@ -1314,15 +1283,7 @@ class NMT:
 
         return decoded_words, None #decoder_attentions[:di + 1]
 
-    '''
-    def get_sentence(self, s_in):
-        wordlist, _ = self.evaluate(None,None,s_in)
 
-        ## filter words ##
-        wordlist = self._shorten(wordlist)
-
-        return wordlist
-    '''
 
     def validate_iters(self):
         self.task_babi_valid_files()
@@ -1389,7 +1350,8 @@ if __name__ == '__main__':
         print('load test set -- no training.')
         print(n.train_fr)
 
-    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False, omit_unk=n.do_hide_unk)
+    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
+                                                         omit_unk=n.do_hide_unk)
 
 
     if n.do_load_babi:
