@@ -139,11 +139,8 @@ class EpisodicAttn(nn.Module):
 
         self.a_list_size = a_list_size
 
-        self.W_b = nn.Parameter(torch.FloatTensor(hidden_size, hidden_size))
-        self.W_1 = nn.Parameter(torch.FloatTensor(hidden_size, self.a_list_size * hidden_size))
-        self.W_2 = nn.Parameter(torch.FloatTensor(1, hidden_size))
-        self.b_1 = nn.Parameter(torch.FloatTensor(hidden_size,))
-        self.b_2 = nn.Parameter(torch.FloatTensor(1,))
+        self.W_1 = nn.Linear( self.a_list_size * hidden_size,1)
+        self.W_2 = nn.Linear(1, hidden_size)
 
         self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
 
@@ -158,14 +155,17 @@ class EpisodicAttn(nn.Module):
 
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=0)# dim=1
-        self.c_list_z = self.c_list_z.view(-1,1)#.permute(1,0)#.squeeze(0)
+        self.c_list_z = torch.cat(concat_list,dim=1)
 
-        self.l_1 = torch.mm(self.W_1, self.c_list_z) + self.b_1
+        self.c_list_z = self.c_list_z.view(1,-1)
+
+        self.l_1 = self.W_1(self.c_list_z)
 
         self.l_1 = torch.tanh(self.l_1)
-        self.l_2 = torch.mm(self.W_2, self.l_1) + self.b_2
-        self.G = torch.sigmoid(self.l_2)[0]
+
+        self.l_2 = self.W_2(self.l_1)
+
+        self.G = F.sigmoid(self.l_2)[0]
 
         return  self.G
 
@@ -206,14 +206,10 @@ class MemRNN(nn.Module):
         self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
-
-
         #_, hidden = self.gru(input,hidden)
         hidden = self.gru(input, hidden)
         output = 0
         return output, hidden
-
-
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
@@ -299,7 +295,7 @@ class WrapMemRNN(nn.Module):
         pass
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
-        encoder_output, encoder_hidden = self.new_input_module(input_variable, question_variable)
+        self.new_input_module(input_variable, question_variable)
         self.new_episodic_module(self.q_q)
 
         outputs, masks, loss, loss_num = self.new_answer_module_simple(target_variable, criterion)
@@ -315,29 +311,39 @@ class WrapMemRNN(nn.Module):
     def new_input_module(self, input_variable, question_variable):
         outlist1 = []
         hidlist1 = []
-        hidden1 = None
+        #hidden1 = None
+        hidden1 = Variable(torch.zeros(1, 1, self.hidden_size))
+
+        '''
         for i in input_variable:
             i = i.view(1,-1)
             out1, hidden1 = self.model_1_enc(i,hidden1)
             outlist1.append(out1.view(1,-1))
             hidlist1.append(hidden1.view(1,-1)) #out1
+        '''
+        out1, hidden1 = self.model_1_enc(input_variable)
 
-        self.inp_c = outlist1 # outlist1
+        self.inp_c = out1 # outlist1
+
 
         outlist2 = []
         hidlist2 = []
         hidden2 = None
+
+        '''
         for i in question_variable:
             i = i.view(1,-1)
-            out2, hidden2 = self.model_2_enc(i,hidden2)
+            out2, hidden2 = self.model_2_enc(i)
             hidlist2.append(hidden2.view(1,-1))
             outlist2.append(out2.view(1,-1)) #out2
+        '''
+        out2, hidden2 = self.model_2_enc(question_variable)
 
         z = hidden2.view(1,-1) # out2
-
+        
         self.q_q = z
 
-        return out1 + out2, hidden1 + hidden2
+        return
 
 
     def new_episodic_module(self, q_q):
@@ -347,25 +353,23 @@ class WrapMemRNN(nn.Module):
             mem = q_q
             g = q_q
             #hidden = None
+            g_list = []
+            for iter in range(self.memory_hops):
 
-            for iter in range( self.memory_hops):
+                e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 sequences = self.inp_c
                 for i in range(len(sequences)):
                     g = self.new_attention_step(sequences[i], g, mem, self.q_q)
-                    #g = F.sigmoid(g)
 
-                ee = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
-
-                for i in range(len(sequences)):
-                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1),# g_record[i].view(1, 1, -1),
-                                                        ee.view(1, 1, -1))  ## something goes here!!
+                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1),
+                                                        e.view(1, 1, -1))  ## something goes here!!
                     pass
 
                 current_episode = e
 
-                _, out = self.model_3_mem_b(current_episode.view(1,1,-1), mem.view(1,1,-1))
-
+                #_, out = self.model_3_mem_b(current_episode.view(1,1,-1), mem.view(1,1,-1))
+                out = self.new_process_from_attn(current_episode.view(1,1,-1),self.q_q.view(1,1,-1), mem.view(1,1,-1))
                 mem = out
 
             self.last_mem = mem #ory[-1]
@@ -1119,7 +1123,7 @@ class NMT:
 
             wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
             self.opt_1 = wrapper_optimizer
-            self.criterion = nn.CrossEntropyLoss()
+            self.criterion = nn.CrossEntropyLoss(size_average=False)
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
@@ -1252,9 +1256,6 @@ class NMT:
 
                 print("-----")
 
-        if self.do_load_babi:
-            print('training:', ', '.join(self.score_list_training))
-            print('list', ', '.join(self.score_list))
 
         if not self.do_test_not_train and self.do_load_babi:
             self.score_list_training.append('%.2f' % self.score)
@@ -1263,6 +1264,10 @@ class NMT:
             self.score_list.append('%.2f' % self.score)
             if self.do_auto_stop:
                 self._auto_stop()
+
+        if self.do_load_babi:
+            print('training:', ', '.join(self.score_list_training))
+            print('list', ', '.join(self.score_list))
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 

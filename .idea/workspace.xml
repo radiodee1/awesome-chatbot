@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1565">
-              <caret line="423" selection-start-line="423" selection-end-line="423" />
+            <state relative-caret-position="395">
+              <caret line="329" column="11" selection-start-line="329" selection-start-column="11" selection-end-line="329" selection-end-column="11" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -120,10 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>open_sentences</find>
-      <find>filterPairs</find>
-      <find>filterPair</find>
-      <find>output_lang</find>
       <find>input_lang</find>
       <find>_shorten</find>
       <find>get_sentence</find>
@@ -135,7 +131,6 @@
       <find>train_iters</find>
       <find>opt_1</find>
       <find>first_load</find>
-      <find>criterion</find>
       <find>load_checkpoint</find>
       <find>validate_iters</find>
       <find>do_test_not_train</find>
@@ -148,8 +143,13 @@
       <find>new_memory_from_episode</find>
       <find>model_3_mem_a</find>
       <find>MemRNN</find>
-      <find>concat_list</find>
       <find>score_list</find>
+      <find>criterion</find>
+      <find>W_b</find>
+      <find>next_mem</find>
+      <find>FloatTensor</find>
+      <find>score_list_training</find>
+      <find>concat_list</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -213,7 +213,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="526" />
+    <option name="x" value="525" />
     <option name="y" value="80" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -254,7 +254,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="526" y="80" width="1380" height="1000" extended-state="0" />
+    <frame x="525" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
@@ -278,21 +278,21 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -550,8 +550,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1565">
-          <caret line="423" selection-start-line="423" selection-end-line="423" />
+        <state relative-caret-position="395">
+          <caret line="329" column="11" selection-start-line="329" selection-start-column="11" selection-end-line="329" selection-end-column="11" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
