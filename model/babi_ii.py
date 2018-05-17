@@ -191,8 +191,6 @@ class CustomGRU(nn.Module):
             weight.data.uniform_(-stdv, stdv)
 
     def forward(self, fact, C):
-
-
         r = F.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
         #g = g.unsqueeze(1).expand_as(h_tilda)
@@ -1254,13 +1252,15 @@ class NMT:
 
                 print("-----")
 
+        if self.do_load_babi:
+            print('training:', ', '.join(self.score_list_training))
+            print('list', ', '.join(self.score_list))
+
         if not self.do_test_not_train and self.do_load_babi:
             self.score_list_training.append('%.2f' % self.score)
-            print('training:', ', '.join(self.score_list_training))
-            
+
         if self.do_test_not_train and self.do_load_babi:
             self.score_list.append('%.2f' % self.score)
-            print('list', ', '.join(self.score_list))
             if self.do_auto_stop:
                 self._auto_stop()
 
