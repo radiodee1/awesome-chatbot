@@ -227,7 +227,7 @@ class EpisodicMemory(nn.Module):
 
         z = z.view(-1, 4 * embedding_size)
 
-        G = F.tanh(self.z1(z))
+        G = F.softmax(self.z1(z))
         #G = self.z2(G)
         G = G.view(batch_num, -1)
         #G = F.softmax(G)
@@ -287,7 +287,7 @@ class EpisodicAttn(nn.Module):
 
         self.l_1 = self.W_1(self.c_list_z)
 
-        self.l_1 = torch.tanh(self.l_1)
+        self.l_1 = F.sigmoid(self.l_1)
 
         #print(self.l_1.size(),'l')
         #self.l_2 = self.W_2(self.l_1)
