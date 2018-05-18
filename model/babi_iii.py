@@ -128,6 +128,128 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 ################# pytorch modules ###############
 
+class AttentionGRUCell(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(AttentionGRUCell, self).__init__()
+        self.hidden_size = hidden_size
+        self.Wr = nn.Linear(input_size, hidden_size)
+        #init.xavier_normal(self.Wr.state_dict()['weight'])
+        self.Ur = nn.Linear(hidden_size, hidden_size)
+        #init.xavier_normal(self.Ur.state_dict()['weight'])
+        self.W = nn.Linear(input_size, hidden_size)
+        #init.xavier_normal(self.W.state_dict()['weight'])
+        self.U = nn.Linear(hidden_size, hidden_size)
+        #init.xavier_normal(self.U.state_dict()['weight'])
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            weight.data.uniform_(-stdv, stdv)
+
+    def forward(self, fact, C, g):
+        '''
+        fact.size() -> (#batch, #hidden = #embedding)
+        c.size() -> (#hidden, ) -> (#batch, #hidden = #embedding)
+        r.size() -> (#batch, #hidden = #embedding)
+        h_tilda.size() -> (#batch, #hidden = #embedding)
+        g.size() -> (#batch, )
+        '''
+
+        r = F.sigmoid(self.Wr(fact) + self.Ur(C))
+        h_tilda = F.tanh(self.W(fact) + r * self.U(C))
+        g = g.unsqueeze(1).expand_as(h_tilda)
+        h = g * h_tilda + (1 - g) * C
+        return h
+
+class AttentionGRU(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(AttentionGRU, self).__init__()
+        self.hidden_size = hidden_size
+        self.AGRUCell = AttentionGRUCell(input_size, hidden_size)
+
+    def forward(self, facts, G):
+        '''
+        facts.size() -> (#batch, #sentence, #hidden = #embedding)
+        fact.size() -> (#batch, #hidden = #embedding)
+        G.size() -> (#batch, #sentence)
+        g.size() -> (#batch, )
+        C.size() -> (#batch, #hidden)
+        '''
+        sen_num, embedding_size = facts.size()
+
+        C = Variable(torch.zeros(self.hidden_size))
+        for sid in range(sen_num):
+            fact = facts[ sid, :]
+            g = G[:, sid]
+            if sid == 0:
+                C = C.view(1,-1) #unsqueeze(0).expand_as(fact)
+            C = self.AGRUCell(fact, C, g)
+        return C
+
+class EpisodicMemory(nn.Module):
+    def __init__(self, hidden_size):
+        super(EpisodicMemory, self).__init__()
+        self.hidden_size = hidden_size
+        self.AGRU = AttentionGRU(hidden_size, hidden_size)
+        self.z1 = nn.Linear(4 * hidden_size, hidden_size)
+        #self.z2 = nn.Linear(hidden_size, 1)
+        self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
+        #init.xavier_normal(self.z1.state_dict()['weight'])
+        #init.xavier_normal(self.z2.state_dict()['weight'])
+        #init.xavier_normal(self.next_mem.state_dict()['weight'])
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            weight.data.uniform_(-stdv, stdv)
+
+    def make_interaction(self, facts, questions, prevM):
+        '''
+        facts.size() -> (#batch, #sentence, #hidden = #embedding)
+        questions.size() -> (#batch, 1, #hidden)
+        prevM.size() -> (#batch, #sentence = 1, #hidden = #embedding)
+        z.size() -> (#batch, #sentence, 4 x #embedding)
+        G.size() -> (#batch, #sentence)
+        '''
+        #print(facts.size(),'f')
+        batch_num, embedding_size = facts.size()
+        questions = questions.view(1,-1) #expand_as(facts)
+        prevM = prevM.view(1,-1) #expand_as(facts)
+
+        z = torch.cat([
+            facts * questions,
+            facts * prevM,
+            torch.abs(facts - questions),
+            torch.abs(facts - prevM)
+        ], dim=1)
+
+        z = z.view(-1, 4 * embedding_size)
+
+        G = F.tanh(self.z1(z))
+        #G = self.z2(G)
+        G = G.view(batch_num, -1)
+        #G = F.softmax(G)
+
+        return G
+
+    def forward(self, facts, questions, prevM):
+        '''
+        facts.size() -> (#batch, #sentence, #hidden = #embedding)
+        questions.size() -> (#batch, #sentence = 1, #hidden)
+        prevM.size() -> (#batch, #sentence = 1, #hidden = #embedding)
+        G.size() -> (#batch, #sentence)
+        C.size() -> (#batch, #hidden)
+        concat.size() -> (#batch, 3 x #embedding)
+        '''
+        G = self.make_interaction(facts, questions, prevM)
+        C = self.AGRU(facts, G)
+        concat = torch.cat([prevM.squeeze(1), C, questions.squeeze(1)], dim=1)
+        next_mem = F.relu(self.next_mem(concat))
+        next_mem = next_mem.unsqueeze(1)
+        return next_mem
+
 
 
 class EpisodicAttn(nn.Module):
@@ -139,8 +261,8 @@ class EpisodicAttn(nn.Module):
 
         self.a_list_size = a_list_size
 
-        self.W_1 = nn.Linear( self.a_list_size * hidden_size,1)
-        self.W_2 = nn.Linear(1, hidden_size)
+        self.W_1 = nn.Linear( self.a_list_size * hidden_size,hidden_size)
+        #self.W_2 = nn.Linear(1, hidden_size)
 
         self.dropout_1 = nn.Dropout(dropout)
         self.dropout_2 = nn.Dropout(dropout)
@@ -167,11 +289,12 @@ class EpisodicAttn(nn.Module):
 
         self.l_1 = torch.tanh(self.l_1)
 
-        self.l_2 = self.W_2(self.l_1)
+        #print(self.l_1.size(),'l')
+        #self.l_2 = self.W_2(self.l_1)
 
-        self.G = F.sigmoid(self.l_2)[0]
+        #self.G = self.l_1 # F.sigmoid(self.l_2)[0]
 
-        return  self.G
+        return self.l_1 # self.G
 
 
 
@@ -284,6 +407,7 @@ class WrapMemRNN(nn.Module):
 
         self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
+        self.model_3_mem_c = EpisodicMemory(hidden_size)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
@@ -307,6 +431,7 @@ class WrapMemRNN(nn.Module):
 
         self.new_input_module(input_variable, question_variable)
         self.new_episodic_module(self.q_q)
+        #self.new_simple_mem_module()
         outputs,  loss = self.new_answer_module_simple(target_variable, criterion)
 
         return outputs, None, loss, None
@@ -330,6 +455,22 @@ class WrapMemRNN(nn.Module):
         self.q_q = z
 
         return
+
+    def new_simple_mem_module(self):
+        for j in range(self.memory_hops):
+            mem = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+
+            for i in range(len(self.inp_c)):
+                mem = self.model_3_mem_c(self.inp_c[i], self.q_q, mem)
+                #e, ee = self.new_episode_small_step(self.inp_c[i].view(1, 1, -1), g.view(1, 1, -1), e.view(1, 1, -1))
+            #current_episode = e
+            #_, out = self.model_3_mem_a(current_episode.view(1, 1, -1), mem.view(1, 1, -1))
+            out  = self.new_process_from_attn(self.inp_c[-1], self.q_q, mem)
+            mem = out
+            self.last_mem = mem
+        pass
+        return mem
 
 
     def new_episodic_module(self, q_q):
@@ -388,7 +529,7 @@ class WrapMemRNN(nn.Module):
 
     def new_process_from_attn(self, facts, question, prev_mem):
         #print(facts.size(), question.size(), prev_mem.size(),'size')
-        concat = torch.cat([facts, question, prev_mem], dim=1)
+        concat = torch.cat([facts.view(1,-1), question.view(1,-1), prev_mem.view(1,-1)], dim=1)
         concat = self.model_4_att.dropout_2(concat)
         linear = self.model_4_att.next_mem(concat.view(1,-1))
         next = F.relu(linear)
