@@ -121,7 +121,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.3
+hparams['dropout'] = 0.5
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=5):
+    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -142,6 +142,8 @@ class EpisodicAttn(nn.Module):
         self.W_1 = nn.Linear( self.a_list_size * hidden_size,1)
         self.W_2 = nn.Linear(1, hidden_size)
 
+        self.dropout_1 = nn.Dropout(dropout)
+        self.dropout_2 = nn.Dropout(dropout)
         self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
 
         self.reset_parameters()
@@ -156,6 +158,8 @@ class EpisodicAttn(nn.Module):
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=1)
+
+        self.c_list_z = self.dropout_1(self.c_list_z)
 
         self.c_list_z = self.c_list_z.view(1,-1)
 
@@ -220,6 +224,7 @@ class Encoder(nn.Module):
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        self.dropout = nn.Dropout(dropout)
         if embedding is not None:
             self.embed.weight.data.copy_(torch.from_numpy(embedding))
             print('embedding encoder')
@@ -227,6 +232,7 @@ class Encoder(nn.Module):
 
     def forward(self, source, hidden=None):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        embedded = self.dropout(embedded)
         encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
@@ -272,12 +278,12 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, 2,dropout,embedding=embedding, bidirectional=False)
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout, embedding=embedding, bidirectional=False)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, 2,dropout=dropout,embedding=embedding, bidirectional=False)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
         self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
-        self.model_4_att = EpisodicAttn(hidden_size)
+        self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
@@ -382,6 +388,7 @@ class WrapMemRNN(nn.Module):
     def new_process_from_attn(self, facts, question, prev_mem):
         #print(facts.size(), question.size(), prev_mem.size(),'size')
         concat = torch.cat([facts, question, prev_mem], dim=1)
+        concat = self.model_4_att.dropout_2(concat)
         linear = self.model_4_att.next_mem(concat.view(1,-1))
         next = F.relu(linear)
         next = next.unsqueeze(1)
