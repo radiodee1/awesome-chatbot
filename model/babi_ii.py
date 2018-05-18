@@ -121,7 +121,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.0
+hparams['dropout'] = 0.3
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -198,11 +198,11 @@ class CustomGRU(nn.Module):
         return h_tilda
 
 class MemRNN(nn.Module):
-    def __init__(self, hidden_size):
+    def __init__(self, hidden_size, dropout=0.3):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        self.gru = nn.GRU(hidden_size, hidden_size, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
         #self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
@@ -213,7 +213,7 @@ class MemRNN(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout, bidirectional=False, embedding=None):
+                 n_layers, dropout=0.3, bidirectional=False, embedding=None):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
@@ -239,11 +239,12 @@ class Encoder(nn.Module):
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
-    def __init__(self, vocab_size, hidden_size):
+    def __init__(self, vocab_size, hidden_size, dropout=0.3):
         super(AnswerModule, self).__init__()
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.out = nn.Linear(hidden_size * 2, vocab_size)
+        self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -252,6 +253,7 @@ class AnswerModule(nn.Module):
             weight.data.uniform_(-stdv, stdv)
 
     def forward(self, mem, question_h):
+        mem = self.dropout(mem)
         mem = mem.view(1,-1)
         question_h = question_h.view(1,-1)
         concat = torch.cat([mem, question_h], dim=1)#.squeeze(1)
@@ -261,7 +263,7 @@ class AnswerModule(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.0, do_babi=True, bad_token_lst=[], freeze_embedding=False, embedding=None):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[], freeze_embedding=False, embedding=None):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -270,13 +272,13 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers,dropout,embedding=embedding, bidirectional=False)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, 2,dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout, embedding=embedding, bidirectional=False)
 
-        self.model_3_mem_a = MemRNN( hidden_size)
-        self.model_3_mem_b = MemRNN(hidden_size)
+        self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
+        self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size)
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -295,9 +297,9 @@ class WrapMemRNN(nn.Module):
         pass
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
+
         self.new_input_module(input_variable, question_variable)
         self.new_episodic_module(self.q_q)
-
         outputs,  loss = self.new_answer_module_simple(target_variable, criterion)
 
         return outputs, None, loss, None
@@ -1060,12 +1062,15 @@ class NMT:
 
         if criterion is not None:
             wrapper_optimizer.zero_grad()
-
+            self.model_0_wra.train()
+            outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable,
+                                                              criterion)
         else:
-            pass
-
-        outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
-
+            self.model_0_wra.eval()
+            with torch.no_grad():
+                outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable,
+                                                                  criterion)
+        #print(self.model_0_wra.training,'train')
         if criterion is not None:
             loss.backward()
 
@@ -1125,6 +1130,7 @@ class NMT:
         if self.do_load_babi:
             if self.do_test_not_train:
                 self.model_0_wra.eval()
+
             else:
                 self.model_0_wra.train()
 
@@ -1251,8 +1257,9 @@ class NMT:
             question_variable = question
             if not self.do_load_babi: sos_token = question_variable
 
-
-        outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, sos_token, None)
+        self.model_0_wra.eval()
+        with torch.no_grad():
+            outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, sos_token, None)
 
         #####################
 
