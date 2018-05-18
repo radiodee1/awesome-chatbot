@@ -121,7 +121,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.5
+hparams['dropout'] = 0.2
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
