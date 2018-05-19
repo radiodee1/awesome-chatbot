@@ -121,9 +121,19 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.2
+hparams['dropout'] = 0.5
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
+
+global old_training
+
+old_training = False
+
+def show_training(training, label):
+    global old_training
+    if training is not old_training:
+        print(training, label)
+    old_training = training
 
 
 ################# pytorch modules ###############
@@ -250,11 +260,11 @@ class EpisodicMemory(nn.Module):
         next_mem = next_mem.unsqueeze(1)
         return next_mem
 
-
+########################## ^^ unused ^^
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -267,7 +277,8 @@ class EpisodicAttn(nn.Module):
         self.dropout_1 = nn.Dropout(dropout)
         self.dropout_2 = nn.Dropout(dropout)
         self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
-
+        self.c_list_z = None
+        self.l_1 = None
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -279,19 +290,19 @@ class EpisodicAttn(nn.Module):
 
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=1)
+        self.c_list_z = torch.cat(concat_list,dim=0)
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(1,-1)
 
+        self.c_list_z = self.c_list_z.view(-1,self.hidden_size * self.a_list_size)
         self.l_1 = self.W_1(self.c_list_z)
 
-        self.l_1 = F.sigmoid(self.l_1)
+        self.l_1 = F.softmax(self.l_1,dim=0)
 
         #print(self.l_1.size(),'l')
         #self.l_2 = self.W_2(self.l_1)
-
+        #show_training(self.training,'attn')
         #self.G = self.l_1 # F.sigmoid(self.l_2)[0]
 
         return self.l_1 # self.G
@@ -322,19 +333,20 @@ class CustomGRU(nn.Module):
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
         #g = g.unsqueeze(1).expand_as(h_tilda)
         #h = g * h_tilda + (1 - g) * C
-        return h_tilda
+        return None, h_tilda
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = CustomGRU(hidden_size,hidden_size)
+        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
         #_, hidden = self.gru(input,hidden)
         output,hidden = self.gru(input, hidden)
+        #print(self.training,'= train')
         #output = 0
         return output, hidden
 
@@ -373,7 +385,8 @@ class AnswerModule(nn.Module):
         super(AnswerModule, self).__init__()
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
-        self.out = nn.Linear(hidden_size * 2, vocab_size)
+        self.out_1 = nn.Linear(hidden_size,vocab_size)
+        #self.out_2 = nn.Linear(vocab_size,vocab_size)
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -384,10 +397,16 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
         mem = self.dropout(mem)
-        mem = mem.view(1,-1)
-        question_h = question_h.view(1,-1)
-        concat = torch.cat([mem, question_h], dim=1)#.squeeze(1)
-        out = self.out(concat)
+        mem = mem.view(self.hidden_size,-1)
+        question_h = question_h.view(self.hidden_size,-1)
+
+        concat = torch.cat([mem, question_h], dim=1)
+
+        out = self.out_1(concat.view(-1,self.hidden_size))
+        #print(out.size(),'out')
+        out = F.tanh(out)
+        out = torch.sum(out, dim=0)
+        #print(out.size(), 'out2')
         return out
 
 #################### Wrapper ####################
@@ -430,7 +449,7 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
         self.new_input_module(input_variable, question_variable)
-        self.new_episodic_module(self.q_q)
+        self.new_episodic_module()
         #self.new_simple_mem_module()
         outputs,  loss = self.new_answer_module_simple(target_variable, criterion)
 
@@ -456,6 +475,7 @@ class WrapMemRNN(nn.Module):
 
         return
 
+    '''
     def new_simple_mem_module(self):
         for j in range(self.memory_hops):
             mem = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
@@ -471,32 +491,32 @@ class WrapMemRNN(nn.Module):
             self.last_mem = mem
         pass
         return mem
+    '''
 
-
-    def new_episodic_module(self, q_q):
+    def new_episodic_module(self):
         if True:
-            self.q_q = q_q
-            #memory = [q_q.clone()]
-            mem = q_q
-            #g = q_q
-            #hidden = None
-            g_list = []
+
+            mem = self.q_q
+            self.inp_c = self.inp_c.permute(1, 0, 2)
+            _, sentences, _ = self.inp_c.size()
+
+            g = mem
+
+            out = nn.Parameter(torch.zeros(1, sentences, self.hidden_size))
+            ee = nn.Parameter(torch.zeros(1, sentences, self.hidden_size))
+
             for iter in range(self.memory_hops):
 
-                e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
-                g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
-
                 sequences = self.inp_c
-                for i in range(len(sequences)):
-                    g = self.new_attention_step(sequences[i], g, mem, self.q_q)
 
-                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1), e.view(1, 1, -1))
-                    pass
+                g = self.new_attention_step(sequences, g, mem, self.q_q)
+
+                e, ee = self.new_episode_small_step(sequences, g, ee.view(1, -1, self.hidden_size))
 
                 current_episode = e
 
-                _, out = self.model_3_mem_a(current_episode.view(1,1,-1), mem.view(1,1,-1))
-                #out = self.new_process_from_attn(current_episode.view(1,1,-1),self.q_q.view(1,1,-1), mem.view(1,1,-1))
+                _, out = self.model_3_mem_b(current_episode, out)
+
                 mem = out
 
             self.last_mem = mem
@@ -506,16 +526,17 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
         _ , gru = self.model_3_mem_a(ct, prev_h)
-        h = g * gru + (1 - g) * prev_h # comment out ' * prev_h '
-        #print(h.size())
+        h = g * gru + (1 - g) * prev_h
+        #print(h.size(),'h')
 
         return h, gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         mem = mem.view(-1, self.hidden_size)
+        ct = ct.view(-1,self.hidden_size)
 
         concat_list = [
-            prev_g.view(self.hidden_size, -1),
+            #prev_g.view(self.hidden_size, -1),
             #ct.view(self.hidden_size,-1),
             #mem.view(self.hidden_size,-1),
             #q_q.view(self.hidden_size,-1),
@@ -524,7 +545,8 @@ class WrapMemRNN(nn.Module):
             torch.abs(ct - q_q).view(self.hidden_size,-1),
             torch.abs(ct - mem).view(self.hidden_size, -1)
         ]
-
+        #for z in concat_list: print(z.size(), end=', ')
+        #print()
         return self.model_4_att(concat_list)
 
     def new_process_from_attn(self, facts, question, prev_mem):
@@ -541,10 +563,11 @@ class WrapMemRNN(nn.Module):
 
         loss = 0
         ansx = self.model_5_ans(self.last_mem, self.q_q)
-        ans = ansx.data.max(dim=1)[1]
-
+        #print(ansx.size())
+        ans = ansx.data.max(dim=0)[1]
+        #print(ansx,'x')
         if criterion is not None:
-            loss = criterion(ansx, target_var[0])
+            loss = criterion(ansx.view(1,-1), target_var[0])
 
         return [ans], loss
 
@@ -730,6 +753,10 @@ class NMT:
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
         self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
+        if False:
+            self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
+            self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
+            self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
         pass
 
     def task_babi_valid_files(self):
@@ -1232,6 +1259,7 @@ class NMT:
     def train_iters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.001):
 
         save_thresh = 2
+        if print_every > n_iters : print_every = n_iters
         #self.saved_files = 0
 
         save_num = 0
@@ -1266,7 +1294,7 @@ class NMT:
 
         if self.do_load_babi and  self.do_test_not_train:
 
-            print('list:', ', '.join(self.score_list))
+            #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
             for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr')
@@ -1390,7 +1418,7 @@ class NMT:
 
         if self.do_load_babi:
             print('training:', ', '.join(self.score_list_training))
-            print('list', ', '.join(self.score_list))
+            print('val list:', ', '.join(self.score_list))
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 

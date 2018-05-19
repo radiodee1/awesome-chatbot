@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_iii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +29,8 @@
       <file leaf-file-name="babi_iii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4069">
-              <caret line="289" column="29" selection-start-line="289" selection-start-column="29" selection-end-line="289" selection-end-column="29" />
+            <state relative-caret-position="431">
+              <caret line="755" column="16" selection-start-line="755" selection-start-column="16" selection-end-line="755" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -129,12 +130,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>last_mem</find>
-      <find>all_mem</find>
-      <find>new_episodic_module</find>
       <find>new_memory_from_episode</find>
       <find>model_3_mem_a</find>
-      <find>MemRNN</find>
       <find>score_list</find>
       <find>criterion</find>
       <find>W_b</find>
@@ -150,15 +147,19 @@
       <find>Adam</find>
       <find>model_0_wra</find>
       <find>eval</find>
-      <find>model_5_ans</find>
-      <find>AnswerModule</find>
       <find>dropout</find>
       <find>WrapMemRNN</find>
       <find>model_1_enc</find>
-      <find>new_process_from_attn</find>
-      <find>concat_list</find>
       <find>next_mem</find>
       <find>dropout_2</find>
+      <find>EpisodicAttn</find>
+      <find>CustomGRU</find>
+      <find>new_process_from_attn</find>
+      <find>MemRNN</find>
+      <find>print_every</find>
+      <find>concat_list</find>
+      <find>model_5_ans</find>
+      <find>AnswerModule</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -222,7 +223,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="525" />
+    <option name="x" value="524" />
     <option name="y" value="80" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -281,10 +282,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="525" y="80" width="1380" height="1000" extended-state="0" />
+    <frame x="524" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
@@ -302,6 +303,25 @@
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Find" order="1" />
     </layout>
+    <layout-to-restore>
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -438,17 +458,17 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="792">
             <caret line="44" column="265" selection-start-line="44" selection-start-column="265" selection-end-line="44" selection-end-column="265" />
           </first_editor>
           <second_editor />
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
@@ -541,13 +561,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="23" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3438">
@@ -565,10 +578,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" column="23" selection-start-line="10" selection-start-column="23" selection-end-line="10" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4069">
-          <caret line="289" column="29" selection-start-line="289" selection-start-column="29" selection-end-line="289" selection-end-column="29" />
+        <state relative-caret-position="431">
+          <caret line="755" column="16" selection-start-line="755" selection-start-column="16" selection-end-line="755" selection-end-column="16" />
         </state>
       </provider>
     </entry>
