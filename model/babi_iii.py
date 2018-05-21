@@ -121,7 +121,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.5
+hparams['dropout'] = 0.2
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -386,7 +386,7 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.out_1 = nn.Linear(hidden_size,vocab_size)
-        #self.out_2 = nn.Linear(vocab_size,vocab_size)
+        self.out_2 = nn.Linear(2,1)
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -397,16 +397,26 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
         mem = self.dropout(mem)
-        mem = mem.view(self.hidden_size,-1)
-        question_h = question_h.view(self.hidden_size,-1)
+        question_h = self.dropout(question_h)
+        #mem = mem #.view(self.hidden_size,-1)
+        #question_h = question_h.view(self.hidden_size,-1)
+        mem = mem.squeeze(0)
+        concat = torch.cat([mem, question_h], dim=0)
+        #print(concat.size(), 'out0')
+        out = self.out_1(concat)#.view(-1,self.hidden_size))
+        sentences, _ = out.size()
+        #print(out.size(),'out1')
+        #out = F.tanh(out)
+        out = out.permute(1,0)
+        #print(out.size(),'out-b')
 
-        concat = torch.cat([mem, question_h], dim=1)
-
-        out = self.out_1(concat.view(-1,self.hidden_size))
-        #print(out.size(),'out')
-        out = F.tanh(out)
-        out = torch.sum(out, dim=0)
-        #print(out.size(), 'out2')
+        out = self.out_2(out)
+        #print(out.size(),'out2')
+        #out = torch.sum(out, dim=0)
+        #out = out / sentences
+        out = F.sigmoid(out)
+        out = out.permute(1,0)
+        #print(out, 'out3')
         return out
 
 #################### Wrapper ####################
@@ -426,7 +436,7 @@ class WrapMemRNN(nn.Module):
 
         self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
-        self.model_3_mem_c = EpisodicMemory(hidden_size)
+        self.model_3_mem_c = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
@@ -469,29 +479,13 @@ class WrapMemRNN(nn.Module):
 
         out2, hidden2 = self.model_2_enc(question_variable)
 
-        z = hidden2.view(1,-1) # out2
+        z = hidden2.squeeze(0) #.view(1,-1) # out2
 
         self.q_q = z
 
         return
 
-    '''
-    def new_simple_mem_module(self):
-        for j in range(self.memory_hops):
-            mem = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
-            e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
-            for i in range(len(self.inp_c)):
-                mem = self.model_3_mem_c(self.inp_c[i], self.q_q, mem)
-                #e, ee = self.new_episode_small_step(self.inp_c[i].view(1, 1, -1), g.view(1, 1, -1), e.view(1, 1, -1))
-            #current_episode = e
-            #_, out = self.model_3_mem_a(current_episode.view(1, 1, -1), mem.view(1, 1, -1))
-            out  = self.new_process_from_attn(self.inp_c[-1], self.q_q, mem)
-            mem = out
-            self.last_mem = mem
-        pass
-        return mem
-    '''
 
     def new_episodic_module(self):
         if True:
@@ -502,23 +496,33 @@ class WrapMemRNN(nn.Module):
 
             g = mem
 
-            out = nn.Parameter(torch.zeros(1, sentences, self.hidden_size))
-            ee = nn.Parameter(torch.zeros(1, sentences, self.hidden_size))
+            out = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            e = nn.Parameter(torch.zeros(1, sentences, self.hidden_size))
 
             for iter in range(self.memory_hops):
 
                 sequences = self.inp_c
 
-                g = self.new_attention_step(sequences, g, mem, self.q_q)
+                g = self.new_attention_step(sequences, None, mem, self.q_q)
 
-                e, ee = self.new_episode_small_step(sequences, g, ee.view(1, -1, self.hidden_size))
+                e, ee = self.new_episode_small_step(sequences, g, e) #.view(1, -1, self.hidden_size))
 
                 current_episode = e
+                if True:
+                    #print(current_episode.size(),'episode')
+                    for i in range(current_episode.size()[1]):
+                        ii = current_episode[:,i,:].clone()
+                        #ii = ii.squeeze(0)
+                        #print(i, ii.size(),'ii')
+                        _, out = self.model_3_mem_b(ii, out) #out
+                        #print(out.size(),'end')
+                    #print(out.size(), 'loop')
+                    #if False:
 
-                _, out = self.model_3_mem_b(current_episode, out)
+                _, out = self.model_3_mem_c(out,out)
 
                 mem = out
-
+                #print(mem.size(),'mem')
             self.last_mem = mem
         return mem
 
@@ -532,42 +536,34 @@ class WrapMemRNN(nn.Module):
         return h, gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        mem = mem.view(-1, self.hidden_size)
-        ct = ct.view(-1,self.hidden_size)
+        mem = mem.squeeze(0) #.view(-1, self.hidden_size)
+        ct = ct.squeeze(0) #.view(-1,self.hidden_size)
 
         concat_list = [
             #prev_g.view(self.hidden_size, -1),
             #ct.view(self.hidden_size,-1),
             #mem.view(self.hidden_size,-1),
             #q_q.view(self.hidden_size,-1),
-            (ct * q_q).view(self.hidden_size,-1),
-            (ct * mem).view(self.hidden_size, -1),
-            torch.abs(ct - q_q).view(self.hidden_size,-1),
-            torch.abs(ct - mem).view(self.hidden_size, -1)
+            (ct * q_q), #.view(self.hidden_size,-1),
+            (ct * mem), #.view(self.hidden_size, -1),
+            torch.abs(ct - q_q), #.view(self.hidden_size,-1),
+            torch.abs(ct - mem), #.view(self.hidden_size, -1)
         ]
         #for z in concat_list: print(z.size(), end=', ')
         #print()
         return self.model_4_att(concat_list)
 
-    def new_process_from_attn(self, facts, question, prev_mem):
-        #print(facts.size(), question.size(), prev_mem.size(),'size')
-        concat = torch.cat([facts.view(1,-1), question.view(1,-1), prev_mem.view(1,-1)], dim=1)
-        concat = self.model_4_att.dropout_2(concat)
-        linear = self.model_4_att.next_mem(concat.view(1,-1))
-        next = F.relu(linear)
-        next = next.unsqueeze(1)
-        return next
-        pass
+
 
     def new_answer_module_simple(self,target_var, criterion):
 
         loss = 0
         ansx = self.model_5_ans(self.last_mem, self.q_q)
         #print(ansx.size())
-        ans = ansx.data.max(dim=0)[1]
+        ans = ansx.data.max(dim=1)[1]
         #print(ansx,'x')
         if criterion is not None:
-            loss = criterion(ansx.view(1,-1), target_var[0])
+            loss = criterion(ansx, target_var[0])
 
         return [ans], loss
 

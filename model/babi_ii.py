@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -161,7 +161,8 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(1,-1)
+        self.c_list_z = self.c_list_z.view(-1,self.a_list_size * self.hidden_size )
+
 
         self.l_1 = self.W_1(self.c_list_z)
 
@@ -170,10 +171,9 @@ class EpisodicAttn(nn.Module):
         self.l_2 = self.W_2(self.l_1)
 
         self.G = F.sigmoid(self.l_2)[0]
+        #print(self.G.size(), 'list')
 
         return  self.G
-
-
 
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -206,13 +206,13 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = CustomGRU(hidden_size,hidden_size)
+        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
-        #_, hidden = self.gru(input,hidden)
-        output,hidden = self.gru(input, hidden)
-        #output = 0
+        hidden = self.gru(input,hidden)
+        #output,hidden = self.gru(input, hidden)
+        output = 0
         return output, hidden
 
 class Encoder(nn.Module):
@@ -261,6 +261,7 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
         mem = self.dropout(mem)
+        question_h = self.dropout(question_h)
         mem = mem.view(1,-1)
         question_h = question_h.view(1,-1)
         concat = torch.cat([mem, question_h], dim=1)#.squeeze(1)
@@ -345,11 +346,15 @@ class WrapMemRNN(nn.Module):
                 e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
                 g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
-                sequences = self.inp_c
-                for i in range(len(sequences)):
-                    g = self.new_attention_step(sequences[i], g, mem, self.q_q)
+                sequences = self.inp_c.permute(1,0,2)
 
-                    e, ee = self.new_episode_small_step(sequences[i].view(1, 1, -1), g.view(1,1,-1), e.view(1, 1, -1))
+                for i in range(len(sequences)):
+                    g = self.new_attention_step(sequences, None, mem, self.q_q)
+                    g = F.softmax(g,dim=0)
+                    #print(g)
+                    #for i in range(len(sequences)):
+                    #print(sequences[:,i,:].size(),'seq')
+                    e, ee = self.new_episode_small_step(sequences[:,i,:].view(1, 1, -1), g.view(1,1,-1), e.view(1, 1, -1))
                     pass
 
                 current_episode = e
@@ -374,7 +379,7 @@ class WrapMemRNN(nn.Module):
         mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            prev_g.view(self.hidden_size, -1),
+            #prev_g.view(self.hidden_size, -1),
             #ct.view(self.hidden_size,-1),
             #mem.view(self.hidden_size,-1),
             #q_q.view(self.hidden_size,-1),
