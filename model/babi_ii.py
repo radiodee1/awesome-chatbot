@@ -310,7 +310,7 @@ class WrapMemRNN(nn.Module):
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
         self.new_input_module(input_variable, question_variable)
-        self.new_episodic_module(self.q_q)
+        self.new_episodic_module()
         outputs,  loss = self.new_answer_module_simple(target_variable, criterion)
 
         return outputs, None, loss, None
@@ -336,15 +336,18 @@ class WrapMemRNN(nn.Module):
         return
 
 
-    def new_episodic_module(self, q_q):
+    def new_episodic_module(self):
         if True:
-            self.q_q = q_q
 
-            mem = q_q
+            #mem = self.q_q
+
+            m_list = []
             g_list = []
             e_list = []
+            m = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
             g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
             e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            m_list.append(m)
             g_list.append(g)
             e_list.append(e)
 
@@ -364,17 +367,16 @@ class WrapMemRNN(nn.Module):
 
                 current_episode = e_list[-1]
 
-                _, out = self.model_3_mem_b(current_episode,mem)
+                _, out = self.model_3_mem_b(current_episode,m_list[-1])
+                m_list.append(out)
 
-                mem = out
-
-            self.last_mem = mem
-        return mem
+            self.last_mem = m_list[-1]
+        return m_list[-1]
 
 
 
     def new_episode_small_step(self, ct, g, prev_h):
-
+        #print(ct,'ct')
         _ , gru = self.model_3_mem_a(ct, prev_h)
         h = g * gru + (1 - g) * prev_h
         #print(h.size())
