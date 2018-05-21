@@ -349,18 +349,16 @@ class WrapMemRNN(nn.Module):
                 sequences = self.inp_c.permute(1,0,2)
 
                 for i in range(len(sequences)):
-                    g = self.new_attention_step(sequences, None, mem, self.q_q)
+                    g = self.new_attention_step(sequences, None, e, self.q_q)
                     g = F.softmax(g,dim=0)
-                    #print(g)
-                    #for i in range(len(sequences)):
-                    #print(sequences[:,i,:].size(),'seq')
+
                     e, ee = self.new_episode_small_step(sequences[:,i,:].view(1, 1, -1), g.view(1,1,-1), e.view(1, 1, -1))
                     pass
 
                 current_episode = e
 
                 _, out = self.model_3_mem_a(current_episode.view(1,1,-1), mem.view(1,1,-1))
-                #out = self.new_process_from_attn(current_episode.view(1,1,-1),self.q_q.view(1,1,-1), mem.view(1,1,-1))
+
                 mem = out
 
             self.last_mem = mem
