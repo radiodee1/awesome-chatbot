@@ -210,6 +210,7 @@ class MemRNN(nn.Module):
         self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
+        #print(hidden)
         hidden = self.gru(input,hidden)
         #output,hidden = self.gru(input, hidden)
         output = 0
@@ -353,9 +354,9 @@ class WrapMemRNN(nn.Module):
 
                 for i in range(len(sequences)):
 
-                    g = self.new_attention_step(sequences, None, g_list[-1], self.q_q)
-                    g = F.softmax(g,dim=0)
-                    g_list.append(g)
+                    x = self.new_attention_step(sequences, None, g_list[-1], self.q_q)
+                    x = F.softmax(x,dim=0)
+                    g_list.append(x)
 
                     e, ee = self.new_episode_small_step(sequences[:,i,:], g_list[-1], e_list[-1])
                     e_list.append(e)
@@ -363,10 +364,10 @@ class WrapMemRNN(nn.Module):
 
                 current_episode = e_list[-1]
 
-                _, out = self.model_3_mem_a(current_episode,mem)
+                _, out = self.model_3_mem_b(current_episode,mem)
 
                 mem = out
-                
+
             self.last_mem = mem
         return mem
 
@@ -388,10 +389,10 @@ class WrapMemRNN(nn.Module):
             ct.squeeze(0),#.view(self.hidden_size,-1),
             #mem.squeeze(0),#.view(self.hidden_size,-1),
             #q_q.squeeze(0),#.view(self.hidden_size,-1),
-            (ct * q_q).squeeze(0),#.view(self.hidden_size,-1),
-            (ct * mem).squeeze(0), #.view(self.hidden_size, -1),
-            torch.abs(ct - q_q).squeeze(0), #.view(self.hidden_size,-1),
-            torch.abs(ct - mem).squeeze(0)#.view(self.hidden_size, -1)
+            (ct * q_q).squeeze(0),
+            (ct * mem).squeeze(0),
+            torch.abs(ct - q_q).squeeze(0),
+            torch.abs(ct - mem).squeeze(0)
         ]
         #for i in concat_list: print(i.size())
         #exit()
