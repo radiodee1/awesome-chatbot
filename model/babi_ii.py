@@ -161,7 +161,7 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(-1,self.a_list_size * self.hidden_size )
+        #self.c_list_z = self.c_list_z.view(-1,self.a_list_size * self.hidden_size )
 
 
         self.l_1 = self.W_1(self.c_list_z)
@@ -262,9 +262,11 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout(mem)
         question_h = self.dropout(question_h)
-        mem = mem.view(1,-1)
-        question_h = question_h.view(1,-1)
-        concat = torch.cat([mem, question_h], dim=1)#.squeeze(1)
+        #mem = mem.view(1,-1)
+        #question_h = question_h.view(1,-1)
+        concat = torch.cat([mem, question_h], dim=0)#.squeeze(1)
+        concat = concat.view(1,-1) #.squeeze(1)
+        #print(concat.size(),'c')
         out = self.out(concat)
         return out
 
@@ -326,9 +328,9 @@ class WrapMemRNN(nn.Module):
 
         out2, hidden2 = self.model_2_enc(question_variable)
 
-        z = hidden2.view(1,-1) # out2
+        #z = hidden2.view(1,-1) # out2
 
-        self.q_q = z
+        self.q_q = hidden2
 
         return
 
@@ -343,8 +345,8 @@ class WrapMemRNN(nn.Module):
             g_list = []
             for iter in range(self.memory_hops):
 
+                ee = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
                 e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
-                g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
 
                 sequences = self.inp_c.permute(1,0,2)
 
@@ -352,12 +354,15 @@ class WrapMemRNN(nn.Module):
                     g = self.new_attention_step(sequences, None, e, self.q_q)
                     g = F.softmax(g,dim=0)
 
-                    e, ee = self.new_episode_small_step(sequences[:,i,:].view(1, 1, -1), g.view(1,1,-1), e.view(1, 1, -1))
+                    e, ee = self.new_episode_small_step(sequences[:,i,:],#.view(1, 1, -1),
+                                                        g,#.view(1,1,-1),
+                                                        e) #.view(1, 1, -1))
                     pass
 
                 current_episode = e
 
-                _, out = self.model_3_mem_a(current_episode.view(1,1,-1), mem.view(1,1,-1))
+                _, out = self.model_3_mem_a(current_episode,#.view(1,1,-1),
+                                            mem) #.view(1,1,-1))
 
                 mem = out
 
@@ -374,30 +379,22 @@ class WrapMemRNN(nn.Module):
         return h, gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        mem = mem.view(-1, self.hidden_size)
+        #mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
             #prev_g.view(self.hidden_size, -1),
             #ct.view(self.hidden_size,-1),
             #mem.view(self.hidden_size,-1),
             #q_q.view(self.hidden_size,-1),
-            (ct * q_q).view(self.hidden_size,-1),
-            (ct * mem).view(self.hidden_size, -1),
-            torch.abs(ct - q_q).view(self.hidden_size,-1),
-            torch.abs(ct - mem).view(self.hidden_size, -1)
+            (ct * q_q).squeeze(0),#.view(self.hidden_size,-1),
+            (ct * mem).squeeze(0), #.view(self.hidden_size, -1),
+            torch.abs(ct - q_q).squeeze(0), #.view(self.hidden_size,-1),
+            torch.abs(ct - mem).squeeze(0)#.view(self.hidden_size, -1)
         ]
 
         return self.model_4_att(concat_list)
 
-    def new_process_from_attn(self, facts, question, prev_mem):
-        #print(facts.size(), question.size(), prev_mem.size(),'size')
-        concat = torch.cat([facts, question, prev_mem], dim=1)
-        concat = self.model_4_att.dropout_2(concat)
-        linear = self.model_4_att.next_mem(concat.view(1,-1))
-        next = F.relu(linear)
-        next = next.unsqueeze(1)
-        return next
-        pass
+
 
     def new_answer_module_simple(self,target_var, criterion):
 
@@ -898,7 +895,8 @@ class NMT:
     def variableFromSentence(self,lang, sentence, add_eol=False):
         indexes = self.indexesFromSentence(lang, sentence)
         if add_eol: indexes.append(EOS_token)
-        result = Variable(torch.LongTensor(indexes).view(-1, 1))
+        result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
+        #print(result.size(),'r')
         if use_cuda:
             return result.cuda()
         else:
@@ -1252,7 +1250,7 @@ class NMT:
 
         if self.do_load_babi:
             print('training:', ', '.join(self.score_list_training))
-            print('list', ', '.join(self.score_list))
+            print('val list:', ', '.join(self.score_list))
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
