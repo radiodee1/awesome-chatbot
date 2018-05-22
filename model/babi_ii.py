@@ -355,22 +355,23 @@ class WrapMemRNN(nn.Module):
             e_list.append(e)
             f_list.append(f)
 
-            m_list.append(self.q_q.clone())
+            #m_list.append(self.q_q.clone())
 
             for iter in range(self.memory_hops):
+
+                g_list.append(g)
+                e_list.append(e)
 
                 sequences = self.inp_c_seq.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
-
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
                     g_list.append(x)
 
+                for i in range(len(sequences)):
                     e, f = self.new_episode_small_step(sequences[i], g_list[-1], e_list[-1])
                     e_list.append(e)
                     f_list.append(f)
-
-                    pass
 
                 _, out = self.model_3_mem_b( e_list[-1], m_list[-1])#, g_list[-1])
                 m_list.append(out)
