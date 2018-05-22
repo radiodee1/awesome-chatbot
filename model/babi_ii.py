@@ -283,7 +283,7 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, 2,dropout=dropout,embedding=embedding, bidirectional=False)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
         self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
@@ -296,6 +296,7 @@ class WrapMemRNN(nn.Module):
         self.answer_var = None  # for answer
         self.q_q = None  # extra question
         self.inp_c = None  # extra input
+        self.inp_c_seq = None
         self.all_mem = None
         self.last_mem = None  # output of mem unit
         self.prediction = None  # final single word prediction
@@ -325,7 +326,9 @@ class WrapMemRNN(nn.Module):
 
         out1, hidden1 = self.model_1_enc(input_variable)
 
+        self.inp_c_seq = out1
         self.inp_c = hidden1 #out1
+
 
         out2, hidden2 = self.model_2_enc(question_variable)
 
@@ -352,14 +355,14 @@ class WrapMemRNN(nn.Module):
 
             for iter in range(self.memory_hops):
                 m_list.append(self.q_q.clone())
-                sequences = self.inp_c.clone().permute(1,0,2)
+                sequences = self.inp_c_seq.clone().permute(1,0,2)
 
                 for i in range(len(sequences)):
 
                     x = self.new_attention_step(sequences, None, m_list[-1], self.q_q)
                     g_list.append(x)
 
-                    e, ee = self.new_episode_small_step(sequences[:,i,:], g_list[-1], e_list[-1])
+                    e, ee = self.new_episode_small_step(self.inp_c, g_list[-1], e_list[-1])
                     e_list.append(e)
 
                     pass
