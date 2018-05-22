@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=6, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -365,7 +365,7 @@ class WrapMemRNN(nn.Module):
                 sequences = self.inp_c_seq.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
-                    x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
+                    x = self.new_attention_step(sequences[i], g_list[-1], m_list[-1], self.q_q)
                     g_list.append(x)
 
                 for i in range(len(sequences)):
@@ -393,7 +393,7 @@ class WrapMemRNN(nn.Module):
         #mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            #prev_g.view(self.hidden_size, -1),
+            prev_g.view(-1, self.hidden_size),
             ct.unsqueeze(0),#.view(self.hidden_size,-1),
 
             (ct * q_q).squeeze(0),
