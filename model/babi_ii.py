@@ -170,7 +170,7 @@ class EpisodicAttn(nn.Module):
 
         self.l_2 = self.W_2(self.l_1)
 
-        self.G = F.softmax(self.l_2, dim=1)[0]
+        self.G = F.sigmoid(self.l_2)[0]
         #print(self.G, 'list')
 
         return  self.G
@@ -325,7 +325,7 @@ class WrapMemRNN(nn.Module):
 
         out1, hidden1 = self.model_1_enc(input_variable)
 
-        self.inp_c = out1 # outlist1
+        self.inp_c = hidden1 #out1
 
         out2, hidden2 = self.model_2_enc(question_variable)
 
@@ -339,38 +339,39 @@ class WrapMemRNN(nn.Module):
     def new_episodic_module(self):
         if True:
 
-            #mem = self.q_q
-
             m_list = []
             g_list = []
             e_list = []
-            m = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            m = self.q_q.clone()
             g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
             e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
             m_list.append(m)
             g_list.append(g)
             e_list.append(e)
 
-            for iter in range(self.memory_hops):
 
-                sequences = self.inp_c.permute(1,0,2)
+            for iter in range(self.memory_hops):
+                m_list.append(self.q_q.clone())
+                sequences = self.inp_c.clone().permute(1,0,2)
 
                 for i in range(len(sequences)):
 
-                    x = self.new_attention_step(sequences, None, g_list[-1], self.q_q)
-                    x = F.softmax(x,dim=0)
+                    x = self.new_attention_step(sequences, None, m_list[-1], self.q_q)
                     g_list.append(x)
 
                     e, ee = self.new_episode_small_step(sequences[:,i,:], g_list[-1], e_list[-1])
                     e_list.append(e)
+
                     pass
 
-                current_episode = e_list[-1]
+                current_episode = e_list[-1].clone()
 
                 _, out = self.model_3_mem_b(current_episode,m_list[-1])
                 m_list.append(out)
 
+
             self.last_mem = m_list[-1]
+
         return m_list[-1]
 
 
