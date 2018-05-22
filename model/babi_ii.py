@@ -194,24 +194,25 @@ class CustomGRU(nn.Module):
         for weight in self.parameters():
             weight.data.uniform_(-stdv, stdv)
 
-    def forward(self, fact, C):
+    def forward(self, fact, C, g):
         r = F.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
-        #g = g.unsqueeze(1).expand_as(h_tilda)
-        #h = g * h_tilda + (1 - g) * C
-        return h_tilda
+
+        g = g.expand_as(h_tilda)
+        h = g * h_tilda + (1 - g) * C
+        return h
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = CustomGRU(hidden_size,hidden_size)
+        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU(hidden_size,hidden_size)
 
-    def forward(self, input, hidden=None):
+    def forward(self, input, hidden=None, g=None):
         #print(hidden)
-        _, hidden_out = self.gru(input,hidden)
+        hidden_out = self.gru(input,hidden,g)
         #output,hidden = self.gru(input, hidden)
         output = 0
         return output, hidden_out
@@ -368,9 +369,7 @@ class WrapMemRNN(nn.Module):
 
                     pass
 
-                current_episode = e_list[-1].clone()
-
-                _, out = self.model_3_mem_b( current_episode, m_list[-1])
+                _, out = self.model_3_mem_b( m_list[-1], e_list[-1], g_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -381,7 +380,7 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
         #print(ct,'ct')
-        _ , gru = self.model_3_mem_a(ct, prev_h)
+        _ , gru = self.model_3_mem_a(ct, prev_h, g)
         h = g * gru + (1 - g) * prev_h
         #print(h.size())
 
