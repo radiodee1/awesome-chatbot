@@ -206,15 +206,15 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU(hidden_size,hidden_size)
+        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = CustomGRU(hidden_size,hidden_size)
 
     def forward(self, input, hidden=None):
         #print(hidden)
-        hidden = self.gru(input,hidden)
+        _, hidden_out = self.gru(input,hidden)
         #output,hidden = self.gru(input, hidden)
         output = 0
-        return output, hidden
+        return output, hidden_out
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
@@ -329,10 +329,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = out1
         self.inp_c = hidden1 #out1
 
-
         out2, hidden2 = self.model_2_enc(question_variable)
-
-        #z = hidden2.view(1,-1) # out2
 
         self.q_q = hidden2
 
@@ -345,15 +342,18 @@ class WrapMemRNN(nn.Module):
             m_list = []
             g_list = []
             e_list = []
+            f_list = []
             m = self.q_q.clone()
             g = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
             e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            f = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
             m_list.append(m)
             g_list.append(g)
             e_list.append(e)
-
+            f_list.append(f)
 
             for iter in range(self.memory_hops):
+
                 m_list.append(self.q_q.clone())
                 sequences = self.inp_c_seq.clone().permute(1,0,2)
 
@@ -362,16 +362,16 @@ class WrapMemRNN(nn.Module):
                     x = self.new_attention_step(sequences, None, m_list[-1], self.q_q)
                     g_list.append(x)
 
-                    e, ee = self.new_episode_small_step(self.inp_c, g_list[-1], e_list[-1])
+                    e, f = self.new_episode_small_step(self.inp_c, g_list[-1], f_list[-1])
                     e_list.append(e)
+                    f_list.append(f)
 
                     pass
 
                 current_episode = e_list[-1].clone()
 
-                _, out = self.model_3_mem_b(current_episode,m_list[-1])
+                _, out = self.model_3_mem_b( current_episode, m_list[-1])
                 m_list.append(out)
-
 
             self.last_mem = m_list[-1]
 
