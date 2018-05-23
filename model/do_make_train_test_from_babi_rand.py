@@ -3,6 +3,7 @@
 
 import os as os
 import sys
+import random
 from settings import hparams
 
 '''
@@ -132,6 +133,22 @@ if __name__ == '__main__':
     for id in id_lst:
 
         train, test = get_babi_raw(id,id)
+        tot = train[:]
+        tot.extend(test[:])
+        indexes = [ i for i in range(len(tot))]
+        test = []
+        train = []
+
+        for i in range(1000):
+            z = random.choice(indexes)
+            indexes.remove(z)
+            train.append(tot[z])
+
+        for i in range(1000):
+            z = random.choice(indexes)
+            indexes.remove(z)
+            test.append(tot[z])
+
 
         data_dir = hparams['data_dir']
         train_name = hparams['train_name']
