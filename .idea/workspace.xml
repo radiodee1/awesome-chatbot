@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="809">
-              <caret line="433" column="41" selection-start-line="433" selection-start-column="41" selection-end-line="433" selection-end-column="41" />
+            <state relative-caret-position="287">
+              <caret line="403" column="1" lean-forward="true" selection-start-line="403" selection-start-column="1" selection-end-line="403" selection-end-column="1" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -571,8 +570,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="809">
-          <caret line="433" column="41" selection-start-line="433" selection-start-column="41" selection-end-line="433" selection-end-column="41" />
+        <state relative-caret-position="287">
+          <caret line="403" column="1" lean-forward="true" selection-start-line="403" selection-start-column="1" selection-end-line="403" selection-end-column="1" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

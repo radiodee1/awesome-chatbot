@@ -415,8 +415,8 @@ class WrapMemRNN(nn.Module):
 
         loss = 0
         ansx = self.model_5_ans(self.last_mem, self.q_q)
-        ans = ansx.data.max(dim=1)[1]
-
+        #ans = ansx.data.max(dim=1)[1]
+        ans = torch.argmax(ansx,dim=1)[0]
         if criterion is not None:
             loss = criterion(ansx, target_var[0])
 
