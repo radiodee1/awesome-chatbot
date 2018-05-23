@@ -121,7 +121,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.5
+hparams['dropout'] = 0.2
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=8, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -321,7 +321,7 @@ class WrapMemRNN(nn.Module):
 
     def new_freeze_embedding(self):
         self.model_1_enc.embed.weight.requires_grad = False
-
+        self.model_2_enc.embed.weight.requires_grad = False
         print('freeze embedding')
         pass
 
@@ -360,7 +360,7 @@ class WrapMemRNN(nn.Module):
             for iter in range(self.memory_hops):
 
                 #g_list.append(g)
-                e_list.append(e)
+                #e_list.append(e)
 
                 sequences = self.inp_c_seq.clone().permute(1,0,2).squeeze(0)
 
@@ -368,6 +368,7 @@ class WrapMemRNN(nn.Module):
                 #if True:
                     x = self.new_attention_step(sequences[i], g_list[-1], m_list[-1], self.q_q)
                     g_list.append(x)
+
 
                 for i in range(len(sequences)):
                 #if True:
@@ -395,7 +396,7 @@ class WrapMemRNN(nn.Module):
         #mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            prev_g.view(-1, self.hidden_size),
+            #prev_g.view(-1, self.hidden_size),
             ct.unsqueeze(0),#.view(self.hidden_size,-1),
             mem.squeeze(0),
             q_q.squeeze(0),
@@ -1398,6 +1399,9 @@ if __name__ == '__main__':
     n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
                                dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix)
+
+    #print(n.model_0_wra)
+    #exit()
 
     if use_cuda and False:
 
