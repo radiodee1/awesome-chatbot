@@ -202,7 +202,7 @@ class CustomGRU(nn.Module):
             h = g * h_tilda + (1 - g) * C
         else:
             h = h_tilda
-        return h
+        return  h
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
@@ -227,7 +227,8 @@ class Encoder(nn.Module):
         self.n_layers = n_layers
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        #self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        self.gru = CustomGRU(hidden_dim,hidden_dim)
         self.dropout = nn.Dropout(dropout)
         if embedding is not None:
             self.embed.weight.data.copy_(torch.from_numpy(embedding))
@@ -238,7 +239,9 @@ class Encoder(nn.Module):
         #source = self.dropout(source)
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
-        encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        encoder_out = 0
+        #encoder_out, 
+        encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
         # sum bidirectional outputs, the other option is to retain concat features
@@ -327,14 +330,24 @@ class WrapMemRNN(nn.Module):
 
     def new_input_module(self, input_variable, question_variable):
 
-        out1, hidden1 = self.model_1_enc(input_variable)
+        prev_h1 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
+        hidlist1 = []
+        for ii in input_variable:
+            out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), prev_h1[-1])#input_variable)
+            hidlist1.append(hidden1)
+            prev_h1.append(hidden1)
 
-        self.inp_c_seq = out1
+        self.inp_c_seq = hidlist1 #out1
         self.inp_c = hidden1 #out1
 
-        out2, hidden2 = self.model_2_enc(question_variable)
+        prev_h2 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
+        hidlist2 = []
+        for ii in question_variable:
+            out2, hidden2 = self.model_2_enc(ii.unsqueeze(0), prev_h2[-1])
+            hidlist2.append(hidden2)
+            prev_h2.append(hidden2)
 
-        self.q_q = hidden2
+        self.q_q = hidlist2[-1]
 
         return
 
@@ -362,7 +375,7 @@ class WrapMemRNN(nn.Module):
                 #g_list.append(g)
                 #e_list.append(e)
 
-                sequences = self.inp_c_seq.clone().permute(1,0,2).squeeze(0)
+                sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
                 #if True:
@@ -397,7 +410,7 @@ class WrapMemRNN(nn.Module):
 
         concat_list = [
             #prev_g.view(-1, self.hidden_size),
-            ct.unsqueeze(0),#.view(self.hidden_size,-1),
+            ct.squeeze(0),#.view(self.hidden_size,-1),
             mem.squeeze(0),
             q_q.squeeze(0),
             (ct * q_q).squeeze(0),
