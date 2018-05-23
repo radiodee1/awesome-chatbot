@@ -132,7 +132,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=8, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -359,21 +359,23 @@ class WrapMemRNN(nn.Module):
 
             for iter in range(self.memory_hops):
 
-                g_list.append(g)
+                #g_list.append(g)
                 e_list.append(e)
 
                 sequences = self.inp_c_seq.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
-                    x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
+                #if True:
+                    x = self.new_attention_step(sequences[i], g_list[-1], m_list[-1], self.q_q)
                     g_list.append(x)
 
-                    #for z in range(len(sequences)):
+                for i in range(len(sequences)):
+                #if True:
                     e, f = self.new_episode_small_step(sequences[i], g_list[-1], e_list[-1])
                     e_list.append(e)
                     f_list.append(f)
 
-                _, out = self.model_3_mem_b( e_list[-1], m_list[-1])#, g_list[-1])
+                _, out = self.model_3_mem_a( e_list[-1], m_list[-1])#, g_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -393,9 +395,10 @@ class WrapMemRNN(nn.Module):
         #mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            #prev_g.view(-1, self.hidden_size),
+            prev_g.view(-1, self.hidden_size),
             ct.unsqueeze(0),#.view(self.hidden_size,-1),
-
+            mem.squeeze(0),
+            q_q.squeeze(0),
             (ct * q_q).squeeze(0),
             (ct * mem).squeeze(0),
             torch.abs(ct - q_q).squeeze(0),
