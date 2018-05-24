@@ -122,7 +122,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.2
+hparams['dropout'] = 0.5
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -146,8 +146,8 @@ class EpisodicAttn(nn.Module):
         init.xavier_normal_(self.W_2.state_dict()['weight'])
         self.dropout_1 = nn.Dropout(dropout)
         self.dropout_2 = nn.Dropout(dropout)
-        self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
-        init.xavier_normal_(self.next_mem.state_dict()['weight'])
+        #self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
+        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
         #self.reset_parameters()
 
@@ -356,9 +356,9 @@ class WrapMemRNN(nn.Module):
 
         self.new_input_module(input_variable, question_variable)
         self.new_episodic_module()
-        outputs,  loss = self.new_answer_module_simple(target_variable, criterion)
+        outputs,  ans = self.new_answer_module_simple(target_variable, criterion)
 
-        return outputs, None, loss, None
+        return outputs, None, ans, None
 
     def new_freeze_embedding(self):
         self.model_1_enc.embed.weight.requires_grad = False
@@ -469,10 +469,10 @@ class WrapMemRNN(nn.Module):
         ansx = self.model_5_ans(self.last_mem, self.q_q)
         #ans = ansx.data.max(dim=1)[1]
         ans = torch.argmax(ansx,dim=1)[0]
-        if criterion is not None:
-            loss = criterion(ansx, target_var[0])
+        #if criterion is not None:
+        #    loss = criterion(ansx, target_var[0])
 
-        return [ans], loss
+        return [ans], ansx
 
         pass
 
@@ -1139,20 +1139,23 @@ class NMT:
         if criterion is not None:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
-            outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable,
+            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                               criterion)
+            loss = criterion(ans, target_variable[0])
         else:
             self.model_0_wra.eval()
             with torch.no_grad():
-                outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, target_variable,
+                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                                   criterion)
+                loss = None
+
         #print(self.model_0_wra.training,'train')
         if criterion is not None:
             loss.backward()
 
             wrapper_optimizer.step()
 
-        return outputs, masks , loss
+        return outputs, None , loss
 
 
 
@@ -1241,7 +1244,8 @@ class NMT:
 
                 self.score = float(num_right/num_tot) * 100
 
-            print_loss_total += float(l)
+            if l is not None:
+                print_loss_total += float(l)
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
