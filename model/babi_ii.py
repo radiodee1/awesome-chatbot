@@ -205,19 +205,7 @@ class CustomGRU(nn.Module):
         self.H_hid = nn.Linear(hidden_size,hidden_size)
         init.xavier_normal_(self.H_hid.state_dict()['weight'])
 
-        '''
-        self.W_mem_res_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
-        self.W_mem_res_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
-        self.b_mem_res = nn.Parameter(torch.zeros(self.hidden_size,))
 
-        self.W_mem_upd_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
-        self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
-        self.b_mem_upd = nn.Parameter(torch.zeros(self.hidden_size,))
-
-        self.W_mem_hid_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
-        self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
-        self.b_mem_hid = nn.Parameter(torch.zeros(self.hidden_size,))
-        '''
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -251,7 +239,6 @@ class MemRNN(nn.Module):
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
-
             weight.data.uniform_(-stdv, stdv)
 
     def forward(self, input, hidden=None, g=None):
@@ -283,7 +270,6 @@ class Encoder(nn.Module):
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_dim)
         for weight in self.parameters():
-
             weight.data.uniform_(-stdv, stdv)
 
     def forward(self, source, hidden=None):
@@ -324,15 +310,8 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
         question_h = self.dropout2(question_h)
-        #mem = mem.view(1,-1)
-        #question_h = question_h.view(1,-1)
 
-        #concat = torch.cat([mem, question_h], dim=0)#.squeeze(1)
-        #concat = concat.view(-1,self.hidden_size *2) #.squeeze(1)
-        #out = self.out1(concat)
         out = self.out1(mem)
-        #out = self.out2(out.permute(1,0))
-        #out = out.permute(1,0)
 
         return out
 
