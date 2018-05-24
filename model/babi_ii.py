@@ -139,8 +139,8 @@ class EpisodicAttn(nn.Module):
 
         self.a_list_size = a_list_size
 
-        self.W_1 = nn.Linear( 1 + (self.a_list_size - 1) * hidden_size,1)
-        self.W_2 = nn.Linear(1,1)#hidden_size)
+        self.W_1 = nn.Linear(  (self.a_list_size ) * hidden_size,hidden_size)
+        self.W_2 = nn.Linear(hidden_size,1)#hidden_size)
         #self.W_3 = nn.Linear(hidden_size,1)
         self.dropout_1 = nn.Dropout(dropout)
         self.dropout_2 = nn.Dropout(dropout)
@@ -157,19 +157,19 @@ class EpisodicAttn(nn.Module):
 
         assert len(concat_list) == self.a_list_size
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=1)
+        self.c_list_z = torch.cat(concat_list,dim=0)
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(-1,(self.a_list_size -1) * self.hidden_size +1)
+        self.c_list_z = self.c_list_z.view(-1,(self.a_list_size ) * self.hidden_size )
 
         self.l_1 = self.W_1(self.c_list_z)
 
-        self.l_1 = torch.tanh(self.l_1)
+        self.l_1 = F.tanh(self.l_1)
 
         self.l_2 = self.W_2(self.l_1)
 
-        #self.l_2 = torch.tanh(self.l_2)
+        self.l_2 = torch.tanh(self.l_2)
 
         #self.l_3 = self.W_3(self.l_2)
         #print(self.l_2,'3')
@@ -183,13 +183,29 @@ class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CustomGRU, self).__init__()
         self.hidden_size = hidden_size
-        self.Wr = nn.Linear(input_size, hidden_size)
+        self.R_in = nn.Linear(input_size, hidden_size)
 
-        self.Ur = nn.Linear(hidden_size, hidden_size)
+        self.R_hid = nn.Linear(hidden_size, hidden_size)
 
-        self.W = nn.Linear(input_size, hidden_size)
+        self.U_in = nn.Linear(input_size, hidden_size)
 
-        self.U = nn.Linear(hidden_size, hidden_size)
+        self.U_hid = nn.Linear(hidden_size, hidden_size)
+
+        self.H_in = nn.Linear(hidden_size,hidden_size)
+
+        self.H_hid = nn.Linear(hidden_size,hidden_size)
+
+        self.W_mem_res_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
+        self.W_mem_res_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
+        self.b_mem_res = nn.Parameter(torch.zeros(self.hidden_size,))
+
+        self.W_mem_upd_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
+        self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
+        self.b_mem_upd = nn.Parameter(torch.zeros(self.hidden_size,))
+
+        self.W_mem_hid_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
+        self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
+        self.b_mem_hid = nn.Parameter(torch.zeros(self.hidden_size,))
 
         self.reset_parameters()
 
@@ -200,14 +216,16 @@ class CustomGRU(nn.Module):
 
     def forward(self, fact, C, g=None):
         #z = F.sigmoid()
-        r = F.sigmoid(self.Wr(fact) + self.Ur(C))
-        h_tilda = F.tanh(self.W(fact) + r * self.U(C))
-        if g is not None:
-            g = g.expand_as(h_tilda)
-            h = g * h_tilda + (1 - g) * C
-        else:
-            h = h_tilda
-        return  h
+        fact = fact.squeeze(0)#.permute(1,0)
+        C = C.squeeze(0)#.permute(1,0)
+
+        z = F.sigmoid(self.U_in( fact) + self.U_hid( C) )
+        r = F.sigmoid(self.R_in( fact) + self.R_hid( C) )
+        _h = F.tanh(self.H_in( fact) + r * self.H_hid( C) )
+        zz = z * C + (1 - z) * _h
+
+        #print(zz,'zz')
+        return zz
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
@@ -262,7 +280,9 @@ class AnswerModule(nn.Module):
         super(AnswerModule, self).__init__()
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
-        self.out = nn.Linear(hidden_size * 2, vocab_size)
+
+        self.out1 = nn.Linear(hidden_size * 2, vocab_size)
+        self.out2 = nn.Linear(hidden_size,1)
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
@@ -277,10 +297,13 @@ class AnswerModule(nn.Module):
         question_h = self.dropout2(question_h)
         #mem = mem.view(1,-1)
         #question_h = question_h.view(1,-1)
+
         concat = torch.cat([mem, question_h], dim=0)#.squeeze(1)
-        concat = concat.view(1,-1) #.squeeze(1)
-        #print(concat.size(),'c')
-        out = self.out(concat)
+        concat = concat.view(-1,self.hidden_size *2) #.squeeze(1)
+        out = self.out1(concat)
+        #out = self.out2(out.permute(1,0))
+        #out = out.permute(1,0)
+
         return out
 
 #################### Wrapper ####################
@@ -397,7 +420,7 @@ class WrapMemRNN(nn.Module):
                     e_list.append(e)
                     f_list.append(f)
 
-                _, out = self.model_3_mem_a(e_list[-1], m_list[-1])#, g_list[-1])
+                _, out = self.model_3_mem_a(m_list[-1], e_list[-1])#, g_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -408,8 +431,8 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
 
-        _ , gru = self.model_3_mem_a(ct, prev_h, None) # g
-        h = g * gru #+ (1 - g) * prev_h
+        _ , gru = self.model_3_mem_b(ct, prev_h, None) # g
+        h = g * gru + (1 - g) * prev_h
 
         return h, gru
 
@@ -417,14 +440,14 @@ class WrapMemRNN(nn.Module):
         #mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
-            prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
-            #ct.squeeze(0),#.view(self.hidden_size,-1),
-            #mem.squeeze(0),
-            #q_q.squeeze(0),
+            #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
+            ct.squeeze(0),#.view(self.hidden_size,-1),
+            mem.squeeze(0),
+            q_q.squeeze(0),
             (ct * q_q).squeeze(0),
             (ct * mem).squeeze(0),
-            torch.abs(ct - q_q).squeeze(0),
-            torch.abs(ct - mem).squeeze(0)
+            #torch.abs(ct - q_q).squeeze(0),
+            #torch.abs(ct - mem).squeeze(0)
         ]
         #for i in concat_list: print(i.size())
         #exit()
