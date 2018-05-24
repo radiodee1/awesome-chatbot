@@ -14,6 +14,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 from torch import optim
 import torch.nn.functional as F
+import torch.nn.init as init
 import time
 import math
 import argparse
@@ -140,13 +141,15 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
 
         self.W_1 = nn.Linear(  (self.a_list_size ) * hidden_size,hidden_size)
+        init.xavier_normal_(self.W_1.state_dict()['weight'])
         self.W_2 = nn.Linear(hidden_size,1)#hidden_size)
-        #self.W_3 = nn.Linear(hidden_size,1)
+        init.xavier_normal_(self.W_2.state_dict()['weight'])
         self.dropout_1 = nn.Dropout(dropout)
         self.dropout_2 = nn.Dropout(dropout)
         self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
+        init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
-        self.reset_parameters()
+        #self.reset_parameters()
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
@@ -183,18 +186,26 @@ class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CustomGRU, self).__init__()
         self.hidden_size = hidden_size
+
         self.R_in = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.R_in.state_dict()['weight'])
 
         self.R_hid = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.R_hid.state_dict()['weight'])
 
         self.U_in = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.U_in.state_dict()['weight'])
 
         self.U_hid = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.U_hid.state_dict()['weight'])
 
         self.H_in = nn.Linear(hidden_size,hidden_size)
+        init.xavier_normal_(self.H_in.state_dict()['weight'])
 
         self.H_hid = nn.Linear(hidden_size,hidden_size)
+        init.xavier_normal_(self.H_hid.state_dict()['weight'])
 
+        '''
         self.W_mem_res_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
         self.W_mem_res_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
         self.b_mem_res = nn.Parameter(torch.zeros(self.hidden_size,))
@@ -206,12 +217,13 @@ class CustomGRU(nn.Module):
         self.W_mem_hid_in = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
         self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size))
         self.b_mem_hid = nn.Parameter(torch.zeros(self.hidden_size,))
-
+        '''
         self.reset_parameters()
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
+
             weight.data.uniform_(-stdv, stdv)
 
     def forward(self, fact, C, g=None):
@@ -234,6 +246,13 @@ class MemRNN(nn.Module):
 
         #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
         self.gru = CustomGRU(hidden_size,hidden_size)
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+
+            weight.data.uniform_(-stdv, stdv)
 
     def forward(self, input, hidden=None, g=None):
         #print(hidden)
@@ -253,10 +272,19 @@ class Encoder(nn.Module):
         #self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
         self.gru = CustomGRU(hidden_dim,hidden_dim)
         self.dropout = nn.Dropout(dropout)
+        self.reset_parameters()
+
         if embedding is not None:
             self.embed.weight.data.copy_(torch.from_numpy(embedding))
             print('embedding encoder')
         #self.gru = MGRU(self.hidden_dim)
+
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_dim)
+        for weight in self.parameters():
+
+            weight.data.uniform_(-stdv, stdv)
 
     def forward(self, source, hidden=None):
         #source = self.dropout(source)
@@ -281,8 +309,9 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.out1 = nn.Linear(hidden_size * 2, vocab_size)
-        self.out2 = nn.Linear(hidden_size,1)
+        self.out1 = nn.Linear(hidden_size , vocab_size)
+        init.xavier_normal_(self.out1.state_dict()['weight'])
+        #self.out2 = nn.Linear(hidden_size,1)
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
@@ -298,9 +327,10 @@ class AnswerModule(nn.Module):
         #mem = mem.view(1,-1)
         #question_h = question_h.view(1,-1)
 
-        concat = torch.cat([mem, question_h], dim=0)#.squeeze(1)
-        concat = concat.view(-1,self.hidden_size *2) #.squeeze(1)
-        out = self.out1(concat)
+        #concat = torch.cat([mem, question_h], dim=0)#.squeeze(1)
+        #concat = concat.view(-1,self.hidden_size *2) #.squeeze(1)
+        #out = self.out1(concat)
+        out = self.out1(mem)
         #out = self.out2(out.permute(1,0))
         #out = out.permute(1,0)
 
@@ -387,15 +417,15 @@ class WrapMemRNN(nn.Module):
             m_list = []
             g_list = []
             e_list = []
-            f_list = []
+
             m = self.q_q.clone()
             g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
             e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
-            f = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+
             m_list.append(m)
             g_list.append(g)
             e_list.append(e)
-            f_list.append(f)
+
 
             #m_list.append(self.q_q.clone())
 
@@ -408,19 +438,18 @@ class WrapMemRNN(nn.Module):
 
                 for i in range(len(sequences)):
                 #if True:
-                    x = self.new_attention_step(sequences[i], g_list[-1], m_list[-1], self.q_q)
-
+                    x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
+                    x = F.relu(x)
                     g_list.append(nn.Parameter(torch.Tensor([x])))
 
                     #print(g_list[-1],'g')
-
+                    #print(self.q_q)
                     #for i in range(len(sequences)):
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[-1], e_list[-1]) # e
+                    e = self.new_episode_small_step(sequences[i], g_list[-1], e_list[-1]) # e
                     e_list.append(e)
-                    f_list.append(f)
 
-                _, out = self.model_3_mem_a(m_list[-1], e_list[-1])#, g_list[-1])
+                _, out = self.model_3_mem_a(e_list[-1], m_list[-1])#, g_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -434,7 +463,7 @@ class WrapMemRNN(nn.Module):
         _ , gru = self.model_3_mem_b(ct, prev_h, None) # g
         h = g * gru + (1 - g) * prev_h
 
-        return h, gru
+        return h
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         #mem = mem.view(-1, self.hidden_size)
