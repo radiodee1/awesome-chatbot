@@ -133,7 +133,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -360,8 +360,11 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.out1 = nn.Linear(hidden_size , vocab_size)
-        init.xavier_normal_(self.out1.state_dict()['weight'])
+        self.W_a = nn.Parameter(torch.zeros(vocab_size,hidden_size))
+        self.b_a = nn.Parameter(torch.zeros(hidden_size,))
+
+        #self.out1 = nn.Linear(hidden_size , vocab_size)
+        #init.xavier_normal_(self.out1.state_dict()['weight'])
         self.out2 = nn.Linear(hidden_size,1)
         init.xavier_normal_(self.out2.state_dict()['weight'])
 
@@ -382,10 +385,12 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
         question_h = self.dropout2(question_h)
+        #mem = mem.permute(1,0)
+        out = torch.mm(self.W_a, mem) + self.b_a
 
-        out = self.out1(mem)
+        #out = self.out1(mem)
 
-        out = self.out2(out.permute(1,0))
+        out = self.out2(out)
 
         return out.permute(1,0)
 
@@ -508,10 +513,10 @@ class WrapMemRNN(nn.Module):
 
                     #print(g_list[-1],'g')
 
-                    e = self.new_episode_small_step(sequences[i], g_list[-1], ee) # e_list[-1]) # e
+                    e = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
 
-                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
+                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), ee)# m_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -538,8 +543,8 @@ class WrapMemRNN(nn.Module):
             q_q.squeeze(0),
             (ct * q_q).squeeze(0),
             (ct * mem).squeeze(0),
-            #torch.abs(ct - q_q).squeeze(0),
-            #torch.abs(ct - mem).squeeze(0)
+            torch.abs(ct - q_q).squeeze(0),
+            torch.abs(ct - mem).squeeze(0)
         ]
         #for i in concat_list: print(i.size())
         #exit()
