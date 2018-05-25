@@ -137,47 +137,53 @@ class EpisodicAttn(nn.Module):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
-
         self.a_list_size = a_list_size
 
-        self.W_1 = nn.Linear(  (self.a_list_size ) * hidden_size * hidden_size, hidden_size)
-        init.xavier_normal_(self.W_1.state_dict()['weight'])
-        self.W_2 = nn.Linear(hidden_size,1)#hidden_size)
-        init.xavier_normal_(self.W_2.state_dict()['weight'])
-        self.dropout_1 = nn.Dropout(dropout)
-        self.dropout_2 = nn.Dropout(dropout)
-        #self.next_mem = nn.Linear(3 * hidden_size, hidden_size)
-        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
+        self.W_c_b = nn.Parameter(torch.zeros(hidden_size,hidden_size))
 
-        #self.reset_parameters()
+        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size* a_list_size))
+        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
+        #self.W_c3 = nn.Parameter(torch.zeros(1,1))
+        self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
+        self.b_c2 = nn.Parameter(torch.zeros(1,))
+        #self.b_c3 = nn.Parameter(torch.zeros(1,)) ## remove!!
+
+        self.W_3 = nn.Linear( hidden_size , 1)
+        init.xavier_normal_(self.W_3.state_dict()['weight'])
+
+        self.dropout_1 = nn.Dropout(dropout)
+        #self.dropout_2 = nn.Dropout(dropout)
+
+        self.reset_parameters()
 
     def reset_parameters(self):
+        #print('reset')
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
+            #print('here...')
             weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
 
     def forward(self,concat_list):
 
-        assert len(concat_list) == self.a_list_size
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(-1,(self.a_list_size ) * self.hidden_size * self.hidden_size )
+        self.c_list_z = self.c_list_z.view(self.a_list_size   * self.hidden_size,-1 )
 
-        self.l_1 = self.W_1(self.c_list_z)
+        l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
+        l_1 = F.tanh(l_1)
+        l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
+        #l_2 = F.tanh(l_2)
+        #l_2 = F.sigmoid(l_2)
+        l_3 = self.W_3(l_2)
 
-        self.l_1 = F.tanh(self.l_1)
+        self.G =  F.sigmoid(l_3)[0]
 
-        self.l_2 = self.W_2(self.l_1)
-
-        #self.l_2 = torch.tanh(self.l_2)
-
-        #self.l_3 = self.W_3(self.l_2)
-        #print(self.l_2,'3')
-
-        self.G = F.sigmoid(self.l_2)[0][0]
         #print(self.G, 'list')
 
         return  self.G
@@ -497,18 +503,17 @@ class WrapMemRNN(nn.Module):
                 for i in range(len(sequences)):
                 #if True:
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-                    #x = F.relu(x)
+
                     g_list.append(nn.Parameter(torch.Tensor([x])))
 
                     #print(g_list[-1],'g')
-                    #print(sequences[i],'si')
 
-                    e = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
+                    e = self.new_episode_small_step(sequences[i], g_list[-1], ee) # e_list[-1]) # e
                     e_list.append(e)
 
-                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])#
+                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
                 m_list.append(out)
-                #print(e_list[-1],'e')
+
             self.last_mem = m_list[-1]
 
         return m_list[-1]
@@ -518,10 +523,8 @@ class WrapMemRNN(nn.Module):
     def new_episode_small_step(self, ct, g, prev_h):
 
         _ , gru = self.model_3_mem_b(ct, prev_h, None) # g
-        #print(prev_h.size(), g.size(),'h,g')
+
         h = g * gru + (1 - g) * prev_h.squeeze(0)
-        #print(gru,'gru',g)
-        #print(h,'h',g)
 
         return h.unsqueeze(0)
 

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="449">
-              <caret line="502" column="20" lean-forward="true" selection-start-line="502" selection-start-column="20" selection-end-line="502" selection-end-column="20" />
+            <state relative-caret-position="-2053">
+              <caret line="364" column="29" selection-start-line="364" selection-start-column="23" selection-end-line="364" selection-end-column="29" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -133,7 +132,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>task_babi_valid_files</find>
       <find>do_test_not_train</find>
       <find>outputs</find>
       <find>loss</find>
@@ -163,6 +161,7 @@
       <find>next_mem</find>
       <find>permute</find>
       <find>concat_list</find>
+      <find>Linear</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -226,7 +225,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="524" />
+    <option name="x" value="525" />
     <option name="y" value="79" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -285,7 +284,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="524" y="79" width="1380" height="1000" extended-state="0" />
+    <frame x="525" y="79" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
@@ -571,8 +570,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="449">
-          <caret line="502" column="20" lean-forward="true" selection-start-line="502" selection-start-column="20" selection-end-line="502" selection-end-column="20" />
+        <state relative-caret-position="-2053">
+          <caret line="364" column="29" selection-start-line="364" selection-start-column="23" selection-end-line="364" selection-end-column="29" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
