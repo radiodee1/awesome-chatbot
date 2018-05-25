@@ -500,7 +500,7 @@ class WrapMemRNN(nn.Module):
             for iter in range(self.memory_hops):
 
                 g_list.append(g)
-                e_list.append(ee)
+                e_list.append(self.q_q.clone())
 
 
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
@@ -513,7 +513,7 @@ class WrapMemRNN(nn.Module):
 
                     #print(g_list[-1],'g')
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[-1],  f_list[-1]) # e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
                     f_list.append(f)
 
