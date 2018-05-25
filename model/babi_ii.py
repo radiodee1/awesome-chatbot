@@ -206,16 +206,15 @@ class CustomGRU(nn.Module):
         init.xavier_normal_(self.H_hid.state_dict()['weight'])
 
 
-        self.reset_parameters()
+        #self.reset_parameters()
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
-
             weight.data.uniform_(-stdv, stdv)
 
     def forward(self, fact, C, g=None):
-        #z = F.sigmoid()
+
         fact = fact.squeeze(0)#.permute(1,0)
         C = C.squeeze(0)#.permute(1,0)
 
@@ -227,13 +226,68 @@ class CustomGRU(nn.Module):
         #print(zz,'zz')
         return zz
 
+class CustomGRU2(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(CustomGRU2, self).__init__()
+        self.hidden_size = hidden_size
+        self.dim = hidden_size
+        '''
+        self.R_in = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.R_in.state_dict()['weight'])
+
+        self.R_hid = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.R_hid.state_dict()['weight'])
+
+        self.U_in = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.U_in.state_dict()['weight'])
+
+        self.U_hid = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.U_hid.state_dict()['weight'])
+
+        self.H_in = nn.Linear(hidden_size,hidden_size)
+        init.xavier_normal_(self.H_in.state_dict()['weight'])
+
+        self.H_hid = nn.Linear(hidden_size,hidden_size)
+        init.xavier_normal_(self.H_hid.state_dict()['weight'])
+        '''
+        self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_res_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.b_mem_res = nn.Parameter(torch.zeros(self.dim,))
+
+        self.W_mem_upd_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.b_mem_upd = nn.Parameter(torch.zeros(self.dim,))
+
+        self.W_mem_hid_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.b_mem_hid = nn.Parameter(torch.zeros(self.dim,))
+        #self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            weight.data.uniform_(-stdv, stdv)
+
+    def forward(self, fact, C, g=None):
+
+        fact = fact.squeeze(0).permute(1,0)
+        C = C.squeeze(0)
+
+        z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
+        r = F.sigmoid(torch.mm(self.W_mem_res_in, fact) + torch.mm(self.W_mem_res_hid, C) + self.b_mem_res)
+        _h = F.tanh(torch.mm(self.W_mem_hid_in, fact) + r * torch.mm(self.W_mem_hid_hid, C) + self.b_mem_hid)
+
+        zz = z * C + (1 - z ) * _h
+
+        return zz # z * C + (1 - z) * _h
+
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
         #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU(hidden_size,hidden_size)
+        self.gru = CustomGRU2(hidden_size,hidden_size)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -257,7 +311,7 @@ class Encoder(nn.Module):
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         #self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
-        self.gru = CustomGRU(hidden_dim,hidden_dim)
+        self.gru = CustomGRU2(hidden_dim,hidden_dim)
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -297,7 +351,7 @@ class AnswerModule(nn.Module):
 
         self.out1 = nn.Linear(hidden_size , vocab_size)
         init.xavier_normal_(self.out1.state_dict()['weight'])
-        #self.out2 = nn.Linear(hidden_size,1)
+        self.out2 = nn.Linear(hidden_size,1)
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
@@ -313,7 +367,9 @@ class AnswerModule(nn.Module):
 
         out = self.out1(mem)
 
-        return out
+        out = self.out2(out.permute(1,0))
+
+        return out.permute(1,0)
 
 #################### Wrapper ####################
 
@@ -368,24 +424,22 @@ class WrapMemRNN(nn.Module):
 
     def new_input_module(self, input_variable, question_variable):
 
-        prev_h1 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
-        hidlist1 = []
+        prev_h1 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
+
         for ii in input_variable:
             out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), prev_h1[-1])#input_variable)
-            hidlist1.append(hidden1)
             prev_h1.append(hidden1)
 
-        self.inp_c_seq = hidlist1 #out1
+        self.inp_c_seq = prev_h1[1:] #out1
         self.inp_c = hidden1 #out1
 
-        prev_h2 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
-        hidlist2 = []
+        prev_h2 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
+
         for ii in question_variable:
-            out2, hidden2 = self.model_2_enc(ii.unsqueeze(0), prev_h2[-1])
-            hidlist2.append(hidden2)
+            out2, hidden2 = self.model_1_enc(ii.unsqueeze(0), prev_h2[-1])
             prev_h2.append(hidden2)
 
-        self.q_q = hidlist2[-1]
+        self.q_q = prev_h2[-1]
 
         return
 
@@ -399,11 +453,11 @@ class WrapMemRNN(nn.Module):
 
             m = self.q_q.clone()
             g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
-            e = nn.Parameter(torch.zeros(1, 1, self.hidden_size))
+            ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
             m_list.append(m)
             g_list.append(g)
-            e_list.append(e)
+            e_list.append(ee)
 
 
             #m_list.append(self.q_q.clone())
@@ -411,26 +465,27 @@ class WrapMemRNN(nn.Module):
             for iter in range(self.memory_hops):
 
                 g_list.append(g)
-                e_list.append(e)
+                e_list.append(ee)
+
 
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
                 #if True:
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-                    x = F.relu(x)
+                    #x = F.relu(x)
                     g_list.append(nn.Parameter(torch.Tensor([x])))
 
                     #print(g_list[-1],'g')
-                    #print(self.q_q)
+                    #print(sequences[i],'si')
                     #for i in range(len(sequences)):
 
-                    e = self.new_episode_small_step(sequences[i], g_list[-1], e_list[-1]) # e
+                    e = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
 
-                _, out = self.model_3_mem_a(e_list[-1], m_list[-1])#, g_list[-1])
+                _, out = self.model_3_mem_a(m_list[-1], e_list[-1])#
                 m_list.append(out)
-
+                #print(e_list[-1],'e')
             self.last_mem = m_list[-1]
 
         return m_list[-1]
@@ -440,9 +495,11 @@ class WrapMemRNN(nn.Module):
     def new_episode_small_step(self, ct, g, prev_h):
 
         _ , gru = self.model_3_mem_b(ct, prev_h, None) # g
-        h = g * gru + (1 - g) * prev_h
+        h = g * gru #+ (1 - g) * prev_h
+        #print(gru,'gru',g)
+        #print(h,'h',g)
 
-        return h
+        return h.unsqueeze(0)
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         #mem = mem.view(-1, self.hidden_size)
@@ -1141,6 +1198,7 @@ class NMT:
             self.model_0_wra.train()
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                               criterion)
+
             loss = criterion(ans, target_variable[0])
         else:
             self.model_0_wra.eval()
@@ -1230,7 +1288,7 @@ class NMT:
                 target_variable = training_pair[0]
                 #print('is auto')
 
-            outputs, masks , l = self.train(input_variable, target_variable, question_variable, encoder,
+            outputs, _, l = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
