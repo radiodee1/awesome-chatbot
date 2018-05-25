@@ -485,7 +485,7 @@ class WrapMemRNN(nn.Module):
             m_list = []
             g_list = []
             e_list = []
-
+            f_list = []
             m = self.q_q.clone()
             g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
             ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
@@ -493,7 +493,7 @@ class WrapMemRNN(nn.Module):
             m_list.append(m)
             g_list.append(g)
             e_list.append(ee)
-
+            f_list.append(ee.clone())
 
             #m_list.append(self.q_q.clone())
 
@@ -513,10 +513,11 @@ class WrapMemRNN(nn.Module):
 
                     #print(g_list[-1],'g')
 
-                    e = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[-1],  f_list[-1]) # e
                     e_list.append(e)
+                    f_list.append(f)
 
-                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), ee)# m_list[-1])
+                _, out = self.model_3_mem_a(e_list[-1].squeeze(0),  m_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -531,7 +532,7 @@ class WrapMemRNN(nn.Module):
 
         h = g * gru + (1 - g) * prev_h.squeeze(0)
 
-        return h.unsqueeze(0)
+        return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         #mem = mem.view(-1, self.hidden_size)
