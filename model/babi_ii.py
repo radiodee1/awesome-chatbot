@@ -352,6 +352,8 @@ class AnswerModule(nn.Module):
         self.out1 = nn.Linear(hidden_size , vocab_size)
         init.xavier_normal_(self.out1.state_dict()['weight'])
         self.out2 = nn.Linear(hidden_size,1)
+        init.xavier_normal_(self.out2.state_dict()['weight'])
+
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
