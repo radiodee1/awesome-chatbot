@@ -140,7 +140,7 @@ class EpisodicAttn(nn.Module):
 
         self.a_list_size = a_list_size
 
-        self.W_1 = nn.Linear(  (self.a_list_size ) * hidden_size,hidden_size)
+        self.W_1 = nn.Linear(  (self.a_list_size ) * hidden_size * hidden_size, hidden_size)
         init.xavier_normal_(self.W_1.state_dict()['weight'])
         self.W_2 = nn.Linear(hidden_size,1)#hidden_size)
         init.xavier_normal_(self.W_2.state_dict()['weight'])
@@ -164,7 +164,7 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(-1,(self.a_list_size ) * self.hidden_size )
+        self.c_list_z = self.c_list_z.view(-1,(self.a_list_size ) * self.hidden_size * self.hidden_size )
 
         self.l_1 = self.W_1(self.c_list_z)
 
@@ -172,7 +172,7 @@ class EpisodicAttn(nn.Module):
 
         self.l_2 = self.W_2(self.l_1)
 
-        self.l_2 = torch.tanh(self.l_2)
+        #self.l_2 = torch.tanh(self.l_2)
 
         #self.l_3 = self.W_3(self.l_2)
         #print(self.l_2,'3')
@@ -231,48 +231,42 @@ class CustomGRU2(nn.Module):
         super(CustomGRU2, self).__init__()
         self.hidden_size = hidden_size
         self.dim = hidden_size
-        '''
-        self.R_in = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.R_in.state_dict()['weight'])
 
-        self.R_hid = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.R_hid.state_dict()['weight'])
-
-        self.U_in = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.U_in.state_dict()['weight'])
-
-        self.U_hid = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.U_hid.state_dict()['weight'])
-
-        self.H_in = nn.Linear(hidden_size,hidden_size)
-        init.xavier_normal_(self.H_in.state_dict()['weight'])
-
-        self.H_hid = nn.Linear(hidden_size,hidden_size)
-        init.xavier_normal_(self.H_hid.state_dict()['weight'])
-        '''
         self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        #init.xavier_normal_(self.W_mem_res_in)
         self.W_mem_res_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        #init.xavier_normal_(self.W_mem_res_hid)
         self.b_mem_res = nn.Parameter(torch.zeros(self.dim,))
 
         self.W_mem_upd_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        #init.xavier_normal_(self.W_mem_upd_in)
         self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        #init.xavier_normal_(self.W_mem_upd_hid)
         self.b_mem_upd = nn.Parameter(torch.zeros(self.dim,))
 
         self.W_mem_hid_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        #init.xavier_normal_(self.W_mem_hid_in)
         self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        #init.xavier_normal_(self.W_mem_hid_hid)
         self.b_mem_hid = nn.Parameter(torch.zeros(self.dim,))
-        #self.reset_parameters()
+        self.reset_parameters()
 
     def reset_parameters(self):
+        #print('reset')
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
+            #print('here...')
             weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
 
     def forward(self, fact, C, g=None):
 
-        fact = fact.squeeze(0).permute(1,0)
+        #fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
 
+        #print(fact.size(), C.size(), 'f,C')
         z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
         r = F.sigmoid(torch.mm(self.W_mem_res_in, fact) + torch.mm(self.W_mem_res_hid, C) + self.b_mem_res)
         _h = F.tanh(torch.mm(self.W_mem_hid_in, fact) + r * torch.mm(self.W_mem_hid_hid, C) + self.b_mem_hid)
@@ -291,9 +285,14 @@ class MemRNN(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        #print('reset')
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
+            #print('here...')
             weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
 
     def forward(self, input, hidden=None, g=None):
         #print(hidden)
@@ -320,18 +319,24 @@ class Encoder(nn.Module):
             print('embedding encoder')
         #self.gru = MGRU(self.hidden_dim)
 
-
     def reset_parameters(self):
+        #print('reset')
         stdv = 1.0 / math.sqrt(self.hidden_dim)
         for weight in self.parameters():
+            #print('here...')
             weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
 
     def forward(self, source, hidden=None):
         #source = self.dropout(source)
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
-        embedded = self.dropout(embedded)
+        #embedded = self.dropout(embedded)
         encoder_out = 0
         #encoder_out,
+        embedded = embedded.squeeze(0).permute(1,0)
+        #print(embedded.size(),'emb')
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
@@ -359,9 +364,14 @@ class AnswerModule(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        #print('reset')
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
+            #print('here...')
             weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
 
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
@@ -404,11 +414,23 @@ class WrapMemRNN(nn.Module):
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
 
+        self.reset_parameters()
+
         if self.freeze_embedding or self.embedding is not None:
             self.new_freeze_embedding()
         #self.criterion = nn.CrossEntropyLoss()
 
         pass
+
+    def reset_parameters(self):
+        #print('reset')
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+            #print('here...')
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
@@ -480,12 +502,11 @@ class WrapMemRNN(nn.Module):
 
                     #print(g_list[-1],'g')
                     #print(sequences[i],'si')
-                    #for i in range(len(sequences)):
 
                     e = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
 
-                _, out = self.model_3_mem_a(m_list[-1], e_list[-1])#
+                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])#
                 m_list.append(out)
                 #print(e_list[-1],'e')
             self.last_mem = m_list[-1]
@@ -497,7 +518,8 @@ class WrapMemRNN(nn.Module):
     def new_episode_small_step(self, ct, g, prev_h):
 
         _ , gru = self.model_3_mem_b(ct, prev_h, None) # g
-        h = g * gru #+ (1 - g) * prev_h
+        #print(prev_h.size(), g.size(),'h,g')
+        h = g * gru + (1 - g) * prev_h.squeeze(0)
         #print(gru,'gru',g)
         #print(h,'h',g)
 
