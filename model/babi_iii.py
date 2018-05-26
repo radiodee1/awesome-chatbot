@@ -148,7 +148,7 @@ class EpisodicAttn(nn.Module):
         self.b_c2 = nn.Parameter(torch.zeros(1,))
         #self.b_c3 = nn.Parameter(torch.zeros(1,)) ## remove!!
 
-        self.W_3 = nn.Linear( hidden_size , 1)
+        self.W_3 = nn.Linear( hidden_size  , 1)
         init.xavier_normal_(self.W_3.state_dict()['weight'])
 
         self.dropout_1 = nn.Dropout(dropout)
@@ -173,8 +173,8 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(self.a_list_size   * self.hidden_size,-1 )
-
+        self.c_list_z = self.c_list_z.view(self.hidden_size * self.a_list_size,-1) # self.a_list_size   * self.hidden_size,-1 )
+        #print(self.c_list_z.size(),'cz')
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
         l_1 = F.tanh(l_1)
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
@@ -269,8 +269,14 @@ class CustomGRU2(nn.Module):
 
     def forward(self, fact, C, g=None):
 
-        #fact = fact.squeeze(0).permute(1,0)
-        C = C.squeeze(0)
+        if fact.size()[0] != self.hidden_size:
+            fact = fact.permute(1,0)
+
+        if len(C.size()) > 2:
+            C = C.squeeze(0)#.permute(1,0)
+
+        if C.size()[0] != self.hidden_size:
+            C = C.permute(1,0)
 
         #print(fact.size(), C.size(), 'f,C')
         z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
@@ -305,6 +311,7 @@ class MemRNN(nn.Module):
         hidden_out = self.gru(input,hidden,g)
         #output,hidden = self.gru(input, hidden)
         output = 0
+        #print(hidden_out.size(),'hid memrnn')
         return output, hidden_out
 
 class Encoder(nn.Module):
@@ -354,6 +361,53 @@ class Encoder(nn.Module):
         #encoder_out = 0
         return encoder_out, encoder_hidden
 
+class EncoderInput(nn.Module):
+    def __init__(self, source_vocab_size, embed_dim, hidden_dim,
+                 n_layers, dropout=0.3, bidirectional=False, embedding=None):
+        super(EncoderInput, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+        self.bidirectional = bidirectional
+        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        #self.gru = CustomGRU2(hidden_dim,hidden_dim)
+        self.dropout = nn.Dropout(dropout)
+        self.reset_parameters()
+
+        if embedding is not None:
+            self.embed.weight.data.copy_(torch.from_numpy(embedding))
+            print('embedding encoder')
+        #self.gru = MGRU(self.hidden_dim)
+
+    def reset_parameters(self):
+        #print('reset')
+        stdv = 1.0 / math.sqrt(self.hidden_dim)
+        for weight in self.parameters():
+            #print('here...')
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+                #print(weight.size())
+
+    def forward(self, source, hidden=None):
+        #source = self.dropout(source)
+        embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        #embedded = self.dropout(embedded)
+        encoder_out = 0
+        #encoder_out,
+        #embedded = embedded.squeeze(0).permute(1,0)
+        #print(embedded.size(),'emb')
+        encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+
+        # sum bidirectional outputs, the other option is to retain concat features
+        if self.bidirectional:
+            encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+                           encoder_out[:, :, self.hidden_dim:])
+
+        #encoder_out = 0
+        return encoder_out, encoder_hidden
+
 class AnswerModule(nn.Module):
     def __init__(self, vocab_size, hidden_size, dropout=0.3):
         super(AnswerModule, self).__init__()
@@ -385,7 +439,7 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
         question_h = self.dropout2(question_h)
-        #mem = mem.permute(1,0)
+        mem = mem.permute(1,0)
         out = torch.mm(self.W_a, mem) + self.b_a
 
         #out = self.out1(mem)
@@ -406,13 +460,14 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
+        self.model_1_enc = EncoderInput(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
         self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
+        self.mem_linear = nn.Linear(self.hidden_size, 1)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -459,16 +514,17 @@ class WrapMemRNN(nn.Module):
 
     def new_input_module(self, input_variable, question_variable):
 
-        prev_h1 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
+        #prev_h1 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
 
-        for ii in input_variable:
-            out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), prev_h1[-1])#input_variable)
-            prev_h1.append(hidden1)
-
-        self.inp_c_seq = prev_h1[1:] #out1
+        #for ii in input_variable:
+        if True:
+            out1, hidden1 = self.model_1_enc(input_variable)#, prev_h1[-1])#input_variable)
+            #prev_h1.append(hidden1)
+        #print(out1.size(),'os')
+        self.inp_c_seq = out1 #prev_h1[1:] #out1
         self.inp_c = hidden1 #out1
 
-        prev_h2 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
+        prev_h2 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
 
         for ii in question_variable:
             out2, hidden2 = self.model_1_enc(ii.unsqueeze(0), prev_h2[-1])
@@ -518,6 +574,9 @@ class WrapMemRNN(nn.Module):
                     f_list.append(f)
 
                 _, out = self.model_3_mem_a(e_list[-1].squeeze(0),  m_list[-1])
+                out = self.mem_linear(out)
+                out = out.permute(1,0)
+                #print(out.size(),'linear')
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -535,17 +594,17 @@ class WrapMemRNN(nn.Module):
         return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        #mem = mem.view(-1, self.hidden_size)
+        mem = mem.view(-1, self.hidden_size)
 
         concat_list = [
             #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
-            ct.squeeze(0),
-            mem.squeeze(0),
+            ct,#.squeeze(0),
+            mem,#.squeeze(0),
             q_q.squeeze(0),
             (ct * q_q).squeeze(0),
-            (ct * mem).squeeze(0),
+            (ct * mem),#.squeeze(0),
             ((ct - q_q) ** 2).squeeze(0),
-            ((ct - mem) ** 2).squeeze(0)
+            ((ct - mem) ** 2)#.squeeze(0)
         ]
         #for i in concat_list: print(i.size())
         #exit()
