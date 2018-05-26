@@ -141,14 +141,14 @@ class EpisodicAttn(nn.Module):
 
         self.W_c_b = nn.Parameter(torch.zeros(hidden_size,hidden_size))
 
-        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size* a_list_size))
-        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
+        self.W_c1 = nn.Parameter(torch.zeros(hidden_size * 104,1))# hidden_size* a_list_size))
+        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size *104))
         #self.W_c3 = nn.Parameter(torch.zeros(1,1))
-        self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
+        self.b_c1 = nn.Parameter(torch.zeros(hidden_size * 104,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
         #self.b_c3 = nn.Parameter(torch.zeros(1,)) ## remove!!
 
-        self.W_3 = nn.Linear( hidden_size , 1)
+        self.W_3 = nn.Linear( hidden_size * 104, 1)
         init.xavier_normal_(self.W_3.state_dict()['weight'])
 
         self.dropout_1 = nn.Dropout(dropout)
@@ -169,11 +169,13 @@ class EpisodicAttn(nn.Module):
     def forward(self,concat_list):
 
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=0)
+
+
+        self.c_list_z = torch.cat(concat_list,dim=1)
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        self.c_list_z = self.c_list_z.view(self.a_list_size * self.hidden_size,-1 )
+        self.c_list_z = self.c_list_z.view(1,104 * self.hidden_size) #self.a_list_size * self.hidden_size,-1 )
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
         l_1 = F.tanh(l_1)
@@ -306,7 +308,7 @@ class MemRNN(nn.Module):
     def forward(self, input, hidden=None, g=None):
         #print(hidden)
         hidden_out = self.gru(input,hidden,g)
-        hidden_out = self.W1(hidden_out)
+        #hidden_out = self.W1(hidden_out)
         #print(hidden_out.size(),'ho')
         #output,hidden = self.gru(input, hidden)
         output = 0
@@ -366,7 +368,7 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.W_a = nn.Parameter(torch.zeros(vocab_size,1))
+        self.W_a = nn.Parameter(torch.zeros(vocab_size,hidden_size))
         self.b_a = nn.Parameter(torch.zeros(hidden_size,))
 
         #self.out1 = nn.Linear(hidden_size , vocab_size)
@@ -504,6 +506,7 @@ class WrapMemRNN(nn.Module):
             m = self.q_q.clone()
             g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
             ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
+            m = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
             m_list.append(m)
             g_list.append(g)
@@ -526,7 +529,7 @@ class WrapMemRNN(nn.Module):
 
                     g_list.append(nn.Parameter(torch.Tensor([x])))
 
-                    #print(g_list[-1],'g')
+                    print(g_list[-1],'g')
 
                     e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
@@ -556,15 +559,15 @@ class WrapMemRNN(nn.Module):
         concat_list = [
             #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
             ct,#.squeeze(0),
-            mem.view(1,-1),#.squeeze(0),
+            mem.contiguous().view(1,-1), #.squeeze(0),
             q_q.squeeze(0),
             (ct * q_q).squeeze(0),
-            (ct * mem).view(1,-1),#.squeeze(0),
+            #(ct * mem).view(1,-1),#.squeeze(0),
             ((ct - q_q) ** 2).squeeze(0),
-            ((ct - mem) ** 2).view(1,-1)#.squeeze(0)
+            #((ct - mem) ** 2).view(1,-1)#.squeeze(0)
         ]
         #for i in concat_list: print(i.size(),'list c')
-
+        #print('devider')
         return self.model_4_att(concat_list)
 
 
