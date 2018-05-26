@@ -133,7 +133,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=106, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -562,20 +562,21 @@ class WrapMemRNN(nn.Module):
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
-                #if True:
+                    #if True:
+
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
 
                     g_list.append(nn.Parameter(torch.Tensor([x])))
 
-                    #print(g_list[-1],'g')
+                    #print(g_list[-1],'g', sequences[i].size(),i)
 
                     e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
                     f_list.append(f)
 
                 _, out = self.model_3_mem_a(e_list[-1].squeeze(0),  m_list[-1])
-                out = self.mem_linear(out)
-                out = out.permute(1,0)
+                #out = self.mem_linear(out)
+                #out = out.permute(1,0)
                 #print(out.size(),'linear')
                 m_list.append(out)
 
@@ -594,17 +595,22 @@ class WrapMemRNN(nn.Module):
         return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        mem = mem.view(-1, self.hidden_size)
-
+        mem2 = mem
+        if len(mem2.size()) >= 2 and mem2.size()[-1] * mem2.size()[-2] == self.hidden_size * self.hidden_size:
+            mem2 = self.mem_linear(mem2)
+            mem2 = mem2.view(1,1, self.hidden_size)
+        else:
+           mem = nn.Parameter(torch.zeros(self.hidden_size,self.hidden_size))
+            
         concat_list = [
             #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
             ct,#.squeeze(0),
             mem,#.squeeze(0),
             q_q.squeeze(0),
             (ct * q_q).squeeze(0),
-            (ct * mem),#.squeeze(0),
+            (ct * mem2).squeeze(0),
             ((ct - q_q) ** 2).squeeze(0),
-            ((ct - mem) ** 2)#.squeeze(0)
+            ((ct - mem2) ** 2).squeeze(0)
         ]
         #for i in concat_list: print(i.size())
         #exit()
