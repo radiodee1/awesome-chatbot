@@ -547,7 +547,7 @@ class WrapMemRNN(nn.Module):
             ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
             m_list.append(m)
-            g_list.append(g)
+            #g_list.append(g)
             e_list.append(ee)
             f_list.append(ee.clone())
 
@@ -555,11 +555,12 @@ class WrapMemRNN(nn.Module):
 
             for iter in range(self.memory_hops):
 
-                g_list.append(g)
+                #g_list.append(g)
+                g_list = []
+
                 e_list.append(self.q_q.clone())
 
-
-                sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
+                sequences = self.inp_c_seq 
 
                 for i in range(len(sequences)):
                     #if True:
@@ -570,7 +571,15 @@ class WrapMemRNN(nn.Module):
 
                     #print(g_list[-1],'g', sequences[i].size(),i)
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
+                assert len(g_list) == len(sequences)
+
+                gg = torch.cat(g_list,dim=0)
+                gg = F.softmax(gg,dim=0)
+                g_list = gg
+                #print(gg,'gg', len(gg))
+
+                for i in range(len(sequences)):
+                    e, f = self.new_episode_small_step(sequences[i], g_list[i],  e_list[-1]) # e
                     e_list.append(e)
                     f_list.append(f)
 
@@ -601,7 +610,7 @@ class WrapMemRNN(nn.Module):
             mem2 = mem2.view(1,1, self.hidden_size)
         else:
            mem = nn.Parameter(torch.zeros(self.hidden_size,self.hidden_size))
-            
+
         concat_list = [
             #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
             ct,#.squeeze(0),
