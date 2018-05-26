@@ -539,13 +539,13 @@ class WrapMemRNN(nn.Module):
 
         concat_list = [
             #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
-            ct.squeeze(0),#.view(self.hidden_size,-1),
+            ct.squeeze(0),
             mem.squeeze(0),
             q_q.squeeze(0),
             (ct * q_q).squeeze(0),
             (ct * mem).squeeze(0),
-            torch.abs(ct - q_q).squeeze(0),
-            torch.abs(ct - mem).squeeze(0)
+            ((ct - q_q) ** 2).squeeze(0),
+            ((ct - mem) ** 2).squeeze(0)
         ]
         #for i in concat_list: print(i.size())
         #exit()
