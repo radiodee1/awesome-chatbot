@@ -521,7 +521,7 @@ class WrapMemRNN(nn.Module):
                 #print(gg,'gg', len(gg))
 
                 for i in range(len(sequences)):
-                    e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[i],  e_list[-1]) # e
                     e_list.append(e)
                     f_list.append(f)
 
