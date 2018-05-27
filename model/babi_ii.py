@@ -138,17 +138,19 @@ class EpisodicAttn(nn.Module):
 
         self.hidden_size = hidden_size
         self.a_list_size = a_list_size
+        self.c_list_z = None
 
         self.W_c_b = nn.Parameter(torch.zeros(hidden_size,hidden_size))
 
         self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size* a_list_size))
         self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
-        #self.W_c3 = nn.Parameter(torch.zeros(1,1))
+        #self.W_c3 = nn.Parameter(torch.zeros(1,hidden_size))
+
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
         #self.b_c3 = nn.Parameter(torch.zeros(1,)) ## remove!!
 
-        self.W_3 = nn.Linear( hidden_size , 1)
+        self.W_3 = nn.Linear( hidden_size , 1,bias=False)
         init.xavier_normal_(self.W_3.state_dict()['weight'])
 
         self.dropout_1 = nn.Dropout(dropout)
@@ -180,13 +182,14 @@ class EpisodicAttn(nn.Module):
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
         #l_2 = F.tanh(l_2)
         l_2 = F.sigmoid(l_2)
+        #l_3 = torch.mm(self.W_c3, l_2)
         l_3 = self.W_3(l_2)
 
         self.G = l_3 # F.sigmoid(l_3)[0]
 
-        #print(self.G, 'list')
+        #print(self.G, 'list', l_1.size(), l_2.size())
 
-        return  self.G
+        return self.G
 
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -483,48 +486,42 @@ class WrapMemRNN(nn.Module):
         if True:
 
             m_list = []
-            #g_list = []
-            e_list = []
-            f_list = []
-            m = self.q_q.clone()
-            #g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
-            ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
-            #m_list.append(m)
-            #g_list.append(g)
-            #e_list.append(ee)
-            #f_list.append(ee.clone())
+            e_list = []
+
+            #m = self.q_q.clone()
+
+            #ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
+
+            e_list.append(self.q_q.clone())
 
             m_list.append(self.q_q.clone())
 
             for iter in range(self.memory_hops):
 
-                #g_list.append(g)
                 g_list = []
-                #m_list = []
-                #m_list.append(self.q_q.clone())
 
+                #e_list = [self.q_q.clone()]
 
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-
                     g_list.append(nn.Parameter(torch.Tensor([x])))
-
-                    #print(g_list[-1],'g')
+                    #print(x,'x')
                 assert len(g_list) == len(sequences)
 
                 gg = torch.cat(g_list, dim=0)
-                gg = F.softmax(gg, dim=0)
+                gg = F.tanh(gg)
                 g_list = gg
                 #print(gg,'gg', len(gg))
 
                 for i in range(len(sequences)):
+
                     e, f = self.new_episode_small_step(sequences[i], g_list[i],  e_list[-1]) # e
                     e_list.append(e)
-                    f_list.append(f)
+                    #f_list.append(f)
 
                 _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
                 m_list.append(out)
