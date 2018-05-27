@@ -182,7 +182,7 @@ class EpisodicAttn(nn.Module):
         #l_2 = F.sigmoid(l_2)
         l_3 = self.W_3(l_2)
 
-        self.G =  F.sigmoid(l_3)[0]
+        self.G = l_3 # F.sigmoid(l_3)[0]
 
         #print(self.G, 'list')
 
@@ -499,7 +499,8 @@ class WrapMemRNN(nn.Module):
 
             for iter in range(self.memory_hops):
 
-                g_list.append(g)
+                #g_list.append(g)
+                g_list = []
                 e_list.append(self.q_q.clone())
 
 
@@ -512,7 +513,14 @@ class WrapMemRNN(nn.Module):
                     g_list.append(nn.Parameter(torch.Tensor([x])))
 
                     #print(g_list[-1],'g')
+                assert len(g_list) == len(sequences)
 
+                gg = torch.cat(g_list, dim=0)
+                gg = F.softmax(gg, dim=0)
+                g_list = gg
+                # print(gg,'gg', len(gg))
+
+                for i in range(len(sequences)):
                     e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
                     e_list.append(e)
                     f_list.append(f)

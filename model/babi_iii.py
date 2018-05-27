@@ -182,7 +182,7 @@ class EpisodicAttn(nn.Module):
         #l_2 = F.sigmoid(l_2)
         l_3 = self.W_3(l_2)
 
-        self.G =  F.sigmoid(l_3)[0]
+        self.G = l_3# F.sigmoid(l_3)[0]
 
         #print(self.G, 'list')
 
@@ -560,7 +560,7 @@ class WrapMemRNN(nn.Module):
 
                 e_list.append(self.q_q.clone())
 
-                sequences = self.inp_c_seq 
+                sequences = self.inp_c_seq
 
                 for i in range(len(sequences)):
                     #if True:
