@@ -178,8 +178,8 @@ class EpisodicAttn(nn.Module):
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
         l_1 = F.tanh(l_1)
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
-        l_2 = F.tanh(l_2)
-        #l_2 = F.sigmoid(l_2)
+        #l_2 = F.tanh(l_2)
+        l_2 = F.sigmoid(l_2)
         l_3 = self.W_3(l_2)
 
         self.G = l_3 # F.sigmoid(l_3)[0]
