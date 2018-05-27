@@ -518,7 +518,7 @@ class WrapMemRNN(nn.Module):
                 gg = torch.cat(g_list, dim=0)
                 gg = F.softmax(gg, dim=0)
                 g_list = gg
-                # print(gg,'gg', len(gg))
+                #print(gg,'gg', len(gg))
 
                 for i in range(len(sequences)):
                     e, f = self.new_episode_small_step(sequences[i], g_list[-1],  e_list[-1]) # e
