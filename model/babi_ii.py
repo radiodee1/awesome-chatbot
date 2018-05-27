@@ -525,7 +525,7 @@ class WrapMemRNN(nn.Module):
                     e_list.append(e)
                     f_list.append(f)
 
-                _, out = self.model_3_mem_a(e_list[-1].squeeze(0),  m_list[-1])
+                _, out = self.model_3_mem_a(m_list[-1], e_list[-1].squeeze(0))
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
