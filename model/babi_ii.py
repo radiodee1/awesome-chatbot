@@ -279,7 +279,7 @@ class CustomGRU2(nn.Module):
 
         zz = z * C + (1 - z ) * _h
 
-        return zz # z * C + (1 - z) * _h
+        return zz
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
@@ -483,31 +483,32 @@ class WrapMemRNN(nn.Module):
         if True:
 
             m_list = []
-            g_list = []
+            #g_list = []
             e_list = []
             f_list = []
             m = self.q_q.clone()
-            g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
+            #g = nn.Parameter(torch.Tensor([0.0]))#torch.zeros(1, 1, self.hidden_size))
             ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
-            m_list.append(m)
-            g_list.append(g)
-            e_list.append(ee)
-            f_list.append(ee.clone())
+            #m_list.append(m)
+            #g_list.append(g)
+            #e_list.append(ee)
+            #f_list.append(ee.clone())
 
-            #m_list.append(self.q_q.clone())
+            m_list.append(self.q_q.clone())
 
             for iter in range(self.memory_hops):
 
                 #g_list.append(g)
                 g_list = []
-                e_list.append(self.q_q.clone())
+                #m_list = []
+                #m_list.append(self.q_q.clone())
 
 
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
                 for i in range(len(sequences)):
-                #if True:
+
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
 
                     g_list.append(nn.Parameter(torch.Tensor([x])))
@@ -525,7 +526,7 @@ class WrapMemRNN(nn.Module):
                     e_list.append(e)
                     f_list.append(f)
 
-                _, out = self.model_3_mem_a(m_list[-1], e_list[-1].squeeze(0))
+                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -536,7 +537,7 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
 
-        _ , gru = self.model_3_mem_b(ct, prev_h, None) # g
+        _, gru = self.model_3_mem_b(ct, prev_h, None) # g
 
         h = g * gru + (1 - g) * prev_h.squeeze(0)
 
