@@ -182,6 +182,7 @@ class EpisodicAttn(nn.Module):
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
         #l_2 = F.tanh(l_2)
         l_2 = F.sigmoid(l_2)
+        #l_2 = F.sigmoid(l_2)
         #l_3 = torch.mm(self.W_c3, l_2)
         l_3 = self.W_3(l_2)
 
@@ -190,7 +191,7 @@ class EpisodicAttn(nn.Module):
         #print(self.G, 'list', l_1.size(), l_2.size())
 
         return self.G
-
+'''
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CustomGRU, self).__init__()
@@ -234,12 +235,15 @@ class CustomGRU(nn.Module):
 
         #print(zz,'zz')
         return zz
-
+'''
 class CustomGRU2(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, input_size, hidden_size, dropout=0.3):
         super(CustomGRU2, self).__init__()
         self.hidden_size = hidden_size
         self.dim = hidden_size
+
+        self.dropout1 = nn.Dropout(dropout)
+        self.dropout2 = nn.Dropout(dropout)
 
         self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim, self.dim))
         #init.xavier_normal_(self.W_mem_res_in)
@@ -272,6 +276,9 @@ class CustomGRU2(nn.Module):
 
     def forward(self, fact, C, g=None):
 
+        fact = self.dropout1(fact)
+        C = self.dropout2(C)
+
         #fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
 
@@ -290,7 +297,7 @@ class MemRNN(nn.Module):
         self.hidden_size = hidden_size
 
         #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU2(hidden_size,hidden_size)
+        self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -304,7 +311,7 @@ class MemRNN(nn.Module):
                 #print(weight.size())
 
     def forward(self, input, hidden=None, g=None):
-        #print(hidden)
+
         hidden_out = self.gru(input,hidden,g)
         #output,hidden = self.gru(input, hidden)
         output = 0
@@ -319,7 +326,7 @@ class Encoder(nn.Module):
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         #self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
-        self.gru = CustomGRU2(hidden_dim,hidden_dim)
+        self.gru = CustomGRU2(hidden_dim,hidden_dim,dropout=dropout)
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -450,7 +457,7 @@ class WrapMemRNN(nn.Module):
 
         self.new_input_module(input_variable, question_variable)
         self.new_episodic_module()
-        outputs,  ans = self.new_answer_module_simple(target_variable, criterion)
+        outputs,  ans = self.new_answer_module_simple()#target_variable, criterion)
 
         return outputs, None, ans, None
 
@@ -485,23 +492,22 @@ class WrapMemRNN(nn.Module):
     def new_episodic_module(self):
         if True:
 
-            m_list = []
+            m_list = [self.q_q.clone()]
 
             e_list = []
-
+            #f_list = []
             #m = self.q_q.clone()
 
-            #ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
+            ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
             e_list.append(self.q_q.clone())
 
-            m_list.append(self.q_q.clone())
 
             for iter in range(self.memory_hops):
 
                 g_list = []
 
-                #e_list = [self.q_q.clone()]
+                f_list = [self.q_q.clone()]
 
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
@@ -513,17 +519,19 @@ class WrapMemRNN(nn.Module):
                 assert len(g_list) == len(sequences)
 
                 gg = torch.cat(g_list, dim=0)
-                gg = F.tanh(gg)
+                #gg = F.tanh(gg)
+                gg = F.softmax(gg,dim=0)
                 g_list = gg
                 #print(gg,'gg', len(gg))
 
                 for i in range(len(sequences)):
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[i],  e_list[-1]) # e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[i], e_list[-1])# e_list[-1]) # e
                     e_list.append(e)
-                    #f_list.append(f)
+                    f_list.append(f)
 
                 _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
+
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
@@ -559,7 +567,7 @@ class WrapMemRNN(nn.Module):
 
 
 
-    def new_answer_module_simple(self,target_var, criterion):
+    def new_answer_module_simple(self):#,target_var, criterion):
 
         loss = 0
         ansx = self.model_5_ans(self.last_mem, self.q_q)
