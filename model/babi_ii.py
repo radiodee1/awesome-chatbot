@@ -277,7 +277,7 @@ class CustomGRU2(nn.Module):
     def forward(self, fact, C, g=None):
 
         fact = self.dropout1(fact)
-        C = self.dropout2(C)
+        #C = self.dropout2(C)
 
         #fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
@@ -370,12 +370,17 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.W_a = nn.Parameter(torch.zeros(vocab_size,hidden_size))
-        self.b_a = nn.Parameter(torch.zeros(hidden_size,))
+        self.W_a1 = nn.Parameter(torch.zeros(hidden_size * 2,hidden_size))
+        self.b_a1 = nn.Parameter(torch.zeros(hidden_size * 2,))
 
-        #self.out1 = nn.Linear(hidden_size , vocab_size)
-        #init.xavier_normal_(self.out1.state_dict()['weight'])
-        self.out2 = nn.Linear(hidden_size,1)
+        self.W_a2 = nn.Parameter(torch.zeros( vocab_size, hidden_size))
+        self.b_a2 = nn.Parameter(torch.zeros(hidden_size, ))
+        self.out_a = nn.Linear(hidden_size, 1)
+        init.xavier_normal_(self.out_a.state_dict()['weight'])
+
+        self.out1 = nn.Linear(hidden_size * 2, vocab_size)
+        init.xavier_normal_(self.out1.state_dict()['weight'])
+        self.out2 = nn.Linear(hidden_size * 2, 1)
         init.xavier_normal_(self.out2.state_dict()['weight'])
 
         self.dropout1 = nn.Dropout(dropout)
@@ -395,12 +400,21 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
         question_h = self.dropout2(question_h)
-        #mem = mem.permute(1,0)
-        out = torch.mm(self.W_a, mem) + self.b_a
+        if False:
+            mem = torch.cat([mem, question_h],dim=1)
 
-        #out = self.out1(mem)
+            out = torch.mm(self.W_a1, mem) + self.b_a1
 
-        out = self.out2(out)
+            out = F.tanh(out)
+            out = self.out1(out)
+            out = F.tanh(out)
+            out = out.permute(1,0)
+            out = self.out2(out)
+            out = F.tanh(out)
+        else:
+            out = torch.mm(self.W_a2, mem) + self.b_a2
+            out = F.tanh(out)
+            out = self.out_a(out)
 
         return out.permute(1,0)
 
@@ -419,8 +433,9 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
-        self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
-        self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
+        gru_dropout = 0.2
+        self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
+        self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
@@ -492,7 +507,7 @@ class WrapMemRNN(nn.Module):
     def new_episodic_module(self):
         if True:
 
-            m_list = [self.q_q.clone()]
+            m_list = [self.q_q.clone(),self.q_q.clone()]
 
             e_list = []
             #f_list = []
@@ -526,11 +541,11 @@ class WrapMemRNN(nn.Module):
 
                 for i in range(len(sequences)):
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[i], e_list[-1])# e_list[-1]) # e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[i], e_list[-1])# e
                     e_list.append(e)
                     f_list.append(f)
 
-                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
+                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-2])
 
                 m_list.append(out)
 
