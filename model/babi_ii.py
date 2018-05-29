@@ -122,7 +122,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.5
+hparams['dropout'] = 0.3
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -433,7 +433,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
-        gru_dropout = 0.2
+        gru_dropout = dropout / 2
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
@@ -1448,7 +1448,10 @@ class NMT:
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
-                    print('[ last valid:', self.score_list[-1],']')
+                    if self.do_test_not_train:
+                        print('[ wait ]')
+                    else:
+                        print('[ last valid:', self.score_list[-1],']')
 
                 print("-----")
 
