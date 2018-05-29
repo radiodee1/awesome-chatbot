@@ -1449,7 +1449,7 @@ class NMT:
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
                     if self.do_test_not_train:
-                        print('[ wait ]')
+                        print('[ older valid:', self.score_list[-1],']')
                     else:
                         print('[ last valid:', self.score_list[-1],']')
 
