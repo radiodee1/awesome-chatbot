@@ -1442,6 +1442,9 @@ class NMT:
                     print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
 
+                print('[last train:', self.score_list_training[-1],']')
+                print('[last valid:', self.score_list[-1],']')
+
                 print("-----")
 
 
