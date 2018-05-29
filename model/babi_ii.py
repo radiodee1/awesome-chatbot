@@ -534,10 +534,24 @@ class WrapMemRNN(nn.Module):
                 assert len(g_list) == len(sequences)
 
                 gg = torch.cat(g_list, dim=0)
-                #gg = F.tanh(gg)
-                gg = F.softmax(gg,dim=0)
-                g_list = gg
-                #print(gg,'gg', len(gg))
+                if True:
+                    #gg = F.tanh(gg)
+                    #gg = F.softmax(gg, dim=0)
+                    gg = gg.float()
+
+                    gg_max = torch.argmax(gg,dim=0)
+
+                    gg_max = gg[int(gg_max.int())]
+
+                    gg = gg.add( - gg_max)
+
+                    e_x = torch.exp(gg)
+
+                    gg = e_x / e_x.sum(dim=0) ## <-- too small???
+
+                g_list = e_x #gg
+
+                #print(gg,'gg -- after', len(gg))
 
                 for i in range(len(sequences)):
 
