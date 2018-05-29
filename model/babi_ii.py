@@ -551,7 +551,7 @@ class WrapMemRNN(nn.Module):
 
                 g_list = e_x #gg
 
-                #print(gg,'gg -- after', len(gg))
+                #print(g_list,'gg -- after', len(g_list))
 
                 for i in range(len(sequences)):
 
@@ -1443,7 +1443,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.score_list is not None and len(self.score_list) > 0:
-                    print('[ last train:', self.score_list_training[-1],']')
+                    print('[ last train:', self.score_list_training[-1],']',end='')
                     print('[ last valid:', self.score_list[-1],']')
 
                 print("-----")
