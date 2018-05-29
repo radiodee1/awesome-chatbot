@@ -191,51 +191,7 @@ class EpisodicAttn(nn.Module):
         #print(self.G, 'list', l_1.size(), l_2.size())
 
         return self.G
-'''
-class CustomGRU(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(CustomGRU, self).__init__()
-        self.hidden_size = hidden_size
 
-        self.R_in = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.R_in.state_dict()['weight'])
-
-        self.R_hid = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.R_hid.state_dict()['weight'])
-
-        self.U_in = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.U_in.state_dict()['weight'])
-
-        self.U_hid = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.U_hid.state_dict()['weight'])
-
-        self.H_in = nn.Linear(hidden_size,hidden_size)
-        init.xavier_normal_(self.H_in.state_dict()['weight'])
-
-        self.H_hid = nn.Linear(hidden_size,hidden_size)
-        init.xavier_normal_(self.H_hid.state_dict()['weight'])
-
-
-        #self.reset_parameters()
-
-    def reset_parameters(self):
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
-            weight.data.uniform_(-stdv, stdv)
-
-    def forward(self, fact, C, g=None):
-
-        fact = fact.squeeze(0)#.permute(1,0)
-        C = C.squeeze(0)#.permute(1,0)
-
-        z = F.sigmoid(self.U_in( fact) + self.U_hid( C) )
-        r = F.sigmoid(self.R_in( fact) + self.R_hid( C) )
-        _h = F.tanh(self.H_in( fact) + r * self.H_hid( C) )
-        zz = z * C + (1 - z) * _h
-
-        #print(zz,'zz')
-        return zz
-'''
 class CustomGRU2(nn.Module):
     def __init__(self, input_size, hidden_size, dropout=0.3):
         super(CustomGRU2, self).__init__()
