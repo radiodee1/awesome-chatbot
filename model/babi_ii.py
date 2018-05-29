@@ -181,8 +181,8 @@ class EpisodicAttn(nn.Module):
         l_1 = F.tanh(l_1)
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
         #l_2 = F.tanh(l_2)
-        l_2 = F.tanh(l_2)
-        #l_2 = F.sigmoid(l_2)
+        #l_2 = F.tanh(l_2)
+        l_2 = F.sigmoid(l_2)
         #l_3 = torch.mm(self.W_c3, l_2)
         l_3 = self.W_3(l_2)
 
@@ -535,24 +535,14 @@ class WrapMemRNN(nn.Module):
 
                 gg = torch.cat(g_list, dim=0)
                 if True:
-                    gg = F.sigmoid(gg)
+                    pass
+                    #gg = F.sigmoid(gg)
+                    gg_max = torch.argmax(gg, dim=0)
+                    gg_max = gg[int(gg_max.int())]
+                    gg_diff = gg_max - 1
+                    gg = gg.add(- gg_diff)
 
-                    '''
-                    e_x = gg #torch.exp(gg)
-                    #e_x = F.softmax(e_x,dim=0)
-                    gg_max = torch.argmax(e_x,dim=0)
-                    gg_min = torch.argmin(e_x, dim=0)
 
-                    gg_max = e_x[int(gg_max.int())]
-                    gg_min = e_x[int(gg_min.int())]
-                    print(gg_max/gg_min)
-                    e_x = e_x.add(- gg_min)
-                    e_x = e_x * ((gg_min) )
-                    gg = e_x # e_x.add( - (gg_min))
-
-                    #print(e_x.sum(dim=0))
-                    #gg = e_x / e_x.sum(dim=0) ## <-- too small???
-                    '''
                 g_list = gg #e_x #gg
 
                 #print(g_list,'gg -- after', len(g_list))
