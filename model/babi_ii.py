@@ -232,7 +232,7 @@ class CustomGRU2(nn.Module):
 
     def forward(self, fact, C, g=None):
 
-        fact = self.dropout1(fact)
+        #fact = self.dropout1(fact)
         #C = self.dropout2(C)
 
         #fact = fact.squeeze(0).permute(1,0)
