@@ -122,7 +122,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
-hparams['dropout'] = 0.3
+#hparams['dropout'] = 0.3
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
@@ -688,6 +688,7 @@ class NMT:
         parser.add_argument('--freeze-embedding', help='Stop training on embedding elements',action='store_true')
         parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
         parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
+        parser.add_argument('--dropout', help='set dropout ratio from the command line. (Float value)')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -738,6 +739,7 @@ class NMT:
             self.do_load_embeddings = True
             self.do_freeze_embedding = True
         if self.args['auto_stop'] == True: self.do_auto_stop = True
+        if self.args['dropout'] is not None: hparams['dropout'] = float(self.args['dropout'])
         if self.printable == '': self.printable = hparams['base_filename']
 
 
@@ -1435,6 +1437,7 @@ class NMT:
         if self.do_load_babi:
             print('training:', ', '.join(self.score_list_training))
             print('val list:', ', '.join(self.score_list))
+        print('dropout:',hparams['dropout'])
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
