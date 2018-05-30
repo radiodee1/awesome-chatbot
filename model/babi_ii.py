@@ -252,8 +252,8 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
 
-        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
+        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -266,11 +266,29 @@ class MemRNN(nn.Module):
                 init.xavier_normal_(weight)
                 #print(weight.size())
 
-    def forward(self, input, hidden=None, g=None):
+    def prune_tensor(self, input, size):
+        if len(input.size()) < size:
+            input = input.unsqueeze(0)
+        if len(input.size()) > size:
+            input = input.squeeze(0)
+        return input
 
-        hidden_out = self.gru(input,hidden,g)
-        #output,hidden = self.gru(input, hidden)
-        output = 0
+    def forward(self, input, hidden=None, g=None):
+        '''
+        if len(input.size()) < 3:
+            input = input.unsqueeze(0)
+        if len(input.size()) > 3:
+            input = input.squeeze(0)
+        if len(hidden.size()) < 3:
+            hidden = hidden.unsqueeze(0)
+        if len(hidden.size()) > 3:
+            hidden = hidden.squeeze(0)
+        '''
+        input = self.prune_tensor(input,3)
+        hidden = self.prune_tensor(hidden,3)
+        #hidden_out = self.gru(input,hidden,g)
+        output,hidden_out = self.gru(input, hidden)
+        #output = 0
         return output, hidden_out
 
 class Encoder(nn.Module):
@@ -356,6 +374,9 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
         question_h = self.dropout2(question_h)
+
+        mem = mem.squeeze(0)
+
         if False:
             mem = torch.cat([mem, question_h],dim=1)
 
@@ -490,14 +511,15 @@ class WrapMemRNN(nn.Module):
                 assert len(g_list) == len(sequences)
 
                 gg = torch.cat(g_list, dim=0)
-                if True:
+                if False:
                     pass
                     #gg = F.sigmoid(gg)
                     gg_max = torch.argmax(gg, dim=0)
                     gg_max = gg[int(gg_max.int())]
                     gg_diff = gg_max - 1
                     gg = gg.add(- gg_diff)
-
+                else:
+                    gg = F.sigmoid(gg)
 
                 g_list = gg #e_x #gg
 
