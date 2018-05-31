@@ -173,7 +173,7 @@ class EpisodicAttn(nn.Module):
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
 
-        self.c_list_z = self.dropout_1(self.c_list_z)
+        #self.c_list_z = self.dropout_1(self.c_list_z)
 
         #self.c_list_z = self.c_list_z.view(self.a_list_size   * self.hidden_size,-1 )
 
@@ -186,6 +186,7 @@ class EpisodicAttn(nn.Module):
         #l_3 = torch.mm(self.W_c3, l_2)
         l_3 = self.W_3(l_2)
 
+        l_3 = self.dropout_1(l_3)
         self.G = l_3 # F.sigmoid(l_3)[0]
 
         #print(self.G, 'list', l_1.size(), l_2.size())
@@ -251,7 +252,8 @@ class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
-        self.dropout = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
+        self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
+        self.dropout2 = nn.Dropout(dropout)
         self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
         #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
@@ -275,7 +277,7 @@ class MemRNN(nn.Module):
 
     def forward(self, input, hidden=None, g=None):
 
-        input = self.dropout(input) # weak dropout
+        #input = self.dropout(input) # weak dropout
 
         '''
         if len(input.size()) < 3:
@@ -292,6 +294,8 @@ class MemRNN(nn.Module):
         #hidden_out = self.gru(input,hidden,g)
         output,hidden_out = self.gru(input, hidden)
         #output = 0
+        output = self.dropout1(output)
+        hidden_out = self.dropout2(hidden_out)
         return output, hidden_out
 
 class Encoder(nn.Module):
@@ -375,8 +379,8 @@ class AnswerModule(nn.Module):
                 #print(weight.size())
 
     def forward(self, mem, question_h):
-        mem = self.dropout1(mem)
-        question_h = self.dropout2(question_h)
+        #mem = self.dropout1(mem)
+        #question_h = self.dropout2(question_h)
 
         mem = mem.squeeze(0)
 
@@ -396,6 +400,7 @@ class AnswerModule(nn.Module):
             out = F.tanh(out)
             out = self.out_a(out)
 
+            out = self.dropout1(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -413,7 +418,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
-        gru_dropout = dropout / 2
+        gru_dropout = dropout # * 0.75 #/ 2
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
