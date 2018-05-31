@@ -186,7 +186,7 @@ class EpisodicAttn(nn.Module):
         #l_3 = torch.mm(self.W_c3, l_2)
         l_3 = self.W_3(l_2)
 
-        l_3 = self.dropout_1(l_3)
+        #l_3 = self.dropout_1(l_3)
         self.G = l_3 # F.sigmoid(l_3)[0]
 
         #print(self.G, 'list', l_1.size(), l_2.size())
@@ -521,13 +521,16 @@ class WrapMemRNN(nn.Module):
                 gg = torch.cat(g_list, dim=0)
                 if False:
                     pass
+                    '''
                     #gg = F.sigmoid(gg)
                     gg_max = torch.argmax(gg, dim=0)
                     gg_max = gg[int(gg_max.int())]
                     gg_diff = gg_max - 1
                     gg = gg.add(- gg_diff)
-                else:
+                    '''
+                if True:
                     gg = F.sigmoid(gg)
+                    gg = self.model_4_att.dropout_1(gg)
 
                 g_list = gg #e_x #gg
 
