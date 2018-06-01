@@ -173,7 +173,7 @@ class EpisodicAttn(nn.Module):
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
 
-        #self.c_list_z = self.dropout_1(self.c_list_z)
+        self.c_list_z = self.dropout_1(self.c_list_z)
 
         #self.c_list_z = self.c_list_z.view(self.a_list_size   * self.hidden_size,-1 )
 
@@ -277,7 +277,7 @@ class MemRNN(nn.Module):
 
     def forward(self, input, hidden=None, g=None):
 
-        #input = self.dropout(input) # weak dropout
+        input = self.dropout1(input) # weak dropout
 
         '''
         if len(input.size()) < 3:
@@ -294,8 +294,8 @@ class MemRNN(nn.Module):
         #hidden_out = self.gru(input,hidden,g)
         output,hidden_out = self.gru(input, hidden)
         #output = 0
-        output = self.dropout1(output)
-        hidden_out = self.dropout2(hidden_out)
+        #output = self.dropout1(output)
+        #hidden_out = self.dropout2(hidden_out)
         return output, hidden_out
 
 class Encoder(nn.Module):
@@ -329,7 +329,7 @@ class Encoder(nn.Module):
     def forward(self, source, hidden=None):
         #source = self.dropout(source)
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
-        #embedded = self.dropout(embedded)
+        embedded = self.dropout(embedded)
         encoder_out = 0
         #encoder_out,
         embedded = embedded.squeeze(0).permute(1,0)
@@ -379,7 +379,7 @@ class AnswerModule(nn.Module):
                 #print(weight.size())
 
     def forward(self, mem, question_h):
-        #mem = self.dropout1(mem)
+        mem = self.dropout1(mem)
         #question_h = self.dropout2(question_h)
 
         mem = mem.squeeze(0)
@@ -400,7 +400,7 @@ class AnswerModule(nn.Module):
             out = F.tanh(out)
             out = self.out_a(out)
 
-            out = self.dropout1(out)
+            #out = self.dropout1(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -418,10 +418,10 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
-        gru_dropout = dropout # * 0.75 #/ 2
+        gru_dropout = dropout / 2
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
-        self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
+        self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
@@ -530,7 +530,7 @@ class WrapMemRNN(nn.Module):
                     '''
                 if True:
                     gg = F.sigmoid(gg)
-                    gg = self.model_4_att.dropout_1(gg)
+
 
                 g_list = gg #e_x #gg
 
@@ -1315,7 +1315,7 @@ class NMT:
 
         if self.do_load_babi and  self.do_test_not_train:
 
-            print('list:', ', '.join(self.score_list))
+            #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
             for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr')
@@ -1446,8 +1446,8 @@ class NMT:
                 self._auto_stop()
 
         if self.do_load_babi:
-            print('training:', ', '.join(self.score_list_training))
-            print('val list:', ', '.join(self.score_list))
+            print('train list:', ', '.join(self.score_list_training))
+            print('valid list:', ', '.join(self.score_list))
         print('dropout:',hparams['dropout'])
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
