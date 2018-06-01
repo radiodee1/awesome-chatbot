@@ -1195,7 +1195,7 @@ class NMT:
                 if self.opt_1 is not None:
                     self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
                     if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
-                        print('new optimizer')
+                        print('new optimizer', hparams['learning_rate'])
                         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
 
                         self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
@@ -1214,7 +1214,12 @@ class NMT:
                 t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                 print(t)
                 print('list:',self.score_list)
-                exit()
+
+                ''' adjust learning_rate to smaller value if possible. '''
+                if float(self.score_list[-1]) != 100.00 and hparams['learning_rate'] > 0.00001:
+                    hparams['learning_rate'] = 0.00001
+                else:
+                    exit()
 
 
 
