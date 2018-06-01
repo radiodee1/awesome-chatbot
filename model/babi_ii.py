@@ -418,7 +418,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
-        gru_dropout = dropout / 2
+        gru_dropout = dropout #/ 2
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
