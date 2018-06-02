@@ -418,7 +418,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
 
-        gru_dropout = dropout #/ 2
+        gru_dropout = dropout * 0 #/ 2
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
@@ -1207,7 +1207,7 @@ class NMT:
     def _auto_stop(self):
         self.epochs_since_adjustment += 1
 
-        if self.epochs_since_adjustment > 5:# len(self.score_list) >= 5 : ## 3 ??
+        if self.epochs_since_adjustment > 5 and hparams['learning_rate'] == 0.001:
 
             if ((False and float(self.score_list[-2]) > float(self.score_list[-1])) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
@@ -1219,12 +1219,20 @@ class NMT:
                 print('list:',self.score_list)
 
                 ''' adjust learning_rate to smaller value if possible. '''
-                if float(self.score_list[-1]) != 100.00 and hparams['learning_rate'] > 0.00001:
+                if float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] > 0.00001:
                     hparams['learning_rate'] = 0.00001
+                    hparams['dropout'] = 0.5
                     self.epochs_since_adjustment = 0
                 else:
                     exit()
 
+        elif self.epochs_since_adjustment > 3 and hparams['learning_rate'] == 0.00001:
+            if float(self.score_list[-1]) == 100.00:
+                time.ctime()
+                t = time.strftime('%l:%M%p %Z on %b %d, %Y')
+                print(t)
+                print('list:', self.score_list)
+                exit()
 
 
     def _shorten(self, sentence):
