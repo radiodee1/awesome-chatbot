@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="652" column="69" selection-start-line="652" selection-start-column="69" selection-end-line="652" selection-end-column="69" />
+            <state relative-caret-position="-1081">
+              <caret line="652" column="40" selection-start-line="652" selection-start-column="40" selection-end-line="652" selection-end-column="40" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -124,13 +124,11 @@
       <find>model_0_wra</find>
       <find>eval</find>
       <find>dropout_2</find>
-      <find>EpisodicAttn</find>
       <find>CustomGRU</find>
       <find>new_process_from_attn</find>
       <find>model_3_mem_c</find>
       <find>inp_c</find>
       <find>model_3_mem_a</find>
-      <find>WrapMemRNN</find>
       <find>model_5_ans</find>
       <find>AnswerModule</find>
       <find>Encoder</find>
@@ -147,9 +145,11 @@
       <find>linear</find>
       <find>concat_list</find>
       <find>train_iters</find>
-      <find>MemRNN</find>
       <find>list</find>
       <find>dropout</find>
+      <find>EpisodicAttn</find>
+      <find>MemRNN</find>
+      <find>WrapMemRNN</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -555,8 +555,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="652" column="69" selection-start-line="652" selection-start-column="69" selection-end-line="652" selection-end-column="69" />
+        <state relative-caret-position="-1081">
+          <caret line="652" column="40" selection-start-line="652" selection-start-column="40" selection-end-line="652" selection-end-column="40" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

@@ -254,7 +254,7 @@ class MemRNN(nn.Module):
         self.hidden_size = hidden_size
         self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
         self.dropout2 = nn.Dropout(dropout)
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=dropout, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
         #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
