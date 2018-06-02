@@ -1194,12 +1194,16 @@ class NMT:
                 if self.do_freeze_embedding:
                     self.model_0_wra.new_freeze_embedding()
                 if self.opt_1 is not None:
-                    self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
-                    if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
+                    #####
+                    try:
+                        self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
+                        if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
+                            raise Exception('new optimizer...')
+                    except:
                         print('new optimizer', hparams['learning_rate'])
                         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-
                         self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
+                        
                 print("loaded checkpoint '"+ basename + "' ")
             else:
                 print("no checkpoint found at '"+ basename + "'")
