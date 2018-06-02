@@ -650,7 +650,7 @@ class NMT:
         self.score_list = []
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.epochs_since_adjustment = 0
+        self.epochs_since_adjustment = 0 # used by auto-stop function
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
