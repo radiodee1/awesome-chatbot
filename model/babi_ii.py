@@ -650,6 +650,7 @@ class NMT:
         self.score_list = []
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
+        self.epochs_since_adjustment = 0
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -1204,7 +1205,9 @@ class NMT:
                 print("no checkpoint found at '"+ basename + "'")
 
     def _auto_stop(self):
-        if len(self.score_list) >= 5 : ## 3 ??
+        self.epochs_since_adjustment += 1
+
+        if self.epochs_since_adjustment > 5:# len(self.score_list) >= 5 : ## 3 ??
 
             if ((False and float(self.score_list[-2]) > float(self.score_list[-1])) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
@@ -1218,6 +1221,7 @@ class NMT:
                 ''' adjust learning_rate to smaller value if possible. '''
                 if float(self.score_list[-1]) != 100.00 and hparams['learning_rate'] > 0.00001:
                     hparams['learning_rate'] = 0.00001
+                    self.epochs_since_adjustment = 0
                 else:
                     exit()
 
@@ -1454,6 +1458,7 @@ class NMT:
             print('train list:', ', '.join(self.score_list_training))
             print('valid list:', ', '.join(self.score_list))
         print('dropout:',hparams['dropout'])
+        print('learning rate:', hparams['learning_rate'])
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
