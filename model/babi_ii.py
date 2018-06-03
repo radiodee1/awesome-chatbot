@@ -1230,11 +1230,12 @@ class NMT:
                 print('list:',self.score_list)
 
                 ''' adjust learning_rate to smaller value if possible. '''
-                if float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] > 0.00001:
+                if False and float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] > 0.00001:
                     hparams['learning_rate'] = 0.00001
                     hparams['dropout'] = 0.5
                     self.epochs_since_adjustment = 0
-                else:
+
+                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                     exit()
 
         elif self.epochs_since_adjustment > 3 and hparams['learning_rate'] == 0.00001:
