@@ -422,7 +422,7 @@ class WrapMemRNN(nn.Module):
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=gru_dropout)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -1211,8 +1211,8 @@ class NMT:
     def _make_optimizer(self):
         print('new optimizer', hparams['learning_rate'])
         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-        #return optim.Adam(parameters, lr=hparams['learning_rate'])
-        return optim.SGD(parameters, lr=hparams['learning_rate'])
+        return optim.Adam(parameters, lr=hparams['learning_rate'])
+        #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
     def _auto_stop(self):
