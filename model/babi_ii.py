@@ -1200,13 +1200,20 @@ class NMT:
                         if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
-                        print('new optimizer', hparams['learning_rate'])
-                        parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-                        self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
-                        
+                        #print('new optimizer', hparams['learning_rate'])
+                        #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+                        #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
+                        self.opt_1 = self._make_optimizer()
                 print("loaded checkpoint '"+ basename + "' ")
             else:
                 print("no checkpoint found at '"+ basename + "'")
+
+    def _make_optimizer(self):
+        print('new optimizer', hparams['learning_rate'])
+        parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+        #return optim.Adam(parameters, lr=hparams['learning_rate'])
+        return optim.SGD(parameters, lr=hparams['learning_rate'])
+
 
     def _auto_stop(self):
         self.epochs_since_adjustment += 1
@@ -1311,9 +1318,10 @@ class NMT:
         num_right_small = 0
 
         if self.opt_1 is None or self.first_load:
-            parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+            #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
 
-            wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
+            #wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
+            wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
         self.criterion = nn.CrossEntropyLoss(size_average=False)
