@@ -1227,7 +1227,9 @@ class NMT:
             z2 = float(self.score_list_training[-2])
             z3 = float(self.score_list_training[-3])
 
-            zz = z1 == 100.00 and z2 == 100.00 and z3 == 100.00
+            z4 = float(self.score_list[-1])
+
+            zz = z1 == 100.00 and z2 == 100.00 and z3 == 100.00 and z4 != 100.00
 
             if ((zz) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
@@ -1249,7 +1251,11 @@ class NMT:
                     exit()
 
                 if self.lr_adjustment_num > 5:
-                    exit()
+                    hparams['learning_rate'] = self.lr_increment * 2
+                    self.lr_adjustment_num = 0
+                    self.epochs_since_adjustment = 0
+                    print('reset all learning rate')
+                    #exit()
 
         elif self.epochs_since_adjustment > 3:
             if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
