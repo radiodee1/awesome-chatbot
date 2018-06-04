@@ -1231,7 +1231,7 @@ class NMT:
                 print('list:',self.score_list)
 
                 ''' adjust learning_rate to bigger value if possible. '''
-                if float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] == 0.001:
+                if float(self.score_list[-1]) >= 95.00 and self.lr_adjustment_num == 0:
                     hparams['learning_rate'] = 0.0005 + hparams['learning_rate']
                     hparams['dropout'] = 0.0
                     self.lr_adjustment_num += 1
