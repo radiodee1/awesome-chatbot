@@ -1221,9 +1221,15 @@ class NMT:
     def _auto_stop(self):
         self.epochs_since_adjustment += 1
 
-        if self.epochs_since_adjustment > 5:
+        if self.epochs_since_adjustment > 3:
+            
+            z1 = float(self.score_list_training[-1])
+            z2 = float(self.score_list_training[-2])
+            z3 = float(self.score_list_training[-3])
 
-            if ((False and float(self.score_list[-2]) > float(self.score_list[-1])) or
+            zz = z1 == 100.00 and z2 == 100.00 and z3 == 100.00
+
+            if ((zz) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
                      float(self.score_list[-3]) == float(self.score_list[-1]))):
