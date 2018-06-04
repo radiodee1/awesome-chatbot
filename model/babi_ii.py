@@ -835,7 +835,7 @@ class NMT:
         plot_losses = []
         num = 0 # hparams['base_file_num']
         for i in range(100):
-            local_filename = hparams['save_dir'] + hparams['base_filename'] + '.'+ str(num) + '.pth.tar'
+            local_filename = hparams['save_dir'] + hparams['base_filename'] + '.'+ str(num) + '.pth'
             if os.path.isfile(local_filename):
                 ''' load weights '''
 
@@ -1141,18 +1141,18 @@ class NMT:
         basename = hparams['save_dir'] + hparams['base_filename']
         if self.do_load_babi or self.do_conserve_space:
             num = self.this_epoch * len(self.pairs) + num
-            torch.save(state,basename+ '.best.pth.tar')
+            torch.save(state,basename+ '.best.pth')
             #if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
             return
-        torch.save(state, basename + extra + '.' + str(num)+ '.pth.tar')
+        torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
-            os.system('cp '+ basename + extra +  '.' + str(num) + '.pth.tar' + ' '  +
-                      basename + '.best.pth.tar')
+            os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
+                      basename + '.best.pth')
 
     def load_checkpoint(self, filename=None):
         if self.first_load:
             self.first_load = False
-            basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth.tar'
+            basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth'
             if filename is not None: basename = filename
             if os.path.isfile(basename):
                 print("loading checkpoint '{}'".format(basename))
