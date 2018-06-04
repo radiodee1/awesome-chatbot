@@ -651,7 +651,8 @@ class NMT:
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
 
-        self.epochs_since_adjustment = 0 # used by auto-stop function
+        ''' used by auto-stop function '''
+        self.epochs_since_adjustment = 0 
         self.lr_adjustment_num = 0
         self.lr_increment = hparams['learning_rate'] / 2.0
         self.lr_low = hparams['learning_rate'] / 10.0
