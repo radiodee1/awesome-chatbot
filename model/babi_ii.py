@@ -1250,17 +1250,16 @@ class NMT:
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
-                #if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
-                #    exit()
-
                 if self.lr_adjustment_num > 5:
-                    hparams['learning_rate'] = self.lr_low # self.lr_increment * 1.5
-                    self.lr_adjustment_num = 0
+                    hparams['learning_rate'] = self.lr_low
                     self.epochs_since_adjustment = 0
                     print('reset all learning rate')
-                    #exit()
 
-                #elif self.epochs_since_adjustment > 3:
+
+                if self.lr_adjustment_num > 10:
+                    print('ten adjustments -- quit')
+                    exit()
+
                 if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
