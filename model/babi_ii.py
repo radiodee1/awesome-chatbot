@@ -1229,17 +1229,17 @@ class NMT:
                 print(t)
                 print('list:',self.score_list)
 
-                ''' adjust learning_rate to smaller value if possible. '''
-                if False and float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] > 0.00001:
-                    hparams['learning_rate'] = 0.00001
-                    hparams['dropout'] = 0.5
+                ''' adjust learning_rate to bigger value if possible. '''
+                if float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] == 0.001:
+                    hparams['learning_rate'] = 1.5 * hparams['learning_rate']
+                    hparams['dropout'] = 0.0
                     self.epochs_since_adjustment = 0
 
                 if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                     exit()
 
-        elif self.epochs_since_adjustment > 3 and hparams['learning_rate'] == 0.00001:
-            if float(self.score_list[-1]) == 100.00:
+        elif self.epochs_since_adjustment > 3 and hparams['learning_rate'] >= 0.0015:
+            if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                 time.ctime()
                 t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                 print(t)
