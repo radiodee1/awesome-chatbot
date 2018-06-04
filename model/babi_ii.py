@@ -1253,7 +1253,8 @@ class NMT:
                 print('list:', self.score_list)
                 exit()
 
-            if float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00:
+            if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
+                    float(self.score_list[-1]) != 100.00):
                 hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
                 hparams['dropout'] = 0.0
                 self.lr_adjustment_num += 1

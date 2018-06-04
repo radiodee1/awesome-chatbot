@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="395">
-              <caret line="1244" column="45" selection-start-line="1244" selection-start-column="45" selection-end-line="1244" selection-end-column="45" />
+            <state relative-caret-position="215">
+              <caret line="1234" selection-start-line="1234" selection-end-line="1234" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -574,8 +574,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="395">
-          <caret line="1244" column="45" selection-start-line="1244" selection-start-column="45" selection-end-line="1244" selection-end-column="45" />
+        <state relative-caret-position="215">
+          <caret line="1234" selection-start-line="1234" selection-end-line="1234" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
