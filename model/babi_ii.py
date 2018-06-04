@@ -1251,7 +1251,7 @@ class NMT:
                     exit()
 
                 if self.lr_adjustment_num > 5:
-                    hparams['learning_rate'] = self.lr_increment * 2
+                    hparams['learning_rate'] = self.lr_increment * 1.5
                     self.lr_adjustment_num = 0
                     self.epochs_since_adjustment = 0
                     print('reset all learning rate')
