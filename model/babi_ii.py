@@ -1222,7 +1222,7 @@ class NMT:
         self.epochs_since_adjustment += 1
 
         if self.epochs_since_adjustment > 3:
-            
+
             z1 = float(self.score_list_training[-1])
             z2 = float(self.score_list_training[-2])
             z3 = float(self.score_list_training[-3])
