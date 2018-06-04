@@ -651,6 +651,7 @@ class NMT:
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
         self.epochs_since_adjustment = 0 # used by auto-stop function
+        self.lr_adjustment_num = 0
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -1218,7 +1219,7 @@ class NMT:
     def _auto_stop(self):
         self.epochs_since_adjustment += 1
 
-        if self.epochs_since_adjustment > 5 and hparams['learning_rate'] == 0.001:
+        if self.epochs_since_adjustment > 5:
 
             if ((False and float(self.score_list[-2]) > float(self.score_list[-1])) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
@@ -1231,14 +1232,18 @@ class NMT:
 
                 ''' adjust learning_rate to bigger value if possible. '''
                 if float(self.score_list[-1]) >= 95.00 and hparams['learning_rate'] == 0.001:
-                    hparams['learning_rate'] = 1.5 * hparams['learning_rate']
+                    hparams['learning_rate'] = 0.0005 + hparams['learning_rate']
                     hparams['dropout'] = 0.0
+                    self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
                 if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                     exit()
 
-        elif self.epochs_since_adjustment > 3 and hparams['learning_rate'] >= 0.0015:
+                if self.lr_adjustment_num > 3:
+                    exit()
+
+        elif self.epochs_since_adjustment > 3:
             if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                 time.ctime()
                 t = time.strftime('%l:%M%p %Z on %b %d, %Y')
@@ -1246,6 +1251,11 @@ class NMT:
                 print('list:', self.score_list)
                 exit()
 
+            if float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00:
+                hparams['learning_rate'] = 0.0005 + hparams['learning_rate']
+                hparams['dropout'] = 0.0
+                self.lr_adjustment_num += 1
+                self.epochs_since_adjustment = 0
 
     def _shorten(self, sentence):
         # assume input is list already
