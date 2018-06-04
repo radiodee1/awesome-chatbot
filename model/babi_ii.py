@@ -654,6 +654,7 @@ class NMT:
         self.epochs_since_adjustment = 0 # used by auto-stop function
         self.lr_adjustment_num = 0
         self.lr_increment = hparams['learning_rate'] / 2.0
+        self.lr_low = hparams['learning_rate'] / 10.0
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -1229,9 +1230,11 @@ class NMT:
 
             z4 = float(self.score_list[-1])
 
-            zz = z1 == 100.00 and z2 == 100.00 and z3 == 100.00 and z4 != 100.00
+            zz1 = z1 == 100.00 and z2 == 100.00 and z3 == 100.00 and z4 != 100.00
 
-            if ((zz) or
+            zz2 = z1 == z2 and z1 == z3
+
+            if ( (zz1) or (zz2) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
                      float(self.score_list[-3]) == float(self.score_list[-1]))):
@@ -1242,35 +1245,35 @@ class NMT:
 
                 ''' adjust learning_rate to bigger value if possible. '''
                 if float(self.score_list[-1]) >= 95.00 and self.lr_adjustment_num == 0:
-                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     hparams['dropout'] = 0.0
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
-                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
-                    exit()
+                #if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
+                #    exit()
 
                 if self.lr_adjustment_num > 5:
-                    hparams['learning_rate'] = self.lr_increment * 1.5
+                    hparams['learning_rate'] = self.lr_low # self.lr_increment * 1.5
                     self.lr_adjustment_num = 0
                     self.epochs_since_adjustment = 0
                     print('reset all learning rate')
                     #exit()
 
-        elif self.epochs_since_adjustment > 3:
-            if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
-                time.ctime()
-                t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                print(t)
-                print('list:', self.score_list)
-                exit()
+                #elif self.epochs_since_adjustment > 3:
+                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
+                    time.ctime()
+                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
+                    print(t)
+                    print('list:', self.score_list)
+                    exit()
 
-            if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
-                    float(self.score_list[-1]) != 100.00):
-                hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                hparams['dropout'] = 0.0
-                self.lr_adjustment_num += 1
-                self.epochs_since_adjustment = 0
+                if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
+                        float(self.score_list[-1]) != 100.00):
+                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+                    hparams['dropout'] = 0.0
+                    self.lr_adjustment_num += 1
+                    self.epochs_since_adjustment = 0
 
     def _shorten(self, sentence):
         # assume input is list already
