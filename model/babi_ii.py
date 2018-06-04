@@ -1242,7 +1242,7 @@ class NMT:
                 if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                     exit()
 
-                if self.lr_adjustment_num > 3:
+                if self.lr_adjustment_num > 5:
                     exit()
 
         elif self.epochs_since_adjustment > 3:
