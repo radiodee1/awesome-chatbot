@@ -652,7 +652,7 @@ class NMT:
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
 
         ''' used by auto-stop function '''
-        self.epochs_since_adjustment = 0 
+        self.epochs_since_adjustment = 0
         self.lr_adjustment_num = 0
         self.lr_increment = hparams['learning_rate'] / 2.0
         self.lr_low = hparams['learning_rate'] / 10.0
@@ -1244,7 +1244,7 @@ class NMT:
                 print(t)
                 print('list:',self.score_list)
 
-                ''' adjust learning_rate to bigger value if possible. '''
+                ''' adjust learning_rate to different value if possible. '''
                 if float(self.score_list[-1]) >= 95.00 and self.lr_adjustment_num == 0:
                     hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     hparams['dropout'] = 0.0
