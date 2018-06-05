@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/markdown-navigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/markdown-navigator/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saved/stat.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saved/stat.md.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -66,23 +64,13 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/saved/README.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-            <state split_layout="SPLIT">
-              <first_editor />
-              <second_editor>
-                <js_state />
-              </second_editor>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="stat.md.md" pinned="false" current-in-tab="false">
+      <file leaf-file-name="stat.md.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/saved/stat.md.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor />
+              <first_editor relative-caret-position="378">
+                <caret line="21" column="41" selection-start-line="21" selection-start-column="41" selection-end-line="21" selection-end-column="41" />
+              </first_editor>
               <second_editor>
                 <js_state />
               </second_editor>
@@ -99,13 +87,37 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stat.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stat.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/stat.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="378">
                 <caret line="21" column="41" selection-start-line="21" selection-start-column="41" selection-end-line="21" selection-end-column="41" />
               </first_editor>
+              <second_editor>
+                <js_state />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor />
+              <second_editor>
+                <js_state />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor />
               <second_editor>
                 <js_state />
               </second_editor>
@@ -206,13 +218,13 @@
         <option value="$PROJECT_DIR$/saved/saved_commands.txt" />
         <option value="$PROJECT_DIR$/bot/game_sr.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
-        <option value="$PROJECT_DIR$/saved/stat.md.md" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi_rand.py" />
         <option value="$PROJECT_DIR$/model/babi_iii.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
+        <option value="$PROJECT_DIR$/saved/stat.md.md" />
       </list>
     </option>
   </component>
@@ -312,7 +324,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/raw/README.md" />
     <entry file="file://$PROJECT_DIR$/do_launch_categorical.sh" />
     <entry file="file://$PROJECT_DIR$/categorical/README.md" />
     <entry file="file://$PROJECT_DIR$/categorical/settings.py" />
@@ -436,13 +447,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_glove_download.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="18">
@@ -509,16 +513,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/saved/stat.md.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <js_state />
-          </second_editor>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3438">
@@ -555,6 +549,43 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/saved/stat.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="378">
+            <caret line="21" column="41" selection-start-line="21" selection-start-column="41" selection-end-line="21" selection-end-column="41" />
+          </first_editor>
+          <second_editor>
+            <js_state />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor>
+            <js_state />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
+        </state>
+      </provider>
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor>
+            <js_state />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/stat.md.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
