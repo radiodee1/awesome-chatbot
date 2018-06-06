@@ -330,9 +330,9 @@ class Encoder(nn.Module):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
         encoder_out = 0
-        #encoder_out,
+
         embedded = embedded.squeeze(0).permute(1,0)
-        #print(embedded.size(),'emb')
+
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
@@ -341,7 +341,6 @@ class Encoder(nn.Module):
             encoder_out = (encoder_out[:, :, :self.hidden_dim] +
                            encoder_out[:, :, self.hidden_dim:])
 
-        #encoder_out = 0
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
@@ -1483,6 +1482,9 @@ class NMT:
 
                     print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
+
+                if self.lr_adjustment_num > 0:
+                    print('[ num of adjustments:', self.lr_adjustment_num,']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
