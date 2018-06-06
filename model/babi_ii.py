@@ -254,8 +254,8 @@ class MemRNN(nn.Module):
         self.hidden_size = hidden_size
         self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
         self.dropout2 = nn.Dropout(dropout)
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
+        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -289,13 +289,12 @@ class MemRNN(nn.Module):
         if len(hidden.size()) > 3:
             hidden = hidden.squeeze(0)
         '''
-        input = self.prune_tensor(input,3)
-        hidden = self.prune_tensor(hidden,3)
-        #hidden_out = self.gru(input,hidden,g)
-        output,hidden_out = self.gru(input, hidden)
-        #output = 0
-        #output = self.dropout1(output)
-        #hidden_out = self.dropout2(hidden_out)
+        input = self.prune_tensor(input,2)
+        hidden = self.prune_tensor(hidden,2)
+        hidden_out = self.gru(input,hidden,g)
+        #output,hidden_out = self.gru(input, hidden)
+        output = None
+
         return output, hidden_out
 
 class Encoder(nn.Module):
@@ -1231,7 +1230,7 @@ class NMT:
 
             z4 = float(self.score_list[-1])
 
-            zz1 = z1 == 100.00 and z2 == 100.00 and z3 == 100.00 and z4 != 100.00
+            zz1 = z1 == 100.00 and z2 == 100.00 and z4 != 100.00
 
             zz2 = z1 == z2 and z1 == z3
 
@@ -1247,7 +1246,7 @@ class NMT:
                 ''' adjust learning_rate to different value if possible. '''
                 if float(self.score_list[-1]) >= 95.00 and self.lr_adjustment_num == 0:
                     hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
-                    hparams['dropout'] = 0.0
+                    #hparams['dropout'] = 0.0
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
@@ -1271,7 +1270,7 @@ class NMT:
                 if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
                     hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                    hparams['dropout'] = 0.0
+                    #hparams['dropout'] = 0.0
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
