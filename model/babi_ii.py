@@ -1428,7 +1428,7 @@ class NMT:
 
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
                       + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.4f' % self.long_term_loss)
-                if iter % (print_every * 20) == 0:
+                if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
 
@@ -1444,11 +1444,11 @@ class NMT:
                         extra = ''
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
-                        if not self.do_test_not_train:
+                        if not self.do_test_not_train and not self.do_load_babi:
                             self.save_checkpoint(num=iter,extra=extra)
                             self.saved_files += 1
                             print('======= save file '+ extra+' ========')
-                    else:
+                    elif not self.do_load_babi:
                         print('skip save!')
                 print('(%d %d%%) %.4f loss' % (iter, iter / n_iters * 100, print_loss_avg))
                 choice = random.choice(self.pairs)
