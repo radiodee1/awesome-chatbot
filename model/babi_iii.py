@@ -175,8 +175,6 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        #self.c_list_z = self.c_list_z.view(self.a_list_size   * self.hidden_size,-1 )
-
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
         l_1 = F.tanh(l_1)
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
@@ -279,7 +277,6 @@ class MemRNN(nn.Module):
 
         input = self.dropout1(input) # weak dropout
 
-
         input = self.prune_tensor(input,3)
         hidden = self.prune_tensor(hidden,3)
         #hidden_out = self.gru(input,hidden,g)
@@ -367,21 +364,9 @@ class AnswerModule(nn.Module):
 
         mem = mem.squeeze(0).permute(1,0)#.squeeze(0)
 
-        if False:
-            mem = torch.cat([mem, question_h],dim=1)
-
-            out = torch.mm(self.W_a1, mem) + self.b_a1
-
-            out = F.tanh(out)
-            out = self.out1(out)
-            out = F.tanh(out)
-            out = out.permute(1,0)
-            out = self.out2(out)
-            out = F.tanh(out)
-        else:
-            out = torch.mm(self.W_a2, mem) + self.b_a2
-            out = F.tanh(out)
-            out = self.out_a(out)
+        out = torch.mm(self.W_a2, mem) + self.b_a2
+        out = F.tanh(out)
+        out = self.out_a(out)
 
         return out.permute(1,0)
 
@@ -501,18 +486,8 @@ class WrapMemRNN(nn.Module):
                 assert len(g_list) == len(sequences)
 
                 gg = torch.cat(g_list, dim=0)
-                if False:
-                    pass
-                    '''
-                    #gg = F.sigmoid(gg)
-                    gg_max = torch.argmax(gg, dim=0)
-                    gg_max = gg[int(gg_max.int())]
-                    gg_diff = gg_max - 1
-                    gg = gg.add(- gg_diff)
-                    '''
-                if True:
-                    gg = F.sigmoid(gg)
 
+                gg = F.sigmoid(gg)
 
                 g_list = gg #e_x #gg
 

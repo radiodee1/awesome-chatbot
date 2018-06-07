@@ -175,19 +175,16 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout_1(self.c_list_z)
 
-        #self.c_list_z = self.c_list_z.view(self.a_list_size   * self.hidden_size,-1 )
-
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
         l_1 = F.tanh(l_1)
         l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
         #l_2 = F.tanh(l_2)
-        #l_2 = F.tanh(l_2)
+
         l_2 = F.sigmoid(l_2)
-        #l_3 = torch.mm(self.W_c3, l_2)
+
         l_3 = self.W_3(l_2)
 
-        #l_3 = self.dropout_1(l_3)
-        self.G = l_3 # F.sigmoid(l_3)[0]
+        self.G = l_3
 
         #print(self.G, 'list', l_1.size(), l_2.size())
 
