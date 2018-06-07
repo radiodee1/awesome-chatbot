@@ -231,7 +231,7 @@ class CustomGRU2(nn.Module):
                 init.xavier_normal_(weight)
                 #print(weight.size())
 
-    def forward(self, fact, C, g=None):
+    def forward(self, fact, C):
 
         #fact = self.dropout1(fact)
         #C = self.dropout2(C)
@@ -275,23 +275,13 @@ class MemRNN(nn.Module):
             input = input.squeeze(0)
         return input
 
-    def forward(self, input, hidden=None, g=None):
+    def forward(self, input, hidden=None):
 
         input = self.dropout1(input) # weak dropout
 
-        '''
-        if len(input.size()) < 3:
-            input = input.unsqueeze(0)
-        if len(input.size()) > 3:
-            input = input.squeeze(0)
-        if len(hidden.size()) < 3:
-            hidden = hidden.unsqueeze(0)
-        if len(hidden.size()) > 3:
-            hidden = hidden.squeeze(0)
-        '''
         input = self.prune_tensor(input,2)
         hidden = self.prune_tensor(hidden,2)
-        hidden_out = self.gru(input,hidden,g)
+        hidden_out = self.gru(input,hidden)
         #output,hidden_out = self.gru(input, hidden)
         output = None
 
@@ -336,11 +326,7 @@ class Encoder(nn.Module):
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
-        # sum bidirectional outputs, the other option is to retain concat features
-        if self.bidirectional:
-            encoder_out = (encoder_out[:, :, :self.hidden_dim] +
-                           encoder_out[:, :, self.hidden_dim:])
-
+        
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
@@ -552,7 +538,7 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
 
-        _, gru = self.model_3_mem_b(ct, prev_h, None) # g
+        _, gru = self.model_3_mem_b(ct, prev_h) # g
 
         h = g * gru + (1 - g) * prev_h.squeeze(0)
 

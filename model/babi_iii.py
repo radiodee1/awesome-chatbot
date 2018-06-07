@@ -231,12 +231,12 @@ class CustomGRU2(nn.Module):
                 init.xavier_normal_(weight)
                 #print(weight.size())
 
-    def forward(self, fact, C, g=None):
+    def forward(self, fact, C):
 
         #fact = self.dropout1(fact)
         #C = self.dropout2(C)
 
-        #fact = fact.squeeze(0).permute(1,0)
+        fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
 
         #print(fact.size(), C.size(), 'f,C')
@@ -275,20 +275,11 @@ class MemRNN(nn.Module):
             input = input.squeeze(0)
         return input
 
-    def forward(self, input, hidden=None, g=None):
+    def forward(self, input, hidden=None):
 
         input = self.dropout1(input) # weak dropout
 
-        '''
-        if len(input.size()) < 3:
-            input = input.unsqueeze(0)
-        if len(input.size()) > 3:
-            input = input.squeeze(0)
-        if len(hidden.size()) < 3:
-            hidden = hidden.unsqueeze(0)
-        if len(hidden.size()) > 3:
-            hidden = hidden.squeeze(0)
-        '''
+
         input = self.prune_tensor(input,3)
         hidden = self.prune_tensor(hidden,3)
         #hidden_out = self.gru(input,hidden,g)
@@ -305,8 +296,8 @@ class Encoder(nn.Module):
         self.n_layers = n_layers
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
-        #self.gru = CustomGRU2(hidden_dim,hidden_dim,dropout=dropout)
+        #self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        self.gru = CustomGRU2(hidden_dim,hidden_dim,dropout=dropout)
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -329,17 +320,12 @@ class Encoder(nn.Module):
         #source = self.dropout(source)
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
-        encoder_out = 0
+        encoder_out = None
 
         #embedded = embedded.squeeze(0).permute(1,0)
         embedded = embedded.permute(1,0,2)
-        #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-        encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-
-        # sum bidirectional outputs, the other option is to retain concat features
-        if self.bidirectional:
-            encoder_out = (encoder_out[:, :, :self.hidden_dim] +
-                           encoder_out[:, :, self.hidden_dim:])
+        encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        #encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
         return encoder_out, encoder_hidden
 
@@ -465,7 +451,7 @@ class WrapMemRNN(nn.Module):
 
     def new_input_module(self, input_variable, question_variable):
 
-        prev_h1 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
+        prev_h1 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
 
         for ii in input_variable:
             out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), prev_h1[-1])#input_variable)
@@ -474,7 +460,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = prev_h1[1:] #out1
         self.inp_c = hidden1 #out1
 
-        prev_h2 = [nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
+        prev_h2 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
 
         for ii in question_variable:
             out2, hidden2 = self.model_1_enc(ii.unsqueeze(0), prev_h2[-1])
@@ -550,7 +536,7 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
 
-        _, gru = self.model_3_mem_b(ct, prev_h, None) # g
+        _, gru = self.model_3_mem_b(ct, prev_h) # g
 
         h = g * gru + (1 - g) * prev_h.squeeze(0)
 
