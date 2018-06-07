@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_iii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +28,8 @@
       <file leaf-file-name="babi_iii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4394">
-              <caret line="176" lean-forward="true" selection-start-line="176" selection-end-line="176" />
+            <state relative-caret-position="449">
+              <caret line="1178" column="28" selection-start-line="1178" selection-start-column="28" selection-end-line="1178" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -157,7 +156,6 @@
       <find>train_iters</find>
       <find>list</find>
       <find>dropout</find>
-      <find>EpisodicAttn</find>
       <find>MemRNN</find>
       <find>WrapMemRNN</find>
       <find>do_auto_stop</find>
@@ -169,9 +167,10 @@
       <find>lr_adjustment_num</find>
       <find>saved_files</find>
       <find>CustomGRU2</find>
-      <find>concat_list</find>
       <find>view</find>
       <find>gru</find>
+      <find>concat_list</find>
+      <find>EpisodicAttn</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -606,8 +605,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4394">
-          <caret line="176" lean-forward="true" selection-start-line="176" selection-end-line="176" />
+        <state relative-caret-position="449">
+          <caret line="1178" column="28" selection-start-line="1178" selection-start-column="28" selection-end-line="1178" selection-end-column="28" />
         </state>
       </provider>
     </entry>
