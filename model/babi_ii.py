@@ -326,7 +326,7 @@ class Encoder(nn.Module):
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
-        
+
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
