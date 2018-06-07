@@ -1231,7 +1231,7 @@ class NMT:
 
             zz2 = z1 == z2 and z1 == z3
 
-            if ( (zz1) or (zz2) or
+            if ( (zz1) or (zz2) or  (abs(z4 - z1) > 10.0 and self.lr_adjustment_num == 0) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
                      float(self.score_list[-3]) == float(self.score_list[-1]))):
@@ -1241,7 +1241,7 @@ class NMT:
                 print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. '''
-                if float(self.score_list[-1]) >= 95.00 and self.lr_adjustment_num == 0:
+                if (float(self.score_list[-1]) >= 95.00  or z1 >= 95.00)and self.lr_adjustment_num == 0:
                     hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
                     self.lr_adjustment_num += 1
@@ -1267,7 +1267,7 @@ class NMT:
                 if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
                     hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                    hparams['dropout'] = 0.05
+                    #hparams['dropout'] = 0.05
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
@@ -1483,7 +1483,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ num of adjustments:', self.lr_adjustment_num,']')
+                    print('[ lr adjustments:', self.lr_adjustment_num, '-- lr:', hparams['learning_rate'], ']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
