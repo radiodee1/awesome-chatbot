@@ -142,13 +142,15 @@ class EpisodicAttn(nn.Module):
 
         self.W_c_b = nn.Parameter(torch.zeros(hidden_size,hidden_size))
 
-        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size* a_list_size))
-        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
-        #self.W_c3 = nn.Parameter(torch.zeros(1,hidden_size))
+        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size* a_list_size))
+        self.W_c2 = nn.Parameter(torch.zeros(1,1))
+
+        #self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size * a_list_size))
+        #self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
-        #self.b_c3 = nn.Parameter(torch.zeros(1,)) ## remove!!
+
 
         self.W_3 = nn.Linear( hidden_size , 1,bias=False)
         init.xavier_normal_(self.W_3.state_dict()['weight'])
@@ -179,17 +181,17 @@ class EpisodicAttn(nn.Module):
         l_1 = F.tanh(l_1)
         #l_1 = F.sigmoid(l_1)
 
-        l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
+        #l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
         #l_2 = F.tanh(l_2)
         #l_2 = F.tanh(l_2)
-        l_2 = F.sigmoid(l_2)
+        #l_2 = F.sigmoid(l_2)
         #l_3 = torch.mm(self.W_c3, l_2)
-        l_3 = self.W_3(l_2)
+        l_3 = self.W_3(l_1)
 
         #l_3 = self.dropout_1(l_3)
         self.G = l_3 # F.sigmoid(l_3)[0]
 
-        #print(self.G, 'list', l_1.size(), l_2.size())
+        #print(self.G.size(), 'list', l_1.size(), l_3.size())
 
         return self.G
 
