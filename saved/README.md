@@ -1,4 +1,6 @@
-# Start Training Code
+# Start Training Code: `babi_ii.py`
+
+It should be noted that the code in this repository uses a batch size of 1, essentially no batch size. This slows down training.
 
 #### Setup for `small_e` and `small_tr`:
 1. `./do_make_glove_download.sh` Execute this in the root folder of the project repository.
