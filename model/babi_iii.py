@@ -140,23 +140,13 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        #self.W_c_b = nn.Parameter(torch.zeros(hidden_size,hidden_size))
-
         self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size* a_list_size))
         self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
-
-        #self.W_d1 = nn.Parameter(torch.zeros(hidden_size, hidden_size * a_list_size))
-        #self.W_d2 = nn.Parameter(torch.zeros(1, hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
 
-
-        #self.W_3 = nn.Linear( hidden_size , 1,bias=False)
-        #init.xavier_normal_(self.W_3.state_dict()['weight'])
-
         self.dropout_1 = nn.Dropout(dropout)
-        #self.dropout_2 = nn.Dropout(dropout)
 
         self.reset_parameters()
 
@@ -178,7 +168,7 @@ class EpisodicAttn(nn.Module):
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
-        l_1 = F.tanh(l_1)
+        l_1 = F.sigmoid(l_1)
 
         l_2 = torch.mm(self.W_c2, l_1.permute(1,0)) + self.b_c2
         l_2 = F.sigmoid(l_2)
@@ -342,7 +332,7 @@ class AnswerModule(nn.Module):
         init.xavier_normal_(self.out2.state_dict()['weight'])
 
         self.dropout1 = nn.Dropout(dropout)
-        self.dropout2 = nn.Dropout(dropout)
+        #self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -483,9 +473,9 @@ class WrapMemRNN(nn.Module):
 
                 gg = torch.cat(g_list, dim=0)
 
-                g_list = F.sigmoid(gg)
-
-                #g_list = gg #e_x #gg
+                #g_list = F.sigmoid(gg)
+                #g_list = F.softmax(gg, dim=0)
+                g_list = gg #e_x #gg
 
                 #print(g_list,'gg -- after', len(g_list))
 
@@ -831,7 +821,7 @@ class NMT:
             num = hparams['epochs']
         for i in range(num):
             self.this_epoch = i
-            self.printable = ' epoch #' + str(i+1)
+            self.printable = 'epoch #' + str(i+1)
             self.do_test_not_train = False
             #self.score = 0.0
 
