@@ -168,7 +168,7 @@ class EpisodicAttn(nn.Module):
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
-        l_1 = F.sigmoid(l_1)
+        l_1 = F.tanh(l_1)
 
         l_2 = torch.mm(self.W_c2, l_1.permute(1,0)) + self.b_c2
         l_2 = F.sigmoid(l_2)
@@ -475,7 +475,7 @@ class WrapMemRNN(nn.Module):
 
                 #g_list = F.sigmoid(gg)
                 #g_list = F.softmax(gg, dim=0)
-                g_list = gg #e_x #gg
+                g_list = gg  #e_x #gg
 
                 #print(g_list,'gg -- after', len(g_list))
 
