@@ -628,6 +628,7 @@ class NMT:
         self.do_freeze_embedding = False
         self.do_load_embeddings = False
         self.do_auto_stop = False
+        self.do_skip_validation = False
 
         self.printable = ''
 
@@ -655,6 +656,7 @@ class NMT:
         parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
         parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
         parser.add_argument('--dropout', help='set dropout ratio from the command line. (Float value)')
+        parser.add_argument('--no-validation', help='skip validation printout until first lr correction.',action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -706,6 +708,7 @@ class NMT:
             self.do_freeze_embedding = True
         if self.args['auto_stop'] == True: self.do_auto_stop = True
         if self.args['dropout'] is not None: hparams['dropout'] = float(self.args['dropout'])
+        if self.args['no_validation'] is True: self.do_skip_validation = True
         if self.printable == '': self.printable = hparams['base_filename']
 
         ''' reset lr vars if changed from command line '''
@@ -1202,7 +1205,7 @@ class NMT:
                     #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
                     hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-
+                    self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
@@ -1210,13 +1213,14 @@ class NMT:
                     #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
                     hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-
+                    self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
                 if self.lr_adjustment_num > 5 and False:
                     hparams['learning_rate'] = self.lr_low
                     self.epochs_since_adjustment = 0
+                    self.do_skip_validation = False
                     print('reset all learning rate')
 
 
@@ -1235,6 +1239,7 @@ class NMT:
                         float(self.score_list[-1]) != 100.00):
                     hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.05
+                    self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
@@ -1458,6 +1463,8 @@ class NMT:
                         print('[ older valid:', self.score_list[-1],']')
                     else:
                         print('[ last valid:', self.score_list[-1],']')
+                elif len(self.score_list_training) >= 1 and self.do_skip_validation:
+                    print('[ last train:', self.score_list_training[-1],'][ no valid ]')
 
                 print("-----")
 
@@ -1526,6 +1533,8 @@ class NMT:
 
 
     def validate_iters(self):
+        if self.do_skip_validation:
+            return
         self.task_babi_valid_files()
         self.printable = 'validate'
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
