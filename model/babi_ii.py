@@ -359,7 +359,7 @@ class AnswerModule(nn.Module):
         #print(out.size(),'out')
         #out = out.permute(1,0)
         #out = torch.mm(self.W_a2, out)# + self.b_a2
-        out = F.sigmoid(out)
+        #out = F.sigmoid(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
