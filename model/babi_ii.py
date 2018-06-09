@@ -140,21 +140,13 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        self.W_c_b = nn.Parameter(torch.zeros(hidden_size,hidden_size))
-
-        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size* a_list_size))
+        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size * hidden_size * a_list_size))
         self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
-        #self.W_c3 = nn.Parameter(torch.zeros(1,hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
-        #self.b_c3 = nn.Parameter(torch.zeros(1,)) ## remove!!
-
-        self.W_3 = nn.Linear( hidden_size , 1,bias=False)
-        init.xavier_normal_(self.W_3.state_dict()['weight'])
 
         self.dropout_1 = nn.Dropout(dropout)
-        #self.dropout_2 = nn.Dropout(dropout)
 
         self.reset_parameters()
 
@@ -172,21 +164,18 @@ class EpisodicAttn(nn.Module):
 
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
+        self.c_list_z = self.c_list_z.view(-1,1)
 
-        self.c_list_z = self.dropout_1(self.c_list_z)
+        #print(self.c_list_z.size(),'cz')
+        #self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
-        l_1 = F.tanh(l_1)
-        l_2 = torch.mm(self.W_c2, l_1) + self.b_c2
-        #l_2 = F.tanh(l_2)
+        l_1 = F.sigmoid(l_1)
 
+        l_2 = torch.mm(self.W_c2, l_1.permute(1,0)) + self.b_c2
         l_2 = F.sigmoid(l_2)
 
-        l_3 = self.W_3(l_2)
-
-        self.G = l_3
-
-        #print(self.G, 'list', l_1.size(), l_2.size())
+        self.G = l_2
 
         return self.G
 
@@ -233,7 +222,7 @@ class CustomGRU2(nn.Module):
         #fact = self.dropout1(fact)
         #C = self.dropout2(C)
 
-        #fact = fact.squeeze(0).permute(1,0)
+        fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
 
         #print(fact.size(), C.size(), 'f,C')
@@ -276,8 +265,8 @@ class MemRNN(nn.Module):
 
         input = self.dropout1(input) # weak dropout
 
-        input = self.prune_tensor(input,2)
-        hidden = self.prune_tensor(hidden,2)
+        input = self.prune_tensor(input,3)
+        hidden = self.prune_tensor(hidden,3)
         hidden_out = self.gru(input,hidden)
         #output,hidden_out = self.gru(input, hidden)
         output = None
@@ -316,13 +305,12 @@ class Encoder(nn.Module):
         #source = self.dropout(source)
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
-        encoder_out = 0
+        encoder_out = None
 
-        embedded = embedded.squeeze(0).permute(1,0)
-
+        #embedded = embedded.squeeze(0).permute(1,0)
+        embedded = embedded.permute(1,0,2)
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-        #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-
+        #encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
         return encoder_out, encoder_hidden
 
@@ -332,11 +320,12 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.W_a1 = nn.Parameter(torch.zeros(hidden_size * 2,hidden_size))
-        self.b_a1 = nn.Parameter(torch.zeros(hidden_size * 2,))
+        self.W_a1 = nn.Parameter(torch.zeros(vocab_size ,hidden_size))
+        self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
-        self.W_a2 = nn.Parameter(torch.zeros( vocab_size, hidden_size))
-        self.b_a2 = nn.Parameter(torch.zeros(hidden_size, ))
+        self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
+        self.b_a2 = nn.Parameter(torch.zeros(1, ))
+
         self.out_a = nn.Linear(hidden_size, 1)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
@@ -346,7 +335,7 @@ class AnswerModule(nn.Module):
         init.xavier_normal_(self.out2.state_dict()['weight'])
 
         self.dropout1 = nn.Dropout(dropout)
-        self.dropout2 = nn.Dropout(dropout)
+        #self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -361,27 +350,16 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
-        #question_h = self.dropout2(question_h)
 
-        mem = mem.squeeze(0)
+        mem = mem.squeeze(0).permute(1,0)#.squeeze(0)
 
-        if False:
-            mem = torch.cat([mem, question_h],dim=1)
+        out = torch.mm(self.W_a1, mem) + self.b_a1
+        out = F.tanh(out)
+        out = self.out_a(out)
+        #print(out.size(),'out')
+        #out = out.permute(1,0)
+        #out = torch.mm(self.W_a2, out)# + self.b_a2
 
-            out = torch.mm(self.W_a1, mem) + self.b_a1
-
-            out = F.tanh(out)
-            out = self.out1(out)
-            out = F.tanh(out)
-            out = out.permute(1,0)
-            out = self.out2(out)
-            out = F.tanh(out)
-        else:
-            out = torch.mm(self.W_a2, mem) + self.b_a2
-            out = F.tanh(out)
-            out = self.out_a(out)
-
-            #out = self.dropout1(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -500,20 +478,10 @@ class WrapMemRNN(nn.Module):
                 assert len(g_list) == len(sequences)
 
                 gg = torch.cat(g_list, dim=0)
-                if False:
-                    pass
-                    '''
-                    #gg = F.sigmoid(gg)
-                    gg_max = torch.argmax(gg, dim=0)
-                    gg_max = gg[int(gg_max.int())]
-                    gg_diff = gg_max - 1
-                    gg = gg.add(- gg_diff)
-                    '''
-                if True:
-                    gg = F.sigmoid(gg)
 
-
-                g_list = gg #e_x #gg
+                #g_list = F.sigmoid(gg)
+                #g_list = F.softmax(gg, dim=0)
+                g_list = gg  #e_x #gg
 
                 #print(g_list,'gg -- after', len(g_list))
 
@@ -528,7 +496,7 @@ class WrapMemRNN(nn.Module):
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
-
+            #print(self.last_mem.size(),'mem')
         return m_list[-1]
 
 
@@ -859,7 +827,7 @@ class NMT:
             num = hparams['epochs']
         for i in range(num):
             self.this_epoch = i
-            self.printable = ' epoch #' + str(i+1)
+            self.printable = 'epoch #' + str(i+1)
             self.do_test_not_train = False
             #self.score = 0.0
 
@@ -1197,11 +1165,12 @@ class NMT:
     def _make_optimizer(self):
         print('new optimizer', hparams['learning_rate'])
         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-        return optim.Adam(parameters, lr=hparams['learning_rate'])
-        #return optim.SGD(parameters, lr=hparams['learning_rate'])
+        #return optim.Adam(parameters, lr=hparams['learning_rate'])
+        return optim.Adagrad(parameters, lr=hparams['learning_rate'])
 
 
     def _auto_stop(self):
+        threshold = 50.00
         self.epochs_since_adjustment += 1
 
         if self.epochs_since_adjustment > 3:
@@ -1216,7 +1185,7 @@ class NMT:
 
             zz2 = z1 == z2 and z1 == z3
 
-            if ( (zz1) or (zz2) or (abs(z4 - z1) > 10.0 and self.lr_adjustment_num == 0) or
+            if ( (zz1) or (zz2) or  (abs(z4 - z1) > 10.0 and self.lr_adjustment_num == 0) or
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
                      float(self.score_list[-3]) == float(self.score_list[-1]))):
@@ -1226,13 +1195,23 @@ class NMT:
                 print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. '''
-                if (float(self.score_list[-1]) >= 95.00 or z1 >= 95.00) and self.lr_adjustment_num == 0:
-                    hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
+                if (float(self.score_list[-1]) >= threshold )and self.lr_adjustment_num == 0:
+                    #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
+                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
-                if self.lr_adjustment_num > 5:
+                if ( z1 >= threshold)and self.lr_adjustment_num == 0:
+                    #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
+                    #hparams['dropout'] = 0.0
+                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+
+                    self.lr_adjustment_num += 1
+                    self.epochs_since_adjustment = 0
+
+                if self.lr_adjustment_num > 5 and False:
                     hparams['learning_rate'] = self.lr_low
                     self.epochs_since_adjustment = 0
                     print('reset all learning rate')
@@ -1252,7 +1231,7 @@ class NMT:
                 if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
                     hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                    #hparams['dropout'] = 0.0
+                    #hparams['dropout'] = 0.05
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
@@ -1468,7 +1447,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ lr adjustments:', self.lr_adjustment_num,'-- lr:',hparams['learning_rate'],']')
+                    print('[ lr adjustments:', self.lr_adjustment_num, '-- lr:', hparams['learning_rate'], ']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')

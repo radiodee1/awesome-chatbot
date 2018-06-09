@@ -140,7 +140,7 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size* a_list_size))
+        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size * hidden_size * a_list_size))
         self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -164,7 +164,9 @@ class EpisodicAttn(nn.Module):
 
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
+        self.c_list_z = self.c_list_z.view(-1,1)
 
+        #print(self.c_list_z.size(),'cz')
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
@@ -318,11 +320,12 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.W_a1 = nn.Parameter(torch.zeros(hidden_size * 2,hidden_size))
-        self.b_a1 = nn.Parameter(torch.zeros(hidden_size * 2,))
+        self.W_a1 = nn.Parameter(torch.zeros(vocab_size ,hidden_size))
+        self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
-        self.W_a2 = nn.Parameter(torch.zeros( vocab_size, hidden_size))
-        self.b_a2 = nn.Parameter(torch.zeros(hidden_size, ))
+        self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
+        self.b_a2 = nn.Parameter(torch.zeros(1, ))
+
         self.out_a = nn.Linear(hidden_size, 1)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
@@ -350,9 +353,12 @@ class AnswerModule(nn.Module):
 
         mem = mem.squeeze(0).permute(1,0)#.squeeze(0)
 
-        out = torch.mm(self.W_a2, mem) + self.b_a2
+        out = torch.mm(self.W_a1, mem) + self.b_a1
         out = F.tanh(out)
         out = self.out_a(out)
+        #print(out.size(),'out')
+        #out = out.permute(1,0)
+        #out = torch.mm(self.W_a2, out)# + self.b_a2
 
         return out.permute(1,0)
 
@@ -490,7 +496,7 @@ class WrapMemRNN(nn.Module):
                 m_list.append(out)
 
             self.last_mem = m_list[-1]
-
+            #print(self.last_mem.size(),'mem')
         return m_list[-1]
 
 

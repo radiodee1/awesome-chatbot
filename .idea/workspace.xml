@@ -14,10 +14,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2988">
+            <state relative-caret-position="-1008">
               <caret line="186" column="20" selection-start-line="186" selection-start-column="20" selection-end-line="186" selection-end-column="20" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -26,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="babi_iii.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="babi_iii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="1207" column="55" selection-start-line="1207" selection-start-column="55" selection-end-line="1207" selection-end-column="55" />
+            <state relative-caret-position="-703">
+              <caret line="380" column="35" selection-start-line="380" selection-start-column="29" selection-end-line="380" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -142,7 +142,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_5_ans</find>
       <find>AnswerModule</find>
       <find>next_mem</find>
       <find>new_attention_step</find>
@@ -155,7 +154,6 @@
       <find>train_iters</find>
       <find>list</find>
       <find>dropout</find>
-      <find>MemRNN</find>
       <find>WrapMemRNN</find>
       <find>do_auto_stop</find>
       <find>_auto_stop</find>
@@ -168,10 +166,12 @@
       <find>CustomGRU2</find>
       <find>view</find>
       <find>gru</find>
-      <find>concat_list</find>
       <find>EpisodicAttn</find>
       <find>Linear</find>
       <find>sigmoid</find>
+      <find>concat_list</find>
+      <find>model_3_mem_a</find>
+      <find>MemRNN</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -613,20 +613,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-703">
+          <caret line="380" column="35" selection-start-line="380" selection-start-column="29" selection-end-line="380" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2988">
+        <state relative-caret-position="-1008">
           <caret line="186" column="20" selection-start-line="186" selection-start-column="20" selection-end-line="186" selection-end-column="20" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_iii.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="1207" column="55" selection-start-line="1207" selection-start-column="55" selection-end-line="1207" selection-end-column="55" />
         </state>
       </provider>
     </entry>
