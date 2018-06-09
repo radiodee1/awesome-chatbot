@@ -1168,8 +1168,8 @@ class NMT:
     def _make_optimizer(self):
         print('new optimizer', hparams['learning_rate'])
         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-        #return optim.Adam(parameters, lr=hparams['learning_rate'])
-        return optim.Adagrad(parameters, lr=hparams['learning_rate'])
+        return optim.Adam(parameters, lr=hparams['learning_rate'])
+        #return optim.Adagrad(parameters, lr=hparams['learning_rate'])
 
 
     def _auto_stop(self):
