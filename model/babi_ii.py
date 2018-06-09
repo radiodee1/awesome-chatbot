@@ -1186,7 +1186,7 @@ class NMT:
             z3 = float(self.score_list_training[-3])
 
             if len(self.score_list) < 3: return
-            
+
             z4 = float(self.score_list[-1])
 
             zz1 = z1 == 100.00 and z2 == 100.00 and z4 != 100.00
