@@ -140,8 +140,8 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size * hidden_size * a_list_size))
-        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
+        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size  * a_list_size))
+        self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size)) #hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
@@ -164,16 +164,16 @@ class EpisodicAttn(nn.Module):
 
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
-        self.c_list_z = self.c_list_z.view(-1,1)
+        #self.c_list_z = self.c_list_z.view(-1,1)
 
-        #print(self.c_list_z.size(),'cz')
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
-        l_1 = F.sigmoid(l_1)
+        l_1 = F.tanh(l_1)
 
         l_2 = torch.mm(self.W_c2, l_1.permute(1,0)) + self.b_c2
         l_2 = F.sigmoid(l_2)
+        #print(self.c_list_z.size(),'cz', l_1.size())
 
         self.G = l_2
 
@@ -359,7 +359,7 @@ class AnswerModule(nn.Module):
         #print(out.size(),'out')
         #out = out.permute(1,0)
         #out = torch.mm(self.W_a2, out)# + self.b_a2
-
+        out = F.sigmoid(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -708,6 +708,9 @@ class NMT:
         if self.args['dropout'] is not None: hparams['dropout'] = float(self.args['dropout'])
         if self.printable == '': self.printable = hparams['base_filename']
 
+        ''' reset lr vars if changed from command line '''
+        self.lr_increment = hparams['learning_rate'] / 2.0
+        self.lr_low = hparams['learning_rate'] / 10.0
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
