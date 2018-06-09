@@ -1164,6 +1164,7 @@ class NMT:
 
 
     def _auto_stop(self):
+        threshold = 50.00
         self.epochs_since_adjustment += 1
 
         if self.epochs_since_adjustment > 3:
@@ -1188,13 +1189,23 @@ class NMT:
                 print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. '''
-                if (float(self.score_list[-1]) >= 95.00  or z1 >= 95.00)and self.lr_adjustment_num == 0:
-                    hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
+                if (float(self.score_list[-1]) >= threshold )and self.lr_adjustment_num == 0:
+                    #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
+                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
-                if self.lr_adjustment_num > 5:
+                if ( z1 >= threshold)and self.lr_adjustment_num == 0:
+                    #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
+                    #hparams['dropout'] = 0.0
+                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+
+                    self.lr_adjustment_num += 1
+                    self.epochs_since_adjustment = 0
+
+                if self.lr_adjustment_num > 5 and False:
                     hparams['learning_rate'] = self.lr_low
                     self.epochs_since_adjustment = 0
                     print('reset all learning rate')
