@@ -170,7 +170,7 @@ class EpisodicAttn(nn.Module):
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) + self.b_c1
         l_1 = F.tanh(l_1)
-
+        #print(l_1.size(),'l1')
         l_2 = torch.mm(self.W_c2, l_1.permute(1,0)) + self.b_c2
         l_2 = F.sigmoid(l_2)
         #print(self.c_list_z.size(),'cz', l_1.size())
@@ -189,21 +189,21 @@ class CustomGRU2(nn.Module):
         self.dropout2 = nn.Dropout(dropout)
 
         self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim, self.dim))
-        #init.xavier_normal_(self.W_mem_res_in)
+
         self.W_mem_res_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
-        #init.xavier_normal_(self.W_mem_res_hid)
+
         self.b_mem_res = nn.Parameter(torch.zeros(self.dim,))
 
         self.W_mem_upd_in = nn.Parameter(torch.zeros(self.dim, self.dim))
-        #init.xavier_normal_(self.W_mem_upd_in)
+
         self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
-        #init.xavier_normal_(self.W_mem_upd_hid)
+
         self.b_mem_upd = nn.Parameter(torch.zeros(self.dim,))
 
         self.W_mem_hid_in = nn.Parameter(torch.zeros(self.dim, self.dim))
-        #init.xavier_normal_(self.W_mem_hid_in)
+
         self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
-        #init.xavier_normal_(self.W_mem_hid_hid)
+
         self.b_mem_hid = nn.Parameter(torch.zeros(self.dim,))
         self.reset_parameters()
 
@@ -239,9 +239,9 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
-        self.dropout2 = nn.Dropout(dropout)
-        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
+        #self.dropout2 = nn.Dropout(dropout)
+        self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -264,12 +264,12 @@ class MemRNN(nn.Module):
     def forward(self, input, hidden=None):
 
         input = self.dropout1(input) # weak dropout
-
-        input = self.prune_tensor(input,3)
-        hidden = self.prune_tensor(hidden,3)
-        hidden_out = self.gru(input,hidden)
-        #output,hidden_out = self.gru(input, hidden)
-        output = None
+        num = 3
+        input = self.prune_tensor(input,num)
+        hidden = self.prune_tensor(hidden,num)
+        #hidden_out = self.gru(input,hidden)
+        output,hidden_out = self.gru(input, hidden)
+        #output = None
 
         return output, hidden_out
 
@@ -713,7 +713,7 @@ class NMT:
 
         ''' reset lr vars if changed from command line '''
         self.lr_increment = hparams['learning_rate'] / 2.0
-        self.lr_low = hparams['learning_rate'] / 10.0
+        self.lr_low = hparams['learning_rate'] / 100.0
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
@@ -1181,46 +1181,64 @@ class NMT:
 
         if self.epochs_since_adjustment > 3:
 
-            z1 = float(self.score_list_training[-1])
-            z2 = float(self.score_list_training[-2])
-            z3 = float(self.score_list_training[-3])
+            z1 = z2 = z3 = z4 = 0.0
 
-            if len(self.score_list) < 3: return
+            if len(self.score_list_training) >= 3:
+                z1 = float(self.score_list_training[-1])
+                z2 = float(self.score_list_training[-2])
+                z3 = float(self.score_list_training[-3])
 
-            z4 = float(self.score_list[-1])
+            if len(self.score_list) > 0:
+                z4 = float(self.score_list[-1])
 
             zz1 = z1 == 100.00 and z2 == 100.00 and z4 != 100.00
 
-            zz2 = z1 == z2 and z1 == z3
+            zz2 = z1 == z2 and z1 == z3 and z1 != 0.0
 
-            if ( (zz1) or (zz2) or  (abs(z4 - z1) > 10.0 and self.lr_adjustment_num == 0) or
+            if ( len(self.score_list) > 2 and (
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
-                     float(self.score_list[-3]) == float(self.score_list[-1]))):
+                     float(self.score_list[-3]) == float(self.score_list[-1])))):
+
                 time.ctime()
                 t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                 print(t)
-                print('list:',self.score_list)
+                #print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. '''
                 if (float(self.score_list[-1]) >= threshold )and self.lr_adjustment_num == 0:
-                    #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
-                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
+                    self.do_skip_validation = False
+                    self.lr_adjustment_num += 1
+                    self.epochs_since_adjustment = 0
+
+                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
+                    time.ctime()
+                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
+                    print(t)
+                    print('list:', self.score_list)
+                    exit()
+
+            if len(self.score_list_training) < 3: return
+
+            if ((zz1) or (zz2) or (abs(z4 - z1) > 10.0 and self.lr_adjustment_num == 0) ):
+
+                if z1 < threshold and self.lr_adjustment_num == 0:
+                    hparams['learning_rate'] = self.lr_low
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
                 if ( z1 >= threshold)and self.lr_adjustment_num == 0:
-                    #hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.0
-                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
-                if self.lr_adjustment_num > 5 and False:
-                    hparams['learning_rate'] = self.lr_low
+                if (z1 >= threshold) and self.epochs_since_adjustment > 5:
+                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
                     self.epochs_since_adjustment = 0
                     self.do_skip_validation = False
                     print('reset all learning rate')
@@ -1230,16 +1248,9 @@ class NMT:
                     print('ten adjustments -- quit')
                     exit()
 
-                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
-                    time.ctime()
-                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                    print(t)
-                    print('list:', self.score_list)
-                    exit()
-
                 if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
-                    hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
                     #hparams['dropout'] = 0.05
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
