@@ -140,7 +140,7 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size  * a_list_size))
+        self.W_c1 = nn.Parameter(torch.zeros(1, hidden_size * hidden_size * a_list_size))
         self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size)) #hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -164,7 +164,8 @@ class EpisodicAttn(nn.Module):
 
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
-        #self.c_list_z = self.c_list_z.view(-1,1)
+        self.c_list_z = self.c_list_z.view(-1,1)
+        #print(self.c_list_z.size(),'cz')
 
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
@@ -173,7 +174,7 @@ class EpisodicAttn(nn.Module):
         #print(l_1.size(),'l1')
         l_2 = torch.mm(self.W_c2, l_1.permute(1,0)) + self.b_c2
         l_2 = F.sigmoid(l_2)
-        #print(self.c_list_z.size(),'cz', l_1.size())
+        #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
         self.G = l_2
 
@@ -224,7 +225,7 @@ class CustomGRU2(nn.Module):
 
         fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
-
+        #print(fact.size(),'fact')
         #print(fact.size(), C.size(), 'f,C')
         z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
         r = F.sigmoid(torch.mm(self.W_mem_res_in, fact) + torch.mm(self.W_mem_res_hid, C) + self.b_mem_res)
@@ -306,9 +307,9 @@ class Encoder(nn.Module):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
         encoder_out = None
-
+        #print(embedded.size(),'em')
         #embedded = embedded.squeeze(0).permute(1,0)
-        embedded = embedded.permute(1,0,2)
+        #embedded = embedded.permute(1,0,2)
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
@@ -350,8 +351,8 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
         mem = self.dropout1(mem)
-
-        mem = mem.squeeze(0).permute(1,0)#.squeeze(0)
+        mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
+        #print(mem.size())
 
         out = torch.mm(self.W_a1, mem) + self.b_a1
         out = F.tanh(out)
