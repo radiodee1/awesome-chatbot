@@ -484,9 +484,9 @@ class WrapMemRNN(nn.Module):
 
                 g_list = torch.cat(g_list, dim=0)
 
-                g_list = F.softmax(g_list, dim=0)
+                #g_list = F.softmax(g_list, dim=0)
 
-                #g_list = F.sigmoid(g_list) # * len(g_list) / 1.5 #e_x #gg
+                g_list = F.sigmoid(g_list) # * len(g_list) / 1.5 #e_x #gg
 
                 if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
 
