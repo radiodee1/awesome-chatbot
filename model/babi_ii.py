@@ -169,12 +169,12 @@ class EpisodicAttn(nn.Module):
 
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
-        l_1 = torch.mm(self.W_c1, self.c_list_z) #+ self.b_c1
+        l_1 = torch.mm(self.W_c1, self.c_list_z) # + self.b_c1
 
-        l_1 = F.tanh(l_1)
-        #print(l_1.size(),'l1')
+        l_1 = F.selu(l_1)
+        #print(l_1,'l1', l_1.size())
         l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
-        #l_2 = F.sigmoid(l_2)
+        #l_2 = F.relu(l_2)
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
         self.G = l_2
@@ -479,14 +479,15 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
                     g_list.append(nn.Parameter(torch.Tensor([x])))
-                    #print(x,'x')
+
                 assert len(g_list) == len(sequences)
 
                 g_list = torch.cat(g_list, dim=0)
 
-                #g_list = F.softmax(g_list, dim=0)
+                #g_list = F.relu(g_list)
+                #g_list = F.softmax(g_list, dim=0) #* len(g_list)
 
-                g_list = F.sigmoid(g_list) 
+                g_list = F.sigmoid(g_list)
 
                 if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
 
