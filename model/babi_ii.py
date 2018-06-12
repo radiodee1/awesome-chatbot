@@ -170,7 +170,6 @@ class EpisodicAttn(nn.Module):
         #self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) #+ self.b_c1
-        #l_2 = F.sigmoid(l_1)
 
         l_1 = F.tanh(l_1)
         #print(l_1.size(),'l1')
@@ -456,13 +455,13 @@ class WrapMemRNN(nn.Module):
 
             m_list = [self.q_q.clone(),self.q_q.clone()]
 
-            e_list = []
+            e_list = [self.q_q.clone()]
             #f_list = []
             #m = self.q_q.clone()
 
-            ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
+            #ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
 
-            e_list.append(self.q_q.clone())
+            #e_list.append(self.q_q.clone())
 
 
             for iter in range(self.memory_hops):
@@ -470,6 +469,8 @@ class WrapMemRNN(nn.Module):
                 g_list = []
 
                 f_list = [self.q_q.clone()]
+
+                e_list = [self.q_q.clone()]
 
                 sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
 
