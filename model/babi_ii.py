@@ -367,11 +367,12 @@ class AnswerModule(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[], freeze_embedding=False, embedding=None):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[], freeze_embedding=False, embedding=None, print_to_screen=False):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
         self.do_babi = do_babi
+        self.print_to_screen = print_to_screen
         self.bad_token_lst = bad_token_lst
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
@@ -487,7 +488,7 @@ class WrapMemRNN(nn.Module):
                 #g_list = F.softmax(gg, dim=0)
                 g_list = gg  #e_x #gg
 
-                #print(g_list,'gg -- after', len(g_list))
+                if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
 
                 for i in range(len(sequences)):
 
@@ -633,6 +634,7 @@ class NMT:
         self.do_load_embeddings = False
         self.do_auto_stop = False
         self.do_skip_validation = False
+        self.do_print_to_screen = False
 
         self.printable = ''
 
@@ -661,6 +663,7 @@ class NMT:
         parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
         parser.add_argument('--dropout', help='set dropout ratio from the command line. (Float value)')
         parser.add_argument('--no-validation', help='skip validation printout until first lr correction.',action='store_true')
+        parser.add_argument('--print-to-screen', help='print some extra values to the screen for debugging', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -713,6 +716,7 @@ class NMT:
         if self.args['auto_stop'] == True: self.do_auto_stop = True
         if self.args['dropout'] is not None: hparams['dropout'] = float(self.args['dropout'])
         if self.args['no_validation'] is True: self.do_skip_validation = True
+        if self.args['print_to_screen'] is True: self.do_print_to_screen = True
         if self.printable == '': self.printable = hparams['base_filename']
 
         ''' reset lr vars if changed from command line '''
@@ -1572,7 +1576,8 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers,
                                       dropout=dropout,do_babi=self.do_load_babi,
-                                      freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix)
+                                      freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
+                                      print_to_screen=self.do_print_to_screen)
 
         self.load_checkpoint()
 
@@ -1593,7 +1598,8 @@ class NMT:
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi,
-                                      freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix)
+                                      freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
+                                      print_to_screen=self.do_print_to_screen)
 
         self.first_load = True
         self.load_checkpoint()
@@ -1633,7 +1639,8 @@ if __name__ == '__main__':
 
     n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
                                dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
-                               freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix)
+                               freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
+                               print_to_screen=n.do_print_to_screen)
 
     #print(n.model_0_wra)
     #exit()
