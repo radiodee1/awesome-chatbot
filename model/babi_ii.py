@@ -174,7 +174,7 @@ class EpisodicAttn(nn.Module):
         l_1 = F.tanh(l_1)
         #print(l_1.size(),'l1')
         l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
-        l_2 = F.sigmoid(l_2)
+        #l_2 = F.sigmoid(l_2)
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
         self.G = l_2
@@ -482,11 +482,11 @@ class WrapMemRNN(nn.Module):
                     #print(x,'x')
                 assert len(g_list) == len(sequences)
 
-                gg = torch.cat(g_list, dim=0)
+                g_list = torch.cat(g_list, dim=0)
 
-                #g_list = F.sigmoid(gg)
-                #g_list = F.softmax(gg, dim=0)
-                g_list = gg  #e_x #gg
+                g_list = F.softmax(g_list, dim=0)
+
+                #g_list = F.sigmoid(g_list) # * len(g_list) / 1.5 #e_x #gg
 
                 if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
 
