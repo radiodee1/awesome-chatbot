@@ -140,8 +140,8 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size * hidden_size * a_list_size))
-        self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size)) #hidden_size))
+        self.W_c1 = nn.Parameter(torch.zeros(1,hidden_size * hidden_size * a_list_size))
+        self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size )) #hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
@@ -163,7 +163,7 @@ class EpisodicAttn(nn.Module):
     def forward(self,concat_list):
 
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=0)
+        self.c_list_z = torch.cat(concat_list,dim=1)
         self.c_list_z = self.c_list_z.view(-1,1)
         #print(self.c_list_z.size(),'cz')
 
@@ -173,11 +173,11 @@ class EpisodicAttn(nn.Module):
 
         #l_1 = F.tanh(l_1)
         #print(l_1,'l1', l_1.size())
-        l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
+        #l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
         #l_2 = F.relu(l_2)
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
-        self.G = l_2
+        self.G = l_1
 
         return self.G
 
@@ -186,27 +186,27 @@ class CustomGRU2(nn.Module):
         super(CustomGRU2, self).__init__()
         self.hidden_size = hidden_size
         self.dim = hidden_size
-
+        self.dim2 = hidden_size
         self.dropout1 = nn.Dropout(dropout)
         self.dropout2 = nn.Dropout(dropout)
 
-        self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim,self.dim2))
 
-        self.W_mem_res_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_res_hid = nn.Parameter(torch.zeros(self.dim, self.dim2))
 
-        self.b_mem_res = nn.Parameter(torch.zeros(self.dim,))
+        self.b_mem_res = nn.Parameter(torch.zeros(1))
 
-        self.W_mem_upd_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_upd_in = nn.Parameter(torch.zeros(self.dim,self.dim2))
 
-        self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.dim,self.dim2))
 
-        self.b_mem_upd = nn.Parameter(torch.zeros(self.dim,))
+        self.b_mem_upd = nn.Parameter(torch.zeros(1))
 
-        self.W_mem_hid_in = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_hid_in = nn.Parameter(torch.zeros(self.dim,self.dim2))
 
-        self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
+        self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.dim,self.dim2))
 
-        self.b_mem_hid = nn.Parameter(torch.zeros(self.dim,))
+        self.b_mem_hid = nn.Parameter(torch.zeros(1))
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -228,12 +228,20 @@ class CustomGRU2(nn.Module):
         C = C.squeeze(0)
         #print(fact.size(),'fact')
         #print(fact.size(), C.size(), 'f,C')
-        z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
+
+        #z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
+
+        z_upd_in = torch.mm(self.W_mem_upd_in, fact)
+        z_upd_hid = torch.mm(self.W_mem_upd_hid, C)
+        z_upd_mem_add = z_upd_in + z_upd_hid
+        z_upd_mem_add = z_upd_mem_add + self.b_mem_upd
+        z = F.sigmoid(z_upd_mem_add)
+
         r = F.sigmoid(torch.mm(self.W_mem_res_in, fact) + torch.mm(self.W_mem_res_hid, C) + self.b_mem_res)
         _h = F.tanh(torch.mm(self.W_mem_hid_in, fact) + r * torch.mm(self.W_mem_hid_hid, C) + self.b_mem_hid)
 
         zz = z * C + (1 - z ) * _h
-
+        #print(z.size(),z_upd_in.size(), z_upd_hid.size(), z_upd_mem_add.size(),'once through')
         return zz
 
 class MemRNN(nn.Module):
@@ -242,8 +250,8 @@ class MemRNN(nn.Module):
         self.hidden_size = hidden_size
         self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
         #self.dropout2 = nn.Dropout(dropout)
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
+        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -269,9 +277,9 @@ class MemRNN(nn.Module):
         num = 3
         input = self.prune_tensor(input,num)
         hidden = self.prune_tensor(hidden,num)
-        #hidden_out = self.gru(input,hidden)
-        output,hidden_out = self.gru(input, hidden)
-        #output = None
+        hidden_out = self.gru(input,hidden)
+        #output,hidden_out = self.gru(input, hidden)
+        output = None
 
         return output, hidden_out
 
@@ -305,15 +313,17 @@ class Encoder(nn.Module):
 
     def forward(self, source, hidden=None):
         #source = self.dropout(source)
+        #print(source.size(),'source')
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
-        embedded = self.dropout(embedded)
+        #print(embedded.size(),'emb')
+        #embedded = self.dropout(embedded)
         encoder_out = None
         #print(embedded.size(),'em')
         #embedded = embedded.squeeze(0).permute(1,0)
         #embedded = embedded.permute(1,0,2)
         encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         #encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-
+        #print(encoder_out.size(),'e out', encoder_hidden.size())
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
@@ -322,7 +332,7 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.W_a1 = nn.Parameter(torch.zeros(vocab_size ,hidden_size))
+        self.W_a1 = nn.Parameter(torch.zeros(vocab_size, hidden_size ))
         self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
         self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
@@ -351,14 +361,17 @@ class AnswerModule(nn.Module):
                 #print(weight.size())
 
     def forward(self, mem, question_h):
+        #print(mem.size(),'mem')
+
         mem = self.dropout1(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
-        #print(mem.size())
 
         out = torch.mm(self.W_a1, mem) #+ self.b_a1
+        #print(out.size(),'out')
+
         out = F.tanh(out)
         out = self.out_a(out)
-        #print(out.size(),'out')
+        #print(out.size(),'out2')
         #out = out.permute(1,0)
         #out = torch.mm(self.W_a2, out)# + self.b_a2
         #out = F.sigmoid(out)
@@ -434,19 +447,21 @@ class WrapMemRNN(nn.Module):
         prev_h1 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
 
         for ii in input_variable:
+            #print(ii,'input')
             out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), prev_h1[-1])#input_variable)
             prev_h1.append(hidden1)
 
         self.inp_c_seq = prev_h1[1:] #out1
-        self.inp_c = prev_h1[-1] #hidden1 #out1
+        self.inp_c = hidden1 #out1
 
         prev_h2 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
 
         for ii in question_variable:
-            out2, hidden2 = self.model_2_enc(ii.unsqueeze(0), prev_h2[-1])
+            #print(ii.size(),'ques')
+            out2, hidden2 = self.model_2_enc( ii.unsqueeze(0), prev_h2[-1])
             prev_h2.append(hidden2)
 
-        self.q_q = prev_h2[-1]
+        self.q_q = hidden2 #prev_h2[-1]
 
         return
 
@@ -485,7 +500,7 @@ class WrapMemRNN(nn.Module):
                 g_list = torch.cat(g_list, dim=0)
 
                 #g_list = F.relu(g_list)
-                #g_list = F.softmax(g_list, dim=0) #* len(g_list)
+                g_list = F.softmax(g_list, dim=0) #* len(g_list)
 
                 g_list = F.sigmoid(g_list)
 
@@ -508,7 +523,7 @@ class WrapMemRNN(nn.Module):
 
 
     def new_episode_small_step(self, ct, g, prev_h):
-
+        #print(ct.size(), prev_h.size(),'c,h')
         _, gru = self.model_3_mem_b(ct, prev_h) # g
 
         h = g * gru + (1 - g) * prev_h.squeeze(0)
