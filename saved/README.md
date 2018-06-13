@@ -2,7 +2,7 @@
 
 It should be noted that the code in this repository uses a batch size of 1, essentially no batch size. Also gpu processing is not implemented. This slows down training.
 
-#### Setup for `small_e` and `small_tr`:
+#### Setup for `ii_small_e` and `ii_small_tr`:
 1. `./do_make_glove_download.sh` Execute this in the root folder of the project repository.
 2. `cd model`
 3. `./do_make_train_test_from_babi.py all`
@@ -13,7 +13,7 @@ It should be noted that the code in this repository uses a batch size of 1, esse
 8. `cd stats`
 9. `./stats.py --test --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=small_e --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. *THIS WILL PLACE A TESTING VALUE IN THE 'STAT.MD' CHART.*
 
-#### Setup for `ii_a`, `ii_b` and `ii_tr`:
+#### Setup for `ii_lrg` and `ii_lrg_tr`:
 Here we are interested in creating the same conditions as above but with a larger vocabulary file. To do this we download the reddit corpus and use it to make large 'train.big.from' and 'train.big.to' files. This process is long and laborious. Our goal vocabulary size is 1500 words. To achieve this we could also download the wiki corpus. The name of the resulting file is `vocab.big.txt`.
 
 1. move to the root directory of the repository.
