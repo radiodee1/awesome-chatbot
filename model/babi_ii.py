@@ -224,7 +224,16 @@ class CustomGRU2(nn.Module):
         #fact = self.dropout1(fact)
         #C = self.dropout2(C)
 
-        fact = fact.squeeze(0).permute(1,0)
+        ''' try not to flip fact if it is already 100x100 '''
+        if fact.size()[1] == 100 and fact.size()[2] == 100:
+            fact = fact.squeeze(0)
+            pass
+        elif fact.size()[1] == 1:
+            fact = fact.squeeze(0).permute(1,0)
+
+
+        #fact = fact.squeeze(0).permute(1,0)
+
         C = C.squeeze(0)
         #print(fact.size(),'fact')
         #print(fact.size(), C.size(), 'f,C')

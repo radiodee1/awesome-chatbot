@@ -223,8 +223,13 @@ class CustomGRU2(nn.Module):
 
         #fact = self.dropout1(fact)
         #C = self.dropout2(C)
+        #print(fact.size(),'fact')
+        if fact.size()[1] == 100 and fact.size()[2] == 100:
+            fact = fact.squeeze(0)
+            pass
+        elif fact.size()[1] == 1:
+            fact = fact.squeeze(0).permute(1,0)
 
-        fact = fact.squeeze(0).permute(1,0)
         C = C.squeeze(0)
         #print(fact.size(),'fact')
         #print(fact.size(), C.size(), 'f,C')
