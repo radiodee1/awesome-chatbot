@@ -5,15 +5,17 @@ This page is for results of the various tests in the BABI set and for explaining
 #### Babi:
 There are 20 tests. One at a time we will try to fill in the results that we achieve in the table below. Also below is a list of filenames. Though one model is meant to complete all the tests with the same saved weights, we willl assume that each test is done seperately. At the end we may include a result for testing on all the categories at once.
 
+Since the 'babi_ii.py' file is the most complete model `ii_` will be the starting base filename for out tests. 
+
 * `baseline_dmn` This would be a figure for comparrison that was taken from literature on the subject. It does not reflect work done with this project. It is generally used with heavy supervision. [See here](https://arxiv.org/pdf/1506.07285.pdf) and [here.](https://yerevann.github.io/2016/02/05/implementing-dynamic-memory-networks/#initial-experiments)
-* `small_e` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download. There are 158 words used in the babi corpus, and with three special tokens ('sol', 'eol', and 'unk') there are 161 vocabulary words. This would be the classic configuration for the babi test.
-* `small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
-* `ii_lrg` Since the 'babi_ii.py' file is the most complete model `ii_` will be the starting base filename for out tests. This column reflects testing done with 100 hidden units and a large set of non trainable embeddings. The individual word vectors will come from the glove download. The words in the vocabulary would include those not specific to the question answering task.
+* `ii_small_e` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download. There are 158 words used in the babi corpus, and with three special tokens ('sol', 'eol', and 'unk') there are 161 vocabulary words. This would be the classic configuration for the babi test.
+* `ii_small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
+* `ii_lrg` This column reflects testing done with 100 hidden units and a large set of non trainable embeddings. The individual word vectors will come from the glove download. The words in the vocabulary would include those not specific to the question answering task.
 * `ii_lrg_tr` This column would have trainable embeddings and 100 units in the hidden layer. Other words would be included in the vocabulary not specific to the question answering task. Glove word vectors would not be used.
 
 The table is included here:
 
- |   | baseline_dmn | small_e | small_tr | ii_lrg  | ii_lrg_tr |
+ |   | baseline_dmn | ii_small_e | ii_small_tr | ii_lrg  | ii_lrg_tr |
 |-|-|-|-|-|-|
  | QA1: Single Supporting Fact | 100 | 0 | 0 | 0 | 0 |
  | QA2: Two Supporting Facts | 98.2 | 0 | 0 | 0 | 0 |
