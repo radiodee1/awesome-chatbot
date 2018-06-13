@@ -1216,7 +1216,8 @@ class NMT:
             if ( len(self.score_list) > 2 and (
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
-                     float(self.score_list[-3]) == float(self.score_list[-1])))):
+                     float(self.score_list[-3]) == float(self.score_list[-1]) and
+                     float(self.score_list[-1]) != 0.0))):
 
                 time.ctime()
                 t = time.strftime('%l:%M%p %Z on %b %d, %Y')
@@ -1565,6 +1566,7 @@ class NMT:
 
     def validate_iters(self):
         if self.do_skip_validation:
+            self.score_list.append('00.00')
             return
         self.task_babi_valid_files()
         self.printable = 'validate'
