@@ -1227,7 +1227,7 @@ class NMT:
                 ''' adjust learning_rate to different value if possible. '''
                 if (float(self.score_list[-1]) >= threshold )and self.lr_adjustment_num == 0:
                     #hparams['dropout'] = 0.0
-                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] = self.lr_low #- self.lr_increment + hparams['learning_rate']
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
@@ -1251,16 +1251,16 @@ class NMT:
 
                 if ( z1 >= threshold)and self.lr_adjustment_num == 0:
                     #hparams['dropout'] = 0.0
-                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] = self.lr_low #- self.lr_increment + hparams['learning_rate']
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
 
                 if (z1 >= threshold) and self.epochs_since_adjustment > 5:
-                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] =  self.lr_increment + hparams['learning_rate']
                     self.epochs_since_adjustment = 0
                     self.do_skip_validation = False
-                    print('reset all learning rate')
+                    print('reset all learning rate -- 5 changes')
 
 
                 if self.lr_adjustment_num > 10:
