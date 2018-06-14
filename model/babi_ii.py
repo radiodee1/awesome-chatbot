@@ -1271,7 +1271,7 @@ class NMT:
                 if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
                     hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
-                    #hparams['dropout'] = 0.05
+                    hparams['dropout'] = 0.1
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0

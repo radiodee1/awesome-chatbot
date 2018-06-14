@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2665">
-              <caret line="173" column="8" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="8" />
+            <state relative-caret-position="575">
+              <caret line="1273" column="44" selection-start-line="1273" selection-start-column="44" selection-end-line="1273" selection-end-column="44" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -116,7 +118,6 @@
       <find>WrapMemRNN</find>
       <find>print</find>
       <find>model_3_mem_b</find>
-      <find>model_1_enc</find>
       <find>GRU</find>
       <find>permute</find>
       <find>CustomGRU2</find>
@@ -125,6 +126,7 @@
       <find>score_list</find>
       <find>_auto_stop</find>
       <find>concat_list</find>
+      <find>model_1_enc</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -536,8 +538,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2665">
-          <caret line="173" column="8" selection-start-line="173" selection-start-column="8" selection-end-line="173" selection-end-column="8" />
+        <state relative-caret-position="575">
+          <caret line="1273" column="44" selection-start-line="1273" selection-start-column="44" selection-end-line="1273" selection-end-column="44" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
