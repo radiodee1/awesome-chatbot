@@ -466,14 +466,6 @@ class WrapMemRNN(nn.Module):
 
             m_list = [self.q_q.clone(),self.q_q.clone()]
 
-            e_list = [self.q_q.clone()]
-            #f_list = []
-            #m = self.q_q.clone()
-
-            #ee = nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))
-
-            #e_list.append(self.q_q.clone())
-
 
             for iter in range(self.memory_hops):
 
@@ -483,7 +475,7 @@ class WrapMemRNN(nn.Module):
 
                 e_list = [self.q_q.clone()]
 
-                sequences = self.inp_c_seq #.clone().permute(1,0,2).squeeze(0)
+                sequences = self.inp_c_seq
 
                 for i in range(len(sequences)):
 
@@ -1270,7 +1262,7 @@ class NMT:
 
                 if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
-                    hparams['learning_rate'] = - self.lr_increment + hparams['learning_rate']
+                    hparams['learning_rate'] =  self.lr_increment + hparams['learning_rate']
                     hparams['dropout'] = 0.1
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
