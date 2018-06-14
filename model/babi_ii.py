@@ -1480,7 +1480,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ lr adjustments:', self.lr_adjustment_num, '-- lr:', hparams['learning_rate'], ']')
+                    print('[ lr adjustments:', self.lr_adjustment_num, '--', hparams['learning_rate'], ']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
