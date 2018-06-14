@@ -1269,7 +1269,7 @@ class NMT:
                         float(self.score_list[-1]) != 100.00):
                     if use_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                        hparams['dropout'] = 0.1
+                        #hparams['dropout'] = 0.1
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
@@ -1454,28 +1454,30 @@ class NMT:
                     elif not self.do_load_babi:
                         print('skip save!')
                 print('(%d %d%%) %.4f loss' % (iter, iter / n_iters * 100, print_loss_avg))
-                choice = random.choice(self.pairs)
-                print('src:',choice[0])
-                question = None
-                if self.do_load_babi:
-                    print('ques:', choice[1])
-                    print('ref:',choice[2])
-                else:
-                    print('tgt:',choice[1])
-                nums = self.variablesFromPair(choice)
-                if self.do_load_babi:
-                    question = nums[1]
-                    target = nums[2]
-                if not self.do_load_babi:
-                    question = nums[0]
-                    target = None
-                words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
-                #print(choice)
-                if not self.do_load_babi:
-                    print('ans:',words)
-                    print('try:',self._shorten(words))
-                    #self._word_from_prediction()
-
+                if not self.do_skip_validation:
+                    ###########################
+                    choice = random.choice(self.pairs)
+                    print('src:',choice[0])
+                    question = None
+                    if self.do_load_babi:
+                        print('ques:', choice[1])
+                        print('ref:',choice[2])
+                    else:
+                        print('tgt:',choice[1])
+                    nums = self.variablesFromPair(choice)
+                    if self.do_load_babi:
+                        question = nums[1]
+                        target = nums[2]
+                    if not self.do_load_babi:
+                        question = nums[0]
+                        target = None
+                    words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
+                    #print(choice)
+                    if not self.do_load_babi:
+                        print('ans:',words)
+                        print('try:',self._shorten(words))
+                        #self._word_from_prediction()
+                    ############################
                 if self.do_load_babi and self.do_test_not_train:
 
                     print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
