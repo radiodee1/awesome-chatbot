@@ -171,7 +171,7 @@ class EpisodicAttn(nn.Module):
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) # + self.b_c1
 
-        #l_1 = F.tanh(l_1)
+        l_1 = F.tanh(l_1) ## <---- this line?
         #print(l_1,'l1', l_1.size())
         l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
         #l_2 = F.relu(l_2)
