@@ -611,8 +611,8 @@ class NMT:
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
         self.lr_adjustment_num = 0
-        self.lr_low = hparams['learning_rate'] / 100.0
-        self.lr_increment = self.lr_low # hparams['learning_rate'] / 2.0
+        self.lr_low = hparams['learning_rate'] #/ 100.0
+        self.lr_increment = self.lr_low / 4.0 # hparams['learning_rate'] / 2.0
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -723,8 +723,8 @@ class NMT:
         if self.printable == '': self.printable = hparams['base_filename']
 
         ''' reset lr vars if changed from command line '''
-        self.lr_low = hparams['learning_rate'] / 100.0
-        self.lr_increment = self.lr_low # hparams['learning_rate'] / 2.0
+        self.lr_low = hparams['learning_rate'] #/ 100.0
+        self.lr_increment = self.lr_low / 4.0 # hparams['learning_rate'] / 2.0
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
