@@ -1274,7 +1274,7 @@ class NMT:
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
                     print('train reached 100 but not validation')
-                elif use_recipe:
+                elif use_recipe and False:
                     hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
     def _shorten(self, sentence):
