@@ -1274,6 +1274,8 @@ class NMT:
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
                     print('train reached 100 but not validation')
+                elif use_recipe:
+                    hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1453,7 +1455,7 @@ class NMT:
                             print('======= save file '+ extra+' ========')
                     elif not self.do_load_babi:
                         print('skip save!')
-                print('(%d %d%%) %.4f loss' % (iter, iter / n_iters * 100, print_loss_avg))
+                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg))
                 if not self.do_skip_validation:
                     ###########################
                     choice = random.choice(self.pairs)
