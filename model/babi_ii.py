@@ -1204,7 +1204,7 @@ class NMT:
             if len(self.score_list) > 0:
                 z4 = float(self.score_list[-1])
 
-            zz1 = z1 == 100.00 and z2 == 100.00 and z4 != 100.00
+            zz1 = z1 == 100.00 and z4 != 100.00 #and z2 == 100.00  ## TWO IN A ROW
 
             zz2 = z1 == z2 and z1 == z3 and z1 != 0.0 ## TWO IN A ROW
 
@@ -1217,6 +1217,7 @@ class NMT:
                 time.ctime()
                 t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                 print(t)
+                self.do_skip_validation = False
                 #print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. -- validation '''
@@ -1269,11 +1270,11 @@ class NMT:
                     print('ten adjustments -- quit')
                     exit()
 
-                if (float(self.score_list_training[-1]) == 100.00 and float(self.score_list_training[-2]) == 100.00 and
+                if (float(self.score_list_training[-1]) == 100.00 and #float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
                     if use_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                        #hparams['dropout'] = 0.1
+                        ## hparams['dropout'] = 0.1 # <---- ???
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
@@ -1495,7 +1496,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ lr adjustments:', self.lr_adjustment_num, '--', hparams['learning_rate'], ']')
+                    print('[ lr adjust:', self.lr_adjustment_num, '--', hparams['learning_rate'], ']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
