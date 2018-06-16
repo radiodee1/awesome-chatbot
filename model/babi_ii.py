@@ -394,7 +394,7 @@ class WrapMemRNN(nn.Module):
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=gru_dropout)
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -1258,13 +1258,13 @@ class NMT:
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
                     print('lr adjust for train >=', threshold)
-
-                if z1 >= threshold and self.epochs_since_adjustment > 5:
-                    #hparams['learning_rate'] =  self.lr_increment + hparams['learning_rate']
+                '''
+                if z1 >= threshold and self.lr_adjustment_num % 8 == 0:
+                    hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     self.epochs_since_adjustment = 0
                     self.do_skip_validation = False
-                    print('5 changes')
-                '''
+                    print('8 changes')
+
 
                 if self.lr_adjustment_num > 10:
                     print('ten adjustments -- quit')
