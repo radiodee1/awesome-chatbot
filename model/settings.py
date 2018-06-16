@@ -38,5 +38,6 @@ hparams = {
     'learning_rate': 0.01, # adam = 0.001, adagrad = 0.01
     'tokens_per_sentence': 30, #32,
     'batch_constant': 512, #
-    'zero_start': False
+    'zero_start': False,
+    'cuda': False
 }

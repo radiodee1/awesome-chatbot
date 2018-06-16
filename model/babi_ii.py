@@ -279,7 +279,8 @@ class MemRNN(nn.Module):
         input = self.prune_tensor(input,num)
         hidden = self.prune_tensor(hidden,num)
         #hidden_out = self.gru(input,hidden)
-        output,hidden_out = self.gru(input, hidden)
+        output, hidden_out = self.gru(input, hidden)
+
         #output = None
 
         return output, hidden_out
@@ -667,6 +668,7 @@ class NMT:
         parser.add_argument('--dropout', help='set dropout ratio from the command line. (Float value)')
         parser.add_argument('--no-validation', help='skip validation printout until first lr correction.',action='store_true')
         parser.add_argument('--print-to-screen', help='print some extra values to the screen for debugging', action='store_true')
+        parser.add_argument('--cuda', help='enable cuda on device.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -720,7 +722,9 @@ class NMT:
         if self.args['dropout'] is not None: hparams['dropout'] = float(self.args['dropout'])
         if self.args['no_validation'] is True: self.do_skip_validation = True
         if self.args['print_to_screen'] is True: self.do_print_to_screen = True
+        if self.args['cuda'] is True: hparams['cuda'] = True
         if self.printable == '': self.printable = hparams['base_filename']
+        if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
         ''' reset lr vars if changed from command line '''
         self.lr_low = hparams['learning_rate'] #/ 100.0
@@ -1054,7 +1058,7 @@ class NMT:
         if add_eol: indexes.append(EOS_token)
         result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
         #print(result.size(),'r')
-        if use_cuda:
+        if hparams['cuda']:
             return result.cuda()
         else:
             return result
@@ -1063,10 +1067,19 @@ class NMT:
     def variablesFromPair(self,pair):
         input_variable = self.variableFromSentence(self.input_lang, pair[0])
         question_variable = self.variableFromSentence(self.output_lang, pair[1])
+
         if len(pair) > 2:
             target_variable = self.variableFromSentence(self.output_lang, pair[2])
         else:
+            #if hparams['cuda'] :
+            #    input_variable = input_variable.cuda()
+            #    question_variable = question_variable.cuda()
             return (input_variable, question_variable)
+        #if hparams['cuda']:
+        #    input_variable = input_variable.cuda()
+        #    question_variable = question_variable.cuda()
+        #    target_variable = target_variable.cuda()
+
         return (input_variable,question_variable, target_variable)
 
 
@@ -1360,7 +1373,7 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        self.criterion = nn.CrossEntropyLoss(size_average=False)
+        self.criterion = nn.NLLLoss() # nn.CrossEntropyLoss(size_average=False)
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
@@ -1599,6 +1612,7 @@ class NMT:
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen)
+        if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
 
@@ -1621,6 +1635,7 @@ class NMT:
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen)
+        if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
         self.load_checkpoint()
@@ -1666,9 +1681,7 @@ if __name__ == '__main__':
     #print(n.model_0_wra)
     #exit()
 
-    if use_cuda and False:
-
-        n.model_0_wra = n.model_0_wra.cuda()
+    if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
 
     if n.do_test_not_train and n.do_load_babi:
         print('test not train')
