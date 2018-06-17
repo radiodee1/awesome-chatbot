@@ -1201,7 +1201,7 @@ class NMT:
 
     def _auto_stop(self):
         threshold = 70.00
-        use_recipe = False
+        use_recipe = True
 
         self.epochs_since_adjustment += 1
 
@@ -1253,7 +1253,7 @@ class NMT:
 
             if len(self.score_list_training) < 3: return
 
-            if ((zz1) or (zz2) or (abs(z4 - z1) > 10.0 and self.lr_adjustment_num == 0) ):
+            if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
 
                 ''' adjust learning_rate to different value if possible. -- training '''
 
@@ -1278,7 +1278,6 @@ class NMT:
                     self.do_skip_validation = False
                     print('8 changes')
 
-
                 if self.lr_adjustment_num > 10:
                     print('ten adjustments -- quit')
                     exit()
@@ -1292,7 +1291,7 @@ class NMT:
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
                     print('train reached 100 but not validation')
-                elif use_recipe and False:
+                elif use_recipe and True:
                     hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
     def _shorten(self, sentence):
