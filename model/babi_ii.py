@@ -1209,8 +1209,9 @@ class NMT:
 
             z1 = z2 = z3 = z4 = 0.0
 
-            if len(self.score_list_training) >= 3:
+            if len(self.score_list_training) >= 1:
                 z1 = float(self.score_list_training[-1])
+            if len(self.score_list_training) >= 3:
                 z2 = float(self.score_list_training[-2])
                 z3 = float(self.score_list_training[-3])
 
