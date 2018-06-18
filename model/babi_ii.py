@@ -1205,7 +1205,7 @@ class NMT:
 
         self.epochs_since_adjustment += 1
 
-        if self.epochs_since_adjustment > 3:
+        if self.epochs_since_adjustment > 1:
 
             z1 = z2 = z3 = z4 = 0.0
 
@@ -1268,7 +1268,8 @@ class NMT:
                     self.epochs_since_adjustment = 0
                     print('train reached 100 but not validation')
 
-            elif use_recipe and False:
+            elif use_recipe and True:
+                print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
     def _shorten(self, sentence):
