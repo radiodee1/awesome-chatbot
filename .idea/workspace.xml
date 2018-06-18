@@ -17,8 +17,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1197">
-              <caret line="1293" column="40" selection-start-line="1293" selection-start-column="40" selection-end-line="1293" selection-end-column="40" />
+            <state relative-caret-position="531">
+              <caret line="1487" column="67" selection-start-line="1487" selection-start-column="67" selection-end-line="1487" selection-end-column="67" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -491,17 +491,17 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor />
           <second_editor>
             <js_state />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
@@ -558,8 +558,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1197">
-          <caret line="1293" column="40" selection-start-line="1293" selection-start-column="40" selection-end-line="1293" selection-end-column="40" />
+        <state relative-caret-position="531">
+          <caret line="1487" column="67" selection-start-line="1487" selection-start-column="67" selection-end-line="1487" selection-end-column="67" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

@@ -1235,15 +1235,6 @@ class NMT:
 
                 ''' adjust learning_rate to different value if possible. -- validation '''
 
-                '''
-                if False and (float(self.score_list[-1]) >= threshold ) and self.lr_adjustment_num == 0:
-                    hparams['learning_rate'] = self.lr_low #- self.lr_increment + hparams['learning_rate']
-                    self.do_skip_validation = False
-                    self.lr_adjustment_num += 1
-                    self.epochs_since_adjustment = 0
-                    print('lr adjust for valid >', threshold)
-                '''
-
                 if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
@@ -1251,27 +1242,12 @@ class NMT:
                     print('list:', self.score_list)
                     exit()
 
-            if len(self.score_list_training) < 3: return
+            if len(self.score_list_training) < 1: return
 
             if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
 
                 ''' adjust learning_rate to different value if possible. -- training '''
 
-                '''
-                if z1 < threshold and self.lr_adjustment_num == 0:
-                    #hparams['learning_rate'] = self.lr_low
-                    self.do_skip_validation = False
-                    self.lr_adjustment_num += 1
-                    self.epochs_since_adjustment = 0
-                    print('lr adjust for train <',threshold)
-
-                if z1 >= threshold and self.lr_adjustment_num == 0:
-                    if use_recipe and False: hparams['learning_rate'] = self.lr_low
-                    self.do_skip_validation = False
-                    self.lr_adjustment_num += 1
-                    self.epochs_since_adjustment = 0
-                    print('lr adjust for train >=', threshold)
-                '''
                 if z1 >= threshold and self.lr_adjustment_num % 8 == 0:
                     hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     self.epochs_since_adjustment = 0
@@ -1286,13 +1262,14 @@ class NMT:
                         float(self.score_list[-1]) != 100.00):
                     if use_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                        ## hparams['dropout'] = 0.1 # <---- ???
+                        hparams['dropout'] = 0.0 #0.1 # <---- ???
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
                     print('train reached 100 but not validation')
-                elif use_recipe and True:
-                    hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
+
+            elif use_recipe and False:
+                hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1508,7 +1485,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ lr adjust:', self.lr_adjustment_num, '--', hparams['learning_rate'], ']')
+                    print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'], ']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
