@@ -1255,8 +1255,8 @@ class NMT:
                     self.do_skip_validation = False
                     print('8 changes')
 
-                if self.lr_adjustment_num > 10:
-                    print('ten adjustments -- quit')
+                if self.lr_adjustment_num > 20:
+                    print('max adjustments -- quit')
                     exit()
 
                 if (float(self.score_list_training[-1]) == 100.00 and #float(self.score_list_training[-2]) == 100.00 and
