@@ -1228,15 +1228,15 @@ class NMT:
                      float(self.score_list[-3]) == float(self.score_list[-1]) and
                      float(self.score_list[-1]) != 0.0))):
 
-                time.ctime()
-                t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                print(t)
+                #time.ctime()
+                #t = time.strftime('%l:%M%p %Z on %b %d, %Y')
+                #print(t)
                 self.do_skip_validation = False
                 #print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. -- validation '''
 
-                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00:
+                if float(self.score_list[-1]) == 100.00 and float(self.score_list[-2]) == 100.00 and z1 == 100.00:
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                     print(t)
