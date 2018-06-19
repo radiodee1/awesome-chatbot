@@ -1222,10 +1222,10 @@ class NMT:
 
             zz2 = z1 == z2 and z1 == z3 and z1 != 0.0 ## TWO IN A ROW
 
-            if ( len(self.score_list) > 2 and (
+            if ( len(self.score_list) >= 2 and (
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
-                     float(self.score_list[-3]) == float(self.score_list[-1]) and
+                     #float(self.score_list[-3]) == float(self.score_list[-1]) and
                      float(self.score_list[-1]) != 0.0))):
 
                 #time.ctime()
