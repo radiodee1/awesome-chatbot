@@ -1255,7 +1255,7 @@ class NMT:
                     self.do_skip_validation = False
                     print('8 changes')
 
-                if self.lr_adjustment_num > 25:
+                if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
                     print('max adjustments -- quit')
                     exit()
 
