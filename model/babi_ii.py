@@ -1205,7 +1205,7 @@ class NMT:
 
         self.epochs_since_adjustment += 1
 
-        if self.epochs_since_adjustment > 1:
+        if self.epochs_since_adjustment > 0:
 
             z1 = z2 = z3 = z4 = 0.0
 
@@ -1263,7 +1263,7 @@ class NMT:
                         float(self.score_list[-1]) != 100.00):
                     if use_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                        hparams['dropout'] = 0.0 #0.1 # <---- ???
+                        #hparams['dropout'] = 0.0 #0.1 # <---- ???
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
