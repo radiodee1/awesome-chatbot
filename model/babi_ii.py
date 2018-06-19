@@ -1255,7 +1255,7 @@ class NMT:
                     self.do_skip_validation = False
                     print('8 changes')
 
-                if self.lr_adjustment_num > 20:
+                if self.lr_adjustment_num > 25:
                     print('max adjustments -- quit')
                     exit()
 
@@ -1269,7 +1269,7 @@ class NMT:
                     self.epochs_since_adjustment = 0
                     print('train reached 100 but not validation')
 
-            elif use_recipe and True:
+            elif use_recipe and False:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
