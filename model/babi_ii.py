@@ -731,8 +731,8 @@ class NMT:
         self.lr_low = hparams['learning_rate'] #/ 100.0
         self.lr_increment = self.lr_low / 4.0
         if self.args['lr_adjust'] is not None:
-            self.lr_adjustment_num = float(self.args['lr_adjust'])
-            hparams['learning_rate'] = self.lr_low + self.lr_adjustment_num * self.lr_increment
+            self.lr_adjustment_num = int(self.args['lr_adjust'])
+            hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
