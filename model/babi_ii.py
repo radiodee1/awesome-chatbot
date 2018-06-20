@@ -1249,19 +1249,19 @@ class NMT:
 
             if len(self.score_list_training) < 1: return
 
+            if z1 >= threshold and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15 ):
+                hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
+                self.epochs_since_adjustment = 0
+                self.do_skip_validation = False
+                print('8 changes or max epochs')
+
+            if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
+                print('max adjustments -- quit')
+                exit()
+
             if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
 
                 ''' adjust learning_rate to different value if possible. -- training '''
-
-                if z1 >= threshold and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15):
-                    hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
-                    self.epochs_since_adjustment = 0
-                    self.do_skip_validation = False
-                    print('8 changes or max epochs')
-
-                if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
-                    print('max adjustments -- quit')
-                    exit()
 
                 if (float(self.score_list_training[-1]) == 100.00 and #float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
