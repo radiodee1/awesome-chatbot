@@ -669,6 +669,7 @@ class NMT:
         parser.add_argument('--no-validation', help='skip validation printout until first lr correction.',action='store_true')
         parser.add_argument('--print-to-screen', help='print some extra values to the screen for debugging', action='store_true')
         parser.add_argument('--cuda', help='enable cuda on device.', action='store_true')
+        parser.add_argument('--lr-adjust', help='resume training at particular lr adjust value.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -728,7 +729,10 @@ class NMT:
 
         ''' reset lr vars if changed from command line '''
         self.lr_low = hparams['learning_rate'] #/ 100.0
-        self.lr_increment = self.lr_low / 4.0 # hparams['learning_rate'] / 2.0
+        self.lr_increment = self.lr_low / 4.0
+        if self.args['lr_adjust'] is not None:
+            self.lr_adjustment_num = float(self.args['lr_adjust'])
+            hparams['learning_rate'] = self.lr_low + self.lr_adjustment_num * self.lr_increment
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
@@ -1249,11 +1253,11 @@ class NMT:
 
                 ''' adjust learning_rate to different value if possible. -- training '''
 
-                if z1 >= threshold and self.lr_adjustment_num % 8 == 0:
+                if z1 >= threshold and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15):
                     hparams['learning_rate'] = self.lr_low # self.lr_increment + hparams['learning_rate']
                     self.epochs_since_adjustment = 0
                     self.do_skip_validation = False
-                    print('8 changes')
+                    print('8 changes or max epochs')
 
                 if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
                     print('max adjustments -- quit')
@@ -1487,7 +1491,7 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'], ']')
+                    print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],',', self.epochs_since_adjustment ,']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
