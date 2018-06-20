@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="396">
-              <caret line="1259" selection-start-line="1259" selection-end-line="1259" />
+            <state relative-caret-position="269">
+              <caret line="1128" column="23" selection-start-line="1128" selection-start-column="8" selection-end-line="1128" selection-end-column="23" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -98,9 +97,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.tar</find>
-      <find>Encoder</find>
-      <find>saved_files</find>
       <find>view</find>
       <find>gru</find>
       <find>EpisodicAttn</find>
@@ -108,7 +104,6 @@
       <find>sigmoid</find>
       <find>model_3_mem_a</find>
       <find>MemRNN</find>
-      <find>validate_iters</find>
       <find>torch.mm</find>
       <find>print</find>
       <find>model_3_mem_b</find>
@@ -116,7 +111,6 @@
       <find>permute</find>
       <find>CustomGRU2</find>
       <find>do_skip_validation</find>
-      <find>score_list</find>
       <find>_auto_stop</find>
       <find>concat_list</find>
       <find>model_1_enc</find>
@@ -128,6 +122,11 @@
       <find>cuda</find>
       <find>model_0_wra</find>
       <find>WrapMemRNN</find>
+      <find>best_accuracy</find>
+      <find>validate_iters</find>
+      <find>score_list</find>
+      <find>optim</find>
+      <find>save_checkpoint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -535,8 +534,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="396">
-          <caret line="1259" selection-start-line="1259" selection-end-line="1259" />
+        <state relative-caret-position="269">
+          <caret line="1128" column="23" selection-start-line="1128" selection-start-column="8" selection-end-line="1128" selection-end-column="23" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

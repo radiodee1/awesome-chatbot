@@ -614,6 +614,9 @@ class NMT:
         self.lr_adjustment_num = 0
         self.lr_low = hparams['learning_rate'] #/ 100.0
         self.lr_increment = self.lr_low / 4.0 # hparams['learning_rate'] / 2.0
+        self.best_accuracy = None
+        self.best_accuracy_old = None
+        self.record_threshold = 95.00
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -866,6 +869,7 @@ class NMT:
 
             print('auto save.')
             print('%.2f' % self.score,'score')
+
             self.save_checkpoint(num=len(self.pairs))
             self.saved_files += 1
             self.validate_iters()
@@ -1131,6 +1135,10 @@ class NMT:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
             #if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
+            if ((self.best_accuracy_old is None and self.best_accuracy is not None) or
+                    (self.best_accuracy_old is not None and self.best_accuracy > self.best_accuracy_old)):
+                torch.save(state, basename + '.' + str(int(math.floor(self.best_accuracy * 100))) + '.best.pth')
+                self.best_accuracy_old = self.best_accuracy
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
@@ -1200,7 +1208,7 @@ class NMT:
         print('new optimizer', hparams['learning_rate'])
         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
         return optim.Adam(parameters, lr=hparams['learning_rate'])
-        #return optim.Adagrad(parameters, lr=hparams['learning_rate'])
+        #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
     def _auto_stop(self):
@@ -1271,11 +1279,15 @@ class NMT:
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
+                    #if len(self.score_list) > 0 and self.score_list_training[-1] == 100.00 :
+                    #    self.best_accuracy = self.score_list[-1]
                     print('train reached 100 but not validation')
 
             elif use_recipe and False:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
+
+
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1581,6 +1593,10 @@ class NMT:
         lr = hparams['learning_rate']
         self.start = 0
         self.train_iters(None,None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+        if len(self.score_list) > 0 and float(self.score_list_training[-1]) >= self.record_threshold: #100.00:
+            self.best_accuracy = float(self.score_list[-1])
+            self.save_checkpoint(num=len(self.pairs))
+
         pass
 
     def setup_for_interactive(self):
