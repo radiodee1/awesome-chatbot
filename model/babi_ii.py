@@ -1213,7 +1213,7 @@ class NMT:
 
     def _auto_stop(self):
         threshold = 70.00
-        use_recipe = True
+        use_recipe = False
 
         self.epochs_since_adjustment += 1
 
