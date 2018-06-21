@@ -167,7 +167,7 @@ class EpisodicAttn(nn.Module):
         self.c_list_z = self.c_list_z.view(-1,1)
         #print(self.c_list_z.size(),'cz')
 
-        #self.c_list_z = self.dropout_1(self.c_list_z)
+        self.c_list_z = self.dropout_1(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) # + self.b_c1
 
@@ -387,14 +387,14 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
 
         gru_dropout = dropout * 0 #/ 2
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=embedding, bidirectional=False)
 
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=embedding, bidirectional=False)
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
-        self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
+        self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
@@ -1213,7 +1213,8 @@ class NMT:
 
     def _auto_stop(self):
         threshold = 70.00
-        use_recipe = False
+        use_lr_recipe = False
+        use_dropout_recipe = True
 
         self.epochs_since_adjustment += 1
 
@@ -1255,12 +1256,15 @@ class NMT:
                     print('list:', self.score_list)
                     exit()
 
+                if self.lr_adjustment_num < 1 and use_dropout_recipe: hparams['dropout'] = 0.0
+
             if len(self.score_list_training) < 1: return
 
-            if z1 >= threshold and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15 ):
+            if z1 >= threshold and self.lr_adjustment_num != 0 and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15 ):
                 hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
                 self.epochs_since_adjustment = 0
                 self.do_skip_validation = False
+                if use_dropout_recipe: hparams['dropout'] = 0.00
                 print('8 changes or max epochs')
 
             if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
@@ -1273,9 +1277,11 @@ class NMT:
 
                 if (float(self.score_list_training[-1]) == 100.00 and #float(self.score_list_training[-2]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
-                    if use_recipe:
+                    if use_lr_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
                         #hparams['dropout'] = 0.0 #0.1 # <---- ???
+                    if use_dropout_recipe:
+                        hparams['dropout'] = hparams['dropout'] + 0.025
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
@@ -1283,7 +1289,7 @@ class NMT:
                     #    self.best_accuracy = self.score_list[-1]
                     print('train reached 100 but not validation')
 
-            elif use_recipe and False:
+            elif use_lr_recipe and False:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
