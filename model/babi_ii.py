@@ -1209,6 +1209,9 @@ class NMT:
                         #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
                         self.opt_1 = self._make_optimizer()
                 print("loaded checkpoint '"+ basename + "' ")
+                if self.do_recipe_dropout:
+                    self.set_dropout(hparams['dropout'])
+
             else:
                 print("no checkpoint found at '"+ basename + "'")
 

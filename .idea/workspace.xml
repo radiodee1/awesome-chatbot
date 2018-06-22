@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2933">
-              <caret line="1704" column="5" selection-start-line="1704" selection-start-column="5" selection-end-line="1704" selection-end-column="5" />
+            <state relative-caret-position="269">
+              <caret line="392" column="24" selection-start-line="392" selection-start-column="13" selection-end-line="392" selection-end-column="24" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -110,7 +110,6 @@
       <find>do_skip_validation</find>
       <find>_auto_stop</find>
       <find>concat_list</find>
-      <find>model_1_enc</find>
       <find>lr_adjustment_num</find>
       <find>lr_increment</find>
       <find>lr_low</find>
@@ -127,6 +126,7 @@
       <find>zero</find>
       <find>save_checkpoint</find>
       <find>train_iters</find>
+      <find>model_1_enc</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -534,8 +534,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2933">
-          <caret line="1704" column="5" selection-start-line="1704" selection-start-column="5" selection-end-line="1704" selection-end-column="5" />
+        <state relative-caret-position="269">
+          <caret line="392" column="24" selection-start-line="392" selection-start-column="13" selection-end-line="392" selection-end-column="24" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
