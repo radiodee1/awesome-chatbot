@@ -617,6 +617,7 @@ class NMT:
         self.best_accuracy = None
         self.best_accuracy_old = None
         self.record_threshold = 95.00
+        self._recipe_switching = 0
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -1224,8 +1225,16 @@ class NMT:
 
     def _auto_stop(self):
         threshold = 70.00
-        use_lr_recipe = self.do_recipe_lr #False
-        use_dropout_recipe = self.do_recipe_dropout #True
+        use_recipe_switching = self.do_recipe_dropout and self.do_recipe_lr
+
+        use_lr_recipe = self.do_recipe_lr
+        use_dropout_recipe = self.do_recipe_dropout
+
+        ''' is this helpful ?? '''
+        if use_recipe_switching and self._recipe_switching % 2 == 0:
+            use_dropout_recipe = False
+        elif use_recipe_switching and self._recipe_switching % 2 == 1:
+            use_lr_recipe = False
 
         self.epochs_since_adjustment += 1
 
@@ -1274,9 +1283,11 @@ class NMT:
             if len(self.score_list_training) < 1: return
 
             if z1 >= threshold and self.lr_adjustment_num != 0 and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15 ):
-                hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
+                if use_lr_recipe:
+                    hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
                 self.epochs_since_adjustment = 0
                 self.do_skip_validation = False
+                self._recipe_switching += 1
                 if use_dropout_recipe:
                     hparams['dropout'] = 0.00
                     self.set_dropout(0.00)
