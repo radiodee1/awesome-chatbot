@@ -146,7 +146,7 @@ class EpisodicAttn(nn.Module):
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         self.b_c2 = nn.Parameter(torch.zeros(1,))
 
-        self.dropout_1 = nn.Dropout(dropout)
+        self.dropout = nn.Dropout(dropout)
 
         self.reset_parameters()
 
@@ -167,7 +167,7 @@ class EpisodicAttn(nn.Module):
         self.c_list_z = self.c_list_z.view(-1,1)
         #print(self.c_list_z.size(),'cz')
 
-        self.c_list_z = self.dropout_1(self.c_list_z)
+        self.c_list_z = self.dropout(self.c_list_z)
 
         l_1 = torch.mm(self.W_c1, self.c_list_z) # + self.b_c1
 
@@ -346,7 +346,7 @@ class AnswerModule(nn.Module):
         self.out2 = nn.Linear(hidden_size * 2, 1)
         init.xavier_normal_(self.out2.state_dict()['weight'])
 
-        self.dropout1 = nn.Dropout(dropout)
+        self.dropout = nn.Dropout(dropout)
         #self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -361,7 +361,7 @@ class AnswerModule(nn.Module):
                 #print(weight.size())
 
     def forward(self, mem, question_h):
-        mem = self.dropout1(mem)
+        mem = self.dropout(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
         #print(mem.size())
 
@@ -642,6 +642,8 @@ class NMT:
         self.do_auto_stop = False
         self.do_skip_validation = False
         self.do_print_to_screen = False
+        self.do_recipe_dropout = False
+        self.do_recipe_lr = False
 
         self.printable = ''
 
@@ -674,6 +676,8 @@ class NMT:
         parser.add_argument('--cuda', help='enable cuda on device.', action='store_true')
         parser.add_argument('--lr-adjust', help='resume training at particular lr adjust value.')
         parser.add_argument('--save-num', help='threshold for auto-saving files. (0-100)')
+        parser.add_argument('--recipe-dropout', help='use dropout recipe', action='store_true')
+        parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -729,6 +733,8 @@ class NMT:
         if self.args['print_to_screen'] is True: self.do_print_to_screen = True
         if self.args['cuda'] is True: hparams['cuda'] = True
         if self.args['save_num'] is not None: self.record_threshold = float(self.args['save_num'])
+        if self.args['recipe_dropout'] is not False: self.do_recipe_dropout = True
+        if self.args['recipe_lr'] is not False: self.do_recipe_lr = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1215,8 +1221,8 @@ class NMT:
 
     def _auto_stop(self):
         threshold = 70.00
-        use_lr_recipe = False
-        use_dropout_recipe = True
+        use_lr_recipe = self.do_recipe_lr #False
+        use_dropout_recipe = self.do_recipe_dropout #True
 
         self.epochs_since_adjustment += 1
 
@@ -1258,7 +1264,9 @@ class NMT:
                     print('list:', self.score_list)
                     exit()
 
-                if self.lr_adjustment_num < 1 and use_dropout_recipe: hparams['dropout'] = 0.0
+                if self.lr_adjustment_num < 1 and use_dropout_recipe:
+                    hparams['dropout'] = 0.0
+                    self.set_dropout(0.0)
 
             if len(self.score_list_training) < 1: return
 
@@ -1266,7 +1274,9 @@ class NMT:
                 hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
                 self.epochs_since_adjustment = 0
                 self.do_skip_validation = False
-                if use_dropout_recipe: hparams['dropout'] = 0.00
+                if use_dropout_recipe:
+                    hparams['dropout'] = 0.00
+                    self.set_dropout(0.00)
                 print('max changes or max epochs')
 
             if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
@@ -1283,6 +1293,7 @@ class NMT:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
                     if use_dropout_recipe:
                         hparams['dropout'] = hparams['dropout'] + 0.025
+                        self.set_dropout(hparams['dropout'])
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
@@ -1326,6 +1337,13 @@ class NMT:
                 saved.append(i)
             last = i
         return ' '.join(out)
+
+    def set_dropout(self, p):
+        print('dropout',p)
+        if self.model_0_wra is not None:
+            self.model_0_wra.model_1_enc.dropout.p = p
+            self.model_0_wra.model_4_att.dropout.p = p
+            self.model_0_wra.model_5_ans.dropout.p = p
 
 
     #######################################
@@ -1600,7 +1618,7 @@ class NMT:
         lr = hparams['learning_rate']
         self.start = 0
         self.train_iters(None,None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
-        if len(self.score_list) > 0 and float(self.score_list_training[-1]) >= self.record_threshold: #100.00:
+        if len(self.score_list) > 0 and float(self.score_list[-1]) >= self.record_threshold: #100.00:
             self.best_accuracy = float(self.score_list[-1])
             self.save_checkpoint(num=len(self.pairs))
 
@@ -1684,6 +1702,7 @@ if __name__ == '__main__':
                                print_to_screen=n.do_print_to_screen)
 
     #print(n.model_0_wra)
+    #n.set_dropout(0.1334)
     #exit()
 
     if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
