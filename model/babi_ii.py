@@ -388,7 +388,7 @@ class WrapMemRNN(nn.Module):
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
 
-        gru_dropout = dropout * 0 
+        gru_dropout = dropout * 0
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=embedding, bidirectional=False)
@@ -673,6 +673,7 @@ class NMT:
         parser.add_argument('--print-to-screen', help='print some extra values to the screen for debugging', action='store_true')
         parser.add_argument('--cuda', help='enable cuda on device.', action='store_true')
         parser.add_argument('--lr-adjust', help='resume training at particular lr adjust value.')
+        parser.add_argument('--save-num', help='threshold for auto-saving files. (0-100)')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -727,6 +728,7 @@ class NMT:
         if self.args['no_validation'] is True: self.do_skip_validation = True
         if self.args['print_to_screen'] is True: self.do_print_to_screen = True
         if self.args['cuda'] is True: hparams['cuda'] = True
+        if self.args['save_num'] is not None: self.record_threshold = float(self.args['save_num'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1265,7 +1267,7 @@ class NMT:
                 self.epochs_since_adjustment = 0
                 self.do_skip_validation = False
                 if use_dropout_recipe: hparams['dropout'] = 0.00
-                print('8 changes or max epochs')
+                print('max changes or max epochs')
 
             if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
                 print('max adjustments -- quit')
@@ -1279,7 +1281,6 @@ class NMT:
                         float(self.score_list[-1]) != 100.00):
                     if use_lr_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                        #hparams['dropout'] = 0.0 #0.1 # <---- ???
                     if use_dropout_recipe:
                         hparams['dropout'] = hparams['dropout'] + 0.025
                     self.do_skip_validation = False

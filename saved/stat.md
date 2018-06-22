@@ -43,7 +43,6 @@ The table is included here:
 
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
-Training benefits from stopping the training process and restarting it with a much lower 'learning_rate' at the end.
 
 #### The `model` Directory:
 
