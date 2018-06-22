@@ -1230,7 +1230,7 @@ class NMT:
         use_lr_recipe = self.do_recipe_lr
         use_dropout_recipe = self.do_recipe_dropout
 
-        ''' is this helpful ?? '''
+        ''' switch between two recipe types '''
         if use_recipe_switching and self._recipe_switching % 2 == 0:
             use_dropout_recipe = False
         elif use_recipe_switching and self._recipe_switching % 2 == 1:
@@ -1258,14 +1258,9 @@ class NMT:
             if ( len(self.score_list) >= 2 and (
                     (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
                     (float(self.score_list[-2]) == float(self.score_list[-1]) and
-                     #float(self.score_list[-3]) == float(self.score_list[-1]) and
                      float(self.score_list[-1]) != 0.0))):
 
-                #time.ctime()
-                #t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                #print(t)
                 self.do_skip_validation = False
-                #print('list:',self.score_list)
 
                 ''' adjust learning_rate to different value if possible. -- validation '''
 
@@ -1301,7 +1296,7 @@ class NMT:
 
                 ''' adjust learning_rate to different value if possible. -- training '''
 
-                if (float(self.score_list_training[-1]) == 100.00 and #float(self.score_list_training[-2]) == 100.00 and
+                if (float(self.score_list_training[-1]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
                     if use_lr_recipe:
                         hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
@@ -1311,8 +1306,6 @@ class NMT:
                     self.do_skip_validation = False
                     self.lr_adjustment_num += 1
                     self.epochs_since_adjustment = 0
-                    #if len(self.score_list) > 0 and self.score_list_training[-1] == 100.00 :
-                    #    self.best_accuracy = self.score_list[-1]
                     print('train reached 100 but not validation')
 
             elif use_lr_recipe and False:
