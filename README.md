@@ -1,7 +1,7 @@
 # `awesome-chatbot`
 Keras or pytorch implementation of a chatbot. The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. The inspiration for this project is the tensorflow NMT project found at the following link: https://github.com/tensorflow/nmt Also, this was inspiring: https://pythonprogramming.net/chatbot-deep-learning-python-tensorflow/ Finally there was a great deep learning youtube series from Siraj Raval. A link for that is [here](https://www.youtube.com/watch?v=t5qgjJIBy9g&index=17&list=PL-pLHOzIUduUSTkdsLkToPdegSbpFJXcX)
 # Progress
-6/23/18 - The project is in its early stages. No model in this project implements an AI chatbot. That is the goal, but it has not been reached as of yet. Presently the focus is on the babi data set.
+6/23/18 - The project is in its early stages. No model in this project implements an AI chatbot. That is the goal, but it has not been reached as of yet. Presently the focus is on the babi data set. This implies that we are using pytorch, not keras at this time.
 
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.

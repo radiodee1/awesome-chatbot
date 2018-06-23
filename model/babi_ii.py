@@ -1233,8 +1233,10 @@ class NMT:
         ''' switch between two recipe types '''
         if use_recipe_switching and self._recipe_switching % 2 == 0:
             use_dropout_recipe = False
+            use_lr_recipe = True
         elif use_recipe_switching and self._recipe_switching % 2 == 1:
             use_lr_recipe = False
+            use_dropout_recipe = True
 
         self.epochs_since_adjustment += 1
 
@@ -1535,7 +1537,10 @@ class NMT:
                     num_right_small = 0
 
                 if self.lr_adjustment_num > 0:
-                    print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],',', self.epochs_since_adjustment ,']')
+                    if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
+                        print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],',', self.epochs_since_adjustment ,']')
+                    if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
+                        print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],',',self.epochs_since_adjustment,']')
 
                 if self.score_list is not None and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
