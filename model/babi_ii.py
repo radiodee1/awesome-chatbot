@@ -394,7 +394,7 @@ class WrapMemRNN(nn.Module):
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=embedding, bidirectional=False)
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
-        self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
+        self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
@@ -1351,7 +1351,7 @@ class NMT:
         print('dropout',p)
         if self.model_0_wra is not None:
             self.model_0_wra.model_1_enc.dropout.p = p
-            self.model_0_wra.model_4_att.dropout.p = p
+            #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
 
