@@ -964,16 +964,7 @@ class NMT:
 
         return self.input_lang, self.output_lang, self.pairs
 
-    '''
-    def filterPair(self,p):
-        return (len(p[0].split(' ')) < MAX_LENGTH and \
-            len(p[1].split(' ')) < MAX_LENGTH)  or True #\
-
-
-
-    def filterPairs(self,pairs):
-        return [pair for pair in pairs if self.filterPair(pair)]
-    '''
+    
 
 
     def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False):
