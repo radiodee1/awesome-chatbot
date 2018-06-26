@@ -172,9 +172,9 @@ class EpisodicAttn(nn.Module):
         l_1 = torch.mm(self.W_c1, self.c_list_z) # + self.b_c1
 
         l_1 = F.tanh(l_1) ## <---- this line?
-        #print(l_1,'l1', l_1.size())
+
         l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
-        #l_2 = F.relu(l_2)
+
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
         self.G = l_2
@@ -449,7 +449,9 @@ class WrapMemRNN(nn.Module):
         for ii in input_variable:
             #prev_h1 = [None]
             #ii = input_variable
-            out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), None) #prev_h1[-1])# input_variable
+            ii = self.prune_tensor(ii, 2)
+
+            out1, hidden1 = self.model_1_enc(ii, None) #prev_h1[-1])# input_variable
             #print(out1.size(),'out1', hidden1.size())
             prev_h1.append(hidden1)
 
@@ -463,9 +465,10 @@ class WrapMemRNN(nn.Module):
         prev_h2 = [] #[None] #nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
 
         for ii in question_variable:
+            ii = self.prune_tensor(ii, 2)
             #prev_h2 = [None]
             #ii = question_variable
-            out2, hidden2 = self.model_2_enc(ii.unsqueeze(0), None) #prev_h2[-1])
+            out2, hidden2 = self.model_2_enc(ii, None) #prev_h2[-1])
             prev_h2.append(hidden2)
 
         self.q_q = hidden2[:,-1,:] #prev_h2[-1]
@@ -477,13 +480,11 @@ class WrapMemRNN(nn.Module):
         if True:
 
             mm_list = []
-            m_list = [self.q_q.clone()]
+
             sequences = self.inp_c_seq
             g_list = [[] for _ in range(len(sequences))]
 
             for i in range(len(sequences)):
-
-                f_list = [self.q_q.clone()]
 
                 e_list = [self.q_q.clone()]
 
@@ -500,7 +501,6 @@ class WrapMemRNN(nn.Module):
 
                     e = e[0,-1][-1]
                     e_list.append(e)
-                    f_list.append(f)
 
                     _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None) # m_list[-1])
 
@@ -508,24 +508,29 @@ class WrapMemRNN(nn.Module):
 
                 mm_list.append(m_list[-1])
 
-        #mm_list = np.asarray(mm_list,dtype=np.float16)
-        #mm_list = torch.from_numpy(mm_list)
         mm_list = torch.cat(mm_list, dim=1)
+
         self.last_mem = mm_list
-        #print(mm_list,'mm')
+        print(self.last_mem.size(),'lm')
 
         return None #m_list[-1]
-
-
 
     def new_episode_small_step(self, ct, g, prev_h):
 
         #g = torch.cat(g, dim=0)
 
-        _, gru = self.model_3_mem_b(ct, None )#prev_h) # g
+        out, gru = self.model_3_mem_b(ct, None )#prev_h) # g
 
-        h = g * gru #+ (1 - g) * prev_h.squeeze(0)
+        prev = gru
 
+        if int(out.size()[1]) > 1:
+
+            prev = out[0,-2,:]
+            #print('here2', prev.size())
+
+        #print((1-g).size(),(1-g), '1-g')
+        h = g * gru + (1 - g) * prev.squeeze(0)
+        #print(g.size(),'g')
         return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
@@ -552,7 +557,7 @@ class WrapMemRNN(nn.Module):
             #for ii in concat_list: print(ii.size())
             #exit()
             z = self.model_4_att(concat_list)
-            z = F.sigmoid(z)
+            #z = F.sigmoid(z)
             att.append(z)
 
         z = torch.cat(att, dim=0)
@@ -568,12 +573,10 @@ class WrapMemRNN(nn.Module):
 
     def new_answer_module_simple(self):#,target_var, criterion):
         #outputs
-        #loss = 0
+
         ansx = self.model_5_ans(self.last_mem, self.q_q)
-        #ans = ansx.data.max(dim=1)[1]
+
         ans = torch.argmax(ansx,dim=1)#[0]
-        #if criterion is not None:
-        #    loss = criterion(ansx, target_var[0])
 
         return [ans], ansx
 
@@ -1096,7 +1099,7 @@ class NMT:
         g1 = []
         g2 = []
         g3 = []
-        dim = 0
+
         group = pairs[start:start + size]
         for i in group:
             g = self.variablesFromPair(i)
@@ -1104,7 +1107,6 @@ class NMT:
             g1.append(g[0].squeeze(1))
             g2.append(g[1].squeeze(1))
             g3.append(g[2].squeeze(1))
-
 
         return (g1, g2, g3)
 
@@ -1407,6 +1409,7 @@ class NMT:
                 outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                                   criterion)
                 loss = None
+                ans = ans.permute(1,0)
 
         #print(self.model_0_wra.training,'train')
         if criterion is not None:
@@ -1601,7 +1604,7 @@ class NMT:
                     if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
                         print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],',',self.epochs_since_adjustment,']')
 
-                if self.score_list is not None and len(self.score_list_training) > 0:
+                if self.score_list is not None and len(self.score_list_training) > 0 and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
                     if self.do_test_not_train:
                         print('[ older valid:', self.score_list[-1],']')
@@ -1612,7 +1615,7 @@ class NMT:
 
                 print("-----")
 
-        if self.do_batch_process: return
+        #if self.do_batch_process: return
 
         str_score = ' %.2f'
         if self.score >= 100.00: str_score = '%.2f'
@@ -1645,23 +1648,23 @@ class NMT:
             question_variable = question
             if not self.do_load_babi: sos_token = question_variable
 
+
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, masks, loss, loss_num = self.model_0_wra(input_variable, question_variable, sos_token, None)
+            outputs, _, loss, _ = self.model_0_wra([input_variable.squeeze(0)],
+                                                   [question_variable.squeeze(0)],
+                                                   [sos_token.squeeze(0)],
+                                                   None)
+
 
         #####################
 
         decoded_words = []
         for di in range(len(outputs)):
 
-            output = outputs[di]
-            #print(output.size(),'out')
-            if False: #len(output.size()) != 2:
-                output = Variable(output.data.max(dim=2)[1]) #1
+            output = outputs[di] #.permute(1,0)
 
-            ni = output # = next_words[0][0]
-
-            #print(outputs[di].size(),'ni', int(ni))
+            ni = torch.argmax(output, dim=0)[0] # = next_words[0][0]
 
             if int(ni) == int(EOS_token):
                 xxx = hparams['eol']
