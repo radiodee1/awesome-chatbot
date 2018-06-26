@@ -22,7 +22,7 @@ from settings import hparams
 import tokenize_weak
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
-#import numpy as np
+import numpy as np
 
 
 '''
@@ -331,14 +331,15 @@ class AnswerModule(nn.Module):
         super(AnswerModule, self).__init__()
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
+        self.batch_size = hparams['batch_size']
 
-        self.W_a1 = nn.Parameter(torch.zeros(vocab_size ,1))
+        self.W_a1 = nn.Parameter(torch.zeros(hidden_size,vocab_size))
         self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
         self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
         self.b_a2 = nn.Parameter(torch.zeros(1, ))
 
-        self.out_a = nn.Linear(hidden_size, 1)
+        self.out_a = nn.Linear(hidden_size, vocab_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
         self.out1 = nn.Linear(hidden_size * 2, vocab_size)
@@ -363,11 +364,11 @@ class AnswerModule(nn.Module):
     def forward(self, mem, question_h):
         mem = self.dropout(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
-        #print(mem.size())
 
-        out = torch.mm(self.W_a1, mem) #+ self.b_a1
-        out = F.tanh(out)
-        out = self.out_a(out)
+
+        #out = torch.mm(self.W_a1, mem) #+ self.b_a1
+        #out = F.tanh(out)
+        out = self.out_a(mem)
         #print(out.size(),'out')
         #out = out.permute(1,0)
         #out = torch.mm(self.W_a2, out)# + self.b_a2
@@ -475,55 +476,45 @@ class WrapMemRNN(nn.Module):
     def new_episodic_module(self):
         if True:
 
-            m_list = [self.q_q.clone(),self.q_q.clone()]
+            mm_list = []
+            m_list = [self.q_q.clone()]
             sequences = self.inp_c_seq
             g_list = [[] for _ in range(len(sequences))]
-            #print(g_list,'list []')
 
             for i in range(len(sequences)):
-            #for iter in range(self.memory_hops):
-                #print(len(sequences), 'len seq')
-                #g_list = []
 
                 f_list = [self.q_q.clone()]
 
                 e_list = [self.q_q.clone()]
 
+                m_list = [self.q_q.clone()]
+
                 for iter in range(self.memory_hops):
-                #for i in range(len(sequences)):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
                     g_list[i] = nn.Parameter(torch.Tensor(x))
-                    #print(x.size(), 'x', g_list, len(g_list))
-
-                    #assert len(g_list) == len(sequences)
-
-                    #g_list = torch.cat(g_list, dim=0)
-
-                    #g_list = F.relu(g_list)
-                    #g_list = F.softmax(g_list, dim=0) #* len(g_list)
-
-                    #g_list = F.sigmoid(g_list)
 
                     if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
-                    #print(g_list.size(),'glist')
-
-                    #for i in range(len(sequences)):
 
                     e, f = self.new_episode_small_step(sequences[i], g_list[i], None) #, e_list[-1])# e
-                    #e = torch.sum(e, dim=2)
+
                     e = e[0,-1][-1]
                     e_list.append(e)
                     f_list.append(f)
-                    #print(len(sequences), len(g_list), i, 'loop')
-                    #print(e_list[-1].size(),'e', e.size())
+
                     _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None) # m_list[-1])
 
                     m_list.append(out)
 
-        self.last_mem = m_list[-1]
-        #print(self.last_mem.size(),'mem2')
-        return m_list[-1]
+                mm_list.append(m_list[-1])
+
+        #mm_list = np.asarray(mm_list,dtype=np.float16)
+        #mm_list = torch.from_numpy(mm_list)
+        mm_list = torch.cat(mm_list, dim=1)
+        self.last_mem = mm_list
+        #print(mm_list,'mm')
+
+        return None #m_list[-1]
 
 
 
@@ -576,11 +567,11 @@ class WrapMemRNN(nn.Module):
         return input
 
     def new_answer_module_simple(self):#,target_var, criterion):
-
-        loss = 0
+        #outputs
+        #loss = 0
         ansx = self.model_5_ans(self.last_mem, self.q_q)
         #ans = ansx.data.max(dim=1)[1]
-        ans = torch.argmax(ansx,dim=1)[0]
+        ans = torch.argmax(ansx,dim=1)#[0]
         #if criterion is not None:
         #    loss = criterion(ansx, target_var[0])
 
@@ -1406,7 +1397,10 @@ class NMT:
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                               criterion)
 
-            loss = criterion(ans, target_variable[0])
+            target_variable = torch.cat(target_variable,dim=0)
+            ans = ans.permute(1,0)
+
+            loss = criterion(ans, target_variable) #[0]) ##ans
         else:
             self.model_0_wra.eval()
             with torch.no_grad():
@@ -1420,7 +1414,7 @@ class NMT:
 
             wrapper_optimizer.step()
 
-        return outputs, None , loss
+        return outputs, ans , loss
 
     #######################################
 
@@ -1507,20 +1501,30 @@ class NMT:
                 question_variable = group[1]
                 target_variable = group[2]
             elif self.do_batch_process:
-                #continue
+                continue
                 pass
-            print(iter,'iter')
-            outputs, _, l = self.train(input_variable, target_variable, question_variable, encoder,
+
+            #print(iter,'iter')
+            outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
             if self.do_load_babi:
 
-                if int(outputs[0].int()) == int(target_variable[0][0].int()):
+                for i in range(len(target_variable)):
+                    o_val = torch.argmax(ans[i], dim=0)
+                    t_val = target_variable[i]
+
+                    if int(o_val.int()) == int(t_val.int()):
+                        num_right += 1
+                        num_right_small += 1
+
+                if False and int(outputs[0].int()) == int(target_variable[0][0].int()):
                     num_right += 1
                     num_right_small += 1
 
-                num_tot += 1
+                if self.do_batch_process: num_tot += hparams['batch_size']
+                else: num_tot += 1
 
                 self.score = float(num_right/num_tot) * 100
 
@@ -1597,7 +1601,7 @@ class NMT:
                     if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
                         print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],',',self.epochs_since_adjustment,']')
 
-                if self.score_list is not None and len(self.score_list) > 0:
+                if self.score_list is not None and len(self.score_list_training) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
                     if self.do_test_not_train:
                         print('[ older valid:', self.score_list[-1],']')
