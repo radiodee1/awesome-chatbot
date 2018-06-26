@@ -444,7 +444,7 @@ class WrapMemRNN(nn.Module):
 
         prev_h1 = []#[None] #nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
 
-        print(input_variable[0].size())
+
         for ii in input_variable:
             #prev_h1 = [None]
             #ii = input_variable
@@ -477,11 +477,12 @@ class WrapMemRNN(nn.Module):
 
             m_list = [self.q_q.clone(),self.q_q.clone()]
             sequences = self.inp_c_seq
-            g_list = []
+            g_list = [[] for _ in range(len(sequences))]
+            #print(g_list,'list []')
 
             for i in range(len(sequences)):
             #for iter in range(self.memory_hops):
-
+                #print(len(sequences), 'len seq')
                 #g_list = []
 
                 f_list = [self.q_q.clone()]
@@ -492,41 +493,44 @@ class WrapMemRNN(nn.Module):
                 #for i in range(len(sequences)):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-                    g_list.append(x) #nn.Parameter(torch.Tensor([x])))
+                    g_list[i] = nn.Parameter(torch.Tensor(x))
+                    #print(x.size(), 'x', g_list, len(g_list))
 
-                #assert len(g_list) == len(sequences)
+                    #assert len(g_list) == len(sequences)
 
-                #g_list = torch.cat(g_list, dim=0)
+                    #g_list = torch.cat(g_list, dim=0)
 
-                #g_list = F.relu(g_list)
-                #g_list = F.softmax(g_list, dim=0) #* len(g_list)
+                    #g_list = F.relu(g_list)
+                    #g_list = F.softmax(g_list, dim=0) #* len(g_list)
 
-                #g_list = F.sigmoid(g_list)
+                    #g_list = F.sigmoid(g_list)
 
                     if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
-                #print(g_list.size(),'glist')
+                    #print(g_list.size(),'glist')
 
-                #for i in range(len(sequences)):
+                    #for i in range(len(sequences)):
 
                     e, f = self.new_episode_small_step(sequences[i], g_list[i], None) #, e_list[-1])# e
-                    e = torch.sum(e, dim=2)
-
+                    #e = torch.sum(e, dim=2)
+                    e = e[0,-1][-1]
                     e_list.append(e)
                     f_list.append(f)
-                    print(len(sequences), len(g_list), i, 'loop')
-                    print(e_list[-1].size(),'e', e.size())
-                    _, out = self.model_3_mem_a(e_list[-1].squeeze(0), None) # m_list[-1])
+                    #print(len(sequences), len(g_list), i, 'loop')
+                    #print(e_list[-1].size(),'e', e.size())
+                    _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None) # m_list[-1])
 
                     m_list.append(out)
 
         self.last_mem = m_list[-1]
-        print(self.last_mem.size(),'mem2')
+        #print(self.last_mem.size(),'mem2')
         return m_list[-1]
 
 
 
     def new_episode_small_step(self, ct, g, prev_h):
-        print(ct.size(),'ct later')
+
+        #g = torch.cat(g, dim=0)
+
         _, gru = self.model_3_mem_b(ct, None )#prev_h) # g
 
         h = g * gru #+ (1 - g) * prev_h.squeeze(0)
@@ -534,11 +538,6 @@ class WrapMemRNN(nn.Module):
         return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
-        #mem = mem.view(-1, self.hidden_size)
-
-        print(ct.size(),'ct')
-        print(q_q.size(),'qq')
-        print(mem.size(),'mem')
 
         q_q = self.prune_tensor(q_q,3)#.expand_as(ct)
         mem = self.prune_tensor(mem,3)#.expand_as(ct)
@@ -566,7 +565,7 @@ class WrapMemRNN(nn.Module):
             att.append(z)
 
         z = torch.cat(att, dim=0)
-        print(z.size(),'z')
+
         return z
 
     def prune_tensor(self, input, size):
@@ -1114,12 +1113,7 @@ class NMT:
             g1.append(g[0].squeeze(1))
             g2.append(g[1].squeeze(1))
             g3.append(g[2].squeeze(1))
-            #print(g[0].size(),'g0')
 
-        #g1 = torch.cat(g1,dim=dim)
-        #g2 = torch.cat(g2,dim=dim)
-        #g3 = torch.cat(g3,dim=dim)
-        print(len(g1),'g', g1[0].size())
 
         return (g1, g2, g3)
 
@@ -1507,7 +1501,7 @@ class NMT:
                 if is_auto:
                     target_variable = training_pair[0]
                     #print('is auto')
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0:
+            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter + hparams['batch_size'] < len(self.pairs):
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
                 input_variable = group[0]
                 question_variable = group[1]
