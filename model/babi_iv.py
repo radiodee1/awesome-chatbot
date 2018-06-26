@@ -140,7 +140,7 @@ class EpisodicAttn(nn.Module):
         self.a_list_size = a_list_size
         self.c_list_z = None
 
-        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, hidden_size * hidden_size * a_list_size))
+        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
         self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size)) #hidden_size))
 
         self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -164,7 +164,7 @@ class EpisodicAttn(nn.Module):
 
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
-        self.c_list_z = self.c_list_z.view(-1,1)
+        self.c_list_z = self.c_list_z.view( self.hidden_size * self.a_list_size,-1)
         #print(self.c_list_z.size(),'cz')
 
         self.c_list_z = self.dropout(self.c_list_z)
@@ -277,7 +277,7 @@ class MemRNN(nn.Module):
         input = self.dropout1(input) # weak dropout
         num = 3
         input = self.prune_tensor(input,num)
-        hidden = self.prune_tensor(hidden,num)
+        #hidden = self.prune_tensor(hidden,num)
         #hidden_out = self.gru(input,hidden)
         output, hidden_out = self.gru(input, hidden)
 
@@ -293,8 +293,8 @@ class Encoder(nn.Module):
         self.n_layers = n_layers
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-        #self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
-        self.gru = CustomGRU2(hidden_dim,hidden_dim,dropout=dropout)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        #self.gru = CustomGRU2(hidden_dim,hidden_dim,dropout=dropout)
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -321,8 +321,8 @@ class Encoder(nn.Module):
         #print(embedded.size(),'em')
         #embedded = embedded.squeeze(0).permute(1,0)
         #embedded = embedded.permute(1,0,2)
-        encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
-        #encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
         return encoder_out, encoder_hidden
 
@@ -332,7 +332,7 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
 
-        self.W_a1 = nn.Parameter(torch.zeros(vocab_size ,hidden_size))
+        self.W_a1 = nn.Parameter(torch.zeros(vocab_size ,1))
         self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
         self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
@@ -442,22 +442,32 @@ class WrapMemRNN(nn.Module):
 
     def new_input_module(self, input_variable, question_variable):
 
-        prev_h1 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
+        prev_h1 = []#[None] #nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
 
+        print(input_variable[0].size())
         for ii in input_variable:
-            out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), prev_h1[-1])#input_variable)
+            #prev_h1 = [None]
+            #ii = input_variable
+            out1, hidden1 = self.model_1_enc(ii.unsqueeze(0), None) #prev_h1[-1])# input_variable
+            #print(out1.size(),'out1', hidden1.size())
             prev_h1.append(hidden1)
 
-        self.inp_c_seq = prev_h1[1:] #out1
+        self.inp_c_seq = prev_h1 #[1:] #out1
         self.inp_c = prev_h1[-1] #hidden1 #out1
 
-        prev_h2 = [nn.Parameter(torch.zeros(1, self.hidden_size, self.hidden_size))]
+        #for i in self.inp_c_seq:
+        #    if i is not None: print(i.size(),'list sizes')
+        #    else: print('none')
+
+        prev_h2 = [] #[None] #nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
 
         for ii in question_variable:
-            out2, hidden2 = self.model_2_enc(ii.unsqueeze(0), prev_h2[-1])
+            #prev_h2 = [None]
+            #ii = question_variable
+            out2, hidden2 = self.model_2_enc(ii.unsqueeze(0), None) #prev_h2[-1])
             prev_h2.append(hidden2)
 
-        self.q_q = prev_h2[-1]
+        self.q_q = hidden2[:,-1,:] #prev_h2[-1]
 
         return
 
@@ -466,76 +476,105 @@ class WrapMemRNN(nn.Module):
         if True:
 
             m_list = [self.q_q.clone(),self.q_q.clone()]
+            sequences = self.inp_c_seq
+            g_list = []
 
+            for i in range(len(sequences)):
+            #for iter in range(self.memory_hops):
 
-            for iter in range(self.memory_hops):
-
-                g_list = []
+                #g_list = []
 
                 f_list = [self.q_q.clone()]
 
                 e_list = [self.q_q.clone()]
 
-                sequences = self.inp_c_seq
-
-                for i in range(len(sequences)):
+                for iter in range(self.memory_hops):
+                #for i in range(len(sequences)):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-                    g_list.append(nn.Parameter(torch.Tensor([x])))
+                    g_list.append(x) #nn.Parameter(torch.Tensor([x])))
 
-                assert len(g_list) == len(sequences)
+                #assert len(g_list) == len(sequences)
 
-                g_list = torch.cat(g_list, dim=0)
+                #g_list = torch.cat(g_list, dim=0)
 
                 #g_list = F.relu(g_list)
                 #g_list = F.softmax(g_list, dim=0) #* len(g_list)
 
-                g_list = F.sigmoid(g_list)
+                #g_list = F.sigmoid(g_list)
 
-                if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
+                    if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
+                #print(g_list.size(),'glist')
 
-                for i in range(len(sequences)):
+                #for i in range(len(sequences)):
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[i], e_list[-1])# e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[i], None) #, e_list[-1])# e
+                    e = torch.sum(e, dim=2)
+
                     e_list.append(e)
                     f_list.append(f)
+                    print(len(sequences), len(g_list), i, 'loop')
+                    print(e_list[-1].size(),'e', e.size())
+                    _, out = self.model_3_mem_a(e_list[-1].squeeze(0), None) # m_list[-1])
 
-                _, out = self.model_3_mem_a(e_list[-1].squeeze(0), m_list[-1])
+                    m_list.append(out)
 
-                m_list.append(out)
-
-            self.last_mem = m_list[-1]
-            #print(self.last_mem.size(),'mem')
+        self.last_mem = m_list[-1]
+        print(self.last_mem.size(),'mem2')
         return m_list[-1]
 
 
 
     def new_episode_small_step(self, ct, g, prev_h):
+        print(ct.size(),'ct later')
+        _, gru = self.model_3_mem_b(ct, None )#prev_h) # g
 
-        _, gru = self.model_3_mem_b(ct, prev_h) # g
-
-        h = g * gru + (1 - g) * prev_h.squeeze(0)
+        h = g * gru #+ (1 - g) * prev_h.squeeze(0)
 
         return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
         #mem = mem.view(-1, self.hidden_size)
 
-        concat_list = [
-            #prev_g.unsqueeze(0),#.view(-1, self.hidden_size),
-            ct.squeeze(0),
-            mem.squeeze(0),
-            q_q.squeeze(0),
-            (ct * q_q).squeeze(0),
-            (ct * mem).squeeze(0),
-            ((ct - q_q) ** 2).squeeze(0),
-            ((ct - mem) ** 2).squeeze(0)
-        ]
-        #for i in concat_list: print(i.size())
-        #exit()
-        return self.model_4_att(concat_list)
+        print(ct.size(),'ct')
+        print(q_q.size(),'qq')
+        print(mem.size(),'mem')
 
+        q_q = self.prune_tensor(q_q,3)#.expand_as(ct)
+        mem = self.prune_tensor(mem,3)#.expand_as(ct)
 
+        assert len(ct.size()) == 3
+        bat, sen, emb = ct.size()
+
+        att = []
+        for iii in range(sen):
+            c = ct[0,iii,:]
+
+            concat_list = [
+                c.unsqueeze(0),
+                mem.squeeze(0),
+                q_q.squeeze(0),
+                (c * q_q).squeeze(0),
+                (c * mem).squeeze(0),
+                ((c - q_q) ** 2).squeeze(0),
+                ((c - mem) ** 2).squeeze(0)
+            ]
+            #for ii in concat_list: print(ii.size())
+            #exit()
+            z = self.model_4_att(concat_list)
+            z = F.sigmoid(z)
+            att.append(z)
+
+        z = torch.cat(att, dim=0)
+        print(z.size(),'z')
+        return z
+
+    def prune_tensor(self, input, size):
+        if len(input.size()) < size:
+            input = input.unsqueeze(0)
+        if len(input.size()) > size:
+            input = input.squeeze(0)
+        return input
 
     def new_answer_module_simple(self):#,target_var, criterion):
 
@@ -645,6 +684,7 @@ class NMT:
         self.do_print_to_screen = False
         self.do_recipe_dropout = False
         self.do_recipe_lr = False
+        self.do_batch_process = False
 
         self.printable = ''
 
@@ -679,6 +719,7 @@ class NMT:
         parser.add_argument('--save-num', help='threshold for auto-saving files. (0-100)')
         parser.add_argument('--recipe-dropout', help='use dropout recipe', action='store_true')
         parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
+        parser.add_argument('--batch',help='enable batch processing.',action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -736,6 +777,7 @@ class NMT:
         if self.args['save_num'] is not None: self.record_threshold = float(self.args['save_num'])
         if self.args['recipe_dropout'] is not False: self.do_recipe_dropout = True
         if self.args['recipe_lr'] is not False: self.do_recipe_lr = True
+        if self.args['batch'] is not False: self.do_batch_process = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1060,6 +1102,26 @@ class NMT:
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
+    def variables_for_batch(self, pairs, size, start):
+        g1 = []
+        g2 = []
+        g3 = []
+        dim = 0
+        group = pairs[start:start + size]
+        for i in group:
+            g = self.variablesFromPair(i)
+            #print(g[0])
+            g1.append(g[0].squeeze(1))
+            g2.append(g[1].squeeze(1))
+            g3.append(g[2].squeeze(1))
+            #print(g[0].size(),'g0')
+
+        #g1 = torch.cat(g1,dim=dim)
+        #g2 = torch.cat(g2,dim=dim)
+        #g3 = torch.cat(g3,dim=dim)
+        print(len(g1),'g', g1[0].size())
+
+        return (g1, g2, g3)
 
     def variableFromSentence(self,lang, sentence, add_eol=False):
         indexes = self.indexesFromSentence(lang, sentence)
@@ -1079,14 +1141,8 @@ class NMT:
         if len(pair) > 2:
             target_variable = self.variableFromSentence(self.output_lang, pair[2])
         else:
-            #if hparams['cuda'] :
-            #    input_variable = input_variable.cuda()
-            #    question_variable = question_variable.cuda()
+
             return (input_variable, question_variable)
-        #if hparams['cuda']:
-        #    input_variable = input_variable.cuda()
-        #    question_variable = question_variable.cuda()
-        #    target_variable = target_variable.cuda()
 
         return (input_variable,question_variable, target_variable)
 
@@ -1372,13 +1428,13 @@ class NMT:
 
         return outputs, None , loss
 
-
+    #######################################
 
     def train_iters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.001):
 
         save_thresh = 2
         #self.saved_files = 0
-
+        step = 1
         save_num = 0
         print_loss_total = 0  # Reset every print_every
         num_right = 0
@@ -1429,23 +1485,37 @@ class NMT:
             else:
                 self.model_0_wra.train()
 
-        for iter in range(start, n_iters + 1):
-            training_pair = training_pairs[iter - 1]
+        if self.do_batch_process:
+            step = hparams['batch_size']
+            start = 0
 
-            input_variable = training_pair[0]
-            question_variable = training_pair[1]
+        for iter in range(start, n_iters + 1, step):
 
-            if len(training_pair) > 2:
-                target_variable = training_pair[2]
-            else:
-                question_variable = training_pair[0]
-                target_variable = training_pair[1]
+            if not self.do_batch_process:
+                training_pair = training_pairs[iter - 1]
 
-            is_auto = random.random() < hparams['autoencode']
-            if is_auto:
-                target_variable = training_pair[0]
-                #print('is auto')
+                input_variable = training_pair[0]
+                question_variable = training_pair[1]
 
+                if len(training_pair) > 2:
+                    target_variable = training_pair[2]
+                else:
+                    question_variable = training_pair[0]
+                    target_variable = training_pair[1]
+
+                is_auto = random.random() < hparams['autoencode']
+                if is_auto:
+                    target_variable = training_pair[0]
+                    #print('is auto')
+            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0:
+                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
+                input_variable = group[0]
+                question_variable = group[1]
+                target_variable = group[2]
+            elif self.do_batch_process:
+                #continue
+                pass
+            print(iter,'iter')
             outputs, _, l = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
@@ -1543,6 +1613,8 @@ class NMT:
                     print('[ last train:', self.score_list_training[-1],'][ no valid ]')
 
                 print("-----")
+
+        if self.do_batch_process: return
 
         str_score = ' %.2f'
         if self.score >= 100.00: str_score = '%.2f'

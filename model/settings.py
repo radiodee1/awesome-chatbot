@@ -18,7 +18,7 @@ hparams = {
     'base_file_num': 1,
     'stats_filename':'stat',
     'num_vocab_total': 15000,
-    'batch_size': 256,#64, #256
+    'batch_size': 50,#64, #256
     'steps_to_stats': 50,
     'epochs': 500,
     'embed_size':None, #values only: 50, 100, 200, 300, None for none
