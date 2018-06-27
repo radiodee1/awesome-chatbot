@@ -341,12 +341,12 @@ class AnswerModule(nn.Module):
 
         self.out_a = nn.Linear(hidden_size, vocab_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
-
+        '''
         self.out1 = nn.Linear(hidden_size * 2, vocab_size)
         init.xavier_normal_(self.out1.state_dict()['weight'])
         self.out2 = nn.Linear(hidden_size * 2, 1)
         init.xavier_normal_(self.out2.state_dict()['weight'])
-
+        '''
         self.dropout = nn.Dropout(dropout)
         #self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
@@ -444,35 +444,28 @@ class WrapMemRNN(nn.Module):
 
     def new_input_module(self, input_variable, question_variable):
 
-        prev_h1 = []#[None] #nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
-
+        prev_h1 = []
 
         for ii in input_variable:
-            #prev_h1 = [None]
-            #ii = input_variable
+
             ii = self.prune_tensor(ii, 2)
 
-            out1, hidden1 = self.model_1_enc(ii, None) #prev_h1[-1])# input_variable
-            #print(out1.size(),'out1', hidden1.size())
+            out1, hidden1 = self.model_1_enc(ii, None)
+
             prev_h1.append(hidden1)
 
-        self.inp_c_seq = prev_h1 #[1:] #out1
-        self.inp_c = prev_h1[-1] #hidden1 #out1
+        self.inp_c_seq = prev_h1
+        self.inp_c = prev_h1[-1]
 
-        #for i in self.inp_c_seq:
-        #    if i is not None: print(i.size(),'list sizes')
-        #    else: print('none')
-
-        prev_h2 = [] #[None] #nn.Parameter(torch.zeros(1, 1, self.hidden_size))]
+        prev_h2 = []
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
-            #prev_h2 = [None]
-            #ii = question_variable
-            out2, hidden2 = self.model_2_enc(ii, None) #prev_h2[-1])
+
+            out2, hidden2 = self.model_2_enc(ii, None)
             prev_h2.append(hidden2)
 
-        self.q_q = hidden2[:,-1,:] #prev_h2[-1]
+        self.q_q = hidden2[:,-1,:]
 
         return
 
@@ -483,33 +476,28 @@ class WrapMemRNN(nn.Module):
             mem_list = []
 
             sequences = self.inp_c_seq
-            g_list = [[] for _ in range(len(sequences))]
 
             for i in range(len(sequences)):
-
-                e_list = []
 
                 m_list = [self.q_q.clone()]
 
                 for iter in range(self.memory_hops):
 
-                    x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
+                    x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
 
-                    g_list[i] = x
+                    if self.print_to_screen: print(x,'x -- after', len(x))
 
-                    if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
+                    e, _ = self.new_episode_small_step(sequences[i], x, None)
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[i], None)
+                    #print(e.size(), iter,'len')
 
                     e = e[0, 0, -1, :]
 
-                    e_list.append(e)
-
-                    _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None)
+                    _, out = self.model_3_mem_a(e.unsqueeze(0), None)
 
                     m_list.append(out)
 
-                mem_list.append(m_list[-1])
+                mem_list.append(m_list[self.memory_hops])
 
         mm_list = torch.cat(mem_list, dim=1)
 
