@@ -480,43 +480,43 @@ class WrapMemRNN(nn.Module):
     def new_episodic_module(self):
         if True:
 
-            mm_list = []
+            mem_list = []
 
             sequences = self.inp_c_seq
             g_list = [[] for _ in range(len(sequences))]
 
             for i in range(len(sequences)):
 
-                e_list = [] #[self.q_q.clone()]
+                e_list = []
 
                 m_list = [self.q_q.clone()]
 
                 for iter in range(self.memory_hops):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-                    #print(x.size(),'x')
-                    g_list[i] = x #nn.Parameter(torch.Tensor(x))
+
+                    g_list[i] = x
 
                     if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
 
-                    e, f = self.new_episode_small_step(sequences[i], g_list[i], None) #, e_list[-1])# e
+                    e, f = self.new_episode_small_step(sequences[i], g_list[i], None)
 
                     e = e[0, 0, -1, :]
 
                     e_list.append(e)
 
-                    _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None) # m_list[-1])
+                    _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None)
 
                     m_list.append(out)
 
-                mm_list.append(m_list[-1])
+                mem_list.append(m_list[-1])
 
-        mm_list = torch.cat(mm_list, dim=1)
+        mm_list = torch.cat(mem_list, dim=1)
 
         self.last_mem = mm_list
         #print(self.last_mem.size(),'lm')
 
-        return None #m_list[-1]
+        return None
 
     def new_episode_small_step(self, ct, g, prev_h):
 
@@ -550,7 +550,7 @@ class WrapMemRNN(nn.Module):
             #for ii in concat_list: print(ii.size())
             #exit()
             z = self.model_4_att(concat_list)
-            #z = F.sigmoid(z)
+            z = F.sigmoid(z)
             att.append(z)
 
         z = torch.cat(att, dim=0)
@@ -1615,6 +1615,7 @@ class NMT:
 
         str_score = ' %.2f'
         if self.score >= 100.00: str_score = '%.2f'
+        if self.score < 10.00: str_score = '  %.2f'
 
         if not self.do_test_not_train and self.do_load_babi:
             self.score_list_training.append(str_score % self.score)
