@@ -369,10 +369,11 @@ class AnswerModule(nn.Module):
         #out = torch.mm(self.W_a1, mem) #+ self.b_a1
         #out = F.tanh(out)
         out = self.out_a(mem)
-        #print(out.size(),'out')
         #out = out.permute(1,0)
         #out = torch.mm(self.W_a2, out)# + self.b_a2
         #out = F.sigmoid(out)
+        #print(out,'out')
+
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -431,7 +432,7 @@ class WrapMemRNN(nn.Module):
 
         self.new_input_module(input_variable, question_variable)
         self.new_episodic_module()
-        outputs,  ans = self.new_answer_module_simple()#target_variable, criterion)
+        outputs,  ans = self.new_answer_module_simple()
 
         return outputs, None, ans, None
 
@@ -486,20 +487,22 @@ class WrapMemRNN(nn.Module):
 
             for i in range(len(sequences)):
 
-                e_list = [self.q_q.clone()]
+                e_list = [] #[self.q_q.clone()]
 
                 m_list = [self.q_q.clone()]
 
                 for iter in range(self.memory_hops):
 
                     x = self.new_attention_step(sequences[i], None, m_list[-1], self.q_q)
-                    g_list[i] = nn.Parameter(torch.Tensor(x))
+                    #print(x.size(),'x')
+                    g_list[i] = x #nn.Parameter(torch.Tensor(x))
 
                     if self.print_to_screen: print(g_list,'gg -- after', len(g_list))
 
                     e, f = self.new_episode_small_step(sequences[i], g_list[i], None) #, e_list[-1])# e
 
-                    e = e[0,-1][-1]
+                    e = e[0, 0, -1, :]
+
                     e_list.append(e)
 
                     _, out = self.model_3_mem_a(e_list[-1].unsqueeze(0), None) # m_list[-1])
@@ -511,32 +514,22 @@ class WrapMemRNN(nn.Module):
         mm_list = torch.cat(mm_list, dim=1)
 
         self.last_mem = mm_list
-        print(self.last_mem.size(),'lm')
+        #print(self.last_mem.size(),'lm')
 
         return None #m_list[-1]
 
     def new_episode_small_step(self, ct, g, prev_h):
 
-        #g = torch.cat(g, dim=0)
-
         out, gru = self.model_3_mem_b(ct, None )#prev_h) # g
 
-        prev = gru
-
-        if int(out.size()[1]) > 1:
-
-            prev = out[0,-2,:]
-            #print('here2', prev.size())
-
-        #print((1-g).size(),(1-g), '1-g')
-        h = g * gru + (1 - g) * prev.squeeze(0)
-        #print(g.size(),'g')
+        h = g * gru #+ (1 - g) * prev.squeeze(0)
+        #print(g.size(),h.size(),'g')
         return h.unsqueeze(0), gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
 
-        q_q = self.prune_tensor(q_q,3)#.expand_as(ct)
-        mem = self.prune_tensor(mem,3)#.expand_as(ct)
+        q_q = self.prune_tensor(q_q,3)
+        mem = self.prune_tensor(mem,3)
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
@@ -571,10 +564,10 @@ class WrapMemRNN(nn.Module):
             input = input.squeeze(0)
         return input
 
-    def new_answer_module_simple(self):#,target_var, criterion):
+    def new_answer_module_simple(self):
         #outputs
 
-        ansx = self.model_5_ans(self.last_mem, self.q_q)
+        ansx = self.model_5_ans(self.last_mem, None)
 
         ans = torch.argmax(ansx,dim=1)#[0]
 
@@ -1431,6 +1424,7 @@ class NMT:
         num_right = 0
         num_tot = 0
         num_right_small = 0
+        num_count = 0
 
         if self.opt_1 is None or self.first_load:
             #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
@@ -1439,7 +1433,8 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        self.criterion =  nn.CrossEntropyLoss(size_average=False)
+        #self.criterion = nn.NLLLoss()
+        self.criterion = nn.CrossEntropyLoss(size_average=False)
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
@@ -1454,7 +1449,7 @@ class NMT:
         if self.do_load_babi:
             self.start = 0
 
-        if self.start != 0 and self.start is not None:
+        if self.start != 0 and self.start is not None and not self.do_batch_process:
             start = self.start + 1
 
         if self.do_load_babi and  self.do_test_not_train:
@@ -1498,7 +1493,7 @@ class NMT:
                 if is_auto:
                     target_variable = training_pair[0]
                     #print('is auto')
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter + hparams['batch_size'] < len(self.pairs):
+            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter + hparams['batch_size'] <= len(self.pairs):
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
                 input_variable = group[0]
                 question_variable = group[1]
@@ -1511,6 +1506,7 @@ class NMT:
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
+            num_count += 1
 
             if self.do_load_babi:
 
@@ -1633,6 +1629,7 @@ class NMT:
             print('valid list:', ', '.join(self.score_list))
         print('dropout:',hparams['dropout'])
         print('learning rate:', hparams['learning_rate'])
+        print(num_count, 'exec count')
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
@@ -1651,12 +1648,11 @@ class NMT:
 
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, loss, _ = self.model_0_wra([input_variable.squeeze(0)],
+            outputs, _, ans , _ = self.model_0_wra([input_variable.squeeze(0)],
                                                    [question_variable.squeeze(0)],
                                                    [sos_token.squeeze(0)],
                                                    None)
-
-
+        outputs = [ans]
         #####################
 
         decoded_words = []
