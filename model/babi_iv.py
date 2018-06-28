@@ -138,13 +138,14 @@ class EpisodicAttn(nn.Module):
 
         self.hidden_size = hidden_size
         self.a_list_size = a_list_size
+        self.batch_size = hparams['batch_size']
         self.c_list_z = None
 
         self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
-        self.W_c2 = nn.Parameter(torch.zeros(1, hidden_size)) #hidden_size))
+        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
 
-        self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
-        self.b_c2 = nn.Parameter(torch.zeros(1,))
+        #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
+        #self.b_c2 = nn.Parameter(torch.zeros(1,))
 
         self.dropout = nn.Dropout(dropout)
 
@@ -164,21 +165,21 @@ class EpisodicAttn(nn.Module):
 
         ''' attention list '''
         self.c_list_z = torch.cat(concat_list,dim=0)
-        self.c_list_z = self.c_list_z.view( self.hidden_size * self.a_list_size,-1)
+        self.c_list_z = self.c_list_z.permute(1,0)
         #print(self.c_list_z.size(),'cz')
 
         self.c_list_z = self.dropout(self.c_list_z)
 
-        l_1 = torch.mm(self.W_c1, self.c_list_z) # + self.b_c1
+        l_1 = torch.mm(self.W_c1, self.c_list_z)
 
-        l_1 = F.tanh(l_1) ## <---- this line?
+        #l_1 = F.tanh(l_1) ## <---- this line?
 
-        l_2 = torch.mm(self.W_c2, l_1)# + self.b_c2
+        #l_2 = torch.mm(self.W_c2, l_1)
 
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
-        self.G = l_2
-
+        self.G = l_1 #* F.softmax(l_2, dim=1)
+        #print(self.G, 'G')
         return self.G
 
 class CustomGRU2(nn.Module):
@@ -489,11 +490,17 @@ class WrapMemRNN(nn.Module):
 
                     e, _ = self.new_episode_small_step(sequences[i], x, None)
 
-                    #print(e.size(), iter,'len')
+                    assert len(sequences[i].size()) == 3
+                    bat, sen, emb = sequences[i].size()
 
-                    e = e[0, 0, -1, :]
+                    #print(e.size(),'eee')
+                    e = e.permute(1,0)
 
-                    _, out = self.model_3_mem_a(e.unsqueeze(0), None)
+                    for iii in range(sen ):# * sen ):
+                        #ee = e[iii, :]
+                        ee = e[iii * sen + sen - 1,:]
+
+                        _, out = self.model_3_mem_a(ee.unsqueeze(0), None)
 
                     m_list.append(out)
 
@@ -508,11 +515,33 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h):
 
-        out, gru = self.model_3_mem_b(ct, None )#prev_h) # g
+        assert len(ct.size()) == 3
+        bat, sen, emb = ct.size()
 
-        h = g * gru #+ (1 - g) * prev.squeeze(0)
-        #print(g.size(),h.size(),'g')
-        return h.unsqueeze(0), gru
+        ep = []
+        for iii in range(sen):
+
+            c = ct[0,iii,:].unsqueeze(0)
+
+            if prev_h is not None:
+                prev_h = self.prune_tensor(prev_h, 3)
+
+            out, gru = self.model_3_mem_b(c, prev_h )
+
+            prev_h = gru[-1]
+            g = g.squeeze(0)
+            gru = gru.squeeze(0).permute(1,0)
+
+            prev_h = self.prune_tensor(prev_h, 2)
+            #print(g[iii].size(), gru.size(),'g,gru')
+
+            h = g[iii] * gru + (1 - g) * prev_h.permute(1,0)
+
+            ep.append(h)
+
+        h = torch.cat(ep, dim=1)
+
+        return h, gru
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
 
@@ -521,6 +550,8 @@ class WrapMemRNN(nn.Module):
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
+
+        #print(sen,'len sen')
 
         att = []
         for iii in range(sen):
@@ -537,12 +568,14 @@ class WrapMemRNN(nn.Module):
             ]
             #for ii in concat_list: print(ii.size())
             #exit()
-            z = self.model_4_att(concat_list)
-            z = F.sigmoid(z)
-            att.append(z)
-
-        z = torch.cat(att, dim=0)
-
+            #z = F.sigmoid(z)
+            concat_list = torch.cat(concat_list, dim=1)
+            att.append(concat_list)
+        #z = torch.cat(att, dim=0)
+        z = self.model_4_att(att)
+        z = F.sigmoid(z)
+        #z = z * F.softmax(z, dim=1) #F.sigmoid(z)
+        #print(z.size(),'z')
         return z
 
     def prune_tensor(self, input, size):
@@ -556,10 +589,10 @@ class WrapMemRNN(nn.Module):
         #outputs
 
         ansx = self.model_5_ans(self.last_mem, None)
+        #print(ansx.size())
+        #ans = torch.argmax(ansx,dim=1)#[0]
 
-        ans = torch.argmax(ansx,dim=1)#[0]
-
-        return [ans], ansx
+        return [None], ansx
 
         pass
 
@@ -625,8 +658,8 @@ class NMT:
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
         self.lr_adjustment_num = 0
-        self.lr_low = hparams['learning_rate'] #/ 100.0
-        self.lr_increment = self.lr_low / 4.0 # hparams['learning_rate'] / 2.0
+        self.lr_low = hparams['learning_rate']
+        self.lr_increment = self.lr_low / 4.0
         self.best_accuracy = None
         self.best_accuracy_old = None
         self.record_threshold = 95.00
@@ -1383,7 +1416,7 @@ class NMT:
             target_variable = torch.cat(target_variable,dim=0)
             ans = ans.permute(1,0)
 
-            loss = criterion(ans, target_variable) #[0]) ##ans
+            loss = criterion(ans, target_variable)
         else:
             self.model_0_wra.eval()
             with torch.no_grad():
@@ -1415,9 +1448,7 @@ class NMT:
         num_count = 0
 
         if self.opt_1 is None or self.first_load:
-            #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
 
-            #wrapper_optimizer = optim.Adam(parameters, lr=learning_rate)
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
@@ -1499,7 +1530,7 @@ class NMT:
             if self.do_load_babi:
 
                 for i in range(len(target_variable)):
-                    o_val = torch.argmax(ans[i], dim=0)
+                    o_val = torch.argmax(ans[i], dim=0)[0]
                     t_val = target_variable[i]
 
                     if int(o_val.int()) == int(t_val.int()):
@@ -1650,7 +1681,9 @@ class NMT:
 
             output = outputs[di] #.permute(1,0)
 
-            ni = torch.argmax(output, dim=0)[0] # = next_words[0][0]
+            output = output.permute(1,0)#torch.cat(output, dim=0)
+
+            ni = torch.argmax(output, dim=1)[0] # = next_words[0][0]
 
             if int(ni) == int(EOS_token):
                 xxx = hparams['eol']
