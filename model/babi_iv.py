@@ -332,13 +332,13 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.batch_size = hparams['batch_size']
-
+        '''
         self.W_a1 = nn.Parameter(torch.zeros(hidden_size,vocab_size))
         self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
         self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
         self.b_a2 = nn.Parameter(torch.zeros(1, ))
-
+        '''
         self.out_a = nn.Linear(hidden_size, vocab_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
         '''
@@ -1599,7 +1599,8 @@ class NMT:
 
                 print("-----")
 
-        #if self.do_batch_process: return
+        if self.do_batch_process:
+            self.save_checkpoint(num=len(self.pairs))
 
         str_score = ' %.2f'
         if self.score >= 100.00: str_score = '%.2f'
