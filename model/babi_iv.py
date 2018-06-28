@@ -494,12 +494,17 @@ class WrapMemRNN(nn.Module):
                     bat, sen, emb = sequences[i].size()
 
                     #print(e.size(),'eee')
-                    e = e.permute(1,0)
+                    #e = e.permute(1,0)
 
-                    for iii in range(sen ):# * sen ):
-                        #ee = e[iii, :]
-                        ee = e[iii * sen + sen - 1,:]
-
+                    if False:
+                        for iii in range(sen ):# * sen ):
+                            #ee = e[iii, :]
+                            ee = e[iii * sen + sen - 1,:]
+                            _, out = self.model_3_mem_a(ee.unsqueeze(0), None)
+                    else:
+                        ee = e[:, 0, -1]#.permute(2,1,0)
+                        #print(ee.size(),'ee')
+                        #ee = e[-1, :]
                         _, out = self.model_3_mem_a(ee.unsqueeze(0), None)
 
                     m_list.append(out)
@@ -528,18 +533,22 @@ class WrapMemRNN(nn.Module):
 
             out, gru = self.model_3_mem_b(c, prev_h )
 
-            prev_h = gru[-1]
+            if gru.size()[1] > 1: prev_h = gru[-2]
+            else: prev_h = gru[-1]
+
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
             prev_h = self.prune_tensor(prev_h, 2)
             #print(g[iii].size(), gru.size(),'g,gru')
 
-            h = g[iii] * gru + (1 - g) * prev_h.permute(1,0)
-
-            ep.append(h)
+            h = torch.mul(g[iii] , gru) # + (1 - g[iii]) * prev_h.permute(1,0)
+            #print(h.size(),'hsize')
+            if iii == sen - 1: ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
+
+        #print(h.size(),ep[0].size(),'h')
 
         return h, gru
 
