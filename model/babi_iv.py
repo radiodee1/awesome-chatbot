@@ -512,7 +512,7 @@ class WrapMemRNN(nn.Module):
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
         #print(sen,'sen', g.size())
-        last = [None]
+        last = [prev_h]
 
         ep = []
         for iii in range(sen):
@@ -535,9 +535,10 @@ class WrapMemRNN(nn.Module):
 
             h = torch.mul(F.sigmoid(g[iii]) , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
-            if last[-2] is not None:
+            index = -1 # -2
+            if last[index] is not None:
                 #print(last[-2].size(),'last')
-                h = h + torch.mul((1 - F.sigmoid(g[iii])), last[-2])
+                h = h + torch.mul((1 - F.sigmoid(g[iii])), last[index])
             #print(h.size(),'hsize')
             if iii == sen - 1: ep.append(h.unsqueeze(1))
 
