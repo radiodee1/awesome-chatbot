@@ -172,13 +172,13 @@ class EpisodicAttn(nn.Module):
 
         l_1 = torch.mm(self.W_c1, self.c_list_z)
 
-        #l_1 = F.tanh(l_1) ## <---- this line?
+        l_1 = F.tanh(l_1) ## <---- this line?
 
-        #l_2 = torch.mm(self.W_c2, l_1)
+        l_2 = torch.mm(self.W_c2, l_1)
 
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
-        self.G = l_1 #* F.softmax(l_2, dim=1)
+        self.G = l_2 #* F.softmax(l_2, dim=1)
         #print(self.G, 'G')
         return self.G
 
@@ -548,7 +548,7 @@ class WrapMemRNN(nn.Module):
 
         h = torch.cat(ep, dim=1)
 
-        #print(h.size(),ep[0].size(),'h')
+        #print(h.size(),ep[0].size(),'h',sen, gru.size())
 
         return h, gru
 
