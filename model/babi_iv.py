@@ -486,9 +486,9 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
 
-                    if self.print_to_screen: print(x,'x -- after', len(x))
+                    if self.print_to_screen and  self.training: print(x,'x -- after', len(x))
 
-                    e, _ = self.new_episode_small_step(sequences[i], x, None)
+                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
@@ -511,6 +511,8 @@ class WrapMemRNN(nn.Module):
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
+        #print(sen,'sen', g.size())
+        last = [None]
 
         ep = []
         for iii in range(sen):
@@ -522,16 +524,20 @@ class WrapMemRNN(nn.Module):
 
             out, gru = self.model_3_mem_b(c, prev_h )
 
+            last.append(out)
+            #print(gru.size(),'gru')
             if False and gru.size()[1] > 1: prev_h = gru[-2]
-            else: prev_h = gru[-1]
+            else:
+                prev_h = gru #[-1]
 
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
-            prev_h = self.prune_tensor(prev_h, 2)
-            #print(g[iii].size(), gru.size(),'g,gru')
-
             h = torch.mul(g[iii] , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+
+            if last[-2] is not None:
+                #print(last[-2].size(),'last')
+                h = h + torch.mul((1 - F.sigmoid(g[iii])), last[-2])
             #print(h.size(),'hsize')
             if iii == sen - 1: ep.append(h.unsqueeze(1))
 
