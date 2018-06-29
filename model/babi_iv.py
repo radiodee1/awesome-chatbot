@@ -493,7 +493,7 @@ class WrapMemRNN(nn.Module):
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
                     ee = e[:, 0, -1]#.permute(2,1,0)
-                    
+
                     _, out = self.model_3_mem_a(ee.unsqueeze(0), None)
 
                     m_list.append(out)
@@ -531,7 +531,7 @@ class WrapMemRNN(nn.Module):
             prev_h = self.prune_tensor(prev_h, 2)
             #print(g[iii].size(), gru.size(),'g,gru')
 
-            h = torch.mul(g[iii] , gru)  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+            h = torch.mul(g[iii] , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
             #print(h.size(),'hsize')
             if iii == sen - 1: ep.append(h.unsqueeze(1))
 
