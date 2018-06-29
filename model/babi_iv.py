@@ -172,7 +172,7 @@ class EpisodicAttn(nn.Module):
 
         l_1 = torch.mm(self.W_c1, self.c_list_z)
 
-        l_1 = F.tanh(l_1) ## <---- this line?
+        #l_1 = F.tanh(l_1) ## <---- this line?
 
         l_2 = torch.mm(self.W_c2, l_1)
 
@@ -571,7 +571,7 @@ class WrapMemRNN(nn.Module):
             att.append(concat_list)
         #z = torch.cat(att, dim=0)
         z = self.model_4_att(att)
-        z = F.sigmoid(z)
+        #z = F.sigmoid(z)
         #z = z * F.softmax(z, dim=1) #F.sigmoid(z)
         #print(z.size(),'z')
         return z
