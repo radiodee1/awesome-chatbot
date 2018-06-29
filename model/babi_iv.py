@@ -533,7 +533,7 @@ class WrapMemRNN(nn.Module):
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
-            h = torch.mul(g[iii] , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+            h = torch.mul(F.sigmoid(g[iii]) , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             if last[-2] is not None:
                 #print(last[-2].size(),'last')
