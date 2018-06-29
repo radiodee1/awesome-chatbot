@@ -522,7 +522,7 @@ class WrapMemRNN(nn.Module):
 
             out, gru = self.model_3_mem_b(c, prev_h )
 
-            if gru.size()[1] > 1: prev_h = gru[-2]
+            if False and gru.size()[1] > 1: prev_h = gru[-2]
             else: prev_h = gru[-1]
 
             g = g.squeeze(0)
