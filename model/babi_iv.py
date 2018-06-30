@@ -141,8 +141,14 @@ class EpisodicAttn(nn.Module):
         self.batch_size = hparams['batch_size']
         self.c_list_z = None
 
-        self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
-        self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
+        #self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
+        #self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
+
+        self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size)
+        init.xavier_normal_(self.out_a.state_dict()['weight'])
+
+        self.out_b = nn.Linear( hidden_size, 1)
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
         #self.b_c2 = nn.Parameter(torch.zeros(1,))
@@ -164,22 +170,24 @@ class EpisodicAttn(nn.Module):
     def forward(self,concat_list):
 
         ''' attention list '''
-        self.c_list_z = torch.cat(concat_list,dim=0)
-        self.c_list_z = self.c_list_z.permute(1,0)
+        self.c_list_z = concat_list# torch.cat(concat_list,dim=0)
+        #self.c_list_z = self.c_list_z.permute(1,0)
         #print(self.c_list_z.size(),'cz')
 
         self.c_list_z = self.dropout(self.c_list_z)
+        l_1 = self.out_a(self.c_list_z)
 
-        l_1 = torch.mm(self.W_c1, self.c_list_z)
-
+        #l_1 = torch.mm(self.W_c1, self.c_list_z)
+        #print(l_1.size(),'l1')
         l_1 = F.tanh(l_1) ## <---- this line?
 
-        l_2 = torch.mm(self.W_c2, l_1)
-
+        l_2 = self.out_b( l_1)
+        #print(l_2, 'l2')
+        #l_2 = F.tanh(l_2)
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
-        self.G = l_2 #* F.softmax(l_2, dim=1)
-        #print(self.G, 'G')
+        self.G = l_1 #* F.softmax(l_2, dim=1)
+
         return self.G
 
 class CustomGRU2(nn.Module):
@@ -486,7 +494,7 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
 
-                    if self.print_to_screen and  self.training: print(F.sigmoid(x),'x -- after', len(x))
+                    if self.print_to_screen and  self.training: print(x,'x -- after', len(x))
 
                     e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
 
@@ -525,23 +533,19 @@ class WrapMemRNN(nn.Module):
             out, gru = self.model_3_mem_b(c, prev_h )
 
             last.append(out)
-            #print(gru.size(),'gru')
-            #if False and gru.size()[1] > 1: prev_h = gru[-2]
-            #else:
-            #    prev_h = gru #[-1]
 
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
-            h = torch.mul(F.sigmoid(g[iii]) , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+            h = torch.mul(g[iii] , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
-            index = -2 #-1 # -2
+            index = -1 #-1 # -2
             if last[index] is not None:
                 #print(last[-2].size(),'last',F.sigmoid( g[iii]))
-                h = h + torch.mul((1 - F.sigmoid(g[iii])), last[index])
+                if False: h = h + torch.mul((1 - g[iii]), last[index])
                 prev_h = last[index]
             #print(h.size(),'hsize')
-            if iii == sen - 1: ep.append(h.unsqueeze(1))
+            if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
 
@@ -569,18 +573,22 @@ class WrapMemRNN(nn.Module):
                 q_q.squeeze(0),
                 (c * q_q).squeeze(0),
                 (c * mem).squeeze(0),
-                ((c - q_q) ** 2).squeeze(0),
-                ((c - mem) ** 2).squeeze(0)
+                (torch.abs(c - q_q) ).squeeze(0),
+                (torch.abs(c - mem) ).squeeze(0)
             ]
             #for ii in concat_list: print(ii.size())
+            #print(sen,'sen')
             #exit()
             #z = F.sigmoid(z)
             concat_list = torch.cat(concat_list, dim=1)
+            #print(concat_list.size(),'cl')
             att.append(concat_list)
+
+        att = torch.cat(att, dim=0)
         #z = torch.cat(att, dim=0)
         z = self.model_4_att(att)
-        #z = F.sigmoid(z)
-        z =  F.softmax(z, dim=1) #F.sigmoid(z)
+        z = F.sigmoid(z)
+        #z =  F.softmax(z, dim=1) #F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
@@ -1539,7 +1547,7 @@ class NMT:
                     o_val = torch.argmax(ans[i], dim=0)[0]
                     t_val = target_variable[i]
 
-                    if int(o_val.int()) == int(t_val.int()):
+                    if int(o_val.item()) == int(t_val.item()):
                         num_right += 1
                         num_right_small += 1
 
