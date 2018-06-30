@@ -172,7 +172,7 @@ class EpisodicAttn(nn.Module):
 
         l_1 = torch.mm(self.W_c1, self.c_list_z)
 
-        #l_1 = F.tanh(l_1) ## <---- this line?
+        l_1 = F.tanh(l_1) ## <---- this line?
 
         l_2 = torch.mm(self.W_c2, l_1)
 
@@ -526,19 +526,20 @@ class WrapMemRNN(nn.Module):
 
             last.append(out)
             #print(gru.size(),'gru')
-            if False and gru.size()[1] > 1: prev_h = gru[-2]
-            else:
-                prev_h = gru #[-1]
+            #if False and gru.size()[1] > 1: prev_h = gru[-2]
+            #else:
+            #    prev_h = gru #[-1]
 
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
             h = torch.mul(F.sigmoid(g[iii]) , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
-            index = -1 # -2
+            index = -2 #-1 # -2
             if last[index] is not None:
-                #print(last[-2].size(),'last')
+                print(last[-2].size(),'last',F.sigmoid( g[iii]))
                 h = h + torch.mul((1 - F.sigmoid(g[iii])), last[index])
+                prev_h = last[index]
             #print(h.size(),'hsize')
             if iii == sen - 1: ep.append(h.unsqueeze(1))
 
@@ -579,7 +580,7 @@ class WrapMemRNN(nn.Module):
         #z = torch.cat(att, dim=0)
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
-        #z = z * F.softmax(z, dim=1) #F.sigmoid(z)
+        z =  F.softmax(z, dim=1) #F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
