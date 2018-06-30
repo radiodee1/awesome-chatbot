@@ -486,7 +486,7 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
 
-                    if self.print_to_screen and  self.training: print(x,'x -- after', len(x))
+                    if self.print_to_screen and  self.training: print(F.sigmoid(x),'x -- after', len(x))
 
                     e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
 
