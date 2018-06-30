@@ -530,7 +530,7 @@ class WrapMemRNN(nn.Module):
             if prev_h is not None:
                 prev_h = self.prune_tensor(prev_h, 3)
 
-            out, gru = self.model_3_mem_b(c, prev_h )
+            out, gru = self.model_3_mem_b(c, last[iii] )
 
             last.append(out)
 
