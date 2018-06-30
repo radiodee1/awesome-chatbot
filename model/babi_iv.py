@@ -490,6 +490,8 @@ class WrapMemRNN(nn.Module):
 
                 m_list = [self.q_q.clone()]
 
+                #print(sequences[i].size(),'seq')
+
                 for iter in range(self.memory_hops):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
