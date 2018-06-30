@@ -1593,7 +1593,7 @@ class NMT:
                     elif not self.do_load_babi:
                         print('skip save!')
                 print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg))
-                if not self.do_skip_validation:
+                if not self.do_skip_validation and True:
                     ###########################
                     choice = random.choice(self.pairs)
                     print('src:',choice[0])
@@ -1680,6 +1680,16 @@ class NMT:
             question_variable = question
             if not self.do_load_babi: sos_token = question_variable
 
+        if False:
+            context_array = [ [] for _ in range(hparams['batch_size'])]
+            question_array = [ [] for _ in range(hparams['batch_size'])]
+            target_array = [ [] for _ in range(hparams['batch_size'])]
+
+            context_array[0] = input_variable.squeeze(0)
+            question_array[0] = question_variable.squeeze(0)
+            target_array[0] = sos_token.squeeze(0)
+
+            print(context_array,'ca')
 
         self.model_0_wra.eval()
         with torch.no_grad():

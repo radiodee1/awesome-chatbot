@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,7 +16,7 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6732">
+            <state relative-caret-position="-1224">
               <caret line="394" selection-start-line="394" selection-end-line="394" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -29,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
-              <caret line="504" column="98" selection-start-line="504" selection-start-column="98" selection-end-line="504" selection-end-column="98" />
+            <state relative-caret-position="2601">
+              <caret line="619" column="41" selection-start-line="619" selection-start-column="41" selection-end-line="619" selection-end-column="41" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -580,7 +579,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6732">
+        <state relative-caret-position="-1224">
           <caret line="394" selection-start-line="394" selection-end-line="394" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
@@ -590,8 +589,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="504" column="98" selection-start-line="504" selection-start-column="98" selection-end-line="504" selection-end-column="98" />
+        <state relative-caret-position="2601">
+          <caret line="619" column="41" selection-start-line="619" selection-start-column="41" selection-end-line="619" selection-end-column="41" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
