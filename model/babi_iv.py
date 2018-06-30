@@ -537,7 +537,7 @@ class WrapMemRNN(nn.Module):
 
             index = -2 #-1 # -2
             if last[index] is not None:
-                print(last[-2].size(),'last',F.sigmoid( g[iii]))
+                #print(last[-2].size(),'last',F.sigmoid( g[iii]))
                 h = h + torch.mul((1 - F.sigmoid(g[iii])), last[index])
                 prev_h = last[index]
             #print(h.size(),'hsize')
