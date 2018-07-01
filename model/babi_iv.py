@@ -545,9 +545,9 @@ class WrapMemRNN(nn.Module):
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             index = -1 #-1 # -2
-            if last[iii] is not None:
+            if last[iii + index] is not None:
                 #print(last[iii].size(),'last -',ggg.size(), ggg, sen)
-                if False: h = h + torch.mul((1 - ggg), last[iii])
+                if True: h = h + torch.mul((1 - ggg), last[iii + index])
 
             #print(h.size(),'hsize')
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
