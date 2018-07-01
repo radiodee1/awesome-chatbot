@@ -255,11 +255,11 @@ class Encoder(nn.Module):
 
     def forward(self, source, hidden=None):
 
-        embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        embedded = self.embed(source)
         embedded = self.dropout(embedded)
         encoder_out = None
 
-        encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+        encoder_out, encoder_hidden = self.gru( embedded, hidden)
 
         return encoder_out, encoder_hidden
 
@@ -418,10 +418,11 @@ class WrapMemRNN(nn.Module):
 
                 mem_list.append(m_list[self.memory_hops])
 
-        mm_list = torch.cat(mem_list, dim=1)
+            mm_list = torch.cat(mem_list, dim=1)
 
-        self.last_mem = mm_list
-        #print(self.last_mem.size(),'lm')
+            self.last_mem = mm_list
+
+            print(self.last_mem.size(),'lm')
 
         return None
 
@@ -516,8 +517,19 @@ class WrapMemRNN(nn.Module):
         #outputs
 
         ansx = self.model_5_ans(self.last_mem, None)
-        #print(ansx.size())
+        '''
+        print(ansx.size(), 'ansx')
+        vocab, sen = ansx.size()
+        aa = torch.argmax(ansx, dim=0)
+        print(aa.size(),'aa')
+        for i in range(sen):
+            zz = aa[i]
+            z = ansx[:, i]
+            a = torch.argmax(z, dim=0)
+            print(a.item(), zz.item())
+        print('----')
         #ans = torch.argmax(ansx,dim=1)#[0]
+        '''
 
         return [None], ansx
 
