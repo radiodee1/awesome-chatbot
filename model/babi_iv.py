@@ -165,7 +165,6 @@ class EpisodicAttn(nn.Module):
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
-                #print(weight.size())
 
     def forward(self,concat_list):
 
@@ -196,9 +195,7 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
-        #self.dropout2 = nn.Dropout(dropout)
         self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
-        #self.gru = CustomGRU2(hidden_size,hidden_size,dropout=dropout)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -209,7 +206,6 @@ class MemRNN(nn.Module):
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
-                #print(weight.size())
 
     def prune_tensor(self, input, size):
         if len(input.size()) < size:
@@ -223,8 +219,7 @@ class MemRNN(nn.Module):
         input = self.dropout1(input) # weak dropout
         num = 3
         input = self.prune_tensor(input,num)
-        #hidden = self.prune_tensor(hidden,num)
-        #hidden_out = self.gru(input,hidden)
+
         output, hidden_out = self.gru(input, hidden)
 
         #output = None
@@ -257,10 +252,9 @@ class Encoder(nn.Module):
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
-                #print(weight.size())
 
     def forward(self, source, hidden=None):
-        #source = self.dropout(source)
+
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
         encoder_out = None
@@ -280,7 +274,7 @@ class AnswerModule(nn.Module):
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
-        #self.dropout2 = nn.Dropout(dropout)
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -291,7 +285,6 @@ class AnswerModule(nn.Module):
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
-                #print(weight.size())
 
     def forward(self, mem, question_h):
         mem = self.dropout(mem)
@@ -351,7 +344,6 @@ class WrapMemRNN(nn.Module):
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
-                #print(weight.size())
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
