@@ -190,71 +190,6 @@ class EpisodicAttn(nn.Module):
 
         return self.G
 
-'''
-class CustomGRU2(nn.Module):
-    def __init__(self, input_size, hidden_size, dropout=0.3):
-        super(CustomGRU2, self).__init__()
-        self.hidden_size = hidden_size
-        self.dim = hidden_size
-
-        self.dropout1 = nn.Dropout(dropout)
-        self.dropout2 = nn.Dropout(dropout)
-
-        self.W_mem_res_in = nn.Parameter(torch.zeros(self.dim, self.dim))
-
-        self.W_mem_res_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
-
-        self.b_mem_res = nn.Parameter(torch.zeros(self.dim,))
-
-        self.W_mem_upd_in = nn.Parameter(torch.zeros(self.dim, self.dim))
-
-        self.W_mem_upd_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
-
-        self.b_mem_upd = nn.Parameter(torch.zeros(self.dim,))
-
-        self.W_mem_hid_in = nn.Parameter(torch.zeros(self.dim, self.dim))
-
-        self.W_mem_hid_hid = nn.Parameter(torch.zeros(self.dim, self.dim))
-
-        self.b_mem_hid = nn.Parameter(torch.zeros(self.dim,))
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        #print('reset')
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
-            #print('here...')
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-                #print(weight.size())
-
-    def forward(self, fact, C):
-
-        #fact = self.dropout1(fact)
-        #C = self.dropout2(C)
-
-        ## try not to flip fact if it is already 100x100 
-        if fact.size()[1] == 100 and fact.size()[2] == 100:
-            fact = fact.squeeze(0)
-            pass
-        elif fact.size()[1] == 1:
-            fact = fact.squeeze(0).permute(1,0)
-
-
-        #fact = fact.squeeze(0).permute(1,0)
-
-        C = C.squeeze(0)
-        #print(fact.size(),'fact')
-        #print(fact.size(), C.size(), 'f,C')
-        z = F.sigmoid(torch.mm( self.W_mem_upd_in, fact) + torch.mm(self.W_mem_upd_hid, C) + self.b_mem_upd)
-        r = F.sigmoid(torch.mm(self.W_mem_res_in, fact) + torch.mm(self.W_mem_res_hid, C) + self.b_mem_res)
-        _h = F.tanh(torch.mm(self.W_mem_hid_in, fact) + r * torch.mm(self.W_mem_hid_hid, C) + self.b_mem_hid)
-
-        zz = z * C + (1 - z ) * _h
-
-        return zz
-'''
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
@@ -549,7 +484,7 @@ class WrapMemRNN(nn.Module):
             index = -1 #-1 # -2
             if last[iii + index] is not None:
                 #print(last[iii].size(),'last -',ggg.size(), ggg, sen)
-                if True: h = h + torch.mul((1 - ggg), last[iii + index])
+                if False: h = h + torch.mul((1 - ggg), last[iii + index])
 
             #print(h.size(),'hsize')
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
