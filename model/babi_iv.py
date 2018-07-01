@@ -147,7 +147,7 @@ class EpisodicAttn(nn.Module):
         self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear( hidden_size, hidden_size)
+        self.out_b = nn.Linear( hidden_size, 1)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -240,7 +240,7 @@ class Encoder(nn.Module):
         self.bidirectional = bidirectional
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
-        #self.gru = CustomGRU2(hidden_dim,hidden_dim,dropout=dropout)
+
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
@@ -264,10 +264,7 @@ class Encoder(nn.Module):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
         encoder_out = None
-        #print(embedded.size(),'em')
-        #embedded = embedded.squeeze(0).permute(1,0)
-        #embedded = embedded.permute(1,0,2)
-        #encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+
         encoder_out, encoder_hidden = self.gru( embedded, hidden)  # (seq_len, batch, hidden_dim*2)
 
         return encoder_out, encoder_hidden
@@ -278,21 +275,10 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.batch_size = hparams['batch_size']
-        '''
-        self.W_a1 = nn.Parameter(torch.zeros(hidden_size,vocab_size))
-        self.b_a1 = nn.Parameter(torch.zeros(hidden_size ,))
 
-        self.W_a2 = nn.Parameter(torch.zeros( hidden_size,))
-        self.b_a2 = nn.Parameter(torch.zeros(1, ))
-        '''
         self.out_a = nn.Linear(hidden_size, vocab_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
-        '''
-        self.out1 = nn.Linear(hidden_size * 2, vocab_size)
-        init.xavier_normal_(self.out1.state_dict()['weight'])
-        self.out2 = nn.Linear(hidden_size * 2, 1)
-        init.xavier_normal_(self.out2.state_dict()['weight'])
-        '''
+
         self.dropout = nn.Dropout(dropout)
         #self.dropout2 = nn.Dropout(dropout)
         self.reset_parameters()
@@ -311,14 +297,7 @@ class AnswerModule(nn.Module):
         mem = self.dropout(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
 
-
-        #out = torch.mm(self.W_a1, mem) #+ self.b_a1
-        #out = F.tanh(out)
         out = self.out_a(mem)
-        #out = out.permute(1,0)
-        #out = torch.mm(self.W_a2, out)# + self.b_a2
-        #out = F.sigmoid(out)
-        #print(out,'out')
 
         return out.permute(1,0)
 
@@ -477,8 +456,8 @@ class WrapMemRNN(nn.Module):
             gru = gru.squeeze(0).permute(1,0)
 
             #print(g.size(),'g')
-            ggg = g[:, iii]
-            #ggg = g[iii]
+            #ggg = g[:, iii]
+            ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             index = -1 #-1 # -2
