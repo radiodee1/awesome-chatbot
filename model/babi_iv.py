@@ -147,7 +147,7 @@ class EpisodicAttn(nn.Module):
         self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear( hidden_size, 1)
+        self.out_b = nn.Linear( hidden_size, hidden_size)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -538,14 +538,16 @@ class WrapMemRNN(nn.Module):
 
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
-            #ggg = g[:, iii]
-            ggg = g[iii]
+
+            #print(g.size(),'g')
+            ggg = g[:, iii]
+            #ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             index = -1 #-1 # -2
             if last[iii] is not None:
                 #print(last[iii].size(),'last -',ggg.size(), ggg, sen)
-                if True: h = h + torch.mul((1 - ggg), last[iii])
+                if False: h = h + torch.mul((1 - ggg), last[iii])
 
             #print(h.size(),'hsize')
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
