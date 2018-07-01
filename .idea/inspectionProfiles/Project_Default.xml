@@ -14,13 +14,17 @@
     <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoredPackages">
         <value>
-          <list size="6">
+          <list size="10">
             <item index="0" class="java.lang.String" itemvalue="tqdm" />
             <item index="1" class="java.lang.String" itemvalue="regex" />
             <item index="2" class="java.lang.String" itemvalue="colorama" />
             <item index="3" class="java.lang.String" itemvalue="unidecode" />
             <item index="4" class="java.lang.String" itemvalue="keras" />
             <item index="5" class="java.lang.String" itemvalue="tensorflow-gpu" />
+            <item index="6" class="java.lang.String" itemvalue="tensorflow" />
+            <item index="7" class="java.lang.String" itemvalue="google-api-python-client" />
+            <item index="8" class="java.lang.String" itemvalue="PyAudio" />
+            <item index="9" class="java.lang.String" itemvalue="google-cloud-speech" />
           </list>
         </value>
       </option>
