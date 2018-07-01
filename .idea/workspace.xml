@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,8 +26,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="513">
-              <caret line="547" column="27" selection-start-line="547" selection-start-column="27" selection-end-line="547" selection-end-column="27" />
+            <state relative-caret-position="549">
+              <caret line="549" column="70" selection-start-line="549" selection-start-column="70" selection-end-line="549" selection-end-column="70" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -572,8 +569,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="513">
-          <caret line="547" column="27" selection-start-line="547" selection-start-column="27" selection-end-line="547" selection-end-column="27" />
+        <state relative-caret-position="549">
+          <caret line="549" column="70" selection-start-line="549" selection-start-column="70" selection-end-line="549" selection-end-column="70" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

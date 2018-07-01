@@ -190,6 +190,7 @@ class EpisodicAttn(nn.Module):
 
         return self.G
 
+'''
 class CustomGRU2(nn.Module):
     def __init__(self, input_size, hidden_size, dropout=0.3):
         super(CustomGRU2, self).__init__()
@@ -233,7 +234,7 @@ class CustomGRU2(nn.Module):
         #fact = self.dropout1(fact)
         #C = self.dropout2(C)
 
-        ''' try not to flip fact if it is already 100x100 '''
+        ## try not to flip fact if it is already 100x100 
         if fact.size()[1] == 100 and fact.size()[2] == 100:
             fact = fact.squeeze(0)
             pass
@@ -253,6 +254,7 @@ class CustomGRU2(nn.Module):
         zz = z * C + (1 - z ) * _h
 
         return zz
+'''
 
 class MemRNN(nn.Module):
     def __init__(self, hidden_size, dropout=0.3):
