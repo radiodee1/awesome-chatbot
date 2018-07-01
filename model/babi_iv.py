@@ -404,7 +404,8 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
 
-                    if self.print_to_screen and  self.training: print(x,'x -- after', len(x))
+                    if self.print_to_screen and not self.training:
+                        print(x,'x -- after', len(x), sequences[i].size())
 
                     e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
 
@@ -430,6 +431,7 @@ class WrapMemRNN(nn.Module):
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
+        #print(ct.size(),'ct')
         #print(sen,'sen', g.size())
         last = [prev_h]
 
@@ -448,7 +450,7 @@ class WrapMemRNN(nn.Module):
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
-            #print(g.size(),'g')
+            #if not self.training: print(g.size(),'g', iii)
             #ggg = g[:, iii]
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
@@ -1617,11 +1619,13 @@ class NMT:
 
             print(context_array,'ca')
 
+        #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
+
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra([input_variable.squeeze(0)],
-                                                   [question_variable.squeeze(0)],
-                                                   [sos_token.squeeze(0)],
+            outputs, _, ans , _ = self.model_0_wra([input_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
+                                                   [question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
+                                                   [sos_token.squeeze(0).squeeze(0).squeeze(0)],
                                                    None)
         outputs = [ans]
         #####################
