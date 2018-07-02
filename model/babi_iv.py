@@ -1360,7 +1360,7 @@ class NMT:
             target_variable = torch.cat(target_variable,dim=0)
             ans = ans.permute(1,0)
 
-            print(ans.size(), target_variable.size(),'criterion')
+            #print(ans.size(), target_variable.size(),'criterion')
 
             loss = criterion(ans, target_variable)
             loss.backward()
