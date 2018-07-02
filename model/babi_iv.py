@@ -520,6 +520,8 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(self.last_mem, None)
 
+        ansx = F.softmax(ansx, dim=0)
+
         if self.print_to_screen:
             print(ansx.size(), 'ansx')
             vocab, sen = ansx.size()
@@ -1353,12 +1355,12 @@ class NMT:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                              criterion)
+                                                  criterion)
 
             target_variable = torch.cat(target_variable,dim=0)
             ans = ans.permute(1,0)
 
-            #print(ans.size(), target_variable.size(),'criterion')
+            print(ans.size(), target_variable.size(),'criterion')
 
             loss = criterion(ans, target_variable)
             loss.backward()
@@ -1368,7 +1370,7 @@ class NMT:
             self.model_0_wra.eval()
             with torch.no_grad():
                 outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                                  criterion)
+                                                      criterion)
                 loss = None
                 ans = ans.permute(1,0)
 
