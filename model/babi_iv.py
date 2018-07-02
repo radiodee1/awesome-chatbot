@@ -1358,7 +1358,12 @@ class NMT:
             target_variable = torch.cat(target_variable,dim=0)
             ans = ans.permute(1,0)
 
+            #print(ans.size(), target_variable.size(),'criterion')
+
             loss = criterion(ans, target_variable)
+            loss.backward()
+            wrapper_optimizer.step()
+
         else:
             self.model_0_wra.eval()
             with torch.no_grad():
@@ -1367,11 +1372,6 @@ class NMT:
                 loss = None
                 ans = ans.permute(1,0)
 
-        #print(self.model_0_wra.training,'train')
-        if criterion is not None:
-            loss.backward()
-
-            wrapper_optimizer.step()
 
         return outputs, ans , loss
 
