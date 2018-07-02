@@ -275,6 +275,7 @@ class AnswerModule(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
+        self.log_soft = nn.LogSoftmax(dim=1)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -292,6 +293,7 @@ class AnswerModule(nn.Module):
 
         out = self.out_a(mem)
 
+        out = self.log_soft(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -520,7 +522,7 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(self.last_mem, None)
 
-        ansx = F.softmax(ansx, dim=0)
+        #ansx = F.softmax(ansx, dim=0)
 
         if self.print_to_screen:
             print(ansx.size(), 'ansx')
