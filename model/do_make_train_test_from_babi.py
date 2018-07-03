@@ -142,7 +142,8 @@ if __name__ == '__main__':
         tgt_ending = hparams['tgt_ending']
         question_ending = hparams['question_ending']
 
-        split = len(test) / 2
+        split = len(test) * 0.5 #/ 2
+        print(split,'split')
 
         with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, mode) as z:
             for i in range(len(train)):
