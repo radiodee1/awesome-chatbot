@@ -414,7 +414,7 @@ class WrapMemRNN(nn.Module):
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
                     ee = e[:, 0, -1]#.permute(2,1,0)
-
+                    #print(ee.size(),'ee')
                     _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter], 3))
 
                     m_list.append(out)
