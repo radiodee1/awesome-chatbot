@@ -1059,6 +1059,7 @@ class NMT:
     def variables_for_batch(self, pairs, size, start):
         if start + size >= len(pairs) and start < len(pairs) - 1:
             size = len(pairs) - start - 1
+            print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
             return self.variablesFromPair(('','',''))
@@ -1535,7 +1536,10 @@ class NMT:
                             print('======= save file '+ extra+' ========')
                     elif not self.do_load_babi:
                         print('skip save!')
-                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg))
+                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg), end=' ')
+                if self.do_batch_process: print('- batch-size', temp_batch_size)
+                else: print('')
+
                 if not self.do_skip_validation and True:
                     ###########################
                     choice = random.choice(self.pairs)
