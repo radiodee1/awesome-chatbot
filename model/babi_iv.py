@@ -1057,6 +1057,11 @@ class NMT:
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
     def variables_for_batch(self, pairs, size, start):
+        if start + size >= len(pairs) and start < len(pairs) - 1:
+            size = len(pairs) - start - 1
+        if size == 0 or start >= len(pairs):
+            print('empty return.')
+            return self.variablesFromPair(('','',''))
         g1 = []
         g2 = []
         g3 = []
@@ -1393,6 +1398,7 @@ class NMT:
         num_tot = 0
         num_right_small = 0
         num_count = 0
+        temp_batch_size = 0
 
         if self.opt_1 is None or self.first_load:
 
@@ -1459,11 +1465,15 @@ class NMT:
                 if is_auto:
                     target_variable = training_pair[0]
                     #print('is auto')
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter + hparams['batch_size'] <= len(self.pairs):
+            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
+
                 input_variable = group[0]
                 question_variable = group[1]
                 target_variable = group[2]
+
+                temp_batch_size = len(input_variable)
+
             elif self.do_batch_process:
                 continue
                 pass
@@ -1488,7 +1498,7 @@ class NMT:
                     num_right += 1
                     num_right_small += 1
 
-                if self.do_batch_process: num_tot += hparams['batch_size']
+                if self.do_batch_process: num_tot += temp_batch_size # hparams['batch_size']
                 else: num_tot += 1
 
                 self.score = float(num_right/num_tot) * 100
