@@ -409,7 +409,7 @@ class WrapMemRNN(nn.Module):
                     if self.print_to_screen and not self.training:
                         print(x,'x -- after', len(x), sequences[i].size())
 
-                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
+                    e, _ = self.new_episode_small_step_2(sequences[i], x.permute(1,0), None)
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
@@ -433,8 +433,7 @@ class WrapMemRNN(nn.Module):
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
-        #print(ct.size(),'ct')
-        #print(sen,'sen', g.size())
+
         last = [prev_h]
 
         ep = []
@@ -452,22 +451,55 @@ class WrapMemRNN(nn.Module):
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
-            #if not self.training: print(g.size(),'g', iii)
             #ggg = g[:, iii]
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             index = 0 #-1 # -2
             if last[iii + index] is not None:
-                #print(last[iii].size(),'last -',ggg.size(), ggg, sen)
-                if True: h = h + torch.mul((1 - ggg), last[iii + index])
+                if False: h = h + torch.mul((1 - ggg), last[iii + index])
 
-            #print(h.size(),'hsize')
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
 
-        #print(h.size(),ep[0].size(),'h',sen, gru.size())
+        return h, gru
+
+    def new_episode_small_step_2(self, ct, g, prev_h):
+
+        assert len(ct.size()) == 3
+        bat, sen, emb = ct.size()
+
+        last = [None]
+
+        ep = []
+        for iii in range(sen):
+
+            c = ct[0,iii,:].unsqueeze(0)
+
+            if prev_h is not None:
+                prev_h = self.prune_tensor(prev_h, 3)
+
+            out, gru = self.model_3_mem_b(c, last[-1])
+
+            last.append(out)
+
+            g = g.squeeze(0)
+            gru = gru.squeeze(0).permute(1,0)
+
+            ggg = g[iii]
+            h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+
+            if last[-1] is not None:
+                if True:
+                    z = torch.mul((1 - ggg), last[-1 ])
+                    h = h.permute(1,0).unsqueeze(0) + z
+
+            if iii == sen - 1 : ep.append(h.unsqueeze(1))
+
+            last.append(h)
+
+        h = torch.cat(ep, dim=1)
 
         return h, gru
 
