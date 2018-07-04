@@ -329,6 +329,7 @@ class WrapMemRNN(nn.Module):
         self.last_mem = None  # output of mem unit
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
+        self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
         self.reset_parameters()
 
@@ -490,10 +491,16 @@ class WrapMemRNN(nn.Module):
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
+            #h = h.flip(0)
+            #print(h)
             if last[-1] is not None:
                 if True:
                     z = torch.mul((1 - ggg), last[-1 ])
-                    h = h.permute(1,0).unsqueeze(0) + z
+                    h = h.permute(1,0).unsqueeze(0)
+                    #print(h,'h')
+                    h_new = h.index_select(2, self.inv_idx)
+                    #print(h_new,'later')
+                    h = h_new + z
 
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
