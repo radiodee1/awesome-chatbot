@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,8 +26,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
-              <caret line="501" column="21" selection-start-line="501" selection-start-column="21" selection-end-line="501" selection-end-column="21" />
+            <state relative-caret-position="-973">
+              <caret line="412" column="80" selection-start-line="412" selection-start-column="73" selection-end-line="412" selection-end-column="80" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -130,7 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cuda</find>
       <find>WrapMemRNN</find>
       <find>best_accuracy</find>
       <find>validate_iters</find>
@@ -160,6 +157,7 @@
       <find>outputs</find>
       <find>batch_size</find>
       <find>variables_for_batch</find>
+      <find>permute</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -565,8 +563,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
-          <caret line="501" column="21" selection-start-line="501" selection-start-column="21" selection-end-line="501" selection-end-column="21" />
+        <state relative-caret-position="-973">
+          <caret line="412" column="80" selection-start-line="412" selection-start-column="73" selection-end-line="412" selection-end-column="80" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

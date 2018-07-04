@@ -561,7 +561,7 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(self.last_mem, None)
 
-        ansx = F.softmax(ansx, dim=0)
+        #ansx = F.softmax(ansx, dim=0)
 
         if self.print_to_screen:
             print(ansx, 'ansx printed')
