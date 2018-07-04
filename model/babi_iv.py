@@ -638,7 +638,7 @@ class NMT:
         self.do_print_to_screen = False
         self.do_recipe_dropout = False
         self.do_recipe_lr = False
-        self.do_batch_process = False
+        self.do_batch_process = True
 
         self.printable = ''
 
@@ -673,7 +673,7 @@ class NMT:
         parser.add_argument('--save-num', help='threshold for auto-saving files. (0-100)')
         parser.add_argument('--recipe-dropout', help='use dropout recipe', action='store_true')
         parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
-        parser.add_argument('--batch',help='enable batch processing.',action='store_true')
+        parser.add_argument('--batch',help='enable batch processing. (default)',action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -731,7 +731,9 @@ class NMT:
         if self.args['save_num'] is not None: self.record_threshold = float(self.args['save_num'])
         if self.args['recipe_dropout'] is not False: self.do_recipe_dropout = True
         if self.args['recipe_lr'] is not False: self.do_recipe_lr = True
-        if self.args['batch'] is not False: self.do_batch_process = True
+        if self.args['batch'] is not False:
+            self.do_batch_process = True
+            print('batch operation now enabled by default.')
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1366,8 +1368,16 @@ class NMT:
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                   criterion)
 
-            target_variable = torch.cat(target_variable,dim=0)
-            ans = ans.permute(1,0)
+            if self.do_batch_process:
+                target_variable = torch.cat(target_variable,dim=0)
+                ans = ans.permute(1,0)
+            else:
+                target_variable = target_variable[0]
+                print(len(ans),ans.size())
+                ans = torch.argmax(ans,dim=1)
+                #ans = ans[0]
+
+            #ans = ans.permute(1,0)
 
             #print(ans.size(), target_variable.size(),'criterion')
 
