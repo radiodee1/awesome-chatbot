@@ -546,7 +546,9 @@ class WrapMemRNN(nn.Module):
         #z = torch.cat(att, dim=0)
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
-        z =  F.softmax(z, dim=1) #F.sigmoid(z)
+        #print(z.size(),'z')
+        z =  F.softmax(z, dim=0) ## dim=1
+        #z = F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
