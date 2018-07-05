@@ -416,7 +416,7 @@ class WrapMemRNN(nn.Module):
                     #print(e.size(),'e')
                     ee = e[:, 0, -1]#.permute(2,1,0)
                     #print(ee.size(),'ee')
-                    _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter], 3))
+                    _, out = self.model_3_mem_a(ee.unsqueeze(0), None) #self.prune_tensor(m_list[iter], 3))
 
                     m_list.append(out)
 
@@ -547,8 +547,8 @@ class WrapMemRNN(nn.Module):
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
         #print(z.size(),'z')
-        z =  F.softmax(z, dim=0) ## dim=1
-        #z = F.sigmoid(z)
+        #z =  F.softmax(z, dim=0) ## dim=1
+        z = F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
