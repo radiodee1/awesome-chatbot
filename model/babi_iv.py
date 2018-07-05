@@ -495,13 +495,13 @@ class WrapMemRNN(nn.Module):
             #print(h)
             if last[-1] is not None:
                 if True:
-                    #print(last[-1].size(), ggg.size(),'last,ggg')
-                    z = torch.mul((1 - ggg), last[-1 ])
-                    h = h.squeeze(1).unsqueeze(0)
-                    #print(h.size(),'h')
+
+                    #z = torch.mul((1 - ggg), last[-1 ])
+                    h = h.squeeze(1).unsqueeze(0).unsqueeze(0)
+
                     #h_new = h.index_select(2, self.inv_idx)
-                    #print(h_new,'later')
-                    h = h + z
+
+                    #h = h + z
 
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
@@ -545,8 +545,8 @@ class WrapMemRNN(nn.Module):
         att = torch.cat(att, dim=0)
         #z = torch.cat(att, dim=0)
         z = self.model_4_att(att)
-        z = F.sigmoid(z)
-        #z =  F.softmax(z, dim=1) #F.sigmoid(z)
+        #z = F.sigmoid(z)
+        z =  F.softmax(z, dim=1) #F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
