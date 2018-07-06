@@ -414,7 +414,7 @@ class WrapMemRNN(nn.Module):
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
-                    ee = e[:, 0, -1]#.permute(2,1,0)
+                    ee = e[0, 0]#.permute(2,1,0)
                     #print(ee.size(),'ee')
                     _, out = self.model_3_mem_a(ee.unsqueeze(0), None) #self.prune_tensor(m_list[iter], 3))
 
@@ -496,12 +496,12 @@ class WrapMemRNN(nn.Module):
             if last[-1] is not None:
                 if True:
 
-                    #z = torch.mul((1 - ggg), last[-1 ])
+                    z = torch.mul((1 - ggg), last[-1 ])
                     h = h.squeeze(1).unsqueeze(0).unsqueeze(0)
 
                     #h_new = h.index_select(2, self.inv_idx)
-
-                    #h = h + z
+                    #print(h.size(), z.size())
+                    h = h + z
 
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
