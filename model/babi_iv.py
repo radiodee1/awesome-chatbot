@@ -273,6 +273,9 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size, vocab_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
+        self.out_b = nn.Linear(vocab_size, vocab_size)
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
+
         self.dropout = nn.Dropout(dropout)
 
         self.log_soft = nn.LogSoftmax(dim=1)
@@ -292,6 +295,8 @@ class AnswerModule(nn.Module):
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
 
         out = self.out_a(mem)
+        out = F.tanh(out)
+        out = self.out_b(out)
 
         #out = self.log_soft(out)
         return out.permute(1,0)
@@ -470,7 +475,7 @@ class WrapMemRNN(nn.Module):
 
         return h, gru
 
-    
+
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
 
