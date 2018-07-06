@@ -410,7 +410,7 @@ class WrapMemRNN(nn.Module):
                     if self.print_to_screen and not self.training:
                         print(x,'x -- after', len(x), sequences[i].size())
 
-                    e, _ = self.new_episode_small_step_2(sequences[i], x.permute(1,0), None)
+                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
@@ -455,61 +455,22 @@ class WrapMemRNN(nn.Module):
             #ggg = g[:, iii]
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
-
+            #print(h.size(),'h')
+            h = h.permute(1,0)
             index = 0 #-1 # -2
             if last[iii + index] is not None:
-                if False: h = h + torch.mul((1 - ggg), last[iii + index])
-
-            if iii == sen - 1 : ep.append(h.unsqueeze(1))
-
-        h = torch.cat(ep, dim=1)
-
-        return h, gru
-
-    def new_episode_small_step_2(self, ct, g, prev_h):
-
-        assert len(ct.size()) == 3
-        bat, sen, emb = ct.size()
-
-        last = [None]
-
-        ep = []
-        for iii in range(sen):
-
-            c = ct[0,iii,:].unsqueeze(0)
-
-            if prev_h is not None:
-                prev_h = self.prune_tensor(prev_h, 3)
-
-            out, gru = self.model_3_mem_b(c, last[-1])
-
-            last.append(out)
-
-            g = g.squeeze(0)
-            gru = gru.squeeze(0).permute(1,0)
-
-            ggg = g[iii]
-            h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
-
-            #h = h.flip(0)
-            #print(h)
-            if last[-1] is not None:
                 if True:
-
-                    z = torch.mul((1 - ggg), last[-1 ])
-                    h = h.squeeze(1).unsqueeze(0).unsqueeze(0)
-
-                    #h_new = h.index_select(2, self.inv_idx)
-                    #print(h.size(), z.size())
+                    z = torch.mul((1 - ggg), last[iii + index])
+                    #print(z.size(),'z')
                     h = h + z
 
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
-            last.append(h)
-
         h = torch.cat(ep, dim=1)
 
         return h, gru
+
+    
 
     def new_attention_step(self, ct, prev_g, mem, q_q):
 
@@ -548,7 +509,7 @@ class WrapMemRNN(nn.Module):
         #z = F.sigmoid(z)
         #print(z.size(),'z')
         #z =  F.softmax(z, dim=0) ## dim=1
-        z = F.sigmoid(z)
+        #z = F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
