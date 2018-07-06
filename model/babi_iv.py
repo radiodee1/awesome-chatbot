@@ -178,7 +178,7 @@ class EpisodicAttn(nn.Module):
 
         #l_1 = torch.mm(self.W_c1, self.c_list_z)
         #print(l_1.size(),'l1')
-        l_1 = F.tanh(l_1) ## <---- this line?
+        l_1 = F.sigmoid(l_1) ## <---- this line? used to be tanh !!
 
         l_2 = self.out_b( l_1)
         #print(l_2, 'l2')
@@ -410,6 +410,7 @@ class WrapMemRNN(nn.Module):
 
             for i in range(len(sequences)):
 
+                #print(self.q_q[i].size(),'qq')
                 z = self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
@@ -417,7 +418,7 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q[i])
 
-                    if self.print_to_screen and not self.training:
+                    if self.print_to_screen and  self.training:
                         print(x,'x -- after', len(x), sequences[i].size())
 
                     e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
@@ -426,7 +427,7 @@ class WrapMemRNN(nn.Module):
                     #print(e.size(),'e')
                     ee = e[0, 0]#.permute(2,1,0)
                     #print(ee.size(),'ee')
-                    _, out = self.model_3_mem_a(ee.unsqueeze(0), None ) # self.prune_tensor(m_list[iter], 3))
+                    _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter].unsqueeze(0), 3))
 
                     m_list.append(out)
 
@@ -455,7 +456,7 @@ class WrapMemRNN(nn.Module):
             if prev_h is not None:
                 prev_h = self.prune_tensor(prev_h, 3)
 
-            out, gru = self.model_3_mem_b(c, last[iii] )
+            out, gru = self.model_3_mem_b(c, None)# last[iii] )
 
             last.append(out)
 
@@ -522,8 +523,8 @@ class WrapMemRNN(nn.Module):
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
         #print(z.size(),'z')
-        #z =  F.softmax(z, dim=0) ## dim=1
-        z = F.sigmoid(z)
+        z = F.softmax(z, dim=0) ## dim=1
+        #z = F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
