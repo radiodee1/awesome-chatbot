@@ -421,7 +421,7 @@ class WrapMemRNN(nn.Module):
                     #print(e.size(),'e')
                     ee = e[0, 0]#.permute(2,1,0)
                     #print(ee.size(),'ee')
-                    _, out = self.model_3_mem_a(ee.unsqueeze(0), None) #self.prune_tensor(m_list[iter], 3))
+                    _, out = self.model_3_mem_a(ee.unsqueeze(0), None ) # self.prune_tensor(m_list[iter], 3))
 
                     m_list.append(out)
 

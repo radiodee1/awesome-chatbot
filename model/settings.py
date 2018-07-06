@@ -13,7 +13,7 @@ hparams = {
     'tgt_ending': "to",
     'question_ending':'ques',
     'babi_name':'babi',
-    'babi_memory_hops': 5,
+    'babi_memory_hops': 4,
     'base_filename': "weight",
     'base_file_num': 1,
     'stats_filename':'stat',
