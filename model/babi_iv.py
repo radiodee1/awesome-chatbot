@@ -270,7 +270,7 @@ class AnswerModule(nn.Module):
         self.vocab_size = vocab_size
         self.batch_size = hparams['batch_size']
 
-        self.out_a = nn.Linear(hidden_size, vocab_size)
+        self.out_a = nn.Linear(hidden_size * 2 , vocab_size)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
         self.out_b = nn.Linear(vocab_size, vocab_size)
@@ -282,15 +282,20 @@ class AnswerModule(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        #print('reset')
+
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
-            #print('here...')
+
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
     def forward(self, mem, question_h):
+
+        question_h = question_h.unsqueeze(0)
+
+        mem = torch.cat([mem, question_h], dim=2)
+
         mem = self.dropout(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
 
@@ -318,7 +323,7 @@ class WrapMemRNN(nn.Module):
         gru_dropout = dropout * 0
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=embedding, bidirectional=False)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
@@ -345,10 +350,10 @@ class WrapMemRNN(nn.Module):
         pass
 
     def reset_parameters(self):
-        #print('reset')
+
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
-            #print('here...')
+
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
@@ -390,7 +395,8 @@ class WrapMemRNN(nn.Module):
             out2, hidden2 = self.model_2_enc(ii, None)
             prev_h2.append(hidden2)
 
-        self.q_q = hidden2[:,-1,:]
+        self.q_q = prev_h2 # hidden2[:,-1,:]
+
 
         return
 
@@ -404,13 +410,12 @@ class WrapMemRNN(nn.Module):
 
             for i in range(len(sequences)):
 
-                m_list = [self.q_q.clone()]
-
-                #print(sequences[i].size(),'seq')
+                z = self.q_q[i][0,-1,:].clone()
+                m_list = [z]
 
                 for iter in range(self.memory_hops):
 
-                    x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q)
+                    x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q[i])
 
                     if self.print_to_screen and not self.training:
                         print(x,'x -- after', len(x), sequences[i].size())
@@ -480,7 +485,7 @@ class WrapMemRNN(nn.Module):
     def new_attention_step(self, ct, prev_g, mem, q_q):
 
         q_q = self.prune_tensor(q_q,3)
-        mem = self.prune_tensor(mem,3)
+        mem = self.prune_tensor(mem,2)
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
@@ -491,17 +496,21 @@ class WrapMemRNN(nn.Module):
         for iii in range(sen):
             c = ct[0,iii,:]
 
+            qq = self.prune_tensor(q_q, 3) #.unsqueeze(0)
+
+            qq = qq[:,-1, :]
+
             concat_list = [
                 c.unsqueeze(0),
-                mem.squeeze(0),
-                q_q.squeeze(0),
-                (c * q_q).squeeze(0),
-                (c * mem).squeeze(0),
-                (torch.abs(c - q_q) ).squeeze(0),
-                (torch.abs(c - mem) ).squeeze(0)
+                mem,#.unsqueeze(0),
+                qq,#.unsqueeze(0),
+                (c * qq), #.unsqueeze(0),
+                (c * mem), #.unsqueeze(0),
+                (torch.abs(c - qq) ),#.unsqueeze(0),
+                (torch.abs(c - mem) )#.unsqueeze(0)
             ]
             #for ii in concat_list: print(ii.size())
-            #print(sen,'sen')
+
             #exit()
             #z = F.sigmoid(z)
             concat_list = torch.cat(concat_list, dim=1)
@@ -528,7 +537,10 @@ class WrapMemRNN(nn.Module):
     def new_answer_module_simple(self):
         #outputs
 
-        ansx = self.model_5_ans(self.last_mem, None)
+        q_q = torch.cat(self.q_q, dim=0)[:,-1,:]
+        #print(q_q.size())
+
+        ansx = self.model_5_ans(self.last_mem, q_q)
 
         #ansx = F.softmax(ansx, dim=0)
 
