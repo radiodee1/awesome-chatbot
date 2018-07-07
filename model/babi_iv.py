@@ -133,7 +133,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -178,7 +178,7 @@ class EpisodicAttn(nn.Module):
 
         #l_1 = torch.mm(self.W_c1, self.c_list_z)
         #print(l_1.size(),'l1')
-        l_1 = F.sigmoid(l_1) ## <---- this line? used to be tanh !!
+        l_1 = F.tanh(l_1) ## <---- this line? used to be tanh !!
 
         l_2 = self.out_b( l_1)
         #print(l_2, 'l2')
@@ -339,7 +339,7 @@ class WrapMemRNN(nn.Module):
         self.last_mem = None  # output of mem unit
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
-        #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
+        self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
         self.reset_parameters()
 
@@ -414,9 +414,10 @@ class WrapMemRNN(nn.Module):
                 z = self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
+                index = 0
                 for iter in range(self.memory_hops):
 
-                    x = self.new_attention_step(sequences[i], None, m_list[iter], self.q_q[i])
+                    x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q[i])
 
                     if self.print_to_screen and  self.training:
                         print(x,'x -- after', len(x), sequences[i].size())
@@ -427,7 +428,7 @@ class WrapMemRNN(nn.Module):
                     #print(e.size(),'e')
                     ee = e[0, 0]#.permute(2,1,0)
                     #print(ee.size(),'ee')
-                    _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter].unsqueeze(0), 3))
+                    _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter + index].unsqueeze(0), 3))
 
                     m_list.append(out)
 
@@ -456,25 +457,30 @@ class WrapMemRNN(nn.Module):
             if prev_h is not None:
                 prev_h = self.prune_tensor(prev_h, 3)
 
-            out, gru = self.model_3_mem_b(c, None)# last[iii] )
+            out, gru = self.model_3_mem_b(c, last[iii] )
 
-            last.append(out)
+            #print(out == gru, 'out-gru')
+
+            #last.append(out)
 
             g = g.squeeze(0)
             gru = gru.squeeze(0).permute(1,0)
 
-            #ggg = g[:, iii]
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
-            #print(h.size(),'h')
+
             h = h.permute(1,0)
+
             index = 0 #-1 # -2
             if last[iii + index] is not None:
                 if True:
+                    #gru_test = gru.index_select(0, self.inv_idx)
+                    #print(last[iii + index].squeeze(0) , gru.permute(1,0), last[iii + index].size(), gru.size())
                     z = torch.mul((1 - ggg), last[iii + index])
                     #print(z.size(),'z')
                     h = h + z
 
+            last.append(out)
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
@@ -502,13 +508,13 @@ class WrapMemRNN(nn.Module):
             qq = qq[:,-1, :]
 
             concat_list = [
-                c.unsqueeze(0),
-                mem,#.unsqueeze(0),
-                qq,#.unsqueeze(0),
-                (c * qq), #.unsqueeze(0),
-                (c * mem), #.unsqueeze(0),
-                (torch.abs(c - qq) ),#.unsqueeze(0),
-                (torch.abs(c - mem) )#.unsqueeze(0)
+                #c.unsqueeze(0),
+                #mem,
+                #qq,
+                (c * qq),
+                (c * mem),
+                (torch.abs(c - qq) ),
+                (torch.abs(c - mem) )
             ]
             #for ii in concat_list: print(ii.size())
 
@@ -523,8 +529,8 @@ class WrapMemRNN(nn.Module):
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
         #print(z.size(),'z')
-        z = F.softmax(z, dim=0) ## dim=1
-        #z = F.sigmoid(z)
+        #z = F.softmax(z, dim=0) ## dim=1
+        z = F.sigmoid(z)
         #print(z.size(),'z')
         return z
 
@@ -543,7 +549,7 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(self.last_mem, q_q)
 
-        #ansx = F.softmax(ansx, dim=0)
+        ansx = F.softmax(ansx, dim=0)
 
         if self.print_to_screen:
             print(ansx, 'ansx printed')
