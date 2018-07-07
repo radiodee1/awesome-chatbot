@@ -428,7 +428,7 @@ class WrapMemRNN(nn.Module):
                     #print(e.size(),'e')
                     ee = e[0, 0]#.permute(2,1,0)
                     #print(ee.size(),'ee')
-                    _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter + index].unsqueeze(0), 3))
+                    _, out = self.model_3_mem_a(ee.unsqueeze(0), None) #self.prune_tensor(m_list[iter + index].unsqueeze(0), 3))
 
                     m_list.append(out)
 
@@ -473,14 +473,14 @@ class WrapMemRNN(nn.Module):
 
             index = 0 #-1 # -2
             if last[iii + index] is not None:
-                if True:
+                if False:
                     #gru_test = gru.index_select(0, self.inv_idx)
                     #print(last[iii + index].squeeze(0) , gru.permute(1,0), last[iii + index].size(), gru.size())
                     z = torch.mul((1 - ggg), last[iii + index])
                     #print(z.size(),'z')
                     h = h + z
 
-            last.append(out)
+            last.append(h.unsqueeze(0)) ## out
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
