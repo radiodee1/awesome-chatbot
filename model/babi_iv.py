@@ -455,12 +455,13 @@ class WrapMemRNN(nn.Module):
         ep = []
         for iii in range(sen):
 
+            index = 0 #-1
             c = ct[0,iii,:].unsqueeze(0)
 
             if prev_h is not None:
                 prev_h = self.prune_tensor(prev_h, 3)
 
-            out, gru = self.model_3_mem_b(c, self.prune_tensor(last[iii] ,3))
+            out, gru = self.model_3_mem_b(c, self.prune_tensor(last[iii ] ,3))
 
             #print(out == gru, 'out-gru')
 
@@ -477,7 +478,7 @@ class WrapMemRNN(nn.Module):
             h = h.permute(1,0)
             h = F.tanh(h)
 
-            index = 0 #-1 # -2
+            #index = 0 -1 # -2
             if last[iii + index] is not None:
                 if True:
                     minus = self.prune_tensor(last[iii + index], 2)
@@ -492,7 +493,7 @@ class WrapMemRNN(nn.Module):
                     h = h + z
 
 
-            last.append(h.unsqueeze(0)) ## out
+            last.append(out) #h.unsqueeze(0)) ## out
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
