@@ -381,7 +381,7 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
 
             out1, hidden1 = self.model_1_enc(ii, None)
-
+            hidden1 = F.tanh(hidden1)
             prev_h1.append(hidden1)
 
         self.inp_c_seq = prev_h1
@@ -393,6 +393,7 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
 
             out2, hidden2 = self.model_2_enc(ii, None)
+            hidden2 = F.tanh(hidden2)
             prev_h2.append(hidden2)
 
         self.q_q = prev_h2 # hidden2[:,-1,:]
@@ -414,6 +415,8 @@ class WrapMemRNN(nn.Module):
                 z = self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
+                zz = z.clone().unsqueeze(0).unsqueeze(0)
+
                 index = 0
                 for iter in range(self.memory_hops):
 
@@ -422,15 +425,15 @@ class WrapMemRNN(nn.Module):
                     if self.print_to_screen and  self.training:
                         print(x,'x -- after', len(x), sequences[i].size())
 
-                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), None)
+                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), zz)
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
                     ee = e[0, 0]#.permute(2,1,0)
                     #print(ee.size(),'ee')
-                    _, out = self.model_3_mem_a(ee.unsqueeze(0), None) #self.prune_tensor(m_list[iter + index].unsqueeze(0), 3))
+                    _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter + index].unsqueeze(0), 3))
 
-                    m_list.append(out)
+                    m_list.append(F.tanh(out))
 
                 mem_list.append(m_list[self.memory_hops])
 
@@ -457,7 +460,7 @@ class WrapMemRNN(nn.Module):
             if prev_h is not None:
                 prev_h = self.prune_tensor(prev_h, 3)
 
-            out, gru = self.model_3_mem_b(c, last[iii] )
+            out, gru = self.model_3_mem_b(c, self.prune_tensor(last[iii] ,3))
 
             #print(out == gru, 'out-gru')
 
@@ -469,16 +472,25 @@ class WrapMemRNN(nn.Module):
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
+            #print(h.size(),'h')
+
             h = h.permute(1,0)
+            h = F.tanh(h)
 
             index = 0 #-1 # -2
             if last[iii + index] is not None:
-                if False:
+                if True:
+                    minus = self.prune_tensor(last[iii + index], 2)
                     #gru_test = gru.index_select(0, self.inv_idx)
-                    #print(last[iii + index].squeeze(0) , gru.permute(1,0), last[iii + index].size(), gru.size())
-                    z = torch.mul((1 - ggg), last[iii + index])
-                    #print(z.size(),'z')
+                    #print('--',ggg.size(), minus.size(), gru.size())
+                    z = torch.mul((0 - ggg), minus)
+                    #print(minus, 'minus', ggg)
+                    z = F.tanh(z)
+                    #print(z,'z')
+                    #print(h, 'h')
+                    #print(0 - ggg, 'ggg')
                     h = h + z
+
 
             last.append(h.unsqueeze(0)) ## out
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
@@ -530,14 +542,14 @@ class WrapMemRNN(nn.Module):
         #z = F.sigmoid(z)
         #print(z.size(),'z')
         #z = F.softmax(z, dim=0) ## dim=1
-        z = F.sigmoid(z)
+        z = F.relu(z)
         #print(z.size(),'z')
         return z
 
     def prune_tensor(self, input, size):
-        if len(input.size()) < size:
+        while len(input.size()) < size:
             input = input.unsqueeze(0)
-        if len(input.size()) > size:
+        while len(input.size()) > size:
             input = input.squeeze(0)
         return input
 
@@ -549,7 +561,7 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(self.last_mem, q_q)
 
-        ansx = F.softmax(ansx, dim=0)
+        #ansx = F.softmax(ansx, dim=0)
 
         if self.print_to_screen:
             print(ansx, 'ansx printed')
