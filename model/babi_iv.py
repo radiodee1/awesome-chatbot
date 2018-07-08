@@ -439,7 +439,7 @@ class WrapMemRNN(nn.Module):
                     out = out[: , -1, :]
                     #print(out.size(),'out')
 
-                    m_list.append(F.relu(out))
+                    m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
 
