@@ -16,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2610">
-              <caret line="165" column="45" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="45" />
+            <state relative-caret-position="269">
+              <caret line="502" column="43" selection-start-line="502" selection-start-column="30" selection-end-line="502" selection-end-column="43" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -28,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="629">
-              <caret line="500" column="21" selection-start-line="500" selection-start-column="21" selection-end-line="500" selection-end-column="21" />
+            <state relative-caret-position="215">
+              <caret line="474" column="13" selection-start-line="474" selection-start-column="13" selection-end-line="474" selection-end-column="13" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -130,7 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>score_list</find>
       <find>optim</find>
       <find>EpisodicAttn</find>
       <find>zero</find>
@@ -160,6 +159,7 @@
       <find>concat_list</find>
       <find>MemRNN</find>
       <find>Encoder</find>
+      <find>model_3_mem_a</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -574,8 +574,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2610">
-          <caret line="165" column="45" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="45" />
+        <state relative-caret-position="269">
+          <caret line="502" column="43" selection-start-line="502" selection-start-column="30" selection-end-line="502" selection-end-column="43" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
@@ -584,8 +584,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="629">
-          <caret line="500" column="21" selection-start-line="500" selection-start-column="21" selection-end-line="500" selection-end-column="21" />
+        <state relative-caret-position="215">
+          <caret line="474" column="13" selection-start-line="474" selection-start-column="13" selection-end-line="474" selection-end-column="13" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
