@@ -381,7 +381,7 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
 
             out1, hidden1 = self.model_1_enc(ii, None)
-            hidden1 = F.tanh(hidden1)
+            #hidden1 = F.tanh(hidden1)
             prev_h1.append(hidden1)
 
         self.inp_c_seq = prev_h1
@@ -393,7 +393,7 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
 
             out2, hidden2 = self.model_2_enc(ii, None)
-            hidden2 = F.tanh(hidden2)
+            #hidden2 = F.tanh(hidden2)
             prev_h2.append(hidden2)
 
         self.q_q = prev_h2 # hidden2[:,-1,:]
@@ -433,7 +433,7 @@ class WrapMemRNN(nn.Module):
                     #print(ee.size(),'ee')
                     _, out = self.model_3_mem_a(ee.unsqueeze(0), self.prune_tensor(m_list[iter + index].unsqueeze(0), 3))
 
-                    m_list.append(F.tanh(out))
+                    m_list.append(F.relu(out))
 
                 mem_list.append(m_list[self.memory_hops])
 
@@ -473,7 +473,7 @@ class WrapMemRNN(nn.Module):
             ggg = g[iii]
             h = torch.mul(ggg , gru)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
-            #print(h.size(),'h')
+            #print(h.permute(1,0),'h')
 
             h = h.permute(1,0)
             h = F.tanh(h)
@@ -484,16 +484,17 @@ class WrapMemRNN(nn.Module):
                     minus = self.prune_tensor(last[iii + index], 2)
                     #gru_test = gru.index_select(0, self.inv_idx)
                     #print('--',ggg.size(), minus.size(), gru.size())
-                    z = torch.mul((0 - ggg), minus)
+                    z = torch.mul((1 - ggg), minus)
                     #print(minus, 'minus', ggg)
                     z = F.tanh(z)
                     #print(z,'z')
-                    #print(h, 'h')
-                    #print(0 - ggg, 'ggg')
+                    #print(h, 'h', ggg,'ggg')
+                    #print(minus, 'minus')
+                    #print(gru,'gru')
                     h = h + z
+                    #print(h,'h')
 
-
-            last.append(out) #h.unsqueeze(0)) ## out
+            last.append(h.unsqueeze(0)) ## out
             if iii == sen - 1 : ep.append(h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
@@ -524,8 +525,8 @@ class WrapMemRNN(nn.Module):
                 #c.unsqueeze(0),
                 #mem,
                 #qq,
-                (c * qq),
-                (c * mem),
+                F.tanh(c * qq),
+                F.tanh(c * mem),
                 (torch.abs(c - qq) ),
                 (torch.abs(c - mem) )
             ]
@@ -543,7 +544,7 @@ class WrapMemRNN(nn.Module):
         #z = F.sigmoid(z)
         #print(z.size(),'z')
         #z = F.softmax(z, dim=0) ## dim=1
-        z = F.relu(z)
+        z = F.tanh(z)
         #print(z.size(),'z')
         return z
 

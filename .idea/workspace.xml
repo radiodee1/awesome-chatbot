@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9054">
-              <caret line="523" column="19" selection-start-line="523" selection-start-column="8" selection-end-line="523" selection-end-column="19" />
+            <state relative-caret-position="2610">
+              <caret line="165" column="45" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="45" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -28,8 +29,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="495" column="27" selection-start-line="495" selection-start-column="27" selection-end-line="495" selection-end-column="27" />
+            <state relative-caret-position="449">
+              <caret line="494" column="21" selection-start-line="494" selection-start-column="21" selection-end-line="494" selection-end-column="21" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -223,8 +224,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="529" />
-    <option name="y" value="76" />
+    <option name="x" value="530" />
+    <option name="y" value="75" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
   </component>
@@ -282,7 +283,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="529" y="76" width="1380" height="1000" extended-state="0" />
+    <frame x="530" y="75" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
@@ -574,8 +575,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9054">
-          <caret line="523" column="19" selection-start-line="523" selection-start-column="8" selection-end-line="523" selection-end-column="19" />
+        <state relative-caret-position="2610">
+          <caret line="165" column="45" selection-start-line="165" selection-start-column="34" selection-end-line="165" selection-end-column="45" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
@@ -584,8 +585,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="495" column="27" selection-start-line="495" selection-start-column="27" selection-end-line="495" selection-end-column="27" />
+        <state relative-caret-position="449">
+          <caret line="494" column="21" selection-start-line="494" selection-start-column="21" selection-end-line="494" selection-end-column="21" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
