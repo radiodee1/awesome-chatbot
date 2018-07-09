@@ -481,8 +481,8 @@ class WrapMemRNN(nn.Module):
             #print(h.size(),'h')
 
             if last[iii + index] is not None:
-                if False:
-                    minus = self.prune_tensor(last[iii], 3)
+                if True:
+                    minus = self.prune_tensor(c, 3) #last[iii], 3)
 
                     z = torch.mul((1 - ggg), minus)
                     #print(minus, 'minus', ggg)
@@ -715,6 +715,7 @@ class NMT:
         parser.add_argument('--recipe-dropout', help='use dropout recipe', action='store_true')
         parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
         parser.add_argument('--batch',help='enable batch processing. (default)',action='store_true')
+        parser.add_argument('--batch-size', help='actual batch size when batch mode is specified.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -775,6 +776,7 @@ class NMT:
         if self.args['batch'] is not False:
             self.do_batch_process = True
             print('batch operation now enabled by default.')
+        if self.args['batch_size'] is not None: hparams['batch_size'] = int(self.args['batch_size'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1101,7 +1103,7 @@ class NMT:
 
     def variables_for_batch(self, pairs, size, start):
         if start + size >= len(pairs) and start < len(pairs) - 1:
-            size = len(pairs) - start - 1
+            size = len(pairs) - start #- 1
             print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
@@ -1440,6 +1442,7 @@ class NMT:
     #######################################
 
     def train_iters(self, encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.001):
+        ''' laundry list of things that must be done every training or testing session. '''
 
         save_thresh = 2
         #self.saved_files = 0
@@ -1530,7 +1533,6 @@ class NMT:
                 continue
                 pass
 
-            #print(iter,'iter')
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
@@ -1550,7 +1552,7 @@ class NMT:
                     num_right += 1
                     num_right_small += 1
 
-                if self.do_batch_process: num_tot += temp_batch_size # hparams['batch_size']
+                if self.do_batch_process: num_tot += temp_batch_size
                 else: num_tot += 1
 
                 self.score = float(num_right/num_tot) * 100
