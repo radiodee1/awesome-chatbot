@@ -482,7 +482,7 @@ class WrapMemRNN(nn.Module):
 
             if last[iii + index] is not None:
                 if True:
-                    minus = self.prune_tensor(c, 3) #last[iii], 3)
+                    minus = self.prune_tensor(last[iii], 3)
 
                     z = torch.mul((1 - ggg), minus)
                     #print(minus, 'minus', ggg)
