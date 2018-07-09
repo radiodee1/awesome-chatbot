@@ -1558,7 +1558,7 @@ class NMT:
                 self.score = float(num_right/num_tot) * 100
 
             if l is not None:
-                print_loss_total += float(l)
+                print_loss_total += float(l.clone())
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
