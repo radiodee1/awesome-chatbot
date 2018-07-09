@@ -133,7 +133,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -521,9 +521,9 @@ class WrapMemRNN(nn.Module):
             qq = qq[:,-1, :]
 
             concat_list = [
-                #c.unsqueeze(0),
-                #mem,
-                #qq,
+                c.unsqueeze(0),
+                mem,
+                qq,
                 (c * qq),
                 (c * mem),
                 (torch.abs(c - qq) ),
