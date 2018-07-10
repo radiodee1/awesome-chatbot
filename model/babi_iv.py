@@ -499,7 +499,6 @@ class WrapMemRNN(nn.Module):
 
             h = self.prune_tensor(h, 3)
 
-
             if last[iii + index] is not None:
                 if False:
                     minus = self.prune_tensor(last[iii], 3)
@@ -560,11 +559,11 @@ class WrapMemRNN(nn.Module):
         att = torch.cat(att, dim=0)
 
         z = self.model_4_att(att)
-        #z = F.sigmoid(z)
+        z = F.sigmoid(z)
 
         #z = F.softmax(z, dim=0) ## dim=1
         #z = F.tanh(z)
-        z = F.relu(z)
+        #z = F.relu(z)
         #print(z.size(),'z')
         return z
 
