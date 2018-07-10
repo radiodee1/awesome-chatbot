@@ -1468,7 +1468,7 @@ class NMT:
                 loss = None
                 ans = ans.permute(1,0)
 
-            self._test_embedding()
+            #self._test_embedding()
 
         return outputs, ans , loss
 
