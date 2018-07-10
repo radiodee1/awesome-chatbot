@@ -216,9 +216,11 @@ class MemRNN(nn.Module):
 
     def forward(self, input, hidden=None):
 
+
         output, hidden_out = self.gru(input, hidden)
 
         #output = None
+        #print(output.size(), input.size(), hidden_out.size(), hidden.size(),'list')
 
         return output, hidden_out
 
@@ -267,6 +269,11 @@ class Encoder(nn.Module):
         #encoder_out = None
 
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
+
+        if self.bidirectional:
+            encoder_out = encoder_out[:,:, :self.hidden_dim] + encoder_out[:,:,self.hidden_dim:]
+
+        #print(encoder_out.size(), encoder_hidden.size(), embedded.size(), hidden,'list')
 
         return encoder_out, encoder_hidden
 
@@ -331,7 +338,7 @@ class WrapMemRNN(nn.Module):
 
         gru_dropout = dropout * 0
 
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=False)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=True)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
