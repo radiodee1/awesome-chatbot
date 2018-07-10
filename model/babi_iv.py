@@ -253,6 +253,16 @@ class Encoder(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
+    def load_embedding(self, embedding):
+        self.embed.weight.data.copy_(torch.from_numpy(embedding))
+
+    def test_embedding(self, num=None):
+        if num is None:
+            num = 15 # magic number for testing
+        e = self.embed(num)
+        print(e.size(), 'test embedding')
+        print(e[0,0,0:10]) # print first ten values
+
     def forward(self, source, hidden=None):
 
         embedded = self.embed(source)
@@ -361,6 +371,12 @@ class WrapMemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
+    def load_embedding(self, embedding):
+        self.embedding = embedding
+        self.model_1_enc.load_embedding(embedding)
+        self.model_2_enc.load_embedding(embedding)
+
+
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
         self.new_input_module(input_variable, question_variable)
@@ -374,6 +390,12 @@ class WrapMemRNN(nn.Module):
         self.model_2_enc.embed.weight.requires_grad = False
         print('freeze embedding')
         pass
+
+    def test_embedding(self, num=None):
+        print('encoder 1:')
+        self.model_1_enc.test_embedding(num)
+        print('encoder 2:')
+        self.model_2_enc.test_embedding(num)
 
     def new_input_module(self, input_variable, question_variable):
 
@@ -910,6 +932,7 @@ class NMT:
             self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
                                                                              lang3=self.train_ques, reverse=False,
                                                                              omit_unk=self.do_hide_unk)
+            #self.model_0_wra.test_embedding()
 
             self.first_load = True
             self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
@@ -1073,6 +1096,7 @@ class NMT:
         print(self.output_lang.name, self.output_lang.n_words)
 
         if self.do_load_embeddings:
+            print('embedding option detected.')
             self.task_set_embedding_matrix()
 
         return self.input_lang, self.output_lang, self.pairs
@@ -1240,6 +1264,9 @@ class NMT:
                     self.start = 0
 
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
+
+                if self.do_load_embeddings:
+                    self.model_0_wra.load_embedding(self.embedding_matrix)
                 if self.do_freeze_embedding:
                     self.model_0_wra.new_freeze_embedding()
                 if self.opt_1 is not None:
@@ -1358,7 +1385,13 @@ class NMT:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
-
+    def _test_embedding(self, num=None):
+        if num is None:
+            num = 'unk'
+        num = self.variableFromSentence(self.output_lang, str(num))
+        print(num)
+        self.model_0_wra.test_embedding(num)
+        exit()
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1426,6 +1459,7 @@ class NMT:
             loss.backward()
             wrapper_optimizer.step()
 
+
         else:
             self.model_0_wra.eval()
             with torch.no_grad():
@@ -1434,6 +1468,7 @@ class NMT:
                 loss = None
                 ans = ans.permute(1,0)
 
+            self._test_embedding()
 
         return outputs, ans , loss
 
@@ -1827,6 +1862,8 @@ if __name__ == '__main__':
     #exit()
 
     if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
+
+    #n._test_embedding()
 
     if n.do_test_not_train and n.do_load_babi:
         print('test not train')
