@@ -946,6 +946,7 @@ class NMT:
             self.validate_iters()
             self.start = 0
             self.task_babi_files()
+            if i % 3 == 0: self._test_embedding(exit=False)
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
         pass
@@ -1385,13 +1386,13 @@ class NMT:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
-    def _test_embedding(self, num=None):
+    def _test_embedding(self, num=None, exit=True):
         if num is None:
             num = 'unk'
         num = self.variableFromSentence(self.output_lang, str(num))
         print(num)
         self.model_0_wra.test_embedding(num)
-        exit()
+        if exit: exit()
 
     def _shorten(self, sentence):
         # assume input is list already
