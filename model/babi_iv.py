@@ -563,7 +563,7 @@ class WrapMemRNN(nn.Module):
         #z = F.sigmoid(z)
 
         #z = F.softmax(z, dim=0) ## dim=1
-        z = F.tanh(z)
+        #z = F.tanh(z)
         #print(z.size(),'z')
         return z
 
