@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2475">
-              <caret line="337" column="39" selection-start-line="337" selection-start-column="39" selection-end-line="337" selection-end-column="39" />
+            <state relative-caret-position="-109">
+              <caret line="136" column="26" selection-start-line="136" selection-start-column="14" selection-end-line="136" selection-end-column="26" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -29,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="684">
-              <caret line="561" column="8" lean-forward="true" selection-start-line="561" selection-start-column="8" selection-end-line="561" selection-end-column="8" />
+            <state relative-caret-position="251">
+              <caret line="587" column="41" selection-start-line="587" selection-start-column="41" selection-end-line="587" selection-end-column="41" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -117,7 +116,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>no_grad</find>
       <find>ans</find>
       <find>model_0_wra</find>
       <find>record_threshold</find>
@@ -134,7 +132,6 @@
       <find>model_3_mem_a</find>
       <find>variables_for_batch</find>
       <find>print_every</find>
-      <find>concat_list</find>
       <find>l</find>
       <find>embedding_matrix</find>
       <find>task_set_embedding_matrix</find>
@@ -147,6 +144,8 @@
       <find>Encoder</find>
       <find>load_embedding</find>
       <find>_test_embedding</find>
+      <find>concat_list</find>
+      <find>EpisodicAttn</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -542,8 +541,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2475">
-          <caret line="337" column="39" selection-start-line="337" selection-start-column="39" selection-end-line="337" selection-end-column="39" />
+        <state relative-caret-position="-109">
+          <caret line="136" column="26" selection-start-line="136" selection-start-column="14" selection-end-line="136" selection-end-column="26" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
@@ -552,8 +551,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="561" column="8" lean-forward="true" selection-start-line="561" selection-start-column="8" selection-end-line="561" selection-end-column="8" />
+        <state relative-caret-position="251">
+          <caret line="587" column="41" selection-start-line="587" selection-start-column="41" selection-end-line="587" selection-end-column="41" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

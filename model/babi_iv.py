@@ -450,7 +450,7 @@ class WrapMemRNN(nn.Module):
                     x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q[i])
 
                     if self.print_to_screen and  self.training:
-                        print(x,'x -- after', len(x), sequences[i].size())
+                        print(x.permute(1,0),'x -- after', len(x), sequences[i].size())
 
                     e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), zz)
 
@@ -585,7 +585,7 @@ class WrapMemRNN(nn.Module):
 
         #ansx = F.softmax(ansx, dim=0)
 
-        if self.print_to_screen:
+        if self.print_to_screen and False:
             print(ansx, 'ansx printed')
             print(ansx.size(), 'ansx')
             vocab, sen = ansx.size()
