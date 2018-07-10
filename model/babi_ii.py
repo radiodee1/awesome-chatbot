@@ -313,6 +313,9 @@ class Encoder(nn.Module):
                 init.xavier_normal_(weight)
                 #print(weight.size())
 
+    def load_embedding(self, embedding):
+        self.embed.weight.data.copy_(torch.from_numpy(embedding))
+
     def forward(self, source, hidden=None):
         #source = self.dropout(source)
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
@@ -425,6 +428,12 @@ class WrapMemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
                 #print(weight.size())
+
+    def load_embedding(self, embedding):
+        self.embedding = embedding
+        self.model_1_enc.load_embedding(embedding)
+        self.model_2_enc.load_embedding(embedding)
+
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
@@ -1187,6 +1196,9 @@ class NMT:
                     self.start = 0
 
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
+
+                if self.do_load_embeddings:
+                    self.model_0_wra.load_embedding(self.embedding_matrix)
                 if self.do_freeze_embedding:
                     self.model_0_wra.new_freeze_embedding()
                 if self.opt_1 is not None:

@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_ii.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_ii.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -15,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8676">
-              <caret line="502" column="43" selection-start-line="502" selection-start-column="30" selection-end-line="502" selection-end-column="43" />
+            <state relative-caret-position="612">
+              <caret line="316" column="65" selection-start-line="316" selection-start-column="65" selection-end-line="316" selection-end-column="65" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -30,23 +28,11 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="575">
-              <caret line="948" column="20" selection-start-line="948" selection-start-column="20" selection-end-line="948" selection-end-column="20" />
+            <state relative-caret-position="269">
+              <caret line="256" column="65" lean-forward="true" selection-start-line="255" selection-start-column="4" selection-end-line="256" selection-end-column="65" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/README.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-            <state split_layout="SPLIT">
-              <first_editor />
-              <second_editor>
-                <markdownNavigatorState />
-              </second_editor>
             </state>
           </provider>
         </entry>
@@ -105,7 +91,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -214,11 +200,11 @@
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/do_launch_babi.sh" />
         <option value="$PROJECT_DIR$/do_make_glove_download.sh" />
-        <option value="$PROJECT_DIR$/model/babi_ii.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/babi_iv.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/babi_ii.py" />
       </list>
     </option>
   </component>
@@ -233,6 +219,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -249,7 +236,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -526,26 +512,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8676">
-          <caret line="502" column="43" selection-start-line="502" selection-start-column="30" selection-end-line="502" selection-end-column="43" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="948" column="20" selection-start-line="948" selection-start-column="20" selection-end-line="948" selection-end-column="20" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -570,6 +536,26 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="256" column="65" lean-forward="true" selection-start-line="255" selection-start-column="4" selection-end-line="256" selection-end-column="65" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="316" column="65" selection-start-line="316" selection-start-column="65" selection-end-line="316" selection-end-column="65" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
