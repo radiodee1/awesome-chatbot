@@ -564,6 +564,7 @@ class WrapMemRNN(nn.Module):
 
         #z = F.softmax(z, dim=0) ## dim=1
         #z = F.tanh(z)
+        z = F.relu(z)
         #print(z.size(),'z')
         return z
 

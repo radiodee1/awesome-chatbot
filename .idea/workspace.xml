@@ -26,8 +26,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="89">
-              <caret line="1265" lean-forward="true" selection-start-line="1265" selection-end-line="1265" />
+            <state relative-caret-position="647">
+              <caret line="565" column="9" selection-start-line="565" selection-start-column="9" selection-end-line="565" selection-end-column="9" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -200,9 +200,9 @@
         <option value="$PROJECT_DIR$/do_make_glove_download.sh" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/babi_iv.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/babi_ii.py" />
+        <option value="$PROJECT_DIR$/model/babi_iv.py" />
       </list>
     </option>
   </component>
@@ -549,8 +549,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="89">
-          <caret line="1265" lean-forward="true" selection-start-line="1265" selection-end-line="1265" />
+        <state relative-caret-position="647">
+          <caret line="565" column="9" selection-start-line="565" selection-start-column="9" selection-end-line="565" selection-end-column="9" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
