@@ -216,10 +216,6 @@ class MemRNN(nn.Module):
 
     def forward(self, input, hidden=None):
 
-        #input = self.dropout1(input) # weak dropout
-        #num = 3
-        #input = self.prune_tensor(input,num)
-
         output, hidden_out = self.gru(input, hidden)
 
         #output = None
@@ -463,7 +459,7 @@ class WrapMemRNN(nn.Module):
                     out = out[: , -1, :]
                     #print(out.size(),'out')
 
-                    m_list.append(out)
+                    m_list.append(F.tanh(out))
 
                 mem_list.append(m_list[self.memory_hops])
 
@@ -471,7 +467,7 @@ class WrapMemRNN(nn.Module):
 
             self.last_mem = mm_list
 
-            #print(self.last_mem.size(),'lm')
+            if self.print_to_screen: print(self.last_mem,'lm')
 
         return None
 
@@ -946,7 +942,7 @@ class NMT:
             self.validate_iters()
             self.start = 0
             self.task_babi_files()
-            if i % 3 == 0: self._test_embedding(exit=False)
+            if i % 3 == 0 and False: self._test_embedding(exit=False)
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
         pass
