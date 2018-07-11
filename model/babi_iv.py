@@ -1699,6 +1699,7 @@ class NMT:
         print('dropout:',hparams['dropout'])
         print('learning rate:', hparams['learning_rate'])
         print(num_count, 'exec count')
+        print('raw score:', num_right, num_tot, num_right_small)
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
