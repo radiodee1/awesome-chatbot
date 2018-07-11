@@ -1700,6 +1700,7 @@ class NMT:
             print('valid list:', ', '.join(self.score_list))
         print('dropout:',hparams['dropout'])
         print('learning rate:', hparams['learning_rate'])
+        print('weight decay:', hparams['weight_decay'])
         print(num_count, 'exec count')
         print('raw score:', num_right, num_tot, num_right_small)
 
