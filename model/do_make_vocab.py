@@ -17,7 +17,7 @@ TO = '../data/embed.txt'
 train_file = ''
 v = []
 
-def make_vocab():
+def make_vocab(train_file):
     global v
     wordlist = []
     for filename in train_file:
@@ -120,8 +120,12 @@ def prep_glove(vocab_list):
     pass
 
 if __name__ == '__main__':
+    print('In order to get a vocab file with all babi vocab words at once, you must temporarily build a question set\n'
+          'with ALL questions at once. Later you can rebuild the question set for just one task after your vocab\n'
+          'file is complete.')
+
     parser = argparse.ArgumentParser(description='Make vocab file.')
-    parser.add_argument('basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
+    parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
     parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
     parser.add_argument('--babi-only', help='Load words from the babi set only', action='store_true')
     parser.add_argument('--load-embed-size', help='Override settings embed-size hparam.')
@@ -129,12 +133,12 @@ if __name__ == '__main__':
     args = vars(args)
     print(args)
     #exit()
-    train_file = ['../data/train.big.from'] # , '../data/train.big.to']
+    train_file = [] #'../data/train.big.from'] # , '../data/train.big.to']
 
     if args['babi_only']:
         train_file = []
         args['babi'] = True
-    else :
+    elif args['basefile'] is not None :
         train_file = [args['basefile']]
 
     if args['load_embed_size'] is not None:
@@ -158,7 +162,7 @@ if __name__ == '__main__':
     v = []
 
     if True:
-        v = make_vocab()
+        v = make_vocab(train_file)
         save_vocab(v, args['babi'])
     if len(v) == 0:
         filename = hparams['data_dir'] + hparams['vocab_name']
