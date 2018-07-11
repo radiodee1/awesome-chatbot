@@ -740,6 +740,7 @@ class NMT:
         parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
         parser.add_argument('--batch',help='enable batch processing. (default)',action='store_true')
         parser.add_argument('--batch-size', help='actual batch size when batch mode is specified.')
+        parser.add_argument('--decay', help='weight decay.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -801,6 +802,7 @@ class NMT:
             self.do_batch_process = True
             print('batch operation now enabled by default.')
         if self.args['batch_size'] is not None: hparams['batch_size'] = int(self.args['batch_size'])
+        if self.args['decay'] is not None: hparams['weight_decay'] = float(self.args['decay'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
