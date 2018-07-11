@@ -272,6 +272,7 @@ class Encoder(nn.Module):
 
         if self.bidirectional:
             encoder_out = encoder_out[:,:, :self.hidden_dim] + encoder_out[:,:,self.hidden_dim:]
+            #print(encoder_out.size())
 
         #print(encoder_out.size(), encoder_hidden.size(), embedded.size(), hidden,'list')
 
@@ -342,7 +343,7 @@ class WrapMemRNN(nn.Module):
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
-        self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
+        self.model_4_att = EpisodicAttn(hidden_size, dropout=dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.input_var = None  # for input
@@ -1578,16 +1579,12 @@ class NMT:
             if self.do_load_babi:
 
                 for i in range(len(target_variable)):
-                    o_val = torch.argmax(ans[i], dim=0)[0]
-                    t_val = target_variable[i]
+                    o_val = torch.argmax(ans[i], dim=0).item() #[0]
+                    t_val = target_variable[i].item()
 
-                    if int(o_val.item()) == int(t_val.item()):
+                    if int(o_val) == int(t_val):
                         num_right += 1
                         num_right_small += 1
-
-                if False and int(outputs[0].int()) == int(target_variable[0][0].int()):
-                    num_right += 1
-                    num_right_small += 1
 
                 if self.do_batch_process: num_tot += temp_batch_size
                 else: num_tot += 1
