@@ -144,10 +144,10 @@ class EpisodicAttn(nn.Module):
         #self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
         #self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
 
-        self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size)
+        self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size,bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear( hidden_size, 1)
+        self.out_b = nn.Linear( hidden_size, 1, bias=True)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -285,10 +285,10 @@ class AnswerModule(nn.Module):
         self.vocab_size = vocab_size
         self.batch_size = hparams['batch_size']
 
-        self.out_a = nn.Linear(hidden_size * 2 , vocab_size)
+        self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear(vocab_size, vocab_size)
+        self.out_b = nn.Linear(vocab_size, vocab_size,bias=True)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
@@ -1295,7 +1295,7 @@ class NMT:
     def _make_optimizer(self):
         print('new optimizer', hparams['learning_rate'])
         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-        return optim.Adam(parameters, lr=hparams['learning_rate'])
+        return optim.Adam(parameters, lr=hparams['learning_rate'],weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
