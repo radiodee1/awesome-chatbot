@@ -182,7 +182,7 @@ class EpisodicAttn(nn.Module):
         l_1 = F.tanh(l_1) ## <---- this line? used to be tanh !!
 
         l_2 = self.out_b( l_1)
-        #print(l_2, 'l2')
+        #print(l_2.size(), 'l2')
         #l_2 = F.tanh(l_2)
         #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
@@ -272,8 +272,9 @@ class Encoder(nn.Module):
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
 
         if self.bidirectional:
-            encoder_out = encoder_out[:,:, :self.hidden_dim] + encoder_out[:,:,self.hidden_dim:]
-            #print(encoder_out.size())
+            encoder_out = encoder_out[0,:, :self.hidden_dim] + encoder_out[0,:,self.hidden_dim:]
+            encoder_out = encoder_out.unsqueeze(0)
+            #print(encoder_out.size(),'hidden')
 
         #print(encoder_out.size(), encoder_hidden.size(), embedded.size(), hidden,'list')
 
@@ -411,8 +412,8 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
 
             out1, hidden1 = self.model_1_enc(ii, None)
-            hidden1 = F.tanh(hidden1)
-            prev_h1.append(hidden1)
+            out1 = F.tanh(out1)
+            prev_h1.append(out1)
             #print(out1.size(), hidden1.size(),'o,h')
 
         self.inp_c_seq = prev_h1
@@ -456,6 +457,7 @@ class WrapMemRNN(nn.Module):
 
                     if self.print_to_screen and  self.training:
                         print(x.permute(1,0),'x -- after', len(x), sequences[i].size())
+                        #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
                     e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), zz)
 
@@ -567,7 +569,7 @@ class WrapMemRNN(nn.Module):
         #z = F.sigmoid(z)
 
         z = F.softmax(z, dim=0) ## dim=1
-        
+
         return z
 
     def prune_tensor(self, input, size):
