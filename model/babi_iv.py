@@ -1881,7 +1881,7 @@ class NMT:
             f.write('\n')
             #f.write('\n')
         f.close()
-
+        print('see file:', basename, '\n')
         pass
 
 if __name__ == '__main__':
