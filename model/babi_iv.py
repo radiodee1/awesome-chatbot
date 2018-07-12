@@ -564,12 +564,10 @@ class WrapMemRNN(nn.Module):
         att = torch.cat(att, dim=0)
 
         z = self.model_4_att(att)
-        z = F.sigmoid(z)
+        #z = F.sigmoid(z)
 
-        #z = F.softmax(z, dim=0) ## dim=1
-        #z = F.tanh(z)
-        #z = F.relu(z)
-        #print(z.size(),'z')
+        z = F.softmax(z, dim=0) ## dim=1
+        
         return z
 
     def prune_tensor(self, input, size):
