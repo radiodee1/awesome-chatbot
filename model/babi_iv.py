@@ -1865,11 +1865,11 @@ class NMT:
             with open(basename, 'w') as f:
                 f.write(self.args['basename'] + '\n')
                 f.write(str(hparams['units']) + ' hidden size \n')
-                f.write('\n')
+                #f.write('\n')
             f.close()
 
         with open(basename,'a') as f:
-            f.write('\n')
+            #f.write('\n')
             f.write('------\n')
             f.write('start time: ' + st_start + '\n')
             f.write('quit/log time: ' + st_now + '\n')
@@ -1880,7 +1880,7 @@ class NMT:
             f.write('valid results:' + '\n')
             f.write(','.join(self.score_list))
             f.write('\n')
-            f.write('\n')
+            #f.write('\n')
         f.close()
 
         pass
