@@ -1692,7 +1692,7 @@ class NMT:
                     print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
 
-                if self.lr_adjustment_num > 0:
+                if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
                     if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
                         print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],',', self.epochs_since_adjustment ,']')
                     if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
