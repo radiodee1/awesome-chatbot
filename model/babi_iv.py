@@ -16,6 +16,7 @@ from torch import optim
 import torch.nn.functional as F
 import torch.nn.init as init
 import time
+import datetime
 import math
 import argparse
 from settings import hparams
@@ -1856,9 +1857,12 @@ class NMT:
 
     def update_result_file(self):
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
+        ts = time.time()
+        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
         with open(basename,'a') as f:
             f.write('\n')
-            f.write('------')
+            f.write('------\n')
+            f.write('quit/log time: ' + st + '\n')
             f.write('elapsed time:' + self.time_elapsed_str + '\n')
             f.write('train results:' + '\n')
             f.write(','.join(self.score_list_training))
