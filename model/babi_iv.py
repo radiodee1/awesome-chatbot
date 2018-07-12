@@ -1861,6 +1861,13 @@ class NMT:
         st_now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
         st_start = datetime.datetime.fromtimestamp(self.time_num).strftime('%Y-%m-%d %H:%M:%S')
+        if not os.path.isfile(basename):
+            with open(basename, 'w') as f:
+                f.write(self.args['basename'] + '\n')
+                f.write(str(hparams['units']) + ' hidden size \n')
+                f.write('\n')
+            f.close()
+
         with open(basename,'a') as f:
             f.write('\n')
             f.write('------\n')

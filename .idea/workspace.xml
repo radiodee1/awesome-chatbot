@@ -28,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="413">
-              <caret line="1867" column="46" selection-start-line="1867" selection-start-column="46" selection-end-line="1867" selection-end-column="46" />
+            <state relative-caret-position="323">
+              <caret line="1866" column="45" selection-start-line="1866" selection-start-column="45" selection-end-line="1866" selection-end-column="45" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -553,13 +553,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="684">
-          <caret line="38" column="24" selection-start-line="38" selection-start-column="24" selection-end-line="38" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2556">
@@ -567,10 +560,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="38" column="24" selection-start-line="38" selection-start-column="24" selection-end-line="38" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="1867" column="46" selection-start-line="1867" selection-start-column="46" selection-end-line="1867" selection-end-column="46" />
+        <state relative-caret-position="323">
+          <caret line="1866" column="45" selection-start-line="1866" selection-start-column="45" selection-end-line="1866" selection-end-column="45" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
