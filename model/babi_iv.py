@@ -145,10 +145,10 @@ class EpisodicAttn(nn.Module):
         #self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
         #self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
 
-        self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size,bias=True)
+        self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size,bias=False)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear( hidden_size, 1, bias=True)
+        self.out_b = nn.Linear( hidden_size, 1, bias=False)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
@@ -1870,7 +1870,7 @@ class NMT:
         with open(basename,'a') as f:
             #f.write('\n')
             f.write('------\n')
-            f.write('start time: ' + st_start + '\n')
+            f.write('start time:    ' + st_start + '\n')
             f.write('quit/log time: ' + st_now + '\n')
             f.write('elapsed time:' + self.time_elapsed_str + '\n')
             f.write('train results:' + '\n')
