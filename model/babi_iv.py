@@ -667,7 +667,7 @@ class NMT:
         self.score_list = []
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.time_num = 0
+        self.time_num = time.time()
         self.time_str = ''
         self.time_elapsed_num = 0
         self.time_elapsed_str = ''
@@ -1519,7 +1519,6 @@ class NMT:
         num_count = 0
         temp_batch_size = 0
 
-        self.time_num = time.time()
         self.time_str = self._as_minutes(self.time_num)
 
         if self.opt_1 is None or self.first_load:
