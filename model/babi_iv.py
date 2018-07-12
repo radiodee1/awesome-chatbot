@@ -567,7 +567,7 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
-
+        #print(z.size())
         z = F.softmax(z, dim=0) ## dim=1
 
         return z
