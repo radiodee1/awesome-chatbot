@@ -800,8 +800,12 @@ class NMT:
         if self.args['print_to_screen'] is True: self.do_print_to_screen = True
         if self.args['cuda'] is True: hparams['cuda'] = True
         if self.args['save_num'] is not None: self.record_threshold = float(self.args['save_num'])
-        if self.args['recipe_dropout'] is not False: self.do_recipe_dropout = True
-        if self.args['recipe_lr'] is not False: self.do_recipe_lr = True
+        if self.args['recipe_dropout'] is not False:
+            self.do_recipe_dropout = True
+            self.do_auto_stop = True
+        if self.args['recipe_lr'] is not False:
+            self.do_recipe_lr = True
+            self.do_auto_stop = True
         if self.args['batch'] is not False:
             self.do_batch_process = True
             print('batch operation now enabled by default.')
