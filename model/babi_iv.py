@@ -666,8 +666,10 @@ class NMT:
         self.score_list = []
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        self.start_time_num = 0
-        self.start_time_str = ''
+        self.time_num = 0
+        self.time_str = ''
+        self.time_elapsed_num = 0
+        self.time_elapsed_str = ''
 
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
@@ -1351,6 +1353,7 @@ class NMT:
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                     print(t)
                     print('list:', self.score_list)
+                    self.update_result_file()
                     exit()
 
                 if self.lr_adjustment_num < 1 and use_dropout_recipe:
@@ -1370,8 +1373,9 @@ class NMT:
                     self.set_dropout(0.00)
                 print('max changes or max epochs')
 
-            if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
+            if (self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300) and (self.do_recipe_lr or self.do_recipe_dropout):
                 print('max adjustments -- quit', self.lr_adjustment_num)
+                self.update_result_file()
                 exit()
 
             if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
@@ -1510,7 +1514,8 @@ class NMT:
         num_count = 0
         temp_batch_size = 0
 
-        self.start_time_num = time.time()
+        self.time_num = time.time()
+        self.time_str = self._as_minutes(self.time_num)
 
         if self.opt_1 is None or self.first_load:
 
@@ -1642,8 +1647,9 @@ class NMT:
                             print('======= save file '+ extra+' ========')
                     elif not self.do_load_babi:
                         print('skip save!')
-                self.start_time_str = self._time_since(self.start_time_num)
-                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.start_time_str, end=' ')
+                self.time_elapsed_str = self._time_since(self.time_num)
+                self.time_elapsed_num = time.time()
+                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.time_elapsed_str, end=' ')
                 if self.do_batch_process: print('- batch-size', temp_batch_size)
                 else: print('')
 
@@ -1844,78 +1850,98 @@ class NMT:
         lr = hparams['learning_rate']
         self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
+    def update_result_file(self):
+        basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
+        with open(basename,'a') as f:
+            f.write('\n')
+            f.write('------')
+            f.write('elapsed time:' + self.time_elapsed_str + '\n')
+            f.write('train results:' + '\n')
+            f.write(','.join(self.score_list_training))
+            f.write('\n')
+            f.write('valid results:' + '\n')
+            f.write(','.join(self.score_list))
+            f.write('\n')
+            f.write('\n')
+        f.close()
+
+        pass
 
 if __name__ == '__main__':
 
     n = NMT()
 
-    if not n.do_review and not n.do_load_babi:
-        n.task_normal_train()
-    elif not n.do_load_babi:
-        n.task_review_set()
-    elif n.do_load_babi and not n.do_test_not_train:
-        n.task_babi_files()
-    elif n.do_load_babi and n.do_test_not_train:
-        n.task_babi_test_files()
-        print('load test set -- no training.')
-        print(n.train_fr)
+    try:
+        if not n.do_review and not n.do_load_babi:
+            n.task_normal_train()
+        elif not n.do_load_babi:
+            n.task_review_set()
+        elif n.do_load_babi and not n.do_test_not_train:
+            n.task_babi_files()
+        elif n.do_load_babi and n.do_test_not_train:
+            n.task_babi_test_files()
+            print('load test set -- no training.')
+            print(n.train_fr)
 
-    n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
-                                                         omit_unk=n.do_hide_unk)
-
-
-    if n.do_load_babi:
-        hparams['num_vocab_total'] = n.output_lang.n_words
-
-    layers = hparams['layers']
-    dropout = hparams['dropout']
-    pytorch_embed_size = hparams['pytorch_embed_size']
-
-    token_list = []
-    if False:
-        for i in word_lst: token_list.append(n.output_lang.word2index[i])
-
-    n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
-                               dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
-                               freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
-                               print_to_screen=n.do_print_to_screen)
-
-    #print(n.model_0_wra)
-    #n.set_dropout(0.1334)
-    #exit()
-
-    if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
-
-    #n._test_embedding()
-
-    if n.do_test_not_train and n.do_load_babi:
-        print('test not train')
-        n.setup_for_babi_test()
-        exit()
-
-    if n.do_train:
-        lr = hparams['learning_rate']
-        n.train_iters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
+        n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
+                                                             omit_unk=n.do_hide_unk)
 
 
-    if n.do_train_long:
-        n.task_train_epochs()
+        if n.do_load_babi:
+            hparams['num_vocab_total'] = n.output_lang.n_words
 
-    if n.do_interactive:
-        n.load_checkpoint()
-        n.task_interactive()
+        layers = hparams['layers']
+        dropout = hparams['dropout']
+        pytorch_embed_size = hparams['pytorch_embed_size']
 
-    if n.do_review:
-        n.task_review_weights(n.pairs,stop_at_fail=False)
+        token_list = []
+        if False:
+            for i in word_lst: token_list.append(n.output_lang.word2index[i])
 
-    if n.do_convert:
-        n.load_checkpoint()
-        n.task_convert()
+        n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
+                                   dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
+                                   freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
+                                   print_to_screen=n.do_print_to_screen)
 
-    if n.do_infer:
-        n.load_checkpoint()
-        choice = random.choice(n.pairs)[0]
-        print(choice)
-        words, _ = n.evaluate(None,None,choice)
-        print(words)
+        #print(n.model_0_wra)
+        #n.set_dropout(0.1334)
+        #exit()
+
+        if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
+
+        #n._test_embedding()
+
+        if n.do_test_not_train and n.do_load_babi:
+            print('test not train')
+            n.setup_for_babi_test()
+            exit()
+
+        if n.do_train:
+            lr = hparams['learning_rate']
+            n.train_iters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
+
+
+        if n.do_train_long:
+            n.task_train_epochs()
+
+        if n.do_interactive:
+            n.load_checkpoint()
+            n.task_interactive()
+
+        if n.do_review:
+            n.task_review_weights(n.pairs,stop_at_fail=False)
+
+        if n.do_convert:
+            n.load_checkpoint()
+            n.task_convert()
+
+        if n.do_infer:
+            n.load_checkpoint()
+            choice = random.choice(n.pairs)[0]
+            print(choice)
+            words, _ = n.evaluate(None,None,choice)
+            print(words)
+
+    except KeyboardInterrupt:
+        n.update_result_file()
 
