@@ -1858,11 +1858,14 @@ class NMT:
     def update_result_file(self):
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
-        st = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+        st_now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+
+        st_start = datetime.datetime.fromtimestamp(self.time_num).strftime('%Y-%m-%d %H:%M:%S')
         with open(basename,'a') as f:
             f.write('\n')
             f.write('------\n')
-            f.write('quit/log time: ' + st + '\n')
+            f.write('start time: ' + st_start + '\n')
+            f.write('quit/log time: ' + st_now + '\n')
             f.write('elapsed time:' + self.time_elapsed_str + '\n')
             f.write('train results:' + '\n')
             f.write(','.join(self.score_list_training))
