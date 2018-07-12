@@ -666,6 +666,8 @@ class NMT:
         self.score_list = []
         self.score_list_training = []
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
+        self.start_time_num = 0
+        self.start_time_str = ''
 
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
@@ -1369,7 +1371,7 @@ class NMT:
                 print('max changes or max epochs')
 
             if self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300:
-                print('max adjustments -- quit')
+                print('max adjustments -- quit', self.lr_adjustment_num)
                 exit()
 
             if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
@@ -1399,6 +1401,19 @@ class NMT:
         print(num)
         self.model_0_wra.test_embedding(num)
         if exit: exit()
+
+    def _as_minutes(self,s):
+        m = math.floor(s / 60)
+        s -= m * 60
+        return '%dm %ds' % (m, s)
+
+    def _time_since(self, since):
+        now = time.time()
+        s = now - since
+        #if percent == 0.0 : percent = 0.001
+        #es = s / (percent)
+        #rs = es - s
+        return ' - %s' % (self._as_minutes(s))
 
     def _shorten(self, sentence):
         # assume input is list already
@@ -1494,6 +1509,8 @@ class NMT:
         num_right_small = 0
         num_count = 0
         temp_batch_size = 0
+
+        self.start_time_num = time.time()
 
         if self.opt_1 is None or self.first_load:
 
@@ -1625,7 +1642,8 @@ class NMT:
                             print('======= save file '+ extra+' ========')
                     elif not self.do_load_babi:
                         print('skip save!')
-                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg), end=' ')
+                self.start_time_str = self._time_since(self.start_time_num)
+                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.start_time_str, end=' ')
                 if self.do_batch_process: print('- batch-size', temp_batch_size)
                 else: print('')
 
