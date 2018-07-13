@@ -1873,7 +1873,7 @@ class NMT:
             f.write('start time:    ' + st_start + '\n')
             f.write('quit/log time: ' + st_now + '\n')
             f.write('elapsed time:  ' + self.time_elapsed_str + '\n')
-            f.write('save count:   ' + str(self.saved_files) + '\n')
+            f.write('save count:    ' + str(self.saved_files) + '\n')
             f.write('train results:' + '\n')
             f.write(','.join(self.score_list_training))
             f.write('\n')
