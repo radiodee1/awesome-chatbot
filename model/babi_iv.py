@@ -275,9 +275,8 @@ class Encoder(nn.Module):
         if self.bidirectional:
             encoder_out = encoder_out[0,:, :self.hidden_dim] + encoder_out[0,:,self.hidden_dim:]
             encoder_out = encoder_out.unsqueeze(0)
-            #print(encoder_out.size(),'hidden')
 
-        #print(encoder_out.size(), encoder_hidden.size(), embedded.size(), hidden,'list')
+            #encoder_hidden = encoder_hidden[0,:,:] + encoder_hidden[1,:,:]
 
         return encoder_out, encoder_hidden
 
