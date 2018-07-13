@@ -19,6 +19,7 @@ import time
 import datetime
 import math
 import argparse
+import json
 from settings import hparams
 import tokenize_weak
 #import matplotlib.pyplot as plt
@@ -1863,8 +1864,9 @@ class NMT:
         if not os.path.isfile(basename):
             with open(basename, 'w') as f:
                 f.write(self.args['basename'] + '\n')
-                f.write(str(hparams['units']) + ' hidden size \n')
-                #f.write('\n')
+                f.write(str(hparams['units']) + ' hidden size \n\n')
+                f.write(json.dumps(hparams))
+                f.write('\n')
             f.close()
 
         with open(basename,'a') as f:
