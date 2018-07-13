@@ -414,7 +414,7 @@ class WrapMemRNN(nn.Module):
             out1, hidden1 = self.model_1_enc(ii, None)
             out1 = F.tanh(out1)
             prev_h1.append(out1)
-            #print(out1.size(), hidden1.size(),'o,h')
+
 
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
