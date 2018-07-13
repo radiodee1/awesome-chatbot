@@ -412,7 +412,7 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
 
             out1, hidden1 = self.model_1_enc(ii, None)
-            out1 = F.tanh(out1)
+            #out1 = F.tanh(out1)
             prev_h1.append(out1)
 
 
@@ -426,7 +426,7 @@ class WrapMemRNN(nn.Module):
 
             out2, hidden2 = self.model_2_enc(ii, None)
             #print(hidden2,'hidden2')
-            hidden2 = F.tanh(hidden2)
+            #hidden2 = F.tanh(hidden2)
             prev_h2.append(hidden2)
 
         self.q_q = prev_h2 # hidden2[:,-1,:]
