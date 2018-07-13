@@ -965,6 +965,7 @@ class NMT:
             if i % 3 == 0 and False: self._test_embedding(exit=False)
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
+        self.update_result_file()
         pass
 
     def task_interactive(self):
