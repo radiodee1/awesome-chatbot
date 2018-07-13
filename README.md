@@ -90,7 +90,7 @@ This file is for additional parameters that can be set using a text editor befor
 * `unk` This is the symbol used for the 'unknown word' token.
 * `units` This is the initial value for hidden units in the first LSTM cell in the keras model. In the pytorch model this is the hidden units value used by both the encoder and the decoder. For the pytorch model GRU cells are used.
 * `layers` This is the number of layers for both the encoder and decoder in the pytorch model.
-* `learning_rate` This is the learning rate for the 'adam' optimizer. In the pytorch model SGD is used.
+* `learning_rate` This is the learning rate for the 'adam' optimizer.
 * `tokens_per_sentence` This is the number of tokens per sentence.
 * `batch_constant` This number serves as a batch size parameter.
 * `teacher_forcing_ratio` This number tells the pytorch version of the model exactly how often to use teacher forcing during training.
