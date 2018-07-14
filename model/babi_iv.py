@@ -1406,7 +1406,7 @@ class NMT:
 
     def _test_embedding(self, num=None, exit=True):
         if num is None:
-            num = 'unk'
+            num = hparams['unk']
         num = self.variableFromSentence(self.output_lang, str(num))
         print(num)
         self.model_0_wra.test_embedding(num)
@@ -1415,6 +1415,10 @@ class NMT:
     def _as_minutes(self,s):
         m = math.floor(s / 60)
         s -= m * 60
+        if m > 60:
+            h = math.floor(m / 60)
+            m -= h * 60
+            return '%dh %dm %ds' % (h,m,s)
         return '%dm %ds' % (m, s)
 
     def _time_since(self, since):
