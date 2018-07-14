@@ -739,7 +739,7 @@ class NMT:
         parser.add_argument('--no-validation', help='skip validation printout until first lr correction.',action='store_true')
         parser.add_argument('--print-to-screen', help='print some extra values to the screen for debugging', action='store_true')
         parser.add_argument('--cuda', help='enable cuda on device.', action='store_true')
-        parser.add_argument('--lr-adjust', help='resume training at particular lr adjust value.')
+        parser.add_argument('--lr-adjust', help='resume training at particular lr adjust value. (disabled)')
         parser.add_argument('--save-num', help='threshold for auto-saving files. (0-100)')
         parser.add_argument('--recipe-dropout', help='use dropout recipe', action='store_true')
         parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
@@ -1696,9 +1696,9 @@ class NMT:
 
                 if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
                     if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
-                        print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],',', self.epochs_since_adjustment ,']')
+                        print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],', epochs', self.epochs_since_adjustment ,']')
                     if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
-                        print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],',',self.epochs_since_adjustment,']')
+                        print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],', epochs',self.epochs_since_adjustment,']')
 
                 if self.score_list is not None and len(self.score_list_training) > 0 and len(self.score_list) > 0:
                     print('[ last train:', self.score_list_training[-1],']',end='')
