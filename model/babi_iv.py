@@ -1731,7 +1731,7 @@ class NMT:
         print('learning rate:', hparams['learning_rate'])
         print('weight decay:', hparams['weight_decay'])
         print(num_count, 'exec count')
-        print('raw score:', num_right, num_tot, num_right_small)
+        print('raw score:', num_right, num_tot, num_right_small, len(self.pairs))
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
