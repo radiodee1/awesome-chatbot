@@ -1415,7 +1415,7 @@ class NMT:
     def _as_minutes(self,s):
         m = math.floor(s / 60)
         s -= m * 60
-        if m > 60:
+        if m >= 60:
             h = math.floor(m / 60)
             m -= h * 60
             return '%dh %dm %ds' % (h,m,s)
