@@ -1863,6 +1863,10 @@ class NMT:
         st_now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
 
         st_start = datetime.datetime.fromtimestamp(self.time_num).strftime('%Y-%m-%d %H:%M:%S')
+
+        epoch_time = ts - self.time_num
+        if self.saved_files > 0: epoch_time = epoch_time / self.saved_files
+
         if not os.path.isfile(basename):
             with open(basename, 'w') as f:
                 f.write(self.args['basename'] + '\n')
@@ -1874,10 +1878,11 @@ class NMT:
         with open(basename,'a') as f:
             #f.write('\n')
             f.write('------\n')
-            f.write('start time:    ' + st_start + '\n')
-            f.write('quit/log time: ' + st_now + '\n')
-            f.write('elapsed time:  ' + self.time_elapsed_str + '\n')
-            f.write('save count:    ' + str(self.saved_files) + '\n')
+            f.write('start time:     ' + st_start + '\n')
+            f.write('quit/log time:  ' + st_now + '\n')
+            f.write('elapsed time:   ' + self.time_elapsed_str + '\n')
+            f.write('save count:     ' + str(self.saved_files) + '\n')
+            f.write('time per epoch: ' + self._as_minutes(epoch_time) + '\n')
             f.write('train results:' + '\n')
             f.write(','.join(self.score_list_training))
             f.write('\n')
