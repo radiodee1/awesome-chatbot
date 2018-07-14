@@ -128,9 +128,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-
 ################# pytorch modules ###############
-
 
 
 class EpisodicAttn(nn.Module):
@@ -609,8 +607,8 @@ class WrapMemRNN(nn.Module):
 
         pass
 
-
 ######################## end pytorch modules ####################
+
 
 class Lang:
     def __init__(self, name, limit=None):
