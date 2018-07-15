@@ -1029,8 +1029,9 @@ class NMT:
                     self.pairs.append(line)
 
         # Reverse pairs, make Lang instances
-        if load_vocab_file is not None:
+        if load_vocab_file is not None and self.vocab_lang is None:
             self.vocab_lang = Lang(load_vocab_file, limit=hparams['num_vocab_total'])
+            print('vocab init.')
             pass
 
         if reverse:
@@ -1075,10 +1076,13 @@ class NMT:
         #print("Trimmed to %s sentence pairs" % len(self.pairs))
         print("Counting words...")
         if v_name is not None:
-            v = self.open_sentences(self.vocab_lang.name)
-            for word in v:
-                self.vocab_lang.addSentence(word.strip())
-                #print(word)
+            #####
+            if self.vocab_lang.n_words <= 3:
+                v = self.open_sentences(self.vocab_lang.name)
+                for word in v:
+                    self.vocab_lang.addSentence(word.strip())
+                    #print(word)
+            #####
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
 

@@ -28,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1332">
-              <caret line="1053" column="69" selection-start-line="1053" selection-start-column="69" selection-end-line="1053" selection-end-column="69" />
+            <state relative-caret-position="269">
+              <caret line="1032" column="34" selection-start-line="1032" selection-start-column="30" selection-end-line="1032" selection-end-column="34" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -103,10 +103,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variables_for_batch</find>
-      <find>print_every</find>
-      <find>l</find>
-      <find>embedding_matrix</find>
       <find>task_set_embedding_matrix</find>
       <find>task_babi_files</find>
       <find>NMT</find>
@@ -133,6 +129,10 @@
       <find>num_tot</find>
       <find>lr_adjustment_num</find>
       <find>make_vocab</find>
+      <find>addWord</find>
+      <find>addSentence</find>
+      <find>vocab_lang</find>
+      <find>Lang</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -569,8 +569,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1332">
-          <caret line="1053" column="69" selection-start-line="1053" selection-start-column="69" selection-end-line="1053" selection-end-column="69" />
+        <state relative-caret-position="269">
+          <caret line="1032" column="34" selection-start-line="1032" selection-start-column="30" selection-end-line="1032" selection-end-column="34" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
