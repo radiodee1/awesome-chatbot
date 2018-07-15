@@ -130,6 +130,28 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 ################# pytorch modules ###############
 
+class CustomGRU(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super(CustomGRU, self).__init__()
+        self.hidden_size = hidden_size
+        self.Wr = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.Wr.state_dict()['weight'])
+        self.Ur = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.Ur.state_dict()['weight'])
+        self.W = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.W.state_dict()['weight'])
+        self.U = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.U.state_dict()['weight'])
+
+    def forward(self, fact, C):
+
+        r = F.sigmoid(self.Wr(fact) + self.Ur(C))
+        h_tilda = F.tanh(self.W(fact) + r * self.U(C))
+        #g = g.unsqueeze(1).expand_as(h_tilda)
+
+        #print( h_tilda.size(), C.size(),'gru')
+        #h = g * h_tilda + (1 - g) * C
+        return h_tilda, h_tilda
 
 class EpisodicAttn(nn.Module):
 
@@ -195,7 +217,8 @@ class MemRNN(nn.Module):
         super(MemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
-        self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
+        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
+        self.gru = CustomGRU(hidden_size,hidden_size)
         self.reset_parameters()
 
     def reset_parameters(self):
