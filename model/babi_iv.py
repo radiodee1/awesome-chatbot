@@ -317,8 +317,8 @@ class AnswerModule(nn.Module):
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
 
         out = self.out_a(mem)
-        out = F.tanh(out)
-        out = self.out_b(out)
+        #out = F.tanh(out)
+        #out = self.out_b(out)
 
         #out = self.log_soft(out)
         return out.permute(1,0)
@@ -1862,7 +1862,7 @@ class NMT:
     def update_result_file(self):
 
         self._test_embedding(exit=False)
-        
+
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
         st_now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
