@@ -852,6 +852,10 @@ class NMT:
 
     def task_set_embedding_matrix(self):
         print('stage: set_embedding_matrix')
+        if self.embedding_matrix is not None:
+            print('embedding already loaded.')
+            return
+            pass
         glove_data = hparams['data_dir'] + hparams['embed_name']
         from gensim.models.keyedvectors import KeyedVectors
         import numpy as np
@@ -1047,6 +1051,8 @@ class NMT:
 
 
     def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False):
+        ''' NOTE: pairs switch from train to embedding all the time. '''
+
         if hparams['vocab_name'] is not None:
             v_name = hparams['data_dir'] + hparams['vocab_name']
             v_name = v_name.replace('big', hparams['babi_name'])
