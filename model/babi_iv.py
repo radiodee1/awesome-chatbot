@@ -143,15 +143,23 @@ class CustomGRU(nn.Module):
         self.U = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.U.state_dict()['weight'])
 
+        self.Wh = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.Wr.state_dict()['weight'])
+        self.Uh = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.Ur.state_dict()['weight'])
+
     def forward(self, fact, C):
 
+        z = F.sigmoid(self.Wh( fact) + self.Uh( C) )
         r = F.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
         #g = g.unsqueeze(1).expand_as(h_tilda)
 
         #print( h_tilda.size(), C.size(),'gru')
         #h = g * h_tilda + (1 - g) * C
-        return h_tilda, h_tilda
+
+        zz = z * C + (1 - z) * h_tilda
+        return zz, zz
 
 class EpisodicAttn(nn.Module):
 
