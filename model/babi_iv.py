@@ -1860,6 +1860,9 @@ class NMT:
         self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
 
     def update_result_file(self):
+
+        self._test_embedding(exit=False)
+        
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
         st_now = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
