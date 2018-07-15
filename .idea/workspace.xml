@@ -29,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="269">
-              <caret line="1032" column="34" selection-start-line="1032" selection-start-column="30" selection-end-line="1032" selection-end-column="34" />
+              <caret line="1845" column="27" selection-start-line="1845" selection-start-column="8" selection-end-line="1845" selection-end-column="27" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -103,8 +103,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>task_set_embedding_matrix</find>
-      <find>task_babi_files</find>
       <find>NMT</find>
       <find>task_normal_train</find>
       <find>test_embedding</find>
@@ -133,6 +131,8 @@
       <find>addSentence</find>
       <find>vocab_lang</find>
       <find>Lang</find>
+      <find>first_load</find>
+      <find>setup_for_babi_test</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -570,7 +570,7 @@
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="269">
-          <caret line="1032" column="34" selection-start-line="1032" selection-start-column="30" selection-end-line="1032" selection-end-column="34" />
+          <caret line="1845" column="27" selection-start-line="1845" selection-start-column="8" selection-end-line="1845" selection-end-column="27" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

@@ -953,7 +953,7 @@ class NMT:
                                                                              omit_unk=self.do_hide_unk)
             #self.model_0_wra.test_embedding()
 
-            self.first_load = True
+            #self.first_load = True
             self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
             self.start = 0
 
