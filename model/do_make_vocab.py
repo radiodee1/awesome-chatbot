@@ -17,7 +17,7 @@ TO = '../data/embed.txt'
 train_file = ''
 v = []
 
-def make_vocab(train_file):
+def make_vocab(train_file, order=False, read_glove=False):
     global v
     wordlist = []
     for filename in train_file:
@@ -29,7 +29,19 @@ def make_vocab(train_file):
                 for word in y:
                     wordlist.append(word)
             pass
-    print('values read')
+    print('values read from text file.')
+
+    if read_glove:
+        with open(FROM, 'r') as x:
+            xx = x.read()
+            for line in xx.split('\n'):
+                l = line.split(' ')
+                #print( len(l))
+                if len(l) > 2:
+                    wordlist.append(l[0].strip())
+        pass
+
+        print('values read from glove file.')
 
     #wordset = set(wordlist)
     c = Counter(wordlist)
@@ -42,9 +54,13 @@ def make_vocab(train_file):
     print(len(cc), 'length of result list')
     #v = []
     num = 0
-    ss = sorted(cc, key=itemgetter(1))
-    #print(ss[0:10])
-    ss.reverse()
+    if order:
+        ss = sorted(cc, key=itemgetter(1))
+        #print(ss[0:10])
+        ss.reverse()
+    else:
+        ss = cc
+
     #print(ss[0:10])
     for z in ss: # sorted(cc, key= lambda word: word[1]):
         if z[0].lower() not in v and num < vocab_length: v.append(z[0].lower())
@@ -127,28 +143,41 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Make vocab file.')
     parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
     parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
-    parser.add_argument('--babi-only', help='Load words from the babi set only', action='store_true')
+    parser.add_argument('--all-glove', help='Load all words from the glove set.', action='store_true')
     parser.add_argument('--load-embed-size', help='Override settings embed-size hparam.')
+    parser.add_argument('--order', help='put in alpha order.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
     print(args)
     #exit()
     train_file = [] #'../data/train.big.from'] # , '../data/train.big.to']
+    order = False
+    read_glove = False
 
-    if args['babi_only']:
+    if args['babi']:
         train_file = []
-        args['babi'] = True
+        #args['babi'] = True
     elif args['basefile'] is not None :
         train_file = [args['basefile']]
 
     if args['load_embed_size'] is not None:
         hparams['embed_size'] = int(args['load_embed_size'])
 
+    if args['order'] is True:
+        order = True
+    else:
+        order = False
+
+    if args['all_glove'] is True:
+        read_glove = True
+    else:
+        read_glove = False
+
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
     babi_file3 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
 
-    if args['babi'] or args['babi_only']:
+    if args['babi']: # or args['babi_only']:
         train_file.append(babi_file)
         train_file.append(babi_file2)
         train_file.append(babi_file3)
@@ -162,7 +191,7 @@ if __name__ == '__main__':
     v = []
 
     if True:
-        v = make_vocab(train_file)
+        v = make_vocab(train_file, order=order, read_glove=read_glove)
         save_vocab(v, args['babi'])
     if len(v) == 0:
         filename = hparams['data_dir'] + hparams['vocab_name']
