@@ -544,13 +544,13 @@ class WrapMemRNN(nn.Module):
                     minus = self.prune_tensor(last[iii + index], 3)
 
                     z = torch.mul((1 - ggg), minus)
-                    
+
                     h = h + z
                     #print(h,'h')
 
             #out, gru = self.model_3_mem_b(self.prune_tensor(h, 3), self.prune_tensor(last[iii ] ,3))
 
-            last.append(gru) #h.unsqueeze(0)) ## out
+            last.append(h) #h.unsqueeze(0)) ## gru
             if iii == sen - 1 : ep.append(self.prune_tensor(h,3)) #h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
