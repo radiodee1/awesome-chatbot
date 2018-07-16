@@ -538,7 +538,7 @@ class WrapMemRNN(nn.Module):
             h = self.prune_tensor(h, 3)
 
             if last[iii + index] is not None:
-                if False:
+                if True:
                     minus = self.prune_tensor(last[iii], 3)
 
                     z = torch.mul((1 - ggg), minus)
@@ -1577,7 +1577,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         #self.criterion = nn.NLLLoss()
-        self.criterion = nn.CrossEntropyLoss() #size_average=False) ## size_average=False
+        self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
