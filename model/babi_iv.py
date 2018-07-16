@@ -538,7 +538,7 @@ class WrapMemRNN(nn.Module):
             h = self.prune_tensor(h, 3)
 
             if last[iii + index] is not None:
-                if True:
+                if False:
                     minus = self.prune_tensor(last[iii + index], 3)
 
                     z = torch.mul((1 - ggg), minus)
@@ -583,11 +583,11 @@ class WrapMemRNN(nn.Module):
                 qq,
                 (c * qq),
                 (c * mem),
-                (torch.abs(c - qq) ),
-                (torch.abs(c - mem) )
+                F.tanh(c - qq) ,
+                F.tanh(c - mem)
             ]
             #for ii in concat_list: print(ii.size())
-
+            #for ii in concat_list: print(ii)
             #exit()
 
             concat_list = torch.cat(concat_list, dim=1)
@@ -597,9 +597,10 @@ class WrapMemRNN(nn.Module):
         att = torch.cat(att, dim=0)
 
         z = self.model_4_att(att)
-        z = F.sigmoid(z)
+        #z = F.sigmoid(z)
         #print(z.size())
-        #z = F.softmax(z, dim=0) * z ## dim=1
+        z = F.softmax(z, dim=0) * z ## dim=1
+        #z = F.sigmoid(z)
 
         return z
 
