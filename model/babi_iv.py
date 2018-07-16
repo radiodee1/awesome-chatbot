@@ -1577,7 +1577,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         #self.criterion = nn.NLLLoss()
-        self.criterion = nn.CrossEntropyLoss(size_average=False)
+        self.criterion = nn.CrossEntropyLoss() #size_average=False) ## size_average=False
 
         training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
 
