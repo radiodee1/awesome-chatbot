@@ -1453,7 +1453,7 @@ class NMT:
         if num is None:
             num = hparams['unk']
         num = self.variableFromSentence(self.output_lang, str(num))
-        print('\n'+num)
+        print('\n',num)
         self.model_0_wra.test_embedding(num)
         if exit: exit()
 
