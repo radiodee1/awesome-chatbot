@@ -390,6 +390,9 @@ class WrapMemRNN(nn.Module):
 
         self.reset_parameters()
 
+        if self.embedding is not None:
+            self.load_embedding(self.embedding)
+
         if self.freeze_embedding or self.embedding is not None:
             self.new_freeze_embedding()
         #self.criterion = nn.CrossEntropyLoss()
@@ -671,6 +674,7 @@ class NMT:
         self.model_0_wra = None
         self.opt_1 = None
         self.embedding_matrix = None
+        self.embedding_matrix_is_loaded = False
         self.criterion = None
 
         self.best_loss = None
@@ -882,7 +886,7 @@ class NMT:
 
     def task_set_embedding_matrix(self):
         print('stage: set_embedding_matrix')
-        if self.embedding_matrix is not None:
+        if self.embedding_matrix is not None and self.embedding_matrix_is_loaded:
             print('embedding already loaded.')
             return
             pass
@@ -1324,6 +1328,7 @@ class NMT:
 
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
+                    self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
                     self.model_0_wra.new_freeze_embedding()
                 if self.opt_1 is not None:
