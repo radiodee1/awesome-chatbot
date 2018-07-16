@@ -525,15 +525,17 @@ class WrapMemRNN(nn.Module):
         ep = []
         for iii in range(sen):
 
-            index = 0 -1
+            index = 0 #-1
             c = ct[0,iii,:].unsqueeze(0)
+
+            out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[-1],3))
 
             g = g.squeeze(0)
             #gru = gru.squeeze(0).permute(1,0)
 
             ggg = g[iii]
 
-            h = torch.mul(ggg , c)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+            h = torch.mul(ggg , out)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             h = self.prune_tensor(h, 3)
 
@@ -542,20 +544,18 @@ class WrapMemRNN(nn.Module):
                     minus = self.prune_tensor(last[iii + index], 3)
 
                     z = torch.mul((1 - ggg), minus)
-                    #print(minus, 'minus', ggg)
-                    #z = F.tanh(z)
-
+                    
                     h = h + z
                     #print(h,'h')
 
-            out, gru = self.model_3_mem_b(self.prune_tensor(h, 3), self.prune_tensor(last[iii ] ,3))
+            #out, gru = self.model_3_mem_b(self.prune_tensor(h, 3), self.prune_tensor(last[iii ] ,3))
 
             last.append(gru) #h.unsqueeze(0)) ## out
-            if iii == sen - 1 : ep.append(self.prune_tensor(gru,3)) #h.unsqueeze(1))
+            if iii == sen - 1 : ep.append(self.prune_tensor(h,3)) #h.unsqueeze(1))
 
         h = torch.cat(ep, dim=1)
 
-        return out, gru # h, gru
+        return h, gru # h, gru
 
 
 
