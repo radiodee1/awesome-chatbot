@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="305">
-              <caret line="888" column="80" selection-start-line="888" selection-start-column="80" selection-end-line="888" selection-end-column="80" />
+            <state relative-caret-position="341">
+              <caret line="1455" column="17" selection-start-line="1455" selection-start-column="17" selection-end-line="1455" selection-end-column="17" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -108,7 +107,6 @@
       <find>task_train_epochs</find>
       <find>prepareData</find>
       <find>Encoder</find>
-      <find>_test_embedding</find>
       <find>EpisodicAttn</find>
       <find>model_1_enc</find>
       <find>do_test_not_train</find>
@@ -134,6 +132,7 @@
       <find>embedding_matrix</find>
       <find>load_embedding</find>
       <find>task_set_embedding_matrix</find>
+      <find>_test_embedding</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -570,8 +569,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="888" column="80" selection-start-line="888" selection-start-column="80" selection-end-line="888" selection-end-column="80" />
+        <state relative-caret-position="341">
+          <caret line="1455" column="17" selection-start-line="1455" selection-start-column="17" selection-end-line="1455" selection-end-column="17" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
