@@ -143,14 +143,14 @@ class CustomGRU(nn.Module):
         self.U = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.U.state_dict()['weight'])
 
-        self.Wh = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.Wh.state_dict()['weight'])
-        self.Uh = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.Uh.state_dict()['weight'])
+        self.Wz = nn.Linear(input_size, hidden_size)
+        init.xavier_normal_(self.Wz.state_dict()['weight'])
+        self.Uz = nn.Linear(hidden_size, hidden_size)
+        init.xavier_normal_(self.Uz.state_dict()['weight'])
 
     def forward(self, fact, C):
 
-        z = F.sigmoid(self.Wh( fact) + self.Uh( C) )
+        z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
         r = F.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
 
@@ -386,7 +386,7 @@ class WrapMemRNN(nn.Module):
         self.last_mem = None  # output of mem unit
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
-        self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
+        #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
         self.reset_parameters()
 
