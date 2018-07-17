@@ -112,11 +112,14 @@ def load_vocab(filename=None):
     pass
 
 
-def prep_glove(vocab_list):
+def prep_glove(vocab_list, w2v=False):
     uniform_low = -1.0
     uniform_high = 1.0
-    glove2word2vec(glove_input_file=FROM, word2vec_output_file=TO+'-temp')
-    glove_model = KeyedVectors.load_word2vec_format(TO+'-temp', binary=False)
+    if not w2v:
+        glove2word2vec(glove_input_file=FROM, word2vec_output_file=TO+'-temp')
+        glove_model = KeyedVectors.load_word2vec_format(TO+'-temp', binary=False)
+    else:
+        glove_model = KeyedVectors.load_word2vec_format('../raw/GoogleNews-vectors-negative300.bin', binary=True)
     num = 0
     with open(TO,'w') as f:
         f.write(str(len(vocab_list)) + ' ' + str(hparams['embed_size']) + '\n')
@@ -144,6 +147,7 @@ if __name__ == '__main__':
     parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
     parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
     parser.add_argument('--all-glove', help='Load all words from the glove set.', action='store_true')
+    parser.add_argument('--w2v', help='replace all glove data with data obtained from w2v downloads.', action='store_true')
     parser.add_argument('--load-embed-size', help='Override settings embed-size hparam.')
     parser.add_argument('--order', help='put in alpha order.', action='store_true')
     args = parser.parse_args()
@@ -153,6 +157,7 @@ if __name__ == '__main__':
     train_file = [] #'../data/train.big.from'] # , '../data/train.big.to']
     order = False
     read_glove = False
+    use_w2v = False
 
     if args['babi']:
         train_file = []
@@ -172,6 +177,12 @@ if __name__ == '__main__':
         read_glove = True
     else:
         read_glove = False
+
+    if args['w2v'] is True:
+        use_w2v = True
+        hparams['embed_size'] = 300
+    else:
+        use_w2v = False
 
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
@@ -199,7 +210,7 @@ if __name__ == '__main__':
         v = load_vocab(filename)
 
     if hparams['embed_size'] is not None and hparams['embed_size'] != 0:
-        prep_glove(v)
+        prep_glove(v, w2v=use_w2v)
 
         if os.path.isfile(TO+'-temp'):
             os.system('rm ' + TO + '-temp')
