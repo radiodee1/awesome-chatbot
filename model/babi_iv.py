@@ -1543,8 +1543,9 @@ class NMT:
 
 
         else:
-            self.model_0_wra.eval()
+            #self.model_0_wra.eval()
             with torch.no_grad():
+                self.model_0_wra.eval()
                 outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                       criterion)
                 loss = None
