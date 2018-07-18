@@ -256,11 +256,12 @@ class MemRNN(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout=0.3, bidirectional=False, embedding=None):
+                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
         self.bidirectional = bidirectional
+        self.position = position
         self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
 
@@ -291,17 +292,65 @@ class Encoder(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0,0,0:10]) # print first ten values
 
+    def position_encoding(self, embedded_sentence):
+        embedded_sentence = embedded_sentence.permute(1,0,2)
+        #print(embedded_sentence.size(),'esize')
+        _, slen, elen = embedded_sentence.size()
+
+        l = [[(1 - s / (slen - 1)) - (e / (elen - 1)) * (1 - 2 * s / (slen - 1)) for e in range(elen)] for s in
+             range(slen)]
+        l = torch.FloatTensor(l)
+        l = l.unsqueeze(0)  # for #batch
+        #print(l.size(),"l")
+        l = l.expand_as(embedded_sentence)
+        if hparams['cuda'] is True: l = l.cuda()
+        weighted = embedded_sentence * Variable(l)
+        #weighted = torch.sum(weighted, dim=1).unsqueeze(0)  # sum with tokens
+        #print(weighted.size(),'w')
+        return weighted
+
+    def list_encoding(self, lst, hidden):
+        l = []
+        #lst = [lst]
+        for i in lst:
+            embedded = self.embed(i)
+            #print(embedded.size(),'em')
+            #if self.position: embedded = embedded.unsqueeze(0)
+            l.append(embedded.permute(1,0,2))
+        embedded = torch.cat(l, dim=0)
+
+        #print('----' ,embedded.size())
+        if True:
+            embedded = self.position_encoding(embedded)
+            embedded = self.dropout(embedded)
+            encoder_out, encoder_hidden = self.gru(embedded, hidden)
+
+            if self.bidirectional:
+                e1 = encoder_out[0, :, :self.hidden_dim]
+                e2 = encoder_out[0, :, self.hidden_dim:]
+                encoder_out = e1 + e2  #
+                encoder_out = encoder_out.unsqueeze(0)
+            #l.append(encoder_out)
+        #encoder_out = torch.cat(l, dim=1)
+        encoder_out = torch.sum(encoder_out, dim=1).unsqueeze(0)
+        #print(encoder_out.size(),'list')
+        return encoder_out, encoder_hidden
+
     def forward(self, source, hidden=None):
+        if self.position: return self.list_encoding(source, hidden)
 
         embedded = self.embed(source)
         #print(embedded.size(),'emb')
+        #if self.position: embedded = self.position_encoding(embedded)
         embedded = self.dropout(embedded)
         #encoder_out = None
 
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
 
         if self.bidirectional:
-            encoder_out = encoder_out[0,:, :self.hidden_dim] + encoder_out[0,:,self.hidden_dim:]
+            e1 = encoder_out[0,:,:self.hidden_dim]
+            e2 = encoder_out[0,:,self.hidden_dim:]
+            encoder_out = e1 + e2 # encoder_out[0,:, :self.hidden_dim] + encoder_out[0,:,self.hidden_dim:]
             encoder_out = encoder_out.unsqueeze(0)
 
             #encoder_hidden = encoder_hidden[0,:,:] + encoder_hidden[1,:,:]
@@ -366,10 +415,10 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-
+        position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
 
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=True)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=True, position=position)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
         self.model_3_mem_a = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=gru_dropout)
@@ -441,7 +490,7 @@ class WrapMemRNN(nn.Module):
         for ii in input_variable:
 
             ii = self.prune_tensor(ii, 2)
-
+            #print(ii, 'ii')
             out1, hidden1 = self.model_1_enc(ii, None)
             #out1 = F.tanh(out1)
             prev_h1.append(out1)
@@ -540,7 +589,7 @@ class WrapMemRNN(nn.Module):
             h = self.prune_tensor(h, 3)
 
             if last[iii + index] is not None:
-                if True:
+                if False:
                     minus = self.prune_tensor(last[iii + index], 3)
 
                     z = torch.mul((1 - ggg), minus)
@@ -605,6 +654,7 @@ class WrapMemRNN(nn.Module):
         return z
 
     def prune_tensor(self, input, size):
+        if isinstance(input, list): return input
         while len(input.size()) < size:
             input = input.unsqueeze(0)
         while len(input.size()) > size:
@@ -1200,7 +1250,10 @@ class NMT:
         for i in group:
             g = self.variablesFromPair(i)
             #print(g[0])
-            g1.append(g[0].squeeze(1))
+            if not hparams['split_sentences']:
+                g1.append(g[0].squeeze(1))
+            else:
+                g1.append(g[0])
             g2.append(g[1].squeeze(1))
             g3.append(g[2].squeeze(1))
 
@@ -1216,9 +1269,30 @@ class NMT:
         else:
             return result
 
-
     def variablesFromPair(self,pair):
-        input_variable = self.variableFromSentence(self.input_lang, pair[0])
+        if hparams['split_sentences'] :
+            l = pair[0].strip().split('.')
+            sen = []
+            max_len = 0
+            for i in range(len(l)):
+                if len(l[i].strip().split(' ')) > max_len: max_len =  len(l[i].strip().split(' '))
+            for i in range(len(l)):
+                if len(l[i]) > 0:
+                    #line = l[i].strip()
+                    l[i] = l[i].strip()
+                    while len(l[i].strip().split(' ')) < max_len:
+                        l[i]+= " " + hparams['unk']
+                    #print(l[i])
+                    z = self.variableFromSentence(self.input_lang, l[i])
+                    #print(z)
+                    sen.append(z)
+            #sen = torch.cat(sen, dim=0)
+            #for i in sen: print(i.size())
+            #print('---')
+            input_variable = sen
+            pass
+        else:
+            input_variable = self.variableFromSentence(self.input_lang, pair[0])
         question_variable = self.variableFromSentence(self.output_lang, pair[1])
 
         if len(pair) > 2:
@@ -1798,25 +1872,26 @@ class NMT:
             question_variable = question
             if not self.do_load_babi: sos_token = question_variable
 
-        if False:
-            context_array = [ [] for _ in range(hparams['batch_size'])]
-            question_array = [ [] for _ in range(hparams['batch_size'])]
-            target_array = [ [] for _ in range(hparams['batch_size'])]
+        if True:
+            if hparams['split_sentences'] is not True:
+                input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
+            else:
+                input_variable = [input_variable]
+            question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
+            sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
 
-            context_array[0] = input_variable.squeeze(0)
-            question_array[0] = question_variable.squeeze(0)
-            target_array[0] = sos_token.squeeze(0)
-
-            print(context_array,'ca')
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra([input_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
-                                                   [question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
-                                                   [sos_token.squeeze(0).squeeze(0).squeeze(0)],
-                                                   None)
+            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
+
+                #[input_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
+                #                                   [question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
+                #                                   [sos_token.squeeze(0).squeeze(0).squeeze(0)],
+                #                                   None)
+
         outputs = [ans]
         #####################
 

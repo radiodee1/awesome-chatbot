@@ -40,5 +40,6 @@ hparams = {
     'tokens_per_sentence': 30, #32,
     'batch_constant': 512, #
     'zero_start': False,
-    'cuda': False
+    'cuda': False,
+    'split_sentences': True
 }

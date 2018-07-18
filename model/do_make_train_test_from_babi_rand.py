@@ -55,7 +55,7 @@ def init_babi(fname):
     return tasks
 
 
-def get_babi_raw(id, test_id):
+def get_babi_raw(id, test_id, sub_folder='en'):
     babi_map = {
         "1": "qa1_single-supporting-fact",
         "2": "qa2_two-supporting-facts",
@@ -106,25 +106,30 @@ def get_babi_raw(id, test_id):
     babi_name = babi_map[id]
     babi_test_name = babi_map[test_id]
     babi_train_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/en/%s_train.txt' % babi_name))
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)))
     babi_test_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/en/%s_test.txt' % babi_test_name))
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)))
     return babi_train_raw, babi_test_raw
 
 if __name__ == '__main__':
     print('do make train and test')
 
     print('usage:')
-    print(sys.argv[0], 'NUM')
+    print(sys.argv[0], 'NUM , [folder]')
     print('NUM is either a number between 1 and 20 or the keyword "all". ')
     print('"all" produces a set of files with all 20 tests, in original order.')
+    print('"folder" is either "en" or "en-10k"')
 
     id = '1'
+    sub_folder = 'en'
     if len(sys.argv) > 1:
         id = sys.argv[1]
     print(id)
     if id == 'all': id_lst = [ str(i+1) for i in range(20)]
     else: id_lst = [id]
+    if len(sys.argv) > 2:
+        sub_folder = sys.argv[2] #'en-10k'
+
     print(id_lst)
 
 
@@ -132,7 +137,7 @@ if __name__ == '__main__':
 
     for id in id_lst:
 
-        train, test = get_babi_raw(id,id)
+        train, test = get_babi_raw(id,id, sub_folder=sub_folder)
         tot = train[:]
         tot.extend(test[:])
         indexes = [ i for i in range(len(tot))]
