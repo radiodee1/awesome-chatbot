@@ -293,7 +293,7 @@ class Encoder(nn.Module):
         print(e[0,0,0:10]) # print first ten values
 
     def position_encoding(self, embedded_sentence):
-        embedded_sentence = embedded_sentence.permute(1,0,2)
+        #embedded_sentence = embedded_sentence.permute(1,0,2)
         #print(embedded_sentence.size(),'esize')
         _, slen, elen = embedded_sentence.size()
 
@@ -322,6 +322,8 @@ class Encoder(nn.Module):
         #print('----' ,embedded.size())
         if True:
             embedded = self.position_encoding(embedded)
+            embedded = torch.sum(embedded, dim=0)
+            embedded = embedded.unsqueeze(0)
             embedded = self.dropout(embedded)
             encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
@@ -332,7 +334,7 @@ class Encoder(nn.Module):
                 encoder_out = encoder_out.unsqueeze(0)
             #l.append(encoder_out)
         #encoder_out = torch.cat(l, dim=1)
-        encoder_out = torch.sum(encoder_out, dim=1).unsqueeze(0)
+        #encoder_out = torch.sum(encoder_out, dim=1).unsqueeze(0)
         #print(encoder_out.size(),'list')
         return encoder_out, encoder_hidden
 
@@ -1281,7 +1283,7 @@ class NMT:
                     #line = l[i].strip()
                     l[i] = l[i].strip()
                     while len(l[i].strip().split(' ')) < max_len:
-                        l[i]+= " " + hparams['unk']
+                        l[i] += " " + hparams['unk']
                     #print(l[i])
                     z = self.variableFromSentence(self.input_lang, l[i])
                     #print(z)
