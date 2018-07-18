@@ -322,7 +322,7 @@ class Encoder(nn.Module):
         #print('----' ,embedded.size())
         if True:
             embedded = self.position_encoding(embedded)
-            embedded = torch.sum(embedded, dim=0)
+            embedded = torch.sum(embedded, dim=1)
             embedded = embedded.unsqueeze(0)
             embedded = self.dropout(embedded)
             encoder_out, encoder_hidden = self.gru(embedded, hidden)
