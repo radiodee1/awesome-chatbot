@@ -1350,7 +1350,7 @@ class NMT:
         pass
 
     def save_checkpoint(self, state=None, is_best=True, num=0, converted=False, extra=''):
-        if state is None:
+        if state is None or True:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
@@ -1360,7 +1360,10 @@ class NMT:
             #if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
             if ((self.best_accuracy_old is None and self.best_accuracy is not None) or
                     (self.best_accuracy_old is not None and self.best_accuracy > self.best_accuracy_old)):
-                torch.save(state, basename + '.' + str(int(math.floor(self.best_accuracy * 100))) + '.best.pth')
+                update = basename + '.' + str(int(math.floor(self.best_accuracy * 100))) + '.best.pth'
+                if os.path.isfile(update):
+                    os.remove(update)
+                torch.save(state, update)
                 self.best_accuracy_old = self.best_accuracy
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
