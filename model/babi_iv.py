@@ -111,6 +111,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
+---------------------------
+
+Some code is originally written by Wonjae Kim. This code includes 
+some of the Pytorch models for processing input in the Encoder stage. 
+He does not have a license file in his project repository.
+The code can be found at the following site:
+
+https://github.com/dandelin/Dynamic-memory-networks-plus-Pytorch
 
 '''
 
