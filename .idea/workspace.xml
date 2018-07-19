@@ -107,7 +107,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_1_enc</find>
       <find>do_test_not_train</find>
       <find>nn.linear</find>
       <find>dropout</find>
@@ -137,6 +136,7 @@
       <find>batch_size</find>
       <find>variablesFromPair</find>
       <find>print</find>
+      <find>save_checkpoint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
