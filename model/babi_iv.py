@@ -1371,6 +1371,12 @@ class NMT:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
                       basename + '.best.pth')
 
+    def move_high_checkpoint(self):
+        basename = hparams['save_dir'] + hparams['base_filename']
+        update = basename + '.' + str(int(math.floor(10000))) + '.best.pth'
+        if os.path.isfile(update):
+            os.system('cp ' + update + ' ' + basename + '.best.pth')
+
     def load_checkpoint(self, filename=None):
         if self.first_load:
             self.first_load = False
@@ -1490,6 +1496,7 @@ class NMT:
 
                 if (len(self.score_list) > 3 and float(self.score_list[-2]) == 100.00 and
                         float(self.score_list[-3]) == 100.00 and float(self.score_list[-1]) != 100):
+                    self.move_high_checkpoint()
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                     print(t)
