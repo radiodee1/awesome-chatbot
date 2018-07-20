@@ -341,8 +341,7 @@ class Encoder(nn.Module):
                 encoder_out = e1 + e2  #
                 encoder_out = encoder_out.unsqueeze(0)
             #l.append(encoder_out)
-        #encoder_out = torch.cat(l, dim=1)
-        #encoder_out = torch.sum(encoder_out, dim=1).unsqueeze(0)
+
         #print(encoder_out.size(),'list')
         return encoder_out, encoder_hidden
 
@@ -560,7 +559,7 @@ class WrapMemRNN(nn.Module):
                     out = out[: , -1, :]
                     #print(out.size(),'out')
 
-                    m_list.append(F.tanh(out))
+                    m_list.append(F.relu(out))
 
                 mem_list.append(m_list[self.memory_hops])
 
@@ -588,7 +587,7 @@ class WrapMemRNN(nn.Module):
             c = ct[0,iii,:].unsqueeze(0)
 
             out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[-1],3))
-
+            #print(out.size(), c.size(),'o c')
             g = g.squeeze(0)
             #gru = gru.squeeze(0).permute(1,0)
 
@@ -632,6 +631,8 @@ class WrapMemRNN(nn.Module):
         for iii in range(sen):
             c = ct[0,iii,:]
 
+            #print(c.size(),'c')
+
             qq = self.prune_tensor(q_q, 3) #.unsqueeze(0)
 
             qq = qq[:,-1, :]
@@ -665,6 +666,7 @@ class WrapMemRNN(nn.Module):
 
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
+        if input is None: return input
         while len(input.size()) < size:
             input = input.unsqueeze(0)
         while len(input.size()) > size:
