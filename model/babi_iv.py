@@ -1497,6 +1497,16 @@ class NMT:
                     self.update_result_file()
                     exit()
 
+                ''' put convergence test here. '''
+                if self._convergence_test(4):
+                    time.ctime()
+                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
+                    print(t)
+                    print('converge')
+                    print('list:', self.score_list)
+                    self.update_result_file()
+                    exit()
+
                 if self.lr_adjustment_num < 1 and use_dropout_recipe:
                     hparams['dropout'] = 0.0
                     self.set_dropout(0.0)
@@ -1538,6 +1548,16 @@ class NMT:
             elif use_lr_recipe and False:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
+
+    def _convergence_test(self, num):
+        if len(self.score_list) < num: return False
+        val = float(self.score_list[-1])
+        if val == 100.00: return False
+        #print(self.score_list[- num:], 'convergence')
+        for i in self.score_list[- num:]:
+            if float(i) != val:
+                return False
+        return True
 
     def _test_embedding(self, num=None, exit=True):
         if num is None:
