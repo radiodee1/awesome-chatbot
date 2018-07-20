@@ -1524,7 +1524,7 @@ class NMT:
                     exit()
 
                 ''' put convergence test here. '''
-                if self._convergence_test(4):
+                if self._convergence_test(4) or self._convergence_test(4, value=100.00):
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                     print(t)
@@ -1575,13 +1575,16 @@ class NMT:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
 
-    def _convergence_test(self, num):
-        if len(self.score_list) < num: return False
-        val = float(self.score_list[-1])
-        if val == 100.00: return False
-        #print(self.score_list[- num:], 'convergence')
-        for i in self.score_list[- num:]:
-            if float(i) != val:
+    def _convergence_test(self, num, lst=None, value=None):
+        if lst is None:
+            lst = self.score_list
+        if len(lst) < num: return False
+
+        if value is None:
+            value = float(lst[-1])
+        
+        for i in lst[- num:]:
+            if float(i) != value:
                 return False
         return True
 
