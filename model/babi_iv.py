@@ -613,26 +613,28 @@ class WrapMemRNN(nn.Module):
 
             out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii ] ,3),ggg)
 
+            concat = [
+                self.prune_tensor(prev_mem, 1),
+                self.prune_tensor(out, 1),
+                self.prune_tensor(question[0, iii, :], 1)
+            ]
+            # for i in concat: print(i.size())
+            # exit()
+            concat = torch.cat(concat, dim=0)
+            h = self.next_mem(concat)
 
+            #z = h #out #h # out
 
-            z = out #h # out
-            last.append(z ) #h) #h.unsqueeze(0)) ## gru
-            if iii == sen - 1 : ep.append(self.prune_tensor(z, 3)) # h
+            last.append(out) #h) #h.unsqueeze(0)) ## gru
+
+            if iii == sen - 1 : ep.append(self.prune_tensor(h, 3)) # h
 
         h = torch.cat(ep, dim=1)
 
-        _, sent, _ = question.size()
+        #_, sent, _ = question.size()
         #print(sent,h.size(),'h')
 
-        concat = [
-            self.prune_tensor(prev_mem, 1),
-            self.prune_tensor(h,1),
-            self.prune_tensor(question[0, sent -1 ,:],1)
-        ]
-        #for i in concat: print(i.size())
-        #exit()
-        concat = torch.cat(concat, dim=0)
-        h = self.next_mem(concat)
+
 
 
         return h, gru # h, gru
