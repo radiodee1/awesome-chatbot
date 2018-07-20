@@ -434,6 +434,8 @@ class WrapMemRNN(nn.Module):
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
+        self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
+
         self.input_var = None  # for input
         self.q_var = None  # for question
         self.answer_var = None  # for answer
@@ -512,7 +514,7 @@ class WrapMemRNN(nn.Module):
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
-
+            #print(ii.size(),'ii')
             out2, hidden2 = self.model_2_enc(ii, None)
             #print(hidden2,'hidden2')
             #hidden2 = F.tanh(hidden2)
@@ -548,7 +550,7 @@ class WrapMemRNN(nn.Module):
                         print(x.permute(1,0),'x -- after', len(x), sequences[i].size())
                         #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
-                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), zz)
+                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), zz, m_list[-1], self.q_q[i])
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
@@ -571,7 +573,7 @@ class WrapMemRNN(nn.Module):
 
         return None
 
-    def new_episode_small_step(self, ct, g, prev_h):
+    def new_episode_small_step(self, ct, g, prev_h, prev_mem=None, question=None):
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
@@ -586,19 +588,19 @@ class WrapMemRNN(nn.Module):
             index = 0 - 1
             c = ct[0,iii,:].unsqueeze(0)
 
-            out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[-1],3))
+            #out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[-1],3))
             #print(out.size(), c.size(),'o c')
             g = g.squeeze(0)
             #gru = gru.squeeze(0).permute(1,0)
 
             ggg = g[iii]
 
-            h = torch.mul(ggg , out)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+            h = torch.mul(ggg , c)# out)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
 
             h = self.prune_tensor(h, 3)
 
             if last[iii + index] is not None:
-                if True:
+                if False:
                     minus = self.prune_tensor(last[iii + index], 3)
 
                     z = torch.mul((1 - ggg), minus)
@@ -606,7 +608,22 @@ class WrapMemRNN(nn.Module):
                     h = h + z
                     #print(h,'h')
 
-            #out, gru = self.model_3_mem_b(self.prune_tensor(h, 3), self.prune_tensor(last[iii ] ,3))
+            out, gru = self.model_3_mem_b(self.prune_tensor(h, 3), self.prune_tensor(last[iii ] ,3))
+
+            '''
+            _, sent, _ = question.size()
+
+            concat = [
+                self.prune_tensor(prev_mem, 1),
+                self.prune_tensor(h,1),
+                self.prune_tensor(question[0, sent -1 ,:],1)
+            ]
+            #for i in concat: print(i.size())
+            #exit()
+            concat = torch.cat(concat, dim=0)
+            h = self.next_mem(concat)
+            '''
+
 
             last.append(h) #h.unsqueeze(0)) ## gru
             if iii == sen - 1 : ep.append(self.prune_tensor(h,3)) #h.unsqueeze(1))
@@ -643,8 +660,8 @@ class WrapMemRNN(nn.Module):
                 qq,
                 (c * qq),
                 (c * mem),
-                F.tanh(c - qq) ,
-                F.tanh(c - mem)
+                torch.abs(c - qq) ,
+                torch.abs(c - mem)
             ]
             #for ii in concat_list: print(ii.size())
             #for ii in concat_list: print(ii)
