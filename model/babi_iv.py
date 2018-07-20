@@ -624,9 +624,9 @@ class WrapMemRNN(nn.Module):
             h = self.next_mem(concat)
             '''
 
-
-            last.append(h) #h.unsqueeze(0)) ## gru
-            if iii == sen - 1 : ep.append(self.prune_tensor(h,3)) #h.unsqueeze(1))
+            z = out #h # out
+            last.append(z ) #h) #h.unsqueeze(0)) ## gru
+            if iii == sen - 1 : ep.append(self.prune_tensor(z, 3)) # h
 
         h = torch.cat(ep, dim=1)
 
