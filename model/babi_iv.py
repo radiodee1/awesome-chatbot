@@ -436,7 +436,7 @@ class WrapMemRNN(nn.Module):
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
-        #self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
+        self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -556,7 +556,8 @@ class WrapMemRNN(nn.Module):
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
-                    ee = self.prune_tensor(e[0, :,:], 3)
+                    ee = self.prune_tensor(e,3)
+                    #ee = self.prune_tensor(e[0, :,:], 3)
                     #print(ee.size(),'ee')
                     _, out = self.model_3_mem_a(ee, self.prune_tensor(m_list[iter + index], 3))
 
@@ -612,25 +613,27 @@ class WrapMemRNN(nn.Module):
 
             out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii ] ,3),ggg)
 
-            '''
-            _, sent, _ = question.size()
 
-            concat = [
-                self.prune_tensor(prev_mem, 1),
-                self.prune_tensor(h,1),
-                self.prune_tensor(question[0, sent -1 ,:],1)
-            ]
-            #for i in concat: print(i.size())
-            #exit()
-            concat = torch.cat(concat, dim=0)
-            h = self.next_mem(concat)
-            '''
 
             z = out #h # out
             last.append(z ) #h) #h.unsqueeze(0)) ## gru
             if iii == sen - 1 : ep.append(self.prune_tensor(z, 3)) # h
 
         h = torch.cat(ep, dim=1)
+
+        _, sent, _ = question.size()
+        #print(sent,h.size(),'h')
+
+        concat = [
+            self.prune_tensor(prev_mem, 1),
+            self.prune_tensor(h,1),
+            self.prune_tensor(question[0, sent -1 ,:],1)
+        ]
+        #for i in concat: print(i.size())
+        #exit()
+        concat = torch.cat(concat, dim=0)
+        h = self.next_mem(concat)
+
 
         return h, gru # h, gru
 
