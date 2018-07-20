@@ -434,7 +434,7 @@ class WrapMemRNN(nn.Module):
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
-        self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
+        #self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
 
         self.input_var = None  # for input
         self.q_var = None  # for question
