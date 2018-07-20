@@ -156,16 +156,19 @@ class CustomGRU(nn.Module):
         self.Uz = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.Uz.state_dict()['weight'])
 
-    def forward(self, fact, C):
+    def forward(self, fact, C, g=None):
 
-        z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
+
         r = F.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
 
-        #print( h_tilda.size(), C.size(),'gru')
-        #h = g * h_tilda + (1 - g) * C
-
-        zz = z * C + (1 - z) * h_tilda
+        if g is None:
+            z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
+            zz = z * C + (1 - z) * h_tilda
+        else:
+            zz = g * h_tilda + (1-g) * C
+            #print(zz.size(),'zz')
+        #zz = z * C + (1 - z) * h_tilda
         return zz, zz
 
 class EpisodicAttn(nn.Module):
@@ -252,10 +255,9 @@ class MemRNN(nn.Module):
             input = input.squeeze(0)
         return input
 
-    def forward(self, input, hidden=None):
+    def forward(self, input, hidden=None, g=None):
 
-
-        output, hidden_out = self.gru(input, hidden)
+        output, hidden_out = self.gru(input, hidden, g)
 
         #output = None
         #print(output.size(), input.size(), hidden_out.size(), hidden.size(),'list')
@@ -595,12 +597,12 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii]
 
-            h = torch.mul(ggg , c)# out)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
-
-            h = self.prune_tensor(h, 3)
-
             if last[iii + index] is not None:
-                if True:
+                if False:
+                    h = torch.mul(ggg, c)  # out)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
+
+                    h = self.prune_tensor(h, 3)
+
                     minus = self.prune_tensor(last[iii + index], 3)
 
                     z = torch.mul((1 - ggg), minus)
@@ -608,7 +610,7 @@ class WrapMemRNN(nn.Module):
                     h = h + z
                     #print(h,'h')
 
-            out, gru = self.model_3_mem_b(self.prune_tensor(h, 3), self.prune_tensor(last[iii ] ,3))
+            out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii ] ,3),ggg)
 
             '''
             _, sent, _ = question.size()
@@ -1582,7 +1584,7 @@ class NMT:
 
         if value is None:
             value = float(lst[-1])
-        
+
         for i in lst[- num:]:
             if float(i) != value:
                 return False
