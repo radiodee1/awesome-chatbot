@@ -617,7 +617,7 @@ class WrapMemRNN(nn.Module):
 
             #z = h #out #h # out
 
-            last.append(h) #gru)
+            last.append(gru) #gru) <<--- this is supposed to be the hidden value
 
         #print(len(ep),h.size(),'h-last')
 
