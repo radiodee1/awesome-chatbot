@@ -330,19 +330,19 @@ class Encoder(nn.Module):
         embedded = torch.cat(l, dim=0)
 
         #print('----' ,embedded.size())
-        if True:
-            embedded = self.position_encoding(embedded)
-            embedded = torch.sum(embedded, dim=1)
-            embedded = embedded.unsqueeze(0)
-            embedded = self.dropout(embedded)
-            encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
-            if self.bidirectional:
-                e1 = encoder_out[0, :, :self.hidden_dim]
-                e2 = encoder_out[0, :, self.hidden_dim:]
-                encoder_out = e1 + e2  #
-                encoder_out = encoder_out.unsqueeze(0)
-            #l.append(encoder_out)
+        embedded = self.position_encoding(embedded)
+        embedded = torch.sum(embedded, dim=1)
+        embedded = embedded.unsqueeze(0)
+        #embedded = self.dropout(embedded)
+        encoder_out, encoder_hidden = self.gru(embedded, hidden)
+
+        if self.bidirectional:
+            e1 = encoder_out[0, :, :self.hidden_dim]
+            e2 = encoder_out[0, :, self.hidden_dim:]
+            encoder_out = e1 + e2  #
+            encoder_out = encoder_out.unsqueeze(0)
+        #l.append(encoder_out)
 
         #print(encoder_out.size(),'list')
         return encoder_out, encoder_hidden
@@ -431,7 +431,7 @@ class WrapMemRNN(nn.Module):
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=True, position=position)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout, embedding=embedding, bidirectional=False)
-        self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
+        #self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
@@ -542,7 +542,8 @@ class WrapMemRNN(nn.Module):
                 z = self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
-                zz = self.prune_tensor(z.clone(), 3)
+                #zz = self.prune_tensor(z.clone(), 3)
+                zz = Variable(torch.zeros(1,1,self.hidden_size))
 
                 index = 0
                 for iter in range(self.memory_hops):
@@ -557,17 +558,10 @@ class WrapMemRNN(nn.Module):
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
-                    ee = self.prune_tensor(e,3)
-                    #ee = self.prune_tensor(e[0, :,:], 3)
-                    #print(ee.size(),'ee')
+                    #ee = self.prune_tensor(e,3)
 
-                    '''
-                    _, out = self.model_3_mem_a(ee, self.prune_tensor(m_list[iter + index], 3))
-
-                    out = out[: , -1, :]
-                    '''
                     #print(out.size(),'out')
-                    out = self.prune_tensor(ee, 3)
+                    out = self.prune_tensor(e, 3)
 
                     m_list.append(out)
 
@@ -590,10 +584,10 @@ class WrapMemRNN(nn.Module):
 
         last = [prev_h]
 
-        ep = []
+        #ep = []
         for iii in range(sen):
 
-            index = 0 #- 1
+            #index = 0 #- 1
             c = ct[0,iii,:].unsqueeze(0)
 
             g = g.squeeze(0)
@@ -601,7 +595,7 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii]
 
-            out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii ] ,3),ggg)
+            out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg)
 
             q_index = question.size()[1] - 1
 
@@ -614,14 +608,13 @@ class WrapMemRNN(nn.Module):
             #for i in concat: print(i.size())
             #exit()
             concat = torch.cat(concat, dim=0)
+            #print(concat.size(),'con')
             h = self.next_mem(concat)
 
             h = F.relu(h)
             #z = h #out #h # out
 
-            last.append(gru) #gru) <<--- this is supposed to be the hidden value
-
-        #print(len(ep),h.size(),'h-last')
+            last.append(gru) # gru <<--- this is supposed to be the hidden value
 
         return h, gru # h, gru
 
