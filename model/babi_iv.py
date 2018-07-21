@@ -595,25 +595,10 @@ class WrapMemRNN(nn.Module):
             index = 0 #- 1
             c = ct[0,iii,:].unsqueeze(0)
 
-            #out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[-1],3))
-            #print(out.size(), c.size(),'o c')
             g = g.squeeze(0)
             #gru = gru.squeeze(0).permute(1,0)
 
             ggg = g[iii]
-
-            if last[iii + index] is not None:
-                if False:
-                    h = torch.mul(ggg, c)  # out)#  + torch.mul((1 - g[iii]) , prev_h.permute(1,0))
-
-                    h = self.prune_tensor(h, 3)
-
-                    minus = self.prune_tensor(last[iii + index], 3)
-
-                    z = torch.mul((1 - ggg), minus)
-
-                    h = h + z
-                    #print(h,'h')
 
             out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii ] ,3),ggg)
 
@@ -632,17 +617,9 @@ class WrapMemRNN(nn.Module):
 
             #z = h #out #h # out
 
-            last.append(out) #h) #h.unsqueeze(0)) ## gru
+            last.append(h) #gru)
 
-            if iii == sen - 1 : ep.append(self.prune_tensor(h, 3)) # h
-
-        h = torch.cat(ep, dim=1)
-
-        #_, sent, _ = question.size()
-        #print(sent,h.size(),'h')
-
-
-
+        #print(len(ep),h.size(),'h-last')
 
         return h, gru # h, gru
 
