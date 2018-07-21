@@ -512,18 +512,18 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
 
-        prev_h2 = []
+        prev_h2 = [None]
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
             #print(ii.size(),'ii')
-            out2, hidden2 = self.model_2_enc(ii, None)
-            #print(hidden2,'hidden2')
+            out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
+            #print(hidden2.size(),'hidden2')
             #hidden2 = F.tanh(hidden2)
             prev_h2.append(hidden2)
 
-        self.q_q = prev_h2 # hidden2[:,-1,:]
-
+        self.q_q = prev_h2[1:] # hidden2[:,-1,:]
+        #print(len(self.q_q),'len', self.q_q[0].size())
 
         return
 
@@ -617,13 +617,16 @@ class WrapMemRNN(nn.Module):
 
             out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii ] ,3),ggg)
 
+            q_index = question.size()[1] - 1
+
             concat = [
                 self.prune_tensor(prev_mem, 1),
                 self.prune_tensor(out, 1),
-                self.prune_tensor(question[0, iii, :], 1)
+                self.prune_tensor(question[0, q_index, :], 1)
             ]
-            # for i in concat: print(i.size())
-            # exit()
+            #print(question.size(),sen,'ques')
+            #for i in concat: print(i.size())
+            #exit()
             concat = torch.cat(concat, dim=0)
             h = self.next_mem(concat)
 
