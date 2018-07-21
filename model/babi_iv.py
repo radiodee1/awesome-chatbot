@@ -621,7 +621,7 @@ class WrapMemRNN(nn.Module):
 
         #print(len(ep),h.size(),'h-last')
 
-        return h, gru # h, gru
+        return out, gru # h, gru
 
 
 
@@ -1516,7 +1516,7 @@ class NMT:
                     exit()
 
                 ''' put convergence test here. '''
-                if self._convergence_test(4) or self._convergence_test(4, value=100.00):
+                if self._convergence_test(10) or self._convergence_test(4, value=100.00):
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                     print(t)
