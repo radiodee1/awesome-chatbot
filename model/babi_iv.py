@@ -569,7 +569,7 @@ class WrapMemRNN(nn.Module):
                     #print(out.size(),'out')
                     out = self.prune_tensor(ee, 3)
 
-                    m_list.append(F.relu(out))
+                    m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
 
@@ -616,13 +616,14 @@ class WrapMemRNN(nn.Module):
             concat = torch.cat(concat, dim=0)
             h = self.next_mem(concat)
 
+            h = F.relu(h)
             #z = h #out #h # out
 
             last.append(gru) #gru) <<--- this is supposed to be the hidden value
 
         #print(len(ep),h.size(),'h-last')
 
-        return out, gru # h, gru
+        return h, gru # h, gru
 
 
 
