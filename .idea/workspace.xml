@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_iv.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_iv.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,8 +28,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="817">
-              <caret line="336" column="9" selection-start-line="336" selection-start-column="9" selection-end-line="336" selection-end-column="9" />
+            <state relative-caret-position="593">
+              <caret line="430" lean-forward="true" selection-start-line="430" selection-end-line="430" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -119,8 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>nn.linear</find>
-      <find>dropout</find>
       <find>update_result_file</find>
       <find>time.time</find>
       <find>time_elapsed_str</find>
@@ -149,6 +149,8 @@
       <find>print</find>
       <find>_auto_stop</find>
       <find>save_checkpoint</find>
+      <find>model_2_enc</find>
+      <find>model_5_ans</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -601,8 +603,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="817">
-          <caret line="336" column="9" selection-start-line="336" selection-start-column="9" selection-end-line="336" selection-end-column="9" />
+        <state relative-caret-position="593">
+          <caret line="430" lean-forward="true" selection-start-line="430" selection-end-line="430" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

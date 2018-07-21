@@ -334,7 +334,7 @@ class Encoder(nn.Module):
         embedded = self.position_encoding(embedded)
         embedded = torch.sum(embedded, dim=1)
         embedded = embedded.unsqueeze(0)
-        #embedded = self.dropout(embedded)
+        embedded = self.dropout(embedded)
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         if self.bidirectional:
