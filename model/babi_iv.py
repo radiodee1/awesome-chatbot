@@ -397,8 +397,8 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        question_h = question_h.unsqueeze(0)
-
+        #question_h = question_h.unsqueeze(0)
+        mem = mem.permute(1,0,2)
         #print(question_h.size(), mem.size(), 'q,m')
 
         mem = torch.cat([mem, question_h], dim=2)
@@ -559,10 +559,14 @@ class WrapMemRNN(nn.Module):
                     ee = self.prune_tensor(e,3)
                     #ee = self.prune_tensor(e[0, :,:], 3)
                     #print(ee.size(),'ee')
+
+                    '''
                     _, out = self.model_3_mem_a(ee, self.prune_tensor(m_list[iter + index], 3))
 
                     out = out[: , -1, :]
+                    '''
                     #print(out.size(),'out')
+                    out = self.prune_tensor(ee, 3)
 
                     m_list.append(F.relu(out))
 
@@ -701,6 +705,7 @@ class WrapMemRNN(nn.Module):
         #outputs
 
         q_q = torch.cat(self.q_q, dim=0)[:,-1,:]
+        q_q = self.prune_tensor(q_q, 3)
         #print(q_q.size())
         mem = self.prune_tensor(self.last_mem, 3)
 
