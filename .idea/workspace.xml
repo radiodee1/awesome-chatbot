@@ -29,8 +29,8 @@
       <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="621">
-              <caret line="1514" column="73" selection-start-line="1514" selection-start-column="73" selection-end-line="1514" selection-end-column="73" />
+            <state relative-caret-position="3581">
+              <caret line="462" column="44" selection-start-line="462" selection-start-column="44" selection-end-line="462" selection-end-column="44" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -122,8 +122,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>time.time</find>
-      <find>time_elapsed_str</find>
       <find>time_num</find>
       <find>concat_list</find>
       <find>train_iters</find>
@@ -139,7 +137,6 @@
       <find>first_load</find>
       <find>setup_for_babi_test</find>
       <find>embedding_matrix</find>
-      <find>load_embedding</find>
       <find>task_set_embedding_matrix</find>
       <find>_test_embedding</find>
       <find>wrapper_optimizer</find>
@@ -152,6 +149,9 @@
       <find>model_2_enc</find>
       <find>model_5_ans</find>
       <find>softmax</find>
+      <find>Encoder</find>
+      <find>model_1_enc</find>
+      <find>load_embedding</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -215,7 +215,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="531" />
+    <option name="x" value="532" />
     <option name="y" value="77" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -284,7 +284,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="531" y="77" width="1380" height="1000" extended-state="0" />
+    <frame x="532" y="77" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
@@ -308,21 +308,21 @@
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -574,6 +574,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="144">
@@ -582,11 +587,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
@@ -604,8 +604,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="621">
-          <caret line="1514" column="73" selection-start-line="1514" selection-start-column="73" selection-end-line="1514" selection-end-column="73" />
+        <state relative-caret-position="3581">
+          <caret line="462" column="44" selection-start-line="462" selection-start-column="44" selection-end-line="462" selection-end-column="44" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

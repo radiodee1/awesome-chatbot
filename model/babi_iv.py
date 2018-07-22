@@ -279,7 +279,8 @@ class Encoder(nn.Module):
         self.reset_parameters()
 
         if embedding is not None:
-            self.embed.weight.data.copy_(torch.from_numpy(embedding))
+            #self.embed.weight.data.copy_(torch.from_numpy(embedding))
+            self.embed = embedding
             print('embedding encoder')
         #self.gru = MGRU(self.hidden_dim)
 
@@ -293,7 +294,8 @@ class Encoder(nn.Module):
                 init.xavier_normal_(weight)
 
     def load_embedding(self, embedding):
-        self.embed.weight.data.copy_(torch.from_numpy(embedding))
+        #self.embed.weight.data.copy_(torch.from_numpy(embedding))
+        self.embed = embedding
 
     def test_embedding(self, num=None):
         if num is None:
@@ -303,7 +305,7 @@ class Encoder(nn.Module):
         print(e[0,0,0:10]) # print first ten values
 
     def position_encoding(self, embedded_sentence):
-        #embedded_sentence = embedded_sentence.permute(1,0,2)
+        #embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
         #print(embedded_sentence.size(),'esize')
         _, slen, elen = embedded_sentence.size()
 
@@ -311,12 +313,12 @@ class Encoder(nn.Module):
              range(slen)]
         l = torch.FloatTensor(l)
         l = l.unsqueeze(0)  # for #batch
-        #print(l.size(),"l")
+        #print(l.size(),"l", l)
         l = l.expand_as(embedded_sentence)
         if hparams['cuda'] is True: l = l.cuda()
         weighted = embedded_sentence * Variable(l)
         #weighted = torch.sum(weighted, dim=1).unsqueeze(0)  # sum with tokens
-        #print(weighted.size(),'w')
+        #print(weighted,'w')
         return weighted
 
     def list_encoding(self, lst, hidden):
@@ -324,18 +326,26 @@ class Encoder(nn.Module):
         #lst = [lst]
         for i in lst:
             embedded = self.embed(i)
-            #print(embedded.size(),'em')
-            #if self.position: embedded = embedded.unsqueeze(0)
+            #print(embedded.size(),'list')
             l.append(embedded.permute(1,0,2))
-        embedded = torch.cat(l, dim=0)
+        embedded = torch.cat(l, dim=0) # dim=0
 
         #print('----' ,embedded.size())
-
+        #if False:
         embedded = self.position_encoding(embedded)
-        embedded = torch.sum(embedded, dim=1)
+        #print(embedded.size(),'emb1')
+        embedded = torch.sum(embedded, dim=1) ## <-- dim=1 works great for task 1
+        #print(embedded.size(),'emb2')
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
+
+        if self.bidirectional: zz = 2
+        else: zz = 1
+        _, slen, elen = embedded.size()
+        hidden = Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
+
+        #print(encoder_hidden.size(), 'e-out')
 
         if self.bidirectional:
             e1 = encoder_out[0, :, :self.hidden_dim]
@@ -429,8 +439,10 @@ class WrapMemRNN(nn.Module):
         position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
 
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=embedding, bidirectional=True, position=position)
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=embedding, bidirectional=False)
+        self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
+
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=self.embed, bidirectional=True, position=position)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=self.embed, bidirectional=False)
         #self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
@@ -455,6 +467,7 @@ class WrapMemRNN(nn.Module):
 
         if self.embedding is not None:
             self.load_embedding(self.embedding)
+        self.share_embedding()
 
         if self.freeze_embedding or self.embedding is not None:
             self.new_freeze_embedding()
@@ -462,7 +475,20 @@ class WrapMemRNN(nn.Module):
 
         pass
 
+    def load_embedding(self, embedding):
+        #embedding = np.transpose(embedding,(1,0))
+        print(embedding.shape)
+        e = torch.from_numpy(embedding)
+        #e = e.permute(1,0)
+        print(e.size(), 'e')
+        self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
+
+    def share_embedding(self):
+        self.model_1_enc.load_embedding(self.embed)
+        self.model_2_enc.load_embedding(self.embed)
+
     def reset_parameters(self):
+        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
 
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
@@ -471,11 +497,12 @@ class WrapMemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
+    '''
     def load_embedding(self, embedding):
         self.embedding = embedding
-        self.model_1_enc.load_embedding(embedding)
-        self.model_2_enc.load_embedding(embedding)
-
+        #self.model_1_enc.load_embedding(embedding)
+        #self.model_2_enc.load_embedding(embedding)
+    '''
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
