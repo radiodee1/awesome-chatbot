@@ -272,17 +272,15 @@ class Encoder(nn.Module):
         self.n_layers = n_layers
         self.bidirectional = bidirectional
         self.position = position
-        self.embed = None# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.embed = None
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
 
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
 
         if embedding is not None:
-            #self.embed.weight.data.copy_(torch.from_numpy(embedding))
             self.embed = embedding
             print('embedding encoder')
-        #self.gru = MGRU(self.hidden_dim)
 
     def reset_parameters(self):
         #print('reset')
@@ -294,7 +292,6 @@ class Encoder(nn.Module):
                 init.xavier_normal_(weight)
 
     def load_embedding(self, embedding):
-        #self.embed.weight.data.copy_(torch.from_numpy(embedding))
         self.embed = embedding
 
     def test_embedding(self, num=None):
@@ -443,13 +440,13 @@ class WrapMemRNN(nn.Module):
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=self.embed, bidirectional=True, position=position)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=self.embed, bidirectional=False)
-        #self.model_3_mem_a = MemRNN(hidden_size, dropout=dropout)
+
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
         self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
-        init.xavier_normal_(self.next_mem.state_dict()['weight'])
+        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
         self.input_var = None  # for input
         self.q_var = None  # for question
@@ -486,8 +483,6 @@ class WrapMemRNN(nn.Module):
         self.model_2_enc.load_embedding(self.embed)
 
     def reset_parameters(self):
-        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
-
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
 
@@ -495,12 +490,8 @@ class WrapMemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    '''
-    def load_embedding(self, embedding):
-        self.embedding = embedding
-        #self.model_1_enc.load_embedding(embedding)
-        #self.model_2_enc.load_embedding(embedding)
-    '''
+        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
+        init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
@@ -510,9 +501,10 @@ class WrapMemRNN(nn.Module):
 
         return outputs, None, ans, None
 
-    def new_freeze_embedding(self):
-        self.model_1_enc.embed.weight.requires_grad = False
-        self.model_2_enc.embed.weight.requires_grad = False
+    def new_freeze_embedding(self, do_freeze=True):
+        self.embed.weight.requires_grad = not do_freeze
+        self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
+        self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
         print('freeze embedding')
         pass
 
@@ -521,6 +513,13 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc.test_embedding(num)
         print('encoder 2:')
         self.model_2_enc.test_embedding(num)
+
+        if num is None:
+            num = 15  # magic number for testing
+        e = self.embed(num)
+        print('encoder 0:')
+        print(e.size(), 'test embedding')
+        print(e[0, 0, 0:10])  # print first ten values
 
     def new_input_module(self, input_variable, question_variable):
 
@@ -1457,6 +1456,8 @@ class NMT:
                     self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
                     self.model_0_wra.new_freeze_embedding()
+                else:
+                    self.model_0_wra.new_freeze_embedding(do_freeze=False)
                 if self.opt_1 is not None:
                     #####
                     try:
