@@ -296,7 +296,7 @@ class Encoder(nn.Module):
 
     def test_embedding(self, num=None):
         if num is None:
-            num = 15 # magic number for testing
+            num = 55 # magic number for testing
         e = self.embed(num)
         print(e.size(), 'test embedding')
         print(e[0,0,0:10]) # print first ten values
@@ -515,7 +515,7 @@ class WrapMemRNN(nn.Module):
         self.model_2_enc.test_embedding(num)
 
         if num is None:
-            num = 15  # magic number for testing
+            num = 55  # magic number for testing = garden
         e = self.embed(num)
         print('encoder 0:')
         print(e.size(), 'test embedding')
@@ -1604,7 +1604,7 @@ class NMT:
 
     def _test_embedding(self, num=None, exit=True):
         if num is None:
-            num = hparams['unk']
+            num = 'garden' #55 #hparams['unk']
         num = self.variableFromSentence(self.output_lang, str(num))
         print('\n',num)
         self.model_0_wra.test_embedding(num)
