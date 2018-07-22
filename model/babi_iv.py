@@ -272,7 +272,7 @@ class Encoder(nn.Module):
         self.n_layers = n_layers
         self.bidirectional = bidirectional
         self.position = position
-        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.embed = None# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
 
         self.dropout = nn.Dropout(dropout)
@@ -477,10 +477,8 @@ class WrapMemRNN(nn.Module):
 
     def load_embedding(self, embedding):
         #embedding = np.transpose(embedding,(1,0))
-        print(embedding.shape)
         e = torch.from_numpy(embedding)
         #e = e.permute(1,0)
-        print(e.size(), 'e')
         self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
 
     def share_embedding(self):
