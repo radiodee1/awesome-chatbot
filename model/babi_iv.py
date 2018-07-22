@@ -181,17 +181,11 @@ class EpisodicAttn(nn.Module):
         self.batch_size = hparams['batch_size']
         self.c_list_z = None
 
-        #self.W_c1 = nn.Parameter(torch.zeros(hidden_size, 1 * hidden_size * a_list_size))
-        #self.W_c2 = nn.Parameter(torch.zeros(1,hidden_size))
-
         self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size,bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
         self.out_b = nn.Linear( hidden_size, 1, bias=True)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
-
-        #self.b_c1 = nn.Parameter(torch.zeros(hidden_size,))
-        #self.b_c2 = nn.Parameter(torch.zeros(1,))
 
         self.dropout = nn.Dropout(dropout)
 
@@ -259,9 +253,6 @@ class MemRNN(nn.Module):
 
         output, hidden_out = self.gru(input, hidden, g)
 
-        #output = None
-        #print(output.size(), input.size(), hidden_out.size(), hidden.size(),'list')
-
         return output, hidden_out
 
 class Encoder(nn.Module):
@@ -301,12 +292,17 @@ class Encoder(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0,0,0:10]) # print first ten values
 
-    def position_encoding(self, embedded_sentence):
-        #embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
+    def position_encoding(self, embedded_sentence, permute_sentence=False):
+        if permute_sentence: embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
         #print(embedded_sentence.size(),'esize')
         _, slen, elen = embedded_sentence.size()
 
-        l = [[(1 - s / (slen - 1)) - (e / (elen - 1)) * (1 - 2 * s / (slen - 1)) for e in range(elen)] for s in
+        slen2 = slen
+        elen2 = elen
+        if slen == 1: slen2 = 2
+        if elen == 1: elen2 = 2
+
+        l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
              range(slen)]
         l = torch.FloatTensor(l)
         l = l.unsqueeze(0)  # for #batch
@@ -315,10 +311,10 @@ class Encoder(nn.Module):
         if hparams['cuda'] is True: l = l.cuda()
         weighted = embedded_sentence * Variable(l)
         #weighted = torch.sum(weighted, dim=1).unsqueeze(0)  # sum with tokens
-        #print(weighted,'w')
+
         return weighted
 
-    def list_encoding(self, lst, hidden):
+    def list_encoding(self, lst, hidden, permute_sentence=False):
         l = []
         #lst = [lst]
         for i in lst:
@@ -327,9 +323,11 @@ class Encoder(nn.Module):
             l.append(embedded.permute(1,0,2))
         embedded = torch.cat(l, dim=0) # dim=0
 
+        if len(l) == 1: permute_sentence=True
         #print('----' ,embedded.size())
         #if False:
-        embedded = self.position_encoding(embedded)
+
+        embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
         #print(embedded.size(),'emb1')
         embedded = torch.sum(embedded, dim=1) ## <-- dim=1 works great for task 1
         #print(embedded.size(),'emb2')
@@ -355,7 +353,13 @@ class Encoder(nn.Module):
         return encoder_out, encoder_hidden
 
     def forward(self, source, hidden=None):
-        if self.position: return self.list_encoding(source, hidden)
+
+        if self.position:
+            if isinstance(source, list):
+                return self.list_encoding(source, hidden)
+            else:
+                #print(source.size(),'src')
+                return self.list_encoding([source], hidden, permute_sentence=True)
 
         embedded = self.embed(source)
         #print(embedded.size(),'emb')
@@ -385,13 +389,13 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear(vocab_size, vocab_size,bias=True)
-        init.xavier_normal_(self.out_b.state_dict()['weight'])
+        #self.out_b = nn.Linear(vocab_size, vocab_size,bias=True)
+        #init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
 
         self.log_soft = nn.LogSoftmax(dim=1)
-        self.reset_parameters()
+        #self.reset_parameters()
 
     def reset_parameters(self):
 
@@ -439,7 +443,7 @@ class WrapMemRNN(nn.Module):
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=self.embed, bidirectional=True, position=position)
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=self.embed, bidirectional=False)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=self.embed, bidirectional=True, position=False)
 
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
@@ -545,7 +549,7 @@ class WrapMemRNN(nn.Module):
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
             #print(hidden2.size(),'hidden2')
             #hidden2 = F.tanh(hidden2)
-            prev_h2.append(hidden2)
+            prev_h2.append(out2)
 
         self.q_q = prev_h2[1:] # hidden2[:,-1,:]
         #print(len(self.q_q),'len', self.q_q[0].size())
@@ -578,7 +582,8 @@ class WrapMemRNN(nn.Module):
                         print(x.permute(1,0),'x -- after', len(x), sequences[i].size())
                         #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
-                    e, _ = self.new_episode_small_step(sequences[i], x.permute(1,0), zz, m_list[-1], self.q_q[i])
+                    #print(x.size(),'x')
+                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q[i])
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
@@ -614,10 +619,7 @@ class WrapMemRNN(nn.Module):
             #index = 0 #- 1
             c = ct[0,iii,:].unsqueeze(0)
 
-            g = g.squeeze(0)
-            #gru = gru.squeeze(0).permute(1,0)
-
-            ggg = g[iii]
+            ggg = g[iii,0,0]
 
             out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg)
 
@@ -647,7 +649,7 @@ class WrapMemRNN(nn.Module):
     def new_attention_step(self, ct, prev_g, mem, q_q):
 
         q_q = self.prune_tensor(q_q,3)
-        mem = self.prune_tensor(mem,2)
+        mem = self.prune_tensor(mem,3)
 
         assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
@@ -657,17 +659,16 @@ class WrapMemRNN(nn.Module):
         att = []
         for iii in range(sen):
             c = ct[0,iii,:]
-
-            #print(c.size(),'c')
+            c = self.prune_tensor(c, 3)
 
             qq = self.prune_tensor(q_q, 3) #.unsqueeze(0)
 
             qq = qq[:,-1, :]
 
             concat_list = [
-                c.unsqueeze(0),
+                c,
                 mem,
-                qq,
+                qq.unsqueeze(0),
                 (c * qq),
                 (c * mem),
                 torch.abs(c - qq) ,
@@ -677,7 +678,7 @@ class WrapMemRNN(nn.Module):
             #for ii in concat_list: print(ii)
             #exit()
 
-            concat_list = torch.cat(concat_list, dim=1)
+            concat_list = torch.cat(concat_list, dim=2)
 
             att.append(concat_list)
 
@@ -686,6 +687,7 @@ class WrapMemRNN(nn.Module):
         z = self.model_4_att(att)
         #z = F.sigmoid(z)
         #print(z.size())
+
         z = F.softmax(z, dim=0) # * z ## dim=1
         #z = F.sigmoid(z)
 
