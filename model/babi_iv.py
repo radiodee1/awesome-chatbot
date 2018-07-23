@@ -257,7 +257,7 @@ class MemRNN(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True):
+                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True, batch_first=False):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
@@ -265,7 +265,7 @@ class Encoder(nn.Module):
         self.position = position
         self.sum_bidirectional = sum_bidirectional
         self.embed = None
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional, batch_first=batch_first)
 
         self.dropout = nn.Dropout(dropout)
         self.reset_parameters()
@@ -447,7 +447,8 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
-                                   embedding=self.embed, bidirectional=True, position=False, sum_bidirectional=False)
+                                   embedding=self.embed, bidirectional=True, position=False, sum_bidirectional=False,
+                                   batch_first=True)
 
         self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
