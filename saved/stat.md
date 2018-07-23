@@ -5,25 +5,23 @@ This page is for results of the various tests in the BABI set and for explaining
 #### Babi:
 There are 20 tests. One at a time we will try to fill in the results that we achieve in the table below. Also below is a list of filenames. Though one model is meant to complete all the tests with the same saved weights, we will assume that each test is done separately. At the end we may include a result for testing on all the categories at once.
 
-Since the 'babi_ii.py' file is the most complete model `ii_` will be the starting base filename for out tests.
+The babi data set is downloaded in the form of 20 categories. There is the basic babi english data set and the 10k data set. We will use the 10k data set. Each category has 10,000 training examples and 1000 testing examples. For our purposes we have divided up each category into 10,000 training examples along with 500 validation set examples and 500 testing set examples. Scores will be filed in pairs. The first score in the pair is the validation set score and the second is the test set score.
 
-The babi data set is downloaded in the form of 20 categories. Each category has 1000 training examples and 1000 testing examples. For our purposes we have divided up each category into 1000 training examples along with 500 validation set examples and 500 testing set examples. Scores will be filed in pairs. The first score in the pair is the validation set score and the second is the test set score.
-
-* `baseline_dmn` This would be a figure for comparrison that was taken from literature on the subject. It does not reflect work done with this project. It is generally used with heavy supervision. [See here](https://arxiv.org/pdf/1506.07285.pdf) and [here.](https://yerevann.github.io/2016/02/05/implementing-dynamic-memory-networks/#initial-experiments)
-* `ii_small` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download. There are 158 words used in the babi corpus, and with three special tokens ('sol', 'eol', and 'unk') there are 161 vocabulary words. This would be the classic configuration for the babi test.
-* `ii_small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
-* `ii_lrg` This column reflects testing done with 100 hidden units and a large set of non trainable embeddings. The individual word vectors will come from the glove download. The words in the vocabulary would include those not specific to the question answering task.
+* `baseline_dmn` This would be a figure for comparison that was taken from literature on the subject. It does not reflect work done with this project. It is generally used with heavy supervision. [See here](https://arxiv.org/pdf/1506.07285.pdf) and [here.](https://yerevann.github.io/2016/02/05/implementing-dynamic-memory-networks/#initial-experiments)
+* `small` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download. There are 158 words used in the babi corpus, and with three special tokens ('sol', 'eol', and 'unk') there are 161 vocabulary words. This would be the classic configuration for the babi test.
+* `small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
+* `lrg` This column reflects testing done with 100 hidden units and a large set of non trainable embeddings. The individual word vectors will come from the glove download. The words in the vocabulary would include those not specific to the question answering task.
 
 The table is included here:
 
- |   | baseline_dmn | ii_small | ii_small_tr | ii_lrg |
+ |   | baseline_dmn | small | small_tr | lrg |
 |-|-|-|-|-|
- | QA1: Single Supporting Fact | 100 | 100/100 | 0 | 0 |
+ | QA1: Single Supporting Fact | 100 | 0 | 100/100 | 0 |
  | QA2: Two Supporting Facts | 98.2 | 0 | 0 | 0 |
  | QA3: Three Supporting Facts | 95.2 | 0 | 0 | 0 |
- | QA4: Two Argument Relations | 100 | 100/100 | 0 | 0 |
+ | QA4: Two Argument Relations | 100 | 0 | 100/100 | 0 |
  | QA5: Three Argument Relations | 99.3 | 0 | 0 | 0 |
- | QA6: Yes/No Questions | 100 | 99.8/100 | 0 | 0 |
+ | QA6: Yes/No Questions | 100 | 0 | 99.8/100 | 0 |
  | QA7: Counting | 96.9 | 0 | 0 | 0 |
  | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 |
  | QA9: Simple Negation | 100 | 0 | 0 | 0 |
