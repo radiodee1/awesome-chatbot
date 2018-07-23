@@ -173,7 +173,7 @@ class CustomGRU(nn.Module):
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=8, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -447,7 +447,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
-                                   embedding=self.embed, bidirectional=True, position=False, sum_bidirectional=False,
+                                   embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
                                    batch_first=True)
 
         self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
@@ -547,7 +547,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c = prev_h1[-1]
 
         prev_h2 = [None]
-        prev_h3 = []
+        #prev_h3 = []
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
@@ -556,10 +556,10 @@ class WrapMemRNN(nn.Module):
             #print(hidden2.size(),'hidden2')
             #hidden2 = F.tanh(hidden2)
             prev_h2.append(out2)
-            prev_h3.append(out2[:,:,self.hidden_size:])
+            #prev_h3.append(out2[:,:,self.hidden_size:])
 
         self.q_q = prev_h2[1:] # hidden2[:,-1,:]
-        self.q_single = prev_h3
+        #self.q_single = prev_h3
         #print(len(self.q_q),'len', self.q_q[0].size())
 
         return
@@ -575,7 +575,7 @@ class WrapMemRNN(nn.Module):
             for i in range(len(sequences)):
 
                 #print(self.q_q[i].size(),'qq')
-                z = self.q_single[i][0,-1,:].clone()
+                z = self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
                 #zz = self.prune_tensor(z.clone(), 3)
@@ -591,7 +591,7 @@ class WrapMemRNN(nn.Module):
                         #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
                     #print(x.size(),'x')
-                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_single[i])
+                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q[i])
 
 
                     out = self.prune_tensor(e, 3)
@@ -666,7 +666,7 @@ class WrapMemRNN(nn.Module):
 
             qq = self.prune_tensor(q_q, 3)
 
-            qq_single = qq[:,-1, self.hidden_size:]
+            #qq_single = qq[:,-1, self.hidden_size:]
 
             qq = qq[:,-1,:].unsqueeze(0)
 
@@ -674,9 +674,9 @@ class WrapMemRNN(nn.Module):
                 c,
                 mem,
                 qq,
-                (c * qq_single),
+                (c * qq),
                 (c * mem),
-                torch.abs(c - qq_single) ,
+                torch.abs(c - qq) ,
                 torch.abs(c - mem)
             ]
             #for ii in concat_list: print(ii.size())
@@ -709,8 +709,8 @@ class WrapMemRNN(nn.Module):
 
     def new_answer_module_simple(self):
         #outputs
-
-        q_q = torch.cat(self.q_single, dim=0)[:,-1,:]
+        #print(self.q_q[0].size(),'qq')
+        q_q = torch.cat(self.q_q, dim=0)[:,-1,:]
         q_q = self.prune_tensor(q_q, 3)
         #print(q_q.size())
         mem = self.prune_tensor(self.last_mem, 3)
@@ -1534,7 +1534,7 @@ class NMT:
 
                 ''' adjust learning_rate to different value if possible. -- validation '''
 
-                if (len(self.score_list) > 3 and float(self.score_list[-2]) == 100.00 and
+                if (False and len(self.score_list) > 3 and float(self.score_list[-2]) == 100.00 and
                         float(self.score_list[-3]) == 100.00 and float(self.score_list[-1]) != 100):
                     self.move_high_checkpoint()
                     time.ctime()
