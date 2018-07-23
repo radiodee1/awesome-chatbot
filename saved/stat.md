@@ -23,7 +23,7 @@ The table is included here:
  | QA3: Three Supporting Facts | 95.2 | 0 | 0 | 0 |
  | QA4: Two Argument Relations | 100 | 100/100 | 0 | 0 |
  | QA5: Three Argument Relations | 99.3 | 0 | 0 | 0 |
- | QA6: Yes/No Questions | 100 | 0 | 0 | 0 |
+ | QA6: Yes/No Questions | 100 | 99.8/100 | 0 | 0 |
  | QA7: Counting | 96.9 | 0 | 0 | 0 |
  | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 |
  | QA9: Simple Negation | 100 | 0 | 0 | 0 |

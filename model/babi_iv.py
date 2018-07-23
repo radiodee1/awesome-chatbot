@@ -295,7 +295,7 @@ class Encoder(nn.Module):
 
     def position_encoding(self, embedded_sentence, permute_sentence=False):
         if permute_sentence: embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
-        #print(embedded_sentence.size(),'esize')
+
         _, slen, elen = embedded_sentence.size()
 
         slen2 = slen
@@ -395,8 +395,7 @@ class AnswerModule(nn.Module):
 
         self.dropout = nn.Dropout(dropout)
 
-        self.log_soft = nn.LogSoftmax(dim=1)
-        #self.reset_parameters()
+
 
     def reset_parameters(self):
 
@@ -419,10 +418,7 @@ class AnswerModule(nn.Module):
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
 
         out = self.out_a(mem)
-        #out = F.tanh(out)
-        #out = self.out_b(out)
 
-        #out = self.log_soft(out)
         return out.permute(1,0)
 
 #################### Wrapper ####################
@@ -548,20 +544,15 @@ class WrapMemRNN(nn.Module):
         self.inp_c = prev_h1[-1]
 
         prev_h2 = [None]
-        #prev_h3 = []
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
-            #print(ii,'ii')
+
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
-            #print(hidden2.size(),'hidden2')
-            #hidden2 = F.tanh(hidden2)
+
             prev_h2.append(out2)
-            #prev_h3.append(out2[:,:,self.hidden_size:])
 
         self.q_q = prev_h2[1:] # hidden2[:,-1,:]
-        #self.q_single = prev_h3
-        #print(len(self.q_q),'len', self.q_q[0].size())
 
         return
 
@@ -575,7 +566,6 @@ class WrapMemRNN(nn.Module):
 
             for i in range(len(sequences)):
 
-                #print(self.q_q[i].size(),'qq')
                 z = self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
@@ -589,11 +579,8 @@ class WrapMemRNN(nn.Module):
 
                     if self.print_to_screen and self.training:
                         print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
-                        #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
-                    #print(x.size(),'x')
                     e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q[i])
-
 
                     out = self.prune_tensor(e, 3)
 
@@ -691,11 +678,9 @@ class WrapMemRNN(nn.Module):
         att = torch.cat(att, dim=0)
 
         z = self.model_4_att(att)
-        #z = F.sigmoid(z)
         #print(z.size())
 
-        z = F.softmax(z, dim=0) # * z ## dim=1
-        #z = F.sigmoid(z)
+        z = F.softmax(z, dim=0)
 
         return z
 
@@ -710,15 +695,13 @@ class WrapMemRNN(nn.Module):
 
     def new_answer_module_simple(self):
         #outputs
-        #print(self.q_q[0].size(),'qq')
+
         q_q = torch.cat(self.q_q, dim=0)[:,-1,:]
         q_q = self.prune_tensor(q_q, 3)
-        #print(q_q.size())
+
         mem = self.prune_tensor(self.last_mem, 3)
 
         ansx = self.model_5_ans(mem, q_q)
-
-        #ansx = F.softmax(ansx, dim=0) # 0 <<--- this line screws up task #1
 
         #print(ansx.size() , ansx,'ansx')
         if self.print_to_screen and False:
@@ -813,6 +796,8 @@ class NMT:
         self.best_accuracy_old = None
         self.record_threshold = 95.00
         self._recipe_switching = 0
+        self._highest_validation_for_quit = 0
+        self._count_epochs_for_quit = 0
 
         self.uniform_low = -1.0
         self.uniform_high = 1.0
@@ -1506,6 +1491,15 @@ class NMT:
             use_lr_recipe = False
             use_dropout_recipe = True
 
+        if self._highest_reached_test(10):
+            time.ctime()
+            t = time.strftime('%l:%M%p %Z on %b %d, %Y')
+            print(t)
+            print('no progress')
+            print('list:', self.score_list)
+            self.update_result_file()
+            exit()
+
         self.epochs_since_adjustment += 1
 
         if self.epochs_since_adjustment > 0:
@@ -1609,6 +1603,21 @@ class NMT:
             if float(i) != value:
                 return False
         return True
+
+    def _highest_reached_test(self, num, lst=None):
+        if lst is None:
+            lst = self.score_list
+        if len(lst) < num:
+            return False
+        if self._count_epochs_for_quit > num:
+            return True
+        val = float(lst[-1])
+        if val > self._highest_validation_for_quit:
+            self._highest_validation_for_quit = val
+            self._count_epochs_for_quit = 0
+        else:
+            self._count_epochs_for_quit += 1
+        return False
 
     def _test_embedding(self, num=None, exit=True):
         if num is None:
