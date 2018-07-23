@@ -173,7 +173,7 @@ class CustomGRU(nn.Module):
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=8, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -257,12 +257,13 @@ class MemRNN(nn.Module):
 
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False):
+                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
         self.bidirectional = bidirectional
         self.position = position
+        self.sum_bidirectional = sum_bidirectional
         self.embed = None
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional)
 
@@ -342,7 +343,7 @@ class Encoder(nn.Module):
 
         #print(encoder_hidden.size(), 'e-out')
 
-        if self.bidirectional:
+        if self.bidirectional and self.sum_bidirectional:
             e1 = encoder_out[0, :, :self.hidden_dim]
             e2 = encoder_out[0, :, self.hidden_dim:]
             encoder_out = e1 + e2  #
@@ -369,7 +370,7 @@ class Encoder(nn.Module):
 
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
 
-        if self.bidirectional:
+        if self.bidirectional and self.sum_bidirectional:
             e1 = encoder_out[0,:,:self.hidden_dim]
             e2 = encoder_out[0,:,self.hidden_dim:]
             encoder_out = e1 + e2 # encoder_out[0,:, :self.hidden_dim] + encoder_out[0,:,self.hidden_dim:]
@@ -427,7 +428,8 @@ class AnswerModule(nn.Module):
 #################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[], freeze_embedding=False, embedding=None, print_to_screen=False):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
+                 freeze_embedding=False, embedding=None, print_to_screen=False):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -442,8 +444,10 @@ class WrapMemRNN(nn.Module):
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,embedding=self.embed, bidirectional=True, position=position)
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout, embedding=self.embed, bidirectional=True, position=False)
+        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
+                                   embedding=self.embed, bidirectional=True, position=position)
+        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
+                                   embedding=self.embed, bidirectional=True, position=False, sum_bidirectional=False)
 
         self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
@@ -542,6 +546,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c = prev_h1[-1]
 
         prev_h2 = [None]
+        prev_h3 = []
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
@@ -550,8 +555,10 @@ class WrapMemRNN(nn.Module):
             #print(hidden2.size(),'hidden2')
             #hidden2 = F.tanh(hidden2)
             prev_h2.append(out2)
+            prev_h3.append(out2[:,:,self.hidden_size:])
 
         self.q_q = prev_h2[1:] # hidden2[:,-1,:]
+        self.q_single = prev_h3
         #print(len(self.q_q),'len', self.q_q[0].size())
 
         return
@@ -567,7 +574,7 @@ class WrapMemRNN(nn.Module):
             for i in range(len(sequences)):
 
                 #print(self.q_q[i].size(),'qq')
-                z = self.q_q[i][0,-1,:].clone()
+                z = self.q_single[i][0,-1,:].clone()
                 m_list = [z]
 
                 #zz = self.prune_tensor(z.clone(), 3)
@@ -583,7 +590,7 @@ class WrapMemRNN(nn.Module):
                         #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
                     #print(x.size(),'x')
-                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q[i])
+                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_single[i])
 
                     assert len(sequences[i].size()) == 3
                     #print(e.size(),'e')
@@ -661,17 +668,19 @@ class WrapMemRNN(nn.Module):
             c = ct[0,iii,:]
             c = self.prune_tensor(c, 3)
 
-            qq = self.prune_tensor(q_q, 3) #.unsqueeze(0)
+            qq = self.prune_tensor(q_q, 3)
 
-            qq = qq[:,-1, :]
+            qq_single = qq[:,-1, self.hidden_size:]
+
+            qq = qq[:,-1,:].unsqueeze(0)
 
             concat_list = [
                 c,
                 mem,
-                qq.unsqueeze(0),
-                (c * qq),
+                qq,
+                (c * qq_single),
                 (c * mem),
-                torch.abs(c - qq) ,
+                torch.abs(c - qq_single) ,
                 torch.abs(c - mem)
             ]
             #for ii in concat_list: print(ii.size())
@@ -705,7 +714,7 @@ class WrapMemRNN(nn.Module):
     def new_answer_module_simple(self):
         #outputs
 
-        q_q = torch.cat(self.q_q, dim=0)[:,-1,:]
+        q_q = torch.cat(self.q_single, dim=0)[:,-1,:]
         q_q = self.prune_tensor(q_q, 3)
         #print(q_q.size())
         mem = self.prune_tensor(self.last_mem, 3)
