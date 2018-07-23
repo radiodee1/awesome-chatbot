@@ -449,7 +449,7 @@ class WrapMemRNN(nn.Module):
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
                                    embedding=self.embed, bidirectional=True, position=False, sum_bidirectional=False)
 
-        self.model_3_mem_b = MemRNN(hidden_size, dropout=dropout)
+        self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
 
@@ -550,7 +550,7 @@ class WrapMemRNN(nn.Module):
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
-            #print(ii.size(),'ii')
+            #print(ii,'ii')
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
             #print(hidden2.size(),'hidden2')
             #hidden2 = F.tanh(hidden2)
@@ -585,18 +585,14 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q[i])
 
-                    if self.print_to_screen and  self.training:
-                        print(x.permute(1,0),'x -- after', len(x), sequences[i].size())
+                    if self.print_to_screen and self.training:
+                        print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
                         #print(sequences[i][0,:,:] == sequences[i][1,:,:])
 
                     #print(x.size(),'x')
                     e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_single[i])
 
-                    assert len(sequences[i].size()) == 3
-                    #print(e.size(),'e')
-                    #ee = self.prune_tensor(e,3)
 
-                    #print(out.size(),'out')
                     out = self.prune_tensor(e, 3)
 
                     m_list.append(out)
@@ -628,26 +624,25 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii,0,0]
 
-            out, gru = self.model_3_mem_b(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg)
-
-            q_index = question.size()[1] - 1
-
-            concat = [
-                self.prune_tensor(prev_mem, 1),
-                self.prune_tensor(out, 1),
-                self.prune_tensor(question[0, q_index, :], 1)
-            ]
-            #print(question.size(),sen,'ques')
-            #for i in concat: print(i.size())
-            #exit()
-            concat = torch.cat(concat, dim=0)
-            #print(concat.size(),'con')
-            h = self.next_mem(concat)
-
-            h = F.relu(h)
-            #z = h #out #h # out
+            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg)
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
+
+        q_index = question.size()[1] - 1
+
+        concat = [
+            self.prune_tensor(prev_mem, 1),
+            self.prune_tensor(out, 1),
+            self.prune_tensor(question[0, q_index, :], 1)
+        ]
+        #print(question.size(),sen,'ques')
+        #for i in concat: print(i.size())
+        #exit()
+        concat = torch.cat(concat, dim=0)
+        #print(concat.size(),'con')
+        h = self.next_mem(concat)
+
+        h = F.relu(h)
 
         return h, gru # h, gru
 
