@@ -338,7 +338,7 @@ class Encoder(nn.Module):
         if self.bidirectional: zz = 2
         else: zz = 1
         _, slen, elen = embedded.size()
-        hidden = Variable(torch.zeros(zz, slen, elen))
+        hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         #print(encoder_hidden.size(), 'e-out')
@@ -445,7 +445,8 @@ class WrapMemRNN(nn.Module):
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
-                                   embedding=self.embed, bidirectional=True, position=position)
+                                   embedding=self.embed, bidirectional=True, position=position,
+                                   batch_first=False)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
                                    embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
                                    batch_first=True)
