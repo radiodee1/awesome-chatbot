@@ -826,6 +826,7 @@ class NMT:
         self.do_recipe_dropout = False
         self.do_recipe_lr = False
         self.do_batch_process = True
+        self.do_sample_on_screen = True
 
         self.printable = ''
 
@@ -864,6 +865,7 @@ class NMT:
         parser.add_argument('--batch-size', help='actual batch size when batch mode is specified.')
         parser.add_argument('--decay', help='weight decay.')
         parser.add_argument('--hops', help='babi memory hops.')
+        parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -931,6 +933,7 @@ class NMT:
         if self.args['batch_size'] is not None: hparams['batch_size'] = int(self.args['batch_size'])
         if self.args['decay'] is not None: hparams['weight_decay'] = float(self.args['decay'])
         if self.args['hops'] is not None: hparams['babi_memory_hops'] = int(self.args['hops'])
+        if self.args['no_sample'] is True: self.do_sample_on_screen = False
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1607,8 +1610,6 @@ class NMT:
     def _highest_reached_test(self, num, lst=None):
         if lst is None:
             lst = self.score_list
-        if len(lst) < num:
-            return False
         if self._count_epochs_for_quit > num:
             return True
         val = float(lst[-1])
@@ -1878,7 +1879,7 @@ class NMT:
                 if self.do_batch_process: print('- batch-size', temp_batch_size)
                 else: print('')
 
-                if not self.do_skip_validation and True:
+                if not self.do_skip_validation and self.do_sample_on_screen:
                     ###########################
                     choice = random.choice(self.pairs)
                     print('src:',choice[0])
