@@ -16,7 +16,7 @@ The table is included here:
 
  |   | baseline_dmn | small | small_tr | lrg |
 |-|-|-|-|-|
- | QA1: Single Supporting Fact | 100 | 0 | 100/100 | 0 |
+ | QA1: Single Supporting Fact | 100 | 100/100 | 100/100 | 0 |
  | QA2: Two Supporting Facts | 98.2 | 0 | 0 | 0 |
  | QA3: Three Supporting Facts | 95.2 | 0 | 0 | 0 |
  | QA4: Two Argument Relations | 100 | 0 | 100/100 | 0 |
