@@ -24,10 +24,10 @@ The table is included here:
  | QA6: Yes/No Questions | 100 | 0 | 99.8/100 | 0 |
  | QA7: Counting | 96.9 | 0 | 0 | 0 |
  | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 |
- | QA9: Simple Negation | 100 | 0 | 100/99.40 | 0 |
+ | QA9: Simple Negation | 100 | 98.20/97.20 | 100/99.40 | 0 |
  | QA10: Indefinite Knowledge | 97.5 | 0 | 0 | 0 |
  | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 |
- | QA12: Conjunction | 100 | 0 | 0 | 0 |
+ | QA12: Conjunction | 100 | 0 | 100/99.80 | 0 |
  | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 |
  | QA14: Time Reasoning | 100 | 0 | 0 | 0 |
  | QA15: Basic Deduction | 100 | 0 | 0 | 0 |
