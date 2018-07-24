@@ -27,7 +27,7 @@ The table is included here:
  | QA9: Simple Negation | 100 | 98.20/97.20 | 100/99.40 | 0 |
  | QA10: Indefinite Knowledge | 97.5 | 0 | 0 | 0 |
  | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 |
- | QA12: Conjunction | 100 | 0 | 100/99.80 | 0 |
+ | QA12: Conjunction | 100 | 0 | 100/99.80* | 0 |
  | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 |
  | QA14: Time Reasoning | 100 | 0 | 0 | 0 |
  | QA15: Basic Deduction | 100 | 0 | 0 | 0 |
@@ -39,7 +39,7 @@ The table is included here:
  | Average | 93.605 | 0 | 0 | 0 |
  | Combined | 0 | 0 | 0 | 0 |
 
-
+_*_ -- these results may need to be revisited.
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
 
