@@ -4,4 +4,4 @@ cd model
 echo $@
 
 
-python3.6 babi_ii.py $@
+python3.6 babi.py $@

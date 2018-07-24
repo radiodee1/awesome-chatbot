@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/do_launch_babi.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_babi.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/model/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/saved/README.md" beforeDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -11,24 +15,26 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4014">
-              <caret line="243" column="34" selection-start-line="243" selection-start-column="8" selection-end-line="243" selection-end-column="34" />
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="stat.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stat.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/stat.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="522">
                 <caret line="29" column="42" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
+              </first_editor>
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="270">
+                <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -96,18 +102,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2159">
-              <caret line="1959" column="29" selection-start-line="1959" selection-start-column="28" selection-end-line="1959" selection-end-column="29" />
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -157,7 +151,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_make_train_test_from_db.py" />
         <option value="$PROJECT_DIR$/categorical/do_make_train_test_from_db.py" />
         <option value="$PROJECT_DIR$/do_launch_categorical.sh" />
         <option value="$PROJECT_DIR$/categorical/model.py" />
@@ -208,6 +201,7 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/babi_iv.py" />
+        <option value="$PROJECT_DIR$/model/README.md" />
       </list>
     </option>
   </component>
@@ -239,11 +233,6 @@
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="saved" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="stats" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -284,7 +273,7 @@
     <frame x="533" y="76" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="10" />
@@ -433,18 +422,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/saved/stat.md.md" />
     <entry file="file://$PROJECT_DIR$/model/babi_iii.py" />
-    <entry file="file://$PROJECT_DIR$/saved/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="486">
-            <caret line="27" selection-start-line="27" selection-end-line="27" />
-          </first_editor>
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
@@ -463,16 +440,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
         </state>
       </provider>
     </entry>
@@ -570,11 +537,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2159">
+        <state relative-caret-position="34812">
           <caret line="1959" column="29" selection-start-line="1959" selection-start-column="28" selection-end-line="1959" selection-end-column="29" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="486">
+            <caret line="27" selection-start-line="27" selection-end-line="27" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
         </state>
       </provider>
     </entry>
@@ -583,6 +562,18 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="522">
             <caret line="29" column="42" selection-start-line="29" selection-start-column="42" selection-end-line="29" selection-end-column="42" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="270">
+            <caret line="15" column="20" selection-start-line="15" selection-start-column="20" selection-end-line="15" selection-end-column="20" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />
