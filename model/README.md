@@ -9,9 +9,7 @@ It should be noted that the code in this repository uses a batch size of 1, esse
 4. `./do_make_vocab.py ../data/train.babi.from --babi --babi-only --load-embed-size=100`
 5. `./do_make_train_test_from_babi.py 1` NOTE: replace '1' with current test.
 6. `cd ..`
-7. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=small_e --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. Change '--basename=ii_a' as necessary.
-8. `cd stats`
-9. `./stats.py --test --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=small_e --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. *THIS WILL PLACE A TESTING VALUE IN THE 'STAT.MD' CHART.*
+7. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=small --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. Change '--basename=ii_a' as necessary.
 
 #### Setup for `lrg`:
 Here we are interested in creating the same conditions as above but with a larger vocabulary file. To do this we download the reddit corpus and use it to make large 'train.big.from' and 'train.big.to' files. This process is long and laborious. Our goal vocabulary size is 1500 words. To achieve this we could also download the wiki corpus. The name of the resulting file is `vocab.big.txt`.
@@ -29,6 +27,4 @@ Here we are interested in creating the same conditions as above but with a large
 11. Start at step number 5 above.
 12. `./do_make_train_test_from_babi.py 1` NOTE: replace '1' with current test.
 13. `cd ..`
-14. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=ii_a --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. Change '--basename=ii_a' as necessary.
-15. `cd stats`
-16. `./stats.py --test --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=ii_a --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. *THIS WILL PLACE A TESTING VALUE IN THE 'STAT.MD' CHART.*
+14. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=lrg --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Replace '--lr=0.001' with '--lr=0.00001'. Remove '--freeze-embedding' as necessary for test. Change '--basename=ii_a' as necessary.
