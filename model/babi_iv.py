@@ -1543,7 +1543,7 @@ class NMT:
                     exit()
 
                 ''' put convergence test here. '''
-                if self._convergence_test(10,lst=self.score_list_training) or self._convergence_test(4, value=100.00):
+                if self._convergence_test(10,lst=self.score_list_training):# or self._convergence_test(4, value=100.00):
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
                     print(t)

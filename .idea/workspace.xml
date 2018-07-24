@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/saved/stat.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,7 +16,7 @@
       <file leaf-file-name="babi_ii.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
+            <state relative-caret-position="4014">
               <caret line="243" column="34" selection-start-line="243" selection-start-column="8" selection-end-line="243" selection-end-column="34" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -25,7 +25,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stat.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="stat.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/saved/stat.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -98,10 +98,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="babi_iv.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="531">
+            <state relative-caret-position="4851">
               <caret line="1881" column="75" selection-start-line="1881" selection-start-column="75" selection-end-line="1881" selection-end-column="75" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -493,7 +493,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_ii.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
+        <state relative-caret-position="4014">
           <caret line="243" column="34" selection-start-line="243" selection-start-column="8" selection-end-line="243" selection-end-column="34" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
@@ -570,16 +570,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="531">
-          <caret line="1881" column="75" selection-start-line="1881" selection-start-column="75" selection-end-line="1881" selection-end-column="75" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/saved/stat.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -589,6 +579,16 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_iv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4851">
+          <caret line="1881" column="75" selection-start-line="1881" selection-start-column="75" selection-end-line="1881" selection-end-column="75" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
