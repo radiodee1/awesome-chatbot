@@ -2093,8 +2093,13 @@ class NMT:
         if not os.path.isfile(basename):
             with open(basename, 'w') as f:
                 f.write(self.args['basename'] + '\n')
-                f.write(str(hparams['units']) + ' hidden size \n\n')
-                f.write(json.dumps(hparams))
+                f.write(str(hparams['units']) + ' hidden size \n')
+                f.write(str(self.output_lang.n_words) + ' vocab size \n\n')
+                f.write('hparams \n')
+                f.write(json.dumps(hparams) + '\n')
+                f.write('------\n')
+                f.write('commandline options \n')
+                f.write(json.dumps(self.args) + '\n')
                 f.write('\n')
             f.close()
 
