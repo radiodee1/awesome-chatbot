@@ -333,8 +333,6 @@ class Encoder(nn.Module):
         embedded = torch.cat(l, dim=0) # dim=0
 
         if len(l) == 1: permute_sentence=True
-        #print('----' ,embedded.size(),'list')
-        #if False:
 
         embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
         #print(embedded.size(),'emb1')
@@ -343,10 +341,7 @@ class Encoder(nn.Module):
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
 
-        #if self.bidirectional: zz = 2
-        #else: zz = 1
-        #_, slen, elen = embedded.size()
-        #print(embedded.size(),'em')
+
         hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
@@ -368,10 +363,10 @@ class Encoder(nn.Module):
                 return self.list_encoding([source], hidden, permute_sentence=True)
 
         embedded = self.embed(source)
-        #print(embedded.size(),'emb')
-        #if self.position: embedded = self.position_encoding(embedded)
+
+
         embedded = self.dropout(embedded)
-        #encoder_out = None
+
 
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
 
