@@ -1,5 +1,5 @@
 # `awesome-chatbot`
-The goal of this project is to meke a Keras or Pytorch implementation of a chatbot.
+The goal of this project is to make a Keras or Pytorch implementation of a chatbot.
 The basic idea is to start by setting up your training environment as described below and then training with or without autoencoding. Later we want to use our code to implement a chatbot. This requires finding a suitable data set. The inspiration for this project is the tensorflow NMT project found at the following link: [here](https://github.com/tensorflow/nmt) Also, this was inspiring: [here](https://pythonprogramming.net/chatbot-deep-learning-python-tensorflow/) Finally there was a great deep learning youtube series from Siraj Raval. A link for that is [here](https://www.youtube.com/watch?v=t5qgjJIBy9g&index=17&list=PL-pLHOzIUduUSTkdsLkToPdegSbpFJXcX)
 # Progress
 6/23/18 - The project is in its early stages. No model in this project implements an AI chatbot. That is the goal, but it has not been reached as of yet. Presently the focus is on the babi data set. This implies that we are using pytorch, not keras at this time.
