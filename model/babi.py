@@ -293,6 +293,14 @@ class Encoder(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0,0,0:10]) # print first ten values
 
+    def sum_output(self, output):
+        if self.bidirectional and self.sum_bidirectional:
+            e1 = output[0, :, :self.hidden_dim]
+            e2 = output[0, :, self.hidden_dim:]
+            output = e1 + e2  #
+            output = output.unsqueeze(0)
+        return output
+
     def position_encoding(self, embedded_sentence, permute_sentence=False):
         if permute_sentence: embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
 
@@ -300,8 +308,8 @@ class Encoder(nn.Module):
 
         slen2 = slen
         elen2 = elen
-        if slen == 1: slen2 = 2
-        if elen == 1: elen2 = 2
+        if slen == 1: slen2 += 0.01
+        if elen == 1: elen2 += 0.01
 
         l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
              range(slen)]
@@ -311,7 +319,6 @@ class Encoder(nn.Module):
         l = l.expand_as(embedded_sentence)
         if hparams['cuda'] is True: l = l.cuda()
         weighted = embedded_sentence * Variable(l)
-        #weighted = torch.sum(weighted, dim=1).unsqueeze(0)  # sum with tokens
 
         return weighted
 
@@ -319,36 +326,34 @@ class Encoder(nn.Module):
         l = []
         #lst = [lst]
         for i in lst:
+            #print(i)
             embedded = self.embed(i)
             #print(embedded.size(),'list')
             l.append(embedded.permute(1,0,2))
         embedded = torch.cat(l, dim=0) # dim=0
 
         if len(l) == 1: permute_sentence=True
-        #print('----' ,embedded.size())
+        #print('----' ,embedded.size(),'list')
         #if False:
 
         embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
         #print(embedded.size(),'emb1')
-        embedded = torch.sum(embedded, dim=1) ## <-- dim=1 works great for task 1
+        embedded = torch.sum(embedded, dim=1)
         #print(embedded.size(),'emb2')
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
 
-        if self.bidirectional: zz = 2
-        else: zz = 1
-        _, slen, elen = embedded.size()
+        #if self.bidirectional: zz = 2
+        #else: zz = 1
+        #_, slen, elen = embedded.size()
+        #print(embedded.size(),'em')
         hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
-        #print(encoder_hidden.size(), 'e-out')
+        #print(encoder_out.size(), 'e-out')
 
-        if self.bidirectional and self.sum_bidirectional:
-            e1 = encoder_out[0, :, :self.hidden_dim]
-            e2 = encoder_out[0, :, self.hidden_dim:]
-            encoder_out = e1 + e2  #
-            encoder_out = encoder_out.unsqueeze(0)
-        #l.append(encoder_out)
+
+        encoder_out = self.sum_output(encoder_out)
 
         #print(encoder_out.size(),'list')
         return encoder_out, encoder_hidden
@@ -370,13 +375,8 @@ class Encoder(nn.Module):
 
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
 
-        if self.bidirectional and self.sum_bidirectional:
-            e1 = encoder_out[0,:,:self.hidden_dim]
-            e2 = encoder_out[0,:,self.hidden_dim:]
-            encoder_out = e1 + e2 # encoder_out[0,:, :self.hidden_dim] + encoder_out[0,:,self.hidden_dim:]
-            encoder_out = encoder_out.unsqueeze(0)
 
-            #encoder_hidden = encoder_hidden[0,:,:] + encoder_hidden[1,:,:]
+        encoder_out = self.sum_output(encoder_out)
 
         return encoder_out, encoder_hidden
 
@@ -394,8 +394,6 @@ class AnswerModule(nn.Module):
         #init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
-
-
 
     def reset_parameters(self):
 
@@ -442,7 +440,7 @@ class WrapMemRNN(nn.Module):
 
         self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position,
-                                   batch_first=False)
+                                   batch_first=True)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
                                    embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
                                    batch_first=True)
