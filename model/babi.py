@@ -1485,7 +1485,7 @@ class NMT:
             use_lr_recipe = False
             use_dropout_recipe = True
 
-        if self._highest_reached_test(10):
+        if self._highest_reached_test(num=20) or self._highest_reached_test(goal=10):
             time.ctime()
             t = time.strftime('%l:%M%p %Z on %b %d, %Y')
             print(t)
@@ -1598,10 +1598,12 @@ class NMT:
                 return False
         return True
 
-    def _highest_reached_test(self, num, lst=None):
+    def _highest_reached_test(self, num=0, lst=None, goal=0):
         if lst is None:
             lst = self.score_list
-        if self._count_epochs_for_quit >= num:
+        if num != 0 and self._count_epochs_for_quit >= num:
+            return True
+        if goal != 0 and self._count_epochs_for_quit >= goal and self._highest_validation_for_quit == 100.00:
             return True
         val = float(lst[-1])
         if val > self._highest_validation_for_quit:
