@@ -324,7 +324,7 @@ class Encoder(nn.Module):
 
     def list_encoding(self, lst, hidden, permute_sentence=False):
         l = []
-        #lst = [lst]
+
         for i in lst:
             #print(i)
             embedded = self.embed(i)
@@ -341,12 +341,10 @@ class Encoder(nn.Module):
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
 
-
         hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         #print(encoder_out.size(), 'e-out')
-
 
         encoder_out = self.sum_output(encoder_out)
 
@@ -1603,7 +1601,7 @@ class NMT:
     def _highest_reached_test(self, num, lst=None):
         if lst is None:
             lst = self.score_list
-        if self._count_epochs_for_quit > num:
+        if self._count_epochs_for_quit >= num:
             return True
         val = float(lst[-1])
         if val > self._highest_validation_for_quit:
