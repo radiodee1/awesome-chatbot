@@ -15,6 +15,7 @@ google-cloud-speech
 PyAudio
 unidecode
 matplotlib
+py-cpuinfo
 
 ## pytorch ##
 ## go to the pytorch web site to download the latest version of pytorch ##

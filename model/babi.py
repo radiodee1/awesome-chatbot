@@ -20,6 +20,7 @@ import datetime
 import math
 import argparse
 import json
+import cpuinfo
 from settings import hparams
 import tokenize_weak
 #import matplotlib.pyplot as plt
@@ -2083,11 +2084,14 @@ class NMT:
         epoch_time = ts - self.time_num
         if self.saved_files > 0: epoch_time = epoch_time / self.saved_files
 
+        cpu_info = cpuinfo.get_cpu_info()['hz_advertised']
+
         if not os.path.isfile(basename):
             with open(basename, 'w') as f:
                 f.write(self.args['basename'] + '\n')
                 f.write(str(hparams['units']) + ' hidden size \n')
-                f.write(str(self.output_lang.n_words) + ' vocab size \n\n')
+                f.write(str(self.output_lang.n_words) + ' vocab size \n')
+                f.write(cpu_info + ' \n\n')
                 f.write('hparams \n')
                 f.write(json.dumps(hparams) + '\n')
                 f.write('------\n')
