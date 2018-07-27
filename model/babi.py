@@ -1486,7 +1486,7 @@ class NMT:
             use_lr_recipe = False
             use_dropout_recipe = True
 
-        if self._highest_reached_test(num=20) or self._highest_reached_test(goal=10):
+        if self._highest_reached_test(num=20, goal=10): # or self._highest_reached_test(goal=10):
             time.ctime()
             t = time.strftime('%l:%M%p %Z on %b %d, %Y')
             print(t)
@@ -1600,6 +1600,7 @@ class NMT:
         return True
 
     def _highest_reached_test(self, num=0, lst=None, goal=0):
+        ''' must only call this fn once !! '''
         if lst is None:
             lst = self.score_list
         if num != 0 and self._count_epochs_for_quit >= num:
