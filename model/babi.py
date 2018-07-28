@@ -1486,7 +1486,7 @@ class NMT:
             use_lr_recipe = False
             use_dropout_recipe = True
 
-        if self._highest_reached_test(num=20, goal=10): # or self._highest_reached_test(goal=10):
+        if self._highest_reached_test(num=20, goal=10):
             time.ctime()
             t = time.strftime('%l:%M%p %Z on %b %d, %Y')
             print(t)
