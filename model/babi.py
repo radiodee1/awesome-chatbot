@@ -2085,9 +2085,9 @@ class NMT:
         epoch_time = ts - self.time_num
         if self.saved_files > 0: epoch_time = epoch_time / self.saved_files
 
-        cpu_info = cpuinfo.get_cpu_info()['hz_advertised']
-
         if not os.path.isfile(basename):
+            cpu_info = cpuinfo.get_cpu_info()['hz_advertised']
+
             with open(basename, 'w') as f:
                 f.write(self.args['basename'] + '\n')
                 f.write(str(hparams['units']) + ' hidden size \n')
