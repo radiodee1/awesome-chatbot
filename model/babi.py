@@ -939,11 +939,19 @@ class NMT:
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
+        self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['question_ending']
+        pass
+
+    def task_normal_valid(self):
+        self.train_fr = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['src_ending']
+        self.train_to = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['tgt_ending']
+        self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['question_ending']
         pass
 
     def task_review_set(self):
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
+        self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['question_ending']
         pass
 
     def task_babi_files(self):
