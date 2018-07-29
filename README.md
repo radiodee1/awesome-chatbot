@@ -6,7 +6,7 @@ The basic idea is to start by setting up your training environment as described 
 
 7/10/18 - Fixed a problem regarding the encoder embeddings in the babi_iv.py file. New values were used with every restart. Must return to fix situation where embeddings are not frozen.
 
-7/19/18 - I found this paper. It refers to DMN+, a more advanced Dynamic Memory Network, which can work with the babi data set. This is the link: https://arxiv.org/abs/1603.01417 . They say in the paper that the input module on the basic DMN sometimes experiences overfitting. I followed the example as best as I could and my validation is much better on task 1.
+7/19/18 - I found this paper. It refers to DMN+, a more advanced Dynamic Memory Network, which can work with the babi data set. This is the link: https://arxiv.org/abs/1603.01417 . They say in the paper that the input module on the basic DMN sometimes experiences overfitting. I followed the example as best as I could and my validation is much better on task 1. At this time I started using the 'en-10k' babi data set. The training portion of this data set is 10,000 questions long.
 
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
