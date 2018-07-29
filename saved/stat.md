@@ -29,7 +29,7 @@ The table is included here:
  | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 |
  | QA12: Conjunction | 100 | 100/100 | 100/100 | 0 |
  | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 |
- | QA14: Time Reasoning | 100 | 0 | 0 | 0 |
+ | QA14: Time Reasoning | 100 | 97.20/94.60 | 0 | 0 |
  | QA15: Basic Deduction | 100 | 0 | 0 | 0 |
  | QA16: Basic Induction | 99.4 | 0 | 0 | 0 |
  | QA17: Positional Reasoning | 59.6 | 0 | 0 | 0 |
