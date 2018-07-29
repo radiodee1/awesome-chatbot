@@ -1603,16 +1603,18 @@ class NMT:
         ''' must only call this fn once !! '''
         if lst is None:
             lst = self.score_list
-        if num != 0 and self._count_epochs_for_quit >= num:
-            return True
-        if goal != 0 and self._count_epochs_for_quit >= goal and self._highest_validation_for_quit == 100.00:
-            return True
         val = float(lst[-1])
         if val > self._highest_validation_for_quit:
             self._highest_validation_for_quit = val
             self._count_epochs_for_quit = 0
         else:
             self._count_epochs_for_quit += 1
+
+        if num != 0 and self._count_epochs_for_quit >= num:
+            return True
+        if goal != 0 and self._count_epochs_for_quit >= goal and self._highest_validation_for_quit == 100.00:
+            return True
+        
         return False
 
     def _test_embedding(self, num=None, exit=True):
