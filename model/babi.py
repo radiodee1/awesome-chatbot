@@ -682,7 +682,13 @@ class WrapMemRNN(nn.Module):
     def new_answer_module_simple(self):
         #outputs
 
-        q_q = torch.cat(self.q_q, dim=0)[:,-1,:]
+        print( len(self.q_q), self.q_q[0].size())
+
+        ## if not all questions are the same size ##
+        q = [i[:,-1,:] for i in self.q_q]
+        #for i in q: print(i.size())
+
+        q_q = torch.cat(q, dim=0) 
         q_q = self.prune_tensor(q_q, 3)
 
         mem = self.prune_tensor(self.last_mem, 3)
