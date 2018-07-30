@@ -174,7 +174,7 @@ class CustomGRU(nn.Module):
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=7, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -204,21 +204,15 @@ class EpisodicAttn(nn.Module):
     def forward(self,concat_list):
 
         ''' attention list '''
-        self.c_list_z = concat_list# torch.cat(concat_list,dim=0)
-        #self.c_list_z = self.c_list_z.permute(1,0)
-        #print(self.c_list_z.size(),'cz')
+        self.c_list_z = concat_list
 
         self.c_list_z = self.dropout(self.c_list_z)
         l_1 = self.out_a(self.c_list_z)
 
-        #l_1 = torch.mm(self.W_c1, self.c_list_z)
-        #print(l_1.size(),'l1')
+
         l_1 = F.tanh(l_1) ## <---- this line? used to be tanh !!
 
         l_2 = self.out_b( l_1)
-        #print(l_2.size(), 'l2')
-        #l_2 = F.tanh(l_2)
-        #print(self.c_list_z.size(),'cz', l_1.size(), l_2)
 
         self.G = l_2 #* F.softmax(l_2, dim=1)
 
@@ -507,10 +501,10 @@ class WrapMemRNN(nn.Module):
         pass
 
     def test_embedding(self, num=None):
-        print('encoder 1:')
-        self.model_1_enc.test_embedding(num)
-        print('encoder 2:')
-        self.model_2_enc.test_embedding(num)
+        #print('encoder 1:')
+        #self.model_1_enc.test_embedding(num)
+        #print('encoder 2:')
+        #self.model_2_enc.test_embedding(num)
 
         if num is None:
             num = 55  # magic number for testing = garden
@@ -651,9 +645,9 @@ class WrapMemRNN(nn.Module):
             qq = qq[:,-1,:].unsqueeze(0)
 
             concat_list = [
-                c,
-                mem,
-                qq,
+                #c,
+                #mem,
+                #qq,
                 (c * qq),
                 (c * mem),
                 torch.abs(c - qq) ,

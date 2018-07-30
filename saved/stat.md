@@ -21,7 +21,7 @@ The table is included here:
  | QA3: Three Supporting Facts | 95.2 | 17.20/18.60 | 0 | 0 |
  | QA4: Two Argument Relations | 100 | 100/100 | 100/100 | 0 |
  | QA5: Three Argument Relations | 99.3 | 0 | 0 | 0 |
- | QA6: Yes/No Questions | 100 | 0 | 99.8/100 | 0 |
+ | QA6: Yes/No Questions | 100 | 51.20/49.40 | 99.8/100 | 0 |
  | QA7: Counting | 96.9 | 0 | 0 | 0 |
  | QA8: Lists/Sets | 96.5 | 0 | 0 | 0 |
  | QA9: Simple Negation | 100 | 98.20/97.20* | 100/99.40 | 0 |
@@ -29,7 +29,7 @@ The table is included here:
  | QA11: Basic Coreference | 99.9 | 0 | 0 | 0 |
  | QA12: Conjunction | 100 | 100/100 | 100/100 | 0 |
  | QA13: Compound Coreference | 99.8 | 0 | 0 | 0 |
- | QA14: Time Reasoning | 100 | 97.20/94.60 | 0 | 0 |
+ | QA14: Time Reasoning | 100 | 97.20/94.60 | 99.00/99.20 | 0 |
  | QA15: Basic Deduction | 100 | 100/100 | 100/100 | 0 |
  | QA16: Basic Induction | 99.4 | 0 | 0 | 0 |
  | QA17: Positional Reasoning | 59.6 | 0 | 0 | 0 |
