@@ -1277,6 +1277,7 @@ class NMT:
         if self.do_load_babi and False:
             sent.append(EOS_token)
             #print(sent,'<<<<')
+        if len(sent) == 0: sent.append(0)
         return sent
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
@@ -1343,10 +1344,9 @@ class NMT:
 
         if len(pair) > 2:
             #print(pair[2],',pair')
-            if (len(pair[2]) > 0):
-                target_variable = self.variableFromSentence(self.output_lang, pair[2])
-            else:
-                target_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
+            #if (len(pair[2]) > 0) or True:
+            target_variable = self.variableFromSentence(self.output_lang, pair[2])
+
         else:
 
             return (input_variable, question_variable)
