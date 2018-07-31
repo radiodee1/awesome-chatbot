@@ -569,7 +569,8 @@ class WrapMemRNN(nn.Module):
                     x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q_last[i])
 
                     if self.print_to_screen and self.training:
-                        print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
+                        #print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
+                        print(self.prune_tensor(self.q_q_last[i], 3) == self.prune_tensor(self.q_q[i][:,-1,:], 3))
 
                     e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q_last[i])
 
