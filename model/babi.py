@@ -444,6 +444,7 @@ class WrapMemRNN(nn.Module):
         self.q_var = None  # for question
         self.answer_var = None  # for answer
         self.q_q = None  # extra question
+        self.q_q_last = None
         self.inp_c = None  # extra input
         self.inp_c_seq = None
         self.all_mem = None
@@ -530,6 +531,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c = prev_h1[-1]
 
         prev_h2 = [None]
+        prev_h3 = []
 
         for ii in question_variable:
             ii = self.prune_tensor(ii, 2)
@@ -537,9 +539,12 @@ class WrapMemRNN(nn.Module):
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
 
             prev_h2.append(out2)
+            prev_h3.append(hidden2)
 
         self.q_q = prev_h2[1:] # hidden2[:,-1,:]
-
+        self.q_q_last = prev_h3
+        #for i in self.q_q_last: print(i.size())
+        #exit()
         return
 
 
@@ -552,7 +557,7 @@ class WrapMemRNN(nn.Module):
 
             for i in range(len(sequences)):
 
-                z = self.q_q[i][0,-1,:].clone()
+                z = self.q_q_last[i].clone() # self.q_q[i][0,-1,:].clone()
                 m_list = [z]
 
                 #zz = self.prune_tensor(z.clone(), 3)
@@ -561,12 +566,12 @@ class WrapMemRNN(nn.Module):
                 index = 0
                 for iter in range(self.memory_hops):
 
-                    x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q[i])
+                    x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q_last[i])
 
                     if self.print_to_screen and self.training:
                         print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
 
-                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q[i])
+                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q_last[i])
 
                     out = self.prune_tensor(e, 3)
 
@@ -603,12 +608,12 @@ class WrapMemRNN(nn.Module):
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
 
-        q_index = question.size()[1] - 1
+        #q_index = question.size()[1] - 1
 
         concat = [
             self.prune_tensor(prev_mem, 1),
             self.prune_tensor(out, 1),
-            self.prune_tensor(question[0, q_index, :], 1)
+            self.prune_tensor(question,1)#[0, q_index, :], 1)
         ]
         #print(question.size(),sen,'ques')
         #for i in concat: print(i.size())
@@ -642,7 +647,7 @@ class WrapMemRNN(nn.Module):
 
             #qq_single = qq[:,-1, self.hidden_size:]
 
-            qq = qq[:,-1,:].unsqueeze(0)
+            #qq = qq[:,-1,:].unsqueeze(0)
 
             concat_list = [
                 #c,
