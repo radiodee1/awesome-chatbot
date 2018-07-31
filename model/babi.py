@@ -1328,7 +1328,7 @@ class NMT:
                     l[i] = l[i].strip()
                     while len(l[i].strip().split(' ')) < max_len:
                         l[i] += " " + hparams['unk']
-                    #print(l[i])
+                    #print(l[i],',l')
                     z = self.variableFromSentence(self.input_lang, l[i])
                     #print(z)
                     sen.append(z)
@@ -1342,7 +1342,11 @@ class NMT:
         question_variable = self.variableFromSentence(self.output_lang, pair[1])
 
         if len(pair) > 2:
-            target_variable = self.variableFromSentence(self.output_lang, pair[2])
+            #print(pair[2],',pair')
+            if (len(pair[2]) > 0):
+                target_variable = self.variableFromSentence(self.output_lang, pair[2])
+            else:
+                target_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
         else:
 
             return (input_variable, question_variable)
