@@ -445,7 +445,7 @@ class WrapMemRNN(nn.Module):
         #self.q_var = None  # for question
         self.answer_var = None  # for answer
         #self.q_q = None  # extra question
-        self.q_q_last = None # question 
+        self.q_q_last = None # question
         self.inp_c = None  # extra input
         self.inp_c_seq = None
         self.all_mem = None
@@ -1891,7 +1891,7 @@ class NMT:
                 self.time_elapsed_str = self._time_since(self.time_num)
                 self.time_elapsed_num = time.time()
                 print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.time_elapsed_str, end=' ')
-                if self.do_batch_process: print('- batch-size', temp_batch_size)
+                if self.do_batch_process: print('- batch-size', temp_batch_size, '- count', self._count_epochs_for_quit)
                 else: print('')
 
                 if not self.do_skip_validation and self.do_sample_on_screen:
