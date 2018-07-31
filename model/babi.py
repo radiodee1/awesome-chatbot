@@ -396,6 +396,7 @@ class AnswerModule(nn.Module):
 
         #question_h = question_h.unsqueeze(0)
         mem = mem.permute(1,0,2)
+        question_h = question_h.permute(1,0,2)
         #print(question_h.size(), mem.size(), 'q,m')
 
         mem = torch.cat([mem, question_h], dim=2)
@@ -530,7 +531,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
 
-        prev_h2 = [None]
+        #prev_h2 = [None]
         prev_h3 = []
 
         for ii in question_variable:
@@ -538,10 +539,10 @@ class WrapMemRNN(nn.Module):
 
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
 
-            prev_h2.append(out2)
+            #prev_h2.append(out2)
             prev_h3.append(hidden2)
 
-        self.q_q = prev_h2[1:] # hidden2[:,-1,:]
+        #self.q_q = prev_h2[1:] # hidden2[:,-1,:]
         self.q_q_last = prev_h3
         #for i in self.q_q_last: print(i.size())
         #exit()
@@ -557,7 +558,7 @@ class WrapMemRNN(nn.Module):
 
             for i in range(len(sequences)):
 
-                z = self.q_q_last[i].clone() # self.q_q[i][0,-1,:].clone()
+                z = self.q_q_last[i].clone()
                 m_list = [z]
 
                 #zz = self.prune_tensor(z.clone(), 3)
@@ -569,8 +570,9 @@ class WrapMemRNN(nn.Module):
                     x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q_last[i])
 
                     if self.print_to_screen and self.training:
-                        #print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
-                        print(self.prune_tensor(self.q_q_last[i], 3) == self.prune_tensor(self.q_q[i][:,-1,:], 3))
+                        print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
+                        print(self.prune_tensor(self.q_q_last[i], 3) ) # == self.prune_tensor(self.q_q[i][:,-1,:], 3))
+                        #exit()
 
                     e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q_last[i])
 
@@ -689,11 +691,14 @@ class WrapMemRNN(nn.Module):
         #outputs
 
         ## if not all questions are the same size ##
-        q = [i[:,-1,:] for i in self.q_q]
+        #q = [i[:,-1,:] for i in self.q_q]
         #for i in q: print(i.size())
+        q = self.q_q_last
 
         q_q = torch.cat(q, dim=0)
         q_q = self.prune_tensor(q_q, 3)
+
+        #print(self.last_mem.size(), q_q.size(),'qq')
 
         mem = self.prune_tensor(self.last_mem, 3)
 
