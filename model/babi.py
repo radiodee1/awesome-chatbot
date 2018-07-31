@@ -442,10 +442,10 @@ class WrapMemRNN(nn.Module):
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
         self.input_var = None  # for input
-        self.q_var = None  # for question
+        #self.q_var = None  # for question
         self.answer_var = None  # for answer
-        self.q_q = None  # extra question
-        self.q_q_last = None
+        #self.q_q = None  # extra question
+        self.q_q_last = None # question 
         self.inp_c = None  # extra input
         self.inp_c_seq = None
         self.all_mem = None
