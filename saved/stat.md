@@ -45,7 +45,7 @@ _*_ -- these results may need to be revisited.
 _+_ -- yes/no or yes/no/maybe answers.
 
 #### Training and Testing:
-All results at this time benefit from weak or no supervision during training.
+All results at this time benefit from weak or no supervision during training. It has been noted in the DMN+ paper that for most models compared, the results for some tests are always 100%. These would be tests 1, 4, 11, 12, 13, 15, and 19.  [See here.](https://arxiv.org/abs/1603.01417)
 
 #### The `model` Directory:
 
