@@ -27,9 +27,9 @@ The table is included here:
  | QA8: Lists/Sets | 96.5 | 100 | 99.40/100 | 100/100 | 0 |
  | QA9: Simple Negation | 100 | 100 | 98.20/97.20* | 100/99.40 | 0 |
  | QA10: Indefinite Knowledge | 97.5 | 100 | 99.40/99.00 | 99.60/100 | 0 |
- | QA11: Basic Coreference | 99.9 | 100 | 100/100 | 0 | 0 |
+ | QA11: Basic Coreference | 99.9 | 100 | 100/100 | 100/100 | 0 |
  | QA12: Conjunction | 100 | 100 | 100/100 | 100/100 | 0 |
- | QA13: Compound Coreference | 99.8 | 100 | 0 | 0 | 0 |
+ | QA13: Compound Coreference | 99.8 | 100 | 99.80/100 | 100/100 | 0 |
  | QA14: Time Reasoning | 100 | 99.8 | 97.20/94.60 | 99.00/99.20 | 0 |
  | QA15: Basic Deduction | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA16: Basic Induction | 99.4 | 54.7 | 0 | 0 | 0 |
