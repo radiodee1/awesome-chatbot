@@ -41,7 +41,9 @@ The table is included here:
  | Combined | 0 | 0 | 0 | 0 | 0 |
 
 _*_ -- these results may need to be revisited.
+
 _+_ -- yes/no or yes/no/maybe answers.
+
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
 
