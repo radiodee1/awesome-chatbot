@@ -22,11 +22,11 @@ The table is included here:
  | QA3: Three Supporting Facts | 95.2 | 98.9 | 17.20/18.60 | 0 | 0 |
  | QA4: Two Argument Relations | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA5: Three Argument Relations | 99.3 | 99.5 | 99.40/99.80 | 99.60/99.80 | 0 |
- | QA6: Yes/No Questions | 100 | 100 | 51.20/49.40* | 99.8/100* | 0 |
+ | QA6: Yes/No Questions + | 100 | 100 | 51.20/49.40* | 99.8/100* | 0 |
  | QA7: Counting | 96.9 | 97.6 | 97.80/97.40 | 98.80/98.60 | 0 |
  | QA8: Lists/Sets | 96.5 | 100 | 99.40/100 | 100/100 | 0 |
- | QA9: Simple Negation | 100 | 100 | 98.20/97.20* | 100/99.40 | 0 |
- | QA10: Indefinite Knowledge | 97.5 | 100 | 99.40/99.00 | 99.60/100 | 0 |
+ | QA9: Simple Negation + | 100 | 100 | 98.20/97.20* | 100/99.40 | 0 |
+ | QA10: Indefinite Knowledge + | 97.5 | 100 | 99.40/99.00 | 99.60/100 | 0 |
  | QA11: Basic Coreference | 99.9 | 100 | 100/100 | 100/100 | 0 |
  | QA12: Conjunction | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA13: Compound Coreference | 99.8 | 100 | 99.80/100 | 100/100 | 0 |
@@ -41,6 +41,7 @@ The table is included here:
  | Combined | 0 | 0 | 0 | 0 | 0 |
 
 _*_ -- these results may need to be revisited.
+_+_ -- yes/no or yes/no/maybe answers.
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training.
 
