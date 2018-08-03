@@ -83,142 +83,145 @@ def format(s, split_phrases=False, add_sol_eol=False):
         z = z + ' ' + hparams['eol']
     return z
 
-for timeframe in timeframes:
-    connection = sqlite3.connect('{}.db'.format(timeframe))
-    c = connection.cursor()
-    limit = 100 #5000
-    last_unix = 0
-    cur_length = limit
-    counter = 0
-    test_done = False
-    pull_num = 0
-    mode = 'w'
+try:
+    for timeframe in timeframes:
+        connection = sqlite3.connect('{}.db'.format(timeframe))
+        c = connection.cursor()
+        limit = 100 #5000
+        last_unix = 0
+        cur_length = limit
+        counter = 0
+        test_done = False
+        pull_num = 0
+        mode = 'w'
 
-    while cur_length == limit:
+        while cur_length == limit:
 
-        df = pd.read_sql("SELECT * FROM parent_reply WHERE unix > {} and parent NOT NULL and score > 0 ORDER BY unix ASC LIMIT {}".format(last_unix,limit),connection)
+            df = pd.read_sql("SELECT * FROM parent_reply WHERE unix > {} and parent NOT NULL and score > 0 ORDER BY unix ASC LIMIT {}".format(last_unix,limit),connection)
 
-        try:
-            last_unix = df.tail(1)['unix'].values[0]
-        except:
-            print('error')
+            try:
+                last_unix = df.tail(1)['unix'].values[0]
+            except:
+                print('error')
 
-            last_unix = 0
+                last_unix = 0
 
-        cur_length = len(df)
+            cur_length = len(df)
 
-        content_parent = df['parent'].values
-        content_comment = df['comment'].values
-
-
-        src_list = []
-        tgt_list = []
-        ques_list = []
-
-        if do_autoencode and do_babi:
-            tmp = ''
-            assert do_autoencode_context is not do_autoencode_question
-
-            for i in range(len(content_parent)):
-
-                tmp = content_parent[i]
-                tmp += ' . ' + content_comment[i]
-                tmp = format(tmp , split_phrases=True)
-
-                tmpz = tmp.split('.')
-
-                ## get last sentence ##
-                if len(tmpz) > 1: tmpz = tmpz[-2]
-                else: tmpz = ''
+            content_parent = df['parent'].values
+            content_comment = df['comment'].values
 
 
-                if len(tmpz) > 0 and len(tmp) > 0:
-                    if do_autoencode_context: src_list.append(tmp)
-                    else: src_list.append('')
+            src_list = []
+            tgt_list = []
+            ques_list = []
 
-                    if do_autoencode_question: ques_list.append(tmpz)
-                    else: ques_list.append('')
+            if do_autoencode and do_babi:
+                tmp = ''
+                assert do_autoencode_context is not do_autoencode_question
 
-                    tgt_list.append(tmpz)
+                for i in range(len(content_parent)):
 
-            pass
-        else:
+                    tmp = content_parent[i]
+                    tmp += ' . ' + content_comment[i]
+                    tmp = format(tmp , split_phrases=True)
 
-            src_list = content_parent[:]
-            tgt_list = content_comment[:]
+                    tmpz = tmp.split('.')
+
+                    ## get last sentence ##
+                    if len(tmpz) > 1: tmpz = tmpz[-2]
+                    else: tmpz = ''
 
 
+                    if len(tmpz) > 0 and len(tmp) > 0:
+                        if do_autoencode_context: src_list.append(tmp)
+                        else: src_list.append('')
 
-        if not test_done:
+                        if do_autoencode_question: ques_list.append(tmpz)
+                        else: ques_list.append('')
 
-            with open('../raw/' + test_name + '.'+ src_ending, mode, encoding='utf8') as f:
-                for content in src_list: # df['parent'].values:
-                    content = format(content)
-                    f.write(str(content)+'\n')
+                        tgt_list.append(tmpz)
 
-            with open('../raw/' + test_name + '.' + tgt_ending, mode, encoding='utf8') as f:
-                for content in tgt_list: #df['comment'].values:
-                    content = format(content)
-                    f.write(str(content)+'\n')
-
-            if do_babi:
-                with open('../raw/' + test_name + '.' + question_ending, mode, encoding='utf8') as f:
-                    for content in ques_list:  # df['comment'].values:
-                        content = format(content)
-                        f.write(str(content) + '\n')
                 pass
+            else:
 
-            test_done = True
-            #limit = 5000
-            limit = pull_size
-            cur_length = limit
+                src_list = content_parent[:]
+                tgt_list = content_comment[:]
 
-        else:
 
-            with open('../raw/' + train_name + '.big.' + src_ending, mode, encoding='utf8') as f:
-                for content in src_list: #df['parent'].values:
-                    content = format(content)
-                    f.write(str(content)+'\n')
 
-            with open('../raw/' + train_name + '.big.' + tgt_ending, mode, encoding='utf8') as f:
-                for content in tgt_list:
+            if not test_done:
 
-                    content = format(content)
-                    f.write(str(content)+'\n')
-
-            if do_babi:
-                with open('../raw/' + train_name + '.big.' + question_ending, mode, encoding='utf8') as f:
-                    for content in ques_list:  # df['comment'].values:
-                        content = format(content)
-                        f.write(str(content) + '\n')
-                pass
-
-            pull_num += 1
-            if subdevide_into_batches:
-                with open('../raw/' + train_name + '.' + str(pull_num) + '.' + src_ending, mode, encoding='utf8') as f:
-                    for content in src_list: #df['parent'].values:
+                with open('../raw/' + test_name + '.'+ src_ending, mode, encoding='utf8') as f:
+                    for content in src_list: # df['parent'].values:
                         content = format(content)
                         f.write(str(content)+'\n')
 
-                with open('../raw/' + train_name + '.' + str(pull_num) + '.' + tgt_ending, mode, encoding='utf8') as f:
+                with open('../raw/' + test_name + '.' + tgt_ending, mode, encoding='utf8') as f:
                     for content in tgt_list: #df['comment'].values:
                         content = format(content)
                         f.write(str(content)+'\n')
 
                 if do_babi:
-                    with open('../raw/' + train_name + '.' + question_ending, mode, encoding='utf8') as f:
+                    with open('../raw/' + test_name + '.' + question_ending, mode, encoding='utf8') as f:
                         for content in ques_list:  # df['comment'].values:
                             content = format(content)
                             f.write(str(content) + '\n')
                     pass
 
-            mode = 'a'
+                test_done = True
+                #limit = 5000
+                limit = pull_size
+                cur_length = limit
 
-        counter += 1
-        if counter > 3 and test_on_screen: exit()
-        if counter % pull_size == 0 or True:
-            print(counter * limit, counter, 'rows/iters completed so far')
-            
+            else:
+
+                with open('../raw/' + train_name + '.big.' + src_ending, mode, encoding='utf8') as f:
+                    for content in src_list: #df['parent'].values:
+                        content = format(content)
+                        f.write(str(content)+'\n')
+
+                with open('../raw/' + train_name + '.big.' + tgt_ending, mode, encoding='utf8') as f:
+                    for content in tgt_list:
+
+                        content = format(content)
+                        f.write(str(content)+'\n')
+
+                if do_babi:
+                    with open('../raw/' + train_name + '.big.' + question_ending, mode, encoding='utf8') as f:
+                        for content in ques_list:  # df['comment'].values:
+                            content = format(content)
+                            f.write(str(content) + '\n')
+                    pass
+
+                pull_num += 1
+                if subdevide_into_batches:
+                    with open('../raw/' + train_name + '.' + str(pull_num) + '.' + src_ending, mode, encoding='utf8') as f:
+                        for content in src_list: #df['parent'].values:
+                            content = format(content)
+                            f.write(str(content)+'\n')
+
+                    with open('../raw/' + train_name + '.' + str(pull_num) + '.' + tgt_ending, mode, encoding='utf8') as f:
+                        for content in tgt_list: #df['comment'].values:
+                            content = format(content)
+                            f.write(str(content)+'\n')
+
+                    if do_babi:
+                        with open('../raw/' + train_name + '.' + question_ending, mode, encoding='utf8') as f:
+                            for content in ques_list:  # df['comment'].values:
+                                content = format(content)
+                                f.write(str(content) + '\n')
+                        pass
+
+                mode = 'a'
+
+            counter += 1
+            if counter > 3 and test_on_screen: exit()
+            if counter % pull_size == 0 or True:
+                print(counter * limit, counter, 'rows/iters completed so far')
+
+except KeyboardInterrupt:
+
     if not test_on_screen:
-        os.system('mv ../raw/t* ../data/.')
+        os.system('mv ../raw/train* ../raw/test* ../data/.')
         pass

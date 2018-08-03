@@ -945,6 +945,7 @@ class NMT:
         self.do_batch_process = True
         self.do_sample_on_screen = True
         self.do_recurrent_output = False
+        self.do_load_recurrent = False
 
         self.printable = ''
 
@@ -959,6 +960,7 @@ class NMT:
         #parser.add_argument('--convert-weights',help='convert weights', action='store_true')
         parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
                             action='store_true')
+        parser.add_argument('--load-recurrent',help='load files from "train.big" recurrent filenames', action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
         parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
         parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
@@ -1054,6 +1056,7 @@ class NMT:
         if self.args['hops'] is not None: hparams['babi_memory_hops'] = int(self.args['hops'])
         if self.args['no_sample'] is True: self.do_sample_on_screen = False
         if self.args['recurrent_output'] is True: self.do_recurrent_output = True
+        if self.args['load_recurrent'] is True: self.do_load_recurrent = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -2357,7 +2360,7 @@ if __name__ == '__main__':
     n = NMT()
 
     try:
-        if not n.do_review and not n.do_load_babi:
+        if (not n.do_review and not n.do_load_babi) or n.do_load_recurrent:
             n.task_normal_train()
         elif not n.do_load_babi:
             n.task_review_set()

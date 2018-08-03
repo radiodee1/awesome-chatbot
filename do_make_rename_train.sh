@@ -5,6 +5,7 @@ cd data
 
 BIGTRAINFROM=train.big.from
 BIGTRAINTO=train.big.to
+BIGTRAINQUES=train.big.ques
 
 TRAIN=train
 
@@ -29,10 +30,11 @@ if [ $# -eq 1 ] ; then
 else
     echo "changing link to large initial file! "
 
-    if [ -f $BIGTRAINFROM ] && [ -f $BIGTRAINTO ] ; then
+    if [ -f $BIGTRAINFROM ] && [ -f $BIGTRAINTO ] && [ -f $BIGTRAINQUES ] ; then
         rm $TRAIN.from $TRAIN.to
         ln -s $BIGTRAINFROM $TRAIN.from
         ln -s $BIGTRAINTO $TRAIN.to
+        ln -s $BIGTRAINQUES $TRAIN.ques
     else
         echo "doing nothing"
         #mv $TRAIN.from $BIGTRAINFROM
@@ -44,4 +46,4 @@ else
 
 fi
 
-ls -hal $TRAIN.from $TRAIN.to
+ls -hal $TRAIN.from $TRAIN.to $TRAIN.ques
