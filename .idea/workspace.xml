@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/saved/stat.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,7 +28,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="1103" />
-          <entry key="py" value="5444" />
+          <entry key="py" value="5485" />
           <entry key="txt" value="12" />
         </counts>
       </usages-collector>
@@ -38,7 +36,7 @@
         <counts>
           <entry key="Markdown" value="1103" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="5444" />
+          <entry key="Python" value="5485" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -74,11 +72,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="316">
-              <caret line="2207" column="21" selection-start-line="2207" selection-start-column="21" selection-end-line="2207" selection-end-column="21" />
+            <state relative-caret-position="694">
+              <caret line="1893" column="43" selection-start-line="1893" selection-start-column="43" selection-end-line="1893" selection-end-column="43" />
               <folding>
-                <marker date="1533321035559" expanded="true" signature="16918:16967" ph="..." />
-                <marker date="1533321035559" expanded="true" signature="16992:18180" ph="..." />
+                <marker date="1533322452139" expanded="true" signature="16918:16967" ph="..." />
+                <marker date="1533322452139" expanded="true" signature="16992:18180" ph="..." />
               </folding>
             </state>
           </provider>
@@ -178,7 +176,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_2_enc</find>
       <find>model_5_ans</find>
       <find>softmax</find>
       <find>Encoder</find>
@@ -208,6 +205,7 @@
       <find>train</find>
       <find>target_variable</find>
       <find>evaluate</find>
+      <find>train_iters</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -338,7 +336,7 @@
     <frame x="540" y="74" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -356,6 +354,25 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -613,11 +630,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="316">
-          <caret line="2207" column="21" selection-start-line="2207" selection-start-column="21" selection-end-line="2207" selection-end-column="21" />
+        <state relative-caret-position="694">
+          <caret line="1893" column="43" selection-start-line="1893" selection-start-column="43" selection-end-line="1893" selection-end-column="43" />
           <folding>
-            <marker date="1533321035559" expanded="true" signature="16918:16967" ph="..." />
-            <marker date="1533321035559" expanded="true" signature="16992:18180" ph="..." />
+            <marker date="1533322452139" expanded="true" signature="16918:16967" ph="..." />
+            <marker date="1533322452139" expanded="true" signature="16992:18180" ph="..." />
           </folding>
         </state>
       </provider>

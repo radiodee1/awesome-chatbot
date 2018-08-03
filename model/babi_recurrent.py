@@ -1884,8 +1884,15 @@ class NMT:
                 self.model_0_wra.eval()
                 outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                       criterion)
-                loss = None
-                ans = ans.permute(1,0)
+
+                if not self.do_recurrent_output:
+                    loss = None
+                    ans = ans.permute(1,0)
+
+                else:
+                    loss = None
+                    ansx = Variable(ans.data.max(dim=2)[1])
+                    ans = ans.permute(1,0,2)
 
             #self._test_embedding()
 
