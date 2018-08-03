@@ -1847,12 +1847,7 @@ class NMT:
 
             if self.do_recurrent_output:
                 target_variable = torch.cat(target_variable, dim=0)
-                #print(target_variable.size(), 'tv0')
-                #target_variable = torch.max(target_variable, dim=1)[1]
-                #print(target_variable, target_variable.size(),'tv1')
-                #target_variable = target_variable.squeeze(2)
-                #ans = torch.argmax(ans, dim=2)#.unsqueeze(2)
-                #print(ans.size(),'ans0')
+
                 ansx = Variable(ans.data.max(dim=2)[1])
                 #print(ans)
                 ans = ans.float().permute(1,0,2).contiguous()
@@ -1994,6 +1989,9 @@ class NMT:
 
                 temp_batch_size = len(input_variable)
 
+                #if self.do_recurrent_output:
+                #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
+
             elif self.do_batch_process:
                 continue
                 pass
@@ -2003,7 +2001,7 @@ class NMT:
                                             None, None, criterion)
             num_count += 1
 
-            if self.do_recurrent_output:
+            if self.do_recurrent_output and self.do_load_babi:
 
                 for i in range(len(target_variable)):
                     for j in range(target_variable[i].size()[1]):
@@ -2013,11 +2011,16 @@ class NMT:
                         if int(o_val) == int(t_val):
                             num_right += 1
                             num_right_small += 1
+                            if int(o_val) == EOS_token:
+                                num_right_small += hparams['tokens_per_sentence'] - (j + 1)
+                                num_right += hparams['tokens_per_sentence'] - (j + 1)
+                                #print('full line', i, j, num_right_small)
+                                break
 
-                if self.do_batch_process:
-                    num_tot += temp_batch_size
-                else:
-                    num_tot += 1
+                num_tot += temp_batch_size * hparams['tokens_per_sentence']
+
+
+                self.score = float(num_right / num_tot) * 100
 
             if self.do_load_babi and not self.do_recurrent_output:
 
@@ -2097,15 +2100,21 @@ class NMT:
                         print('try:',self._shorten(words))
                         #self._word_from_prediction()
                     ############################
+                if self.do_recurrent_output:
+                    num_right_small = math.floor(num_right_small / (hparams['tokens_per_sentence'] ))
+                    pass
+
                 if self.do_load_babi and self.do_test_not_train:
 
-                    print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
+                    print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small ))
                     num_right_small = 0
 
                 if self.do_load_babi and not self.do_test_not_train:
 
                     print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
+
+                num_right_small = 0
 
                 if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
                     if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
