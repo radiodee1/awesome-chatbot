@@ -139,6 +139,62 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 ################# pytorch modules ###############
 
+class LuongAttention(nn.Module):
+    """
+    LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
+    https://arxiv.org/pdf/1508.04025.pdf
+    """
+
+    def __init__(self, dim):
+        super(LuongAttention, self).__init__()
+        self.W = nn.Linear(dim, dim, bias=False)
+
+    def score(self, decoder_hidden, encoder_out):
+        # linear transform encoder out (seq, batch, dim)
+        encoder_out = self.W(encoder_out)
+        # (batch, seq, dim) | (2, 15, 50)
+        encoder_out = encoder_out.permute(1, 0, 2)
+        # (2, 15, 50) @ (2, 50, 1)
+        return encoder_out @ decoder_hidden.permute(1, 2, 0)
+
+    def forward(self, decoder_hidden, encoder_out):
+        energies = self.score(decoder_hidden, encoder_out)
+        mask = F.softmax(energies, dim=1)  # batch, seq, 1
+        context = encoder_out.permute(1, 2, 0) @ mask  # (2, 50, 15) @ (2, 15, 1)
+        context = context.permute(2, 0, 1)  # (seq, batch, dim)
+        mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
+        return context, mask
+
+class Decoder(nn.Module):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
+        super(Decoder, self).__init__()
+        self.n_layers = n_layers
+        self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        self.attention = LuongAttention(hidden_dim)
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout)
+        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
+
+    def load_embedding(self, embedding):
+        self.embed = embedding
+
+    def forward(self, output, encoder_out, decoder_hidden):
+        """
+        decodes one output frame
+        """
+        embedded = self.embed(output)  # (1, batch, embed_dim)
+        #print(decoder_hidden[:-1].size(),'eh size')
+        #context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        #print(embedded.size(), context.size(),'con')
+        concat_list = [
+            embedded.squeeze(0),
+            context
+        ]
+        gru_in = torch.cat(concat_list, dim=2)
+        rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
+        output = self.out(torch.cat([rnn_output, context], 2))
+        return output, decoder_hidden, mask
+
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CustomGRU, self).__init__()
@@ -369,19 +425,24 @@ class Encoder(nn.Module):
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
-    def __init__(self, vocab_size, hidden_size, dropout=0.3):
+    def __init__(self, vocab_size, hidden_size, dropout=0.3, embed=None, recurrent_output=False, sol_token=0):
         super(AnswerModule, self).__init__()
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.batch_size = hparams['batch_size']
+        self.recurrent_output= recurrent_output
+        self.sol_token = sol_token
 
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        #self.out_b = nn.Linear(vocab_size, vocab_size,bias=True)
-        #init.xavier_normal_(self.out_b.state_dict()['weight'])
+        self.out_b = nn.Linear(hidden_size * 2, hidden_size, bias=True)
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
+        self.maxtokens = hparams['tokens_per_sentence']
+
+        self.decoder = Decoder(vocab_size, hidden_size, hidden_size, 1, dropout, embed)
 
     def reset_parameters(self):
 
@@ -391,6 +452,53 @@ class AnswerModule(nn.Module):
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
+
+    def prune_tensor(self, input, size):
+        if isinstance(input, list): return input
+        if input is None: return input
+        while len(input.size()) < size:
+            input = input.unsqueeze(0)
+        while len(input.size()) > size:
+            input = input.squeeze(0)
+        return input
+
+    def load_embedding(self, embed):
+        self.decoder.load_embedding(embed)
+
+    def recurrent(self, out):
+        output = Variable(torch.LongTensor([SOS_token]))  # self.sol_token
+        if hparams['cuda'] is True: output = output.cuda()
+
+        l, hid = out.size()
+
+        all_out = []
+        for k in range(l):
+            outputs = []
+            decoder_hidden = self.prune_tensor(out[k,:], 3)
+            encoder_out = self.prune_tensor(out[k,:], 3)
+            output = self.prune_tensor(output, 3)
+
+            #print(k,decoder_hidden.size(),'dh')
+
+            for i in range(self.maxtokens):
+                output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
+                outputs.append(output)
+                output = Variable(output.data.max(dim=2)[1])
+                output = self.prune_tensor(output, 3)
+                #print(i, output)
+                #if output == EOS_token: break
+
+            #print(len(outputs))
+            #for j in outputs: print(j.size(), 'out')
+            #exit()
+
+            some_out = torch.cat(outputs, dim=0)
+            #print(some_out.size(),'some cat')
+            all_out.append(some_out)
+        val_out = torch.cat(all_out, dim=1)
+
+        #print(val_out.size(),'out all')
+        return val_out
 
     def forward(self, mem, question_h):
 
@@ -404,6 +512,10 @@ class AnswerModule(nn.Module):
         mem = self.dropout(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
 
+        if self.recurrent_output:
+            mem = self.out_b(mem)
+            return self.recurrent(mem)
+
         out = self.out_a(mem)
 
         return out.permute(1,0)
@@ -412,7 +524,7 @@ class AnswerModule(nn.Module):
 
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
-                 freeze_embedding=False, embedding=None, print_to_screen=False):
+                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -422,6 +534,8 @@ class WrapMemRNN(nn.Module):
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
+        self.recurrent_output = recurrent_output
+        self.sol_token = sol_token
         position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
 
@@ -436,7 +550,8 @@ class WrapMemRNN(nn.Module):
 
         self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout, embed=self.embed,
+                                        recurrent_output=self.recurrent_output, sol_token=self.sol_token)
 
         self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
@@ -475,6 +590,7 @@ class WrapMemRNN(nn.Module):
     def share_embedding(self):
         self.model_1_enc.load_embedding(self.embed)
         self.model_2_enc.load_embedding(self.embed)
+        self.model_5_ans.load_embedding(self.embed)
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
@@ -828,6 +944,7 @@ class NMT:
         self.do_recipe_lr = False
         self.do_batch_process = True
         self.do_sample_on_screen = True
+        self.do_recurrent_output = False
 
         self.printable = ''
 
@@ -867,6 +984,7 @@ class NMT:
         parser.add_argument('--decay', help='weight decay.')
         parser.add_argument('--hops', help='babi memory hops.')
         parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
+        parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -935,6 +1053,7 @@ class NMT:
         if self.args['decay'] is not None: hparams['weight_decay'] = float(self.args['decay'])
         if self.args['hops'] is not None: hparams['babi_memory_hops'] = int(self.args['hops'])
         if self.args['no_sample'] is True: self.do_sample_on_screen = False
+        if self.args['recurrent_output'] is True: self.do_recurrent_output = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1306,9 +1425,13 @@ class NMT:
 
         return (g1, g2, g3)
 
-    def variableFromSentence(self,lang, sentence, add_eol=False):
+    def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
         indexes = self.indexesFromSentence(lang, sentence)
         if add_eol: indexes.append(EOS_token)
+        sentence_len = len(indexes)
+        while pad > sentence_len:
+            indexes.append(UNK_token)
+            pad -= 1
         result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
         #print(result.size(),'r')
         if hparams['cuda']:
@@ -1345,7 +1468,16 @@ class NMT:
         if len(pair) > 2:
             #print(pair[2],',pair')
             #if (len(pair[2]) > 0) or True:
-            target_variable = self.variableFromSentence(self.output_lang, pair[2])
+            pad = 0
+            add_eol = False
+            if self.do_recurrent_output:
+                pad = hparams['tokens_per_sentence']
+                add_eol = True
+            target_variable = self.variableFromSentence(self.output_lang, pair[2],
+                                                        add_eol=add_eol,
+                                                        pad=pad)
+            if self.do_recurrent_output:
+                target_variable = target_variable.unsqueeze(0)
 
         else:
 
@@ -1713,7 +1845,22 @@ class NMT:
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                   criterion)
 
-            if self.do_batch_process:
+            if self.do_recurrent_output:
+                target_variable = torch.cat(target_variable, dim=0)
+                #print(target_variable.size(), 'tv0')
+                #target_variable = torch.max(target_variable, dim=1)[1]
+                #print(target_variable, target_variable.size(),'tv1')
+                #target_variable = target_variable.squeeze(2)
+                #ans = torch.argmax(ans, dim=2)#.unsqueeze(2)
+                #print(ans.size(),'ans0')
+                ansx = Variable(ans.data.max(dim=2)[1])
+                #print(ans)
+                ans = ans.float().permute(1,0,2).contiguous()
+                #print(ans.size(),'ans1')
+                ans = ans.view(-1, self.output_lang.n_words)
+                target_variable = target_variable.view(-1)
+                #print( ans.size(),'ans', target_variable.size(), 'tv')
+            elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
             else:
@@ -1741,6 +1888,10 @@ class NMT:
                 ans = ans.permute(1,0)
 
             #self._test_embedding()
+
+        if self.do_recurrent_output:
+            ans = ansx.permute(1,0)
+            #print(ans.size(),'ans')
 
         return outputs, ans , loss
 
@@ -1845,7 +1996,23 @@ class NMT:
                                             None, None, criterion)
             num_count += 1
 
-            if self.do_load_babi:
+            if self.do_recurrent_output:
+
+                for i in range(len(target_variable)):
+                    for j in range(target_variable[i].size()[1]):
+                        t_val = target_variable[i][0,j,0].item()
+                        o_val = ans[i][j].item()
+
+                        if int(o_val) == int(t_val):
+                            num_right += 1
+                            num_right_small += 1
+
+                if self.do_batch_process:
+                    num_tot += temp_batch_size
+                else:
+                    num_tot += 1
+
+            if self.do_load_babi and not self.do_recurrent_output:
 
                 for i in range(len(target_variable)):
                     o_val = torch.argmax(ans[i], dim=0).item() #[0]
@@ -2011,27 +2178,47 @@ class NMT:
         outputs = [ans]
         #####################
 
-        decoded_words = []
-        for di in range(len(outputs)):
+        if not self.do_recurrent_output:
+            decoded_words = []
+            for di in range(len(outputs)):
 
-            output = outputs[di] #.permute(1,0)
+                output = outputs[di]
+                output = output.permute(1,0)
 
-            output = output.permute(1,0)#torch.cat(output, dim=0)
+                ni = torch.argmax(output, dim=1)[0]
 
-            ni = torch.argmax(output, dim=1)[0] # = next_words[0][0]
+                if int(ni) == int(EOS_token):
+                    xxx = hparams['eol']
+                    decoded_words.append(xxx)
+                    print('eol found.')
+                    if True: break
+                else:
+                    if di < 4:
+                        print(int(ni), self.output_lang.index2word[int(ni)])
+                    if di == 5 and len(outputs) > 5:
+                        print('...etc')
+                    decoded_words.append(self.output_lang.index2word[int(ni)])
 
-            if int(ni) == int(EOS_token):
-                xxx = hparams['eol']
-                decoded_words.append(xxx)
-                print('eol found.')
-                if True: break
-            else:
-                if di < 4:
-                    print(int(ni), self.output_lang.index2word[int(ni)])
-                if di == 5 and len(outputs) > 5:
-                    print('...etc')
-                decoded_words.append(self.output_lang.index2word[int(ni)])
-
+        else:
+            decoded_words = []
+            for db in range(len(outputs)):
+                for di in range(len(outputs[db])):
+                    output = outputs[db][di]
+                    output = output.permute(1, 0)
+                    #print(output.size(),'out')
+                    ni = torch.argmax(output, dim=0)[0]
+                    #print(ni, 'ni')
+                    if int(ni) == int(EOS_token):
+                        xxx = hparams['eol']
+                        decoded_words.append(xxx)
+                        print('eol found.')
+                        if True: break
+                    else:
+                        if di < 4:
+                            print(int(ni), self.output_lang.index2word[int(ni)])
+                        if di == 5 and len(outputs) > 5:
+                            print('...etc')
+                        decoded_words.append(self.output_lang.index2word[int(ni)])
 
         return decoded_words, None #decoder_attentions[:di + 1]
 
@@ -2062,11 +2249,13 @@ class NMT:
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
+        sol_token = self.output_lang.word2index[hparams['sol']]
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers,
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
-                                      print_to_screen=self.do_print_to_screen)
+                                      print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
+                                      sol_token=sol_token)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2085,11 +2274,13 @@ class NMT:
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
+        sol_token = self.output_lang.word2index[hparams['sol']]
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
-                                      print_to_screen=self.do_print_to_screen)
+                                      print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
+                                      sol_token=sol_token)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -2171,6 +2362,7 @@ if __name__ == '__main__':
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
+        sol_token = n.output_lang.word2index[hparams['sol']]
 
         token_list = []
         if False:
@@ -2179,7 +2371,8 @@ if __name__ == '__main__':
         n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
-                                   print_to_screen=n.do_print_to_screen)
+                                   print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
+                                   sol_token=sol_token)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
