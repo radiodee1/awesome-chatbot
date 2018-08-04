@@ -60,28 +60,40 @@ src_ending = hparams['src_ending']
 tgt_ending = hparams['tgt_ending']
 question_ending = hparams['question_ending']
 
-def format(s, split_phrases=False, add_sol_eol=False):
+def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
     z = tokenize_weak.format(s)
     if z == None or z.strip() == '':
-        z = ' what ? '
+
+        z = ' hello '
         add_sol_eol = True
 
     if split_phrases:
         x = []
-        z = z.replace(',', ' . ')
+
+        z = z.replace(',', ' ')
         z = z.replace('?', ' . ')
         z = z.replace('!', ' . ')
         zz = z.split('.')
         for i in zz:
+            xx = i.split(' ')
+            y = []
+            for j in xx:
+                j = j.strip()
+                if len(j) > 0: y.append(j)
+            i = ' '.join(y)
             i = i.strip()
-            if len(i) > 1:
-                x.append( hparams['sol'] + ' ' + i + ' ' + hparams['eol'] + ' . ' )
+            if len(i) > 1 and not i.isspace():
+                if not add_eol_only:
+                    x.append( hparams['sol'] + ' ' + i + ' ' + hparams['eol'] + ' . ' )
+                else:
+                    x.append( i + ' ' + hparams['eol'] + ' . ')
         x = ' '.join(x)
         return x
     if add_sol_eol:
-        z = hparams['sol'] + ' ' + z
+        if not add_eol_only: z = hparams['sol'] + ' ' + z
         z = z + ' ' + hparams['eol']
     return z
+
 
 try:
     for timeframe in timeframes:
@@ -111,6 +123,7 @@ try:
             content_parent = df['parent'].values
             content_comment = df['comment'].values
 
+            skip_num = 0
 
             src_list = []
             tgt_list = []
@@ -124,7 +137,7 @@ try:
 
                     tmp = content_parent[i]
                     tmp += ' . ' + content_comment[i]
-                    tmp = format(tmp , split_phrases=True)
+                    tmp = format(tmp , split_phrases=True, add_eol_only=True)
 
                     tmpz = tmp.split('.')
 
@@ -141,6 +154,9 @@ try:
                         else: ques_list.append('')
 
                         tgt_list.append(tmpz)
+                    else:
+                        skip_num += 1
+                        print('skip one here!', skip_num)
 
                 pass
             else:
@@ -221,7 +237,12 @@ try:
                 print(counter * limit, counter, 'rows/iters completed so far')
 
 except KeyboardInterrupt:
+    print()
+    pass
+finally:
 
     if not test_on_screen:
-        os.system('mv ../raw/train* ../raw/test* ../data/.')
+        s = 'mv ../raw/train* ../raw/test* ../data/.'
+        print(s)
+        os.system(s)
         pass

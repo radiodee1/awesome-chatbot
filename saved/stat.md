@@ -22,7 +22,7 @@ The table is included here:
  | QA3: Three Supporting Facts | 95.2 | 98.9 | 17.20/18.60 | 0 | 0 |
  | QA4: Two Argument Relations | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA5: Three Argument Relations | 99.3 | 99.5 | 99.40/99.80 | 99.60/99.80 | 0 |
- | QA6: Yes/No Questions + | 100 | 100 | 100/100 | 99.8/100* | 0 |
+ | QA6: Yes/No Questions + | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA7: Counting | 96.9 | 97.6 | 97.80/97.40 | 98.80/98.60 | 0 |
  | QA8: Lists/Sets | 96.5 | 100 | 99.40/100 | 100/100 | 0 |
  | QA9: Simple Negation + | 100 | 100 | 98.20/97.20* | 100/99.40 | 0 |
@@ -33,7 +33,7 @@ The table is included here:
  | QA14: Time Reasoning | 100 | 99.8 | 97.20/94.60 | 99.00/99.20 | 0 |
  | QA15: Basic Deduction | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA16: Basic Induction | 99.4 | 54.7 | 48.20/50.60 | 52.60/58.40 | 0 |
- | QA17: Positional Reasoning | 59.6 | 95.8 | 0 | 0 | 0 |
+ | QA17: Positional Reasoning + | 59.6 | 95.8 | 0 | 0 | 0 |
  | QA18: Size Reasoning | 95.3 | 97.9 | 0 | 0 | 0 |
  | QA19: Path Finding | 34.5 | 100 | 0 | 0 | 0|
  | QA20: Agent's Motivation | 100 | 100 | 0 | 0 | 0 |
