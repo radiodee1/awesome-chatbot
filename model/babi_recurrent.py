@@ -1400,6 +1400,8 @@ class NMT:
             sent.append(EOS_token)
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
+        if self.do_load_recurrent:
+            sent = sent[:MAX_LENGTH]
         return sent
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
@@ -1430,7 +1432,7 @@ class NMT:
 
     def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
         indexes = self.indexesFromSentence(lang, sentence)
-        if add_eol: indexes.append(EOS_token)
+        if add_eol and len(indexes) < pad: indexes.append(EOS_token)
         sentence_len = len(indexes)
         while pad > sentence_len:
             indexes.append(UNK_token)
@@ -1830,6 +1832,22 @@ class NMT:
             last = i
         return ' '.join(out)
 
+    def _pad_list(self, lst, val=None):
+        if val is None: val = hparams['unk']
+        width = 0
+        for i in lst:
+            if len(i) > width:
+                width = len(lst)
+        if width == 0:
+            return lst
+        z = []
+        for i in lst:
+            if len(i) < width:
+                for j in range(width - len(i)):
+                    i.append(val)
+            z.append(i)
+        return z
+
     def set_dropout(self, p):
         print('dropout',p)
         if self.model_0_wra is not None:
@@ -1849,6 +1867,9 @@ class NMT:
                                                   criterion)
 
             if self.do_recurrent_output:
+                ##lz = len(target_variable[0])
+                #target_variable = self._pad_list(target_variable)
+
                 target_variable = torch.cat(target_variable, dim=0)
 
                 ansx = Variable(ans.data.max(dim=2)[1])
@@ -2019,6 +2040,9 @@ class NMT:
                                 num_right += hparams['tokens_per_sentence'] - (j + 1)
                                 #print('full line', i, j, num_right_small)
                                 break
+                        else:
+                            # next sentence
+                            break
 
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 

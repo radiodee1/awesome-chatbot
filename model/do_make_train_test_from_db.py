@@ -145,8 +145,10 @@ try:
                     if len(tmpz) > 1: tmpz = tmpz[-2]
                     else: tmpz = ''
 
+                    z_len_1 = len(content_parent[i].split(' '))
+                    z_len_2 = len(content_comment[i].split(' '))
 
-                    if len(tmpz) > 0 and len(tmp) > 0:
+                    if len(tmpz) > 0 and len(tmp) > 0 and z_len_1 > 0 and z_len_2 > 0:
                         if do_autoencode_context: src_list.append(tmp)
                         else: src_list.append('')
 
