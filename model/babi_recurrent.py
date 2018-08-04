@@ -2213,11 +2213,6 @@ class NMT:
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
 
-                #[input_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
-                #                                   [question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
-                #                                   [sos_token.squeeze(0).squeeze(0).squeeze(0)],
-                #                                   None)
-
         outputs = [ans]
         #####################
 

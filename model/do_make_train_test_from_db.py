@@ -21,6 +21,7 @@ parser.add_argument('--autoencode', help='store auto encoder format', action='st
 parser.add_argument('--to-lower', help='store in lowercase form', action='store_true')
 parser.add_argument('--test-on-screen', help='test on screen', action='store_true')
 parser.add_argument('--subdevide', help='subdevide into batches', action='store_true')
+parser.add_argument('--length', help='number of examples to process')
 args = parser.parse_args()
 args = vars(args)
 print(args)
@@ -37,6 +38,8 @@ do_babi = False
 do_autoencode = False
 do_autoencode_context = False
 do_autoencode_question = False
+approximate_length = 0
+count_recorded = 0
 
 if args['babi'] is True: do_babi = True
 if args['to_lower'] is True: to_lower = True
@@ -47,10 +50,12 @@ if args['autoencode'] is True:
     ## set the context and question variables by hand
     do_autoencode_context = True
     do_autoencode_question = False
+if args['length'] is not None:
+    approximate_length = int(args['length'])
 
 batch_size = 64 #32 # 64 #256
 steps_per_stats = 100
-pull_size = batch_size * steps_per_stats * 10
+#pull_size = batch_size * steps_per_stats * 10
 
 test_name = hparams['test_name']
 train_name = hparams['train_name']
@@ -99,7 +104,7 @@ try:
     for timeframe in timeframes:
         connection = sqlite3.connect('{}.db'.format(timeframe))
         c = connection.cursor()
-        limit = 100 #5000
+        limit = 500 #5000
         last_unix = 0
         cur_length = limit
         counter = 0
@@ -107,7 +112,7 @@ try:
         pull_num = 0
         mode = 'w'
 
-        while cur_length == limit:
+        while cur_length == limit and (count_recorded < approximate_length + limit or approximate_length == 0):
 
             df = pd.read_sql("SELECT * FROM parent_reply WHERE unix > {} and parent NOT NULL and score > 0 ORDER BY unix ASC LIMIT {}".format(last_unix,limit),connection)
 
@@ -129,7 +134,11 @@ try:
             tgt_list = []
             ques_list = []
 
-            if do_autoencode and do_babi:
+            if count_recorded + 1 >= approximate_length + limit and approximate_length != 0:
+                print('skipping.')
+                break
+
+            if do_autoencode and do_babi and (count_recorded < approximate_length + limit or approximate_length == 0):
                 tmp = ''
                 assert do_autoencode_context is not do_autoencode_question
 
@@ -148,7 +157,9 @@ try:
                     z_len_1 = len(content_parent[i].split(' '))
                     z_len_2 = len(content_comment[i].split(' '))
 
-                    if len(tmpz) > 0 and len(tmp) > 0 and z_len_1 > 0 and z_len_2 > 0:
+
+                    if not test_done or (len(tmpz) > 0 and len(tmp) > 0 and z_len_1 > 0 and z_len_2 > 0 and
+                            (count_recorded < approximate_length + limit or approximate_length == 0)):
                         if do_autoencode_context: src_list.append(tmp)
                         else: src_list.append('')
 
@@ -156,6 +167,10 @@ try:
                         else: ques_list.append('')
 
                         tgt_list.append(tmpz)
+                        count_recorded += 1
+                    elif count_recorded >= approximate_length + limit and approximate_length != 0:
+                        print('last recorded.')
+                        break
                     else:
                         skip_num += 1
                         print('skip one here!', skip_num)
@@ -168,7 +183,7 @@ try:
 
 
 
-            if not test_done:
+            if not test_done and (count_recorded < approximate_length + limit or approximate_length == 0):
 
                 with open('../raw/' + test_name + '.'+ src_ending, mode, encoding='utf8') as f:
                     for content in src_list: # df['parent'].values:
@@ -189,10 +204,11 @@ try:
 
                 test_done = True
                 #limit = 5000
-                limit = pull_size
+                #limit = pull_size
                 cur_length = limit
 
             else:
+
 
                 with open('../raw/' + train_name + '.big.' + src_ending, mode, encoding='utf8') as f:
                     for content in src_list: #df['parent'].values:
@@ -235,8 +251,8 @@ try:
 
             counter += 1
             if counter > 3 and test_on_screen: exit()
-            if counter % pull_size == 0 or True:
-                print(counter * limit, counter, 'rows/iters completed so far')
+            if counter % limit == 0 or True:
+                print(counter * limit, limit, counter, 'rows/iters completed so far')
 
 except KeyboardInterrupt:
     print()
