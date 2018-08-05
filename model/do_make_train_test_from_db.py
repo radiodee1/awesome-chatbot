@@ -71,6 +71,7 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
 
         z = ' hello '
         add_sol_eol = True
+        add_eol_only = True
 
     if split_phrases:
         x = []

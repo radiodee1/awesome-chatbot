@@ -472,7 +472,7 @@ class AnswerModule(nn.Module):
         self.decoder.load_embedding(embed)
 
     def recurrent(self, out):
-        output = Variable(torch.LongTensor([SOS_token]))  # self.sol_token
+        output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
         if hparams['cuda'] is True: output = output.cuda()
 
         l, hid = out.size()
@@ -494,12 +494,13 @@ class AnswerModule(nn.Module):
             #print(k,decoder_hidden.size(),'dh')
 
             for i in range(self.maxtokens):
+                #print(output, 'before')
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
+                #print(output.size(), decoder_hidden.size())
                 outputs.append(output)
                 output = Variable(output.data.max(dim=2)[1])
+                #print(output)
                 output = self.prune_tensor(output, 3)
-                #print(i, output)
-                #if output == EOS_token: break
 
             #print(len(outputs))
             #for j in outputs: print(j.size(), 'out')
