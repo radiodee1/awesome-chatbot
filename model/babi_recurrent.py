@@ -1301,10 +1301,10 @@ class NMT:
         self.pairs = []
         if not self.do_interactive:
 
-            l_in = self.open_sentences(hparams['data_dir'] + lang1)
-            l_out = self.open_sentences(hparams['data_dir'] + lang2)
+            l_in = self.open_sentences( lang1)
+            l_out = self.open_sentences( lang2)
             if lang3 is not None:
-                l_ques = self.open_sentences(hparams['data_dir'] + lang3)
+                l_ques = self.open_sentences(lang3)
 
             #pairs = []
             for i in range(len(l_in)):
