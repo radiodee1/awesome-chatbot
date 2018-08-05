@@ -171,7 +171,7 @@ class Decoder(nn.Module):
         self.n_layers = n_layers
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout)
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout * 0.0)
         self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
 
     def load_embedding(self, embedding):
@@ -183,8 +183,8 @@ class Decoder(nn.Module):
         """
         embedded = self.embed(output)  # (1, batch, embed_dim)
         #print(decoder_hidden[:-1].size(),'eh size')
-        #context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-        context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        #context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
         #print(embedded.size(), context.size(),'con')
         concat_list = [
             embedded.squeeze(0),
@@ -411,6 +411,11 @@ class Encoder(nn.Module):
                 #print(source.size(),'src')
                 return self.list_encoding([source], hidden, permute_sentence=True)
 
+        if isinstance(source, list):
+            source = ' '.join(source)
+
+        #print(source,'<-- src')
+
         embedded = self.embed(source)
 
 
@@ -432,6 +437,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output= recurrent_output
         self.sol_token = sol_token
+        self.decoder_layers = 2
 
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
@@ -442,7 +448,7 @@ class AnswerModule(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = Decoder(vocab_size, hidden_size, hidden_size, 1, dropout, embed)
+        self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed)
 
     def reset_parameters(self):
 
@@ -473,9 +479,16 @@ class AnswerModule(nn.Module):
 
         all_out = []
         for k in range(l):
+            e_out_list = [
+                self.prune_tensor(out[k,:],2),
+                self.prune_tensor(out[k,:],2)
+            ]
+
+            e_out = torch.cat(e_out_list, dim=0)
+
             outputs = []
-            decoder_hidden = self.prune_tensor(out[k,:], 3)
-            encoder_out = self.prune_tensor(out[k,:], 3)
+            decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2) #out[k,:], 3)
+            encoder_out = self.prune_tensor(e_out,3).permute(1,0,2) #out[k,:], 3)
             output = self.prune_tensor(output, 3)
 
             #print(k,decoder_hidden.size(),'dh')
@@ -946,6 +959,7 @@ class NMT:
         self.do_sample_on_screen = True
         self.do_recurrent_output = False
         self.do_load_recurrent = False
+        self.do_no_positional = False
 
         self.printable = ''
 
@@ -987,6 +1001,7 @@ class NMT:
         parser.add_argument('--hops', help='babi memory hops.')
         parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
         parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
+        parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1057,6 +1072,9 @@ class NMT:
         if self.args['no_sample'] is True: self.do_sample_on_screen = False
         if self.args['recurrent_output'] is True: self.do_recurrent_output = True
         if self.args['load_recurrent'] is True: self.do_load_recurrent = True
+        if self.args['no_split_sentences'] is True:
+            self.do_no_positional = True
+            hparams['split_sentences'] = False
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1066,6 +1084,32 @@ class NMT:
         if self.args['lr_adjust'] is not None:
             self.lr_adjustment_num = int(self.args['lr_adjust'])
             hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
+
+    def task_choose_files(self, mode=None):
+        if mode is None:
+            mode = 'train'
+        if self.do_load_babi and not self.do_load_recurrent:
+            if mode == 'train':
+                self.task_babi_files()
+                return
+            if mode == 'valid':
+                self.task_babi_valid_files()
+                return
+            if mode == 'test':
+                self.task_babi_test_files()
+                return
+            pass
+        if self.do_load_babi and self.do_load_recurrent:
+            if mode == 'train':
+                self.task_normal_train()
+                return
+            if mode == 'valid':
+                self.task_normal_valid()
+                return
+            if mode == 'test':
+                self.task_normal_test()
+                return
+            pass
 
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
@@ -1079,7 +1123,7 @@ class NMT:
         self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['question_ending']
         pass
 
-    def task_review_set(self):
+    def task_normal_test(self):
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
         self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['question_ending']
@@ -1217,7 +1261,9 @@ class NMT:
             self.saved_files += 1
             self.validate_iters()
             self.start = 0
-            self.task_babi_files()
+            #self.task_babi_files()
+            mode = 'train'
+            self.task_choose_files(mode=mode)
             if i % 3 == 0 and False: self._test_embedding(exit=False)
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -2266,7 +2312,9 @@ class NMT:
         if self.do_skip_validation:
             self.score_list.append('00.00')
             return
-        self.task_babi_valid_files()
+        #self.task_babi_valid_files()
+        mode = 'valid'
+        self.task_choose_files(mode=mode)
         self.printable = 'validate'
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
         self.do_test_not_train = True
@@ -2304,7 +2352,9 @@ class NMT:
 
         self.do_test_not_train = True
         #self.task_babi_files()
-        self.task_babi_test_files()
+        #self.task_babi_test_files()
+        mode = 'test'
+        self.task_choose_files(mode=mode)
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False,
                                                                          omit_unk=self.do_hide_unk)
         hparams['num_vocab_total'] = self.output_lang.n_words
@@ -2379,14 +2429,23 @@ if __name__ == '__main__':
     n = NMT()
 
     try:
+        mode = ''
         if (not n.do_review and not n.do_load_babi) or n.do_load_recurrent:
-            n.task_normal_train()
+            #n.task_normal_train()
+            mode = 'train'
+            n.task_choose_files(mode=mode)
         elif not n.do_load_babi:
-            n.task_review_set()
+            mode = 'test'
+            n.task_choose_files(mode=mode)
+            #n.task_review_set()
         elif n.do_load_babi and not n.do_test_not_train:
-            n.task_babi_files()
+            mode = 'train'
+            n.task_choose_files(mode=mode)
+            #n.task_babi_files()
         elif n.do_load_babi and n.do_test_not_train:
-            n.task_babi_test_files()
+            mode = 'test'
+            n.task_choose_files(mode=mode)
+            #n.task_babi_test_files()
             print('load test set -- no training.')
             print(n.train_fr)
 
