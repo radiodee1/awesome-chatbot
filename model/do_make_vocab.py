@@ -39,18 +39,18 @@ hard_coded_list = [
 ]
 
 directions = [
-    'n,n',
-    's,s',
-    'e,e',
-    'w,w',
-    'n,e',
-    'n,w',
-    's,e',
-    's,w',
-    'e,n',
-    'e,s',
-    'w,n',
-    'w,s'
+    'nn',
+    'ss',
+    'ee',
+    'ww',
+    'ne',
+    'nw',
+    'se',
+    'sw',
+    'en',
+    'es',
+    'wn',
+    'ws'
 ]
 
 v = []
