@@ -283,7 +283,7 @@ except KeyboardInterrupt:
 finally:
 
     if not test_on_screen:
-        s = 'mv ../raw/train* ../raw/test* ../data/.'
+        s = 'mv ../raw/train* ../raw/test* ../raw/valid* ../data/.'
         print(s)
         os.system(s)
         pass
