@@ -15,11 +15,33 @@ vocab_length = hparams['num_vocab_total']
 FROM = '../raw/glove.6B.' + str(embed_size) +'d.txt' # 50, 100, 200, 300
 TO = '../data/embed.txt'
 train_file = ''
+
+hard_coded_list = [
+    "i'm",
+    "you're",
+    "we're",
+    "they're",
+    "he's",
+    "she's",
+    "it's",
+    "that's",
+    "don't",
+    "can't",
+    "shouldn't",
+    "didn't",
+    "shan't",
+    "wouldn't" #,
+    #"won't"
+]
+
 v = []
 
-def make_vocab(train_file, order=False, read_glove=False):
+def make_vocab(train_file, order=False, read_glove=False, contractions=False):
     global v
     wordlist = []
+
+    if contractions: wordlist.extend(hard_coded_list)
+
     for filename in train_file:
         with open(filename, 'r') as x:
             xx = x.read()
@@ -150,6 +172,8 @@ if __name__ == '__main__':
     parser.add_argument('--w2v', help='replace all glove data with data obtained from w2v downloads.', action='store_true')
     parser.add_argument('--load-embed-size', help='Override settings embed-size hparam.')
     parser.add_argument('--order', help='put in alpha order.', action='store_true')
+    parser.add_argument('--contractions', help='add some contractions to the vocab that are not present in glove.',
+                        action='store_true')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -158,6 +182,7 @@ if __name__ == '__main__':
     order = False
     read_glove = False
     use_w2v = False
+    use_contractions = False
 
     if args['babi']:
         train_file = []
@@ -184,6 +209,8 @@ if __name__ == '__main__':
     else:
         use_w2v = False
 
+    if args['contractions'] is True: use_contractions = True
+
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
     babi_file3 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
@@ -202,7 +229,7 @@ if __name__ == '__main__':
     v = []
 
     if True:
-        v = make_vocab(train_file, order=order, read_glove=read_glove)
+        v = make_vocab(train_file, order=order, read_glove=read_glove, contractions=use_contractions)
         save_vocab(v, args['babi'])
     if len(v) == 0:
         filename = hparams['data_dir'] + hparams['vocab_name']
