@@ -30,7 +30,11 @@ hard_coded_list = [
     "shouldn't",
     "didn't",
     "shan't",
-    "wouldn't" #,
+    "wouldn't",
+    "we've",
+    "i've",
+    "they've",
+    "you've"
     #"won't"
 ]
 
