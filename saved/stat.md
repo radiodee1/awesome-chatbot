@@ -33,8 +33,8 @@ The table is included here:
  | QA14: Time Reasoning | 100 | 99.8 | 97.20/94.60 | 99.00/99.20 | 0 |
  | QA15: Basic Deduction | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA16: Basic Induction | 99.4 | 54.7 | 48.20/50.60 | 52.60/58.40 | 0 |
- | QA17: Positional Reasoning + | 59.6 | 95.8 | 0 | 0 | 0 |
- | QA18: Size Reasoning + | 95.3 | 97.9 | 0 | 0 | 0 |
+ | QA17: Positional Reasoning + | 59.6 | 95.8 | 59.20/57.00 | 58.00/59.40 | 0 |
+ | QA18: Size Reasoning + | 95.3 | 97.9 | 91.68/89.40 | 0 | 0 |
  | QA19: Path Finding | 34.5 | 100 | 0 | 0 | 0|
  | QA20: Agent's Motivation | 100 | 100 | 0 | 0 | 0 |
  | Average | 93.605 | 0 | 0 | 0 | 0 |

@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/saved/stat.md" beforeDir="false" afterPath="$PROJECT_DIR$/saved/stat.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +27,8 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="md" value="1130" />
-          <entry key="py" value="7771" />
+          <entry key="md" value="1161" />
+          <entry key="py" value="7772" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -38,9 +36,9 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Bash" value="71" />
-          <entry key="Markdown" value="1130" />
+          <entry key="Markdown" value="1161" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="7771" />
+          <entry key="Python" value="7772" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -61,12 +59,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/saved/stat.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="648">
-                <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
+                <caret line="36" column="56" selection-start-line="36" selection-start-column="56" selection-end-line="36" selection-end-column="56" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -75,16 +73,16 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="514">
-              <caret line="416" column="8" selection-start-line="416" selection-start-column="8" selection-end-line="416" selection-end-column="8" />
+            <state relative-caret-position="-2186">
+              <caret line="416" column="9" selection-start-line="416" selection-start-column="9" selection-end-line="416" selection-end-column="9" />
               <folding>
-                <marker date="1533480798681" expanded="true" signature="17083:17132" ph="..." />
-                <marker date="1533480798681" expanded="true" signature="17157:18580" ph="..." />
-                <marker date="1533480798681" expanded="true" signature="41158:41946" ph="..." />
-                <marker date="1533480798681" expanded="true" signature="73924:74316" ph="..." />
+                <marker date="1533480860585" expanded="true" signature="17084:17133" ph="..." />
+                <marker date="1533480860585" expanded="true" signature="17158:18581" ph="..." />
+                <marker date="1533480860585" expanded="true" signature="41159:41947" ph="..." />
+                <marker date="1533480860585" expanded="true" signature="73925:74317" ph="..." />
               </folding>
             </state>
           </provider>
@@ -268,8 +266,8 @@
         <option value="$PROJECT_DIR$/model/babi.py" />
         <option value="$PROJECT_DIR$/do_make_rename_train.sh" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
-        <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/saved/stat.md" />
       </list>
     </option>
   </component>
@@ -619,28 +617,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2186">
+          <caret line="416" column="9" selection-start-line="416" selection-start-column="9" selection-end-line="416" selection-end-column="9" />
+          <folding>
+            <marker date="1533480860585" expanded="true" signature="17084:17133" ph="..." />
+            <marker date="1533480860585" expanded="true" signature="17158:18581" ph="..." />
+            <marker date="1533480860585" expanded="true" signature="41159:41947" ph="..." />
+            <marker date="1533480860585" expanded="true" signature="73925:74317" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/saved/stat.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="648">
-            <caret line="36" column="26" selection-start-line="36" selection-start-column="26" selection-end-line="36" selection-end-column="26" />
+            <caret line="36" column="56" selection-start-line="36" selection-start-column="56" selection-end-line="36" selection-end-column="56" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="514">
-          <caret line="416" column="8" selection-start-line="416" selection-start-column="8" selection-end-line="416" selection-end-column="8" />
-          <folding>
-            <marker date="1533480798681" expanded="true" signature="17083:17132" ph="..." />
-            <marker date="1533480798681" expanded="true" signature="17157:18580" ph="..." />
-            <marker date="1533480798681" expanded="true" signature="41158:41946" ph="..." />
-            <marker date="1533480798681" expanded="true" signature="73924:74316" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
