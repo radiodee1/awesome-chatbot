@@ -34,13 +34,30 @@ hard_coded_list = [
     #"won't"
 ]
 
+directions = [
+    'n,n',
+    's,s',
+    'e,e',
+    'w,w',
+    'n,e',
+    'n,w',
+    's,e',
+    's,w',
+    'e,n',
+    'e,s',
+    'w,n',
+    'w,s'
+]
+
 v = []
 
 def make_vocab(train_file, order=False, read_glove=False, contractions=False):
     global v
     wordlist = []
 
-    if contractions: wordlist.extend(hard_coded_list)
+    if contractions:
+        wordlist.extend(hard_coded_list)
+        wordlist.extend(directions)
 
     for filename in train_file:
         with open(filename, 'r') as x:
