@@ -49,6 +49,9 @@ def init_babi(fname):
             tmp = line[idx + 1:].split('\t')
             task["Q"] = line[:idx].lower()
             task["A"] = tmp[1].strip().lower()
+
+            task["A"] = "".join(task["A"].split(',')) ## remove comma if there...
+
             tasks.append(task.copy())
 
     return tasks
