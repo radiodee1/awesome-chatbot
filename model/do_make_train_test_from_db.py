@@ -105,7 +105,7 @@ try:
     for timeframe in timeframes:
         connection = sqlite3.connect('{}.db'.format(timeframe))
         c = connection.cursor()
-        limit = 500 #5000
+        limit = 1000
         last_unix = 0
         cur_length = limit
         counter = 0
@@ -186,19 +186,41 @@ try:
 
             if not test_done and (count_recorded < approximate_length + limit or approximate_length == 0):
 
+                split = int(len(src_list) * 0.5)
+
                 with open('../raw/' + test_name + '.'+ src_ending, mode, encoding='utf8') as f:
-                    for content in src_list: # df['parent'].values:
+                    for content in src_list[split:]: # df['parent'].values:
                         content = format(content)
                         f.write(str(content)+'\n')
 
                 with open('../raw/' + test_name + '.' + tgt_ending, mode, encoding='utf8') as f:
-                    for content in tgt_list: #df['comment'].values:
+                    for content in tgt_list[split:]: #df['comment'].values:
                         content = format(content)
                         f.write(str(content)+'\n')
 
                 if do_babi:
                     with open('../raw/' + test_name + '.' + question_ending, mode, encoding='utf8') as f:
-                        for content in ques_list:  # df['comment'].values:
+                        for content in ques_list[split:]:  # df['comment'].values:
+                            content = format(content)
+                            f.write(str(content) + '\n')
+                    pass
+
+
+                ####################
+
+                with open('../raw/' + valid_name + '.'+ src_ending, mode, encoding='utf8') as f:
+                    for content in src_list[:split]: # df['parent'].values:
+                        content = format(content)
+                        f.write(str(content)+'\n')
+
+                with open('../raw/' + valid_name + '.' + tgt_ending, mode, encoding='utf8') as f:
+                    for content in tgt_list[:split]: #df['comment'].values:
+                        content = format(content)
+                        f.write(str(content)+'\n')
+
+                if do_babi:
+                    with open('../raw/' + valid_name + '.' + question_ending, mode, encoding='utf8') as f:
+                        for content in ques_list[:split]:  # df['comment'].values:
                             content = format(content)
                             f.write(str(content) + '\n')
                     pass
