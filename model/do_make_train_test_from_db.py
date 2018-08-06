@@ -172,7 +172,11 @@ try:
                     if not test_done or (len(tmpz) > 0 and len(tmp) > 0 and z_len_1 > 0 and z_len_2 > 0 and
                             (count_recorded < approximate_length + limit or approximate_length == 0)):
 
-                        if True: tmp = tmpz # simplify autoencode situation
+                        if True:
+                            tmp = tmpz # simplify autoencode situation
+                            if tmp.strip() == '':
+                                tmp = random.choice(choices)
+                                print('empty string found.')
 
                         if do_autoencode_context: src_list.append(tmp)
                         else: src_list.append('')

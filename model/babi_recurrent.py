@@ -1512,7 +1512,8 @@ class NMT:
             input_variable = sen
             pass
         else:
-            input_variable = self.variableFromSentence(self.input_lang, pair[0])
+            pad = 1
+            input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad)
         question_variable = self.variableFromSentence(self.output_lang, pair[1])
 
         if len(pair) > 2:
@@ -1532,6 +1533,7 @@ class NMT:
         else:
 
             return (input_variable, question_variable)
+
 
         return (input_variable,question_variable, target_variable)
 
@@ -1900,7 +1902,14 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
-
+    def prune_tensor(self, input, size):
+        if isinstance(input, list): return input
+        if input is None: return input
+        while len(input.size()) < size:
+            input = input.unsqueeze(0)
+        while len(input.size()) > size:
+            input = input.squeeze(0)
+        return input
     #######################################
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
@@ -2245,7 +2254,14 @@ class NMT:
 
         if True:
             if hparams['split_sentences'] is not True:
-                input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
+                input_variable = self.prune_tensor(input_variable,2)
+                b, i = input_variable.size()
+                if b > i and i == 1: input_variable = input_variable.permute(1,0)
+                input_variable = self.prune_tensor(input_variable,1)
+                input_variable = [input_variable]
+
+                #input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
+                #print(input_variable[0].size(), 'size')
             else:
                 input_variable = [input_variable]
             question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
