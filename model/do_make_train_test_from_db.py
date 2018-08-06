@@ -5,6 +5,7 @@ import sqlite3
 import pandas as pd
 import os
 import argparse
+import random
 import tokenize_weak
 import sys
 from settings import hparams
@@ -13,6 +14,14 @@ from settings import hparams
 timeframes = ['input']
 
 print(sys.argv)
+
+choices = [
+    'hello',
+    'goodbye',
+    'what',
+    'what is your name',
+    'i agree'
+]
 
 parser = argparse.ArgumentParser(description='Make text files.')
 parser.add_argument('--basefile', metavar='FILE', type=str, help='Base database file name')
@@ -69,7 +78,8 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
     z = tokenize_weak.format(s)
     if z == None or z.strip() == '':
 
-        z = ' hello '
+        #z = ' hello '
+        z = random.choice(choices)
         add_sol_eol = True
         add_eol_only = True
 
@@ -161,6 +171,9 @@ try:
 
                     if not test_done or (len(tmpz) > 0 and len(tmp) > 0 and z_len_1 > 0 and z_len_2 > 0 and
                             (count_recorded < approximate_length + limit or approximate_length == 0)):
+
+                        if True: tmp = tmpz # simplify autoencode situation
+
                         if do_autoencode_context: src_list.append(tmp)
                         else: src_list.append('')
 
