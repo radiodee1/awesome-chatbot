@@ -754,7 +754,7 @@ class WrapMemRNN(nn.Module):
         h = self.next_mem(concat)
 
         h = F.relu(h)
-        
+
         if self.recurrent_output:
             h = out
 
