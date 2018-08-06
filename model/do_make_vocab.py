@@ -50,7 +50,11 @@ directions = [
     'en',
     'es',
     'wn',
-    'ws'
+    'ws',
+    'n',
+    's',
+    'w',
+    'e'
 ]
 
 v = []
