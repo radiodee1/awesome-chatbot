@@ -755,7 +755,7 @@ class WrapMemRNN(nn.Module):
 
         h = F.relu(h)
 
-        if self.recurrent_output:
+        if self.recurrent_output and not hparams['split_sentences']:
             h = out
 
         return h, gru # h, gru
