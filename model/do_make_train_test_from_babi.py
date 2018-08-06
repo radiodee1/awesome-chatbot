@@ -50,7 +50,7 @@ def init_babi(fname):
             task["Q"] = line[:idx].lower()
             task["A"] = tmp[1].strip().lower()
 
-            task["A"] = "".join(task["A"].split(',')) ## remove comma if there...
+            task["A"] = " ".join(task["A"].split(',')) ## remove comma if there...
 
             tasks.append(task.copy())
 
