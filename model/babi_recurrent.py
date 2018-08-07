@@ -177,6 +177,15 @@ class Decoder(nn.Module):
     def load_embedding(self, embedding):
         self.embed = embedding
 
+    def prune_tensor(self, input, size):
+        if isinstance(input, list): return input
+        if input is None: return input
+        while len(input.size()) < size:
+            input = input.unsqueeze(0)
+        while len(input.size()) > size and input.size()[0] == 1:
+            input = input.squeeze(0)
+        return input
+
     def forward(self, output, encoder_out, decoder_hidden):
         """
         decodes one output frame
@@ -185,11 +194,17 @@ class Decoder(nn.Module):
         #print(decoder_hidden[:-1].size(),'eh size')
         if self.n_layers > 1:
             context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            embedded = self.prune_tensor(embedded,3)
+            #context = context.squeeze(0)
         else:
+            #print(decoder_hidden.size(),'dh')
             context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            embedded = self.prune_tensor(embedded, 3)
+            context = context.permute(1,0,2)
+
         #print(embedded.size(), context.size(),'con')
         concat_list = [
-            embedded.squeeze(0),
+            embedded,
             context
         ]
         gru_in = torch.cat(concat_list, dim=2)
@@ -439,7 +454,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output= recurrent_output
         self.sol_token = sol_token
-        self.decoder_layers = hparams['layers']
+        self.decoder_layers = hparams['decoder_layers']
 
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
@@ -466,7 +481,7 @@ class AnswerModule(nn.Module):
         if input is None: return input
         while len(input.size()) < size:
             input = input.unsqueeze(0)
-        while len(input.size()) > size:
+        while len(input.size()) > size and input.size()[0] == 1:
             input = input.squeeze(0)
         return input
 
@@ -482,9 +497,11 @@ class AnswerModule(nn.Module):
         all_out = []
         for k in range(l):
             e_out_list = [
-                self.prune_tensor(out[k,:],2),
                 self.prune_tensor(out[k,:],2)
             ]
+
+            if self.decoder_layers == 2:
+                e_out_list.append(self.prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
 
@@ -751,6 +768,7 @@ class WrapMemRNN(nn.Module):
         #print(question.size(),sen,'ques')
         #for i in concat: print(i.size())
         #exit()
+
         concat = torch.cat(concat, dim=0)
         #print(concat.size(),'con')
         h = self.next_mem(concat)
@@ -816,7 +834,7 @@ class WrapMemRNN(nn.Module):
         if input is None: return input
         while len(input.size()) < size:
             input = input.unsqueeze(0)
-        while len(input.size()) > size:
+        while len(input.size()) > size and input.size()[0] == 1:
             input = input.squeeze(0)
         return input
 
@@ -1006,7 +1024,7 @@ class NMT:
         parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
         parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
-        parser.add_argument('--layers', help='number of layers in the recurrent output decoder (1 or 2)')
+        parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1080,7 +1098,7 @@ class NMT:
         if self.args['no_split_sentences'] is True:
             self.do_no_positional = True
             hparams['split_sentences'] = False
-        if self.args['layers'] is not None: hparams['layers'] = int(self.args['layers'])
+        if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 

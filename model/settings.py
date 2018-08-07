@@ -33,6 +33,7 @@ hparams = {
     'unk':'unk',
     'units': 100, #128, #256 , #64,
     'layers':2,
+    'decoder_layers': 2,
     'teacher_forcing_ratio': 0.0, ## 0.5
     'dropout': 0.0,
     'learning_rate': 0.01, # adam = 0.001, adagrad = 0.01
