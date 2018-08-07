@@ -2197,7 +2197,7 @@ class NMT:
 
                 if not self.do_skip_validation and self.do_sample_on_screen:
                     ###########################
-                    choice = random.choice(self.pairs[start:start + temp_batch_size])
+                    choice = random.choice(self.pairs[iter: iter + temp_batch_size])
                     print('src:',choice[0])
                     question = None
                     if self.do_load_babi:
