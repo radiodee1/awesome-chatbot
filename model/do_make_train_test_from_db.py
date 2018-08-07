@@ -194,12 +194,18 @@ try:
                         print('skip one here!', skip_num)
 
                 pass
-            else:
+            elif  (count_recorded < approximate_length + limit or approximate_length == 0):
 
                 src_list = content_parent[:]
                 tgt_list = content_comment[:]
+                if do_babi:
+                    ques_list = content_parent[:]
 
+                count_recorded += len(content_parent)
 
+                if count_recorded >= approximate_length + limit and approximate_length != 0:
+                    print('last recorded.')
+                    break
 
             if not test_done and (count_recorded < approximate_length + limit or approximate_length == 0):
 
