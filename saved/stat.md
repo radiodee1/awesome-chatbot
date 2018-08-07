@@ -36,7 +36,7 @@ The table is included here:
  | QA17: Positional Reasoning + | 59.6 | 95.8 | 59.20/57.00 | 58.00/59.40 | 0 |
  | QA18: Size Reasoning + | 95.3 | 97.9 | 91.60/89.40 | 91.60/89.40 | 0 |
  | QA19: Path Finding | 34.5 | 100 | 0 | 0 | 0|
- | QA20: Agent's Motivation | 100 | 100 | 0 | 0 | 0 |
+ | QA20: Agent's Motivation | 100 | 100 | 100/100 | 100/100 | 0 |
  | Average | 93.605 | 0 | 0 | 0 | 0 |
  | Combined | 0 | 0 | 0 | 0 | 0 |
 
