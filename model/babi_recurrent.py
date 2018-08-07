@@ -1886,7 +1886,7 @@ class NMT:
                 else:
                     out.append(x)
                 ll = x
-        return ' '.join(out)
+            return ' '.join(out)
 
         ## shorten !!!
 
@@ -2216,7 +2216,7 @@ class NMT:
                     #print(choice)
                     if not self.do_load_babi or self.do_recurrent_output:
                         print('ans:',words)
-                        print('try:',self._shorten(words))
+                        print('try:',self._shorten(words, just_duplicates=True))
                         #self._word_from_prediction()
                     ############################
                 if self.do_recurrent_output:
