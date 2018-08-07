@@ -23,3 +23,17 @@ Here we are interested in creating the same conditions as above but with a large
 6. `./do_make_train_test_from_babi.py 1 en-10k` NOTE: replace '1' with current test.
 7. `cd ..`
 8. `./do_launch_babi.sh --mode=long --units=100 --load-babi --load-embed-size=100 --hide-unk --basename=lrg --freeze-embedding --lr=0.001 --babi-num=1` NOTE: replace '1' with current test. Remove '--freeze-embedding' and '--load-embed-size=100' as necessary for test.
+
+#### Recurrent Output: `babi_recurrent.py`:
+Test 19 uses two word output. The babi.py program that I've been working on is not set up to reply with more than one word at a time.
+To address this a gru was added to the output of the model. Test 19 is then supposed to be run with the new code.
+At the same time as test 19 is being run with the recurrent code the model is being experimented with on a different computer with a different set of goals.
+Here we are interested in finding a way to make a chatbot using the babi_recurrent.py code.
+
+The major obstacle that I see for this right now is that I don't have a good data set at my disposal. I currently have access to a movie data base and a reddit dump data base.
+Both are large but static filled. What we could do, and will try, is auto-encode the recurrent module with the movie corpus. Then we'll freeze the output module.
+Then we'll train the rest of the model over again with question/answer oriented data. This would be all with the DMN type architecture that we've been working with to solve the babi tasks.
+
+We could also employ a seq2seq architecture. This might be easy to implement. The topic is discussed in the following paper. [See Here.](http://arxiv.org/abs/1506.05869v3) This model uses one input and one output. The babi model uses two inputs and one output. Both should be tried.
+
+Then maybe we'll compare our results using the DMN type model with a seq2seq chatbot architecture.

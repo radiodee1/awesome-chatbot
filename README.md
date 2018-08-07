@@ -34,6 +34,9 @@ Description of the individual setup scripts is included below.
   * https://github.com/YerevaNN/Dynamic-memory-networks-in-Theano
 * The original paper on Dynamic Memory Networks, by Kumar et al., can be found here:
   * http://arxiv.org/abs/1506.07285
+* This paper discusses using a sequence to sequence model to make a chatbot:
+  * http://arxiv.org/abs/1506.05869v3
+
 # GloVe and W2V Word Embeddings Download
 * This link brings you to a page where you can download W2V embeddings that google makes available. At the time of this writing this project does not use w2v embeddings, but uses GloVe instead.
   * https://code.google.com/archive/p/word2vec/
