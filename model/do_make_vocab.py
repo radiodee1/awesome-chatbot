@@ -42,7 +42,14 @@ hard_coded_list = [
     "they'd",
     "we'd",
     "he'd",
-    "she'd"
+    "she'd",
+    "i'll",
+    "you'll",
+    "he'll",
+    "she'll",
+    "they'll",
+    "we'll",
+    "it'll"
     #"won't"
 ]
 
