@@ -34,7 +34,15 @@ hard_coded_list = [
     "we've",
     "i've",
     "they've",
-    "you've"
+    "you've",
+    "here's",
+    "there's",
+    "i'd",
+    "you'd",
+    "they'd",
+    "we'd",
+    "he'd",
+    "she'd"
     #"won't"
 ]
 
