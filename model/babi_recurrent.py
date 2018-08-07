@@ -1884,7 +1884,7 @@ class NMT:
                 if x == ll:
                     pass
                 else:
-                    out.append(x)
+                    if x != hparams['eol']: out.append(x)
                 ll = x
             return ' '.join(out)
 
