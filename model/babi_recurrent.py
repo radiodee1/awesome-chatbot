@@ -183,8 +183,10 @@ class Decoder(nn.Module):
         """
         embedded = self.embed(output)  # (1, batch, embed_dim)
         #print(decoder_hidden[:-1].size(),'eh size')
-        context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-        #context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        if self.n_layers > 1:
+            context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        else:
+            context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
         #print(embedded.size(), context.size(),'con')
         concat_list = [
             embedded.squeeze(0),
@@ -437,7 +439,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output= recurrent_output
         self.sol_token = sol_token
-        self.decoder_layers = 2
+        self.decoder_layers = hparams['layers']
 
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
@@ -1004,6 +1006,7 @@ class NMT:
         parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
         parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
+        parser.add_argument('--layers', help='number of layers in the recurrent output decoder (1 or 2)')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1077,6 +1080,7 @@ class NMT:
         if self.args['no_split_sentences'] is True:
             self.do_no_positional = True
             hparams['split_sentences'] = False
+        if self.args['layers'] is not None: hparams['layers'] = int(self.args['layers'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
