@@ -1873,10 +1873,23 @@ class NMT:
         #rs = es - s
         return ' - %s' % (self._as_minutes(s))
 
-    def _shorten(self, sentence):
+    def _shorten(self, sentence, just_duplicates=False):
         # assume input is list already
         # get longest mutter possible!!
         # trim start!!!
+        ll = ''
+        out = []
+        if just_duplicates:
+            for x in sentence:
+                if x == ll:
+                    pass
+                else:
+                    out.append(x)
+                ll = x
+        return ' '.join(out)
+
+        ## shorten !!!
+
         j = 0
         k = 0
         while k < len(sentence):
@@ -2201,7 +2214,7 @@ class NMT:
                         target = None
                     words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
                     #print(choice)
-                    if not self.do_load_babi:
+                    if not self.do_load_babi or self.do_recurrent_output:
                         print('ans:',words)
                         print('try:',self._shorten(words))
                         #self._word_from_prediction()
