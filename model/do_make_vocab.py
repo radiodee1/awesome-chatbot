@@ -49,7 +49,8 @@ hard_coded_list = [
     "she'll",
     "they'll",
     "we'll",
-    "it'll"
+    "it'll",
+    "what's"
     #"won't"
 ]
 
