@@ -922,6 +922,7 @@ class NMT:
         self.vocab_lang = None
 
         self.print_every = hparams['steps_to_stats']
+        self.epoch_length = 10000 ## 10000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
         self.first_load = True
@@ -1275,7 +1276,7 @@ class NMT:
             #self.model_0_wra.test_embedding()
 
             #self.first_load = True
-            self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+            self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
             self.start = 0
 
             print('auto save.')
@@ -1448,6 +1449,9 @@ class NMT:
         if self.do_load_embeddings:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
+
+        if self.epoch_length > len(self.pairs):
+            self.epoch_length = len(self.pairs)
 
         return self.input_lang, self.output_lang, self.pairs
 
@@ -2028,6 +2032,12 @@ class NMT:
         num_right_small = 0
         num_count = 0
         temp_batch_size = 0
+        epoch_len = self.epoch_length
+        epoch_start = self.this_epoch * self.epoch_length
+        epoch_stop = epoch_start + self.epoch_length
+        if len(self.pairs) < epoch_stop:
+            epoch_stop = len(self.pairs)
+            epoch_len = len(self.pairs) - epoch_start
 
         self.time_str = self._as_minutes(self.time_num)
 
@@ -2039,7 +2049,8 @@ class NMT:
         #self.criterion = nn.NLLLoss()
         self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
-        training_pairs = [self.variablesFromPair(self.pairs[i]) for i in range(n_iters)]
+        training_pairs = [self.variablesFromPair(
+            self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
 
         if not self.do_test_not_train:
             criterion = self.criterion
@@ -2195,9 +2206,14 @@ class NMT:
                 if self.do_auto_stop: print('- count', self._count_epochs_for_quit)
                 else: print('')
 
-                if not self.do_skip_validation and self.do_sample_on_screen:
+                #print(epoch_start, iter, temp_batch_size, epoch_stop)
+
+                if not self.do_skip_validation and self.do_sample_on_screen: # and temp_batch_size > 0 and epoch_start + iter < epoch_stop:
                     ###########################
-                    choice = random.choice(self.pairs[iter: iter + temp_batch_size])
+                    if epoch_start + iter >= epoch_stop:
+                        choice = random.choice(self.pairs)
+                    else:
+                        choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
                     print('src:',choice[0])
                     question = None
                     if self.do_load_babi:
@@ -2375,7 +2391,7 @@ class NMT:
         self.load_checkpoint()
         lr = hparams['learning_rate']
         self.start = 0
-        self.train_iters(None,None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+        self.train_iters(None,None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
         if len(self.score_list) > 0 and float(self.score_list[-1]) >= self.record_threshold: #100.00:
             self.best_accuracy = float(self.score_list[-1])
             self.save_checkpoint(num=len(self.pairs))
@@ -2427,7 +2443,7 @@ class NMT:
         self.first_load = True
         self.load_checkpoint()
         lr = hparams['learning_rate']
-        self.train_iters(None, None, len(self.pairs), print_every=self.print_every, learning_rate=lr)
+        self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
 
     def update_result_file(self):
 
@@ -2539,7 +2555,7 @@ if __name__ == '__main__':
 
         if n.do_train:
             lr = hparams['learning_rate']
-            n.train_iters(None, None, len(n.pairs), print_every=n.print_every, learning_rate=lr)
+            n.train_iters(None, None, n.epoch_length, print_every=n.print_every, learning_rate=lr)
 
 
         if n.do_train_long:
