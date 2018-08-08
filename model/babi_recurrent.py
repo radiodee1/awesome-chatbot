@@ -922,7 +922,7 @@ class NMT:
         self.vocab_lang = None
 
         self.print_every = hparams['steps_to_stats']
-        self.epoch_length = 10000 ## 10000
+        self.epoch_length = 5000 ## 10000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
         self.first_load = True
@@ -2318,7 +2318,19 @@ class NMT:
                 #print(input_variable[0].size(), 'size')
             else:
                 input_variable = [input_variable]
-            question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
+
+            question_variable = self.prune_tensor(question_variable, 2)
+            ql = len(question_variable.size())
+            if ql == 2:
+                b, i = question_variable.size()
+                if b > i and i == 1: question_variable = question_variable.permute(1,0)
+            question_variable = question_variable.squeeze(0)
+            question_variable = [question_variable]
+
+            #print(question_variable[0].size())
+
+            #question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
+
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
 
 
