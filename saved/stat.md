@@ -38,7 +38,6 @@ The table is included here:
  | QA19: Path Finding | 34.5 | 100 | xx/xx | xx/xx | 0 |
  | QA20: Agent's Motivation | 100 | 100 | 100/100 | 100/100 | 0 |
  | Average | 93.605 | 0 | 0 | 0 | 0 |
- | Combined | 0 | 0 | 0 | 0 | 0 |
 
 _*_ -- these results may need to be revisited.
 
