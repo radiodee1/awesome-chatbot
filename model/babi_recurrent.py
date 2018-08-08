@@ -922,7 +922,7 @@ class NMT:
         self.vocab_lang = None
 
         self.print_every = hparams['steps_to_stats']
-        self.epoch_length = 5000 ## 10000
+        self.epoch_length = 10000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
         self.first_load = True
