@@ -5,6 +5,7 @@ import sqlite3
 import os
 from datetime import datetime
 import sys
+import argparse
 
 print(sys.argv)
 
@@ -13,11 +14,26 @@ if len(sys.argv) > 1:
     print(txtname)
     print('this first arg should be the path to the movie corpus file.')
 
+parser = argparse.ArgumentParser(description='Make db file.')
+parser.add_argument('basefile', metavar='FILE', type=str, help='Base file from movie corpus for db output')
+parser.add_argument('--test-on-screen', help='print some values to the screen.', action='store_true')
+parser.add_argument('--repeat', help='shift and repeat movie data', action='store_true')
+parser.add_argument('--switch-order', help='switch comment order.', action='store_true')
+args = parser.parse_args()
+args = vars(args)
+
+
 timeframe = 'input'
 sql_transaction = []
 
 shift_and_repeat = False
 test_on_screen = False
+switch_comment_order = True
+
+txtname = str(args['basefile'])
+if args['test_on_screen'] is not None: test_on_screen = args['test_on_screen']
+if args['repeat'] is not None: shift_and_repeat = args['repeat']
+if args['switch_order'] is not None: switch_comment_order = args['switch_order']
 
 connection = sqlite3.connect('{}.db'.format(timeframe))
 c = connection.cursor()
@@ -192,22 +208,32 @@ if __name__ == '__main__':
                 #if done: #acceptable(body) and acceptable(reply) and done :
                 done = False
                 
-                if row_counter % 2 == 0 or  shift_and_repeat:
-                    if test_on_screen and False:
+                if row_counter % 2 == 0 : #or shift_and_repeat:
+                    if test_on_screen :
                         print(body, '-body-',row_counter)
                         print(reply,'-reply-',row_counter)
                         print(name, '-name-\n', row_counter)
                 
                     if True:
-                        sql_insert_complete(comment_id,parent_id,body,reply,subreddit,created_utc,score)
+                        if not switch_comment_order :
+                            comment_from = body[:]
+                            comment_to = reply[:]
+                        else: # switch_comment_order:
+                            comment_from = reply[:]
+                            comment_to = body[:]
+                        sql_insert_complete(comment_id,parent_id,comment_from,comment_to,subreddit,created_utc,score)
                         done_counter += 1
 
                     body = '' #reply[:]
+                    if shift_and_repeat:
+                        body = reply[:]
 
                 if row_counter % 100000 == 0:
                     print('Total Rows Read: {}, Paired Rows: {}, Time: {}'.format(row_counter, paired_rows, str(datetime.now())))
 
-                #if done:
+                if test_on_screen and row_counter > 100:
+                    exit()
+
                 num += 1
 
         transaction_bldr('', force=True)
