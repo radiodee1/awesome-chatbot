@@ -538,14 +538,19 @@ class AnswerModule(nn.Module):
         mem = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
+        '''
         if self.recurrent_output:
             mem = mem.squeeze(0)
             return self.recurrent(mem)
-
+        '''
         mem = torch.cat([mem, question_h], dim=2)
 
         mem = self.dropout(mem)
         mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
+
+        if self.recurrent_output:
+            mem = self.out_b(mem)
+            return self.recurrent(mem)
 
         out = self.out_a(mem)
 
