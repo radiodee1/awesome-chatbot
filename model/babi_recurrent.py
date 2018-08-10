@@ -1290,6 +1290,7 @@ class NMT:
             mode = 'train'
             self.task_choose_files(mode=mode)
             if i % 3 == 0 and False: self._test_embedding(exit=False)
+
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
         self.update_result_file()
@@ -2032,16 +2033,26 @@ class NMT:
         num_right_small = 0
         num_count = 0
         temp_batch_size = 0
+
         epoch_len = self.epoch_length
         epoch_start = self.this_epoch * self.epoch_length
+        if epoch_start >= len(self.pairs):
+            n = (len(self.pairs) // self.epoch_length)
+            e = self.this_epoch % n
+            epoch_start = e * self.epoch_length
+            #exit()
+
         epoch_stop = epoch_start + self.epoch_length
+
         if len(self.pairs) < epoch_stop:
             epoch_stop = len(self.pairs)
             epoch_len = len(self.pairs) - epoch_start
-        print('limit pairs:', len(self.pairs),
-              '- end of this epoch:',epoch_stop,
-              '- epochs:', len(self.pairs) // self.epoch_length,
-              '- this epoch:', self.this_epoch + 1)
+
+        if not self.do_test_not_train:
+            print('limit pairs:', len(self.pairs),
+                  '- end of this epoch:',epoch_stop,
+                  '- epochs:', len(self.pairs) // self.epoch_length,
+                  '- this epoch:', self.this_epoch + 1)
 
         self.time_str = self._as_minutes(self.time_num)
 
