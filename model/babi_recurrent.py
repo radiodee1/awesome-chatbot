@@ -2038,6 +2038,10 @@ class NMT:
         if len(self.pairs) < epoch_stop:
             epoch_stop = len(self.pairs)
             epoch_len = len(self.pairs) - epoch_start
+        print('limit pairs:', len(self.pairs),
+              '- end of this epoch:',epoch_stop,
+              '- epochs:', len(self.pairs) // self.epoch_length,
+              '- this epoch:', self.this_epoch + 1)
 
         self.time_str = self._as_minutes(self.time_num)
 

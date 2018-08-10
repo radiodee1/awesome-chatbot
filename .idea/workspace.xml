@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_db_from_movie.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_db_from_movie.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,22 +16,23 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="34" />
+          <entry key="project.closed" value="37" />
+          <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="8" />
           <entry key="project.open.time.5" value="5" />
           <entry key="project.open.time.6" value="7" />
-          <entry key="project.open.time.7" value="7" />
+          <entry key="project.open.time.7" value="8" />
           <entry key="project.open.time.8" value="3" />
-          <entry key="project.open.time.9" value="2" />
-          <entry key="project.opened" value="35" />
+          <entry key="project.open.time.9" value="3" />
+          <entry key="project.opened" value="38" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="3113" />
-          <entry key="py" value="11151" />
+          <entry key="py" value="11239" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -40,7 +42,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="3113" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="11151" />
+          <entry key="Python" value="11239" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -75,11 +77,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="228" column="39" selection-start-line="228" selection-start-column="39" selection-end-line="228" selection-end-column="39" />
+            <state relative-caret-position="4104">
+              <caret line="233" column="33" selection-start-line="233" selection-start-column="33" selection-end-line="233" selection-end-column="33" />
               <folding>
                 <element signature="e#20#33#0" expanded="true" />
               </folding>
@@ -108,23 +110,23 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="782">
+            <state relative-caret-position="918">
               <caret line="53" column="79" selection-start-line="53" selection-start-column="79" selection-end-line="53" selection-end-column="79" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="915">
-              <caret line="924" column="28" selection-start-line="924" selection-start-column="28" selection-end-line="924" selection-end-column="28" />
+            <state relative-caret-position="316">
+              <caret line="2041" column="48" lean-forward="true" selection-start-line="2041" selection-start-column="48" selection-end-line="2041" selection-end-column="48" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1533752625221" expanded="true" signature="17747:17796" ph="..." />
-                <marker date="1533752625221" expanded="true" signature="17821:19356" ph="..." />
-                <marker date="1533752625221" expanded="true" signature="42211:42999" ph="..." />
-                <marker date="1533752625221" expanded="true" signature="75371:75763" ph="..." />
+                <marker date="1533904160335" expanded="true" signature="17747:17796" ph="..." />
+                <marker date="1533904160335" expanded="true" signature="17821:19356" ph="..." />
+                <marker date="1533904160335" expanded="true" signature="42211:42999" ph="..." />
+                <marker date="1533904160335" expanded="true" signature="75371:75763" ph="..." />
               </folding>
             </state>
           </provider>
@@ -133,8 +135,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
-              <caret line="218" column="21" selection-start-line="217" selection-end-line="218" selection-end-column="21" />
+            <state relative-caret-position="678">
+              <caret line="53" column="8" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -189,7 +191,6 @@
       <find>train_fr</find>
       <find>open_sentences</find>
       <find>variablesFromPair</find>
-      <find>AnswerModule</find>
       <find>prune</find>
       <find>encoder_out</find>
       <find>and input.size()[0] == 1</find>
@@ -206,12 +207,13 @@
       <find>pairs</find>
       <find>approximate_length</find>
       <find>print_every</find>
-      <find>this_epoch</find>
       <find>train_iters</find>
       <find>prepareData</find>
       <find>epoch_length</find>
       <find>sql_insert_complete</find>
       <find>shift_and_repeat</find>
+      <find>AnswerModule</find>
+      <find>this_epoch</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -264,13 +266,13 @@
         <option value="$PROJECT_DIR$/do_make_rename_train.sh" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
-        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/do_make_db_from_movie.py" />
+        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
       </list>
     </option>
   </component>
@@ -554,6 +556,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4104">
+          <caret line="233" column="33" selection-start-line="233" selection-start-column="33" selection-end-line="233" selection-end-column="33" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -565,6 +577,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="7" column="2" selection-start-line="2" selection-end-line="7" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="918">
+          <caret line="53" column="79" selection-start-line="53" selection-start-column="79" selection-end-line="53" selection-end-column="79" />
         </state>
       </provider>
     </entry>
@@ -599,40 +618,23 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="782">
-          <caret line="53" column="79" selection-start-line="53" selection-start-column="79" selection-end-line="53" selection-end-column="79" />
+        <state relative-caret-position="678">
+          <caret line="53" column="8" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="915">
-          <caret line="924" column="28" selection-start-line="924" selection-start-column="28" selection-end-line="924" selection-end-column="28" />
+        <state relative-caret-position="316">
+          <caret line="2041" column="48" lean-forward="true" selection-start-line="2041" selection-start-column="48" selection-end-line="2041" selection-end-column="48" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1533752625221" expanded="true" signature="17747:17796" ph="..." />
-            <marker date="1533752625221" expanded="true" signature="17821:19356" ph="..." />
-            <marker date="1533752625221" expanded="true" signature="42211:42999" ph="..." />
-            <marker date="1533752625221" expanded="true" signature="75371:75763" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="218" column="21" selection-start-line="217" selection-end-line="218" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="228" column="39" selection-start-line="228" selection-start-column="39" selection-end-line="228" selection-end-column="39" />
-          <folding>
-            <element signature="e#20#33#0" expanded="true" />
+            <marker date="1533904160335" expanded="true" signature="17747:17796" ph="..." />
+            <marker date="1533904160335" expanded="true" signature="17821:19356" ph="..." />
+            <marker date="1533904160335" expanded="true" signature="42211:42999" ph="..." />
+            <marker date="1533904160335" expanded="true" signature="75371:75763" ph="..." />
           </folding>
         </state>
       </provider>

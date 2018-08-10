@@ -50,8 +50,8 @@ hard_coded_list = [
     "they'll",
     "we'll",
     "it'll",
-    "what's"
-    #"won't"
+    "what's",
+    "won't"
 ]
 
 directions = [
