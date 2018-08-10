@@ -35,13 +35,15 @@ The table is included here:
  | QA16: Basic Induction | 99.4 | 54.7 | 48.20/50.60 | 52.60/58.40 | 0 |
  | QA17: Positional Reasoning + | 59.6 | 95.8 | 59.20/57.00 | 58.00/59.40 | 0 |
  | QA18: Size Reasoning + | 95.3 | 97.9 | 91.60/89.40 | 91.60/89.40 | 0 |
- | QA19: Path Finding | 34.5 | 100 | xx/xx | xx/xx | 0 |
+ | QA19: Path Finding ** | 34.5 | 100 | xx/xx | xx/xx | 0 |
  | QA20: Agent's Motivation | 100 | 100 | 100/100 | 100/100 | 0 |
  | Average | 93.605 | 0 | 0 | 0 | 0 |
 
 _*_ -- these results may need to be revisited.
 
 _+_ -- yes/no or yes/no/maybe answers.
+
+_**_ -- Test 19 uses two-word output. See note below.
 
 #### Training and Testing:
 All results at this time benefit from weak or no supervision during training. It has been noted in the DMN+ paper that for most models compared, the results for some tests are always 100%. These would be tests 1, 4, 11, 12, 13, 15, and 19.  [See here.](https://arxiv.org/abs/1603.01417)
@@ -60,3 +62,13 @@ Later the DMN architecture became interesting.
 * `model/do_make_train_test_from_babi.py` This must be run before executing any training on the babi set. This script also allows you to select which babi challenge you want to work on.
 * `model/do_make_train_test_from_db.py` This makes the files for training on the two part data required for the seq2seq problems. It takes as input a sqlite3 database created with one of the scripts in the root directory of the project. This data is typically extracted from reddit json dumps.
 * `model/do_make_vocab.py` This script is executed after the 'do_make_train_test' scripts. It sets up a vocabulary file for the NN model.
+
+#### Two Word Output: `babi_recurrent.py` -- Test 19
+8/10/18
+
+To address the problem of two word output the babi.py program was outfitted with a recurrent output module.
+The module consisted of a two layer gru. For the babi test 19 we used the specially outfitted program.
+This is one of the reasons we don't average our results. They are not all produced using the same software.
+
+The results for test 19 are terrible. If we come across material on line that would improve our results we will attempt to employ it.
+Until such time these are the results we will document for test 19.
