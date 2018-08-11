@@ -651,6 +651,7 @@ class WrapMemRNN(nn.Module):
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
         self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
+        self.model_5_ans.decoder.embed.weight.requires_grad = not do_freeze
         print('freeze embedding')
         pass
 
