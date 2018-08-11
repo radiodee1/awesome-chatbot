@@ -489,6 +489,7 @@ class NMT:
         self.epoch_length = 10000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
+        self.start_epoch = 0
         self.first_load = True
         self.memory_hops = 5
         self.start = 0
@@ -590,6 +591,7 @@ class NMT:
         parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
+        parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -664,6 +666,7 @@ class NMT:
             self.do_no_positional = True
             hparams['split_sentences'] = False
         if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
+        if self.args['start_epoch'] is not None: self.start_epoch = int(self.args['start_epoch'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -828,7 +831,7 @@ class NMT:
         lr = hparams['learning_rate']
         if num == 0:
             num = hparams['epochs']
-        for i in range(num):
+        for i in range(self.start_epoch, num):
             self.this_epoch = i
             self.printable = 'epoch #' + str(i+1)
             self.do_test_not_train = False
