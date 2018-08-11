@@ -26,7 +26,14 @@ Here we are interested in creating the same conditions as above but with a large
 
 #### Recurrent Output: `babi_recurrent.py`:
 Test 19 uses two word output. The babi.py program that I've been working on is not set up to reply with more than one word at a time.
-To address this a gru was added to the output of the model. Test 19 is then supposed to be run with the new code.
+To address this a gru was added to the output of the model. Test 19 is then supposed to be run with the new code. The code allows for
+command line options that set the number of layers in the recurrent module. Layer size of 1 and 2 was tried and 1 was found to be best.
+Even with one recurrent layer testing output was never very good. See the table below.
+
+| Test | 1 recurrent layer | 2 recurrent layers |
+|-|-|-|
+| Test 19 | 7.39% | 30% |
+
 At the same time as test 19 is being run with the recurrent code the model is being experimented with on a different computer with a different set of goals.
 Here we are interested in finding a way to make a chatbot using the babi_recurrent.py code.
 
