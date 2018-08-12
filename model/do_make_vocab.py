@@ -178,6 +178,7 @@ def load_vocab(filename=None):
 
 
 def prep_glove(vocab_list, w2v=False):
+    print('do glove prep.')
     uniform_low = -1.0
     uniform_high = 1.0
     if not w2v:
@@ -210,7 +211,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Make vocab file.')
     parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output. (Can be a comma separated list.)')
-    parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
+    parser.add_argument('--babi', help='Flag for babi input. (Override basefile.)', action='store_true')
     parser.add_argument('--all-glove', help='Load all words from the glove set.', action='store_true')
     parser.add_argument('--w2v', help='replace all glove data with data obtained from w2v downloads.', action='store_true')
     parser.add_argument('--load-embed-size', help='Override settings embed-size hparam.')
@@ -228,9 +229,10 @@ if __name__ == '__main__':
     use_contractions = False
 
     if args['babi']:
-        train_file = []
+        pass
+        #train_file = []
         #args['babi'] = True
-    elif args['basefile'] is not None :
+    if args['basefile'] is not None :
         lst = args['basefile']
         lst = lst.split(',')
         if len(lst) > 1:
