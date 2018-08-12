@@ -187,14 +187,22 @@ class LuongAttention(nn.Module):
         return context, mask
 
 class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout * 0.0)
-        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
+
+        gru_in_dim = embed_dim + hidden_dim
+        linear_in_dim = hidden_dim * 2
+        if cancel_attention:
+            gru_in_dim = hidden_dim
+            linear_in_dim = hidden_dim
+
+        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout * 0.0)
+        self.out = nn.Linear(linear_in_dim, target_vocab_size)
         self.maxtokens = hparams['tokens_per_sentence']
+        self.cancel_attention = cancel_attention
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -258,24 +266,38 @@ class Decoder(nn.Module):
 
         encoder_out = self.prune_tensor(encoder_out, 3)
 
-        context, mask = self.attention(decoder_hidden[:,-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+        if not self.cancel_attention:
+            context, mask = self.attention(decoder_hidden[:,-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context = context.permute(1, 0, 2)
+        else:
+            context = None
+            mask = None
+
         embedded = self.prune_tensor(embedded,3)
 
         decoder_hidden = decoder_hidden[:,-self.n_layers:].permute(1,0,2)
 
-        context = context.permute(1,0,2)
+        #context = context.permute(1,0,2)
 
-        concat_list = [
-            embedded,
-            context
-        ]
-        #for i in concat_list: print(i.size(), self.n_layers)
-        #exit()
+        if not self.cancel_attention:
+            concat_list = [
+                embedded,
+                context
+            ]
+            #for i in concat_list: print(i.size(), self.n_layers)
+            #exit()
 
-        gru_in = torch.cat(concat_list, dim=2) #dim=2
+            gru_in = torch.cat(concat_list, dim=2) #dim=2
+        else:
+            gru_in = embedded
+
         rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
         decoder_hidden = decoder_hidden.permute(1,0,2)
-        output = self.out(torch.cat([rnn_output, context], 2))
+
+        if self.cancel_attention:
+            output = self.out(rnn_output)
+        else:
+            output = self.out(torch.cat([rnn_output, context], 2))
         return output, decoder_hidden, mask
 
 
@@ -283,7 +305,9 @@ class Decoder(nn.Module):
 
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
-                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0):
+                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
+                 cancel_attention=False):
+
         super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
@@ -298,13 +322,15 @@ class WrapMemRNN(nn.Module):
         self.sol_token = sol_token
         position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
+        self.cancel_attention = cancel_attention
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
         self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
                                           2, dropout,embed=self.embed)
 
-        self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed)
+        self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
+                                   cancel_attention=self.cancel_attention)
 
         self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
@@ -531,6 +557,7 @@ class NMT:
         self.do_recurrent_output = False
         self.do_load_recurrent = False
         self.do_no_positional = False
+        self.do_no_attention = False
 
         self.printable = ''
 
@@ -575,6 +602,7 @@ class NMT:
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
+        parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -650,6 +678,7 @@ class NMT:
             hparams['split_sentences'] = False
         if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
         if self.args['start_epoch'] is not None: self.start_epoch = int(self.args['start_epoch'])
+        if self.args['no_attention'] is not False: self.do_no_attention = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1989,7 +2018,7 @@ class NMT:
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2016,7 +2045,7 @@ class NMT:
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -2117,7 +2146,7 @@ if __name__ == '__main__':
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
-                                   sol_token=sol_token)
+                                   sol_token=sol_token, cancel_attention=n.do_no_attention)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)

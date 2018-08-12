@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,7 +30,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4260" />
-          <entry key="py" value="14308" />
+          <entry key="py" value="14774" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -40,7 +40,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4260" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="14308" />
+          <entry key="Python" value="14774" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -63,15 +63,15 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="525" column="20" selection-start-line="525" selection-start-column="20" selection-end-line="525" selection-end-column="20" />
+            <state relative-caret-position="748">
+              <caret line="526" column="21" selection-start-line="526" selection-start-column="21" selection-end-line="526" selection-end-column="21" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1534099021023" expanded="true" signature="17747:17796" ph="..." />
-                <marker date="1534099021023" expanded="true" signature="17821:19543" ph="..." />
+                <marker date="1534099225501" expanded="true" signature="17747:17796" ph="..." />
+                <marker date="1534099225501" expanded="true" signature="17821:19609" ph="..." />
               </folding>
             </state>
           </provider>
@@ -108,7 +108,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2232">
+            <state relative-caret-position="658">
               <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
@@ -135,11 +135,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="262">
-              <caret line="137" column="29" selection-start-line="137" selection-start-column="28" selection-end-line="137" selection-end-column="29" />
+              <caret line="2020" column="96" selection-start-line="2020" selection-start-column="81" selection-end-line="2020" selection-end-column="96" />
             </state>
           </provider>
         </entry>
@@ -190,12 +190,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sql_insert_complete</find>
-      <find>shift_and_repeat</find>
-      <find>this_epoch</find>
-      <find>do_interactive</find>
-      <find>task_interactive</find>
-      <find>outputs</find>
       <find>load_embedding</find>
       <find>model_0_seq</find>
       <find>model_6_dec</find>
@@ -220,6 +214,12 @@
       <find>all_mem</find>
       <find>model_5_ans</find>
       <find>AnswerModule</find>
+      <find>WrapMemRNN</find>
+      <find>attention</find>
+      <find>out</find>
+      <find>output_lang</find>
+      <find>self.out</find>
+      <find>do_no_attention</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -274,11 +274,11 @@
         <option value="$PROJECT_DIR$/do_make_db_from_movie.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/README.md" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/tokenize_weak.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
       </list>
     </option>
   </component>
@@ -591,16 +591,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2232">
-          <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi_rand.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2106">
@@ -639,13 +629,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="137" column="29" selection-start-line="137" selection-start-column="28" selection-end-line="137" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -658,13 +641,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="525" column="20" selection-start-line="525" selection-start-column="20" selection-end-line="525" selection-end-column="20" />
+        <state relative-caret-position="748">
+          <caret line="526" column="21" selection-start-line="526" selection-start-column="21" selection-end-line="526" selection-end-column="21" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1534099021023" expanded="true" signature="17747:17796" ph="..." />
-            <marker date="1534099021023" expanded="true" signature="17821:19543" ph="..." />
+            <marker date="1534099225501" expanded="true" signature="17747:17796" ph="..." />
+            <marker date="1534099225501" expanded="true" signature="17821:19609" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="658">
+          <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="2020" column="96" selection-start-line="2020" selection-start-column="81" selection-end-line="2020" selection-end-column="96" />
         </state>
       </provider>
     </entry>
