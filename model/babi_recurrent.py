@@ -511,19 +511,23 @@ class AnswerModule(nn.Module):
             output = self.prune_tensor(output, 3)
 
             #print(k,decoder_hidden.size(),'dh')
+            eol_test = False
 
             for i in range(self.maxtokens):
                 #print(output, 'before')
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
                 #print(output.size(), decoder_hidden.size())
-                outputs.append(output)
+                if not eol_test:
+                    outputs.append(output)
+                else:
+                    outputs.append(Variable(torch.LongTensor([0])))
+
                 output = Variable(output.data.max(dim=2)[1])
-                #print(output)
+                if output == torch.LongTensor([EOS_token]):
+                    eol_test = True
+
                 output = self.prune_tensor(output, 3)
 
-            #print(len(outputs))
-            #for j in outputs: print(j.size(), 'out')
-            #exit()
 
             some_out = torch.cat(outputs, dim=0)
             #print(some_out.size(),'some cat')
@@ -1970,8 +1974,7 @@ class NMT:
                                                   criterion)
 
             if self.do_recurrent_output:
-                ##lz = len(target_variable[0])
-                #target_variable = self._pad_list(target_variable)
+
 
                 target_variable = torch.cat(target_variable, dim=0)
 
@@ -1981,7 +1984,9 @@ class NMT:
                 #print(ans.size(),'ans1')
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
-                #print( ans.size(),'ans', target_variable.size(), 'tv')
+
+                #print( ans.size(),'ans', target_variable.size(), 'tv - 50 x 30')
+
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)

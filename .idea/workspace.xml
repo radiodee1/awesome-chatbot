@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/tokenize_weak.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/tokenize_weak.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_db.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,8 +16,8 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="40" />
-          <entry key="project.open.time.10" value="1" />
+          <entry key="project.closed" value="41" />
+          <entry key="project.open.time.10" value="2" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="8" />
@@ -25,13 +26,13 @@
           <entry key="project.open.time.7" value="8" />
           <entry key="project.open.time.8" value="4" />
           <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="41" />
+          <entry key="project.opened" value="42" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4260" />
-          <entry key="py" value="13628" />
+          <entry key="py" value="14106" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -41,13 +42,13 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4260" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="13628" />
+          <entry key="Python" value="14106" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="4" />
-          <entry key="py" value="9" />
+          <entry key="py" value="10" />
           <entry key="sh" value="1" />
           <entry key="txt" value="2" />
         </counts>
@@ -57,33 +58,22 @@
           <entry key="Bash" value="1" />
           <entry key="Markdown" value="4" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="9" />
+          <entry key="Python" value="10" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="918">
-              <caret line="53" column="79" selection-start-line="53" selection-start-column="79" selection-end-line="53" selection-end-column="79" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="11286">
-              <caret line="653" column="13" selection-start-line="653" selection-end-line="654" />
+            <state relative-caret-position="568">
+              <caret line="521" column="33" selection-start-line="521" selection-start-column="33" selection-end-line="521" selection-end-column="33" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1533926508264" expanded="true" signature="17747:17796" ph="..." />
-                <marker date="1533926508264" expanded="true" signature="17821:19356" ph="..." />
-                <marker date="1533926508264" expanded="true" signature="42418:43206" ph="..." />
-                <marker date="1533926508264" expanded="true" signature="75579:75971" ph="..." />
+                <marker date="1534096656191" expanded="true" signature="17747:17796" ph="..." />
+                <marker date="1534096656191" expanded="true" signature="17821:19569" ph="..." />
               </folding>
             </state>
           </provider>
@@ -117,10 +107,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="658">
+            <state relative-caret-position="2232">
               <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
@@ -150,8 +140,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2636">
-              <caret line="222" selection-start-line="222" selection-end-line="222" />
+            <state relative-caret-position="262">
+              <caret line="137" column="29" selection-start-line="137" selection-start-column="28" selection-end-line="137" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="126">
+              <caret line="94" selection-start-line="94" selection-end-line="94" />
+              <folding>
+                <element signature="e#21#35#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -159,7 +161,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
+            <state relative-caret-position="1944">
               <caret line="108" selection-start-line="108" selection-end-line="108" />
             </state>
           </provider>
@@ -190,8 +192,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>prepareData</find>
-      <find>epoch_length</find>
       <find>sql_insert_complete</find>
       <find>shift_and_repeat</find>
       <find>this_epoch</find>
@@ -199,7 +199,6 @@
       <find>task_interactive</find>
       <find>outputs</find>
       <find>load_embedding</find>
-      <find>AnswerModule</find>
       <find>model_0_seq</find>
       <find>model_6_dec</find>
       <find>model_1_seq</find>
@@ -211,7 +210,6 @@
       <find>Encoder</find>
       <find>_pad_list</find>
       <find>word_lst</find>
-      <find>?</find>
       <find>train_iters</find>
       <find>train</find>
       <find>variables_for_batch</find>
@@ -220,6 +218,10 @@
       <find>question_variable</find>
       <find>read_glove</find>
       <find>tokenize_weak</find>
+      <find>?</find>
+      <find>all_mem</find>
+      <find>model_5_ans</find>
+      <find>AnswerModule</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -271,14 +273,14 @@
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
         <option value="$PROJECT_DIR$/do_make_db_from_movie.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
-        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/tokenize_weak.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
+        <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
       </list>
     </option>
   </component>
@@ -350,25 +352,6 @@
     <frame x="540" y="72" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-    <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -386,7 +369,7 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+    </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -546,13 +529,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3528">
-          <caret line="203" column="85" selection-start-line="203" selection-start-column="85" selection-end-line="203" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4104">
@@ -571,20 +547,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="918">
           <caret line="53" column="79" selection-start-line="53" selection-start-column="79" selection-end-line="53" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11286">
-          <caret line="653" column="13" selection-start-line="653" selection-end-line="654" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-            <marker date="1533926508264" expanded="true" signature="17747:17796" ph="..." />
-            <marker date="1533926508264" expanded="true" signature="17821:19356" ph="..." />
-            <marker date="1533926508264" expanded="true" signature="42418:43206" ph="..." />
-            <marker date="1533926508264" expanded="true" signature="75579:75971" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -612,10 +574,34 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2232">
+          <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi_rand.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2106">
           <caret line="120" column="48" selection-start-line="120" selection-start-column="48" selection-end-line="120" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1944">
+          <caret line="108" selection-start-line="108" selection-end-line="108" />
         </state>
       </provider>
     </entry>
@@ -638,31 +624,29 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2636">
-          <caret line="222" selection-start-line="222" selection-end-line="222" />
+        <state relative-caret-position="262">
+          <caret line="137" column="29" selection-start-line="137" selection-start-column="28" selection-end-line="137" selection-end-column="29" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="108" selection-start-line="108" selection-end-line="108" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
-          <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
+        <state relative-caret-position="126">
+          <caret line="94" selection-start-line="94" selection-end-line="94" />
           <folding>
-            <element signature="e#20#51#0" expanded="true" />
+            <element signature="e#21#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="568">
+          <caret line="521" column="33" selection-start-line="521" selection-start-column="33" selection-end-line="521" selection-end-column="33" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+            <marker date="1534096656191" expanded="true" signature="17747:17796" ph="..." />
+            <marker date="1534096656191" expanded="true" signature="17821:19569" ph="..." />
           </folding>
         </state>
       </provider>

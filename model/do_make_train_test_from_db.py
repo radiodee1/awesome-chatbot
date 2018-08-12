@@ -6,6 +6,7 @@ import pandas as pd
 import os
 import argparse
 import random
+import re
 import tokenize_weak
 import sys
 from settings import hparams
@@ -90,6 +91,7 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
         z = z.replace('?', ' . ')
         z = z.replace('!', ' . ')
         zz = z.split('.')
+        #zz = filter(None, re.split("[,.\-!?:]+", z))
         for i in zz:
             xx = i.split(' ')
             y = []
