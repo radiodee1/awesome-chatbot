@@ -34,7 +34,7 @@ def format(content, do_tokenize=False):
         odd = re.findall(r"([$%0123456789+=^;:~_/\\])(\w*)", z)
         double = re.findall(r"(['])(['])+", z)
 
-        if test_on_screen: print(z,begin,end, both)
+        #if test_on_screen: print(z,begin,end, both)
 
 
         if len(odd) > 0:

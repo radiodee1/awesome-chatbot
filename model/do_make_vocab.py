@@ -16,7 +16,7 @@ FROM = '../raw/glove.6B.' + str(embed_size) +'d.txt' # 50, 100, 200, 300
 TO = '../data/embed.txt'
 train_file = ''
 
-hard_coded_list = [
+whitelist = [
     "i'm",
     "you're",
     "we're",
@@ -81,8 +81,10 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False):
     wordlist = []
 
     if contractions:
-        wordlist.extend(hard_coded_list)
-        wordlist.extend(directions)
+        whitelist.extend(directions)
+        wordlist.extend(whitelist)
+        #wordlist.extend(directions)
+        print('add whitelist.')
 
     for filename in train_file:
         if os.path.isfile(filename):
@@ -128,7 +130,8 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False):
 
     #print(ss[0:10])
     for z in ss: # sorted(cc, key= lambda word: word[1]):
-        if z[0].lower() not in v and num < vocab_length: v.append(z[0].lower())
+        if (z[0].lower() not in v and num < vocab_length - len(whitelist)) or z[0].lower() in whitelist:
+            v.append(z[0].lower())
         num +=1
     #vv = list(set(v))
     v.sort()

@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/tokenize_weak.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/tokenize_weak.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -30,7 +31,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4260" />
-          <entry key="py" value="13536" />
+          <entry key="py" value="13628" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -40,7 +41,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4260" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="13536" />
+          <entry key="Python" value="13628" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -119,8 +120,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
-              <caret line="231" column="9" selection-start-line="231" selection-start-column="9" selection-end-line="231" selection-end-column="9" />
+            <state relative-caret-position="658">
+              <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
+              <folding>
+                <element signature="e#20#51#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -155,8 +159,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1476">
-              <caret line="82" column="18" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="18" />
+            <state relative-caret-position="566">
+              <caret line="108" selection-start-line="108" selection-end-line="108" />
             </state>
           </provider>
         </entry>
@@ -186,8 +190,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>approximate_length</find>
-      <find>print_every</find>
       <find>prepareData</find>
       <find>epoch_length</find>
       <find>sql_insert_complete</find>
@@ -216,6 +218,8 @@
       <find>variableFromSentence</find>
       <find>tokens_per_sentence</find>
       <find>question_variable</find>
+      <find>read_glove</find>
+      <find>tokenize_weak</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -237,7 +241,6 @@
         <option value="$PROJECT_DIR$/do_make_french_download.sh" />
         <option value="$PROJECT_DIR$/do_make_db_from_french.py" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
-        <option value="$PROJECT_DIR$/model/tokenize_weak.py" />
         <option value="$PROJECT_DIR$/do_launch_game.sh" />
         <option value="$PROJECT_DIR$/do_launch_pytorch.sh" />
         <option value="$PROJECT_DIR$/do_launch_model.sh" />
@@ -274,12 +277,13 @@
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/model/tokenize_weak.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="539" />
+    <option name="x" value="540" />
     <option name="y" value="72" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -343,7 +347,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="539" y="72" width="1380" height="1000" extended-state="0" />
+    <frame x="540" y="72" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -615,20 +619,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1476">
-          <caret line="82" column="18" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider editor-type-id="text-editor">
         <state relative-caret-position="198">
@@ -653,10 +643,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="566">
+          <caret line="108" selection-start-line="108" selection-end-line="108" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="231" column="9" selection-start-line="231" selection-start-column="9" selection-end-line="231" selection-end-column="9" />
+        <state relative-caret-position="658">
+          <caret line="132" column="72" selection-start-line="132" selection-start-column="72" selection-end-line="132" selection-end-column="72" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
