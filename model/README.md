@@ -38,7 +38,7 @@ At the same time as test 19 is being run with the recurrent code the model is be
 Here we are interested in finding a way to make a chatbot using the babi_recurrent.py code.
 
 The major obstacle that I see for this right now is that I don't have a good data set at my disposal. I currently have access to a movie data base and a reddit dump data base.
-Both are large but static filled. I find that training with question/answer pairs is not very predictable. If it fails totally we should have another option.
+Both are large but noise filled. I find that training with question/answer pairs is not very predictable. If it fails totally we should have another option.
 
 What we could do, and should try, is auto-encode the recurrent module with the movie corpus. Then we'll freeze the output module.
 Then we'll train the rest of the model over again with question/answer oriented data. This would be all with the DMN type architecture that we've been working with to solve the babi tasks.

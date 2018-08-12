@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/model/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,23 +17,23 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="39" />
+          <entry key="project.closed" value="40" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="8" />
           <entry key="project.open.time.5" value="5" />
-          <entry key="project.open.time.6" value="8" />
+          <entry key="project.open.time.6" value="9" />
           <entry key="project.open.time.7" value="8" />
           <entry key="project.open.time.8" value="4" />
           <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="40" />
+          <entry key="project.opened" value="41" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="md" value="4255" />
-          <entry key="py" value="13112" />
+          <entry key="md" value="4260" />
+          <entry key="py" value="13507" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -38,15 +41,15 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="Bash" value="71" />
-          <entry key="Markdown" value="4255" />
+          <entry key="Markdown" value="4260" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="13112" />
+          <entry key="Python" value="13507" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="4" />
-          <entry key="py" value="8" />
+          <entry key="py" value="9" />
           <entry key="sh" value="1" />
           <entry key="txt" value="2" />
         </counts>
@@ -56,22 +59,13 @@
           <entry key="Bash" value="1" />
           <entry key="Markdown" value="4" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="8" />
+          <entry key="Python" value="9" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_unpack_text.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="7" column="2" selection-start-line="2" selection-end-line="7" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -111,12 +105,12 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="295">
-                <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
+              <first_editor relative-caret-position="720">
+                <caret line="40" column="24" selection-start-line="40" selection-start-column="24" selection-end-line="40" selection-end-column="24" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -128,8 +122,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="810">
-              <caret line="53" column="8" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="8" />
+            <state relative-caret-position="828">
+              <caret line="54" column="6" selection-start-line="54" selection-start-column="6" selection-end-line="54" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -152,11 +146,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="398">
-              <caret line="833" column="41" selection-start-line="833" selection-start-column="41" selection-end-line="833" selection-end-column="41" />
+            <state relative-caret-position="172">
+              <caret line="225" column="67" selection-start-line="225" selection-start-column="67" selection-end-line="225" selection-end-column="67" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1476">
+              <caret line="82" column="18" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -186,14 +189,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_shorten</find>
-      <find>step</find>
-      <find>batch_size</find>
-      <find>start</find>
-      <find>pairs</find>
       <find>approximate_length</find>
       <find>print_every</find>
-      <find>train_iters</find>
       <find>prepareData</find>
       <find>epoch_length</find>
       <find>sql_insert_complete</find>
@@ -214,8 +211,14 @@
       <find>criterion</find>
       <find>Encoder</find>
       <find>_pad_list</find>
-      <find>question_variable</find>
+      <find>word_lst</find>
+      <find>?</find>
+      <find>train_iters</find>
+      <find>train</find>
+      <find>variables_for_batch</find>
       <find>variableFromSentence</find>
+      <find>tokens_per_sentence</find>
+      <find>question_variable</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -270,11 +273,11 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
         <option value="$PROJECT_DIR$/do_make_db_from_movie.py" />
-        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
+        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
       </list>
     </option>
   </component>
@@ -289,7 +292,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -311,6 +313,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -556,13 +559,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" column="5" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_unpack_text.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -603,10 +599,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="720">
+            <caret line="40" column="24" selection-start-line="40" selection-start-column="24" selection-end-line="40" selection-end-column="24" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="810">
-          <caret line="53" column="8" selection-start-line="53" selection-start-column="5" selection-end-line="53" selection-end-column="8" />
+        <state relative-caret-position="828">
+          <caret line="54" column="6" selection-start-line="54" selection-start-column="6" selection-end-line="54" selection-end-column="6" />
         </state>
       </provider>
     </entry>
@@ -621,6 +629,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1476">
+          <caret line="82" column="18" selection-start-line="82" selection-start-column="17" selection-end-line="82" selection-end-column="18" />
         </state>
       </provider>
     </entry>
@@ -643,20 +658,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="398">
-          <caret line="833" column="41" selection-start-line="833" selection-start-column="41" selection-end-line="833" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="295">
-            <caret line="34" column="25" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
-          </first_editor>
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
+        <state relative-caret-position="172">
+          <caret line="225" column="67" selection-start-line="225" selection-start-column="67" selection-end-line="225" selection-end-column="67" />
         </state>
       </provider>
     </entry>

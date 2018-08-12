@@ -51,7 +51,8 @@ hard_coded_list = [
     "we'll",
     "it'll",
     "what's",
-    "won't"
+    "won't",
+    "?"
 ]
 
 directions = [
@@ -84,15 +85,16 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False):
         wordlist.extend(directions)
 
     for filename in train_file:
-        with open(filename, 'r') as x:
-            xx = x.read()
-            for line in xx.split('\n'):
-                line = tokenize_weak.format(line)
-                y = line.lower().split()
-                for word in y:
-                    wordlist.append(word)
-            pass
-    print('values read from text file.')
+        if os.path.isfile(filename):
+            with open(filename, 'r') as x:
+                xx = x.read()
+                for line in xx.split('\n'):
+                    line = tokenize_weak.format(line)
+                    y = line.lower().split()
+                    for word in y:
+                        wordlist.append(word)
+                pass
+    print('values read from text file.', ' '.join(train_file))
 
     if read_glove:
         with open(FROM, 'r') as x:
@@ -207,7 +209,7 @@ if __name__ == '__main__':
           'file is complete.')
 
     parser = argparse.ArgumentParser(description='Make vocab file.')
-    parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output')
+    parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output. (Can be a comma separated list.)')
     parser.add_argument('--babi', help='Flag for babi input.', action='store_true')
     parser.add_argument('--all-glove', help='Load all words from the glove set.', action='store_true')
     parser.add_argument('--w2v', help='replace all glove data with data obtained from w2v downloads.', action='store_true')
@@ -229,7 +231,12 @@ if __name__ == '__main__':
         train_file = []
         #args['babi'] = True
     elif args['basefile'] is not None :
-        train_file = [args['basefile']]
+        lst = args['basefile']
+        lst = lst.split(',')
+        if len(lst) > 1:
+            train_file = lst
+        else:
+            train_file = [args['basefile']]
 
     if args['load_embed_size'] is not None:
         hparams['embed_size'] = int(args['load_embed_size'])

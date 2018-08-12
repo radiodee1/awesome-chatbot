@@ -213,19 +213,6 @@ class Decoder(nn.Module):
 
         l, s, hid = encoder_out.size()
 
-        '''
-        #print(encoder_out.size(),'e out')
-        output = [ EOS_token for i in range(l)]
-        output = Variable(torch.LongTensor(output))
-        if hparams['cuda'] is True: output = output.cuda()
-        '''
-
-        #output = self.prune_tensor(output, 3)
-        #output = output.permute(0,2,1)
-
-        #print(l, output.size())
-
-
         all_out = []
         for k in range(l):
 
@@ -233,9 +220,9 @@ class Decoder(nn.Module):
             if hparams['cuda'] is True: output = output.cuda()
 
             outputs = []
-            #print(decoder_hidden.size(), encoder_out.size(), 'dh,eo')
 
             decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
+
             encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
             output = self.prune_tensor(output, 3)
 
@@ -250,10 +237,6 @@ class Decoder(nn.Module):
                 #print(output,'out')
                 output = self.prune_tensor(output, 3)
 
-            #print(len(outputs))
-            #for j in outputs: print(j.size(), 'out')
-            #exit()
-            #print(len(outputs),'os')
 
             some_out = torch.cat(outputs, dim=0)
             #print(some_out.size(),'some cat')
@@ -277,7 +260,9 @@ class Decoder(nn.Module):
 
         context, mask = self.attention(decoder_hidden[:,-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
         embedded = self.prune_tensor(embedded,3)
+
         decoder_hidden = decoder_hidden[:,-self.n_layers:].permute(1,0,2)
+
         context = context.permute(1,0,2)
 
         concat_list = [
@@ -373,7 +358,6 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
-        #for ii in question_variable:
         #print(len(question_variable), 'len')
 
         question_variable, hidden = self.new_question_module(question_variable)
@@ -417,15 +401,14 @@ class WrapMemRNN(nn.Module):
 
             out2, hidden2 = self.model_1_seq(ii, None) #, prev_h2[-1])
 
-            #print(out2.size(),'o2')
             prev_h2.append(self.prune_tensor(out2,3))
-
-            prev_h3.append(self.prune_tensor(hidden2,3))
+            prev_h3.append(self.prune_tensor(hidden2[:,-1,:].unsqueeze(1),3))
 
         prev_h2 = torch.cat(prev_h2, dim=0)
-        prev_h3 = torch.cat(prev_h3, dim=0)
+        prev_h3 = torch.cat(prev_h3, dim=1)
 
-        return prev_h2, prev_h3
+
+        return prev_h2, prev_h3.permute(1,0,2)
 
 
     def prune_tensor(self, input, size):
@@ -1797,7 +1780,8 @@ class NMT:
                         choice = random.choice(self.pairs)
                     else:
                         choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
-                    print('src:',choice[0])
+
+                    #print('src:',choice[0])
                     question = None
                     if self.do_load_babi:
                         print('ques:', choice[1])
