@@ -516,14 +516,19 @@ class AnswerModule(nn.Module):
             for i in range(self.maxtokens):
                 #print(output, 'before')
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
-                #print(output.size(), decoder_hidden.size())
+
                 if not eol_test:
                     outputs.append(output)
+
                 else:
-                    outputs.append(Variable(torch.LongTensor([0])))
+                    output = Variable(torch.zeros((self.vocab_size)))
+                    output = self.prune_tensor(output, 3)
+                    outputs.append(output)
+                    #print(output.size(),'out 2')
 
                 output = Variable(output.data.max(dim=2)[1])
-                if output == torch.LongTensor([EOS_token]):
+
+                if self.prune_tensor(output,1).item() == EOS_token: #  torch.LongTensor([EOS_token]):
                     eol_test = True
 
                 output = self.prune_tensor(output, 3)

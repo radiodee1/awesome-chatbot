@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_db.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -32,7 +30,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4260" />
-          <entry key="py" value="14106" />
+          <entry key="py" value="14308" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -42,7 +40,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4260" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="14106" />
+          <entry key="Python" value="14308" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -68,12 +66,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="568">
-              <caret line="521" column="33" selection-start-line="521" selection-start-column="33" selection-end-line="521" selection-end-column="33" />
+            <state relative-caret-position="352">
+              <caret line="525" column="20" selection-start-line="525" selection-start-column="20" selection-end-line="525" selection-end-column="20" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1534096656191" expanded="true" signature="17747:17796" ph="..." />
-                <marker date="1534096656191" expanded="true" signature="17821:19569" ph="..." />
+                <marker date="1534099021023" expanded="true" signature="17747:17796" ph="..." />
+                <marker date="1534099021023" expanded="true" signature="17821:19543" ph="..." />
               </folding>
             </state>
           </provider>
@@ -352,7 +350,7 @@
     <frame x="540" y="72" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -370,6 +368,25 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -641,12 +658,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="568">
-          <caret line="521" column="33" selection-start-line="521" selection-start-column="33" selection-end-line="521" selection-end-column="33" />
+        <state relative-caret-position="352">
+          <caret line="525" column="20" selection-start-line="525" selection-start-column="20" selection-end-line="525" selection-end-column="20" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1534096656191" expanded="true" signature="17747:17796" ph="..." />
-            <marker date="1534096656191" expanded="true" signature="17821:19569" ph="..." />
+            <marker date="1534099021023" expanded="true" signature="17747:17796" ph="..." />
+            <marker date="1534099021023" expanded="true" signature="17821:19543" ph="..." />
           </folding>
         </state>
       </provider>
