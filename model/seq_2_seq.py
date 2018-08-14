@@ -292,6 +292,9 @@ class Decoder(nn.Module):
         else:
             gru_in = embedded
 
+        #gru_in = gru_in.contiguous()
+        decoder_hidden = decoder_hidden.contiguous()
+
         rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
         decoder_hidden = decoder_hidden.permute(1,0,2)
 
@@ -429,6 +432,7 @@ class WrapMemRNN(nn.Module):
             out2, hidden2 = self.model_1_seq(ii, None) #, prev_h2[-1])
 
             prev_h2.append(self.prune_tensor(out2,3))
+
             prev_h3.append(self.prune_tensor(hidden2[:,-1,:].unsqueeze(1),3))
 
         prev_h2 = torch.cat(prev_h2, dim=0)
