@@ -171,7 +171,7 @@ class Decoder(nn.Module):
         self.n_layers = n_layers
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout * 0.0)
+        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout * 0.0, batch_first=True)
         self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
 
     def load_embedding(self, embedding):
