@@ -145,7 +145,7 @@ class Encoder(nn.Module):
         self.hidden_dim = hidden_dim
         self.embed = embed# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
 
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=True)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=True, batch_first=True)
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -154,6 +154,7 @@ class Encoder(nn.Module):
 
     def forward(self, source, hidden=None):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        #print(embedded.size(),'emb')
         encoder_out, encoder_hidden = self.gru(embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         # sum bidirectional outputs, the other option is to retain concat features
         encoder_out = (encoder_out[:, :, :self.hidden_dim] +
@@ -199,7 +200,7 @@ class Decoder(nn.Module):
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
-        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout * 0.0)
+        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout * 0.0, batch_first=True)
         self.out = nn.Linear(linear_in_dim, target_vocab_size)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
