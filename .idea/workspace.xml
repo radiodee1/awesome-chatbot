@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,7 +30,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4260" />
-          <entry key="py" value="14860" />
+          <entry key="py" value="14951" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -41,7 +40,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4260" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="14860" />
+          <entry key="Python" value="14951" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -139,8 +138,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3890">
-              <caret line="432" selection-start-line="432" selection-end-line="432" />
+            <state relative-caret-position="316">
+              <caret line="892" selection-start-line="892" selection-end-line="892" />
             </state>
           </provider>
         </entry>
@@ -191,7 +190,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>load_embedding</find>
       <find>model_0_seq</find>
       <find>model_6_dec</find>
       <find>model_1_seq</find>
@@ -206,7 +204,6 @@
       <find>train_iters</find>
       <find>train</find>
       <find>variables_for_batch</find>
-      <find>variableFromSentence</find>
       <find>tokens_per_sentence</find>
       <find>question_variable</find>
       <find>read_glove</find>
@@ -221,6 +218,8 @@
       <find>output_lang</find>
       <find>self.out</find>
       <find>do_no_attention</find>
+      <find>evaluate</find>
+      <find>variableFromSentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -664,8 +663,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3890">
-          <caret line="432" selection-start-line="432" selection-end-line="432" />
+        <state relative-caret-position="316">
+          <caret line="892" selection-start-line="892" selection-end-line="892" />
         </state>
       </provider>
     </entry>

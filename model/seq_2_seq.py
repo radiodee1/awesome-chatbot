@@ -887,8 +887,10 @@ class NMT:
             line = input("> ")
             line = tokenize_weak.format(line)
             print(line)
-            line = self.variableFromSentence(self.input_lang, line, add_eol=True)
-            out , _ =self.evaluate(None, None, line)
+            pad = hparams['tokens_per_sentence']
+            line = self.variableFromSentence(self.input_lang, line, add_eol=True, pad=pad)
+
+            out , _ =self.evaluate(None, None, line, question=line)
             print(out)
 
     def task_convert(self):
@@ -1774,7 +1776,7 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
 
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
+                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) #+", countdown = "+ str(save_thresh - save_num)
                       + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
@@ -2193,5 +2195,8 @@ if __name__ == '__main__':
             print(words)
 
     except KeyboardInterrupt:
-        n.update_result_file()
+        if not n.do_interactive:
+            n.update_result_file()
+        else:
+            print()
 
