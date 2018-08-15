@@ -88,6 +88,7 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False):
 
     for filename in train_file:
         if os.path.isfile(filename):
+            print('found:', filename)
             with open(filename, 'r') as x:
                 xx = x.read()
                 for line in xx.split('\n'):
