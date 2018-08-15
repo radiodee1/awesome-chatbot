@@ -88,7 +88,7 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
         x = []
 
         z = z.replace(',', ' ')
-        z = z.replace('?', ' . ')
+        z = z.replace('?', ' ? . ')
         z = z.replace('!', ' . ')
         zz = z.split('.')
         #zz = filter(None, re.split("[,.\-!?:]+", z))
