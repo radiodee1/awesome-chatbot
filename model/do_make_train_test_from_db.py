@@ -31,6 +31,7 @@ parser.add_argument('--autoencode', help='store auto encoder format', action='st
 parser.add_argument('--to-lower', help='store in lowercase form', action='store_true')
 parser.add_argument('--test-on-screen', help='test on screen', action='store_true')
 parser.add_argument('--subdevide', help='subdevide into batches', action='store_true')
+parser.add_argument('--only-one',help='record only one phrase for each question/answer.', action='store_true')
 parser.add_argument('--length', help='number of examples to process')
 args = parser.parse_args()
 args = vars(args)
@@ -48,6 +49,7 @@ do_babi = False
 do_autoencode = False
 do_autoencode_context = False
 do_autoencode_question = False
+do_only_one_phrase = False
 approximate_length = 0
 count_recorded = 0
 
@@ -62,6 +64,7 @@ if args['autoencode'] is True:
     do_autoencode_question = False
 if args['length'] is not None:
     approximate_length = int(args['length'])
+if args['only_one'] is not False: do_only_one_phrase = True
 
 batch_size = 64 #32 # 64 #256
 steps_per_stats = 100
@@ -75,7 +78,7 @@ src_ending = hparams['src_ending']
 tgt_ending = hparams['tgt_ending']
 question_ending = hparams['question_ending']
 
-def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
+def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_one_phrase=False):
     z = tokenize_weak.format(s)
     if z == None or z.strip() == '':
 
@@ -105,6 +108,9 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False):
                     x.append( hparams['sol'] + ' ' + i + ' ' + hparams['eol'] + ' . ' )
                 else:
                     x.append( i + ' ' + hparams['eol'] + ' . ')
+
+        if only_one_phrase and len(x) > 1: ## return just first phrase
+            return x[-1]
         x = ' '.join(x)
         return x
     if add_sol_eol:
@@ -159,7 +165,7 @@ try:
 
                     tmp = content_parent[i]
                     tmp += ' . ' + content_comment[i]
-                    tmp = format(tmp , split_phrases=True, add_eol_only=True)
+                    tmp = format(tmp , split_phrases=True, add_eol_only=True, only_one_phrase=do_only_one_phrase)
 
                     tmpz = tmp.split('.')
 
@@ -200,10 +206,10 @@ try:
 
                 for i in range(len(content_parent)):
 
-                    src_list.append(format(content_parent[i],split_phrases=True, add_eol_only=True))
-                    tgt_list.append(format(content_comment[i],split_phrases=True, add_eol_only=True))
+                    src_list.append(format(content_parent[i],split_phrases=True, add_eol_only=True, only_one_phrase=do_only_one_phrase))
+                    tgt_list.append(format(content_comment[i],split_phrases=True, add_eol_only=True, only_one_phrase=do_only_one_phrase))
                     if do_babi:
-                        ques_list.append(format(content_parent[i],split_phrases=True, add_eol_only=True))
+                        ques_list.append(format(content_parent[i],split_phrases=True, add_eol_only=True, only_one_phrase=do_only_one_phrase))
 
                     count_recorded += 1 #len(content_parent)
 
