@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,9 +15,9 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="45" />
+          <entry key="project.closed" value="47" />
           <entry key="project.open.time.10" value="3" />
-          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.13" value="2" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="8" />
@@ -25,13 +26,13 @@
           <entry key="project.open.time.7" value="9" />
           <entry key="project.open.time.8" value="4" />
           <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="46" />
+          <entry key="project.opened" value="47" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4619" />
-          <entry key="py" value="15238" />
+          <entry key="py" value="15260" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -41,7 +42,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4619" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="15238" />
+          <entry key="Python" value="15260" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -64,11 +65,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="90" column="36" selection-start-line="90" selection-start-column="36" selection-end-line="90" selection-end-column="36" />
+            <state relative-caret-position="657">
+              <caret line="55" column="14" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
@@ -97,7 +98,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5024">
+            <state relative-caret-position="9396">
               <caret line="548" selection-start-line="548" selection-end-line="548" />
             </state>
           </provider>
@@ -130,14 +131,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="752">
-              <caret line="231" column="50" lean-forward="true" selection-start-line="231" selection-start-column="50" selection-end-line="231" selection-end-column="50" />
-              <folding>
-                <element signature="e#21#35#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="180">
+              <caret line="10" selection-start-line="10" selection-end-line="10" />
             </state>
           </provider>
         </entry>
@@ -176,7 +174,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_0_seq</find>
       <find>model_6_dec</find>
       <find>model_1_seq</find>
       <find>do_no_positional</find>
@@ -206,6 +203,7 @@
       <find>evaluate</find>
       <find>variableFromSentence</find>
       <find>?</find>
+      <find>format</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -261,10 +259,10 @@
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/model/tokenize_weak.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
-        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
+        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
       </list>
     </option>
   </component>
@@ -546,8 +544,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="90" column="36" selection-start-line="90" selection-start-column="36" selection-end-line="90" selection-end-column="36" />
+        <state relative-caret-position="657">
+          <caret line="55" column="14" selection-start-line="55" selection-start-column="14" selection-end-line="55" selection-end-column="14" />
           <folding>
             <element signature="e#20#51#0" expanded="true" />
           </folding>
@@ -565,6 +563,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
           <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9396">
+          <caret line="548" selection-start-line="548" selection-end-line="548" />
         </state>
       </provider>
     </entry>
@@ -589,6 +594,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1944">
@@ -597,6 +609,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="234">
@@ -605,28 +622,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5024">
-          <caret line="548" selection-start-line="548" selection-end-line="548" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="752">
-          <caret line="231" column="50" lean-forward="true" selection-start-line="231" selection-start-column="50" selection-end-line="231" selection-end-column="50" />
-          <folding>
-            <element signature="e#21#35#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
