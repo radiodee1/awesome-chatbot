@@ -546,7 +546,7 @@ class NMT:
         self.do_interactive = False
         self.do_convert = False
         self.do_plot = False
-        self.do_load_babi = False
+        self.do_load_babi = True #False
         self.do_hide_unk = False
         self.do_conserve_space = False
         self.do_test_not_train = False
@@ -575,7 +575,7 @@ class NMT:
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
         #parser.add_argument('--convert-weights',help='convert weights', action='store_true')
-        parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
+        parser.add_argument('--load-babi', help='Load three babi input files instead of two chatbot data files. (default)',
                             action='store_true')
         parser.add_argument('--load-recurrent',help='load files from "train.big" recurrent filenames', action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
