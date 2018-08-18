@@ -500,7 +500,7 @@ class NMT:
         self.vocab_lang = None
 
         self.print_every = hparams['steps_to_stats']
-        self.epoch_length = 10000
+        self.epoch_length = 1000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
         self.start_epoch = 0
@@ -1058,7 +1058,7 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
-        if self.epoch_length > len(self.pairs):
+        if self.epoch_length > len(self.pairs) and not self.do_test_not_train:
             print('reset epoch length:', len(self.pairs))
             self.epoch_length = len(self.pairs)
 
@@ -1711,13 +1711,6 @@ class NMT:
         #self.criterion = nn.NLLLoss()
         self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
-        '''
-        training_pairs = [self.variablesFromPair(
-            self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
-        
-
-        training_pairs = self.variables_for_batch(self.pairs, hparams['batch_size'], epoch_start, skip_unk=self.do_skip_unk)
-        '''
 
         if not self.do_test_not_train:
             criterion = self.criterion
@@ -1760,24 +1753,7 @@ class NMT:
 
         for iter in range(epoch_start, epoch_stop + 1, step):
 
-            '''
-            if not self.do_batch_process:
-                training_pair = training_pairs[iter - 1]
 
-                input_variable = training_pair[0]
-                question_variable = training_pair[1]
-
-                if len(training_pair) > 2:
-                    target_variable = training_pair[2]
-                else:
-                    question_variable = training_pair[0]
-                    target_variable = training_pair[1]
-
-                is_auto = random.random() < hparams['autoencode']
-                if is_auto:
-                    target_variable = training_pair[0]
-                    #print('is auto')
-            '''
 
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
@@ -1848,13 +1824,11 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
 
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) #+", countdown = "+ str(save_thresh - save_num)
+                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters)
                       + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
-                      + ', low loss = %.6f' % self.long_term_loss, end=', ')
-                if self.do_skip_unk:
-                    print('skipped =', self._skipped)
-                else:
-                    print()
+                      + ', low loss = %.6f' % self.long_term_loss, end=' ')
+
+                print()
 
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1

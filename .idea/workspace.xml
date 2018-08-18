@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="49" />
+          <entry key="project.closed" value="50" />
           <entry key="project.open.time.10" value="4" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.13" value="2" />
@@ -25,14 +26,14 @@
           <entry key="project.open.time.6" value="9" />
           <entry key="project.open.time.7" value="10" />
           <entry key="project.open.time.8" value="4" />
-          <entry key="project.open.time.9" value="3" />
-          <entry key="project.opened" value="50" />
+          <entry key="project.open.time.9" value="4" />
+          <entry key="project.opened" value="51" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4619" />
-          <entry key="py" value="16324" />
+          <entry key="py" value="16334" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -42,7 +43,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4619" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="16324" />
+          <entry key="Python" value="16334" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -98,8 +99,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="1883" column="72" selection-start-line="1883" selection-start-column="72" selection-end-line="1883" selection-end-column="72" />
+            <state relative-caret-position="478">
+              <caret line="502" column="29" selection-start-line="502" selection-start-column="29" selection-end-line="502" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -116,7 +117,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
+            <state relative-caret-position="684">
               <caret line="43" column="10" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="10" />
             </state>
           </provider>
@@ -174,8 +175,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tokenize_weak</find>
-      <find>all_mem</find>
       <find>model_5_ans</find>
       <find>AnswerModule</find>
       <find>WrapMemRNN</find>
@@ -193,17 +192,19 @@
       <find>training_pairs</find>
       <find>variables_for_batch</find>
       <find>do_batch_process</find>
-      <find>train_iters</find>
       <find>this_epoch</find>
-      <find>epoch_length</find>
       <find>wasn</find>
       <find>acceptable</find>
       <find>format</find>
       <find>word2index</find>
       <find>prepareData</find>
       <find>pd</find>
-      <find>n_iters</find>
       <find>nn_iters</find>
+      <find>Encoder</find>
+      <find>epoch_length</find>
+      <find>validate_iters</find>
+      <find>train_iters</find>
+      <find>n_iters</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -267,8 +268,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="540" />
-    <option name="y" value="72" />
+    <option name="x" value="539" />
+    <option name="y" value="74" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
   </component>
@@ -331,7 +332,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="72" width="1380" height="1000" extended-state="0" />
+    <frame x="539" y="74" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -592,10 +593,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="684">
+          <caret line="43" column="10" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
           <caret line="4" column="49" selection-start-line="4" selection-start-column="49" selection-end-line="4" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="19" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -623,24 +638,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_movie.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="43" column="10" selection-start-line="43" selection-start-column="4" selection-end-line="43" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="4" column="19" selection-start-line="4" selection-start-column="17" selection-end-line="4" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="1883" column="72" selection-start-line="1883" selection-start-column="72" selection-end-line="1883" selection-end-column="72" />
+        <state relative-caret-position="478">
+          <caret line="502" column="29" selection-start-line="502" selection-start-column="29" selection-end-line="502" selection-end-column="29" />
         </state>
       </provider>
     </entry>
