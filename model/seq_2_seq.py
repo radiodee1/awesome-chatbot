@@ -863,7 +863,8 @@ class NMT:
 
             self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
                                                                              lang3=self.train_ques, reverse=False,
-                                                                             omit_unk=self.do_hide_unk)
+                                                                             omit_unk=self.do_hide_unk,
+                                                                             skip_unk=self.do_skip_unk)
             #self.model_0_wra.test_embedding()
 
             #self.first_load = True
@@ -884,7 +885,10 @@ class NMT:
 
             i += 1
 
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
+                                                                         lang3=self.train_ques, reverse=False,
+                                                                         omit_unk=self.do_hide_unk,
+                                                                         skip_unk=self.do_skip_unk)
 
         self.update_result_file()
         pass
@@ -971,7 +975,7 @@ class NMT:
 
 
 
-    def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False):
+    def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False, skip_unk=False):
         ''' NOTE: pairs switch from train to embedding all the time. '''
 
         if hparams['vocab_name'] is not None:
@@ -1012,14 +1016,20 @@ class NMT:
                 a = []
                 b = []
                 c = []
+
+                skip = False
                 for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
+                    elif skip_unk:
+                        skip = True
                     elif not omit_unk:
                         a.append(hparams['unk'])
                 for word in self.pairs[p][1].split(' '):
                     if word in self.vocab_lang.word2index:
                         b.append(word)
+                    elif skip_unk:
+                        skip = True
                     elif not omit_unk:
                         b.append(hparams['unk'])
                 pairs = [' '.join(a), ' '.join(b)]
@@ -1027,10 +1037,12 @@ class NMT:
                     for word in self.pairs[p][2].split(' '):
                         if word in self.vocab_lang.word2index:
                             c.append(word)
+                        elif skip_unk:
+                            skip = True
                         elif not omit_unk:
                             c.append(hparams['unk'])
                     pairs.append( ' '.join(c) )
-                new_pairs.append(pairs)
+                if not skip: new_pairs.append(pairs)
             self.pairs = new_pairs
 
         else:
@@ -2064,7 +2076,10 @@ class NMT:
         mode = 'valid'
         self.task_choose_files(mode=mode)
         self.printable = 'validate'
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
+                                                                         lang3=self.train_ques, reverse=False,
+                                                                         omit_unk=self.do_hide_unk,
+                                                                         skip_unk=self.do_skip_unk)
         self.do_test_not_train = True
         self.first_load = True
         self.load_checkpoint()
@@ -2079,7 +2094,10 @@ class NMT:
 
     def setup_for_interactive(self):
         self.do_interactive = True
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
+                                                                         lang3=self.train_ques, reverse=False,
+                                                                         omit_unk=self.do_hide_unk,
+                                                                         skip_unk=self.do_skip_unk)
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
@@ -2103,8 +2121,10 @@ class NMT:
         #self.task_babi_test_files()
         mode = 'test'
         self.task_choose_files(mode=mode)
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False,
-                                                                         omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
+                                                                         lang3=self.train_ques, reverse=False,
+                                                                         omit_unk=self.do_hide_unk,
+                                                                         skip_unk=self.do_skip_unk)
         hparams['num_vocab_total'] = self.output_lang.n_words
 
         layers = hparams['layers']
@@ -2198,7 +2218,7 @@ if __name__ == '__main__':
             print(n.train_fr)
 
         n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
-                                                             omit_unk=n.do_hide_unk)
+                                                             omit_unk=n.do_hide_unk, skip_unk=n.do_skip_unk)
 
 
         if n.do_load_babi:
