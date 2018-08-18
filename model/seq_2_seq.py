@@ -1693,6 +1693,8 @@ class NMT:
             epoch_stop = len(self.pairs)
             #epoch_len = len(self.pairs) - epoch_start
 
+        nn_iters = self.epoch_length
+
         if not self.do_test_not_train:
             print('limit pairs:', len(self.pairs),
                   '- end of this epoch:',epoch_stop,
@@ -1879,7 +1881,7 @@ class NMT:
                         print('skip save!')
                 self.time_elapsed_str = self._time_since(self.time_num)
                 self.time_elapsed_num = time.time()
-                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.time_elapsed_str, end=' ')
+                print('(%d %d%%) %.6f loss' % (iter, (iter - epoch_start) / self.epoch_length * 100, print_loss_avg),self.time_elapsed_str, end=' ')
                 if self.do_batch_process: print('- batch-size', temp_batch_size, end=' ')
                 if self.do_auto_stop: print('- count', self._count_epochs_for_quit)
                 else: print('')
