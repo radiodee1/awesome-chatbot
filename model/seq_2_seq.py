@@ -518,6 +518,7 @@ class NMT:
         self.time_str = ''
         self.time_elapsed_num = 0
         self.time_elapsed_str = ''
+        self._skipped = 0
 
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
@@ -559,10 +560,11 @@ class NMT:
         self.do_recipe_lr = False
         self.do_batch_process = True
         self.do_sample_on_screen = True
-        self.do_recurrent_output = False
+        self.do_recurrent_output = True
         self.do_load_recurrent = False
         self.do_no_positional = False
         self.do_no_attention = False
+        self.do_skip_unk = False
 
         self.printable = ''
 
@@ -579,6 +581,7 @@ class NMT:
                             action='store_true')
         parser.add_argument('--load-recurrent',help='load files from "train.big" recurrent filenames', action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
+        parser.add_argument('--skip-unk',help='skip input that contains the unk token', action='store_true')
         parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
         parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
                             action='store_true')
@@ -603,7 +606,7 @@ class NMT:
         parser.add_argument('--decay', help='weight decay.')
         parser.add_argument('--hops', help='babi memory hops.')
         parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
-        parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
+        parser.add_argument('--recurrent-output', help='use recurrent output module. (default)', action='store_true')
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
@@ -684,6 +687,7 @@ class NMT:
         if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
         if self.args['start_epoch'] is not None: self.start_epoch = int(self.args['start_epoch'])
         if self.args['no_attention'] is not False: self.do_no_attention = True
+        if self.args['skip_unk'] is not False: self.do_skip_unk = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1043,7 +1047,7 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence):
+    def indexesFromSentence(self,lang, sentence, skip_unk=False):
         s = sentence.split(' ')
         sent = []
         for word in s:
@@ -1052,6 +1056,9 @@ class NMT:
                 elif word == hparams['sol']: word = SOS_token
                 else: word = lang.word2index[word]
                 sent.append(word)
+            elif skip_unk:
+                print('-')
+                return None
             elif not self.do_hide_unk:
                 sent.append(lang.word2index[hparams['unk']])
         if len(sent) >= MAX_LENGTH and not self.do_load_babi:
@@ -1067,7 +1074,7 @@ class NMT:
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
-    def variables_for_batch(self, pairs, size, start):
+    def variables_for_batch(self, pairs, size, start, skip_unk=False):
         if start + size >= len(pairs) and start < len(pairs) - 1:
             size = len(pairs) - start #- 1
             print('process size', size,'next')
@@ -1078,7 +1085,33 @@ class NMT:
         g2 = []
         g3 = []
 
-        group = pairs[start:start + size]
+        group = []
+
+        if skip_unk:
+            num = 0
+            self._skipped = 0
+            while len(g1) < size:
+
+                if start + num > len(pairs): break
+
+                triplet = pairs[start + num]
+                x = self.variablesFromPair(triplet, skip_unk=skip_unk)
+                if x is not None:
+                    if not hparams['split_sentences']:
+                        g1.append(x[0].squeeze(1))
+                    else:
+                        g1.append(x[0])
+                    g2.append(x[1].squeeze(1))
+                    g3.append(x[2].squeeze(1))
+                else:
+                    self._skipped += 1
+                num += 1
+            #print(self._skipped)
+            return (g1, g2, g3)
+            pass
+        else:
+            group = pairs[start:start + size]
+
         for i in group:
             g = self.variablesFromPair(i)
             #print(g[0])
@@ -1091,8 +1124,9 @@ class NMT:
 
         return (g1, g2, g3)
 
-    def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
-        indexes = self.indexesFromSentence(lang, sentence)
+    def variableFromSentence(self,lang, sentence, add_eol=False, pad=0, skip_unk=False):
+        indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk)
+        if indexes is None and skip_unk: return indexes
         if add_eol and len(indexes) < pad: indexes.append(EOS_token)
         sentence_len = len(indexes)
         while pad > sentence_len:
@@ -1105,7 +1139,7 @@ class NMT:
         else:
             return result
 
-    def variablesFromPair(self,pair):
+    def variablesFromPair(self,pair, skip_unk=False):
         if hparams['split_sentences'] :
             l = pair[0].strip().split('.')
             sen = []
@@ -1119,7 +1153,8 @@ class NMT:
                     while len(l[i].strip().split(' ')) < max_len:
                         l[i] += " " + hparams['unk']
                     #print(l[i],',l')
-                    z = self.variableFromSentence(self.input_lang, l[i])
+                    z = self.variableFromSentence(self.input_lang, l[i], skip_unk=skip_unk)
+                    if skip_unk and z is None: return None
                     #print(z)
                     sen.append(z)
             #sen = torch.cat(sen, dim=0)
@@ -1129,10 +1164,10 @@ class NMT:
             pass
         else:
             pad = 1
-            input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad)
+            input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, skip_unk=skip_unk)
 
         pad = hparams['tokens_per_sentence']
-        question_variable = self.variableFromSentence(self.output_lang, pair[1], pad=pad)
+        question_variable = self.variableFromSentence(self.output_lang, pair[1], pad=pad, skip_unk=skip_unk)
 
         if len(pair) > 2:
             #print(pair[2],',pair')
@@ -1144,15 +1179,18 @@ class NMT:
                 add_eol = True
             target_variable = self.variableFromSentence(self.output_lang, pair[2],
                                                         add_eol=add_eol,
-                                                        pad=pad)
+                                                        pad=pad,
+                                                        skip_unk=skip_unk)
             if self.do_recurrent_output:
                 target_variable = target_variable.unsqueeze(0)
 
         else:
-
+            if skip_unk and (input_variable is None or question_variable is None):
+                return None
             return (input_variable, question_variable)
 
-
+        if skip_unk and (input_variable is None or question_variable is None or target_variable is None):
+            return None
         return (input_variable,question_variable, target_variable)
 
 
@@ -1710,7 +1748,9 @@ class NMT:
                     target_variable = training_pair[0]
                     #print('is auto')
             elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
-                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
+
+                skip_unk = self.do_skip_unk
+                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
 
                 input_variable = group[0]
                 question_variable = group[1]
@@ -1777,7 +1817,13 @@ class NMT:
                 print_loss_total = 0
 
                 print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) #+", countdown = "+ str(save_thresh - save_num)
-                      + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
+                      + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
+                      + ', low loss = %.6f' % self.long_term_loss, end=', ')
+                if self.do_skip_unk:
+                    print('skipped =', self._skipped)
+                else:
+                    print()
+
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):

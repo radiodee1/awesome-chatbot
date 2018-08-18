@@ -54,6 +54,8 @@ whitelist = [
     "won't",
     "haven't",
     "doesn't",
+    "isn't",
+    "wasn't",
     "?"
 ]
 
