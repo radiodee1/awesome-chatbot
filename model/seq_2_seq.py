@@ -852,7 +852,10 @@ class NMT:
         lr = hparams['learning_rate']
         if num == 0:
             num = hparams['epochs']
-        for i in range(self.start_epoch, num):
+        i = self.start_epoch
+
+        while True:
+
             self.this_epoch = i
             self.printable = 'epoch #' + str(i+1)
             self.do_test_not_train = False
@@ -878,6 +881,8 @@ class NMT:
             mode = 'train'
             self.task_choose_files(mode=mode)
             if i % 3 == 0 and False: self._test_embedding(exit=False)
+
+            i += 1
 
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -1042,6 +1047,7 @@ class NMT:
             self.task_set_embedding_matrix()
 
         if self.epoch_length > len(self.pairs):
+            print('reset epoch length:', len(self.pairs))
             self.epoch_length = len(self.pairs)
 
         return self.input_lang, self.output_lang, self.pairs
@@ -1093,6 +1099,8 @@ class NMT:
             while len(g1) < size:
 
                 if start + num > len(pairs): break
+
+                #print(start + num, end=', ')
 
                 triplet = pairs[start + num]
                 x = self.variablesFromPair(triplet, skip_unk=skip_unk)
@@ -1659,7 +1667,7 @@ class NMT:
         num_count = 0
         temp_batch_size = 0
 
-        epoch_len = self.epoch_length
+        #epoch_len = self.epoch_length
         epoch_start = self.this_epoch * self.epoch_length
         if epoch_start >= len(self.pairs):
             n = (len(self.pairs) // self.epoch_length)
@@ -1671,7 +1679,7 @@ class NMT:
 
         if len(self.pairs) < epoch_stop:
             epoch_stop = len(self.pairs)
-            epoch_len = len(self.pairs) - epoch_start
+            #epoch_len = len(self.pairs) - epoch_start
 
         if not self.do_test_not_train:
             print('limit pairs:', len(self.pairs),
@@ -1689,8 +1697,13 @@ class NMT:
         #self.criterion = nn.NLLLoss()
         self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
+        '''
         training_pairs = [self.variablesFromPair(
             self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
+        
+
+        training_pairs = self.variables_for_batch(self.pairs, hparams['batch_size'], epoch_start, skip_unk=self.do_skip_unk)
+        '''
 
         if not self.do_test_not_train:
             criterion = self.criterion
@@ -1726,11 +1739,14 @@ class NMT:
                 self.model_0_wra.train()
 
         if self.do_batch_process:
-            step = hparams['batch_size']
-            start = 0
+            step = 1 # hparams['batch_size']
+            if self.start_epoch is 0: start = 0
 
-        for iter in range(start, n_iters + 1, step):
 
+
+        for iter in range(epoch_start, epoch_stop + 1, step):
+
+            '''
             if not self.do_batch_process:
                 training_pair = training_pairs[iter - 1]
 
@@ -1747,7 +1763,9 @@ class NMT:
                 if is_auto:
                     target_variable = training_pair[0]
                     #print('is auto')
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
+            '''
+
+            if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
                 skip_unk = self.do_skip_unk
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
@@ -1757,7 +1775,7 @@ class NMT:
                 target_variable = group[2]
 
                 temp_batch_size = len(input_variable)
-
+                #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
 
