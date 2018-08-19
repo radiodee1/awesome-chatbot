@@ -857,7 +857,7 @@ class NMT:
         while True:
 
             self.this_epoch = i
-            self.printable = 'epoch #' + str(i+1)
+            self.printable = 'step #' + str(i+1)
             self.do_test_not_train = False
             #self.score = 0.0
 

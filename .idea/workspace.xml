@@ -32,7 +32,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="md" value="4619" />
-          <entry key="py" value="16397" />
+          <entry key="py" value="16404" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -42,7 +42,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4619" />
           <entry key="PLAIN_TEXT" value="12" />
-          <entry key="Python" value="16397" />
+          <entry key="Python" value="16404" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -98,8 +98,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="1687" column="35" selection-start-line="1687" selection-start-column="35" selection-end-line="1687" selection-end-column="35" />
+            <state relative-caret-position="262">
+              <caret line="859" column="34" selection-start-line="859" selection-start-column="34" selection-end-line="859" selection-end-column="34" />
             </state>
           </provider>
         </entry>
@@ -174,7 +174,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_5_ans</find>
       <find>AnswerModule</find>
       <find>WrapMemRNN</find>
       <find>attention</find>
@@ -204,6 +203,7 @@
       <find>n_iters</find>
       <find>epoch_length</find>
       <find>this_epoch</find>
+      <find>printable</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -639,8 +639,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="1687" column="35" selection-start-line="1687" selection-start-column="35" selection-end-line="1687" selection-end-column="35" />
+        <state relative-caret-position="262">
+          <caret line="859" column="34" selection-start-line="859" selection-start-column="34" selection-end-line="859" selection-end-column="34" />
         </state>
       </provider>
     </entry>
