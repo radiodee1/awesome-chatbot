@@ -200,10 +200,11 @@ class Decoder(nn.Module):
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
-        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout * 0.0, batch_first=True)
+        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
         self.out = nn.Linear(linear_in_dim, target_vocab_size)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
+        self.decoder_hidden_z = None
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -238,7 +239,7 @@ class Decoder(nn.Module):
             #print(k,decoder_hidden_x.size(),'dh', encoder_out_x.size())
 
             for i in range(self.maxtokens):
-                #print(output, 'before')
+                #print(i)
                 output, decoder_hidden_x, mask = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
                 #print(output.size(), decoder_hidden.size())
                 outputs.append(output)
@@ -268,13 +269,26 @@ class Decoder(nn.Module):
         encoder_out = self.prune_tensor(encoder_out, 3)
 
         if not self.cancel_attention:
-            context, mask = self.attention(decoder_hidden[:,-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+
+            decoder_hidden_y = decoder_hidden[:, 0, :]
+            for i in range(1,decoder_hidden.size()[1]):
+                decoder_hidden_y = decoder_hidden_y + decoder_hidden[:,i,:]
+
+            decoder_hidden_y = decoder_hidden_y.unsqueeze(1)
+
+            context, mask = self.attention(decoder_hidden_y[:,-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
             context = context.permute(1, 0, 2)
         else:
             context = None
             mask = None
 
         embedded = self.prune_tensor(embedded,3)
+
+        ## MESS WITH HIDDEN STATE HERE ##
+        if decoder_hidden.size()[1] == 4:
+            self.decoder_hidden_z = decoder_hidden[:,-2:] + decoder_hidden[:,2:]
+            decoder_hidden = self.decoder_hidden_z #.permute(1,0,2)
+            #print(decoder_hidden.size(),'dh2')
 
         decoder_hidden = decoder_hidden[:,-self.n_layers:].permute(1,0,2)
 
