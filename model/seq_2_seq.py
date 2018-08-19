@@ -1699,7 +1699,8 @@ class NMT:
             print('limit pairs:', len(self.pairs),
                   '- end of this epoch:',epoch_stop,
                   '- epochs:', len(self.pairs) // self.epoch_length,
-                  '- this epoch:', self.this_epoch + 1)
+                  '- this epoch:', self.this_epoch + 1,
+                  '- epoch len:', self.epoch_length)
 
         self.time_str = self._as_minutes(self.time_num)
 
