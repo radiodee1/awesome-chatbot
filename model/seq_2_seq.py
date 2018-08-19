@@ -438,7 +438,6 @@ class WrapMemRNN(nn.Module):
         prev_h2 = torch.cat(prev_h2, dim=0)
         prev_h3 = torch.cat(prev_h3, dim=1)
 
-
         return prev_h2, prev_h3.permute(1,0,2)
 
 
@@ -1700,10 +1699,10 @@ class NMT:
 
         if not self.do_test_not_train:
             print('limit pairs:', len(self.pairs),
-                  '- end of this epoch:',epoch_stop,
-                  '- epochs:', len(self.pairs) // self.epoch_length,
-                  '- this epoch:', self.this_epoch + 1,
-                  '- epoch len:', self.epoch_length)
+                  '- end of this step:',epoch_stop,
+                  '- steps:', len(self.pairs) // self.epoch_length,
+                  '- this step:', self.this_epoch + 1,
+                  '- step len:', self.epoch_length)
 
         self.time_str = self._as_minutes(self.time_num)
 
