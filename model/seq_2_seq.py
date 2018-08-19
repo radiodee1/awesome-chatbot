@@ -286,7 +286,8 @@ class Decoder(nn.Module):
 
         ## MESS WITH HIDDEN STATE HERE ##
         if decoder_hidden.size()[1] == 4:
-            self.decoder_hidden_z = decoder_hidden[:,-2:] + decoder_hidden[:,2:]
+            #assert decoder_hidden[:, -2:] != decoder_hidden[:,:2]
+            self.decoder_hidden_z = decoder_hidden[:,-2:] + decoder_hidden[:,:2]
             decoder_hidden = self.decoder_hidden_z #.permute(1,0,2)
             #print(decoder_hidden.size(),'dh2')
 
