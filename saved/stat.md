@@ -11,11 +11,11 @@ The babi data set is downloaded in the form of 20 categories. There is the basic
 * `dmn_plus` Results from the DMN+ paper. [See here.](https://arxiv.org/abs/1603.01417)
 * `small` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download. There are 158 words used in the babi corpus, and with three special tokens ('sol', 'eol', and 'unk') there are 161 vocabulary words. This would be the classic configuration for the babi test.
 * `small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
-* `lrg` This column reflects testing done with 100 hidden units and a large set of non trainable embeddings. The individual word vectors will come from the glove download. The words in the vocabulary would include those not specific to the question answering task.
+* `lrg_tr` This column reflects testing done with 100 hidden units and a large set of trainable embeddings. The words in the vocabulary would include those not specific to the question answering task.
 
 The table is included here:
 
- |   | baseline_dmn | dmn_plus | small | small_tr | lrg |
+ |   | baseline_dmn | dmn_plus | small | small_tr | lrg_tr |
 |-|:-:|:-:|-|-|-|
  | QA1: Single Supporting Fact | 100 | 100 | 100/100 | 100/100 | 100/100 |
  | QA2: Two Supporting Facts | 98.2 | 99.7 | 0 | 0 | 0 |
