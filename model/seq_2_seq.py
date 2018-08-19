@@ -1058,10 +1058,11 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
+        '''
         if self.epoch_length > len(self.pairs) and not self.do_test_not_train:
             print('reset epoch length:', len(self.pairs))
             self.epoch_length = len(self.pairs)
-
+        '''
         return self.input_lang, self.output_lang, self.pairs
 
 
@@ -1679,15 +1680,17 @@ class NMT:
         num_count = 0
         temp_batch_size = 0
 
-        #epoch_len = self.epoch_length
+        epoch_len = self.epoch_length
         epoch_start = self.this_epoch * self.epoch_length
         if epoch_start >= len(self.pairs):
             n = (len(self.pairs) // self.epoch_length)
+            if n == 0: n = 1
             e = self.this_epoch % n
             epoch_start = e * self.epoch_length
             #exit()
+            #length
 
-        epoch_stop = epoch_start + self.epoch_length
+        epoch_stop = epoch_start + epoch_len
 
         if len(self.pairs) < epoch_stop:
             epoch_stop = len(self.pairs)
