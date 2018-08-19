@@ -9,6 +9,7 @@ from gensim.scripts.glove2word2vec import glove2word2vec
 from gensim.models.keyedvectors import KeyedVectors
 import numpy as np
 import argparse
+import glob
 
 embed_size = hparams['embed_size']
 vocab_length = hparams['num_vocab_total']
@@ -218,7 +219,7 @@ if __name__ == '__main__':
           'file is complete.')
 
     parser = argparse.ArgumentParser(description='Make vocab file.')
-    parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output. (Can be a comma separated list.)')
+    parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output. (Can be a comma separated list or glob.)')
     parser.add_argument('--babi', help='Flag for babi input. (Override basefile.)', action='store_true')
     parser.add_argument('--all-glove', help='Load all words from the glove set.', action='store_true')
     parser.add_argument('--w2v', help='replace all glove data with data obtained from w2v downloads.', action='store_true')
@@ -243,10 +244,16 @@ if __name__ == '__main__':
     if args['basefile'] is not None :
         lst = args['basefile']
         lst = lst.split(',')
+        glist = []
         if len(lst) > 1:
             train_file = lst
         else:
             train_file = [args['basefile']]
+
+        ## expand glob ##
+        for i in train_file:
+            glist.extend(glob.glob(i))
+        train_file = glist
 
     if args['load_embed_size'] is not None:
         hparams['embed_size'] = int(args['load_embed_size'])
