@@ -2050,7 +2050,7 @@ class NMT:
                         xxx = hparams['eol']
                         decoded_words.append(xxx)
                         print('eol found.')
-                        if True: break
+                        if not self.do_print_to_screen: break
                     else:
                         if di < 4:
                             print(int(ni), self.output_lang.index2word[int(ni)])
