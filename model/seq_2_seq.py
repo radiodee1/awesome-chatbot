@@ -325,7 +325,7 @@ class Decoder(nn.Module):
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
-                 cancel_attention=False):
+                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
 
         super(WrapMemRNN, self).__init__()
 
@@ -375,8 +375,11 @@ class WrapMemRNN(nn.Module):
 
         if self.freeze_embedding or self.embedding is not None:
             self.new_freeze_embedding()
-        #self.criterion = nn.CrossEntropyLoss()
 
+        if freeze_encoder:
+            self.new_freeze_encoding()
+        if freeze_decoder:
+            self.new_freeze_decoding()
         pass
 
     def load_embedding(self, embedding):
@@ -423,6 +426,24 @@ class WrapMemRNN(nn.Module):
         self.model_1_seq.embed.weight.requires_grad = not do_freeze
         self.model_6_dec.embed.weight.requires_grad = not do_freeze
         print('freeze embedding')
+        pass
+
+    def new_freeze_decoding(self, do_freeze=True):
+        self.model_6_dec.gru.weight_ih.requires_grad = not do_freeze
+        self.model_6_dec.gru.weight_hh.requires_grad = not do_freeze
+        if self.model_6_dec.gru.bias == True:
+            self.model_6_dec.gru.bias_ih.requires_grad = not do_freeze
+            self.model_6_dec.gru.bias_hh.requires_grad = not do_freeze
+        print('freeze decoding')
+        pass
+
+    def new_freeze_encoding(self, do_freeze=True):
+        self.model_1_seq.gru.weight_ih.requires_grad = not do_freeze
+        self.model_1_seq.gru.weight_hh.requires_grad = not do_freeze
+        if self.model_1_seq.gru.bias == True:
+            self.model_1_seq.gru.bias_ih.requires_grad = not do_freeze
+            self.model_1_seq.gru.bias_hh.requires_grad = not do_freeze
+        print('freeze encoding')
         pass
 
     def test_embedding(self, num=None):
@@ -566,6 +587,8 @@ class NMT:
         self.do_conserve_space = False
         self.do_test_not_train = False
         self.do_freeze_embedding = False
+        self.do_freeze_decoding = False
+        self.do_freeze_encoding = False
         self.do_load_embeddings = False
         self.do_auto_stop = False
         self.do_skip_validation = False
@@ -605,6 +628,8 @@ class NMT:
                             action='store_true')
         parser.add_argument('--lr', help='learning rate')
         parser.add_argument('--freeze-embedding', help='Stop training on embedding elements',action='store_true')
+        parser.add_argument('--freeze-decoding', help='Stop training on decoder', action='store_true')
+        parser.add_argument('--freeze-encoding', help='Stop training on encoder', action='store_true')
         parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
         parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
         parser.add_argument('--dropout', help='set dropout ratio from the command line. (Float value)')
@@ -670,6 +695,8 @@ class NMT:
             hparams['teacher_forcing_ratio'] = 0.0
         if self.args['lr'] is not None: hparams['learning_rate'] = float(self.args['lr'])
         if self.args['freeze_embedding'] == True: self.do_freeze_embedding = True
+        if self.args['freeze_encoding'] == True: self.do_freeze_encoding = True
+        if self.args['freeze_decoding'] == True: self.do_freeze_decoding = True
         if self.args['load_embed_size'] is not None:
             hparams['embed_size'] = int(self.args['load_embed_size'])
             self.do_load_embeddings = True
@@ -2101,7 +2128,8 @@ class NMT:
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                      freeze_decoder=self.do_freeze_decoding, freeze_encoder=self.do_freeze_encoding)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2130,7 +2158,8 @@ class NMT:
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                      freeze_decoder=self.do_freeze_decoding, freeze_encoder=self.do_freeze_encoding)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -2231,7 +2260,8 @@ if __name__ == '__main__':
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
-                                   sol_token=sol_token, cancel_attention=n.do_no_attention)
+                                   sol_token=sol_token, cancel_attention=n.do_no_attention,
+                                   freeze_decoder=n.do_freeze_decoding, freeze_encoder=n.do_freeze_encoding)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
