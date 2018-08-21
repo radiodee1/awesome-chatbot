@@ -1007,8 +1007,11 @@ class NMT:
             self.input_lang = Lang(lang1, limit=hparams['num_vocab_total'])
             self.output_lang = Lang(lang2, limit=hparams['num_vocab_total'])
 
-        if hparams['autoencode'] == 1.0:
-            self.pairs = [ [p[0], p[0], p[0]] for p in self.pairs]
+        if hparams['autoencode'] > 0.0:
+            a = hparams['autoencode']
+            #self.pairs = [ [p[0], p[0], p[0]] for p in self.pairs]
+            self.pairs = [ [p[0], p[0], p[0]] if random.uniform(0.0,1.0) <= a else [p[0], p[1], p[2]] for p in self.pairs]
+
             self.output_lang = self.input_lang
 
         return self.input_lang, self.output_lang, self.pairs
