@@ -425,25 +425,21 @@ class WrapMemRNN(nn.Module):
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_seq.embed.weight.requires_grad = not do_freeze
         self.model_6_dec.embed.weight.requires_grad = not do_freeze
-        print('freeze embedding')
+        if do_freeze: print('freeze embedding')
         pass
 
     def new_freeze_decoding(self, do_freeze=True):
-        self.model_6_dec.gru.weight_ih.requires_grad = not do_freeze
-        self.model_6_dec.gru.weight_hh.requires_grad = not do_freeze
-        if self.model_6_dec.gru.bias == True:
-            self.model_6_dec.gru.bias_ih.requires_grad = not do_freeze
-            self.model_6_dec.gru.bias_hh.requires_grad = not do_freeze
-        print('freeze decoding')
+        for weight in self.model_6_dec.parameters():
+            weight.requires_grad = not do_freeze
+
+        if do_freeze: print('freeze decoding')
         pass
 
     def new_freeze_encoding(self, do_freeze=True):
-        self.model_1_seq.gru.weight_ih.requires_grad = not do_freeze
-        self.model_1_seq.gru.weight_hh.requires_grad = not do_freeze
-        if self.model_1_seq.gru.bias == True:
-            self.model_1_seq.gru.bias_ih.requires_grad = not do_freeze
-            self.model_1_seq.gru.bias_hh.requires_grad = not do_freeze
-        print('freeze encoding')
+        for weight in self.model_1_seq.parameters():
+            weight.requires_grad = not do_freeze
+
+        if do_freeze: print('freeze encoding')
         pass
 
     def test_embedding(self, num=None):
@@ -1372,6 +1368,15 @@ class NMT:
                     self.model_0_wra.new_freeze_embedding()
                 else:
                     self.model_0_wra.new_freeze_embedding(do_freeze=False)
+                if self.do_freeze_encoding:
+                    self.model_0_wra.new_freeze_encoding()
+                else:
+                    self.model_0_wra.new_freeze_encoding(do_freeze=False)
+                if self.do_freeze_decoding:
+                    self.model_0_wra.new_freeze_decoding()
+                else:
+                    self.model_0_wra.new_freeze_decoding(do_freeze=False)
+
                 if self.opt_1 is not None:
                     #####
                     try:
