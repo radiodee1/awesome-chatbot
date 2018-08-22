@@ -1151,7 +1151,7 @@ class NMT:
             self._skipped = 0
             while len(g1) < size:
 
-                if start + num > len(pairs): break
+                if start + num >= len(pairs): break
 
                 #print(start + num, end=', ')
 
