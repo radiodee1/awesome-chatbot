@@ -197,7 +197,7 @@ class Decoder(nn.Module):
 
     def forward(self, output, encoder_out, decoder_hidden):
         
-        embedded = self.embed(output)  # (1, batch, embed_dim)
+        #embedded = self.embed(output)  # (1, batch, embed_dim)
 
 
         if not self.cancel_attention:
@@ -212,12 +212,12 @@ class Decoder(nn.Module):
             if self.n_layers > 1:
 
                 context, mask = self.attention(decoder_hidden_y, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-                embedded = self.prune_tensor(embedded,3)
+                embedded = output #self.prune_tensor(embedded,3)
                 #context = context.squeeze(0)
             else:
                 #print(decoder_hidden.size(),'dh')
                 context, mask = self.attention(decoder_hidden_y, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-                embedded = self.prune_tensor(embedded, 3)
+                embedded = output #self.prune_tensor(embedded, 3)
                 context = context.permute(1,0,2)
 
             concat_list = [
@@ -230,6 +230,7 @@ class Decoder(nn.Module):
             gru_in = torch.cat(concat_list, dim=2)  # dim=2
 
         else:
+            embedded = output
             gru_in = self.prune_tensor(embedded, 3)
             mask = None
             # gru_in = gru_in.contiguous()
@@ -238,12 +239,15 @@ class Decoder(nn.Module):
 
         rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
 
+        '''
         if self.cancel_attention:
             output = self.out(rnn_output)
         else:
             output = self.out(torch.cat([rnn_output, context], 2))
+        '''
+        return rnn_output, decoder_hidden, mask
 
-        return output, decoder_hidden, mask
+        #return output, decoder_hidden, mask
 
 
 
@@ -498,6 +502,9 @@ class AnswerModule(nn.Module):
         self.out_b = nn.Linear(hidden_size * 2, hidden_size, bias=True)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
+        self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
+        init.xavier_normal_(self.out_c.state_dict()['weight'])
+
         self.dropout = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
@@ -526,7 +533,7 @@ class AnswerModule(nn.Module):
         self.decoder.load_embedding(embed)
 
     def recurrent(self, out):
-        output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
+        #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
         if hparams['cuda'] is True: output = output.cuda()
 
         l, hid = out.size()
@@ -543,12 +550,11 @@ class AnswerModule(nn.Module):
             e_out = torch.cat(e_out_list, dim=0)
 
             outputs = []
-            decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2) #out[k,:], 3)
-            encoder_out = self.prune_tensor(e_out,3).permute(1,0,2) #out[k,:], 3)
-            output = self.prune_tensor(output, 3)
+            decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
+            encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
+            output = self.prune_tensor(out[k,:], 3)
 
-            #print(k,decoder_hidden.size(),'dh')
-            eol_test = False
+            ##########################################
 
             for i in range(self.maxtokens):
 
@@ -556,29 +562,18 @@ class AnswerModule(nn.Module):
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
                 #print(output.size(),'output')
 
-                if not eol_test:
-                    outputs.append(output)
-
-                else:
-                    output = Variable(torch.zeros((self.vocab_size)))
-                    output = self.prune_tensor(output, 3)
-                    outputs.append(output)
-                    #print(output.size(),'out 2')
-
-                output = Variable(output.data.max(dim=2)[1])
-
-                if self.prune_tensor(output,1).item() == EOS_token: #  torch.LongTensor([EOS_token]):
-                    eol_test = True
+                outputs.append(self.out_c(output))
 
                 output = self.prune_tensor(output, 3)
 
-
             some_out = torch.cat(outputs, dim=0)
-            #print(some_out.size(),'some cat')
+            #some_out = some_out.data.max(dim=2)[1].permute(1,0)
+            some_out = self.prune_tensor(some_out, 3)
+
             all_out.append(some_out)
+
         val_out = torch.cat(all_out, dim=1)
 
-        #print(val_out.size(),'out all')
         return val_out
 
     def forward(self, mem, question_h):
@@ -2019,7 +2014,6 @@ class NMT:
                                                   criterion)
 
             if self.do_recurrent_output:
-
 
                 target_variable = torch.cat(target_variable, dim=0)
 
