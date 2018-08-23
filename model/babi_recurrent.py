@@ -247,106 +247,6 @@ class Decoder(nn.Module):
 
 
 
-    '''
-    def forward(self, encoder_out, decoder_hidden):
-        # output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
-
-        l, s, hid = encoder_out.size()
-
-        all_out = []
-        for k in range(l):
-
-            output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
-            if hparams['cuda'] is True: output = output.cuda()
-
-            outputs = []
-
-            decoder_hidden_x = self.prune_tensor(decoder_hidden[k, :, :], 3)
-
-            encoder_out_x = self.prune_tensor(encoder_out[k, :, :], 3)
-            output = self.prune_tensor(output, 3)
-
-            # print(k,decoder_hidden_x.size(),'dh', encoder_out_x.size())
-
-            for i in range(self.maxtokens):
-                # print(i)
-                output, decoder_hidden_x, mask = self.new_inner(output, encoder_out_x[:, i, :], decoder_hidden_x)
-                # print(output.size(), decoder_hidden.size())
-                outputs.append(output)
-                output = Variable(output.data.max(dim=2)[1])
-                # print(output,'out')
-                output = self.prune_tensor(output, 3)
-
-            some_out = torch.cat(outputs, dim=0)
-            # print(some_out.size(),'some cat')
-            all_out.append(some_out)
-            # print(len(outputs), len(all_out))
-
-        val_out = torch.cat(all_out, dim=1)
-
-        # print(val_out.size(),'out all')
-
-        return val_out
-
-    def new_inner(self, output, encoder_out, decoder_hidden):
-
-        # print(output.size(),'out at embed')
-        embedded = self.embed(output)  # (1, batch, embed_dim)
-
-        encoder_out = self.prune_tensor(encoder_out, 3)
-
-        if not self.cancel_attention:
-
-            decoder_hidden_y = decoder_hidden[:, 0, :]
-            for i in range(1, decoder_hidden.size()[1]):
-                decoder_hidden_y = decoder_hidden_y + decoder_hidden[:, i, :]
-
-            decoder_hidden_y = decoder_hidden_y.unsqueeze(1)
-
-            context, mask = self.attention(decoder_hidden_y[:, -1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-            context = context.permute(1, 0, 2)
-        else:
-            context = None
-            mask = None
-
-        embedded = self.prune_tensor(embedded, 3)
-
-        ## MESS WITH HIDDEN STATE HERE ##
-        if decoder_hidden.size()[1] == 4:
-            # assert decoder_hidden[:, -2:] != decoder_hidden[:,:2]
-            self.decoder_hidden_z = decoder_hidden[:, -2:] + decoder_hidden[:, :2]
-            decoder_hidden = self.decoder_hidden_z  # .permute(1,0,2)
-            # print(decoder_hidden.size(),'dh2')
-
-        decoder_hidden = decoder_hidden[:, -self.n_layers:].permute(1, 0, 2)
-
-        # context = context.permute(1,0,2)
-
-        if not self.cancel_attention:
-            concat_list = [
-                embedded,
-                context
-            ]
-            # for i in concat_list: print(i.size(), self.n_layers)
-            # exit()
-
-            gru_in = torch.cat(concat_list, dim=2)  # dim=2
-        else:
-            gru_in = embedded
-
-        # gru_in = gru_in.contiguous()
-        decoder_hidden = decoder_hidden.contiguous()
-
-        rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
-        decoder_hidden = decoder_hidden.permute(1, 0, 2)
-
-        if self.cancel_attention:
-            output = self.out(rnn_output)
-        else:
-            output = self.out(torch.cat([rnn_output, context], 2))
-        return output, decoder_hidden, mask
-    '''
-
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
         super(CustomGRU, self).__init__()
@@ -683,7 +583,7 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        mem = mem.permute(1,0,2)
+        mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
         '''
@@ -691,16 +591,16 @@ class AnswerModule(nn.Module):
             mem = mem.squeeze(0)
             return self.recurrent(mem)
         '''
-        mem = torch.cat([mem, question_h], dim=2)
+        mem_in = torch.cat([mem_in, question_h], dim=2)
 
-        mem = self.dropout(mem)
-        mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
+        mem_in = self.dropout(mem_in)
+        mem_in = mem_in.squeeze(0)#.permute(1,0)#.squeeze(0)
 
         if self.recurrent_output:
-            mem = self.out_b(mem)
+            mem = mem.permute(1,0,2).squeeze(0)
             return self.recurrent(mem)
 
-        out = self.out_a(mem)
+        out = self.out_a(mem_in)
 
         return out.permute(1,0)
 
