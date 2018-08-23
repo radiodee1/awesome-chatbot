@@ -282,7 +282,7 @@ class Decoder(nn.Module):
 
         embedded = self.prune_tensor(embedded,3)
 
-        ## MESS WITH HIDDEN STATE HERE ##
+        ## CHANGE HIDDEN STATE HERE ##
         if decoder_hidden.size()[1] == 4:
             #assert decoder_hidden[:, -2:] != decoder_hidden[:,:2]
             self.decoder_hidden_z = decoder_hidden[:,-2:] + decoder_hidden[:,:2]

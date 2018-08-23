@@ -554,7 +554,7 @@ class AnswerModule(nn.Module):
 
                 #print(output, 'before')
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
-                #print(decoder_hidden.size(),'dh, decoder')
+                #print(output.size(),'output')
 
                 if not eol_test:
                     outputs.append(output)
