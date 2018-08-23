@@ -88,8 +88,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
-              <caret line="601" column="46" selection-start-line="601" selection-start-column="46" selection-end-line="601" selection-end-column="46" />
+            <state relative-caret-position="306">
+              <caret line="587" lean-forward="true" selection-start-line="587" selection-end-line="587" />
             </state>
           </provider>
         </entry>
@@ -634,8 +634,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="601" column="46" selection-start-line="601" selection-start-column="46" selection-end-line="601" selection-end-column="46" />
+        <state relative-caret-position="306">
+          <caret line="587" lean-forward="true" selection-start-line="587" selection-end-line="587" />
         </state>
       </provider>
     </entry>

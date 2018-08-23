@@ -586,11 +586,6 @@ class AnswerModule(nn.Module):
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
-        '''
-        if self.recurrent_output:
-            mem = mem.squeeze(0)
-            return self.recurrent(mem)
-        '''
         mem_in = torch.cat([mem_in, question_h], dim=2)
 
         mem_in = self.dropout(mem_in)
