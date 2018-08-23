@@ -170,17 +170,20 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
         self.maxtokens = hparams['tokens_per_sentence']
+        self.vocab_size = target_vocab_size
+        self.hidden_dim = hidden_dim
         #self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
 
         gru_in_dim = embed_dim + hidden_dim
-        linear_in_dim = hidden_dim * 2
+        #linear_in_dim = hidden_dim * 2
         if cancel_attention:
+
             gru_in_dim = hidden_dim
-            linear_in_dim = hidden_dim
+            #linear_in_dim = hidden_dim
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout * 0.0, batch_first=True)
-        self.out = nn.Linear(linear_in_dim, target_vocab_size)
+        #self.out = nn.Linear(linear_in_dim, target_vocab_size)
         self.cancel_attention = cancel_attention
 
     def load_embedding(self, embedding):
@@ -558,9 +561,7 @@ class AnswerModule(nn.Module):
 
             for i in range(self.maxtokens):
 
-                #print(output, 'before')
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
-                #print(output.size(),'output')
 
                 outputs.append(self.out_c(output))
 
