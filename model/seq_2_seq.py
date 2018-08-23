@@ -260,9 +260,7 @@ class Decoder(nn.Module):
         return val_out
 
     def new_inner(self, output, encoder_out, decoder_hidden):
-        """
-        decodes one output frame
-        """
+
         #print(output.size(),'out at embed')
         embedded = self.embed(output)  # (1, batch, embed_dim)
 

@@ -166,13 +166,22 @@ class LuongAttention(nn.Module):
         return context, mask
 
 class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
+        self.maxtokens = hparams['tokens_per_sentence']
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
-        self.gru = nn.GRU(embed_dim + hidden_dim, hidden_dim, n_layers, dropout=dropout * 0.0, batch_first=True)
-        self.out = nn.Linear(hidden_dim * 2, target_vocab_size)
+
+        gru_in_dim = embed_dim + hidden_dim
+        linear_in_dim = hidden_dim * 2
+        if cancel_attention:
+            gru_in_dim = hidden_dim
+            linear_in_dim = hidden_dim
+
+        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout * 0.0, batch_first=True)
+        self.out = nn.Linear(linear_in_dim, target_vocab_size)
+        self.cancel_attention = cancel_attention
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -187,30 +196,156 @@ class Decoder(nn.Module):
         return input
 
     def forward(self, output, encoder_out, decoder_hidden):
-        """
-        decodes one output frame
-        """
+        
         embedded = self.embed(output)  # (1, batch, embed_dim)
-        #print(decoder_hidden[:-1].size(),'eh size')
-        if self.n_layers > 1:
-            context, mask = self.attention(decoder_hidden[:-1], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-            embedded = self.prune_tensor(embedded,3)
-            #context = context.squeeze(0)
-        else:
-            #print(decoder_hidden.size(),'dh')
-            context, mask = self.attention(decoder_hidden, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-            embedded = self.prune_tensor(embedded, 3)
-            context = context.permute(1,0,2)
 
-        #print(embedded.size(), context.size(),'con')
-        concat_list = [
-            embedded,
-            context
-        ]
-        gru_in = torch.cat(concat_list, dim=2)
+
+        if not self.cancel_attention:
+            decoder_hidden_y = decoder_hidden.permute(1,0,2)
+
+            decoder_hidden_y = decoder_hidden_y[:, 0, :]
+            for i in range(1, decoder_hidden.size()[1]):
+                decoder_hidden_y = decoder_hidden_y + decoder_hidden[:, i, :]
+
+            decoder_hidden_y = decoder_hidden_y.unsqueeze(1)
+
+            if self.n_layers > 1:
+
+                context, mask = self.attention(decoder_hidden_y, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+                embedded = self.prune_tensor(embedded,3)
+                #context = context.squeeze(0)
+            else:
+                #print(decoder_hidden.size(),'dh')
+                context, mask = self.attention(decoder_hidden_y, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+                embedded = self.prune_tensor(embedded, 3)
+                context = context.permute(1,0,2)
+
+            concat_list = [
+                embedded,
+                context
+            ]
+            #for i in concat_list: print(i.size())
+            #exit()
+
+            gru_in = torch.cat(concat_list, dim=2)  # dim=2
+
+        else:
+            gru_in = self.prune_tensor(embedded, 3)
+            mask = None
+            # gru_in = gru_in.contiguous()
+
+        decoder_hidden = decoder_hidden.contiguous()
+
         rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
-        output = self.out(torch.cat([rnn_output, context], 2))
+
+        if self.cancel_attention:
+            output = self.out(rnn_output)
+        else:
+            output = self.out(torch.cat([rnn_output, context], 2))
+
         return output, decoder_hidden, mask
+
+
+
+    '''
+    def forward(self, encoder_out, decoder_hidden):
+        # output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
+
+        l, s, hid = encoder_out.size()
+
+        all_out = []
+        for k in range(l):
+
+            output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
+            if hparams['cuda'] is True: output = output.cuda()
+
+            outputs = []
+
+            decoder_hidden_x = self.prune_tensor(decoder_hidden[k, :, :], 3)
+
+            encoder_out_x = self.prune_tensor(encoder_out[k, :, :], 3)
+            output = self.prune_tensor(output, 3)
+
+            # print(k,decoder_hidden_x.size(),'dh', encoder_out_x.size())
+
+            for i in range(self.maxtokens):
+                # print(i)
+                output, decoder_hidden_x, mask = self.new_inner(output, encoder_out_x[:, i, :], decoder_hidden_x)
+                # print(output.size(), decoder_hidden.size())
+                outputs.append(output)
+                output = Variable(output.data.max(dim=2)[1])
+                # print(output,'out')
+                output = self.prune_tensor(output, 3)
+
+            some_out = torch.cat(outputs, dim=0)
+            # print(some_out.size(),'some cat')
+            all_out.append(some_out)
+            # print(len(outputs), len(all_out))
+
+        val_out = torch.cat(all_out, dim=1)
+
+        # print(val_out.size(),'out all')
+
+        return val_out
+
+    def new_inner(self, output, encoder_out, decoder_hidden):
+
+        # print(output.size(),'out at embed')
+        embedded = self.embed(output)  # (1, batch, embed_dim)
+
+        encoder_out = self.prune_tensor(encoder_out, 3)
+
+        if not self.cancel_attention:
+
+            decoder_hidden_y = decoder_hidden[:, 0, :]
+            for i in range(1, decoder_hidden.size()[1]):
+                decoder_hidden_y = decoder_hidden_y + decoder_hidden[:, i, :]
+
+            decoder_hidden_y = decoder_hidden_y.unsqueeze(1)
+
+            context, mask = self.attention(decoder_hidden_y[:, -1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context = context.permute(1, 0, 2)
+        else:
+            context = None
+            mask = None
+
+        embedded = self.prune_tensor(embedded, 3)
+
+        ## MESS WITH HIDDEN STATE HERE ##
+        if decoder_hidden.size()[1] == 4:
+            # assert decoder_hidden[:, -2:] != decoder_hidden[:,:2]
+            self.decoder_hidden_z = decoder_hidden[:, -2:] + decoder_hidden[:, :2]
+            decoder_hidden = self.decoder_hidden_z  # .permute(1,0,2)
+            # print(decoder_hidden.size(),'dh2')
+
+        decoder_hidden = decoder_hidden[:, -self.n_layers:].permute(1, 0, 2)
+
+        # context = context.permute(1,0,2)
+
+        if not self.cancel_attention:
+            concat_list = [
+                embedded,
+                context
+            ]
+            # for i in concat_list: print(i.size(), self.n_layers)
+            # exit()
+
+            gru_in = torch.cat(concat_list, dim=2)  # dim=2
+        else:
+            gru_in = embedded
+
+        # gru_in = gru_in.contiguous()
+        decoder_hidden = decoder_hidden.contiguous()
+
+        rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
+        decoder_hidden = decoder_hidden.permute(1, 0, 2)
+
+        if self.cancel_attention:
+            output = self.out(rnn_output)
+        else:
+            output = self.out(torch.cat([rnn_output, context], 2))
+        return output, decoder_hidden, mask
+    '''
 
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -447,7 +582,7 @@ class Encoder(nn.Module):
         return encoder_out, encoder_hidden
 
 class AnswerModule(nn.Module):
-    def __init__(self, vocab_size, hidden_size, dropout=0.3, embed=None, recurrent_output=False, sol_token=0):
+    def __init__(self, vocab_size, hidden_size, dropout=0.3, embed=None, recurrent_output=False, sol_token=0, cancel_attention=False):
         super(AnswerModule, self).__init__()
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
@@ -455,6 +590,7 @@ class AnswerModule(nn.Module):
         self.recurrent_output= recurrent_output
         self.sol_token = sol_token
         self.decoder_layers = hparams['decoder_layers']
+        self.cancel_attention = cancel_attention
 
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
@@ -465,7 +601,8 @@ class AnswerModule(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed)
+        self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed,
+                               cancel_attention=self.cancel_attention)
 
     def reset_parameters(self):
 
@@ -514,8 +651,10 @@ class AnswerModule(nn.Module):
             eol_test = False
 
             for i in range(self.maxtokens):
+
                 #print(output, 'before')
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
+                #print(decoder_hidden.size(),'dh, decoder')
 
                 if not eol_test:
                     outputs.append(output)
@@ -569,7 +708,8 @@ class AnswerModule(nn.Module):
 
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
-                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0):
+                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False,
+                 cancel_attention=False, sol_token=0):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -581,6 +721,7 @@ class WrapMemRNN(nn.Module):
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
         self.recurrent_output = recurrent_output
         self.sol_token = sol_token
+        self.cancel_attention = cancel_attention
         position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
 
@@ -596,7 +737,8 @@ class WrapMemRNN(nn.Module):
         self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
         self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout, embed=self.embed,
-                                        recurrent_output=self.recurrent_output, sol_token=self.sol_token)
+                                        recurrent_output=self.recurrent_output, sol_token=self.sol_token,
+                                        cancel_attention=self.cancel_attention)
 
         self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
@@ -998,6 +1140,7 @@ class NMT:
         self.do_recurrent_output = False
         self.do_load_recurrent = False
         self.do_no_positional = False
+        self.do_no_attention = False
 
         self.printable = ''
 
@@ -1041,6 +1184,7 @@ class NMT:
         parser.add_argument('--recurrent-output', help='use recurrent output module', action='store_true')
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
+        parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1111,6 +1255,7 @@ class NMT:
         if self.args['no_sample'] is True: self.do_sample_on_screen = False
         if self.args['recurrent_output'] is True: self.do_recurrent_output = True
         if self.args['load_recurrent'] is True: self.do_load_recurrent = True
+        if self.args['no_attention'] is not False: self.do_no_attention = True
         if self.args['no_split_sentences'] is True:
             self.do_no_positional = True
             hparams['split_sentences'] = False
@@ -2453,7 +2598,7 @@ class NMT:
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2480,7 +2625,7 @@ class NMT:
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -2581,7 +2726,7 @@ if __name__ == '__main__':
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
-                                   sol_token=sol_token)
+                                   sol_token=sol_token, cancel_attention=n.do_no_attention)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
