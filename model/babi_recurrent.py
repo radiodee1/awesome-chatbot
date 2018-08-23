@@ -170,7 +170,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
         self.maxtokens = hparams['tokens_per_sentence']
-        self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        #self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
 
         gru_in_dim = embed_dim + hidden_dim
