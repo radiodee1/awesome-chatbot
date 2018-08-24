@@ -1668,7 +1668,9 @@ class NMT:
 
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
+
                 #print( ans.size(),'ans', target_variable.size(), 'tv')
+
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)

@@ -562,6 +562,9 @@ class AnswerModule(nn.Module):
             for i in range(self.maxtokens):
 
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
+                #print(output,'before')
+                output = F.softmax(output, dim=2)
+                #print(output,'out softmax')
 
                 outputs.append(self.out_c(output))
 
@@ -903,19 +906,7 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(mem, q_q)
 
-        #print(ansx.size() , ansx,'ansx')
-        if self.print_to_screen and False:
-            print(ansx, 'ansx printed')
-            print(ansx.size(), 'ansx')
-            vocab, sen = ansx.size()
-            aa = torch.argmax(ansx, dim=0)
-            print(aa.size(),'aa')
-            for i in range(sen):
-                zz = aa[i]
-                z = ansx[:, i]
-                a = torch.argmax(z, dim=0)
-                print(a.item(), zz.item())
-            print('----')
+
         #ans = torch.argmax(ansx,dim=1)#[0]
 
 
@@ -2022,7 +2013,7 @@ class NMT:
                 ansx = Variable(ans.data.max(dim=2)[1])
                 #print(ans)
                 ans = ans.float().permute(1,0,2).contiguous()
-                #print(ans.size(),'ans1')
+                #print(ans.size(),'ans1', target_variable.size(),'tv before')
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
 
