@@ -563,11 +563,12 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
                 #print(output,'before')
-                output = F.softmax(output, dim=2)
-                #print(output,'out softmax')
+                output_x = self.out_c(output)
+                output_x = F.softmax(output_x, dim=2)
 
-                outputs.append(self.out_c(output))
+                outputs.append(output_x)
 
+                #output = F.softmax(output, dim=2)
                 output = self.prune_tensor(output, 3)
 
             some_out = torch.cat(outputs, dim=0)
