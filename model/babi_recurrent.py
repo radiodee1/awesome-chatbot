@@ -560,6 +560,7 @@ class AnswerModule(nn.Module):
             ##########################################
 
             for i in range(self.maxtokens):
+                output = F.softmax(output, dim=2)
 
                 output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
                 #print(output,'before')
@@ -568,7 +569,6 @@ class AnswerModule(nn.Module):
 
                 outputs.append(output_x)
 
-                #output = F.softmax(output, dim=2)
                 output = self.prune_tensor(output, 3)
 
             some_out = torch.cat(outputs, dim=0)
