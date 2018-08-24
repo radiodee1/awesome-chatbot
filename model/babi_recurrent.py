@@ -1891,6 +1891,7 @@ class NMT:
             lst = self.score_list
         if len(lst) == 0: return False
         val = float(lst[-1])
+        if val < threshold: return False
         if val > self._highest_validation_for_quit and val > threshold:
             self._highest_validation_for_quit = val
             self._count_epochs_for_quit = 0
