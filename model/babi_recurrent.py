@@ -496,7 +496,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output= recurrent_output
         self.sol_token = sol_token
-        self.decoder_layers = hparams['decoder_layers']
+        self.decoder_layers = 1 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
 
         self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
@@ -511,8 +511,9 @@ class AnswerModule(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed,
-                               cancel_attention=self.cancel_attention)
+        self.decoder = nn.GRU(hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        #self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed,
+        #                       cancel_attention=self.cancel_attention)
 
     def reset_parameters(self):
 
@@ -533,7 +534,8 @@ class AnswerModule(nn.Module):
         return input
 
     def load_embedding(self, embed):
-        self.decoder.load_embedding(embed)
+        if False:
+            self.decoder.load_embedding(embed)
 
     def recurrent(self, out):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
@@ -547,7 +549,7 @@ class AnswerModule(nn.Module):
                 self.prune_tensor(out[k,:],2)
             ]
 
-            if self.decoder_layers == 2:
+            if self.decoder_layers == 2 :
                 e_out_list.append(self.prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
@@ -565,7 +567,7 @@ class AnswerModule(nn.Module):
             for i in range(self.maxtokens):
                 #output = F.softmax(output, dim=2)
 
-                output, decoder_hidden, mask = self.decoder(output, encoder_out, decoder_hidden)
+                output, decoder_hidden= self.decoder(output, decoder_hidden)
                 #print(output,'before')
                 output_x = self.out_c(output)
                 #output_x = F.softmax(output_x, dim=2)
@@ -701,7 +703,7 @@ class WrapMemRNN(nn.Module):
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
         self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
-        self.model_5_ans.decoder.embed.weight.requires_grad = not do_freeze
+        #self.model_5_ans.decoder.embed.weight.requires_grad = not do_freeze
         print('freeze embedding')
         pass
 
