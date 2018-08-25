@@ -826,12 +826,13 @@ class WrapMemRNN(nn.Module):
         #exit()
 
         concat = torch.cat(concat, dim=0)
-        #print(concat.size(),'con')
         h = self.next_mem(concat)
+        #print(h.size(),'con')
 
         h = F.relu(h)
+        #h = F.softmax(h, dim=0)
 
-        if self.recurrent_output and not hparams['split_sentences']:
+        if self.recurrent_output and not hparams['split_sentences'] and False:
             h = out
 
         return h, gru # h, gru
