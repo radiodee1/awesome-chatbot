@@ -573,8 +573,9 @@ class AnswerModule(nn.Module):
                 #print(output.size(),'out')
                 output = self.out_c(output)
 
-                output_x = F.softmax(output, dim=2)
+                output = F.softmax(output, dim=2)
 
+                output_x = output
                 outputs.append(output_x)
 
                 output = self.prune_tensor(output, 3)
