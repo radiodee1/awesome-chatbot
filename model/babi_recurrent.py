@@ -558,8 +558,9 @@ class AnswerModule(nn.Module):
             decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
             #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
             encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
-            output = self.prune_tensor(out[k,:], 3)
-            #output = Variable(torch.zeros(1,1,self.hidden_size))
+
+            #output = self.prune_tensor(out[k,:], 3) # <--- use this!
+            output = Variable(torch.zeros(1,1,self.hidden_size))
             #print(output.size(),'out')
             #print(decoder_hidden.size(),'dh')
             ##########################################
@@ -584,7 +585,7 @@ class AnswerModule(nn.Module):
             all_out.append(some_out)
 
         val_out = torch.cat(all_out, dim=1)
-
+        #print(val_out.size(),'val out')
         return val_out
 
     def forward(self, mem, question_h):
@@ -2022,10 +2023,11 @@ class NMT:
                 #print(ans)
                 ans = ans.float().permute(1,0,2).contiguous()
                 #print(ans.size(),'ans1', target_variable.size(),'tv before')
+                #target_variable = target_variable.permute(1,0,2).contiguous()
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
 
-                #print( ans.size(),'ans', target_variable.size(), 'tv - 50 x 30')
+                #print( ans.size(),'ans', target_variable.size(), target_variable[:50], 'tv - 50 x 30')
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
