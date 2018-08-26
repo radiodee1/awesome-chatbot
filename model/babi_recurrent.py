@@ -494,7 +494,7 @@ class AnswerModule(nn.Module):
         self.hidden_size = hidden_size
         self.vocab_size = vocab_size
         self.batch_size = hparams['batch_size']
-        self.recurrent_output= recurrent_output
+        self.recurrent_output = recurrent_output
         self.sol_token = sol_token
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
@@ -511,7 +511,7 @@ class AnswerModule(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = nn.GRU(hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        self.decoder = nn.GRU(self.vocab_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
         #self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed,
         #                       cancel_attention=self.cancel_attention)
 
@@ -560,7 +560,7 @@ class AnswerModule(nn.Module):
             encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
             #output = self.prune_tensor(out[k,:], 3) # <--- use this!
-            output = Variable(torch.zeros(1,1,self.hidden_size))
+            output = Variable(torch.zeros(1,1,self.vocab_size))
             #print(output.size(),'out')
             #print(decoder_hidden.size(),'dh')
             ##########################################
@@ -568,11 +568,12 @@ class AnswerModule(nn.Module):
             for i in range(self.maxtokens):
                 #output = F.softmax(output, dim=2)
 
-                output, decoder_hidden= self.decoder(output, decoder_hidden)
-                #print(output,'before')
-                output_x = self.out_c(output)
-                #output_x = F.softmax(output_x, dim=2)
-                #output_x = F.sigmoid(output_x)
+                output, decoder_hidden = self.decoder(output, decoder_hidden)
+
+                #print(output.size(),'out')
+                output = self.out_c(output)
+
+                output_x = output
 
                 outputs.append(output_x)
 
