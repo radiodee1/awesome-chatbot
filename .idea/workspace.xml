@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="78" />
+          <entry key="project.closed" value="79" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.13" value="2" />
@@ -24,18 +24,18 @@
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="19" />
           <entry key="project.open.time.5" value="7" />
-          <entry key="project.open.time.6" value="17" />
+          <entry key="project.open.time.6" value="18" />
           <entry key="project.open.time.7" value="14" />
           <entry key="project.open.time.8" value="5" />
           <entry key="project.open.time.9" value="4" />
-          <entry key="project.opened" value="79" />
+          <entry key="project.opened" value="80" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="4625" />
-          <entry key="py" value="19244" />
+          <entry key="py" value="19326" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -45,7 +45,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4625" />
           <entry key="PLAIN_TEXT" value="19" />
-          <entry key="Python" value="19244" />
+          <entry key="Python" value="19326" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -71,8 +71,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="496">
-              <caret line="577" column="17" selection-start-line="577" selection-start-column="17" selection-end-line="577" selection-end-column="17" />
+            <state relative-caret-position="82">
+              <caret line="1333" column="90" selection-start-line="1333" selection-start-column="90" selection-end-line="1333" selection-end-column="90" />
             </state>
           </provider>
         </entry>
@@ -179,8 +179,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>n_iters</find>
-      <find>epoch_length</find>
       <find>this_epoch</find>
       <find>printable</find>
       <find>num_count</find>
@@ -209,6 +207,8 @@
       <find>train</find>
       <find>outputs</find>
       <find>target</find>
+      <find>train_iters</find>
+      <find>epoch_length</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -538,8 +538,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="496">
-          <caret line="577" column="17" selection-start-line="577" selection-start-column="17" selection-end-line="577" selection-end-column="17" />
+        <state relative-caret-position="82">
+          <caret line="1333" column="90" selection-start-line="1333" selection-start-column="90" selection-end-line="1333" selection-end-column="90" />
         </state>
       </provider>
     </entry>
@@ -605,11 +605,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="234">
@@ -618,6 +613,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
