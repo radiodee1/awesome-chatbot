@@ -1346,6 +1346,10 @@ class NMT:
             mode = 'train'
             self.task_choose_files(mode=mode)
             if i % 3 == 0 and False: self._test_embedding(exit=False)
+            if not self.do_sample_on_screen:
+                print('-----')
+                self._show_sample()
+                print('-----')
 
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -2282,6 +2286,8 @@ class NMT:
                 #print(epoch_start, iter, temp_batch_size, epoch_stop)
 
                 if not self.do_skip_validation and self.do_sample_on_screen: # and temp_batch_size > 0 and epoch_start + iter < epoch_stop:
+                    self._show_sample(iter,epoch_start, epoch_stop, temp_batch_size)
+                    '''
                     ###########################
                     if epoch_start + iter >= epoch_stop:
                         choice = random.choice(self.pairs)
@@ -2308,6 +2314,7 @@ class NMT:
                         print('try:',self._shorten(words, just_duplicates=True))
                         #self._word_from_prediction()
                     ############################
+                    '''
                 if self.do_recurrent_output:
                     num_right_small = math.floor(num_right_small / (hparams['tokens_per_sentence'] ))
                     pass
@@ -2364,6 +2371,35 @@ class NMT:
         print('weight decay:', hparams['weight_decay'])
         print(num_count, 'exec count')
         print('raw score:', num_right, num_tot, num_right_small, len(self.pairs))
+
+    def _show_sample(self, iter=0, epoch_start=0, epoch_stop=hparams['batch_size'], temp_batch_size=hparams['batch_size']):
+        ###########################
+        if epoch_start + iter >= epoch_stop:
+            choice = random.choice(self.pairs)
+        else:
+            choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
+        print('src:', choice[0])
+        question = None
+        if self.do_load_babi:
+            print('ques:', choice[1])
+            print('ref:', choice[2])
+        else:
+            print('tgt:', choice[1])
+        nums = self.variablesFromPair(choice)
+        if self.do_load_babi:
+            question = nums[1]
+            target = nums[2]
+        if not self.do_load_babi:
+            question = nums[0]
+            target = None
+        words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
+        # print(choice)
+        if not self.do_load_babi or self.do_recurrent_output:
+            print('ans:', words)
+            print('try:', self._shorten(words, just_duplicates=True))
+            # self._word_from_prediction()
+        ############################
+        pass
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
 
