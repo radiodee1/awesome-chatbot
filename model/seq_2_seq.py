@@ -530,6 +530,7 @@ class NMT:
 
         self.print_every = hparams['steps_to_stats']
         self.epoch_length = 1000
+        self.starting_epoch_length = 1000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
         self.start_epoch = 0
@@ -900,9 +901,11 @@ class NMT:
                                                                              lang3=self.train_ques, reverse=False,
                                                                              omit_unk=self.do_hide_unk,
                                                                              skip_unk=self.do_skip_unk)
-            #self.model_0_wra.test_embedding()
 
             #self.first_load = True
+            self.epoch_length = self.starting_epoch_length
+            if self.epoch_length > len(self.pairs): self.epoch_length = len(self.pairs) - 1
+
             self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
             self.start = 0
 
