@@ -511,7 +511,7 @@ class AnswerModule(nn.Module):
         self.dropout = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = nn.GRU(self.vocab_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
         #self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed,
         #                       cancel_attention=self.cancel_attention)
 
@@ -560,7 +560,7 @@ class AnswerModule(nn.Module):
             encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
             #output = self.prune_tensor(out[k,:], 3) # <--- use this!
-            output = Variable(torch.zeros(1,1,self.vocab_size))
+            output = Variable(torch.zeros(1,1,self.hidden_size))
             #print(output.size(),'out')
             #print(decoder_hidden.size(),'dh')
             ##########################################
@@ -571,11 +571,11 @@ class AnswerModule(nn.Module):
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #print(output.size(),'out')
-                output = self.out_c(output)
+                output_x = self.out_c(output)
 
                 output = F.softmax(output, dim=2)
 
-                output_x = output
+                #output_x = output
                 outputs.append(output_x)
 
                 output = self.prune_tensor(output, 3)
