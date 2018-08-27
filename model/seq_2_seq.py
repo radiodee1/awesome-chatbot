@@ -914,6 +914,7 @@ class NMT:
 
             self.save_checkpoint(num=len(self.pairs))
             self.saved_files += 1
+            self.this_epoch = 0
             self.validate_iters()
             self.start = 0
             #self.task_babi_files()
@@ -1139,8 +1140,9 @@ class NMT:
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
     def variables_for_batch(self, pairs, size, start, skip_unk=False):
-        if start + size >= len(pairs) - 1:# and start < len(pairs) - 1:
-            size = len(pairs) - start #- 1
+        e = self.epoch_length * self.this_epoch + self.epoch_length
+        if start + size > e  and start < e :
+            size = e - start #- 1
             print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
