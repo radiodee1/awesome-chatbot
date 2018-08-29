@@ -597,6 +597,7 @@ class NMT:
         self.do_no_positional = False
         self.do_no_attention = False
         self.do_skip_unk = False
+        self.do_autoencode_words = False
 
         self.printable = ''
 
@@ -606,6 +607,7 @@ class NMT:
         parser.add_argument('--printable', help='a string to print during training for identification.')
         parser.add_argument('--basename', help='base filename to use if it is different from settings file.')
         parser.add_argument('--autoencode', help='enable auto encode from the command line with a ratio.')
+        parser.add_argument('--autoencode-words', help='enable auto encode on a word to word basis.', action='store_true')
         parser.add_argument('--train-all', help='(broken) enable training of the embeddings layer from the command line',
                             action='store_true')
         #parser.add_argument('--convert-weights',help='convert weights', action='store_true')
@@ -663,6 +665,7 @@ class NMT:
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
             print(hparams['base_filename'], 'set name')
+        if self.args['autoencode_words'] is not False: self.do_autoencode_words = True
         if self.args['autoencode'] is not  None and float(self.args['autoencode']) > 0.0:
             hparams['autoencode'] = float(self.args['autoencode'])
         else: hparams['autoencode'] = 0.0
@@ -1009,16 +1012,49 @@ class NMT:
             self.input_lang = Lang(lang1, limit=hparams['num_vocab_total'])
             self.output_lang = Lang(lang2, limit=hparams['num_vocab_total'])
 
-        if hparams['autoencode'] > 0.0:
+        if hparams['autoencode'] > 0.0 and not self.do_autoencode_words:
             a = hparams['autoencode']
             #self.pairs = [ [p[0], p[0], p[0]] for p in self.pairs]
             self.pairs = [ [p[0], p[0], p[0]] if random.uniform(0.0,1.0) <= a else [p[0], p[1], p[2]] for p in self.pairs]
+            self.output_lang = self.input_lang
 
+        if hparams['autoencode'] > 0.0 and self.do_autoencode_words:
+            a = hparams['autoencode']
+
+            self.pairs = self._make_autoencode_pairs(a, self.pairs)
             self.output_lang = self.input_lang
 
         return self.input_lang, self.output_lang, self.pairs
 
+    def _make_autoencode_pairs(self, a, pairs_in):
+        pairs_out = []
+        for p in pairs_in:
+            p_from = p[0] # in
+            p_ques = p[1] # ques
+            p_to = p[2] # out
 
+            p_from = p_from.split(' ')
+            p_to = p_to.split(' ')
+            p_ques = p_ques.split(' ')
+
+            #print(p_from, p_ques, p_to)
+
+            while len(p_from) > len(p_to):
+                p_to.append(hparams['unk'])
+            while len(p_to) > len(p_from):
+                p_from.append(hparams['unk'])
+
+            for i in range(len(p_from)):
+                if random.uniform(0.0,1.0) > a :#and i < hparams['tokens_per_sentence']:
+                    p_to[i] = p_from[i]
+                else:
+                    pass
+            print(p_from, len(p_from), p_ques, len(p_ques), p_to, len(p_to))
+
+            pairs_out.append([' '.join(p_from), ' '.join(p_ques), ' '.join(p_to)])
+            #pairs_out.append([p_from, p_ques, p_to])
+
+        return pairs_out
 
 
     def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False, skip_unk=False):
@@ -1193,6 +1229,7 @@ class NMT:
         return (g1, g2, g3)
 
     def variableFromSentence(self,lang, sentence, add_eol=False, pad=0, skip_unk=False):
+        max = hparams['tokens_per_sentence']
         indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk)
         if indexes is None and skip_unk: return indexes
         if add_eol and len(indexes) < pad: indexes.append(EOS_token)
@@ -1203,9 +1240,9 @@ class NMT:
         result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
         #print(result.size(),'r')
         if hparams['cuda']:
-            return result.cuda()
+            return result[:max].cuda()
         else:
-            return result
+            return result[:max]
 
     def variablesFromPair(self,pair, skip_unk=False):
         if hparams['split_sentences'] :
