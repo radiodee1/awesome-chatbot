@@ -1049,7 +1049,7 @@ class NMT:
                     p_to[i] = p_from[i]
                 else:
                     pass
-            print(p_from, len(p_from), p_ques, len(p_ques), p_to, len(p_to))
+            #print(p_from, len(p_from), p_ques, len(p_ques), p_to, len(p_to))
 
             pairs_out.append([' '.join(p_from), ' '.join(p_ques), ' '.join(p_to)])
             #pairs_out.append([p_from, p_ques, p_to])
