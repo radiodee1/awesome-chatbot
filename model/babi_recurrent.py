@@ -557,23 +557,22 @@ class AnswerModule(nn.Module):
             outputs = []
             decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
             #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
-            encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
+            #encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
             #output = self.prune_tensor(out[k,:], 3) # <--- use this!
             output = Variable(torch.zeros(1,1,self.hidden_size))
-            #print(output.size(),'out')
-            #print(decoder_hidden.size(),'dh')
             ##########################################
 
             for i in range(self.maxtokens):
-                #output = F.softmax(output, dim=2)
+
+                output = F.softmax(output, dim=2) # <--- use this!
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #print(output.size(),'out')
                 output_x = self.out_c(output)
 
-                output = F.softmax(output, dim=2)
+                #output_x = F.softmax(output_x, dim=2)
 
                 #output_x = output
                 outputs.append(output_x)
@@ -1580,6 +1579,7 @@ class NMT:
             return result
 
     def variablesFromPair(self,pair):
+        pad = hparams['tokens_per_sentence']
         if hparams['split_sentences'] :
             l = pair[0].strip().split('.')
             sen = []
@@ -1593,7 +1593,8 @@ class NMT:
                     while len(l[i].strip().split(' ')) < max_len:
                         l[i] += " " + hparams['unk']
                     #print(l[i],',l')
-                    z = self.variableFromSentence(self.input_lang, l[i])
+                    add_eol = True
+                    z = self.variableFromSentence(self.input_lang, l[i], add_eol=add_eol)
                     #print(z)
                     sen.append(z)
             #sen = torch.cat(sen, dim=0)
@@ -1602,9 +1603,10 @@ class NMT:
             input_variable = sen
             pass
         else:
-            pad = 1
-            input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad)
-        question_variable = self.variableFromSentence(self.output_lang, pair[1])
+            #pad = 1
+            add_eol = True
+            input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, add_eol=add_eol)
+        question_variable = self.variableFromSentence(self.output_lang, pair[1], add_eol=True, pad=pad)
 
         if len(pair) > 2:
             #print(pair[2],',pair')
@@ -2076,7 +2078,7 @@ class NMT:
 
         if self.do_recurrent_output:
             ans = ansx.permute(1,0)
-            #print(ans.size(),'ans')
+            #print(ans,ans.size(),'ans')
 
         return outputs, ans , loss
 
@@ -2288,31 +2290,6 @@ class NMT:
                 if not self.do_skip_validation and self.do_sample_on_screen: # and temp_batch_size > 0 and epoch_start + iter < epoch_stop:
                     self._show_sample(iter,epoch_start, epoch_stop, temp_batch_size)
                     '''
-                    ###########################
-                    if epoch_start + iter >= epoch_stop:
-                        choice = random.choice(self.pairs)
-                    else:
-                        choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
-                    print('src:',choice[0])
-                    question = None
-                    if self.do_load_babi:
-                        print('ques:', choice[1])
-                        print('ref:',choice[2])
-                    else:
-                        print('tgt:',choice[1])
-                    nums = self.variablesFromPair(choice)
-                    if self.do_load_babi:
-                        question = nums[1]
-                        target = nums[2]
-                    if not self.do_load_babi:
-                        question = nums[0]
-                        target = None
-                    words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
-                    #print(choice)
-                    if not self.do_load_babi or self.do_recurrent_output:
-                        print('ans:',words)
-                        print('try:',self._shorten(words, just_duplicates=True))
-                        #self._word_from_prediction()
                     ############################
                     '''
                 if self.do_recurrent_output:

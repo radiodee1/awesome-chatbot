@@ -3,7 +3,9 @@
 
 import os as os
 import sys
+import argparse
 from settings import hparams
+import tokenize_weak
 
 '''
 The MIT License (MIT)
@@ -28,6 +30,43 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
+
+
+def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_one_phrase=False):
+    z = tokenize_weak.format(s)
+
+    if split_phrases:
+        x = []
+
+        z = z.replace(',', ' ')
+        z = z.replace('?', ' ? . ')
+        z = z.replace('!', ' . ')
+        zz = z.split('.')
+        #zz = filter(None, re.split("[,.\-!?:]+", z))
+        for i in zz:
+            xx = i.split(' ')
+            y = []
+            for j in xx:
+                j = j.strip()
+                if len(j) > 0: y.append(j)
+            i = ' '.join(y)
+            i = i.strip()
+            if len(i) > 1 and not i.isspace():
+                if not add_eol_only:
+                    x.append( hparams['sol'] + ' ' + i + ' ' + hparams['eol'] + ' . ' )
+                else:
+                    x.append( i + ' ' + hparams['eol'] + ' . ')
+
+        if only_one_phrase and len(x) > 1: ## return just first phrase
+            return x[-1]
+        x = ' '.join(x)
+        return x
+    if add_sol_eol:
+        if not add_eol_only: z = hparams['sol'] + ' ' + z
+        z = z + ' ' + hparams['eol']
+    return z
+
+
 
 def init_babi(fname):
     print("==> Loading file from %s" % fname)
@@ -58,7 +97,7 @@ def init_babi(fname):
     return tasks
 
 
-def get_babi_raw(id, test_id, sub_folder='en'):
+def get_babi_raw(id, test_id, sub_folder='en', add_eol=False):
     babi_map = {
         "1": "qa1_single-supporting-fact",
         "2": "qa2_two-supporting-facts",
@@ -123,17 +162,31 @@ if __name__ == '__main__':
     print('"all" produces a set of files with all 20 tests, in original order.')
     print('"folder" is either "en" or "en-10k"')
 
+    parser = argparse.ArgumentParser(description='Make text files.')
+    parser.add_argument('num', help='babi number, or "all"')
+    parser.add_argument('folder', help='either "en-10k" or "en"')
+    parser.add_argument('--eol', help='add eol to sentences', action='store_true')
+    args = parser.parse_args()
+    args = vars(args)
+    print(args)
+
+
     id = '1'
     sub_folder = 'en'
+    flag_eol = False
+
     if len(sys.argv) > 1:
-        id = sys.argv[1]
+        #id = sys.argv[1]
+        id = str(args['num'])
     print(id)
     if id == 'all': id_lst = [ str(i+1) for i in range(20)]
     else: id_lst = [id]
     if len(sys.argv) > 2:
         sub_folder = sys.argv[2] # 'en-10k'
+        sub_folder = str(args['folder'])
     print(id_lst)
-
+    if args['eol'] is True:
+        flag_eol = True
 
     mode = 'w'
 
