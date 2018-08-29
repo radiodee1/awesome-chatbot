@@ -89,8 +89,15 @@ def init_babi(fname, add_eol=False):
             task["Q"] = line[:idx].lower()
             task["A"] = tmp[1].strip().lower()
 
-            if len(task["A"].split(',')) > 1:
-                task["A"] = " ".join(task["A"].split(',')) + ' ' + hparams['eol']
+            if len(task["A"].split(',')) > 1 or add_eol:
+                task["A"] = " ".join(task["A"].split(',')) + ' ' + hparams['eol'] 
+                if add_eol:
+                    task["A"] = task["A"] + ' . '
+
+            if add_eol:
+                #print('---')
+                task["C"] = format(task["C"],split_phrases=True, add_eol_only=add_eol)
+                task["Q"] = format(task["Q"],split_phrases=True, add_eol_only=add_eol)
 
             tasks.append(task.copy())
 
@@ -148,9 +155,9 @@ def get_babi_raw(id, test_id, sub_folder='en', add_eol=False):
     babi_name = babi_map[id]
     babi_test_name = babi_map[test_id]
     babi_train_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)))
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)), add_eol=add_eol)
     babi_test_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)))
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)), add_eol=add_eol)
     return babi_train_raw, babi_test_raw
 
 if __name__ == '__main__':
@@ -192,7 +199,7 @@ if __name__ == '__main__':
 
     for id in id_lst:
 
-        train, test = get_babi_raw(id,id, sub_folder=sub_folder)
+        train, test = get_babi_raw(id,id, sub_folder=sub_folder, add_eol=flag_eol)
 
         data_dir = hparams['data_dir']
         train_name = hparams['train_name']
