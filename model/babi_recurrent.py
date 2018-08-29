@@ -559,8 +559,8 @@ class AnswerModule(nn.Module):
             #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
             #encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
-            #output = self.prune_tensor(out[k,:], 3) # <--- use this!
-            output = Variable(torch.zeros(1,1,self.hidden_size))
+            #output = self.prune_tensor(out[k,:], 3)
+            output = Variable(torch.zeros(1,1,self.hidden_size)) # <--- use this!
             ##########################################
 
             for i in range(self.maxtokens):
@@ -572,7 +572,7 @@ class AnswerModule(nn.Module):
                 #print(output.size(),'out')
                 output_x = self.out_c(output)
 
-                #output_x = F.softmax(output_x, dim=2)
+                #output_x = F.softmax(output_x, dim=2) # <--- not this!!
 
                 #output_x = output
                 outputs.append(output_x)

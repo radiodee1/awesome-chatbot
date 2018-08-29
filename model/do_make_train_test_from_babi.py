@@ -68,7 +68,7 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_o
 
 
 
-def init_babi(fname):
+def init_babi(fname, add_eol=False):
     print("==> Loading file from %s" % fname)
 
     tasks = []
