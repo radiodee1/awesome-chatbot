@@ -90,7 +90,7 @@ def init_babi(fname, add_eol=False):
             task["A"] = tmp[1].strip().lower()
 
             if len(task["A"].split(',')) > 1 or add_eol:
-                task["A"] = " ".join(task["A"].split(',')) + ' ' + hparams['eol'] 
+                task["A"] = " ".join(task["A"].split(',')) + ' ' + hparams['eol']
                 if add_eol:
                     task["A"] = task["A"] + ' . '
 

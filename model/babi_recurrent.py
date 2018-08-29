@@ -1561,7 +1561,11 @@ class NMT:
             else:
                 g1.append(g[0])
             g2.append(g[1].squeeze(1))
-            g3.append(g[2].squeeze(1))
+            if self.do_recurrent_output:
+                g3.append(g[2].squeeze(1))
+            else:
+                #print(g[2][0], 'target', self.input_lang.index2word[g[2][0].item()])
+                g3.append(g[2][0])
 
         return (g1, g2, g3)
 
@@ -2193,6 +2197,7 @@ class NMT:
                 input_variable = group[0]
                 question_variable = group[1]
                 target_variable = group[2]
+
 
                 temp_batch_size = len(input_variable)
 
