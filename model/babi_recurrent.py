@@ -1564,7 +1564,7 @@ class NMT:
             if self.do_recurrent_output:
                 g3.append(g[2].squeeze(1))
             else:
-                #print(g[2][0], 'target', self.input_lang.index2word[g[2][0].item()])
+                #print(g[2][0],g[2], 'target', len(g[2]),self.input_lang.index2word[g[2][0].item()])
                 g3.append(g[2][0])
 
         return (g1, g2, g3)
@@ -2035,15 +2035,11 @@ class NMT:
 
                 target_variable = torch.cat(target_variable, dim=0)
 
-                ansx = Variable(ans.data.max(dim=2)[1])
-                #print(ans)
+                #ansx = Variable(ans.data.max(dim=2)[1])
                 ans = ans.float().permute(1,0,2).contiguous()
-                #print(ans.size(),'ans1', target_variable.size(),'tv before')
-                #target_variable = target_variable.permute(1,0,2).contiguous()
+
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
-
-                #print( ans.size(),'ans', target_variable.size(), target_variable[:50], 'tv - 50 x 30')
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
@@ -2076,13 +2072,26 @@ class NMT:
 
                 else:
                     loss = None
-                    ansx = Variable(ans.data.max(dim=2)[1])
-                    ans = ans.permute(1,0,2)
+                    #ansx = Variable(ans.data.max(dim=2)[1])
+                    #ans = ans.permute(1,0,2)
+                    #target_variable = torch.cat(target_variable, dim=0)
+
+                    # ansx = Variable(ans.data.max(dim=2)[1])
+                    ans = ans.float().permute(1, 0, 2).contiguous()
+
+                    ans = ans.view(-1, self.output_lang.n_words)
+                    #target_variable = target_variable.view(-1)
 
             #self._test_embedding()
 
+        #ansx = ans
         if self.do_recurrent_output:
-            ans = ansx.permute(1,0)
+            #print(ans.size())
+            if len(ans.size()) is not 2:
+                ans = ans.view(-1, self.output_lang.n_words)
+                print(ans.size(),'redo with view')
+                exit()
+            ans = ans.permute(1,0)
             #print(ans,ans.size(),'ans')
 
         return outputs, ans , loss
@@ -2101,7 +2110,7 @@ class NMT:
         num_tot = 0
         num_right_small = 0
         num_count = 0
-        temp_batch_size = 0
+        temp_batch_size = hparams['batch_size'] #0
 
         epoch_len = self.epoch_length
         epoch_start = self.this_epoch * self.epoch_length
@@ -2214,23 +2223,34 @@ class NMT:
             num_count += 1
 
             if self.do_recurrent_output and self.do_load_babi:
-
-                for i in range(len(target_variable)):
-                    for j in range(target_variable[i].size()[1]):
-                        t_val = target_variable[i][0,j,0].item()
-                        o_val = ans[i][j].item()
+                ans = ans.permute(1,0)
+                ans = torch.argmax(ans,dim=1)
+                for ii in range(len(target_variable)):
+                    for jj in range(target_variable[ii].size(1)): # target_variable[i].size()[1]):
+                        #print(i, j, temp_batch_size)
+                        t_val = target_variable[ii][0,jj,0].item()
+                        #print(t_val, EOS_token)
+                        #o_val = ans[i][j].item()
+                        o_val = ans[ ii * target_variable[ii].size(1) + jj].item()
+                        #print( ans.size(),'ans', ii * target_variable[ii].size(1) + jj, 'index')
 
                         if int(o_val) == int(t_val):
                             num_right += 1
                             num_right_small += 1
                             if int(o_val) == EOS_token:
-                                num_right_small += hparams['tokens_per_sentence'] - (j + 1)
-                                num_right += hparams['tokens_per_sentence'] - (j + 1)
+                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
+                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
                             # next sentence
+                            if int(o_val) == EOS_token and int(t_val) == UNK_token and jj > 0:
+                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
+                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
+                                break
                             break
+                            pass
+                    #print( len(target_variable), target_variable[i].size(1), ans[i].size() ,'tv, ans out')
 
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
@@ -2240,6 +2260,7 @@ class NMT:
             if self.do_load_babi and not self.do_recurrent_output:
 
                 for i in range(len(target_variable)):
+                    #print(ans[i].size())
                     o_val = torch.argmax(ans[i], dim=0).item() #[0]
                     t_val = target_variable[i].item()
 
