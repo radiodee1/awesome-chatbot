@@ -477,12 +477,9 @@ class Encoder(nn.Module):
 
         embedded = self.embed(source)
 
-
         embedded = self.dropout(embedded)
 
-
         encoder_out, encoder_hidden = self.gru( embedded, hidden)
-
 
         encoder_out = self.sum_output(encoder_out)
 
@@ -498,12 +495,14 @@ class AnswerModule(nn.Module):
         self.sol_token = sol_token
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
+        out_size = vocab_size
+        if recurrent_output: out_size = hidden_size
 
-        self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
+        self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear(hidden_size * 2, hidden_size, bias=True)
-        init.xavier_normal_(self.out_b.state_dict()['weight'])
+        #self.out_b = nn.Linear(hidden_size * 2, hidden_size, bias=True)
+        #init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
         init.xavier_normal_(self.out_c.state_dict()['weight'])
@@ -512,8 +511,6 @@ class AnswerModule(nn.Module):
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
-        #self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout, embed,
-        #                       cancel_attention=self.cancel_attention)
 
     def reset_parameters(self):
 
@@ -559,9 +556,9 @@ class AnswerModule(nn.Module):
             #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
             #encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
-            #output = self.prune_tensor(out[k,:], 3)
+            output = self.prune_tensor(out[k,:], 3)
 
-            output = Variable(torch.zeros(1,1,self.hidden_size))
+            #output = Variable(torch.zeros(1,1,self.hidden_size))
             ##########################################
 
             for i in range(self.maxtokens):
@@ -587,7 +584,9 @@ class AnswerModule(nn.Module):
             all_out.append(some_out)
 
         val_out = torch.cat(all_out, dim=1)
+
         #print(val_out.size(),'val out')
+
         return val_out
 
     def forward(self, mem, question_h):
@@ -598,13 +597,13 @@ class AnswerModule(nn.Module):
         mem_in = torch.cat([mem_in, question_h], dim=2)
 
         mem_in = self.dropout(mem_in)
-        mem_in = mem_in.squeeze(0)#.permute(1,0)#.squeeze(0)
-
-        if self.recurrent_output:
-            mem = mem.permute(1,0,2).squeeze(0)
-            return self.recurrent(mem)
+        mem_in = mem_in.squeeze(0)
 
         out = self.out_a(mem_in)
+
+        if self.recurrent_output:
+            mem = out #.permute(1,0,2).squeeze(0)
+            return self.recurrent(mem)
 
         return out.permute(1,0)
 
@@ -838,7 +837,8 @@ class WrapMemRNN(nn.Module):
         #h = F.softmax(h, dim=0)
 
         if self.recurrent_output and not hparams['split_sentences'] and False:
-            h = out
+            #h = out
+            pass
 
         return h, gru # h, gru
 
