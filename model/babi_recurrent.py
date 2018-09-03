@@ -560,7 +560,7 @@ class AnswerModule(nn.Module):
 
             #output = Variable(torch.zeros(1,1,self.hidden_size))
 
-            output = F.tanh(output)
+            #output = F.tanh(output)
             ##########################################
 
             for i in range(self.maxtokens):
@@ -569,10 +569,10 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                #print(output.size(),'out')
-                output_x = self.out_c(output)
+                output_x = F.softmax(output, dim=2) # <--- not this!!
 
-                output_x = F.softmax(output_x, dim=2) # <--- not this!!
+                #print(output.size(),'out')
+                output_x = self.out_c(output_x)
 
                 #output_x = output
                 outputs.append(output_x)
@@ -595,7 +595,7 @@ class AnswerModule(nn.Module):
 
         if not self.recurrent_output:
             mem = F.relu(mem)
-            
+
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
