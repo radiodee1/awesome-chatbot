@@ -559,18 +559,20 @@ class AnswerModule(nn.Module):
             output = self.prune_tensor(out[k,:], 3)
 
             #output = Variable(torch.zeros(1,1,self.hidden_size))
+
+            output = F.tanh(output)
             ##########################################
 
             for i in range(self.maxtokens):
 
-                output = F.softmax(output, dim=2) # <--- use this!
+                #output = F.softmax(output, dim=2) # <--- use this!
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #print(output.size(),'out')
                 output_x = self.out_c(output)
 
-                #output_x = F.softmax(output_x, dim=2) # <--- not this!!
+                output_x = F.softmax(output_x, dim=2) # <--- not this!!
 
                 #output_x = output
                 outputs.append(output_x)
@@ -591,6 +593,9 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
+        if not self.recurrent_output:
+            mem = F.relu(mem)
+            
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
@@ -774,14 +779,17 @@ class WrapMemRNN(nn.Module):
                 index = 0
                 for iter in range(self.memory_hops):
 
-                    x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q_last[i])
+                    if len(m_list) is 1 : mem_last = m_list[-1]
+                    else: mem_last = F.relu(m_list[-1])
+
+                    x = self.new_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
                     if self.print_to_screen and self.training:
                         print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
                         print(self.prune_tensor(self.q_q_last[i], 3) ) # == self.prune_tensor(self.q_q[i][:,-1,:], 3))
                         #exit()
 
-                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q_last[i])
+                    e, _ = self.new_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
                     out = self.prune_tensor(e, 3)
 
@@ -833,8 +841,7 @@ class WrapMemRNN(nn.Module):
         h = self.next_mem(concat)
         #print(h.size(),'con')
 
-        h = F.relu(h)
-        #h = F.softmax(h, dim=0)
+        #h = F.relu(h)
 
         if self.recurrent_output and not hparams['split_sentences'] and False:
             #h = out
@@ -1179,6 +1186,17 @@ class NMT:
                 return
             pass
         if self.do_load_babi and self.do_load_recurrent:
+            if mode == 'train':
+                self.task_normal_train()
+                return
+            if mode == 'valid':
+                self.task_normal_valid()
+                return
+            if mode == 'test':
+                self.task_normal_test()
+                return
+            pass
+        if True: # not self.do_load_babi and self.do_load_recurrent:
             if mode == 'train':
                 self.task_normal_train()
                 return
