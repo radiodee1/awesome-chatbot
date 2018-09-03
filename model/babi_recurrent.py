@@ -556,9 +556,9 @@ class AnswerModule(nn.Module):
             #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
             #encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
-            #output = self.prune_tensor(out[k,:], 3)
+            output = self.prune_tensor(out[k,:], 3)
 
-            output = Variable(torch.zeros(1,1,self.hidden_size))
+            #output = Variable(torch.zeros(1,1,self.hidden_size))
 
             #output = F.tanh(output)
             ##########################################
@@ -569,18 +569,16 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                output_x = F.softmax(output, dim=2) # <--- not this!!
+                output_x = self.out_c(output)
 
-                #print(output.size(),'out')
-                output_x = self.out_c(output_x)
+                output_x = F.tanh(output_x)
 
-                #output_x = output
                 outputs.append(output_x)
 
                 output = self.prune_tensor(output, 3)
 
             some_out = torch.cat(outputs, dim=0)
-            #some_out = some_out.data.max(dim=2)[1].permute(1,0)
+
             some_out = self.prune_tensor(some_out, 3)
 
             all_out.append(some_out)
@@ -596,18 +594,20 @@ class AnswerModule(nn.Module):
         if not self.recurrent_output:
             mem = F.relu(mem)
 
-        mem_in = mem.permute(1,0,2)
-        question_h = question_h.permute(1,0,2)
+            mem_in = mem.permute(1,0,2)
+            question_h = question_h.permute(1,0,2)
 
-        mem_in = torch.cat([mem_in, question_h], dim=2)
+            mem_in = torch.cat([mem_in, question_h], dim=2)
 
-        mem_in = self.dropout(mem_in)
-        mem_in = mem_in.squeeze(0)
+            mem_in = self.dropout(mem_in)
+            mem_in = mem_in.squeeze(0)
 
-        out = self.out_a(mem_in)
+            out = self.out_a(mem_in)
 
         if self.recurrent_output:
-            mem = out #.permute(1,0,2).squeeze(0)
+
+            mem = mem.permute(1,0,2).squeeze(0)
+
             return self.recurrent(mem)
 
         return out.permute(1,0)
