@@ -1702,19 +1702,23 @@ class NMT:
             self.model_0_wra.train()
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                   criterion)
+            loss = 0
 
             if self.do_recurrent_output:
                 ##lz = len(target_variable[0])
 
-                target_variable = torch.cat(target_variable, dim=0)
+                #target_variable = torch.cat(target_variable, dim=0)
 
                 ansx = Variable(ans.data.max(dim=2)[1])
 
                 ans = ans.float().permute(1,0,2).contiguous()
 
-                ans = ans.view(-1, self.output_lang.n_words)
-                target_variable = target_variable.view(-1)
+                #ans = ans.view(-1, self.output_lang.n_words)
+                #target_variable = target_variable.view(-1)
 
+                for i in range(len(target_variable)):
+                    target_v = target_variable[i].squeeze(0).squeeze(1)
+                    loss += criterion(ans[i,:, :], target_v)
                 #print( ans.size(),'ans', target_variable.size(), 'tv')
 
             elif self.do_batch_process:
@@ -1730,7 +1734,9 @@ class NMT:
 
             #print(ans.size(), target_variable.size(),'criterion')
 
-            loss = criterion(ans, target_variable)
+            if not self.do_recurrent_output:
+                loss = criterion(ans, target_variable)
+
             loss.backward()
             wrapper_optimizer.step()
 
