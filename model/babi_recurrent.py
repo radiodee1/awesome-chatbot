@@ -572,7 +572,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
-                output_x = F.softmax(output_x, dim=2)
+                #output_x = F.softmax(output_x, dim=2)
 
                 outputs.append(output_x)
 
