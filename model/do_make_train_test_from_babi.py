@@ -31,6 +31,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
+directions = {
+    'n': 'north',
+    's': 'south',
+    'w': 'west',
+    'e': 'east'
+}
+
 
 def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_one_phrase=False):
     z = tokenize_weak.format(s)
@@ -68,7 +75,7 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_o
 
 
 
-def init_babi(fname, add_eol=False):
+def init_babi(fname, add_eol=False, replace_directions=False):
     print("==> Loading file from %s" % fname)
 
     tasks = []
@@ -91,6 +98,16 @@ def init_babi(fname, add_eol=False):
 
             if len(task["A"].split(',')) > 1 or add_eol:
                 task["A"] = " ".join(task["A"].split(',')) + ' ' + hparams['eol']
+                if replace_directions:
+                    d = task["A"].split(' ')
+                    dl = []
+                    for a in d:
+                        if a in directions:
+                            a = directions[a]
+                        dl.append(a)
+                    task["A"] = ' '.join(dl)
+
+
                 if add_eol:
                     task["A"] = task["A"] + ' . '
 
@@ -155,9 +172,9 @@ def get_babi_raw(id, test_id, sub_folder='en', add_eol=False):
     babi_name = babi_map[id]
     babi_test_name = babi_map[test_id]
     babi_train_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)), add_eol=add_eol)
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)), add_eol=add_eol, replace_directions=True)
     babi_test_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)), add_eol=add_eol)
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)), add_eol=add_eol, replace_directions=True)
     return babi_train_raw, babi_test_raw
 
 if __name__ == '__main__':
