@@ -537,7 +537,7 @@ class AnswerModule(nn.Module):
     def recurrent(self, out):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
         #if hparams['cuda'] is True: output = output.cuda()
-        out = F.tanh(out)
+        out = F.relu(out)
 
         l, hid = out.size()
 
@@ -896,7 +896,9 @@ class WrapMemRNN(nn.Module):
         z = self.model_4_att(att)
         #print(z.size())
 
-        z = F.softmax(z, dim=0)
+        #z = F.softmax(z, dim=0) # <--- use this!!
+
+        z = F.sigmoid(z)
 
         return z
 
