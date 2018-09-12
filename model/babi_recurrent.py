@@ -896,9 +896,10 @@ class WrapMemRNN(nn.Module):
         z = self.model_4_att(att)
         #print(z.size())
 
-        #z = F.softmax(z, dim=0) # <--- use this!!
-
-        z = F.sigmoid(z)
+        if self.recurrent_output:
+            z = F.sigmoid(z)
+        else:
+            z = F.softmax(z, dim=0) # <--- use this!!
 
         return z
 
