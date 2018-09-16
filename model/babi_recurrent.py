@@ -733,12 +733,13 @@ class WrapMemRNN(nn.Module):
 
         prev_h1 = []
 
+        hidden1 = None
         for ii in input_variable:
 
             ii = self.prune_tensor(ii, 2)
             #print(ii, 'ii')
-            out1, hidden1 = self.model_1_enc(ii, None)
-            #out1 = F.tanh(out1)
+            out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
+
             prev_h1.append(out1)
 
 
