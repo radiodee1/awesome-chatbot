@@ -700,7 +700,7 @@ class WrapMemRNN(nn.Module):
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
         self.model_1_enc = None
-        
+
         if simple_input:
             self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position,
