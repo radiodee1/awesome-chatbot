@@ -681,7 +681,7 @@ class AnswerModule(nn.Module):
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False,
-                 cancel_attention=False, sol_token=0):
+                 cancel_attention=False, sol_token=0, simple_input=False):
         super(WrapMemRNN, self).__init__()
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -699,9 +699,17 @@ class WrapMemRNN(nn.Module):
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
-        self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
+        self.model_1_enc = None
+        
+        if simple_input:
+            self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position,
                                    batch_first=True)
+        else:
+            self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
+                                       embedding=self.embed, bidirectional=True, position=position,
+                                       batch_first=True)
+
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
                                    embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
                                    batch_first=True)
@@ -1111,6 +1119,7 @@ class NMT:
         self.do_load_recurrent = False
         self.do_no_positional = False
         self.do_no_attention = False
+        self.do_simple_input = False
 
         self.printable = ''
 
@@ -1155,6 +1164,7 @@ class NMT:
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
+        parser.add_argument('--simple-input', help='use simple input module', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1230,6 +1240,7 @@ class NMT:
             self.do_no_positional = True
             hparams['split_sentences'] = False
         if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
+        if self.args['simple_input'] is True: self.do_simple_input = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -2630,7 +2641,9 @@ class NMT:
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                      simple_input=self.do_simple_input)
+
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2657,7 +2670,9 @@ class NMT:
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
-                                      sol_token=sol_token, cancel_attention=self.do_no_attention)
+                                      sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                      simple_input=self.do_simple_input)
+
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -2758,7 +2773,8 @@ if __name__ == '__main__':
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
-                                   sol_token=sol_token, cancel_attention=n.do_no_attention)
+                                   sol_token=sol_token, cancel_attention=n.do_no_attention,
+                                   simple_input=n.do_simple_input)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
