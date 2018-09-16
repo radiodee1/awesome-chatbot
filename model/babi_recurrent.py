@@ -702,8 +702,8 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = None
 
         if simple_input:
-            self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
-                                   embedding=self.embed, bidirectional=True, position=position,
+            self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, 1, dropout=dropout,
+                                   embedding=self.embed, bidirectional=False, position=position,
                                    batch_first=True)
         else:
             self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
