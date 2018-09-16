@@ -365,6 +365,66 @@ class MemRNN(nn.Module):
 
         return output, hidden_out
 
+class InputEncoder(nn.Module):
+    def __init__(self, source_vocab_size, embed_dim, hidden_dim,
+                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True, batch_first=False):
+        super(InputEncoder, self).__init__()
+        self.hidden_dim = hidden_dim
+        self.n_layers = n_layers
+        self.bidirectional = bidirectional
+        self.position = position
+        self.sum_bidirectional = sum_bidirectional
+        self.embed = None
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional, batch_first=batch_first)
+
+        self.dropout = nn.Dropout(dropout)
+        self.reset_parameters()
+
+        if embedding is not None:
+            self.embed = embedding
+            print('embedding encoder')
+
+    def reset_parameters(self):
+        #print('reset')
+        stdv = 1.0 / math.sqrt(self.hidden_dim)
+        for weight in self.parameters():
+            #print('here...')
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+
+    def load_embedding(self, embedding):
+        self.embed = embedding
+
+    def test_embedding(self, num=None):
+        if num is None:
+            num = 55 # magic number for testing
+        e = self.embed(num)
+        print(e.size(), 'test embedding')
+        print(e[0,0,0:10]) # print first ten values
+
+    def sum_output(self, output):
+        if self.bidirectional and self.sum_bidirectional:
+            e1 = output[0, :, :self.hidden_dim]
+            e2 = output[0, :, self.hidden_dim:]
+            output = e1 + e2  #
+            output = output.unsqueeze(0)
+        return output
+
+    def forward(self, source, hidden=None):
+
+        for s in source:
+
+            embedded = self.embed(s)
+
+            embedded = self.dropout(embedded)
+
+            encoder_out, hidden = self.gru( embedded, hidden)
+
+            encoder_out = self.sum_output(encoder_out)
+
+        return encoder_out, hidden
+
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
                  n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True, batch_first=False):
@@ -450,6 +510,8 @@ class Encoder(nn.Module):
         #print(embedded.size(),'emb2')
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
+
+        #if hidden is not None: print(hidden.size())
 
         #hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
@@ -637,7 +699,7 @@ class WrapMemRNN(nn.Module):
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
+        self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position,
                                    batch_first=True)
         self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
@@ -741,7 +803,6 @@ class WrapMemRNN(nn.Module):
             out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
 
             prev_h1.append(out1)
-
 
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
