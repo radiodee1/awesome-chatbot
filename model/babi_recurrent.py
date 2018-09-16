@@ -451,7 +451,7 @@ class Encoder(nn.Module):
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
 
-        hidden = None # Variable(torch.zeros(zz, slen, elen))
+        #hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         #print(encoder_out.size(), 'e-out')

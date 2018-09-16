@@ -26,16 +26,16 @@
           <entry key="project.open.time.5" value="12" />
           <entry key="project.open.time.6" value="23" />
           <entry key="project.open.time.7" value="19" />
-          <entry key="project.open.time.8" value="6" />
+          <entry key="project.open.time.8" value="7" />
           <entry key="project.open.time.9" value="5" />
-          <entry key="project.opened" value="106" />
+          <entry key="project.opened" value="107" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="4625" />
-          <entry key="py" value="22416" />
+          <entry key="py" value="22590" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -45,7 +45,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4625" />
           <entry key="PLAIN_TEXT" value="19" />
-          <entry key="Python" value="22416" />
+          <entry key="Python" value="22590" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -92,8 +92,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="394">
-              <caret line="741" selection-start-line="741" selection-end-line="741" />
+            <state relative-caret-position="-1466">
+              <caret line="370" column="21" selection-start-line="370" selection-start-column="14" selection-end-line="370" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -180,9 +180,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>do_load_recurrent</find>
-      <find>variableFromSentence</find>
-      <find>format</find>
       <find>variablesFromPair</find>
       <find>add_eol_only</find>
       <find>split_phrases</find>
@@ -191,7 +188,6 @@
       <find>target_variable</find>
       <find>index2word</find>
       <find>_show_sample</find>
-      <find>position</find>
       <find>split_sentences</find>
       <find>permute_sentence</find>
       <find>do_load_babi</find>
@@ -210,6 +206,10 @@
       <find>model_3_mem</find>
       <find>MemRNN</find>
       <find>CustomGRU</find>
+      <find>position</find>
+      <find>split</find>
+      <find>model_1_enc</find>
+      <find>Encoder</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -578,6 +578,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -633,17 +640,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="394">
-          <caret line="741" selection-start-line="741" selection-end-line="741" />
+        <state relative-caret-position="-1466">
+          <caret line="370" column="21" selection-start-line="370" selection-start-column="14" selection-end-line="370" selection-end-column="21" />
         </state>
       </provider>
     </entry>
