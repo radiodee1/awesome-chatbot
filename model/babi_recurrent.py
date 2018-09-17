@@ -599,7 +599,7 @@ class AnswerModule(nn.Module):
     def recurrent(self, out):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
         #if hparams['cuda'] is True: output = output.cuda()
-        out = F.relu(out)
+        out = F.tanh(out)
 
         l, hid = out.size()
 
