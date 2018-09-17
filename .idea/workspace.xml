@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,27 +15,27 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="108" />
+          <entry key="project.closed" value="111" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.13" value="2" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.3" value="3" />
-          <entry key="project.open.time.4" value="27" />
+          <entry key="project.open.time.4" value="28" />
           <entry key="project.open.time.5" value="12" />
           <entry key="project.open.time.6" value="23" />
-          <entry key="project.open.time.7" value="19" />
+          <entry key="project.open.time.7" value="21" />
           <entry key="project.open.time.8" value="8" />
           <entry key="project.open.time.9" value="5" />
-          <entry key="project.opened" value="108" />
+          <entry key="project.opened" value="111" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="4625" />
-          <entry key="py" value="22880" />
+          <entry key="py" value="22961" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -42,13 +45,13 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4625" />
           <entry key="PLAIN_TEXT" value="19" />
-          <entry key="Python" value="22880" />
+          <entry key="Python" value="22961" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="5" />
-          <entry key="py" value="22" />
+          <entry key="py" value="23" />
           <entry key="sh" value="4" />
           <entry key="txt" value="2" />
         </counts>
@@ -58,22 +61,13 @@
           <entry key="Bash" value="4" />
           <entry key="Markdown" value="5" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="22" />
+          <entry key="Python" value="23" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="30834">
-              <caret line="1739" column="4" selection-start-line="1739" selection-start-column="4" selection-end-line="1739" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -89,8 +83,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-8702">
-              <caret line="1185" column="41" selection-start-line="1185" selection-start-column="41" selection-end-line="1185" selection-end-column="41" />
+            <state relative-caret-position="532">
+              <caret line="2507" selection-start-line="2507" selection-end-line="2507" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/babi.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="784">
+              <caret line="1830" column="48" selection-start-line="1830" selection-start-column="29" selection-end-line="1830" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -177,9 +180,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>add_eol_only</find>
-      <find>split_phrases</find>
-      <find>init_babi</find>
       <find>do_batch_process</find>
       <find>target_variable</find>
       <find>index2word</find>
@@ -196,7 +196,6 @@
       <find>train_iters</find>
       <find>temp_batch_size</find>
       <find>prep</find>
-      <find>prepareData</find>
       <find>train_fr</find>
       <find>task_normal_train</find>
       <find>model_3_mem</find>
@@ -207,6 +206,10 @@
       <find>model_1_enc</find>
       <find>Encoder</find>
       <find>WrapMemRNN</find>
+      <find>prepareData</find>
+      <find>indexesFromSentence</find>
+      <find>variablesFromPair</find>
+      <find>variableFromSentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -551,13 +554,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32472">
-          <caret line="1830" column="48" selection-start-line="1830" selection-start-column="29" selection-end-line="1830" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="30834">
@@ -621,11 +617,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="198">
-          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="234">
@@ -636,11 +627,23 @@
           </second_editor>
         </state>
       </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="198">
+          <caret line="11" column="92" lean-forward="true" selection-start-line="11" selection-start-column="92" selection-end-line="11" selection-end-column="92" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="784">
+          <caret line="1830" column="48" selection-start-line="1830" selection-start-column="29" selection-end-line="1830" selection-end-column="48" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-8702">
-          <caret line="1185" column="41" selection-start-line="1185" selection-start-column="41" selection-end-line="1185" selection-end-column="41" />
+        <state relative-caret-position="532">
+          <caret line="2507" selection-start-line="2507" selection-end-line="2507" />
         </state>
       </provider>
     </entry>

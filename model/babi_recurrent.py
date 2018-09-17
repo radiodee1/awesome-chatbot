@@ -1632,6 +1632,10 @@ class NMT:
         if self.do_load_babi and False:
             sent.append(EOS_token)
             #print(sent,'<<<<')
+        if self.do_recurrent_output and sent[-1] != EOS_token:
+            #sent.append(EOS_token)
+            #print(sent,'<===')
+            pass
         if len(sent) == 0: sent.append(0)
         if self.do_load_recurrent:
             sent = sent[:MAX_LENGTH]
@@ -1711,7 +1715,7 @@ class NMT:
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, add_eol=add_eol)
         question_variable = self.variableFromSentence(self.output_lang, pair[1], add_eol=True, pad=pad)
 
-        if len(pair) > 2:
+        if len(pair) > 2 or self.do_recurrent_output:
             #print(pair[2],',pair')
             #if (len(pair[2]) > 0) or True:
             pad = 0
@@ -1722,6 +1726,7 @@ class NMT:
             target_variable = self.variableFromSentence(self.output_lang, pair[2],
                                                         add_eol=add_eol,
                                                         pad=pad)
+            #print(target_variable, 'tv')
             if self.do_recurrent_output:
                 target_variable = target_variable.unsqueeze(0)
 
@@ -2499,6 +2504,7 @@ class NMT:
         if self.do_load_babi:
             question = nums[1]
             target = nums[2]
+
         if not self.do_load_babi:
             question = nums[0]
             target = None
