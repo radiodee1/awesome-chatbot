@@ -600,7 +600,7 @@ class AnswerModule(nn.Module):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
         #if hparams['cuda'] is True: output = output.cuda()
 
-        out = F.tanh(out)
+        out = F.relu(out)
 
         l, hid = out.size()
 
@@ -636,7 +636,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
-                #output_x = F.softmax(output_x, dim=2)
+                output_x = F.softmax(output_x, dim=2)
 
                 outputs.append(output_x)
 
