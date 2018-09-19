@@ -636,7 +636,8 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
-                output_x = F.softmax(output_x, dim=2)
+                #print(output_x.size(),'ox')
+                #output_x = F.softmax(output_x, dim=2)
 
                 outputs.append(output_x)
 
@@ -2251,8 +2252,10 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        #self.criterion = nn.NLLLoss()
-        self.criterion = nn.CrossEntropyLoss() #size_average=False)
+        if self.do_recurrent_output:
+            self.criterion = nn.NLLLoss()
+        else:
+            self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
         training_pairs = [self.variablesFromPair(
             self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
