@@ -634,9 +634,9 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                output = F.softmax(output, dim=2)
-                
-                output_x = self.out_c(output)
+                output_x = F.softmax(output, dim=2)
+
+                output_x = self.out_c(output_x)
 
                 #print(output_x.size(),'ox')
                 #output_x = F.softmax(output_x, dim=2)
