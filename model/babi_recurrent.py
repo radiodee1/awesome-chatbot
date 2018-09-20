@@ -634,7 +634,7 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                output_x = F.softmax(output, dim=2)
+                output_x = F.tanh(output) #, dim=2)
 
                 output_x = self.out_c(output_x)
 
@@ -2255,7 +2255,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         if self.do_recurrent_output:
-            self.criterion = nn.NLLLoss()
+            self.criterion = nn.CrossEntropyLoss() # nn.NLLLoss()
         else:
             self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
