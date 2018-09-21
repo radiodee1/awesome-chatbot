@@ -14,7 +14,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="116" />
+          <entry key="project.closed" value="117" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.13" value="2" />
@@ -34,7 +34,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="4625" />
-          <entry key="py" value="23042" />
+          <entry key="py" value="23043" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -44,7 +44,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4625" />
           <entry key="PLAIN_TEXT" value="19" />
-          <entry key="Python" value="23042" />
+          <entry key="Python" value="23043" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -82,8 +82,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="326">
-              <caret line="636" column="43" selection-start-line="636" selection-start-column="43" selection-end-line="636" selection-end-column="43" />
+            <state relative-caret-position="272">
+              <caret line="626" column="12" selection-start-line="626" selection-start-column="12" selection-end-line="626" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -604,8 +604,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="636" column="43" selection-start-line="636" selection-start-column="43" selection-end-line="636" selection-end-column="43" />
+        <state relative-caret-position="272">
+          <caret line="626" column="12" selection-start-line="626" selection-start-column="12" selection-end-line="626" selection-end-column="12" />
         </state>
       </provider>
     </entry>
