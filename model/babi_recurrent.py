@@ -2255,7 +2255,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         if self.do_recurrent_output:
-            self.criterion = nn.CrossEntropyLoss() # nn.NLLLoss()
+            self.criterion = nn.NLLLoss()
         else:
             self.criterion = nn.CrossEntropyLoss() #size_average=False)
 
