@@ -654,6 +654,7 @@ class AnswerModule(nn.Module):
         val_out = torch.cat(all_out, dim=1)
 
         #print(val_out.size(),'val out')
+        val_out = self.dropout(val_out)
 
         return val_out
 
