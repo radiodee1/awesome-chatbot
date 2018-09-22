@@ -639,7 +639,7 @@ class AnswerModule(nn.Module):
                 output_x = self.out_c(output)
 
                 #print(output_x.size(),'ox')
-                output_x = F.softmax(output_x, dim=2)
+                output_x = F.log_softmax(output_x, dim=2)
 
                 outputs.append(output_x)
 
