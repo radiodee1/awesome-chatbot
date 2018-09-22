@@ -636,6 +636,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
+                output_x = self.dropout(output_x)
                 #print(output_x.size(),'ox')
                 output_x = F.log_softmax(output_x, dim=2)
 
@@ -652,7 +653,7 @@ class AnswerModule(nn.Module):
         val_out = torch.cat(all_out, dim=1)
 
         #print(val_out.size(),'val out')
-        val_out = self.dropout(val_out)
+        #val_out = self.dropout(val_out)
 
         return val_out
 
