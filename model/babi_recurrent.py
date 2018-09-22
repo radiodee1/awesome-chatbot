@@ -629,9 +629,7 @@ class AnswerModule(nn.Module):
 
             for i in range(self.maxtokens):
 
-                #output = F.softmax(output, dim=2)
-                #output = F.tanh(output)
-
+                
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 output = F.tanh(output)
