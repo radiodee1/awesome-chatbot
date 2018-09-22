@@ -13,6 +13,8 @@ The basic idea is to start by setting up your training environment as described 
 8/15/18 - I have not been able to finish babi test 19. I have tried adding an output gru to the answer module of the program. My results with that gru are poor.
 The program recognizes that the answer must be a pair of cardinal directions, like north, south, east, and west. The program does not, however, identify the correct pair.
 
+9/22/18 - I am still working on multiple word output.
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.

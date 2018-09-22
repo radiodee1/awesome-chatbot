@@ -629,7 +629,7 @@ class AnswerModule(nn.Module):
 
             for i in range(self.maxtokens):
 
-                
+
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 output = F.tanh(output)
