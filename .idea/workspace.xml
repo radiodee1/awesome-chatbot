@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,27 +14,27 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="120" />
+          <entry key="project.closed" value="122" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
           <entry key="project.open.time.13" value="2" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.3" value="3" />
-          <entry key="project.open.time.4" value="32" />
+          <entry key="project.open.time.4" value="33" />
           <entry key="project.open.time.5" value="14" />
           <entry key="project.open.time.6" value="26" />
           <entry key="project.open.time.7" value="21" />
           <entry key="project.open.time.8" value="9" />
           <entry key="project.open.time.9" value="5" />
-          <entry key="project.opened" value="121" />
+          <entry key="project.opened" value="122" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="4625" />
-          <entry key="py" value="23106" />
+          <entry key="py" value="23121" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -45,7 +44,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4625" />
           <entry key="PLAIN_TEXT" value="19" />
-          <entry key="Python" value="23106" />
+          <entry key="Python" value="23121" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -83,8 +82,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="218">
-              <caret line="641" column="57" selection-start-line="641" selection-start-column="57" selection-end-line="641" selection-end-column="57" />
+            <state relative-caret-position="272">
+              <caret line="132" column="56" selection-start-line="132" selection-start-column="56" selection-end-line="132" selection-end-column="56" />
             </state>
           </provider>
         </entry>
@@ -605,8 +604,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="218">
-          <caret line="641" column="57" selection-start-line="641" selection-start-column="57" selection-end-line="641" selection-end-column="57" />
+        <state relative-caret-position="272">
+          <caret line="132" column="56" selection-start-line="132" selection-start-column="56" selection-end-line="132" selection-end-column="56" />
         </state>
       </provider>
     </entry>

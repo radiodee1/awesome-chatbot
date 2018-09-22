@@ -634,7 +634,7 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                output = F.tanh(output) #, dim=2)
+                output = F.tanh(output)
 
                 output_x = self.out_c(output)
 
