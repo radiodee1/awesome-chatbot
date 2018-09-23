@@ -632,7 +632,7 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                output = F.tanh(output)
+                #output = F.tanh(output)
 
                 output_x = self.out_c(output)
 

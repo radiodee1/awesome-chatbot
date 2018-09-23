@@ -14,7 +14,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="128" />
+          <entry key="project.closed" value="130" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
@@ -22,20 +22,20 @@
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.3" value="4" />
-          <entry key="project.open.time.4" value="37" />
+          <entry key="project.open.time.4" value="38" />
           <entry key="project.open.time.5" value="14" />
           <entry key="project.open.time.6" value="26" />
           <entry key="project.open.time.7" value="21" />
-          <entry key="project.open.time.8" value="9" />
+          <entry key="project.open.time.8" value="10" />
           <entry key="project.open.time.9" value="5" />
-          <entry key="project.opened" value="128" />
+          <entry key="project.opened" value="130" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="4688" />
-          <entry key="py" value="23121" />
+          <entry key="py" value="23135" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -45,7 +45,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="4625" />
           <entry key="PLAIN_TEXT" value="82" />
-          <entry key="Python" value="23121" />
+          <entry key="Python" value="23135" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -140,8 +140,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="640">
-              <caret line="721" column="39" selection-start-line="721" selection-start-column="27" selection-end-line="721" selection-end-column="39" />
+            <state relative-caret-position="748">
+              <caret line="655" column="9" selection-start-line="655" selection-start-column="9" selection-end-line="655" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -268,8 +268,8 @@
         <option value="$PROJECT_DIR$/saved/stat.md" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
-        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
       </list>
     </option>
   </component>
@@ -339,7 +339,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="532" y="80" width="1380" height="1000" extended-state="0" />
-    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -578,6 +577,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -598,25 +612,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="640">
-          <caret line="721" column="39" selection-start-line="721" selection-start-column="27" selection-end-line="721" selection-end-column="39" />
+        <state relative-caret-position="748">
+          <caret line="655" column="9" selection-start-line="655" selection-start-column="9" selection-end-line="655" selection-end-column="9" />
         </state>
       </provider>
     </entry>
