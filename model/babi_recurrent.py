@@ -281,6 +281,7 @@ class CustomGRU(nn.Module):
         if g is None:
             z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
             zz = z * C + (1 - z) * h_tilda
+            #print('g is none.')
         else:
             zz = g * h_tilda + (1-g) * C
             #print(zz.size(),'zz')
@@ -557,6 +558,7 @@ class AnswerModule(nn.Module):
         self.sol_token = sol_token
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
+        self.embed = embed
         out_size = vocab_size
         if recurrent_output: out_size = hidden_size
 
@@ -593,8 +595,8 @@ class AnswerModule(nn.Module):
         return input
 
     def load_embedding(self, embed):
-        if False:
-            self.decoder.load_embedding(embed)
+
+        self.embed = embed
 
     def recurrent(self, out):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
@@ -620,10 +622,12 @@ class AnswerModule(nn.Module):
             #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
             #encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
-            output = self.prune_tensor(out[k,:], 3)
+            #output = self.prune_tensor(out[k,:], 3)
 
             #output = Variable(torch.zeros(1,1,self.hidden_size))
 
+            output = self.embed(Variable(torch.tensor([SOS_token])))
+            output = self.prune_tensor(output, 3)
             #output = F.tanh(output)
             ##########################################
 
@@ -637,7 +641,7 @@ class AnswerModule(nn.Module):
                 output_x = self.out_c(output)
 
                 output_x = self.dropout(output_x)
-                #print(output_x.size(),'ox')
+
                 output_x = F.log_softmax(output_x, dim=2)
 
                 outputs.append(output_x)
