@@ -626,7 +626,7 @@ class AnswerModule(nn.Module):
 
             #output = Variable(torch.zeros(1,1,self.hidden_size))
 
-            output = self.embed(Variable(torch.tensor([SOS_token])))
+            output = self.embed(Variable(torch.tensor([EOS_token])))
             output = self.prune_tensor(output, 3)
             #output = F.tanh(output)
             ##########################################
