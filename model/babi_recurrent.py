@@ -636,11 +636,11 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                #output = F.tanh(output)
+                output = self.dropout(output)
 
                 output_x = self.out_c(output)
 
-                output_x = self.dropout(output_x)
+                #output_x = self.dropout(output_x)
 
                 output_x = F.log_softmax(output_x, dim=2)
 
