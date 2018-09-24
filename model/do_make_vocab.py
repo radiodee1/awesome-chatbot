@@ -149,26 +149,41 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False):
     #print(v)
     return v
 
-def save_vocab(v, babi=False):
+def save_vocab(v, babi=False, save_big=True, both=False):
     ''' remember to leave 3 spots blank '''
     sol = hparams['sol']
     eol = hparams['eol']
     unk = hparams['unk']
-    #name = train_file[0].replace('train', 'vocab')
+
     name = hparams['data_dir'] + hparams['vocab_name']
 
     if name == train_file[0]:
         name += '.voc.txt'
 
-    if babi:
-        name = name.replace('big', hparams['babi_name'])
+    original_name = name[:]
 
-    with open(name, 'w') as x:
-        #x.write(unk+'\n'+ sol+'\n'+eol+'\n')
-        for z in range(len(v)):
-            if z < int(hparams['num_vocab_total']) - 3: ## magic num for hparams tokens
-                x.write(v[z] + "\n")
-        print('values written')
+    if both:
+        babi = True
+        save_big = True
+
+    if babi:
+        babi_name = name.replace('big', hparams['babi_name'])
+
+        with open(babi_name, 'w') as x:
+            #x.write(unk+'\n'+ sol+'\n'+eol+'\n')
+            for z in range(len(v)):
+                if z < int(hparams['num_vocab_total']) - 3: ## magic num for hparams tokens
+                    x.write(v[z] + "\n")
+            print('values written', babi_name)
+
+    if save_big:
+        with open(original_name, 'w') as x:
+            # x.write(unk+'\n'+ sol+'\n'+eol+'\n')
+            for z in range(len(v)):
+                if z < int(hparams['num_vocab_total']) - 3:  ## magic num for hparams tokens
+                    x.write(v[z] + "\n")
+            print('values written',original_name)
+
     pass
 
 
@@ -227,6 +242,7 @@ if __name__ == '__main__':
     parser.add_argument('--order', help='put in alpha order.', action='store_true')
     parser.add_argument('--contractions', help='add some contractions to the vocab that are not present in glove.',
                         action='store_true')
+    parser.add_argument('--both-files',help='save "babi" and "big" named vocab files.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -236,6 +252,7 @@ if __name__ == '__main__':
     read_glove = False
     use_w2v = False
     use_contractions = False
+    store_two_files = False
 
     if args['babi']:
         pass
@@ -276,6 +293,8 @@ if __name__ == '__main__':
 
     if args['contractions'] is True: use_contractions = True
 
+    if args['both_files'] is True: store_two_files = True
+
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
     babi_file3 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
@@ -295,7 +314,7 @@ if __name__ == '__main__':
 
     if True:
         v = make_vocab(train_file, order=order, read_glove=read_glove, contractions=use_contractions)
-        save_vocab(v, args['babi'])
+        save_vocab(v, args['babi'], both=store_two_files)
     if len(v) == 0:
         filename = hparams['data_dir'] + hparams['vocab_name']
         if args['babi'] == True: filename = filename.replace('big', hparams['babi_name'])
