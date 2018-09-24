@@ -14,7 +14,7 @@ The basic idea is to start by setting up your training environment as described 
 The program recognizes that the answer must be a pair of cardinal directions, like north, south, east, and west. The program does not, however, identify the correct pair.
 
 9/24/18 - I am still working on multiple word output. I have placed a dropout function in the code for the recurrent output section of the `babi_recurrent.py` program.
-The output is promising. I think to start with I will run it with task #1 and then I will try it out on task #19. In other people's code I have noticed that they typically do not
+The output of my first test run is promising. I think to start with I will run it with task #1 and then I will try it out on task #19. In other people's code I have noticed that they typically do not
 use 50% dropout, but something closer to 30%. I can run task #1 and #19 with lower dropout if I want to later.
 
 # Organization
