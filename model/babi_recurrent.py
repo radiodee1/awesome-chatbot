@@ -572,7 +572,7 @@ class AnswerModule(nn.Module):
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
-        self.dropout_hidden = nn.Dropout(dropout * 0.5)
+        #self.dropout_hidden = nn.Dropout(dropout * 0.5)
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
