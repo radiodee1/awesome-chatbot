@@ -1085,6 +1085,8 @@ class NMT:
         self.time_elapsed_num = 0
         self.time_elapsed_str = ''
 
+        self.print_control_num = 0
+
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
         self.lr_adjustment_num = 0
@@ -1130,6 +1132,7 @@ class NMT:
         self.do_no_positional = False
         self.do_no_attention = False
         self.do_simple_input = False
+        self.do_print_control = False
 
         self.printable = ''
 
@@ -1175,6 +1178,7 @@ class NMT:
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
         parser.add_argument('--simple-input', help='use simple input module', action='store_true')
+        parser.add_argument('--print-control', help='set print control num to space out output.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1251,6 +1255,9 @@ class NMT:
             hparams['split_sentences'] = False
         if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
         if self.args['simple_input'] is True: self.do_simple_input = True
+        if self.args['print_control'] is not None:
+            self.do_print_control = True
+            self.print_control_num = float(self.args['print_control'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -2042,6 +2049,14 @@ class NMT:
         self.model_0_wra.test_embedding(num)
         if exit: exit()
 
+    def _print_control(self, iter):
+        if self.do_print_control:
+            if iter == 0: return True
+            if iter % self.print_control_num == 0: return True
+        else:
+            return True
+        return False
+
     def _as_minutes(self,s):
         m = math.floor(s / 60)
         s -= m * 60
@@ -2165,7 +2180,7 @@ class NMT:
                 ans = ans.permute(1,0)
             else:
                 target_variable = target_variable[0]
-                print(len(ans),ans.size())
+                #print(len(ans),ans.size())
                 ans = torch.argmax(ans,dim=1)
                 #ans = ans[0]
 
@@ -2247,7 +2262,7 @@ class NMT:
             epoch_stop = len(self.pairs)
             epoch_len = len(self.pairs) - epoch_start
 
-        if not self.do_test_not_train:
+        if not self.do_test_not_train :
             print('limit pairs:', len(self.pairs),
                   '- end of this epoch:',epoch_stop,
                   '- epochs:', len(self.pairs) // self.epoch_length,
@@ -2403,8 +2418,9 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
 
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
-                      + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
+                if self._print_control(iter):
+                    print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
+                          + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
@@ -2425,15 +2441,17 @@ class NMT:
                         if not self.do_test_not_train and not self.do_load_babi:
                             self.save_checkpoint(num=iter,extra=extra)
                             self.saved_files += 1
-                            print('======= save file '+ extra+' ========')
-                    elif not self.do_load_babi:
+                            if self._print_control(iter):
+                                print('======= save file '+ extra+' ========')
+                    elif not self.do_load_babi and self._print_control(iter):
                         print('skip save!')
                 self.time_elapsed_str = self._time_since(self.time_num)
                 self.time_elapsed_num = time.time()
-                print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.time_elapsed_str, end=' ')
-                if self.do_batch_process: print('- batch-size', temp_batch_size, end=' ')
-                if self.do_auto_stop: print('- count', self._count_epochs_for_quit)
-                else: print('')
+                if self._print_control(iter):
+                    print('(%d %d%%) %.6f loss' % (iter, iter / n_iters * 100, print_loss_avg),self.time_elapsed_str, end=' ')
+                    if self.do_batch_process: print('- batch-size', temp_batch_size, end=' ')
+                    if self.do_auto_stop: print('- count', self._count_epochs_for_quit)
+                    else: print('')
 
                 #print(epoch_start, iter, temp_batch_size, epoch_stop)
 
@@ -2446,34 +2464,36 @@ class NMT:
                     num_right_small = math.floor(num_right_small / (hparams['tokens_per_sentence'] ))
                     pass
 
-                if self.do_load_babi and self.do_test_not_train:
+                if self._print_control(iter):
+                    if self.do_load_babi and self.do_test_not_train:
 
-                    print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small ))
-                    num_right_small = 0
+                        print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small ))
+                        num_right_small = 0
 
-                if self.do_load_babi and not self.do_test_not_train:
+                    if self.do_load_babi and not self.do_test_not_train:
 
-                    print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
-                    num_right_small = 0
+                        print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
+                        num_right_small = 0
 
                 num_right_small = 0
 
-                if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
-                    if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
-                        print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],', epochs', self.epochs_since_adjustment ,']')
-                    if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
-                        print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],', epochs',self.epochs_since_adjustment,']')
+                if self._print_control(iter):
+                    if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
+                        if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
+                            print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],', epochs', self.epochs_since_adjustment ,']')
+                        if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
+                            print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],', epochs',self.epochs_since_adjustment,']')
 
-                if self.score_list is not None and len(self.score_list_training) > 0 and len(self.score_list) > 0:
-                    print('[ last train:', self.score_list_training[-1],']',end='')
-                    if self.do_test_not_train:
-                        print('[ older valid:', self.score_list[-1],']')
-                    else:
-                        print('[ last valid:', self.score_list[-1],']')
-                elif len(self.score_list_training) >= 1 and self.do_skip_validation:
-                    print('[ last train:', self.score_list_training[-1],'][ no valid ]')
+                    if self.score_list is not None and len(self.score_list_training) > 0 and len(self.score_list) > 0:
+                        print('[ last train:', self.score_list_training[-1],']',end='')
+                        if self.do_test_not_train:
+                            print('[ older valid:', self.score_list[-1],']')
+                        else:
+                            print('[ last valid:', self.score_list[-1],']')
+                    elif len(self.score_list_training) >= 1 and self.do_skip_validation:
+                        print('[ last train:', self.score_list_training[-1],'][ no valid ]')
 
-                print("-----")
+                    print("-----")
 
         if self.do_batch_process:
             self.save_checkpoint(num=len(self.pairs))
@@ -2490,17 +2510,20 @@ class NMT:
             if self.do_auto_stop:
                 self._auto_stop()
 
-        if self.do_load_babi:
-            print('train list:', ', '.join(self.score_list_training))
-            print('valid list:', ', '.join(self.score_list))
-        print('dropout:',hparams['dropout'])
-        print('learning rate:', hparams['learning_rate'])
-        print('weight decay:', hparams['weight_decay'])
-        print(num_count, 'exec count')
-        print('raw score:', num_right, num_tot, num_right_small, len(self.pairs))
+        if self._print_control(iter):
+            if self.do_load_babi:
+                print('train list:', ', '.join(self.score_list_training))
+                print('valid list:', ', '.join(self.score_list))
+            print('dropout:',hparams['dropout'])
+            print('learning rate:', hparams['learning_rate'])
+            print('weight decay:', hparams['weight_decay'])
+            print(num_count, 'exec count')
+            print('raw score:', num_right, num_tot, num_right_small, len(self.pairs))
 
     def _show_sample(self, iter=0, epoch_start=0, epoch_stop=hparams['batch_size'], temp_batch_size=hparams['batch_size']):
         ###########################
+        if not self._print_control(iter): return
+
         if epoch_start + iter >= epoch_stop:
             choice = random.choice(self.pairs)
         else:
