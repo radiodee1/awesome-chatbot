@@ -571,8 +571,8 @@ class AnswerModule(nn.Module):
         self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout)
-        #self.dropout_hidden = nn.Dropout(dropout * 0.5)
+        self.dropout = nn.Dropout(dropout * 0.5)
+        self.dropout_b = nn.Dropout(dropout * 0.5)
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
@@ -638,7 +638,7 @@ class AnswerModule(nn.Module):
 
                 output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                #output = self.dropout(output)
+                output = self.dropout_b(output)
 
                 output_x = self.out_c(output)
 

@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="135" />
+          <entry key="project.closed" value="141" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
@@ -23,20 +23,20 @@
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.3" value="5" />
-          <entry key="project.open.time.4" value="40" />
+          <entry key="project.open.time.4" value="44" />
           <entry key="project.open.time.5" value="14" />
-          <entry key="project.open.time.6" value="28" />
+          <entry key="project.open.time.6" value="30" />
           <entry key="project.open.time.7" value="22" />
           <entry key="project.open.time.8" value="10" />
           <entry key="project.open.time.9" value="5" />
-          <entry key="project.opened" value="136" />
+          <entry key="project.opened" value="142" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5164" />
-          <entry key="py" value="23902" />
+          <entry key="py" value="23910" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -46,7 +46,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="5101" />
           <entry key="PLAIN_TEXT" value="82" />
-          <entry key="Python" value="23902" />
+          <entry key="Python" value="23910" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -134,11 +134,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2448">
-              <caret line="2855" column="33" selection-start-line="2855" selection-start-column="25" selection-end-line="2855" selection-end-column="33" />
-              <folding>
-                <marker date="1537970281384" expanded="true" signature="80541:80568" ph="..." />
-              </folding>
+            <state relative-caret-position="-4426">
+              <caret line="640" column="39" selection-start-line="640" selection-start-column="39" selection-end-line="640" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -187,7 +184,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>out_b</find>
       <find>recurrent_output</find>
       <find>argmax</find>
       <find>variables_for_batch</find>
@@ -217,6 +213,7 @@
       <find>num_vocab_total</find>
       <find>print_every</find>
       <find>evaluate</find>
+      <find>update_result_file</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -290,7 +287,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -312,6 +308,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -539,6 +536,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="630">
+          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1458">
@@ -614,20 +618,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="35" column="24" selection-start-line="35" selection-start-column="24" selection-end-line="35" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2448">
-          <caret line="2855" column="33" selection-start-line="2855" selection-start-column="25" selection-end-line="2855" selection-end-column="33" />
-          <folding>
-            <marker date="1537970281384" expanded="true" signature="80541:80568" ph="..." />
-          </folding>
+        <state relative-caret-position="-4426">
+          <caret line="640" column="39" selection-start-line="640" selection-start-column="39" selection-end-line="640" selection-end-column="39" />
         </state>
       </provider>
     </entry>
