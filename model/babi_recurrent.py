@@ -2723,7 +2723,7 @@ class NMT:
 
     def update_result_file(self):
 
-        self._test_embedding(exit=False)
+        if False: self._test_embedding(exit=False)
 
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
