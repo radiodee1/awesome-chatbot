@@ -121,7 +121,7 @@ def init_babi(fname, add_eol=False, replace_directions=False):
     return tasks
 
 
-def get_babi_raw(id, test_id, sub_folder='en', add_eol=False):
+def get_babi_raw(id, test_id, sub_folder='en', add_eol=False, replace_directions=False):
     babi_map = {
         "1": "qa1_single-supporting-fact",
         "2": "qa2_two-supporting-facts",
@@ -172,9 +172,9 @@ def get_babi_raw(id, test_id, sub_folder='en', add_eol=False):
     babi_name = babi_map[id]
     babi_test_name = babi_map[test_id]
     babi_train_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)), add_eol=add_eol, replace_directions=True)
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_train.txt' % (sub_folder, babi_name)), add_eol=add_eol, replace_directions=replace_directions)
     babi_test_raw = init_babi(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)), add_eol=add_eol, replace_directions=True)
+        os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)), add_eol=add_eol, replace_directions=replace_directions)
     return babi_train_raw, babi_test_raw
 
 if __name__ == '__main__':
@@ -190,6 +190,7 @@ if __name__ == '__main__':
     parser.add_argument('num', help='babi number, or "all"')
     parser.add_argument('folder', help='either "en-10k" or "en"')
     parser.add_argument('--eol', help='add eol to sentences', action='store_true')
+    parser.add_argument('--replace-directions', help='replace directions with whole word.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -216,7 +217,7 @@ if __name__ == '__main__':
 
     for id in id_lst:
 
-        train, test = get_babi_raw(id,id, sub_folder=sub_folder, add_eol=flag_eol)
+        train, test = get_babi_raw(id,id, sub_folder=sub_folder, add_eol=flag_eol, replace_directions=args['replace_directions'])
 
         data_dir = hparams['data_dir']
         train_name = hparams['train_name']
