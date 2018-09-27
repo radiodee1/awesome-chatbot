@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="143" />
+          <entry key="project.closed" value="144" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
@@ -36,7 +36,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5164" />
-          <entry key="py" value="24084" />
+          <entry key="py" value="24094" />
           <entry key="sh" value="71" />
           <entry key="txt" value="12" />
         </counts>
@@ -46,7 +46,7 @@
           <entry key="Bash" value="71" />
           <entry key="Markdown" value="5101" />
           <entry key="PLAIN_TEXT" value="82" />
-          <entry key="Python" value="24084" />
+          <entry key="Python" value="24094" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -113,20 +113,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="542">
-              <caret line="2760" column="16" selection-start-line="2760" selection-end-line="2761" />
+            <state relative-caret-position="-3670">
+              <caret line="1231" column="43" selection-start-line="1231" selection-start-column="43" selection-end-line="1231" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="470">
-              <caret line="2268" column="69" selection-start-line="2268" selection-start-column="69" selection-end-line="2268" selection-end-column="69" />
+            <state relative-caret-position="-2362">
+              <caret line="751" selection-start-line="751" selection-end-line="751" />
             </state>
           </provider>
         </entry>
@@ -271,8 +271,8 @@
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
-        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
       </list>
     </option>
   </component>
@@ -611,17 +611,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="2760" column="16" selection-start-line="2760" selection-end-line="2761" />
+        <state relative-caret-position="-2362">
+          <caret line="751" selection-start-line="751" selection-end-line="751" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="470">
-          <caret line="2268" column="69" selection-start-line="2268" selection-start-column="69" selection-end-line="2268" selection-end-column="69" />
+        <state relative-caret-position="-3670">
+          <caret line="1231" column="43" selection-start-line="1231" selection-start-column="43" selection-end-line="1231" selection-end-column="43" />
         </state>
       </provider>
     </entry>

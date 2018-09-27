@@ -2758,7 +2758,7 @@ class NMT:
             f.write('elapsed time:   ' + self.time_elapsed_str + '\n')
             f.write('save count:     ' + str(self.saved_files) + '\n')
             f.write('time per epoch: ' + self._as_minutes(epoch_time) + '\n')
-            f.write('this epoch      ' + str(self.this_epoch) + '\n')
+            f.write('this epoch/step ' + str(self.this_epoch) + '\n')
             f.write('train results:' + '\n')
             f.write(','.join(self.score_list_training))
             f.write('\n')
