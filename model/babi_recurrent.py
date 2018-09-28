@@ -284,6 +284,10 @@ class CustomGRU(nn.Module):
             #print('g is none.')
         else:
         '''
+        g = g.unsqueeze(0).expand_as(h_tilda)
+        #print(g)
+        #exit()
+
         zz = g * h_tilda + (1-g) * C
         #print(zz.size(),'zz')
         #zz = z * C + (1 - z) * h_tilda
