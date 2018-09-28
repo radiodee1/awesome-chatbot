@@ -904,7 +904,7 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii,0,0]
 
-            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg)
+            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii-1], 3), ggg) # <<--- iii-1 or iii-0 ??
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
 
