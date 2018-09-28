@@ -287,7 +287,7 @@ class CustomGRU(nn.Module):
         zz = g * h_tilda + (1-g) * C
         #print(zz.size(),'zz')
         #zz = z * C + (1 - z) * h_tilda
-        return zz, h_tilda #zz
+        return zz, zz # h_tilda #zz
 
 class EpisodicAttn(nn.Module):
 
