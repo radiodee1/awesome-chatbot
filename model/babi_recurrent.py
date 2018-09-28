@@ -277,16 +277,17 @@ class CustomGRU(nn.Module):
 
         r = F.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = F.tanh(self.W(fact) + r * self.U(C))
-
+        '''
         if g is None:
             z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
             zz = z * C + (1 - z) * h_tilda
             #print('g is none.')
         else:
-            zz = g * h_tilda + (1-g) * C
-            #print(zz.size(),'zz')
+        '''
+        zz = g * h_tilda + (1-g) * C
+        #print(zz.size(),'zz')
         #zz = z * C + (1 - z) * h_tilda
-        return zz, zz
+        return zz, h_tilda #zz
 
 class EpisodicAttn(nn.Module):
 
@@ -904,7 +905,7 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii,0,0]
 
-            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii-1], 3), ggg) # <<--- iii-1 or iii-0 ??
+            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg) # <<--- iii-1 or iii-0 ??
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
 
