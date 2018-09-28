@@ -863,11 +863,11 @@ class WrapMemRNN(nn.Module):
                 #zz = self.prune_tensor(z.clone(), 3)
                 zz = Variable(torch.zeros(1,1,self.hidden_size))
 
-                index = 0
+                index = -1
                 for iter in range(self.memory_hops):
 
-                    if len(m_list) is 1 : mem_last = m_list[-1]
-                    else: mem_last = F.relu(m_list[-1])
+                    if len(m_list) is 1 : mem_last = m_list[index]
+                    else: mem_last = F.relu(m_list[index])
 
                     x = self.new_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
