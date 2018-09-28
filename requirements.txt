@@ -16,6 +16,7 @@ PyAudio
 unidecode
 matplotlib
 py-cpuinfo
+datetime
 
 ## pytorch ##
 ## go to the pytorch web site to download the latest version of pytorch ##
