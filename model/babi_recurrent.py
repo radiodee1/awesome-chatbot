@@ -426,7 +426,7 @@ class SimpleInputEncoder(nn.Module):
             embedded = self.embed(s)
 
             embedded = self.dropout(embedded)
-            embedded = embedded.permute(1,0,2)
+            embedded = embedded.permute(1,0,2) ## batch first
 
             encoder_out, hidden = self.gru( embedded, hidden)
 
@@ -722,7 +722,7 @@ class WrapMemRNN(nn.Module):
 
         if simple_input:
             self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 1, dropout=dropout,
-                                   embedding=self.embed, bidirectional=False, position=position,
+                                   embedding=self.embed, bidirectional=True, position=position,
                                    batch_first=True)
         else:
             self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
