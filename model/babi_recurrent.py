@@ -426,8 +426,7 @@ class SimpleInputEncoder(nn.Module):
             embedded = self.embed(s)
 
             embedded = self.dropout(embedded)
-
-            #embedded = embedded.unsqueeze(0)
+            embedded = embedded.permute(1,0,2)
 
             encoder_out, hidden = self.gru( embedded, hidden)
 
@@ -830,7 +829,7 @@ class WrapMemRNN(nn.Module):
             #print(ii, 'ii')
             out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
             #print(out1.size(),'out1')
-            if not self.simple_input:
+            if True: #not self.simple_input:
                 prev_h1.append(out1)
             else:
                 prev_h1.append(out1.permute(1,0,2))
