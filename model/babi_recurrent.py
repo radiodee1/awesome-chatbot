@@ -371,10 +371,10 @@ class MemRNN(nn.Module):
 
         return output, hidden_out
 
-class InputEncoder(nn.Module):
+class SimpleInputEncoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim,
                  n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True, batch_first=False):
-        super(InputEncoder, self).__init__()
+        super(SimpleInputEncoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.n_layers = n_layers
         self.bidirectional = bidirectional
@@ -419,11 +419,15 @@ class InputEncoder(nn.Module):
 
     def forward(self, source, hidden=None):
 
-        for s in source:
+        #for s in source:
+        if True:
+            s = source
 
             embedded = self.embed(s)
 
             embedded = self.dropout(embedded)
+
+            #embedded = embedded.unsqueeze(0)
 
             encoder_out, hidden = self.gru( embedded, hidden)
 
@@ -709,6 +713,7 @@ class WrapMemRNN(nn.Module):
         self.recurrent_output = recurrent_output
         self.sol_token = sol_token
         self.cancel_attention = cancel_attention
+        self.simple_input = simple_input
         position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
 
@@ -717,7 +722,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = None
 
         if simple_input:
-            self.model_1_enc = InputEncoder(vocab_size, embed_dim, hidden_size, 1, dropout=dropout,
+            self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 1, dropout=dropout,
                                    embedding=self.embed, bidirectional=False, position=position,
                                    batch_first=True)
         else:
@@ -824,8 +829,11 @@ class WrapMemRNN(nn.Module):
             ii = self.prune_tensor(ii, 2)
             #print(ii, 'ii')
             out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
-
-            prev_h1.append(out1)
+            #print(out1.size(),'out1')
+            if not self.simple_input:
+                prev_h1.append(out1)
+            else:
+                prev_h1.append(out1.permute(1,0,2))
 
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
@@ -871,10 +879,8 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
-                    if self.print_to_screen and self.training:
-                        print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
-                        print(self.prune_tensor(self.q_q_last[i], 3) ) # == self.prune_tensor(self.q_q[i][:,-1,:], 3))
-                        #exit()
+                    #print(x, x.size(), len(self.inp_c_seq),self.inp_c_seq[0].size(),'info')
+
 
                     e, _ = self.new_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
@@ -894,7 +900,7 @@ class WrapMemRNN(nn.Module):
 
     def new_episode_small_step(self, ct, g, prev_h, prev_mem=None, question=None):
 
-        assert len(ct.size()) == 3
+        #assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
 
         #print(sen,'sen')
@@ -943,8 +949,9 @@ class WrapMemRNN(nn.Module):
         q_q = self.prune_tensor(q_q,3)
         mem = self.prune_tensor(mem,3)
 
-        assert len(ct.size()) == 3
+        #assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
+
 
         #print(q_q.size(), sen,'len q')
 
@@ -1182,7 +1189,7 @@ class NMT:
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
-        parser.add_argument('--simple-input', help='use simple input module', action='store_true')
+        parser.add_argument('--simple-input', help='use simple input module. No positional encoding.', action='store_true')
         parser.add_argument('--print-control', help='set print control num to space out output.')
 
         self.args = parser.parse_args()
@@ -1682,8 +1689,11 @@ class NMT:
             #print(g[0])
             if not hparams['split_sentences']:
                 g1.append(g[0].squeeze(1))
-            else:
+            elif not self.do_simple_input:
                 g1.append(g[0])
+            else:
+                g1.append(g[0]) ## put every word in it's own list??
+
             g2.append(g[1].squeeze(1))
             if self.do_recurrent_output:
                 g3.append(g[2].squeeze(1))
@@ -1709,7 +1719,7 @@ class NMT:
 
     def variablesFromPair(self,pair):
         pad = hparams['tokens_per_sentence']
-        if hparams['split_sentences'] :
+        if hparams['split_sentences'] and not self.do_simple_input:
             l = pair[0].strip().split('.')
             sen = []
             max_len = 0
