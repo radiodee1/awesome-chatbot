@@ -1687,8 +1687,6 @@ class NMT:
             #print(g[0])
             if not hparams['split_sentences']:
                 g1.append(g[0].squeeze(1))
-            elif not self.do_simple_input:
-                g1.append(g[0])
             else:
                 g1.append(g[0]) ## put every word in it's own list??
 
