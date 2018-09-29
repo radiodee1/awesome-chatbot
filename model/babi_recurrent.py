@@ -829,10 +829,9 @@ class WrapMemRNN(nn.Module):
             #print(ii, 'ii')
             out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
             #print(out1.size(),'out1')
-            if True: #not self.simple_input:
-                prev_h1.append(out1)
-            else:
-                prev_h1.append(out1.permute(1,0,2))
+
+            prev_h1.append(out1)
+
 
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
@@ -878,7 +877,7 @@ class WrapMemRNN(nn.Module):
 
                     x = self.new_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
-                    #print(x, x.size(), len(self.inp_c_seq),self.inp_c_seq[0].size(),'info')
+                    #print( x.size(), len(self.inp_c_seq),self.inp_c_seq[0].size(),'info')
 
 
                     e, _ = self.new_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
