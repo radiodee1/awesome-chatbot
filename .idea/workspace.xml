@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="150" />
+          <entry key="project.closed" value="151" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="5" />
           <entry key="project.open.time.11" value="2" />
@@ -26,16 +27,16 @@
           <entry key="project.open.time.5" value="14" />
           <entry key="project.open.time.6" value="33" />
           <entry key="project.open.time.7" value="24" />
-          <entry key="project.open.time.8" value="10" />
+          <entry key="project.open.time.8" value="11" />
           <entry key="project.open.time.9" value="5" />
-          <entry key="project.opened" value="151" />
+          <entry key="project.opened" value="152" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5312" />
-          <entry key="py" value="24591" />
+          <entry key="py" value="24605" />
           <entry key="sh" value="149" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +46,7 @@
           <entry key="Bash" value="149" />
           <entry key="Markdown" value="5249" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="24591" />
+          <entry key="Python" value="24605" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -94,8 +95,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="1688" column="42" selection-start-line="1688" selection-start-column="42" selection-end-line="1688" selection-end-column="42" />
+            <state relative-caret-position="-1368">
+              <caret line="141" column="3" lean-forward="true" selection-start-line="141" selection-start-column="3" selection-end-line="141" selection-end-column="3" />
             </state>
           </provider>
         </entry>
@@ -185,7 +186,6 @@
       <find>position</find>
       <find>split</find>
       <find>model_1_enc</find>
-      <find>Encoder</find>
       <find>WrapMemRNN</find>
       <find>prepareData</find>
       <find>indexesFromSentence</find>
@@ -203,13 +203,14 @@
       <find>CustomGRU</find>
       <find>model_3_mem</find>
       <find>MemRNN</find>
-      <find>split_sentences</find>
       <find>InputEncoder</find>
       <find>simple_input</find>
       <find>variablesFromPair</find>
       <find>new_attention_step</find>
       <find>SimpleInputEncoder</find>
       <find>do_simple_input</find>
+      <find>Encoder</find>
+      <find>split_sentences</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -546,11 +547,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="324">
@@ -559,6 +555,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -626,8 +627,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="1688" column="42" selection-start-line="1688" selection-start-column="42" selection-end-line="1688" selection-end-column="42" />
+        <state relative-caret-position="-1368">
+          <caret line="141" column="3" lean-forward="true" selection-start-line="141" selection-start-column="3" selection-end-line="141" selection-end-column="3" />
         </state>
       </provider>
     </entry>

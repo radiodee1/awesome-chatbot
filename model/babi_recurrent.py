@@ -139,11 +139,12 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 ################# pytorch modules ###############
 
+'''
 class LuongAttention(nn.Module):
-    """
-    LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
-    https://arxiv.org/pdf/1508.04025.pdf
-    """
+    
+    ## LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
+    ## https://arxiv.org/pdf/1508.04025.pdf
+    
 
     def __init__(self, dim):
         super(LuongAttention, self).__init__()
@@ -242,15 +243,9 @@ class Decoder(nn.Module):
 
         rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
 
-        '''
-        if self.cancel_attention:
-            output = self.out(rnn_output)
-        else:
-            output = self.out(torch.cat([rnn_output, context], 2))
-        '''
+        
         return rnn_output, decoder_hidden, mask
-
-        #return output, decoder_hidden, mask
+'''
 
 
 
