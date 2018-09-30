@@ -226,24 +226,28 @@ class Decoder(nn.Module):
         all_out = []
         for k in range(l):
 
-            output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
-            if hparams['cuda'] is True: output = output.cuda()
+            #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
+            #if hparams['cuda'] is True: output = output.cuda()
 
             outputs = []
 
             decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
 
             encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
-            output = self.prune_tensor(output, 3)
+            #output = self.prune_tensor(output, 3)
 
             #print(k,decoder_hidden_x.size(),'dh', encoder_out_x.size())
 
+            output = self.embed(Variable(torch.LongTensor([EOS_token])))
+            output = self.prune_tensor(output, 3)
+
             for i in range(self.maxtokens):
                 #print(i)
-                output, decoder_hidden_x, mask = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
+                output, decoder_hidden_x, mask, out_x = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
                 #print(output.size(), decoder_hidden.size())
-                outputs.append(output)
-                output = Variable(output.data.max(dim=2)[1])
+
+                outputs.append(out_x)
+                #output = Variable(output.data.max(dim=2)[1])
                 #print(output,'out')
                 output = self.prune_tensor(output, 3)
 
@@ -262,7 +266,8 @@ class Decoder(nn.Module):
     def new_inner(self, output, encoder_out, decoder_hidden):
 
         #print(output.size(),'out at embed')
-        embedded = self.embed(output)  # (1, batch, embed_dim)
+        #embedded = self.embed(output)  # (1, batch, embed_dim)
+        embedded = output
 
         encoder_out = self.prune_tensor(encoder_out, 3)
 
@@ -312,10 +317,10 @@ class Decoder(nn.Module):
         decoder_hidden = decoder_hidden.permute(1,0,2)
 
         if self.cancel_attention:
-            output = self.out(rnn_output)
+            out_x = self.out(rnn_output)
         else:
-            output = self.out(torch.cat([rnn_output, context], 2))
-        return output, decoder_hidden, mask
+            out_x = self.out(torch.cat([rnn_output, context], 2))
+        return output, decoder_hidden, mask, out_x
 
 
 #################### Wrapper ####################
