@@ -1654,7 +1654,7 @@ class NMT:
         if self.do_load_babi and False:
             sent.append(EOS_token)
             #print(sent,'<<<<')
-        if self.do_recurrent_output and sent[-1] != EOS_token:
+        if self.do_recurrent_output and (len(sent) == 0 or sent[-1] != EOS_token):
             #sent.append(EOS_token)
             #print(sent,'<===')
             pass
