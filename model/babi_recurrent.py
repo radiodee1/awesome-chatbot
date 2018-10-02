@@ -2169,18 +2169,19 @@ class NMT:
 
             if self.do_recurrent_output:
 
-                #target_variable = torch.cat(target_variable, dim=0)
+                target_variable = torch.cat(target_variable, dim=0)
 
                 #ansx = Variable(ans.data.max(dim=2)[1])
                 ans = ans.float().permute(1,0,2).contiguous()
 
-                #ans = ans.view(-1, self.output_lang.n_words)
-                #target_variable = target_variable.view(-1)
-
+                ans = ans.view(-1, self.output_lang.n_words)
+                target_variable = target_variable.view(-1)
+                loss += criterion(ans, target_variable)
+                '''
                 for i in range(len(target_variable)):
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
-
+                '''
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
@@ -2281,10 +2282,12 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output:
+        if self.do_recurrent_output and False:
             self.criterion = nn.NLLLoss()
         else:
-            self.criterion = nn.CrossEntropyLoss() #size_average=False)
+            weight = torch.ones(self.output_lang.n_words)
+            weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+            self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
 
         training_pairs = [self.variablesFromPair(
             self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters

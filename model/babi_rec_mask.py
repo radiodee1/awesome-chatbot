@@ -2070,6 +2070,7 @@ class NMT:
         nTotal = mask.sum()
         crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)))
         #print(mask.size(),'m')
+        #crossEntropy = torch.gather(inp, 1, target.view(-1,1))
         loss = crossEntropy.masked_select(mask).mean()
         device = 'cpu'
         if hparams['cuda']: device = 'gpu'
@@ -2124,29 +2125,40 @@ class NMT:
                     #loss += some_loss
                     #print(loss)
                 else:
-                    #binary_variable = torch.cat(binary_variable, dim=0)
-                    #target_variable = torch.cat(target_variable, dim=0)
-                    #target_variable = target_variable.squeeze(2)
+                    binary_variable = torch.cat(binary_variable, dim=0)
+                    target_variable = torch.cat(target_variable, dim=0)
+                    target_variable = target_variable.squeeze(2)
 
                     #binary_variable = binary_variable.transpose(1,0)
                     #target_variable = target_variable.transpose(1,0)
                     #ans_v = ans.transpose(1,0)
+
+                    #binary_variable = binary_variable.permute(1,0)
+                    #target_variable = target_variable.permute(1,0)
+                    #ans_v = ans.permute(1,0,2)
                     ans_v = ans
                     #ans = ans.transpose(1,2)
                     #binary_variable = binary_variable.unsqueeze(2)
-
+                    print(target_variable,'ans', binary_variable.size(), ans, 'ans')
                     #k = target_variable.size()[0]
 
                     k = len(target_variable)
                     #print(ans.size(), ans_v.size())
                     #exit()
-                    for i in range(k):
-                        target_v = target_variable[i] #.squeeze(0).squeeze(1)
-                        binary_v = binary_variable[i] #.unsqueeze(1)
-                        #print(ans_v[i,:,:].size(), target_v.size())
-                        some_loss, tot = self._mask_NLLLoss(ans_v[i,:,:], target_v, binary_v)
+                    if True:
+                        for i in range(k):
+                            target_v = target_variable[i] #.squeeze(0).squeeze(1)
+                            binary_v = binary_variable[i] #.unsqueeze(1)
+                            print(ans_v[i,:,:].size(), target_v.size())
+                            some_loss, tot = self._mask_NLLLoss(ans_v[i,:,:], target_v, binary_v)
+                            loss += some_loss
+                            #loss += criterion(ans[i,:, :], target_v)
+                    else:
+                        some_loss, tot = self._mask_NLLLoss(ans.view(-1, self.output_lang.n_words),
+                                                            target_variable.view(-1),
+                                                            binary_variable.view(-1))
                         loss += some_loss
-                        #loss += criterion(ans[i,:, :], target_v)
+
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
@@ -2257,10 +2269,12 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output:
-            self.criterion = nn.NLLLoss()
+        if self.do_recurrent_output and False:
+            self.criterion = nn.NLLLoss() ##Don't use!!
         else:
-            self.criterion = nn.CrossEntropyLoss() #size_average=False)
+            weight = torch.ones(self.output_lang.n_words)
+            weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+            self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
 
         training_pairs = [self.variablesFromPair(
             self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
