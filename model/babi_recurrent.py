@@ -1138,6 +1138,7 @@ class NMT:
         self.do_no_attention = False
         self.do_simple_input = False
         self.do_print_control = False
+        self.do_skip_unk = False
         self.do_chatbot_train = False
 
         self.printable = ''
@@ -1155,6 +1156,7 @@ class NMT:
                             action='store_true')
         parser.add_argument('--load-recurrent',help='load files from "train.big" recurrent filenames', action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
+        parser.add_argument('--skip-unk', help='do not use sentences with unknown words.', action='store_true')
         parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
         parser.add_argument('--conserve-space', help='save only one file for all training epochs.',
                             action='store_true')
@@ -1267,6 +1269,7 @@ class NMT:
         if self.args['print_control'] is not None:
             self.do_print_control = True
             self.print_control_num = float(self.args['print_control'])
+        if self.args['skip_unk'] is True: self.do_skip_unk = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1597,31 +1600,40 @@ class NMT:
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
 
+            skip_count = 0
             new_pairs = []
             for p in range(len(self.pairs)):
                 #print(self.pairs[p])
+                skip = False
+
                 a = []
                 b = []
                 c = []
                 for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
-                    elif not omit_unk:
+                    elif not omit_unk or self.do_skip_unk:
                         a.append(hparams['unk'])
+                        skip = True
                 for word in self.pairs[p][1].split(' '):
                     if word in self.vocab_lang.word2index:
                         b.append(word)
-                    elif not omit_unk:
+                    elif not omit_unk or self.do_skip_unk:
                         b.append(hparams['unk'])
+                        skip = True
                 pairs = [' '.join(a), ' '.join(b)]
                 if lang3 is not None:
                     for word in self.pairs[p][2].split(' '):
                         if word in self.vocab_lang.word2index:
                             c.append(word)
-                        elif not omit_unk:
+                        elif not omit_unk or self.do_skip_unk:
                             c.append(hparams['unk'])
+                            skip = True
                     pairs.append( ' '.join(c) )
-                new_pairs.append(pairs)
+                if skip is False or not self.do_skip_unk:
+                    new_pairs.append(pairs)
+                else:
+                    skip_count += 1
             self.pairs = new_pairs
 
         else:
@@ -1632,6 +1644,7 @@ class NMT:
         print("Counted words:")
         print(self.input_lang.name, self.input_lang.n_words)
         print(self.output_lang.name, self.output_lang.n_words)
+        print('skip count', skip_count)
 
         if self.do_load_embeddings:
             print('embedding option detected.')
