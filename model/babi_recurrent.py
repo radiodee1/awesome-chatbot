@@ -1138,12 +1138,13 @@ class NMT:
         self.do_no_attention = False
         self.do_simple_input = False
         self.do_print_control = False
+        self.do_chatbot_train = False
 
         self.printable = ''
 
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
-        parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot)')
+        parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot, chatbot)')
         parser.add_argument('--printable', help='a string to print during training for identification.')
         parser.add_argument('--basename', help='base filename to use if it is different from settings file.')
         parser.add_argument('--autoencode', help='enable auto encode from the command line with a ratio.')
@@ -1191,6 +1192,9 @@ class NMT:
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
+        if self.args['mode'] == 'chatbot':
+            self.do_chatbot_train = True
+            self.do_train_long = True
         if self.args['mode'] == 'train': self.do_train = True
         if self.args['mode'] == 'infer': self.do_infer = True
         if self.args['mode'] == 'review': self.do_review = True
@@ -1438,9 +1442,10 @@ class NMT:
         lr = hparams['learning_rate']
         if num == 0:
             num = hparams['epochs']
+
         for i in range(num):
             self.this_epoch = i
-            self.printable = 'epoch #' + str(i+1)
+            self.printable = 'step #' + str(i+1)
             self.do_test_not_train = False
             #self.score = 0.0
 
@@ -1452,6 +1457,7 @@ class NMT:
             #self.first_load = True
             self.epoch_length = self.starting_epoch_length
             if self.epoch_length > len(self.pairs): self.epoch_length = len(self.pairs) - 1
+
             self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
             self.start = 0
 
@@ -2300,13 +2306,13 @@ class NMT:
         self.load_checkpoint()
 
         start = 1
-        if self.do_load_babi:
+        if self.do_load_babi  and not self.do_chatbot_train:
             self.start = 0
 
         if self.start != 0 and self.start is not None and not self.do_batch_process:
             start = self.start + 1
 
-        if self.do_load_babi and  self.do_test_not_train:
+        if self.do_load_babi and self.do_test_not_train:
 
             #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
@@ -2428,7 +2434,7 @@ class NMT:
                 print_loss_total = 0
 
                 if self._print_control(iter):
-                    print('iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
+                    print(epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
                           + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
