@@ -19,25 +19,30 @@ TRAIN=train
 VALID=valid
 TEST=test
 
+echo "usage: $0 <namespace word>"
+echo "example: $0 babi"
+echo "    this will point symbolic links to files 'train.babi.from', 'train.babi.to' , etc."
+
 
 if [ $# -eq 1 ] ; then
     echo "pointing to " $1
 
     #exit()
+BIGTRAINFROM=train.$1.from
+BIGTRAINTO=train.$1.to
+BIGTRAINQUES=train.$1.ques
 
-    if [ -f $BIGTRAINFROM ] && [ -f $BIGTRAINTO ] ; then
-        rm $TRAIN.from $TRAIN.to
-        ln -s $TRAIN.$1.from $TRAIN.from
-        ln -s $TRAIN.$1.to $TRAIN.to
-    else
-        mv $TRAIN.from $BIGTRAINFROM
-        mv $TRAIN.to $BIGTRAINTO
-        #rm $TRAIN.from $TRAIN.to
-        ln -s $TRAIN.$1.from $TRAIN.from
-        ln -s $TRAIN.$1.to $TRAIN.to
-    fi
+BIGVALFROM=valid.$1.from
+BIGVALTO=valid.$1.to
+BIGVALQUES=valid.$1.ques
 
-else
+BIGTESTFROM=test.$1.from
+BIGTESTTO=test.$1.to
+BIGTESTQUES=test.$1.ques
+
+fi
+#else
+    echo ""
     echo "changing link to large initial file! "
 
     if [ -f $BIGTRAINFROM ] && [ -f $BIGTRAINTO ] && [ -f $BIGTRAINQUES ] ; then
@@ -53,7 +58,7 @@ else
         ln -s $BIGTESTFROM $TEST.from
         ln -s $BIGTESTTO $TEST.to
         ln -s $BIGTESTQUES $TEST.ques
-        
+
 
     else
         echo "doing nothing"
@@ -64,6 +69,6 @@ else
     fi
     #ls -hal
 
-fi
-
-ls -hal $TRAIN.from $TRAIN.to $TRAIN.ques
+#fi
+echo ""
+ls -hal $TRAIN.from $TRAIN.to $TRAIN.ques $TEST.from $TEST.to $TEST.ques $VALID.from $VALID.to $VALID.ques
