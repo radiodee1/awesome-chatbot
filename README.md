@@ -18,6 +18,9 @@ The output of my first test run is promising. I think to start with I will run i
 use 50% dropout, but something closer to 30%. I can run task #1 and #19 with lower dropout if I want to later. WHAT WORKED:
 The task #1 experiment worked with the recurrent output code. The #19 tests still don't work!
 
+10/6/18 - I've completed some code that runs on hadoop and helps clean input from the reddit download. I have been
+keeping it in a separate repository. I will include a link to the github repository here: https://github.com/radiodee1/awesome-hadoop-reddit .
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
