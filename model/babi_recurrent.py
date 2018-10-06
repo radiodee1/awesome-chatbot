@@ -270,8 +270,8 @@ class CustomGRU(nn.Module):
     def forward(self, fact, C, g=None):
 
 
-        r = F.sigmoid(self.Wr(fact) + self.Ur(C))
-        h_tilda = F.tanh(self.W(fact) + r * self.U(C))
+        r = torch.sigmoid(self.Wr(fact) + self.Ur(C))
+        h_tilda = torch.tanh(self.W(fact) + r * self.U(C))
         '''
         if g is None:
             z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
@@ -326,7 +326,7 @@ class EpisodicAttn(nn.Module):
         l_1 = self.out_a(self.c_list_z)
 
 
-        l_1 = F.tanh(l_1) ## <---- this line? used to be tanh !!
+        l_1 = torch.tanh(l_1) ## <---- this line? used to be tanh !!
 
         l_2 = self.out_b( l_1)
 
@@ -1075,6 +1075,7 @@ class NMT:
         self.starting_epoch_length = 10000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
+        self.start_epoch = 0
         self.first_load = True
         self.memory_hops = 5
         self.start = 0
@@ -1187,6 +1188,7 @@ class NMT:
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
         parser.add_argument('--simple-input', help='use simple input module. No positional encoding.', action='store_true')
         parser.add_argument('--print-control', help='set print control num to space out output.')
+        parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1265,6 +1267,7 @@ class NMT:
             self.do_no_positional = True
             hparams['split_sentences'] = False
         if self.args['decoder_layers'] is not None: hparams['decoder_layers'] = int(self.args['decoder_layers'])
+        if self.args['start_epoch'] is not None: self.start_epoch = int(self.args['start_epoch'])
         if self.args['simple_input'] is True: self.do_simple_input = True
         if self.args['print_control'] is not None:
             self.do_print_control = True
@@ -1445,8 +1448,9 @@ class NMT:
         lr = hparams['learning_rate']
         if num == 0:
             num = hparams['epochs']
+        i = self.start_epoch
 
-        for i in range(num):
+        while True:
             self.this_epoch = i
             self.printable = 'step #' + str(i+1)
             self.do_test_not_train = False
@@ -1479,6 +1483,8 @@ class NMT:
                 print('-----')
                 self._show_sample()
                 print('-----')
+
+            i += 1
 
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
