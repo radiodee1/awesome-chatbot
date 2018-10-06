@@ -7,6 +7,14 @@ BIGTRAINFROM=train.big.from
 BIGTRAINTO=train.big.to
 BIGTRAINQUES=train.big.ques
 
+BIGVALFROM=valid.big.from
+BIGVALTO=valid.big.to
+BIGVALQUES=valid.big.ques
+
+BIGTESTFROM=test.big.from
+BIGTESTTO=test.big.to
+BIGTESTQUES=test.big.ques
+
 TRAIN=train
 VALID=valid
 TEST=test
@@ -33,10 +41,20 @@ else
     echo "changing link to large initial file! "
 
     if [ -f $BIGTRAINFROM ] && [ -f $BIGTRAINTO ] && [ -f $BIGTRAINQUES ] ; then
-        rm $TRAIN.from $TRAIN.to
+        rm $TRAIN.from $TRAIN.to $TRAIN.ques
         ln -s $BIGTRAINFROM $TRAIN.from
         ln -s $BIGTRAINTO $TRAIN.to
         ln -s $BIGTRAINQUES $TRAIN.ques
+        rm $VALID.from $VALID.to $VALID.ques
+        ln -s $BIGVALFROM $VALID.from
+        ln -s $BIGVALTO $VALID.to
+        ln -s $BIGVALQUES $VALID.ques
+        rm $TEST.from $TEST.to $TEST.ques
+        ln -s $BIGTESTFROM $TEST.from
+        ln -s $BIGTESTTO $TEST.to
+        ln -s $BIGTESTQUES $TEST.ques
+        
+
     else
         echo "doing nothing"
         #mv $TRAIN.from $BIGTRAINFROM
