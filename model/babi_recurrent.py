@@ -2311,7 +2311,7 @@ class NMT:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
-            
+
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
