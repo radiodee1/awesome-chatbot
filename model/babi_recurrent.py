@@ -647,7 +647,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.dropout(output_x)
 
-                output_x = F.log_softmax(output_x, dim=2)
+                output_x = F.log_softmax(output_x, dim=2) ### <<--- this line for NLLLoss !!
 
                 outputs.append(output_x)
 
