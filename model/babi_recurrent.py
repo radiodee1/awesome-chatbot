@@ -2224,6 +2224,9 @@ class NMT:
                 loss = criterion(ans, target_variable)
 
             loss.backward()
+
+            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), 50.00)
+
             wrapper_optimizer.step()
 
 
