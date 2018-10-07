@@ -2307,15 +2307,19 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output and False:
-            self.criterion = nn.NLLLoss()
+        if self.do_recurrent_output:
+            weight = torch.ones(self.output_lang.n_words)
+            weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+            self.criterion = nn.NLLLoss(weight=weight)
+            
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
 
-        training_pairs = [self.variablesFromPair(
-            self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
+        if not self.do_batch_process:
+            training_pairs = [self.variablesFromPair(
+                self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
 
         if not self.do_test_not_train:
             criterion = self.criterion
