@@ -1615,6 +1615,10 @@ class NMT:
                 a = []
                 b = []
                 c = []
+                if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                if lang3 is not None:
+                    if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
@@ -2225,7 +2229,8 @@ class NMT:
 
             loss.backward()
 
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), 50.00)
+            clip = 50.0
+            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
             wrapper_optimizer.step()
 
