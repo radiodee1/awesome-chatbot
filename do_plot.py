@@ -5,21 +5,12 @@ from __future__ import unicode_literals, print_function, division
 import sys
 sys.path.append('..')
 from io import open
-import unicodedata
-import string
-import re
-import random
 import os
-import time
-import datetime
-import math
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import argparse
 import json
-import cpuinfo
 from model.settings import hparams
-#from model import  tokenize_weak
 import glob
 
 if __name__ == '__main__':
@@ -66,10 +57,10 @@ if __name__ == '__main__':
                 for k in j:
                     sublist.append((int(k), float(j[k])))
                 sublist.sort(key=lambda tuple: tuple[0])
-                print(sublist)
+                #print(sublist)
                 arg_list.append(sublist)
 
-    print(arg_list)
+    #print(arg_list)
 
     arg_plot_color = [ 'r', 'b', 'g', 'y','c','m']
     fig, ax = plt.subplots()
