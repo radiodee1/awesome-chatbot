@@ -14,6 +14,7 @@ import time
 import datetime
 import math
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import argparse
 import json
 import cpuinfo
@@ -69,3 +70,23 @@ if __name__ == '__main__':
                 arg_list.append(sublist)
 
     print(arg_list)
+
+    arg_plot_color = [ 'r', 'b', 'g', 'y','c','m']
+    fig, ax = plt.subplots()
+    plt.ylabel('Accuracy')
+    plt.xlabel('Steps = 10,000 pairs/step')
+    plt.title('Auto-encoding')
+    handles = []
+    for i in range(len(arg_list)):
+        label_out = arg_glob_list[i].split('/')[-1]
+        color_patch = mpatches.Patch(color=arg_plot_color[i], label=label_out)
+        handles.append(color_patch)
+
+        lst_x = []
+        lst_y = []
+        for k in arg_list[i]:
+            lst_x.append(k[0])
+            lst_y.append(k[1])
+            ax.plot(lst_x, lst_y, arg_plot_color[i] + '-')
+    ax.legend(handles=handles)
+    plt.show()
