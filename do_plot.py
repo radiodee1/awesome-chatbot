@@ -66,7 +66,7 @@ if __name__ == '__main__':
     fig, ax = plt.subplots()
     plt.ylabel('Accuracy')
     plt.xlabel('Steps = 10,000 pairs/step')
-    plt.title('Auto-encoding')
+    plt.title(arg_title)
     handles = []
     for i in range(len(arg_list)):
         label_out = arg_glob_list[i].split('/')[-1]
