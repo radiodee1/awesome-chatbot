@@ -1844,7 +1844,7 @@ class NMT:
             torch.save(state,basename+ '.best.pth')
             #####
             if len(self.score_list) > 0 or True:
-                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.this_epoch) * self.epoch_length)] = str(self.score)
+                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.epoch_length)] = str(self.score)
                 print('offset',self.best_accuracy_record_offset, ', epoch', self.this_epoch)
                 self.update_json_file()
             #####
@@ -2421,7 +2421,7 @@ class NMT:
                                             None, None, criterion)
             num_count += 1
 
-            if self.do_recurrent_output and self.do_load_babi:
+            if self.do_recurrent_output and self.do_load_babi: # and  self.do_sample_on_screen:
                 ans = ans.permute(1,0)
                 ans = torch.argmax(ans,dim=1)
                 for ii in range(len(target_variable)):
@@ -2456,7 +2456,7 @@ class NMT:
 
                 self.score = float(num_right / num_tot) * 100
 
-            if self.do_load_babi and not self.do_recurrent_output:
+            if self.do_load_babi and not self.do_recurrent_output : #and  self.do_sample_on_screen:
 
                 for i in range(len(target_variable)):
                     #print(ans[i].size())
