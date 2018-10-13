@@ -1364,7 +1364,7 @@ class NMT:
             torch.save(state,basename+ '.best.pth')
             #####
             if self.do_test_not_train:
-                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.epoch_length)] = str(self.score)
+                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = str(self.score)
                 print('offset', self.best_accuracy_record_offset, ', epoch', self.this_epoch)
                 self.update_json_file()
             #####
