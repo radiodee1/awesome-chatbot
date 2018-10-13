@@ -65,7 +65,7 @@ if __name__ == '__main__':
     arg_plot_color = [ 'r', 'b', 'g', 'y','c','m']
     fig, ax = plt.subplots()
     plt.ylabel('Accuracy')
-    plt.xlabel('Steps = 10,000 pairs/step')
+    plt.xlabel('Sentence Pairs')
     plt.title(arg_title)
     handles = []
     for i in range(len(arg_list)):
