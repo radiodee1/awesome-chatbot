@@ -562,6 +562,8 @@ class NMT:
         self.lr_increment = self.lr_low / 4.0
         self.best_accuracy = None
         self.best_accuracy_old = None
+        self.best_accuracy_dict = {}
+        self.best_accuracy_record_offset = 0
         self.record_threshold = 95.00
         self._recipe_switching = 0
         self._highest_validation_for_quit = 0
@@ -652,6 +654,8 @@ class NMT:
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
+        parser.add_argument('--json-record-offset', help='starting record number for json file')
+
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -659,6 +663,8 @@ class NMT:
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
+        if self.args['mode'] is None or self.args['mode'] not in ['train', 'infer', 'review', 'long', 'interactive', 'plot']:
+            self.args['mode'] = 'long'
         if self.args['mode'] == 'train': self.do_train = True
         if self.args['mode'] == 'infer': self.do_infer = True
         if self.args['mode'] == 'review': self.do_review = True
@@ -732,6 +738,8 @@ class NMT:
         if self.args['start_epoch'] is not None: self.start_epoch = int(self.args['start_epoch'])
         if self.args['no_attention'] is not False: self.do_no_attention = True
         if self.args['skip_unk'] is not False: self.do_skip_unk = True
+        if self.args['json_record_offset'] is not None:
+            self.best_accuracy_record_offset = int(self.args['json_record_offset'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -741,6 +749,8 @@ class NMT:
         if self.args['lr_adjust'] is not None:
             self.lr_adjustment_num = int(self.args['lr_adjust'])
             hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
+
+        self.read_json_file()
 
     def task_choose_files(self, mode=None):
         if mode is None:
@@ -1105,6 +1115,11 @@ class NMT:
                 c = []
 
                 skip = False
+
+                if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                if lang3 is not None:
+                    if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index:
                         a.append(word)
@@ -1344,9 +1359,15 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
-        if self.do_load_babi or self.do_conserve_space:
+        if self.do_load_babi or self.do_conserve_space or self.do_train_long or self.do_recurrent_output:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
+            #####
+            if len(self.score_list) > 0 or True:
+                self.best_accuracy_dict[str(self.best_accuracy_record_offset + self.this_epoch)] = str(self.score)
+                print('offset', self.best_accuracy_record_offset, ', epoch', self.this_epoch)
+                self.update_json_file()
+            #####
             #if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
             if ((self.best_accuracy_old is None and self.best_accuracy is not None) or
                     (self.best_accuracy_old is not None and self.best_accuracy >= self.best_accuracy_old)):
@@ -1354,6 +1375,7 @@ class NMT:
                 if os.path.isfile(update):
                     os.remove(update)
                 torch.save(state, update)
+
                 self.best_accuracy_old = self.best_accuracy
             return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
@@ -2282,6 +2304,21 @@ class NMT:
         f.close()
         print('\nsee file:', basename, '\n')
         pass
+
+    def update_json_file(self):
+        basename = hparams['save_dir'] + hparams['base_filename'] + '.json'
+        if len(self.best_accuracy_dict) > 0:
+            with open(basename, 'w') as z:
+                z.write(json.dumps(self.best_accuracy_dict))
+            z.close()
+
+    def read_json_file(self):
+        basename = hparams['save_dir'] + hparams['base_filename'] + '.json'
+        if os.path.isfile(basename):
+            with open(basename) as z:
+                json_data = json.load(z)
+            self.best_accuracy_dict = json_data # json.loads(json_data)
+
 
 if __name__ == '__main__':
 

@@ -1199,6 +1199,8 @@ class NMT:
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
+        if self.args['mode'] is None or self.args['mode'] not in ['train', 'infer', 'review', 'long', 'interactive', 'plot']:
+            self.args['mode'] = 'long'
         if self.args['mode'] == 'chatbot':
             self.do_chatbot_train = True
             self.do_train_long = True
@@ -1837,7 +1839,7 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
-        if self.do_load_babi or self.do_conserve_space:
+        if self.do_load_babi or self.do_conserve_space :
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
             #####
