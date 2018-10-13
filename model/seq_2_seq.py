@@ -535,7 +535,7 @@ class NMT:
 
         self.print_every = hparams['steps_to_stats']
         self.epoch_length = 1000
-        self.starting_epoch_length = 1000
+        self.starting_epoch_length = self.epoch_length #1000
         self.epochs = hparams['epochs']
         self.hidden_size = hparams['units']
         self.start_epoch = 0
