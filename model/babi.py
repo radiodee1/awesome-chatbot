@@ -874,6 +874,7 @@ class NMT:
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
+        if self.args['mode'] is None: self.do_train_long = True
         if self.args['mode'] == 'train': self.do_train = True
         if self.args['mode'] == 'infer': self.do_infer = True
         if self.args['mode'] == 'review': self.do_review = True

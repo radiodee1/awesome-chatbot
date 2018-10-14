@@ -139,7 +139,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 ################# pytorch modules ###############
 
-'''
+
 class LuongAttention(nn.Module):
     
     ## LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
@@ -245,8 +245,6 @@ class Decoder(nn.Module):
 
         
         return rnn_output, decoder_hidden, mask
-'''
-
 
 
 class CustomGRU(nn.Module):
@@ -559,7 +557,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output = recurrent_output
         self.sol_token = sol_token
-        self.decoder_layers = 1 # hparams['decoder_layers']
+        self.decoder_layers = 2 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
         self.embed = embed
         out_size = vocab_size
@@ -578,7 +576,8 @@ class AnswerModule(nn.Module):
         self.dropout_b = nn.Dropout(dropout * 0.5)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        self.decoder = None #nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        self.decoder_w_attn = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
 
     def reset_parameters(self):
 
@@ -633,13 +632,17 @@ class AnswerModule(nn.Module):
             output = self.embed(Variable(torch.tensor([EOS_token])))
             output = self.prune_tensor(output, 3)
             #output = F.tanh(output)
-            ##########################################
+            ##############################################
 
             for i in range(self.maxtokens):
 
                 #decoder_hidden = self.dropout_hidden(decoder_hidden)
 
-                output, decoder_hidden = self.decoder(output, decoder_hidden)
+                if self.decoder_w_attn is not None:
+                    output, decoder_hidden, mask = self.decoder_w_attn(output, output, decoder_hidden)
+                    pass
+                else:
+                    output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #output = self.dropout_b(output)
 
@@ -716,7 +719,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = None
 
         if simple_input:
-            self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 1, dropout=dropout,
+            self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 2, dropout=dropout,
                                    embedding=self.embed, bidirectional=True, position=position,
                                    batch_first=True)
         else:
