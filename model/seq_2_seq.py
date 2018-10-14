@@ -555,6 +555,8 @@ class NMT:
         self.time_elapsed_str = ''
         self._skipped = 0
 
+        self.print_control_num = 0
+
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
         self.lr_adjustment_num = 0
@@ -605,9 +607,9 @@ class NMT:
         self.do_no_attention = False
         self.do_skip_unk = False
         self.do_autoencode_words = False
+        self.do_print_control = False
 
         self.printable = ''
-
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
         parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot)')
@@ -653,9 +655,9 @@ class NMT:
         parser.add_argument('--no-split-sentences', help='do not do positional encoding on input', action='store_true')
         parser.add_argument('--decoder-layers', help='number of layers in the recurrent output decoder (1 or 2)')
         parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
+        parser.add_argument('--print-control', help='set print control num to space out output.')
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
         parser.add_argument('--json-record-offset', help='starting record number for json file')
-
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -738,6 +740,9 @@ class NMT:
         if self.args['start_epoch'] is not None: self.start_epoch = int(self.args['start_epoch'])
         if self.args['no_attention'] is not False: self.do_no_attention = True
         if self.args['skip_unk'] is not False: self.do_skip_unk = True
+        if self.args['print_control'] is not None:
+            self.do_print_control = True
+            self.print_control_num = float(self.args['print_control'])
         if self.args['json_record_offset'] is not None:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
         if self.printable == '': self.printable = hparams['base_filename']
@@ -1628,6 +1633,14 @@ class NMT:
         self.model_0_wra.test_embedding(num)
         if exit: exit()
 
+    def _print_control(self, iter):
+        if self.do_print_control:
+            if iter == 0: return True
+            if iter % self.print_control_num == 0: return True
+        else:
+            return True
+        return False
+
     def _as_minutes(self,s):
         m = math.floor(s / 60)
         s -= m * 60
@@ -2258,7 +2271,7 @@ class NMT:
 
     def update_result_file(self):
 
-        self._test_embedding(exit=False)
+        #self._test_embedding(exit=False)
 
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()

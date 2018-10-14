@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="171" />
+          <entry key="project.closed" value="172" />
           <entry key="project.open.time.0" value="1" />
           <entry key="project.open.time.1" value="1" />
           <entry key="project.open.time.10" value="6" />
@@ -27,18 +27,18 @@
           <entry key="project.open.time.3" value="7" />
           <entry key="project.open.time.4" value="49" />
           <entry key="project.open.time.5" value="17" />
-          <entry key="project.open.time.6" value="38" />
+          <entry key="project.open.time.6" value="39" />
           <entry key="project.open.time.7" value="27" />
           <entry key="project.open.time.8" value="11" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="172" />
+          <entry key="project.opened" value="173" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="29288" />
+          <entry key="py" value="29296" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -48,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="29288" />
+          <entry key="Python" value="29296" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -71,11 +71,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="1473" column="28" selection-start-line="1473" selection-start-column="17" selection-end-line="1473" selection-end-column="28" />
+            <state relative-caret-position="316">
+              <caret line="2107" column="20" lean-forward="true" selection-start-line="2101" selection-start-column="4" selection-end-line="2107" selection-end-column="20" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -86,7 +86,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_plot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
+            <state relative-caret-position="594">
               <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
               <folding>
                 <element signature="e#22#87#0" expanded="true" />
@@ -134,11 +134,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="1366" column="126" selection-start-line="1366" selection-start-column="126" selection-end-line="1366" selection-end-column="126" />
+            <state relative-caret-position="406">
+              <caret line="1641" column="20" selection-start-line="1641" selection-start-column="20" selection-end-line="1641" selection-end-column="20" />
             </state>
           </provider>
         </entry>
@@ -154,8 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>epoch_start</find>
-      <find>start_epoch</find>
       <find>tanh</find>
       <find>NLLLoss</find>
       <find>_make_optimizer</find>
@@ -184,6 +182,8 @@
       <find>self.score</find>
       <find>epoch_length</find>
       <find>epoch_lengt</find>
+      <find>print-control</find>
+      <find>print_control_num</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -241,8 +241,8 @@
         <option value="$PROJECT_DIR$/do_make_rename_train_valid_test.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/do_plot.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
       </list>
     </option>
   </component>
@@ -540,9 +540,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="5094">
           <caret line="292" selection-start-line="292" selection-end-line="292" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -558,7 +555,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/do_plot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
+        <state relative-caret-position="594">
           <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
           <folding>
             <element signature="e#22#87#0" expanded="true" />
@@ -597,20 +594,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="1366" column="126" selection-start-line="1366" selection-start-column="126" selection-end-line="1366" selection-end-column="126" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="1473" column="28" selection-start-line="1473" selection-start-column="17" selection-end-line="1473" selection-end-column="28" />
+        <state relative-caret-position="316">
+          <caret line="2107" column="20" lean-forward="true" selection-start-line="2101" selection-start-column="4" selection-end-line="2107" selection-end-column="20" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="406">
+          <caret line="1641" column="20" selection-start-line="1641" selection-start-column="20" selection-end-line="1641" selection-end-column="20" />
         </state>
       </provider>
     </entry>
