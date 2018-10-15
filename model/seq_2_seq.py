@@ -579,6 +579,9 @@ class NMT:
         self.train_ques = None
         self.pairs = []
 
+        self.pairs_train = []
+        self.pairs_valid = []
+
         self.do_train = False
         self.do_infer = False
         self.do_review = False
@@ -608,6 +611,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_autoencode_words = False
         self.do_print_control = False
+        self.do_load_once = True
 
         self.printable = ''
 
@@ -1079,6 +1083,9 @@ class NMT:
 
     def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False, skip_unk=False):
         ''' NOTE: pairs switch from train to embedding all the time. '''
+
+        if self.do_load_once and len(self.pairs_train) is not 0 and len(self.pairs_valid) is not 0:
+            return self.input_lang, self.output_lang, self.pairs
 
         if hparams['vocab_name'] is not None:
             v_name = hparams['data_dir'] + hparams['vocab_name']
@@ -2195,7 +2202,13 @@ class NMT:
         if self.do_skip_validation:
             self.score_list.append('00.00')
             return
-        #self.task_babi_valid_files()
+        if self.do_load_once:
+            self.pairs_train = self.pairs
+            if len(self.pairs_valid) > 0:
+                self.pairs = self.pairs_valid
+            if self.epoch_length > len(self.pairs):
+                self.epoch_length = len(self.pairs)
+            #print('load once', len(self.pairs))
         mode = 'valid'
         self.task_choose_files(mode=mode)
         self.printable = 'validate'
@@ -2212,7 +2225,9 @@ class NMT:
         if len(self.score_list) > 0 and float(self.score_list[-1]) >= self.record_threshold: #100.00:
             self.best_accuracy = float(self.score_list[-1])
             self.save_checkpoint(num=len(self.pairs))
-
+        if self.do_load_once:
+            self.pairs_valid = self.pairs
+            self.pairs = self.pairs_train
         pass
 
     def setup_for_interactive(self):
@@ -2271,7 +2286,7 @@ class NMT:
 
     def update_result_file(self):
 
-        #self._test_embedding(exit=False)
+        self._test_embedding(exit=False)
 
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
