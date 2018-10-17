@@ -131,7 +131,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 
 #hparams['teacher_forcing_ratio'] = 0.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
-hparams['layers'] = 1
+hparams['layers'] = 2
 hparams['pytorch_embed_size'] = hparams['units']
 #hparams['dropout'] = 0.3
 
@@ -146,14 +146,14 @@ class Encoder(nn.Module):
         self.embed = embed# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
 
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=True, batch_first=True)
+        self.dropout = nn.Dropout(dropout)
 
     def load_embedding(self, embedding):
         self.embed = embedding
 
-
-
     def forward(self, source, hidden=None):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        embedded = self.dropout(embedded)
         #print(embedded.size(),'emb')
         encoder_out, encoder_hidden = self.gru(embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         # sum bidirectional outputs, the other option is to retain concat features
@@ -194,17 +194,20 @@ class Decoder(nn.Module):
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = LuongAttention(hidden_dim)
 
-        gru_in_dim = embed_dim + hidden_dim
+        gru_in_dim = hidden_dim
         linear_in_dim = hidden_dim * 2
         if cancel_attention:
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
-        self.out = nn.Linear(linear_in_dim, target_vocab_size)
+        self.out = nn.Linear(hidden_dim, target_vocab_size)
+        self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
+        self.dropout_o = nn.Dropout(dropout)
+        self.dropout_e = nn.Dropout(dropout)
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -235,10 +238,11 @@ class Decoder(nn.Module):
 
             encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
             #output = self.prune_tensor(output, 3)
+            #print(encoder_out_x.size(), 'eo')
 
             #print(k,decoder_hidden_x.size(),'dh', encoder_out_x.size())
 
-            output = self.embed(Variable(torch.LongTensor([EOS_token])))
+            output = Variable(torch.LongTensor([EOS_token]))
             output = self.prune_tensor(output, 3)
 
             for i in range(self.maxtokens):
@@ -246,11 +250,13 @@ class Decoder(nn.Module):
                 output, decoder_hidden_x, mask, out_x = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
                 #print(output.size(), decoder_hidden.size())
 
+                #out_x = F.log_softmax(out_x, dim=2)
                 outputs.append(out_x)
                 #output = Variable(output.data.max(dim=2)[1])
                 #print(output,'out')
                 output = self.prune_tensor(output, 3)
-
+                output = torch.argmax(output, dim=2)
+                #print(output,'o')
 
             some_out = torch.cat(outputs, dim=0)
             #print(some_out.size(),'some cat')
@@ -266,60 +272,51 @@ class Decoder(nn.Module):
     def new_inner(self, output, encoder_out, decoder_hidden):
 
         #print(output.size(),'out at embed')
-        #embedded = self.embed(output)  # (1, batch, embed_dim)
-        embedded = output
+        embedded = self.embed(output)  # (1, batch, embed_dim)
+        embedded = self.prune_tensor(embedded, 3)
+        embedded = self.dropout_e(embedded)
+
+        ## CHANGE HIDDEN STATE HERE ##
+        decoder_hidden = decoder_hidden[:, :self.n_layers].permute(1, 0, 2)
 
         encoder_out = self.prune_tensor(encoder_out, 3)
 
+        rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
+        #print(decoder_hidden.size(),'dh3')
+
         if not self.cancel_attention:
 
-            decoder_hidden_y = decoder_hidden[:, 0, :]
-            for i in range(1,decoder_hidden.size()[1]):
-                decoder_hidden_y = decoder_hidden_y + decoder_hidden[:,i,:]
-
-            decoder_hidden_y = decoder_hidden_y.unsqueeze(1)
-
-            context, mask = self.attention(decoder_hidden_y[:,-1:], encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context, mask = self.attention(rnn_output, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
             context = context.permute(1, 0, 2)
         else:
             context = None
             mask = None
 
-        embedded = self.prune_tensor(embedded,3)
-
-        ## CHANGE HIDDEN STATE HERE ##
-        if decoder_hidden.size()[1] == 4:
-            #assert decoder_hidden[:, -2:] != decoder_hidden[:,:2]
-            self.decoder_hidden_z = decoder_hidden[:,-2:] + decoder_hidden[:,:2]
-            decoder_hidden = self.decoder_hidden_z #.permute(1,0,2)
-            #print(decoder_hidden.size(),'dh2')
-
-        decoder_hidden = decoder_hidden[:,-self.n_layers:].permute(1,0,2)
-
-        #context = context.permute(1,0,2)
-
         if not self.cancel_attention:
             concat_list = [
-                embedded,
-                context
+                rnn_output,
+                context #[0,:,:].unsqueeze(0)
             ]
             #for i in concat_list: print(i.size(), self.n_layers)
             #exit()
 
-            gru_in = torch.cat(concat_list, dim=2) #dim=2
+            attn_out = torch.cat(concat_list, dim=2) #dim=2
+            attn_out = torch.tanh(self.concat_out(attn_out))
         else:
-            gru_in = embedded
+            attn_out = rnn_output
 
-        #gru_in = gru_in.contiguous()
         decoder_hidden = decoder_hidden.contiguous()
-
-        rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
         decoder_hidden = decoder_hidden.permute(1,0,2)
 
         if self.cancel_attention:
-            out_x = self.out(rnn_output)
+            out_x = self.out(attn_out)
+            out_x = self.dropout_o(out_x)
         else:
-            out_x = self.out(torch.cat([rnn_output, context], 2))
+            attn_out = self.dropout_o(attn_out)
+            out_x = self.out(attn_out) #torch.cat([rnn_output, context], 2))
+            out_x = F.softmax(out_x, dim=2)
+            output = out_x.clone()
+            #print(output.size(), out_x.size(),'o,o')
         return output, decoder_hidden, mask, out_x
 
 
@@ -1860,8 +1857,10 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        #self.criterion = nn.NLLLoss()
-        self.criterion = nn.CrossEntropyLoss() #size_average=False)
+        weight = torch.ones(self.output_lang.n_words)
+        weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+        self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
+        #self.criterion = nn.NLLLoss(weight=weight)
 
 
         if not self.do_test_not_train:
