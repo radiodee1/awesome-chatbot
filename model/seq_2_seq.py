@@ -310,34 +310,11 @@ class Decoder(nn.Module):
             out_x = self.out(attn_out)
             out_x = self.dropout_o(out_x)
 
-        '''
-        if not self.cancel_attention:
-            concat_list = [
-                rnn_output,
-                context #[0,:,:].unsqueeze(0)
-            ]
-            #for i in concat_list: print(i.size(), self.n_layers)
-            #exit()
 
-            attn_out = torch.cat(concat_list, dim=2) #dim=2
-            attn_out = torch.tanh(self.concat_out(attn_out))
-        else:
-            attn_out = rnn_output
-        '''
         decoder_hidden = decoder_hidden.contiguous()
         decoder_hidden = decoder_hidden.permute(1,0,2)
 
-        '''
-        if self.cancel_attention:
-            out_x = self.out(attn_out)
-            out_x = self.dropout_o(out_x)
-        else:
-            attn_out = self.dropout_o(attn_out)
-            out_x = self.out(attn_out) #torch.cat([rnn_output, context], 2))
-            out_x = F.softmax(out_x, dim=2)
-            output = out_x.clone()
-            #print(output.size(), out_x.size(),'o,o')
-        '''
+        
         return output, decoder_hidden, mask, out_x
 
 
