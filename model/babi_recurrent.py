@@ -602,9 +602,7 @@ class AnswerModule(nn.Module):
         self.embed = embed
 
     def recurrent(self, out):
-        #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
-        #if hparams['cuda'] is True: output = output.cuda()
-
+        
         out = F.relu(out)
 
         l, hid = out.size()
@@ -622,12 +620,7 @@ class AnswerModule(nn.Module):
 
             outputs = []
             decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
-            #decoder_hidden = Variable(torch.zeros(2,1,self.hidden_size))
-            #encoder_out = self.prune_tensor(e_out,3).permute(1,0,2)
 
-            #output = self.prune_tensor(out[k,:], 3)
-
-            #output = Variable(torch.zeros(1,1,self.hidden_size))
 
             output = self.embed(Variable(torch.tensor([EOS_token])))
             output = self.prune_tensor(output, 3)
@@ -664,8 +657,6 @@ class AnswerModule(nn.Module):
 
         val_out = torch.cat(all_out, dim=1)
 
-        #print(val_out.size(),'val out')
-        #val_out = self.dropout(val_out)
 
         return val_out
 
@@ -804,10 +795,6 @@ class WrapMemRNN(nn.Module):
         pass
 
     def test_embedding(self, num=None):
-        #print('encoder 1:')
-        #self.model_1_enc.test_embedding(num)
-        #print('encoder 2:')
-        #self.model_2_enc.test_embedding(num)
 
         if num is None:
             num = 55  # magic number for testing = garden
@@ -922,15 +909,12 @@ class WrapMemRNN(nn.Module):
             self.prune_tensor(out, 1),
             self.prune_tensor(question,1)#[0, q_index, :], 1)
         ]
-        #print(question.size(),sen,'ques')
         #for i in concat: print(i.size())
         #exit()
 
         concat = torch.cat(concat, dim=0)
         h = self.next_mem(concat)
-        #print(h.size(),'con')
 
-        #h = F.relu(h)
 
         if self.recurrent_output and not hparams['split_sentences'] and False:
             #h = out
@@ -945,11 +929,7 @@ class WrapMemRNN(nn.Module):
         q_q = self.prune_tensor(q_q,3)
         mem = self.prune_tensor(mem,3)
 
-        #assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
-
-
-        #print(q_q.size(), sen,'len q')
 
         att = []
         for iii in range(sen):
@@ -958,9 +938,6 @@ class WrapMemRNN(nn.Module):
 
             qq = self.prune_tensor(q_q, 3)
 
-            #qq_single = qq[:,-1, self.hidden_size:]
-
-            #qq = qq[:,-1,:].unsqueeze(0)
 
             concat_list = [
                 #c,
@@ -982,13 +959,7 @@ class WrapMemRNN(nn.Module):
         att = torch.cat(att, dim=0)
 
         z = self.model_4_att(att)
-        #print(z.size())
-        '''
-        if self.recurrent_output:
-            z = F.sigmoid(z)
-        else:
-            pass
-        '''
+
         z = F.softmax(z, dim=0) # <--- use this!!
 
         return z
@@ -1005,23 +976,14 @@ class WrapMemRNN(nn.Module):
     def wrap_answer_module_simple(self):
         #outputs
 
-        ## if not all questions are the same size ##
-        #q = [i[:,-1,:] for i in self.q_q]
-        #for i in q: print(i.size())
         q = self.q_q_last
 
         q_q = torch.cat(q, dim=0)
         q_q = self.prune_tensor(q_q, 3)
 
-        #print(self.last_mem.size(), q_q.size(),'qq')
-
         mem = self.prune_tensor(self.last_mem, 3)
 
         ansx = self.model_5_ans(mem, q_q)
-
-
-        #ans = torch.argmax(ansx,dim=1)#[0]
-
 
         return [None], ansx
 
