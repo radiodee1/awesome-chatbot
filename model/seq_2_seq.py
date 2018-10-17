@@ -229,39 +229,28 @@ class Decoder(nn.Module):
         all_out = []
         for k in range(l):
 
-            #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
-            #if hparams['cuda'] is True: output = output.cuda()
-
             outputs = []
 
             decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
 
             encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
-            #output = self.prune_tensor(output, 3)
-            #print(encoder_out_x.size(), 'eo')
 
-            #print(k,decoder_hidden_x.size(),'dh', encoder_out_x.size())
 
             output = Variable(torch.LongTensor([EOS_token]))
             output = self.prune_tensor(output, 3)
 
             for i in range(self.maxtokens):
-                #print(i)
-                output, decoder_hidden_x, mask, out_x = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
-                #print(output.size(), decoder_hidden.size())
 
-                #out_x = F.log_softmax(out_x, dim=2)
+                output, decoder_hidden_x, mask, out_x = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
+
                 outputs.append(out_x)
-                #output = Variable(output.data.max(dim=2)[1])
-                #print(output,'out')
+
                 output = self.prune_tensor(output, 3)
                 output = torch.argmax(output, dim=2)
-                #print(output,'o')
 
             some_out = torch.cat(outputs, dim=0)
-            #print(some_out.size(),'some cat')
+
             all_out.append(some_out)
-            #print(len(outputs), len(all_out))
 
         val_out = torch.cat(all_out, dim=1)
 
@@ -271,7 +260,6 @@ class Decoder(nn.Module):
 
     def new_inner(self, output, encoder_out, decoder_hidden):
 
-        #print(output.size(),'out at embed')
         embedded = self.embed(output)  # (1, batch, embed_dim)
         embedded = self.prune_tensor(embedded, 3)
         embedded = self.dropout_e(embedded)
@@ -282,7 +270,6 @@ class Decoder(nn.Module):
         encoder_out = self.prune_tensor(encoder_out, 3)
 
         rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
-        #print(decoder_hidden.size(),'dh3')
 
         if not self.cancel_attention:
 
@@ -291,7 +278,7 @@ class Decoder(nn.Module):
 
             concat_list = [
                 rnn_output,
-                context  # [0,:,:].unsqueeze(0)
+                context
             ]
             # for i in concat_list: print(i.size(), self.n_layers)
             # exit()
@@ -310,11 +297,9 @@ class Decoder(nn.Module):
             out_x = self.out(attn_out)
             out_x = self.dropout_o(out_x)
 
-
         decoder_hidden = decoder_hidden.contiguous()
         decoder_hidden = decoder_hidden.permute(1,0,2)
 
-        
         return output, decoder_hidden, mask, out_x
 
 
