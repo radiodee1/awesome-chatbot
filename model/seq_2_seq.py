@@ -288,10 +288,29 @@ class Decoder(nn.Module):
 
             context, mask = self.attention(rnn_output, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
             context = context.permute(1, 0, 2)
+
+            concat_list = [
+                rnn_output,
+                context  # [0,:,:].unsqueeze(0)
+            ]
+            # for i in concat_list: print(i.size(), self.n_layers)
+            # exit()
+
+            attn_out = torch.cat(concat_list, dim=2)  # dim=2
+            attn_out = torch.tanh(self.concat_out(attn_out))
+
+            attn_out = self.dropout_o(attn_out)
+            out_x = self.out(attn_out)  # torch.cat([rnn_output, context], 2))
+            out_x = F.softmax(out_x, dim=2)
+            output = out_x.clone()
         else:
             context = None
             mask = None
+            attn_out = rnn_output
+            out_x = self.out(attn_out)
+            out_x = self.dropout_o(out_x)
 
+        '''
         if not self.cancel_attention:
             concat_list = [
                 rnn_output,
@@ -304,10 +323,11 @@ class Decoder(nn.Module):
             attn_out = torch.tanh(self.concat_out(attn_out))
         else:
             attn_out = rnn_output
-
+        '''
         decoder_hidden = decoder_hidden.contiguous()
         decoder_hidden = decoder_hidden.permute(1,0,2)
 
+        '''
         if self.cancel_attention:
             out_x = self.out(attn_out)
             out_x = self.dropout_o(out_x)
@@ -317,6 +337,7 @@ class Decoder(nn.Module):
             out_x = F.softmax(out_x, dim=2)
             output = out_x.clone()
             #print(output.size(), out_x.size(),'o,o')
+        '''
         return output, decoder_hidden, mask, out_x
 
 
