@@ -760,7 +760,7 @@ class WrapMemRNN(nn.Module):
         self.share_embedding()
 
         if self.freeze_embedding or self.embedding is not None:
-            self.new_freeze_embedding()
+            self.wrap_freeze_embedding()
         #self.criterion = nn.CrossEntropyLoss()
 
         pass
@@ -789,13 +789,13 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
-        self.new_input_module(input_variable, question_variable)
-        self.new_episodic_module()
-        outputs,  ans = self.new_answer_module_simple()
+        self.wrap_input_module(input_variable, question_variable)
+        self.wrap_episodic_module()
+        outputs,  ans = self.wrap_answer_module_simple()
 
         return outputs, None, ans, None
 
-    def new_freeze_embedding(self, do_freeze=True):
+    def wrap_freeze_embedding(self, do_freeze=True):
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
         self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
@@ -816,7 +816,7 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def new_input_module(self, input_variable, question_variable):
+    def wrap_input_module(self, input_variable, question_variable):
 
         prev_h1 = []
 
@@ -852,7 +852,7 @@ class WrapMemRNN(nn.Module):
         return
 
 
-    def new_episodic_module(self):
+    def wrap_episodic_module(self):
         if True:
 
             mem_list = []
@@ -873,12 +873,12 @@ class WrapMemRNN(nn.Module):
                     if len(m_list) is 1 : mem_last = m_list[index]
                     else: mem_last = F.relu(m_list[index])
 
-                    x = self.new_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
+                    x = self.wrap_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
                     #print( x.size(), len(self.inp_c_seq),self.inp_c_seq[0].size(),'info')
 
 
-                    e, _ = self.new_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
+                    e, _ = self.wrap_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
                     out = self.prune_tensor(e, 3)
 
@@ -894,7 +894,7 @@ class WrapMemRNN(nn.Module):
 
         return None
 
-    def new_episode_small_step(self, ct, g, prev_h, prev_mem=None, question=None):
+    def wrap_episode_small_step(self, ct, g, prev_h, prev_mem=None, question=None):
 
         #assert len(ct.size()) == 3
         bat, sen, emb = ct.size()
@@ -940,7 +940,7 @@ class WrapMemRNN(nn.Module):
 
 
 
-    def new_attention_step(self, ct, prev_g, mem, q_q):
+    def wrap_attention_step(self, ct, prev_g, mem, q_q):
 
         q_q = self.prune_tensor(q_q,3)
         mem = self.prune_tensor(mem,3)
@@ -1002,7 +1002,7 @@ class WrapMemRNN(nn.Module):
             input = input.squeeze(0)
         return input
 
-    def new_answer_module_simple(self):
+    def wrap_answer_module_simple(self):
         #outputs
 
         ## if not all questions are the same size ##
@@ -1925,9 +1925,9 @@ class NMT:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
                     self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
-                    self.model_0_wra.new_freeze_embedding()
+                    self.model_0_wra.wrap_freeze_embedding()
                 else:
-                    self.model_0_wra.new_freeze_embedding(do_freeze=False)
+                    self.model_0_wra.wrap_freeze_embedding(do_freeze=False)
                 if self.opt_1 is not None:
                     #####
                     try:

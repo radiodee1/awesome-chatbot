@@ -391,7 +391,7 @@ class WrapMemRNN(nn.Module):
 
         #print(len(question_variable), 'len')
 
-        question_variable, hidden = self.new_question_module(question_variable)
+        question_variable, hidden = self.wrap_question_module(question_variable)
         #print(question_variable.size(), hidden.size())
 
         question_variable = self.prune_tensor(question_variable,3)
@@ -434,9 +434,7 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-
-
-    def new_question_module(self, question_variable):
+    def wrap_question_module(self, question_variable):
 
         prev_h2 = []
         prev_h3 = []
