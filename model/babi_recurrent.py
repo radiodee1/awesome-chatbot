@@ -602,7 +602,7 @@ class AnswerModule(nn.Module):
         self.embed = embed
 
     def recurrent(self, out):
-        
+
         out = F.relu(out)
 
         l, hid = out.size()

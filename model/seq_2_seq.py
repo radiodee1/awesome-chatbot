@@ -1952,11 +1952,12 @@ class NMT:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
 
-                print('iter = '+str(iter)+ ', num of iters = '+str(n_iters)
-                      + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
-                      + ', low loss = %.6f' % self.long_term_loss, end=' ')
+                if self._print_control(iter):
+                    print('iter = '+str(iter)+ ', num of iters = '+str(n_iters)
+                          + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
+                          + ', low loss = %.6f' % self.long_term_loss, end=' ')
 
-                print()
+                    print()
 
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
@@ -1983,14 +1984,16 @@ class NMT:
                         print('skip save!')
                 self.time_elapsed_str = self._time_since(self.time_num)
                 self.time_elapsed_num = time.time()
-                print('(%d %d%%) %.6f loss' % (iter, (iter - epoch_start) / self.epoch_length * 100, print_loss_avg),self.time_elapsed_str, end=' ')
-                if self.do_batch_process: print('- batch-size', temp_batch_size, end=' ')
-                if self.do_auto_stop: print('- count', self._count_epochs_for_quit)
-                else: print('')
+
+                if self._print_control(iter):
+                    print('(%d %d%%) %.6f loss' % (iter, (iter - epoch_start) / self.epoch_length * 100, print_loss_avg),self.time_elapsed_str, end=' ')
+                    if self.do_batch_process: print('- batch-size', temp_batch_size, end=' ')
+                    if self.do_auto_stop: print('- count', self._count_epochs_for_quit)
+                    else: print('')
 
                 #print(epoch_start, iter, temp_batch_size, epoch_stop)
 
-                if not self.do_skip_validation and self.do_sample_on_screen: # and temp_batch_size > 0 and epoch_start + iter < epoch_stop:
+                if not self.do_skip_validation and self.do_sample_on_screen and self._print_control(iter): # and temp_batch_size > 0 and epoch_start + iter < epoch_stop:
                     ###########################
                     self._show_sample(iter, epoch_start, epoch_stop, temp_batch_size)
 
@@ -2000,33 +2003,34 @@ class NMT:
                     pass
 
                 if self.do_load_babi and self.do_test_not_train:
-
-                    print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small ))
+                    if self._print_control(iter):
+                        print('current accuracy: %.4f' % self.score, '- num right '+ str(num_right_small ))
                     num_right_small = 0
 
                 if self.do_load_babi and not self.do_test_not_train:
-
-                    print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
+                    if self._print_control(iter):
+                        print('training accuracy: %.4f' % self.score, '- num right '+ str(num_right_small))
                     num_right_small = 0
 
                 num_right_small = 0
 
-                if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
-                    if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
-                        print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],', epochs', self.epochs_since_adjustment ,']')
-                    if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
-                        print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],', epochs',self.epochs_since_adjustment,']')
+                if self._print_control(iter):
+                    if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
+                        if self._recipe_switching % 2 == 0 or not self.do_recipe_dropout:
+                            print('[ lr adjust:', self.lr_adjustment_num, '-', hparams['learning_rate'],', epochs', self.epochs_since_adjustment ,']')
+                        if self._recipe_switching % 2 == 1 or not self.do_recipe_lr:
+                            print('[ dropout adjust:', self.lr_adjustment_num,'-', hparams['dropout'],', epochs',self.epochs_since_adjustment,']')
 
-                if self.score_list is not None and len(self.score_list_training) > 0 and len(self.score_list) > 0:
-                    print('[ last train:', self.score_list_training[-1],']',end='')
-                    if self.do_test_not_train:
-                        print('[ older valid:', self.score_list[-1],']')
-                    else:
-                        print('[ last valid:', self.score_list[-1],']')
-                elif len(self.score_list_training) >= 1 and self.do_skip_validation:
-                    print('[ last train:', self.score_list_training[-1],'][ no valid ]')
+                    if self.score_list is not None and len(self.score_list_training) > 0 and len(self.score_list) > 0:
+                        print('[ last train:', self.score_list_training[-1],']',end='')
+                        if self.do_test_not_train:
+                            print('[ older valid:', self.score_list[-1],']')
+                        else:
+                            print('[ last valid:', self.score_list[-1],']')
+                    elif len(self.score_list_training) >= 1 and self.do_skip_validation:
+                        print('[ last train:', self.score_list_training[-1],'][ no valid ]')
 
-                print("-----")
+                    print("-----")
 
         if self.do_batch_process:
             self.save_checkpoint(num=len(self.pairs))
