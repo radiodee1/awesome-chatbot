@@ -960,7 +960,10 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
 
-        z = F.softmax(z, dim=0) # <--- use this!!
+        if not self.simple_input:
+            z = F.softmax(z, dim=0) # <--- use this!!
+        else:
+            z = F.sigmoid(z)
 
         return z
 
