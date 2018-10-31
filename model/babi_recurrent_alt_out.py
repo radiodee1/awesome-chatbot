@@ -653,9 +653,9 @@ class AnswerModule(nn.Module):
 
                 outputs.append(output_x)
 
-                output = self.prune_tensor(output, 3)
+                #output = self.prune_tensor(output, 3)
 
-                token = torch.argmax(output_x,dim=2)
+                token = torch.argmax(output_x, dim=2)
                 #print(token)
 
             some_out = torch.cat(outputs, dim=0)
