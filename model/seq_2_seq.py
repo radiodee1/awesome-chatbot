@@ -202,6 +202,7 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
         self.out = nn.Linear(hidden_dim, target_vocab_size)
+        self.out_out = nn.Linear(hidden_dim, target_vocab_size)
         self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -235,18 +236,21 @@ class Decoder(nn.Module):
 
             encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
 
-
-            output = Variable(torch.LongTensor([EOS_token]))
-            output = self.prune_tensor(output, 3)
+            token = EOS_token
+            #output = Variable(torch.LongTensor([EOS_token]))
+            #output = self.prune_tensor(output, 3)
 
             for i in range(self.maxtokens):
+                output = Variable(torch.LongTensor([token]))
+                output = self.prune_tensor(output, 3)
 
                 output, decoder_hidden_x, mask, out_x = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
 
-                outputs.append(out_x)
-
+                #outputs.append(out_x)
+                output = self.out(output)
                 output = self.prune_tensor(output, 3)
-                output = torch.argmax(output, dim=2)
+                outputs.append(output)
+                token = torch.argmax(output, dim=2)
 
             some_out = torch.cat(outputs, dim=0)
 
@@ -287,15 +291,16 @@ class Decoder(nn.Module):
             attn_out = torch.tanh(self.concat_out(attn_out))
 
             attn_out = self.dropout_o(attn_out)
-            out_x = self.out(attn_out)  # torch.cat([rnn_output, context], 2))
-            out_x = F.softmax(out_x, dim=2)
+            #out_x = attn_out #self.out(attn_out)  # torch.cat([rnn_output, context], 2))
+            out_x = F.softmax(attn_out, dim=2)
             output = out_x.clone()
         else:
             context = None
             mask = None
-            attn_out = rnn_output
-            out_x = self.out(attn_out)
-            out_x = self.dropout_o(out_x)
+            #attn_out = rnn_output
+            #out_x = attn_out #self.out(attn_out)
+            out_x = self.dropout_o(rnn_output)
+            output = out_x.clone()
 
         decoder_hidden = decoder_hidden.contiguous()
         decoder_hidden = decoder_hidden.permute(1,0,2)
@@ -1720,7 +1725,7 @@ class NMT:
         return input
     #######################################
 
-    def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
+    def train(self,input_variable, target_variable, question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         if criterion is not None:
             wrapper_optimizer.zero_grad()
@@ -1732,7 +1737,7 @@ class NMT:
             if self.do_recurrent_output:
                 ##lz = len(target_variable[0])
 
-                #target_variable = torch.cat(target_variable, dim=0)
+                #target_variable = Variable(torch.LongTensor(target_variable)) #torch.cat(target_variable, dim=0)
 
                 ansx = Variable(ans.data.max(dim=2)[1])
 
@@ -1743,7 +1748,7 @@ class NMT:
 
                 for i in range(len(target_variable)):
                     target_v = target_variable[i].squeeze(0).squeeze(1)
-                    loss += criterion(ans[i,:, :], target_v)
+                    loss += criterion(ans[i, :, :], target_v)
                 #print( ans.size(),'ans', target_variable.size(), 'tv')
 
             elif self.do_batch_process:
