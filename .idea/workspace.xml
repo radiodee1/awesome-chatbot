@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt_out.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt_out.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -83,19 +80,19 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt_out.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-548">
-              <caret line="176" column="39" selection-start-line="176" selection-start-column="25" selection-end-line="176" selection-end-column="39" />
+            <state relative-caret-position="262">
+              <caret line="2730" column="34" selection-start-line="2730" selection-start-column="17" selection-end-line="2730" selection-end-column="34" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/do_plot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
+            <state relative-caret-position="378">
               <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
               <folding>
                 <element signature="e#22#87#0" expanded="true" />
@@ -186,13 +183,11 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>epoch_length</find>
       <find>loaded</find>
       <find>do_load_once</find>
       <find>train_iters</find>
       <find>log</find>
       <find>log_</find>
-      <find>WrapMemRNN</find>
       <find>layers</find>
       <find>n_layers</find>
       <find>new</find>
@@ -211,11 +206,13 @@
       <find>target_variable</find>
       <find>Tensor</find>
       <find>softm</find>
-      <find>Encoder</find>
       <find>AnswerModule</find>
       <find>decoder_w_attn</find>
       <find>Decoder</find>
       <find>LuongAttention</find>
+      <find>Encoder</find>
+      <find>WrapMemRNN</find>
+      <find>hparams['layers']</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -534,16 +531,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_plot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
-          <folding>
-            <element signature="e#22#87#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1458">
@@ -608,8 +595,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt_out.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-548">
-          <caret line="176" column="39" selection-start-line="176" selection-start-column="25" selection-end-line="176" selection-end-column="39" />
+        <state relative-caret-position="262">
+          <caret line="2730" column="34" selection-start-line="2730" selection-start-column="17" selection-end-line="2730" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_plot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
+          <folding>
+            <element signature="e#22#87#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

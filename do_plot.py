@@ -69,8 +69,9 @@ if __name__ == '__main__':
     plt.title(arg_title)
     handles = []
     for i in range(len(arg_list)):
+        ii = i % len(arg_plot_color)
         label_out = arg_glob_list[i].split('/')[-1]
-        color_patch = mpatches.Patch(color=arg_plot_color[i], label=label_out)
+        color_patch = mpatches.Patch(color=arg_plot_color[ii], label=label_out)
         handles.append(color_patch)
 
         lst_x = []
@@ -78,6 +79,6 @@ if __name__ == '__main__':
         for k in arg_list[i]:
             lst_x.append(k[0])
             lst_y.append(k[1])
-            ax.plot(lst_x, lst_y, arg_plot_color[i] + '-')
+            ax.plot(lst_x, lst_y, arg_plot_color[ii] + '-')
     ax.legend(handles=handles)
     plt.show()
