@@ -474,7 +474,8 @@ class Encoder(nn.Module):
         return output
 
     def position_encoding(self, embedded_sentence, permute_sentence=False):
-        if permute_sentence:
+        if permute_sentence and False:
+            print('permute sent')
             embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
 
         _, slen, elen = embedded_sentence.size()
