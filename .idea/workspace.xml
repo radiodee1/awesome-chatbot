@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="30758" />
+          <entry key="py" value="30861" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="30758" />
+          <entry key="Python" value="30861" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -84,16 +86,16 @@
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt_out.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="262">
-              <caret line="2730" column="34" selection-start-line="2730" selection-start-column="17" selection-end-line="2730" selection-end-column="34" />
+              <caret line="628" column="33" selection-start-line="628" selection-start-column="22" selection-end-line="628" selection-end-column="33" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_plot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
+            <state relative-caret-position="720">
+              <caret line="81" column="52" selection-start-line="81" selection-start-column="52" selection-end-line="81" selection-end-column="52" />
               <folding>
                 <element signature="e#22#87#0" expanded="true" />
               </folding>
@@ -163,11 +165,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="784">
-              <caret line="294" column="27" selection-start-line="294" selection-start-column="22" selection-end-line="294" selection-end-column="27" />
+            <state relative-caret-position="172">
+              <caret line="236" column="13" selection-start-line="236" selection-start-column="13" selection-end-line="236" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -183,7 +185,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>loaded</find>
       <find>do_load_once</find>
       <find>train_iters</find>
       <find>log</find>
@@ -200,7 +201,6 @@
       <find>argm</find>
       <find>argmax</find>
       <find>model_1_seq</find>
-      <find>self.out</find>
       <find>longtensor</find>
       <find>variableFromSentence</find>
       <find>target_variable</find>
@@ -213,6 +213,8 @@
       <find>Encoder</find>
       <find>WrapMemRNN</find>
       <find>hparams['layers']</find>
+      <find>self.out</find>
+      <find>self.embed(</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -266,12 +268,12 @@
         <option value="$PROJECT_DIR$/do_make_rename_train.sh" />
         <option value="$PROJECT_DIR$/do_make_rename_train_valid_test.sh" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/do_plot.py" />
         <option value="$PROJECT_DIR$/model/babi.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent2.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent_alt_out.py" />
+        <option value="$PROJECT_DIR$/do_plot.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
       </list>
     </option>
   </component>
@@ -586,27 +588,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+    <entry file="file://$PROJECT_DIR$/do_plot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="784">
-          <caret line="294" column="27" selection-start-line="294" selection-start-column="22" selection-end-line="294" selection-end-column="27" />
+        <state relative-caret-position="720">
+          <caret line="81" column="52" selection-start-line="81" selection-start-column="52" selection-end-line="81" selection-end-column="52" />
+          <folding>
+            <element signature="e#22#87#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt_out.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="262">
-          <caret line="2730" column="34" selection-start-line="2730" selection-start-column="17" selection-end-line="2730" selection-end-column="34" />
+          <caret line="628" column="33" selection-start-line="628" selection-start-column="22" selection-end-line="628" selection-end-column="33" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_plot.py">
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="35" column="46" selection-start-line="35" selection-start-column="46" selection-end-line="35" selection-end-column="46" />
-          <folding>
-            <element signature="e#22#87#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="172">
+          <caret line="236" column="13" selection-start-line="236" selection-start-column="13" selection-end-line="236" selection-end-column="13" />
         </state>
       </provider>
     </entry>

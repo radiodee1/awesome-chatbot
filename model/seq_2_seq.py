@@ -234,7 +234,7 @@ class Decoder(nn.Module):
 
             decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
 
-            encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
+            #encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
 
             token = EOS_token
             #output = Variable(torch.LongTensor([EOS_token]))
@@ -244,12 +244,17 @@ class Decoder(nn.Module):
                 output = Variable(torch.LongTensor([token]))
                 output = self.prune_tensor(output, 3)
 
-                output, decoder_hidden_x, mask, out_x = self.new_inner(output, encoder_out_x[:,i,:], decoder_hidden_x)
+                output, decoder_hidden_x, mask, out_x = self.new_inner(
+                    output,
+                    output, #encoder_out_x[:,-1,:], # i
+                    decoder_hidden_x
+                )
 
                 #outputs.append(out_x)
                 output = self.out(output)
                 output = self.prune_tensor(output, 3)
                 outputs.append(output)
+                #print(output.size())
                 token = torch.argmax(output, dim=2)
 
             some_out = torch.cat(outputs, dim=0)
@@ -277,7 +282,7 @@ class Decoder(nn.Module):
 
         if not self.cancel_attention:
 
-            context, mask = self.attention(rnn_output, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context, mask = self.attention(rnn_output, embedded)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
             context = context.permute(1, 0, 2)
 
             concat_list = [
