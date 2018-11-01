@@ -37,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="30861" />
+          <entry key="py" value="31345" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="30861" />
+          <entry key="Python" value="31345" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -168,8 +168,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="172">
-              <caret line="236" column="13" selection-start-line="236" selection-start-column="13" selection-end-line="236" selection-end-column="13" />
+            <state relative-caret-position="136">
+              <caret line="188" column="39" selection-start-line="188" selection-start-column="39" selection-end-line="188" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -185,11 +185,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>do_load_once</find>
-      <find>train_iters</find>
-      <find>log</find>
-      <find>log_</find>
-      <find>layers</find>
       <find>n_layers</find>
       <find>new</find>
       <find>print</find>
@@ -202,19 +197,24 @@
       <find>argmax</find>
       <find>model_1_seq</find>
       <find>longtensor</find>
-      <find>variableFromSentence</find>
-      <find>target_variable</find>
       <find>Tensor</find>
       <find>softm</find>
       <find>AnswerModule</find>
       <find>decoder_w_attn</find>
-      <find>Decoder</find>
-      <find>LuongAttention</find>
       <find>Encoder</find>
       <find>WrapMemRNN</find>
       <find>hparams['layers']</find>
       <find>self.out</find>
       <find>self.embed(</find>
+      <find>question_variable</find>
+      <find>target_variable</find>
+      <find>model_6_dec</find>
+      <find>Decoder</find>
+      <find>input_variable</find>
+      <find>variableFromSentence</find>
+      <find>variablesFromPair</find>
+      <find>LuongAttention</find>
+      <find>attention</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -607,8 +607,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="172">
-          <caret line="236" column="13" selection-start-line="236" selection-start-column="13" selection-end-line="236" selection-end-column="13" />
+        <state relative-caret-position="136">
+          <caret line="188" column="39" selection-start-line="188" selection-start-column="39" selection-end-line="188" selection-end-column="39" />
         </state>
       </provider>
     </entry>

@@ -185,7 +185,8 @@ class LuongAttention(nn.Module):
         context = encoder_out.permute(1, 2, 0) @ mask  # (2, 50, 15) @ (2, 15, 1)
         context = context.permute(2, 0, 1)  # (seq, batch, dim)
         mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
-        return context, mask
+        context = torch.sum(context, dim=0) ## why?
+        return F.softmax(context, dim=1), mask
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
@@ -202,7 +203,7 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
         self.out = nn.Linear(hidden_dim, target_vocab_size)
-        self.out_out = nn.Linear(hidden_dim, target_vocab_size)
+        #self.out_out = nn.Linear(hidden_dim, target_vocab_size)
         self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -234,7 +235,7 @@ class Decoder(nn.Module):
 
             decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
 
-            #encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
+            encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
 
             token = EOS_token
             #output = Variable(torch.LongTensor([EOS_token]))
@@ -246,7 +247,7 @@ class Decoder(nn.Module):
 
                 output, decoder_hidden_x, mask, out_x = self.new_inner(
                     output,
-                    output, #encoder_out_x[:,-1,:], # i
+                    encoder_out_x[:,-1,:].unsqueeze(0),
                     decoder_hidden_x
                 )
 
@@ -276,21 +277,21 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden = decoder_hidden[:, :self.n_layers].permute(1, 0, 2)
 
-        encoder_out = self.prune_tensor(encoder_out, 3)
+        #encoder_out = self.prune_tensor(encoder_out, 3)
 
         rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
 
         if not self.cancel_attention:
 
-            context, mask = self.attention(rnn_output, embedded)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-            context = context.permute(1, 0, 2)
+            context, mask = self.attention(decoder_hidden, encoder_out)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context = self.prune_tensor(context, 3)#.permute(1, 0, 2)
 
             concat_list = [
                 rnn_output,
                 context
             ]
-            # for i in concat_list: print(i.size(), self.n_layers)
-            # exit()
+            #for i in concat_list: print(i.size(), self.n_layers)
+            #exit()
 
             attn_out = torch.cat(concat_list, dim=2)  # dim=2
             attn_out = torch.tanh(self.concat_out(attn_out))
@@ -399,7 +400,7 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
-        #print(len(question_variable), 'len')
+        question_variable = input_variable
 
         question_variable, hidden = self.wrap_question_module(question_variable)
         #print(question_variable.size(), hidden.size())
@@ -446,20 +447,34 @@ class WrapMemRNN(nn.Module):
 
     def wrap_question_module(self, question_variable):
 
+        question_v = []
+        for i in question_variable:
+            question_v.append(self.prune_tensor(i.permute(1,0),2))
+        question_v = torch.cat(question_v,dim=0)
+
+        '''
         prev_h2 = []
         prev_h3 = []
 
         for ii in question_variable:
+            #print(len(ii),'ii')
+            #ii = Variable(torch.LongTensor([ii]))
+
             ii = self.prune_tensor(ii, 2)
 
             out2, hidden2 = self.model_1_seq(ii, None) #, prev_h2[-1])
 
             prev_h2.append(self.prune_tensor(out2,3))
 
-            prev_h3.append(self.prune_tensor(hidden2[:,-1,:].unsqueeze(1),3))
+            prev_h3.append(self.prune_tensor(hidden2,3)) #[:,-1,:].unsqueeze(1),3))
 
         prev_h2 = torch.cat(prev_h2, dim=0)
         prev_h3 = torch.cat(prev_h3, dim=1)
+
+        '''
+
+        prev_h2, prev_h3 = self.model_1_seq(question_v,None)
+
 
         return prev_h2, prev_h3.permute(1,0,2)
 
@@ -1248,7 +1263,7 @@ class NMT:
 
         return (g1, g2, g3)
 
-    def variableFromSentence(self,lang, sentence, add_eol=False, pad=0, skip_unk=False):
+    def variableFromSentence(self, lang, sentence, add_eol=False, pad=0, skip_unk=False):
         max = hparams['tokens_per_sentence']
         indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk)
         if indexes is None and skip_unk: return indexes
@@ -1265,7 +1280,7 @@ class NMT:
             return result[:max]
 
     def variablesFromPair(self,pair, skip_unk=False):
-        if hparams['split_sentences'] :
+        if hparams['split_sentences'] and False :
             l = pair[0].strip().split('.')
             sen = []
             max_len = 0
@@ -1288,7 +1303,7 @@ class NMT:
             input_variable = sen
             pass
         else:
-            pad = 1
+            pad = hparams['tokens_per_sentence']
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, skip_unk=skip_unk)
 
         pad = hparams['tokens_per_sentence']
