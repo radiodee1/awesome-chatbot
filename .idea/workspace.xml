@@ -37,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="31345" />
+          <entry key="py" value="31367" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="31345" />
+          <entry key="Python" value="31367" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -168,8 +168,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="188" column="39" selection-start-line="188" selection-start-column="39" selection-end-line="188" selection-end-column="39" />
+            <state relative-caret-position="226">
+              <caret line="254" column="17" selection-start-line="254" selection-start-column="17" selection-end-line="254" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -185,7 +185,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>n_layers</find>
       <find>new</find>
       <find>print</find>
       <find>_show_sample</find>
@@ -215,6 +214,7 @@
       <find>variablesFromPair</find>
       <find>LuongAttention</find>
       <find>attention</find>
+      <find>concat_out</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -278,8 +278,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="535" />
-    <option name="y" value="79" />
+    <option name="x" value="534" />
+    <option name="y" value="80" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
   </component>
@@ -337,7 +337,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="535" y="79" width="1380" height="1000" extended-state="0" />
+    <frame x="534" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
@@ -607,8 +607,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="188" column="39" selection-start-line="188" selection-start-column="39" selection-end-line="188" selection-end-column="39" />
+        <state relative-caret-position="226">
+          <caret line="254" column="17" selection-start-line="254" selection-start-column="17" selection-end-line="254" selection-end-column="17" />
         </state>
       </provider>
     </entry>

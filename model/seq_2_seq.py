@@ -203,8 +203,8 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
         self.out = nn.Linear(hidden_dim, target_vocab_size)
-        #self.out_out = nn.Linear(hidden_dim, target_vocab_size)
-        self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
+
+        self.concat_out = nn.Linear(linear_in_dim, target_vocab_size)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -236,7 +236,7 @@ class Decoder(nn.Module):
             decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
 
             encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
-
+            #print(encoder_out_x.size(),'eo')
             token = EOS_token
             #output = Variable(torch.LongTensor([EOS_token]))
             #output = self.prune_tensor(output, 3)
@@ -251,15 +251,13 @@ class Decoder(nn.Module):
                     decoder_hidden_x
                 )
 
-                #outputs.append(out_x)
-                output = self.out(output)
+                #output = self.out(output)
                 output = self.prune_tensor(output, 3)
                 outputs.append(output)
                 #print(output.size())
                 token = torch.argmax(output, dim=2)
 
             some_out = torch.cat(outputs, dim=0)
-
             all_out.append(some_out)
 
         val_out = torch.cat(all_out, dim=1)
