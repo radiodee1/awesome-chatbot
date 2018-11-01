@@ -303,6 +303,7 @@ class Decoder(nn.Module):
             mask = None
             #attn_out = rnn_output
             #out_x = attn_out #self.out(attn_out)
+            rnn_output = self.concat_out(rnn_output)
             out_x = self.dropout_o(rnn_output)
             output = out_x.clone()
 
