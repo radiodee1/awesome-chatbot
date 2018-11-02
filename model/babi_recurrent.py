@@ -474,7 +474,9 @@ class Encoder(nn.Module):
         return output
 
     def position_encoding(self, embedded_sentence, permute_sentence=False):
-        if permute_sentence: embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
+        if permute_sentence and False:
+            print('permute sent')
+            embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
 
         _, slen, elen = embedded_sentence.size()
 
@@ -482,6 +484,8 @@ class Encoder(nn.Module):
         elen2 = elen
         if slen == 1: slen2 += 0.01
         if elen == 1: elen2 += 0.01
+
+        #print(slen, elen, 'slen,elen')
 
         l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
              range(slen)]
@@ -621,13 +625,16 @@ class AnswerModule(nn.Module):
             outputs = []
             decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
 
+            token = EOS_token
+            #output = self.embed(Variable(torch.tensor([EOS_token])))
+            #output = self.prune_tensor(output, 3)
 
-            output = self.embed(Variable(torch.tensor([EOS_token])))
-            output = self.prune_tensor(output, 3)
-            #output = F.tanh(output)
             ##############################################
 
             for i in range(self.maxtokens):
+
+                output = self.embed(Variable(torch.tensor([token])))
+                output = self.prune_tensor(output, 3)
 
                 #decoder_hidden = self.dropout_hidden(decoder_hidden)
 
@@ -647,7 +654,10 @@ class AnswerModule(nn.Module):
 
                 outputs.append(output_x)
 
-                output = self.prune_tensor(output, 3)
+                #output = self.prune_tensor(output, 3)
+
+                token = torch.argmax(output_x, dim=2)
+                #print(token)
 
             some_out = torch.cat(outputs, dim=0)
 
