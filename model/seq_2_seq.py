@@ -292,11 +292,13 @@ class Decoder(nn.Module):
             #exit()
 
             attn_out = torch.cat(concat_list, dim=2)  # dim=2
-            attn_out = torch.tanh(self.concat_out(attn_out))
-
+            attn_out = self.concat_out(attn_out)
             attn_out = self.dropout_o(attn_out)
+
+            out_x = torch.tanh(attn_out)
+
             #out_x = attn_out #self.out(attn_out)  # torch.cat([rnn_output, context], 2))
-            out_x = F.softmax(attn_out, dim=2)
+            #out_x = F.softmax(attn_out, dim=2)
             output = out_x.clone()
         else:
             context = None
@@ -304,7 +306,9 @@ class Decoder(nn.Module):
             #attn_out = rnn_output
             #out_x = attn_out #self.out(attn_out)
             rnn_output = self.concat_out(rnn_output)
-            out_x = self.dropout_o(rnn_output)
+            rnn_output = self.dropout_o(rnn_output)
+            out_x = torch.tanh(rnn_output)
+            #out_x = self.dropout_o(rnn_output)
             output = out_x.clone()
 
         decoder_hidden = decoder_hidden.contiguous()
@@ -399,6 +403,7 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
+        #print(question_variable,'qv')
         question_variable = input_variable
 
         question_variable, hidden = self.wrap_question_module(question_variable)
@@ -450,6 +455,8 @@ class WrapMemRNN(nn.Module):
         for i in question_variable:
             question_v.append(self.prune_tensor(i.permute(1,0),2))
         question_v = torch.cat(question_v,dim=0)
+
+        #print(question_v,'qv')
 
         '''
         prev_h2 = []
