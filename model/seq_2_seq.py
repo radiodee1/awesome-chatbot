@@ -403,16 +403,11 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
-        #print(question_variable,'qv')
-        question_variable = input_variable
-
-        question_variable, hidden = self.wrap_question_module(question_variable)
-        #print(question_variable.size(), hidden.size())
+        question_variable, hidden = self.wrap_question_module(input_variable)
 
         question_variable = self.prune_tensor(question_variable,3)
         hidden = self.prune_tensor(hidden,3)
 
-        #print(question_variable.size(), hidden.size(),'q,h')
         ans = self.model_6_dec(question_variable, hidden)
 
         outputs = None
