@@ -295,8 +295,8 @@ class Decoder(nn.Module):
             attn_out = self.concat_out(attn_out)
             attn_out = self.dropout_o(attn_out)
 
-            out_x = torch.tanh(attn_out)
-
+            #out_x = F.softmax(attn_out, dim=2)
+            out_x = attn_out
             #out_x = attn_out #self.out(attn_out)  # torch.cat([rnn_output, context], 2))
             #out_x = F.softmax(attn_out, dim=2)
             output = out_x.clone()
@@ -307,7 +307,7 @@ class Decoder(nn.Module):
             #out_x = attn_out #self.out(attn_out)
             rnn_output = self.concat_out(rnn_output)
             rnn_output = self.dropout_o(rnn_output)
-            out_x = torch.tanh(rnn_output)
+            out_x = rnn_output # torch.tanh(rnn_output)
             #out_x = self.dropout_o(rnn_output)
             output = out_x.clone()
 
