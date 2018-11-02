@@ -247,7 +247,7 @@ class Decoder(nn.Module):
 
                 output, decoder_hidden_x, mask, out_x = self.new_inner(
                     output,
-                    encoder_out_x[:,-1,:].unsqueeze(0),
+                    encoder_out_x[:,i,:].unsqueeze(0),
                     decoder_hidden_x
                 )
 
@@ -451,14 +451,7 @@ class WrapMemRNN(nn.Module):
 
     def wrap_question_module(self, question_variable):
 
-        question_v = []
-        for i in question_variable:
-            question_v.append(self.prune_tensor(i.permute(1,0),2))
-        question_v = torch.cat(question_v,dim=0)
 
-        #print(question_v,'qv')
-
-        '''
         prev_h2 = []
         prev_h3 = []
 
@@ -472,17 +465,20 @@ class WrapMemRNN(nn.Module):
 
             prev_h2.append(self.prune_tensor(out2,3))
 
-            prev_h3.append(self.prune_tensor(hidden2,3)) #[:,-1,:].unsqueeze(1),3))
+            h = None
+            for j in range(len(ii)):
+                if ii[j].item() is not 0:
+                    h = self.prune_tensor(hidden2[:,j,:].unsqueeze(1), 3)
+                    #print('ii hid', j)
+            prev_h3.append(h)
+            #prev_h3.append(self.prune_tensor(hidden2,3)) #[:,-1,:].unsqueeze(1),3))
 
-        prev_h2 = torch.cat(prev_h2, dim=0)
+        prev_h2 = torch.cat(prev_h2, dim=1)
         prev_h3 = torch.cat(prev_h3, dim=1)
 
-        '''
+        #prev_h2, prev_h3 = self.model_1_seq(question_v,None)
 
-        prev_h2, prev_h3 = self.model_1_seq(question_v,None)
-
-
-        return prev_h2, prev_h3.permute(1,0,2)
+        return prev_h2.permute(1,0,2), prev_h3.permute(1,0,2)
 
 
     def prune_tensor(self, input, size):
