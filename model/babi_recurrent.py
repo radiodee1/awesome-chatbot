@@ -137,6 +137,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
+blacklist = ['re', 've', 's', 't', 'll', 'm', 'don']
 ################# pytorch modules ###############
 
 
@@ -1614,13 +1615,13 @@ class NMT:
                 if lang3 is not None:
                     if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 for word in self.pairs[p][0].split(' '):
-                    if word in self.vocab_lang.word2index:
+                    if word in self.vocab_lang.word2index and word not in blacklist:
                         a.append(word)
                     elif not omit_unk or self.do_skip_unk:
                         a.append(hparams['unk'])
                         skip = True
                 for word in self.pairs[p][1].split(' '):
-                    if word in self.vocab_lang.word2index:
+                    if word in self.vocab_lang.word2index and word not in blacklist:
                         b.append(word)
                     elif not omit_unk or self.do_skip_unk:
                         b.append(hparams['unk'])
@@ -1628,7 +1629,7 @@ class NMT:
                 pairs = [' '.join(a), ' '.join(b)]
                 if lang3 is not None:
                     for word in self.pairs[p][2].split(' '):
-                        if word in self.vocab_lang.word2index:
+                        if word in self.vocab_lang.word2index and word not in blacklist:
                             c.append(word)
                         elif not omit_unk or self.do_skip_unk:
                             c.append(hparams['unk'])
