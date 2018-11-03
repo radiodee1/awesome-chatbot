@@ -14,7 +14,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="193" />
+          <entry key="project.closed" value="194" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -185,7 +185,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>new</find>
       <find>print</find>
       <find>_show_sample</find>
       <find>softmax</find>
@@ -215,6 +214,7 @@
       <find>model_5_ans</find>
       <find>AnswerModule</find>
       <find>Decoder</find>
+      <find>simple_input</find>
     </findStrings>
   </component>
   <component name="Git.Settings">

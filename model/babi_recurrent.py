@@ -137,7 +137,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-blacklist = ['re', 've', 's', 't', 'll', 'm', 'don']
+blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 ################# pytorch modules ###############
 
 
