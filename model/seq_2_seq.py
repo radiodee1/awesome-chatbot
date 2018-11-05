@@ -1812,8 +1812,8 @@ class NMT:
             ans = ansx.permute(1,0)
             #print(ans.size(),'ans')
 
-        clip = 50.0
-        _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+        #clip = 50.0
+        #_ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
         return outputs, ans , loss
 

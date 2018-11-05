@@ -137,9 +137,32 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+
+
 ################# pytorch modules ###############
 
+def encoding_positional(embedded_sentence, sum=False):
+
+    _, slen, elen = embedded_sentence.size()
+
+    slen2 = slen
+    elen2 = elen
+    if slen == 1: slen2 += 0.01
+    if elen == 1: elen2 += 0.01
+
+    # print(slen, elen, 'slen,elen')
+
+    l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
+         range(slen)]
+    l = torch.FloatTensor(l)
+    l = l.unsqueeze(0)  # for #batch
+    # print(l.size(),"l", l)
+    l = l.expand_as(embedded_sentence)
+    if hparams['cuda'] is True: l = l.cuda()
+    weighted = embedded_sentence * Variable(l)
+    if sum:
+        weighted = torch.sum(weighted, dim=1)
+    return weighted
 
 class LuongAttention(nn.Module):
     
@@ -474,6 +497,7 @@ class Encoder(nn.Module):
             output = output.unsqueeze(0)
         return output
 
+    '''
     def position_encoding(self, embedded_sentence, permute_sentence=False):
         if permute_sentence and False:
             print('permute sent')
@@ -498,8 +522,11 @@ class Encoder(nn.Module):
         weighted = embedded_sentence * Variable(l)
 
         return weighted
+    '''
 
     def list_encoding(self, lst, hidden, permute_sentence=False):
+        #print(permute_sentence)
+
         l = []
 
         for i in lst:
@@ -509,12 +536,15 @@ class Encoder(nn.Module):
             l.append(embedded.permute(1,0,2))
         embedded = torch.cat(l, dim=0) # dim=0
 
-        if len(l) == 1: permute_sentence=True
+        #if len(l) == 1: permute_sentence=True
+        #print(embedded.size(),'emb')
 
-        embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
-        #print(embedded.size(),'emb1')
+        embedded = encoding_positional(embedded)
+
+        #embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
+
         embedded = torch.sum(embedded, dim=1)
-        #print(embedded.size(),'emb2')
+
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
 
@@ -751,6 +781,7 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = None
         self.all_mem = None
         self.last_mem = None  # output of mem unit
+        self.memory_list = None
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
@@ -857,6 +888,9 @@ class WrapMemRNN(nn.Module):
 
             sequences = self.inp_c_seq
 
+            self.memory_list = None
+            positional_list = []
+
             for i in range(len(sequences)):
 
                 z = self.q_q_last[i].clone()
@@ -875,7 +909,6 @@ class WrapMemRNN(nn.Module):
 
                     #print( x.size(), len(self.inp_c_seq),self.inp_c_seq[0].size(),'info')
 
-
                     e, _ = self.wrap_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
                     out = self.prune_tensor(e, 3)
@@ -883,8 +916,14 @@ class WrapMemRNN(nn.Module):
                     m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
+                tmp = torch.cat(m_list, dim=1)
+                #print(tmp.size(),'tmp')
+                positional_list.append(tmp)
 
             mm_list = torch.cat(mem_list, dim=0)
+
+            self.memory_list = torch.cat(positional_list, dim=0)
+            #print(self.memory_list.size(),'pl')
 
             self.last_mem = mm_list
 
@@ -990,6 +1029,18 @@ class WrapMemRNN(nn.Module):
     def wrap_answer_module_simple(self):
         #outputs
 
+        if self.recurrent_output and self.memory_hops > 1 :
+            lst = []
+            for i in range(len(self.memory_list)):
+                encoding = self.prune_tensor(self.memory_list[i,-2:], 3)
+                encoding = encoding_positional(encoding, sum=True)
+                lst.append(encoding)
+            lst = torch.cat(lst, dim=0)
+
+            self.last_mem = self.prune_tensor(lst, 3).permute(1,0,2)
+            #print(self.last_mem.size(),'lm')
+
+        #print(self.last_mem.size())
         q = self.q_q_last
 
         q_q = torch.cat(q, dim=0)
@@ -1002,6 +1053,7 @@ class WrapMemRNN(nn.Module):
         return [None], ansx
 
         pass
+
 
 ######################## end pytorch modules ####################
 
@@ -1096,6 +1148,8 @@ class NMT:
 
         self.pairs_train = []
         self.pairs_valid = []
+
+        self.blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 
         self.do_train = False
         self.do_infer = False
@@ -1272,6 +1326,9 @@ class NMT:
         if self.args['lr_adjust'] is not None:
             self.lr_adjustment_num = int(self.args['lr_adjust'])
             hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
+        if not self.do_skip_unk and not self.do_hide_unk:
+            #global blacklist
+            self.blacklist = []
 
         self.read_json_file()
 
@@ -1477,6 +1534,8 @@ class NMT:
                 print('-----')
 
             i += 1
+            if i > num and not self.do_load_babi:
+                break
 
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
 
@@ -1615,13 +1674,13 @@ class NMT:
                 if lang3 is not None:
                     if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 for word in self.pairs[p][0].split(' '):
-                    if word in self.vocab_lang.word2index and word not in blacklist:
+                    if word in self.vocab_lang.word2index and word not in self.blacklist:
                         a.append(word)
                     elif not omit_unk or self.do_skip_unk:
                         a.append(hparams['unk'])
                         skip = True
                 for word in self.pairs[p][1].split(' '):
-                    if word in self.vocab_lang.word2index and word not in blacklist:
+                    if word in self.vocab_lang.word2index and word not in self.blacklist:
                         b.append(word)
                     elif not omit_unk or self.do_skip_unk:
                         b.append(hparams['unk'])
@@ -1629,7 +1688,7 @@ class NMT:
                 pairs = [' '.join(a), ' '.join(b)]
                 if lang3 is not None:
                     for word in self.pairs[p][2].split(' '):
-                        if word in self.vocab_lang.word2index and word not in blacklist:
+                        if word in self.vocab_lang.word2index and word not in self.blacklist:
                             c.append(word)
                         elif not omit_unk or self.do_skip_unk:
                             c.append(hparams['unk'])
@@ -2293,7 +2352,8 @@ class NMT:
         epoch_start = self.this_epoch * self.epoch_length
         if epoch_start >= len(self.pairs):
             n = (len(self.pairs) // self.epoch_length)
-            e = self.this_epoch % n
+            if n is not 0: e = self.this_epoch % n
+            else: e = 0
             epoch_start = e * self.epoch_length
             #exit()
 
@@ -2316,7 +2376,7 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output:
+        if self.do_recurrent_output :
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
