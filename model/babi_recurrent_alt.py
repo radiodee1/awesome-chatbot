@@ -601,14 +601,18 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        #self.out_b = nn.Linear(hidden_size * 2, hidden_size, bias=True)
-        #init.xavier_normal_(self.out_b.state_dict()['weight'])
+        self.out_b1 = nn.Linear(hidden_size , hidden_size , bias=True)
+        init.xavier_normal_(self.out_b1.state_dict()['weight'])
+
+        self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
+        init.xavier_normal_(self.out_b2.state_dict()['weight'])
 
         self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout )
-        self.dropout_b = nn.Dropout(dropout )
+        self.dropout = nn.Dropout(dropout)
+        self.dropout_b = nn.Dropout(dropout)
+        self.dropout_c = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = None #nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
@@ -636,9 +640,7 @@ class AnswerModule(nn.Module):
 
         self.embed = embed
 
-    def recurrent(self, out):
-
-        out = F.relu(out)
+    def recurrent(self, out, hid1=None, hid2=None):
 
         l, hid = out.size()
 
@@ -648,17 +650,25 @@ class AnswerModule(nn.Module):
                 self.prune_tensor(out[k,:],2)
             ]
 
-            if self.decoder_layers == 2 :
+            while len(e_out_list) < self.decoder_layers:
                 e_out_list.append(self.prune_tensor(out[k,:],2))
 
+            if hid1 is not None and hid2 is not None and self.decoder_layers == 2:
+                e_out_list = [
+                    self.out_b1(hid1[k]),
+                    self.out_b2(hid1[k]) #.permute(1,0,2)[k])
+                ]
+                #for i in e_out_list: print(i.size())
+                #exit()
+
             e_out = torch.cat(e_out_list, dim=0)
+            e_out = F.tanh(e_out)
+            e_out = self.dropout_c(e_out)
 
             outputs = []
             decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
 
             token = EOS_token
-            #output = self.embed(Variable(torch.tensor([EOS_token])))
-            #output = self.prune_tensor(output, 3)
 
             ##############################################
 
@@ -667,7 +677,6 @@ class AnswerModule(nn.Module):
                 output = self.embed(Variable(torch.tensor([token])))
                 output = self.prune_tensor(output, 3)
                 output = self.dropout_b(output)
-                #decoder_hidden = self.dropout_hidden(decoder_hidden)
 
                 if self.decoder_w_attn is not None:
                     output, decoder_hidden, mask = self.decoder_w_attn(output, output, decoder_hidden)
@@ -679,11 +688,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.dropout(output_x)
 
-                output_x = F.log_softmax(output_x, dim=2) ### <<--- this line for NLLLoss !!
-
                 outputs.append(output_x)
-
-                #output = self.prune_tensor(output, 3)
 
                 token = torch.argmax(output_x, dim=2)
                 #print(token)
@@ -695,13 +700,13 @@ class AnswerModule(nn.Module):
             all_out.append(some_out)
 
         val_out = torch.cat(all_out, dim=1)
-
+        val_out = F.softmax(val_out, dim=2)
 
         return val_out
 
     def forward(self, mem, question_h):
 
-        #if not self.recurrent_output or True:
+        question_h = F.relu(question_h)
         mem = F.relu(mem)
 
         mem_in = mem.permute(1,0,2)
@@ -716,11 +721,9 @@ class AnswerModule(nn.Module):
 
         if self.recurrent_output:
 
-            #out = self.prune_tensor(out, 3)
+            out = F.tanh(out)
 
-            #mem = out #.permute(1,0,2).squeeze(0)
-
-            return self.recurrent(out)
+            return self.recurrent(out, mem, question_h)
 
         return out.permute(1,0)
 
@@ -891,8 +894,9 @@ class WrapMemRNN(nn.Module):
             self.memory_list = None
             positional_list = []
 
-            for i in range(len(sequences)):
 
+            for i in range(len(sequences)):
+                slot_list = [ self.q_q_last[i] for _ in range(self.memory_hops) ]
                 z = self.q_q_last[i].clone()
                 m_list = [z]
 
@@ -913,11 +917,20 @@ class WrapMemRNN(nn.Module):
 
                     out = self.prune_tensor(e, 3)
 
+                    ## can use?? ##
+                    if False:
+                        slot_list[iter] = out
+                        s = torch.cat(slot_list, dim=1)
+                        s = encoding_positional(s,sum=True)
+                        s = self.prune_tensor(s, 3)
+                        out = F.tanh(s)
+
                     m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
                 tmp = torch.cat(m_list, dim=1)
                 #print(tmp.size(),'tmp')
+
                 positional_list.append(tmp)
 
             mm_list = torch.cat(mem_list, dim=0)
@@ -957,13 +970,14 @@ class WrapMemRNN(nn.Module):
         concat = [
             self.prune_tensor(prev_mem, 1),
             self.prune_tensor(out, 1),
-            self.prune_tensor(question,1)#[0, q_index, :], 1)
+            self.prune_tensor(question,1)
         ]
         #for i in concat: print(i.size())
         #exit()
 
         concat = torch.cat(concat, dim=0)
         h = self.next_mem(concat)
+        h = F.tanh(h)
 
 
         if self.recurrent_output and not hparams['split_sentences'] and False:
@@ -1029,7 +1043,7 @@ class WrapMemRNN(nn.Module):
     def wrap_answer_module_simple(self):
         #outputs
 
-        if self.recurrent_output and self.memory_hops > 1 and False:
+        if self.recurrent_output and self.memory_hops > 1 :
             lst = []
             for i in range(len(self.memory_list)):
                 encoding = self.prune_tensor(self.memory_list[i], 3)

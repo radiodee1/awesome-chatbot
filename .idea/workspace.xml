@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,17 +27,17 @@
           <entry key="project.open.time.4" value="52" />
           <entry key="project.open.time.5" value="20" />
           <entry key="project.open.time.6" value="46" />
-          <entry key="project.open.time.7" value="31" />
+          <entry key="project.open.time.7" value="32" />
           <entry key="project.open.time.8" value="12" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="199" />
+          <entry key="project.opened" value="200" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="32796" />
+          <entry key="py" value="33389" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,13 +47,13 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="32796" />
+          <entry key="Python" value="33389" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="md" value="9" />
-          <entry key="py" value="51" />
+          <entry key="py" value="52" />
           <entry key="sh" value="12" />
           <entry key="txt" value="3" />
         </counts>
@@ -63,18 +63,18 @@
           <entry key="Bash" value="12" />
           <entry key="Markdown" value="9" />
           <entry key="PLAIN_TEXT" value="3" />
-          <entry key="Python" value="51" />
+          <entry key="Python" value="52" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="586">
-              <caret line="1031" column="58" selection-start-line="1031" selection-start-column="58" selection-end-line="1031" selection-end-column="58" />
+            <state relative-caret-position="2476">
+              <caret line="1031" column="67" selection-start-line="1031" selection-start-column="67" selection-end-line="1031" selection-end-column="67" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -82,11 +82,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/babi.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10044">
-              <caret line="584" column="28" selection-start-line="584" selection-start-column="28" selection-end-line="584" selection-end-column="28" />
+            <state relative-caret-position="2314">
+              <caret line="770" column="24" selection-start-line="770" selection-start-column="13" selection-end-line="770" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -182,18 +182,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>self.embed(</find>
-      <find>question_variable</find>
-      <find>target_variable</find>
-      <find>model_6_dec</find>
-      <find>input_variable</find>
-      <find>variableFromSentence</find>
       <find>variablesFromPair</find>
       <find>LuongAttention</find>
       <find>attention</find>
       <find>concat_out</find>
-      <find>model_5_ans</find>
-      <find>AnswerModule</find>
       <find>simple_input</find>
       <find>last_mem</find>
       <find>this_epoch</find>
@@ -207,11 +199,19 @@
       <find>self.blac</find>
       <find>do_skip_unk</find>
       <find>directions</find>
-      <find>encoding_positional</find>
       <find>dropout_hidden</find>
       <find>dropout_b</find>
-      <find>decoder_w_attn</find>
+      <find>cancel_attention</find>
+      <find>encoding_positional</find>
+      <find>AnswerModule</find>
       <find>Decoder</find>
+      <find>decoder_w_attn</find>
+      <find>decoder_hidden</find>
+      <find>NLLLoss</find>
+      <find>next_mem</find>
+      <find>out_c</find>
+      <find>out_a</find>
+      <find>model_5_ans</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -220,7 +220,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/model/test.py" />
         <option value="$PROJECT_DIR$/do_launch_series_model.py" />
         <option value="$PROJECT_DIR$/model/attention_decoder.py" />
         <option value="$PROJECT_DIR$/do_make_movie_download.sh" />
@@ -271,6 +270,7 @@
         <option value="$PROJECT_DIR$/do_plot.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent_alt.py" />
       </list>
     </option>
   </component>
@@ -285,7 +285,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -302,6 +301,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -337,7 +337,7 @@
     <frame x="534" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -355,12 +355,30 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/do_launch_pytorch.sh" />
     <entry file="file://$PROJECT_DIR$/model/pytorch.py" />
     <entry file="file://$PROJECT_DIR$/bot/game.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -516,8 +534,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="586">
-          <caret line="1031" column="58" selection-start-line="1031" selection-start-column="58" selection-end-line="1031" selection-end-column="58" />
+        <state relative-caret-position="2476">
+          <caret line="1031" column="67" selection-start-line="1031" selection-start-column="67" selection-end-line="1031" selection-end-column="67" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
@@ -553,11 +571,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -566,6 +579,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -597,6 +615,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="32202">
           <caret line="1815" column="9" selection-start-line="1815" selection-start-column="9" selection-end-line="1815" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2314">
+          <caret line="770" column="24" selection-start-line="770" selection-start-column="13" selection-end-line="770" selection-end-column="24" />
         </state>
       </provider>
     </entry>
