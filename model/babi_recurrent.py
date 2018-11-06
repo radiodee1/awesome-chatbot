@@ -703,26 +703,26 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        if not self.recurrent_output or True:
-            mem = F.relu(mem)
+        #if not self.recurrent_output or True:
+        mem = F.relu(mem)
 
-            mem_in = mem.permute(1,0,2)
-            question_h = question_h.permute(1,0,2)
+        mem_in = mem.permute(1,0,2)
+        question_h = question_h.permute(1,0,2)
 
-            mem_in = torch.cat([mem_in, question_h], dim=2)
+        mem_in = torch.cat([mem_in, question_h], dim=2)
 
-            mem_in = self.dropout(mem_in)
-            mem_in = mem_in.squeeze(0)
+        mem_in = self.dropout(mem_in)
+        mem_in = mem_in.squeeze(0)
 
-            out = self.out_a(mem_in)
+        out = self.out_a(mem_in)
 
         if self.recurrent_output:
 
             #out = self.prune_tensor(out, 3)
 
-            mem = out #.permute(1,0,2).squeeze(0)
+            #mem = out #.permute(1,0,2).squeeze(0)
 
-            return self.recurrent(mem)
+            return self.recurrent(out)
 
         return out.permute(1,0)
 
