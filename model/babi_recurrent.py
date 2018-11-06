@@ -703,7 +703,7 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        if not self.recurrent_output:
+        if not self.recurrent_output or True:
             mem = F.relu(mem)
 
             mem_in = mem.permute(1,0,2)
@@ -718,7 +718,9 @@ class AnswerModule(nn.Module):
 
         if self.recurrent_output:
 
-            mem = mem.permute(1,0,2).squeeze(0)
+            #out = self.prune_tensor(out, 3)
+
+            mem = out #.permute(1,0,2).squeeze(0)
 
             return self.recurrent(mem)
 
@@ -1032,7 +1034,7 @@ class WrapMemRNN(nn.Module):
         if self.recurrent_output and self.memory_hops > 1 :
             lst = []
             for i in range(len(self.memory_list)):
-                encoding = self.prune_tensor(self.memory_list[i,-2:], 3)
+                encoding = self.prune_tensor(self.memory_list[i], 3)
                 encoding = encoding_positional(encoding, sum=True)
                 lst.append(encoding)
             lst = torch.cat(lst, dim=0)
