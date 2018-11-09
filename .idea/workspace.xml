@@ -37,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="33702" />
+          <entry key="py" value="33903" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="33702" />
+          <entry key="Python" value="33903" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -85,8 +85,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3286">
-              <caret line="2609" column="32" selection-start-line="2609" selection-start-column="17" selection-end-line="2609" selection-end-column="32" />
+            <state relative-caret-position="658">
+              <caret line="677" column="57" selection-start-line="677" selection-start-column="57" selection-end-line="677" selection-end-column="57" />
             </state>
           </provider>
         </entry>
@@ -182,14 +182,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>next_mem</find>
-      <find>out_c</find>
-      <find>decoder_hidden</find>
-      <find>out_d</find>
-      <find>decoder_layers</find>
-      <find>out_a</find>
-      <find>out_b1</find>
-      <find>out_b2</find>
       <find>model_5_ans</find>
       <find>wrap_answer_module_simple</find>
       <find>dropout_b</find>
@@ -205,13 +197,21 @@
       <find>attention</find>
       <find>sof</find>
       <find>gru</find>
-      <find>AnswerModule</find>
       <find>decoder</find>
-      <find>dropout</find>
       <find>loss</find>
       <find>model_0_wra</find>
       <find>do_batch_process</find>
+      <find>train</find>
+      <find>target_variable</find>
+      <find>criterion</find>
+      <find>validate_iters</find>
+      <find>do_load_once</find>
+      <find>load_checkpoint</find>
+      <find>count</find>
+      <find>save</find>
       <find>save_checkpoint</find>
+      <find>dropout</find>
+      <find>AnswerModule</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -275,7 +275,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="535" />
+    <option name="x" value="534" />
     <option name="y" value="79" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -334,7 +334,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="535" y="79" width="1380" height="1000" extended-state="0" />
+    <frame x="534" y="79" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -620,8 +620,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3286">
-          <caret line="2609" column="32" selection-start-line="2609" selection-start-column="17" selection-end-line="2609" selection-end-column="32" />
+        <state relative-caret-position="658">
+          <caret line="677" column="57" selection-start-line="677" selection-start-column="57" selection-end-line="677" selection-end-column="57" />
         </state>
       </provider>
     </entry>

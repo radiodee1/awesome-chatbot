@@ -675,7 +675,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
-                #output_x = self.dropout(output_x)
+                output_x = self.dropout(output_x) ## <---
 
                 outputs.append(output_x)
 
@@ -703,7 +703,7 @@ class AnswerModule(nn.Module):
 
         mem_in = torch.cat([mem_in, question_h], dim=2)
 
-        #mem_in = self.dropout(mem_in)
+        mem_in = self.dropout(mem_in)
         mem_in = mem_in.squeeze(0)
 
         out = self.out_a(mem_in)
@@ -736,7 +736,7 @@ class WrapMemRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        gru_dropout = dropout * 0.0 #0.5
+        gru_dropout = dropout #* 0.0 #0.5
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
@@ -755,9 +755,9 @@ class WrapMemRNN(nn.Module):
                                    embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
                                    batch_first=True)
 
-        self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
+        self.model_3_mem = MemRNN(hidden_size, dropout=gru_dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout, embed=self.embed,
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=gru_dropout, embed=self.embed,
                                         recurrent_output=self.recurrent_output, sol_token=self.sol_token,
                                         cancel_attention=self.cancel_attention)
 
@@ -2258,35 +2258,35 @@ class NMT:
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
                                                   criterion)
 
+            #print(input_variable, 'in\n', question_variable,'qv\n', target_variable, len(target_variable), target_variable[0].size(), 'tv\n')
+
             loss = 0
 
-            if self.do_recurrent_output:
+            if self.do_recurrent_output :
 
                 target_variable = torch.cat(target_variable, dim=0)
-
+                ans = self.prune_tensor(ans, 3)
                 #ansx = Variable(ans.data.max(dim=2)[1])
                 ans = ans.float().permute(1,0,2).contiguous()
-
+                '''
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
                 loss += criterion(ans, target_variable)
                 '''
                 for i in range(len(target_variable)):
+                    #print(target_variable[i])
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
-                '''
+
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
             else:
                 target_variable = target_variable[0]
-                #print(len(ans),ans.size())
                 ans = torch.argmax(ans,dim=1)
                 #ans = ans[0]
 
-            #ans = ans.permute(1,0)
 
-            #print(ans.size(), target_variable.size(),'criterion')
 
             if not self.do_recurrent_output:
                 loss = criterion(ans, target_variable)
@@ -2388,7 +2388,7 @@ class NMT:
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
-            self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
+            self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
 
         if not self.do_batch_process:
             training_pairs = [self.variablesFromPair(
@@ -2530,7 +2530,7 @@ class NMT:
                 print_loss_total = 0
 
                 if self._print_control(iter):
-                    print(epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
+                    print(epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters) # +", countdown = "+ str(save_thresh - save_num)
                           + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
@@ -2606,7 +2606,7 @@ class NMT:
 
                     print("-----")
 
-        if self.do_batch_process:
+        if self.do_batch_process or not self.do_test_not_train:
             self.save_checkpoint(num=len(self.pairs))
 
         str_score = ' %.2f'
