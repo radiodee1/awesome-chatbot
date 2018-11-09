@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="199" />
+          <entry key="project.closed" value="203" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -26,18 +27,18 @@
           <entry key="project.open.time.3" value="7" />
           <entry key="project.open.time.4" value="52" />
           <entry key="project.open.time.5" value="20" />
-          <entry key="project.open.time.6" value="46" />
-          <entry key="project.open.time.7" value="32" />
-          <entry key="project.open.time.8" value="12" />
+          <entry key="project.open.time.6" value="47" />
+          <entry key="project.open.time.7" value="33" />
+          <entry key="project.open.time.8" value="13" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="200" />
+          <entry key="project.opened" value="203" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="33389" />
+          <entry key="py" value="33646" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="33389" />
+          <entry key="Python" value="33646" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -73,7 +74,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2476">
+            <state relative-caret-position="18090">
               <caret line="1031" column="67" selection-start-line="1031" selection-start-column="67" selection-end-line="1031" selection-end-column="67" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -85,8 +86,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2314">
-              <caret line="770" column="24" selection-start-line="770" selection-start-column="13" selection-end-line="770" selection-end-column="24" />
+            <state relative-caret-position="658">
+              <caret line="675" column="17" selection-start-line="675" selection-start-column="17" selection-end-line="675" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -182,36 +183,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variablesFromPair</find>
-      <find>LuongAttention</find>
-      <find>attention</find>
-      <find>concat_out</find>
-      <find>simple_input</find>
-      <find>last_mem</find>
-      <find>this_epoch</find>
-      <find>start_epoch</find>
-      <find>epoch_length</find>
-      <find>starting_epoch_length</find>
-      <find>recurrent_output</find>
-      <find>list_encoding</find>
-      <find>maxtokens</find>
-      <find>blacklist</find>
       <find>self.blac</find>
       <find>do_skip_unk</find>
       <find>directions</find>
       <find>dropout_hidden</find>
-      <find>dropout_b</find>
       <find>cancel_attention</find>
       <find>encoding_positional</find>
-      <find>AnswerModule</find>
       <find>Decoder</find>
       <find>decoder_w_attn</find>
-      <find>decoder_hidden</find>
       <find>NLLLoss</find>
       <find>next_mem</find>
       <find>out_c</find>
+      <find>decoder_hidden</find>
+      <find>out_d</find>
+      <find>decoder</find>
+      <find>decoder_layers</find>
       <find>out_a</find>
+      <find>out_b1</find>
+      <find>out_b2</find>
       <find>model_5_ans</find>
+      <find>wrap_answer_module_simple</find>
+      <find>dropout_b</find>
+      <find>WrapMemRNN</find>
+      <find>gru_dropout</find>
+      <find>Encoder</find>
+      <find>model_2_enc</find>
+      <find>EpisodicAttn</find>
+      <find>softmax</find>
+      <find>AnswerModule</find>
+      <find>MemRNN</find>
+      <find>CustomGRU</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -275,7 +276,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="534" />
+    <option name="x" value="535" />
     <option name="y" value="80" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
@@ -334,7 +335,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="534" y="80" width="1380" height="1000" extended-state="0" />
+    <frame x="535" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -532,20 +533,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2476">
-          <caret line="1031" column="67" selection-start-line="1031" selection-start-column="67" selection-end-line="1031" selection-end-column="67" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="10044">
           <caret line="584" column="28" selection-start-line="584" selection-start-column="28" selection-end-line="584" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18090">
+          <caret line="1031" column="67" selection-start-line="1031" selection-start-column="67" selection-end-line="1031" selection-end-column="67" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -620,8 +621,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2314">
-          <caret line="770" column="24" selection-start-line="770" selection-start-column="13" selection-end-line="770" selection-end-column="24" />
+        <state relative-caret-position="478">
+          <caret line="311" column="29" selection-start-line="311" selection-start-column="29" selection-end-line="311" selection-end-column="29" />
         </state>
       </provider>
     </entry>

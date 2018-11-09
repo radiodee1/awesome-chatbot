@@ -272,7 +272,7 @@ class Decoder(nn.Module):
 
 
 class CustomGRU(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, input_size, hidden_size, dropout=0.3):
         super(CustomGRU, self).__init__()
         self.hidden_size = hidden_size
         self.Wr = nn.Linear(input_size, hidden_size)
@@ -288,6 +288,8 @@ class CustomGRU(nn.Module):
         init.xavier_normal_(self.Wz.state_dict()['weight'])
         self.Uz = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.Uz.state_dict()['weight'])
+
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, fact, C, g=None):
 
@@ -306,6 +308,8 @@ class CustomGRU(nn.Module):
         #exit()
 
         zz = g * h_tilda + (1-g) * C
+
+        zz = self.dropout(zz)
         #print(zz.size(),'zz')
         #zz = z * C + (1 - z) * h_tilda
         return zz, zz # h_tilda #zz
@@ -346,7 +350,6 @@ class EpisodicAttn(nn.Module):
 
         self.c_list_z = self.dropout(self.c_list_z)
         l_1 = self.out_a(self.c_list_z)
-
 
         l_1 = torch.tanh(l_1) ## <---- this line? used to be tanh !!
 
@@ -497,32 +500,7 @@ class Encoder(nn.Module):
             output = output.unsqueeze(0)
         return output
 
-    '''
-    def position_encoding(self, embedded_sentence, permute_sentence=False):
-        if permute_sentence and False:
-            print('permute sent')
-            embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
 
-        _, slen, elen = embedded_sentence.size()
-
-        slen2 = slen
-        elen2 = elen
-        if slen == 1: slen2 += 0.01
-        if elen == 1: elen2 += 0.01
-
-        #print(slen, elen, 'slen,elen')
-
-        l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
-             range(slen)]
-        l = torch.FloatTensor(l)
-        l = l.unsqueeze(0)  # for #batch
-        #print(l.size(),"l", l)
-        l = l.expand_as(embedded_sentence)
-        if hparams['cuda'] is True: l = l.cuda()
-        weighted = embedded_sentence * Variable(l)
-
-        return weighted
-    '''
 
     def list_encoding(self, lst, hidden, permute_sentence=False):
         #print(permute_sentence)
@@ -592,7 +570,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output = recurrent_output
         self.sol_token = sol_token
-        self.decoder_layers = 2 # hparams['decoder_layers']
+        self.decoder_layers = 1 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
         self.embed = embed
         out_size = vocab_size
@@ -604,19 +582,22 @@ class AnswerModule(nn.Module):
         self.out_b1 = nn.Linear(hidden_size , hidden_size , bias=True)
         init.xavier_normal_(self.out_b1.state_dict()['weight'])
 
-        self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
-        init.xavier_normal_(self.out_b2.state_dict()['weight'])
+        #self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
+        #init.xavier_normal_(self.out_b2.state_dict()['weight'])
 
         self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
         init.xavier_normal_(self.out_c.state_dict()['weight'])
+
+        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
+        init.xavier_normal_(self.out_d.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
         self.dropout_b = nn.Dropout(dropout)
         self.dropout_c = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = None #nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
-        self.decoder_w_attn = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
+        self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        self.decoder_w_attn = None #Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
 
     def reset_parameters(self):
 
@@ -640,7 +621,7 @@ class AnswerModule(nn.Module):
 
         self.embed = embed
 
-    def recurrent(self, out, hid1=None, hid2=None):
+    def recurrent(self, out, hid1=None):
 
         l, hid = out.size()
 
@@ -653,20 +634,26 @@ class AnswerModule(nn.Module):
             while len(e_out_list) < self.decoder_layers:
                 e_out_list.append(self.prune_tensor(out[k,:],2))
 
-            if hid1 is not None and hid2 is not None and self.decoder_layers == 2:
+            if hid1 is not None: # and  self.decoder_layers == 2:
+                out_d = self.out_d(hid1[k])
+
+                out_d = self.prune_tensor(out_d, 3)
+
                 e_out_list = [
-                    self.out_b1(hid1[k]),
-                    self.out_b2(hid1[k]) #.permute(1,0,2)[k])
+                    out_d[:,:,:self.hidden_size],
+                    out_d[:,:,self.hidden_size:]
                 ]
                 #for i in e_out_list: print(i.size())
                 #exit()
+            if self.decoder_layers == 1 and hid1 is not None:
+                e_out_list = [ hid1[k] ]
 
             e_out = torch.cat(e_out_list, dim=0)
-            e_out = F.tanh(e_out)
+            e_out = F.relu(e_out)
             e_out = self.dropout_c(e_out)
 
             outputs = []
-            decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
+            decoder_hidden = self.prune_tensor(e_out,3) #.permute(1,0,2)
 
             token = EOS_token
 
@@ -676,9 +663,9 @@ class AnswerModule(nn.Module):
 
                 output = self.embed(Variable(torch.tensor([token])))
                 output = self.prune_tensor(output, 3)
-                output = self.dropout_b(output)
+                #output = self.dropout_b(output)
 
-                if self.decoder_w_attn is not None:
+                if self.decoder_w_attn is not None and not self.cancel_attention:
                     output, decoder_hidden, mask = self.decoder_w_attn(output, output, decoder_hidden)
                     pass
                 else:
@@ -686,7 +673,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
-                output_x = self.dropout(output_x)
+                #output_x = self.dropout(output_x)
 
                 outputs.append(output_x)
 
@@ -723,7 +710,7 @@ class AnswerModule(nn.Module):
 
             out = F.tanh(out)
 
-            return self.recurrent(out, mem, question_h)
+            return self.recurrent(out, None)
 
         return out.permute(1,0)
 
@@ -1043,7 +1030,7 @@ class WrapMemRNN(nn.Module):
     def wrap_answer_module_simple(self):
         #outputs
 
-        if self.recurrent_output and self.memory_hops > 1 :
+        if self.recurrent_output and self.memory_hops > 1 and False :
             lst = []
             for i in range(len(self.memory_list)):
                 encoding = self.prune_tensor(self.memory_list[i], 3)
