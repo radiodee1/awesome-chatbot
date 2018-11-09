@@ -164,6 +164,7 @@ def encoding_positional(embedded_sentence, sum=False):
         weighted = torch.sum(weighted, dim=1)
     return weighted
 
+'''
 class LuongAttention(nn.Module):
     
     ## LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
@@ -189,6 +190,7 @@ class LuongAttention(nn.Module):
         context = context.permute(2, 0, 1)  # (seq, batch, dim)
         mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
         return context, mask
+'''
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
@@ -198,7 +200,7 @@ class Decoder(nn.Module):
         self.vocab_size = target_vocab_size
         self.hidden_dim = hidden_dim
         #self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim)
+        self.attention = None # LuongAttention(hidden_dim)
 
         gru_in_dim = embed_dim + hidden_dim
         #linear_in_dim = hidden_dim * 2
@@ -228,7 +230,7 @@ class Decoder(nn.Module):
         #embedded = self.embed(output)  # (1, batch, embed_dim)
 
 
-        if not self.cancel_attention:
+        if not self.cancel_attention and False:
             decoder_hidden_y = decoder_hidden.permute(1,0,2)
 
             decoder_hidden_y = decoder_hidden_y[:, 0, :]
@@ -309,7 +311,7 @@ class CustomGRU(nn.Module):
 
         zz = g * h_tilda + (1-g) * C
 
-        zz = self.dropout(zz)
+        #zz = self.dropout(zz)
         #print(zz.size(),'zz')
         #zz = z * C + (1 - z) * h_tilda
         return zz, zz # h_tilda #zz
@@ -650,7 +652,7 @@ class AnswerModule(nn.Module):
 
             e_out = torch.cat(e_out_list, dim=0)
             e_out = F.relu(e_out)
-            e_out = self.dropout_c(e_out)
+            #e_out = self.dropout_c(e_out)
 
             outputs = []
             decoder_hidden = self.prune_tensor(e_out,3) #.permute(1,0,2)
@@ -687,7 +689,7 @@ class AnswerModule(nn.Module):
             all_out.append(some_out)
 
         val_out = torch.cat(all_out, dim=1)
-        val_out = F.softmax(val_out, dim=2)
+        #val_out = F.softmax(val_out, dim=2)
 
         return val_out
 
@@ -701,7 +703,7 @@ class AnswerModule(nn.Module):
 
         mem_in = torch.cat([mem_in, question_h], dim=2)
 
-        mem_in = self.dropout(mem_in)
+        #mem_in = self.dropout(mem_in)
         mem_in = mem_in.squeeze(0)
 
         out = self.out_a(mem_in)
@@ -1011,7 +1013,7 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
 
-        if not self.simple_input:
+        if not self.simple_input or True:
             z = F.softmax(z, dim=0) # <--- use this!!
         else:
             z = F.sigmoid(z)
@@ -1888,6 +1890,7 @@ class NMT:
         if self.do_load_babi or self.do_conserve_space :
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
+            print('save', basename)
             #####
             if self.do_test_not_train:
                 self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = str(self.score)
@@ -2290,8 +2293,8 @@ class NMT:
 
             loss.backward()
 
-            clip = 50.0
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+            #clip = 50.0
+            #_ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_5_ans.parameters(), clip)
 
             wrapper_optimizer.step()
 
@@ -2377,7 +2380,7 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output :
+        if self.do_recurrent_output and False:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
@@ -2840,7 +2843,7 @@ class NMT:
 
     def update_result_file(self):
 
-        if True: self._test_embedding(exit=False)
+        if self.do_freeze_embedding: self._test_embedding(exit=False)
 
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
