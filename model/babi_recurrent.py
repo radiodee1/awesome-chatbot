@@ -1028,7 +1028,7 @@ class WrapMemRNN(nn.Module):
 
     def wrap_answer_module_simple(self):
         #outputs
-
+        '''
         if self.recurrent_output and self.memory_hops > 1 and False:
             lst = []
             for i in range(len(self.memory_list)):
@@ -1039,7 +1039,7 @@ class WrapMemRNN(nn.Module):
 
             self.last_mem = self.prune_tensor(lst, 3).permute(1,0,2)
             #print(self.last_mem.size(),'lm')
-
+        '''
         #print(self.last_mem.size())
         q = self.q_q_last
 

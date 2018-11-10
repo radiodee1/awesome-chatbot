@@ -147,6 +147,10 @@ def encoding_positional(embedded_sentence, sum=False):
 
     slen2 = slen
     elen2 = elen
+
+    if slen == 1 or elen == 1:
+        exit()
+
     if slen == 1: slen2 += 0.01
     if elen == 1: elen2 += 0.01
 
@@ -502,10 +506,7 @@ class Encoder(nn.Module):
             output = output.unsqueeze(0)
         return output
 
-
-
     def list_encoding(self, lst, hidden, permute_sentence=False):
-        #print(permute_sentence)
 
         l = []
 
@@ -585,8 +586,8 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b1 = nn.Linear(hidden_size , hidden_size , bias=True)
-        init.xavier_normal_(self.out_b1.state_dict()['weight'])
+        #self.out_b1 = nn.Linear(hidden_size , hidden_size , bias=True)
+        #init.xavier_normal_(self.out_b1.state_dict()['weight'])
 
         #self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
         #init.xavier_normal_(self.out_b2.state_dict()['weight'])
@@ -603,7 +604,18 @@ class AnswerModule(nn.Module):
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
-        self.decoder_w_attn = None #Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
+        #self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
+        self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
+
+        self.h0 = None
+        self.c0 = None
+
+        self.h0, self.c0 = self.init_hidden(1)
+
+    def init_hidden(self, batch_size):
+        hidden = Variable(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size))
+        cell = Variable(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size))
+        return (hidden, cell)
 
     def reset_parameters(self):
 
@@ -640,6 +652,7 @@ class AnswerModule(nn.Module):
             while len(e_out_list) < self.decoder_layers:
                 e_out_list.append(self.prune_tensor(out[k,:],2))
 
+            '''
             if hid1 is not None: # and  self.decoder_layers == 2:
                 out_d = self.out_d(hid1[k])
 
@@ -653,6 +666,7 @@ class AnswerModule(nn.Module):
                 #exit()
             if self.decoder_layers == 1 and hid1 is not None:
                 e_out_list = [ hid1[k] ]
+            '''
 
             e_out = torch.cat(e_out_list, dim=0)
             e_out = F.relu(e_out)
@@ -663,6 +677,8 @@ class AnswerModule(nn.Module):
 
             token = EOS_token
 
+            if self.lstm is not None:
+                self.h0 = decoder_hidden
             ##############################################
 
             for i in range(self.maxtokens):
@@ -671,8 +687,11 @@ class AnswerModule(nn.Module):
                 output = self.prune_tensor(output, 3)
                 #output = self.dropout_b(output)
 
-                if self.decoder_w_attn is not None and not self.cancel_attention:
-                    output, decoder_hidden, mask = self.decoder_w_attn(output, output, decoder_hidden)
+                if self.lstm is not None:
+                    output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
+                    self.h0 = hn
+                    self.c0 = cn
+                    #print(i, hn.size(), cn.size(),'hn,cn')
                     pass
                 else:
                     #print(output.size(), decoder_hidden.size(),'o,dh')
@@ -681,7 +700,10 @@ class AnswerModule(nn.Module):
 
                 output_x = self.out_c(output)
 
-                output_x = self.dropout(output_x) ## <---
+                output_x = self.dropout(output_x)
+
+                output_x = F.log_softmax(output_x, dim=2)
+                #output_x = self.dropout(output_x) ## <---
 
                 outputs.append(output_x)
 
@@ -703,6 +725,7 @@ class AnswerModule(nn.Module):
 
         question_h = F.relu(question_h)
         mem = F.relu(mem)
+        question_h = F.relu(question_h)
 
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
@@ -716,7 +739,7 @@ class AnswerModule(nn.Module):
 
         if self.recurrent_output:
 
-            out = F.tanh(out)
+            #out = F.tanh(out) ## <-- not this
 
             return self.recurrent(out, None)
 
@@ -742,7 +765,7 @@ class WrapMemRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        gru_dropout = dropout #* 0.0 #0.5
+        gru_dropout = dropout * 0.0 #0.5
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
@@ -761,9 +784,9 @@ class WrapMemRNN(nn.Module):
                                    embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
                                    batch_first=True)
 
-        self.model_3_mem = MemRNN(hidden_size, dropout=gru_dropout)
+        self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
         self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=gru_dropout, embed=self.embed,
+        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout, embed=self.embed,
                                         recurrent_output=self.recurrent_output, sol_token=self.sol_token,
                                         cancel_attention=self.cancel_attention)
 
@@ -852,7 +875,7 @@ class WrapMemRNN(nn.Module):
 
             ii = self.prune_tensor(ii, 2)
             #print(ii, 'ii')
-            out1, hidden1 = self.model_1_enc(ii, None)
+            out1, hidden1 = self.model_1_enc(ii, hidden1)
             #print(out1.size(),'out1')
 
             prev_h1.append(out1)
@@ -891,7 +914,9 @@ class WrapMemRNN(nn.Module):
 
 
             for i in range(len(sequences)):
-                slot_list = [ self.q_q_last[i] for _ in range(self.memory_hops) ]
+
+                #slot_list = [ self.q_q_last[i] for _ in range(self.memory_hops) ]
+
                 z = self.q_q_last[i].clone()
                 m_list = [z]
 
@@ -911,7 +936,7 @@ class WrapMemRNN(nn.Module):
                     e, _ = self.wrap_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
                     out = self.prune_tensor(e, 3)
-
+                    '''
                     ## can use?? ##
                     if False:
                         slot_list[iter] = out
@@ -919,7 +944,7 @@ class WrapMemRNN(nn.Module):
                         s = encoding_positional(s,sum=True)
                         s = self.prune_tensor(s, 3)
                         out = F.tanh(s)
-
+                    '''
                     m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
@@ -972,7 +997,7 @@ class WrapMemRNN(nn.Module):
 
         concat = torch.cat(concat, dim=0)
         h = self.next_mem(concat)
-        h = F.tanh(h)
+        #h = F.tanh(h)
 
 
         if self.recurrent_output and not hparams['split_sentences'] and False:
@@ -1019,10 +1044,8 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
 
-        if not self.simple_input or True:
-            z = F.softmax(z, dim=0) # <--- use this!!
-        else:
-            z = F.sigmoid(z)
+        z = F.softmax(z, dim=0) # <--- use this!!
+
 
         return z
 
@@ -1037,7 +1060,7 @@ class WrapMemRNN(nn.Module):
 
     def wrap_answer_module_simple(self):
         #outputs
-
+        '''
         if self.recurrent_output and self.memory_hops > 1 and False :
             lst = []
             for i in range(len(self.memory_list)):
@@ -1048,7 +1071,7 @@ class WrapMemRNN(nn.Module):
 
             self.last_mem = self.prune_tensor(lst, 3).permute(1,0,2)
             #print(self.last_mem.size(),'lm')
-
+        '''
         #print(self.last_mem.size())
         q = self.q_q_last
 
@@ -1893,7 +1916,7 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
-        if self.do_load_babi or self.do_conserve_space :
+        if self.do_load_babi or self.do_conserve_space or True:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
             print('save', basename)
@@ -2269,12 +2292,12 @@ class NMT:
             loss = 0
 
             if self.do_recurrent_output :
-
+                #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
                 ans = self.prune_tensor(ans, 3)
                 #ansx = Variable(ans.data.max(dim=2)[1])
                 ans = ans.float().permute(1,0,2).contiguous()
-                '''
+
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
                 loss += criterion(ans, target_variable)
@@ -2283,7 +2306,7 @@ class NMT:
                     #print(target_variable[i])
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
-
+                '''
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
@@ -2299,8 +2322,9 @@ class NMT:
 
             loss.backward()
 
-            #clip = 50.0
-            #_ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_5_ans.parameters(), clip)
+            if True:
+                clip = 50.0
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
             wrapper_optimizer.step()
 
@@ -2394,7 +2418,7 @@ class NMT:
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
-            self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
+            self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
 
         if not self.do_batch_process:
             training_pairs = [self.variablesFromPair(
