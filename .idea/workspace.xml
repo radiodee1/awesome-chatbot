@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="203" />
+          <entry key="project.closed" value="204" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -25,19 +26,19 @@
           <entry key="project.open.time.2" value="3" />
           <entry key="project.open.time.3" value="7" />
           <entry key="project.open.time.4" value="52" />
-          <entry key="project.open.time.5" value="20" />
+          <entry key="project.open.time.5" value="21" />
           <entry key="project.open.time.6" value="47" />
           <entry key="project.open.time.7" value="34" />
           <entry key="project.open.time.8" value="13" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="204" />
+          <entry key="project.opened" value="205" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="33903" />
+          <entry key="py" value="34063" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="33903" />
+          <entry key="Python" value="34063" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -85,8 +86,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="658">
-              <caret line="677" column="57" selection-start-line="677" selection-start-column="57" selection-end-line="677" selection-end-column="57" />
+            <state relative-caret-position="262">
+              <caret line="765" column="24" selection-start-line="765" selection-start-column="13" selection-end-line="765" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -182,12 +183,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_5_ans</find>
-      <find>wrap_answer_module_simple</find>
-      <find>dropout_b</find>
-      <find>WrapMemRNN</find>
-      <find>gru_dropout</find>
-      <find>Encoder</find>
       <find>model_2_enc</find>
       <find>EpisodicAttn</find>
       <find>softmax</find>
@@ -212,6 +207,12 @@
       <find>save_checkpoint</find>
       <find>dropout</find>
       <find>AnswerModule</find>
+      <find>position</find>
+      <find>do_no_positional</find>
+      <find>split_sentences</find>
+      <find>Encoder</find>
+      <find>self.gru</find>
+      <find>model_5_ans</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -620,8 +621,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
-          <caret line="677" column="57" selection-start-line="677" selection-start-column="57" selection-end-line="677" selection-end-column="57" />
+        <state relative-caret-position="262">
+          <caret line="765" column="24" selection-start-line="765" selection-start-column="13" selection-end-line="765" selection-end-column="24" />
         </state>
       </provider>
     </entry>

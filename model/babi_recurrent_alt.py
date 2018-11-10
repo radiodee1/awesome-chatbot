@@ -517,13 +517,15 @@ class Encoder(nn.Module):
         embedded = torch.cat(l, dim=0) # dim=0
 
         #if len(l) == 1: permute_sentence=True
-        #print(embedded.size(),'emb')
+        #print(embedded.size(),'e0')
 
         embedded = encoding_positional(embedded)
 
         #embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
+        #print(embedded.size(),'e1')
 
         embedded = torch.sum(embedded, dim=1)
+        #print(embedded.size(),'e2')
 
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
@@ -533,20 +535,22 @@ class Encoder(nn.Module):
         #hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
-        #print(encoder_out.size(), 'e-out')
-
         encoder_out = self.sum_output(encoder_out)
+        #print(encoder_out.size(), 'e-out')
+        #print(encoder_hidden.size(), 'e-hid')
 
         #print(encoder_out.size(),'list')
         return encoder_out, encoder_hidden
 
     def forward(self, source, hidden=None):
 
-        if self.position:
+        if self.position :
+
             if isinstance(source, list):
                 return self.list_encoding(source, hidden)
             else:
-                #print(source.size(),'src')
+                print(source.size(),'src')
+                exit()
                 return self.list_encoding([source], hidden, permute_sentence=True)
 
         if isinstance(source, list):
@@ -598,7 +602,7 @@ class AnswerModule(nn.Module):
         self.dropout_c = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-        self.decoder = nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
+        self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
         self.decoder_w_attn = None #Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
 
     def reset_parameters(self):
@@ -671,6 +675,8 @@ class AnswerModule(nn.Module):
                     output, decoder_hidden, mask = self.decoder_w_attn(output, output, decoder_hidden)
                     pass
                 else:
+                    #print(output.size(), decoder_hidden.size(),'o,dh')
+                    #decoder_hidden = self.prune_tensor(decoder_hidden, 3)
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 output_x = self.out_c(output)
@@ -846,7 +852,7 @@ class WrapMemRNN(nn.Module):
 
             ii = self.prune_tensor(ii, 2)
             #print(ii, 'ii')
-            out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
+            out1, hidden1 = self.model_1_enc(ii, None)
             #print(out1.size(),'out1')
 
             prev_h1.append(out1)
