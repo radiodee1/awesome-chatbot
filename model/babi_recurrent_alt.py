@@ -675,21 +675,24 @@ class AnswerModule(nn.Module):
             outputs = []
             decoder_hidden = self.prune_tensor(e_out,3) #.permute(1,0,2)
 
-            token = EOS_token
+            token = SOS_token #EOS_token
 
             if self.lstm is not None:
+                #_, self.c0 = self.init_hidden(1)
+
                 self.h0 = decoder_hidden
+                #self.c0 = None #decoder_hidden
             ##############################################
 
             for i in range(self.maxtokens):
 
                 output = self.embed(Variable(torch.tensor([token])))
                 output = self.prune_tensor(output, 3)
-                #output = self.dropout_b(output)
+                output = self.dropout_b(output)
 
                 if self.lstm is not None:
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
-                    self.h0 = hn
+                    self.h0 = hn #self.dropout_c(hn)
                     self.c0 = cn
                     #print(i, hn.size(), cn.size(),'hn,cn')
                     pass
@@ -702,12 +705,20 @@ class AnswerModule(nn.Module):
 
                 output_x = self.dropout(output_x)
 
-                output_x = F.log_softmax(output_x, dim=2)
+                output_x = F.log_softmax(output_x, dim=2) ## log_softmax
                 #output_x = self.dropout(output_x) ## <---
 
                 outputs.append(output_x)
 
                 token = torch.argmax(output_x, dim=2)
+
+                if token == EOS_token:
+                    for _ in range(i + 1, self.maxtokens):
+                        out_early = Variable(torch.zeros((1,1,self.vocab_size)))
+                        out_early = self.prune_tensor(out_early, 3)
+                        outputs.append(out_early)
+                    #print(len(outputs))
+                    break
                 #print(token)
 
             some_out = torch.cat(outputs, dim=0)
