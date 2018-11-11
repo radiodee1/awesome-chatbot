@@ -678,10 +678,11 @@ class AnswerModule(nn.Module):
             token = SOS_token #EOS_token
 
             if self.lstm is not None:
+                decoder_hidden = decoder_hidden.permute(1,0,2)
                 #_, self.c0 = self.init_hidden(1)
 
                 self.h0 = decoder_hidden
-                #self.c0 = None #decoder_hidden
+                #self.c0 = decoder_hidden
             ##############################################
 
             for i in range(self.maxtokens):
@@ -715,11 +716,10 @@ class AnswerModule(nn.Module):
                 if token == EOS_token:
                     for _ in range(i + 1, self.maxtokens):
                         out_early = Variable(torch.zeros((1,1,self.vocab_size)))
-                        out_early = self.prune_tensor(out_early, 3)
+                        #out_early = self.prune_tensor(out_early, 3)
                         outputs.append(out_early)
                     #print(len(outputs))
                     break
-                #print(token)
 
             some_out = torch.cat(outputs, dim=0)
 
