@@ -586,6 +586,7 @@ class AnswerModule(nn.Module):
                 if self.lstm is not None:
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
                     hn = self.dropout_d(hn)
+                    cn = self.dropout_c(cn)
                     self.h0 = nn.Parameter(hn, requires_grad=False)
                     self.c0 = nn.Parameter(cn, requires_grad=False)
                     #print(i, hn.size(), cn.size(),'hn,cn')
