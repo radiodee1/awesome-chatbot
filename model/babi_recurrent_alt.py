@@ -286,12 +286,14 @@ class MemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
+    '''
     def prune_tensor(self, input, size):
         if len(input.size()) < size:
             input = input.unsqueeze(0)
         if len(input.size()) > size:
             input = input.squeeze(0)
         return input
+    '''
 
     def forward(self, input, hidden=None, g=None):
 
@@ -2157,6 +2159,7 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
+    '''
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
         if input is None: return input
@@ -2165,6 +2168,7 @@ class NMT:
         while len(input.size()) > size:
             input = input.squeeze(0)
         return input
+    '''
     #######################################
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
@@ -2179,7 +2183,7 @@ class NMT:
             if self.do_recurrent_output :
                 #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
-                ans = self.prune_tensor(ans, 3)
+                ans = prune_tensor(ans, 3)
 
                 ans = ans.float().permute(1,0,2).contiguous()
                 '''
@@ -2235,7 +2239,7 @@ class NMT:
 
                     ans = ans.float().permute(1, 0, 2).contiguous()
 
-                    ans = self.prune_tensor(ans, 3)
+                    ans = prune_tensor(ans, 3)
                     #print(ans)
 
 
@@ -2597,10 +2601,10 @@ class NMT:
 
         if True:
             if hparams['split_sentences'] is not True:
-                input_variable = self.prune_tensor(input_variable,2)
+                input_variable = prune_tensor(input_variable,2)
                 b, i = input_variable.size()
                 if b > i and i == 1: input_variable = input_variable.permute(1,0)
-                input_variable = self.prune_tensor(input_variable,1)
+                input_variable = prune_tensor(input_variable,1)
                 input_variable = [input_variable]
 
                 #input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
@@ -2608,7 +2612,7 @@ class NMT:
             else:
                 input_variable = [input_variable]
 
-            question_variable = self.prune_tensor(question_variable, 2)
+            question_variable = prune_tensor(question_variable, 2)
             ql = len(question_variable.size())
             if ql == 2:
                 b, i = question_variable.size()
