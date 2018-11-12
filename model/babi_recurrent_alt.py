@@ -168,6 +168,24 @@ def encoding_positional(embedded_sentence, sum=False):
         weighted = torch.sum(weighted, dim=1)
     return weighted
 
+def prune_tensor( input, size):
+    if isinstance(input, list): return input
+    if input is None: return input
+    n = 0
+    while len(input.size()) < size:
+        input = input.unsqueeze(0)
+        n += 1
+        if n > size + 1:
+            break
+    n = 0
+    z = len(input.size()) + 1
+    while len(input.size()) > size and input.size()[0] == 1:
+        input = input.squeeze(0)
+        n += 1
+        if n > z:
+            break
+    return input
+
 '''
 ###################################
 '''
@@ -194,26 +212,16 @@ class CustomGRU(nn.Module):
 
     def forward(self, fact, C, g=None):
 
-
         r = torch.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = torch.tanh(self.W(fact) + r * self.U(C))
-        '''
-        if g is None:
-            z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
-            zz = z * C + (1 - z) * h_tilda
-            #print('g is none.')
-        else:
-        '''
+
         g = g.unsqueeze(0).expand_as(h_tilda)
         #print(g)
         #exit()
 
         zz = g * h_tilda + (1-g) * C
 
-        #zz = self.dropout(zz)
-        #print(zz.size(),'zz')
-        #zz = z * C + (1 - z) * h_tilda
-        return zz, zz # h_tilda #zz
+        return zz, zz
 
 class EpisodicAttn(nn.Module):
 
@@ -246,7 +254,6 @@ class EpisodicAttn(nn.Module):
 
     def forward(self,concat_list):
 
-        ''' attention list '''
         self.c_list_z = concat_list
 
         self.c_list_z = self.dropout(self.c_list_z)
@@ -521,6 +528,7 @@ class AnswerModule(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
+    '''
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
         if input is None: return input
@@ -529,6 +537,7 @@ class AnswerModule(nn.Module):
         while len(input.size()) > size and input.size()[0] == 1:
             input = input.squeeze(0)
         return input
+    '''
 
     def load_embedding(self, embed):
 
@@ -541,11 +550,11 @@ class AnswerModule(nn.Module):
         all_out = []
         for k in range(l):
             e_out_list = [
-                self.prune_tensor(out[k,:],2)
+                prune_tensor(out[k,:],2)
             ]
 
             while len(e_out_list) < self.decoder_layers:
-                e_out_list.append(self.prune_tensor(out[k,:],2))
+                e_out_list.append(prune_tensor(out[k,:],2))
 
             '''
             if hid1 is not None: # and  self.decoder_layers == 2:
@@ -568,7 +577,7 @@ class AnswerModule(nn.Module):
             #e_out = self.dropout_c(e_out)
 
             outputs = []
-            decoder_hidden = self.prune_tensor(e_out,3) #.permute(1,0,2)
+            decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
 
             token = SOS_token #EOS_token
 
@@ -583,7 +592,7 @@ class AnswerModule(nn.Module):
             for i in range(self.maxtokens):
 
                 output = self.embed(Variable(torch.tensor([token])))
-                output = self.prune_tensor(output, 3)
+                output = prune_tensor(output, 3)
                 output = self.dropout_b(output)
 
                 if self.lstm is not None:
@@ -593,8 +602,7 @@ class AnswerModule(nn.Module):
                     #print(i, hn.size(), cn.size(),'hn,cn')
                     pass
                 else:
-                    #print(output.size(), decoder_hidden.size(),'o,dh')
-                    #decoder_hidden = self.prune_tensor(decoder_hidden, 3)
+
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 output_x = self.out_c(output)
@@ -611,14 +619,13 @@ class AnswerModule(nn.Module):
                 if token == EOS_token:
                     for _ in range(i + 1, self.maxtokens):
                         out_early = Variable(torch.zeros((1,1,self.vocab_size)))
-                        #out_early = self.prune_tensor(out_early, 3)
                         outputs.append(out_early)
                     #print(len(outputs))
                     break
 
             some_out = torch.cat(outputs, dim=0)
 
-            some_out = self.prune_tensor(some_out, 3)
+            some_out = prune_tensor(some_out, 3)
 
             all_out.append(some_out)
 
@@ -779,7 +786,7 @@ class WrapMemRNN(nn.Module):
         hidden1 = None
         for ii in input_variable:
 
-            ii = self.prune_tensor(ii, 2)
+            ii = prune_tensor(ii, 2)
             #print(ii, 'ii')
             out1, hidden1 = self.model_1_enc(ii, hidden1)
             #print(out1.size(),'out1')
@@ -794,7 +801,7 @@ class WrapMemRNN(nn.Module):
         prev_h3 = []
 
         for ii in question_variable:
-            ii = self.prune_tensor(ii, 2)
+            ii = prune_tensor(ii, 2)
 
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
 
@@ -841,7 +848,7 @@ class WrapMemRNN(nn.Module):
 
                     e, _ = self.wrap_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
-                    out = self.prune_tensor(e, 3)
+                    out = prune_tensor(e, 3)
                     '''
                     ## can use?? ##
                     if False:
@@ -887,16 +894,16 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii,0,0]
 
-            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg) # <<--- iii-1 or iii-0 ??
+            out, gru = self.model_3_mem(prune_tensor(c, 3), prune_tensor(last[iii], 3), ggg) # <<--- iii-1 or iii-0 ??
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
 
         #q_index = question.size()[1] - 1
 
         concat = [
-            self.prune_tensor(prev_mem, 1),
-            self.prune_tensor(out, 1),
-            self.prune_tensor(question,1)
+            prune_tensor(prev_mem, 1),
+            prune_tensor(out, 1),
+            prune_tensor(question,1)
         ]
         #for i in concat: print(i.size())
         #exit()
@@ -916,17 +923,17 @@ class WrapMemRNN(nn.Module):
 
     def wrap_attention_step(self, ct, prev_g, mem, q_q):
 
-        q_q = self.prune_tensor(q_q,3)
-        mem = self.prune_tensor(mem,3)
+        q_q = prune_tensor(q_q,3)
+        mem = prune_tensor(mem,3)
 
         bat, sen, emb = ct.size()
 
         att = []
         for iii in range(sen):
             c = ct[0,iii,:]
-            c = self.prune_tensor(c, 3)
+            c = prune_tensor(c, 3)
 
-            qq = self.prune_tensor(q_q, 3)
+            qq = prune_tensor(q_q, 3)
 
 
             concat_list = [
@@ -955,6 +962,7 @@ class WrapMemRNN(nn.Module):
 
         return z
 
+    '''
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
         if input is None: return input
@@ -963,6 +971,7 @@ class WrapMemRNN(nn.Module):
         while len(input.size()) > size and input.size()[0] == 1:
             input = input.squeeze(0)
         return input
+    '''
 
     def wrap_answer_module_simple(self):
         #outputs
@@ -982,9 +991,9 @@ class WrapMemRNN(nn.Module):
         q = self.q_q_last
 
         q_q = torch.cat(q, dim=0)
-        q_q = self.prune_tensor(q_q, 3)
+        q_q = prune_tensor(q_q, 3)
 
-        mem = self.prune_tensor(self.last_mem, 3)
+        mem = prune_tensor(self.last_mem, 3)
 
         ansx = self.model_5_ans(mem, q_q)
 
