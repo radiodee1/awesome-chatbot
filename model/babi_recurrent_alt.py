@@ -509,7 +509,7 @@ class AnswerModule(nn.Module):
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
-        #self.decoder = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
+
         self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
 
         self.h0 = None

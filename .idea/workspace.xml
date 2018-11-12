@@ -37,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="35314" />
+          <entry key="py" value="35346" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="35314" />
+          <entry key="Python" value="35346" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -94,8 +94,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="555" column="28" selection-start-line="555" selection-start-column="16" selection-end-line="555" selection-end-column="28" />
+            <state relative-caret-position="118">
+              <caret line="512" selection-start-line="512" selection-end-line="512" />
             </state>
           </provider>
         </entry>
@@ -182,7 +182,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>criterion</find>
       <find>validate_iters</find>
       <find>do_load_once</find>
       <find>load_checkpoint</find>
@@ -209,9 +208,10 @@
       <find>_show_sample</find>
       <find>train(</find>
       <find>dropout</find>
-      <find>dropout_c</find>
       <find>cross</find>
       <find>prune_tensor</find>
+      <find>dropout_c</find>
+      <find>decoder</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -620,8 +620,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="555" column="28" selection-start-line="555" selection-start-column="16" selection-end-line="555" selection-end-column="28" />
+        <state relative-caret-position="118">
+          <caret line="512" selection-start-line="512" selection-end-line="512" />
         </state>
       </provider>
     </entry>
