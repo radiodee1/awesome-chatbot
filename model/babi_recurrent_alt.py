@@ -549,6 +549,7 @@ class AnswerModule(nn.Module):
 
         all_out = []
         for k in range(l):
+
             e_out_list = [
                 prune_tensor(out[k,:],2)
             ]
@@ -556,25 +557,9 @@ class AnswerModule(nn.Module):
             while len(e_out_list) < self.decoder_layers:
                 e_out_list.append(prune_tensor(out[k,:],2))
 
-            '''
-            if hid1 is not None: # and  self.decoder_layers == 2:
-                out_d = self.out_d(hid1[k])
-
-                out_d = self.prune_tensor(out_d, 3)
-
-                e_out_list = [
-                    out_d[:,:,:self.hidden_size],
-                    out_d[:,:,self.hidden_size:]
-                ]
-                #for i in e_out_list: print(i.size())
-                #exit()
-            if self.decoder_layers == 1 and hid1 is not None:
-                e_out_list = [ hid1[k] ]
-            '''
-
             e_out = torch.cat(e_out_list, dim=0)
             e_out = F.relu(e_out)
-            #e_out = self.dropout_c(e_out)
+            e_out = self.dropout_c(e_out)
 
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
@@ -959,19 +944,7 @@ class WrapMemRNN(nn.Module):
 
         z = F.softmax(z, dim=0) # <--- use this!!
 
-
         return z
-
-    '''
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
-    '''
 
     def wrap_answer_module_simple(self):
         #outputs
