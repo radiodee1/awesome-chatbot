@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="210" />
+          <entry key="project.closed" value="211" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -28,16 +29,16 @@
           <entry key="project.open.time.5" value="21" />
           <entry key="project.open.time.6" value="50" />
           <entry key="project.open.time.7" value="36" />
-          <entry key="project.open.time.8" value="13" />
+          <entry key="project.open.time.8" value="14" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="211" />
+          <entry key="project.opened" value="212" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="35036" />
+          <entry key="py" value="35295" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="35036" />
+          <entry key="Python" value="35295" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -94,8 +95,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3016">
-              <caret line="788" column="17" selection-start-line="788" selection-start-column="17" selection-end-line="788" selection-end-column="17" />
+            <state relative-caret-position="46">
+              <caret line="680" column="31" selection-start-line="680" selection-start-column="31" selection-end-line="680" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -182,7 +183,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>train</find>
       <find>target_variable</find>
       <find>criterion</find>
       <find>validate_iters</find>
@@ -195,11 +195,8 @@
       <find>Encoder</find>
       <find>self.gru</find>
       <find>model_5_ans</find>
-      <find>dropout</find>
       <find>entropy</find>
-      <find>ansx</find>
       <find>position</find>
-      <find>_show_sample</find>
       <find>long</find>
       <find>setup_for_babi_test</find>
       <find>save_checkpoint</find>
@@ -211,7 +208,11 @@
       <find>dropout_c</find>
       <find>parameters</find>
       <find>Decoder</find>
+      <find>ansx</find>
       <find>prune_tensor</find>
+      <find>_show_sample</find>
+      <find>train(</find>
+      <find>dropout</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -275,8 +276,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="534" />
-    <option name="y" value="79" />
+    <option name="x" value="533" />
+    <option name="y" value="80" />
     <option name="width" value="1380" />
     <option name="height" value="1000" />
   </component>
@@ -334,7 +335,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="534" y="79" width="1380" height="1000" extended-state="0" />
+    <frame x="533" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -620,8 +621,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3016">
-          <caret line="788" column="17" selection-start-line="788" selection-start-column="17" selection-end-line="788" selection-end-column="17" />
+        <state relative-caret-position="46">
+          <caret line="680" column="31" selection-start-line="680" selection-start-column="31" selection-end-line="680" selection-end-column="31" />
         </state>
       </provider>
     </entry>

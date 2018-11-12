@@ -678,7 +678,7 @@ class WrapMemRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        gru_dropout = dropout * 0.0 #0.5
+        gru_dropout = dropout #* 0.0 #0.5
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
@@ -2199,10 +2199,7 @@ class NMT:
         if criterion is not None:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
-            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                  criterion)
-
-            #print(input_variable, 'in\n', question_variable,'qv\n', target_variable, len(target_variable), target_variable[0].size(), 'tv\n')
+            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
             loss = 0
 
@@ -2210,18 +2207,23 @@ class NMT:
                 #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
                 ans = self.prune_tensor(ans, 3)
-                #ansx = Variable(ans.data.max(dim=2)[1])
-                ans = ans.float().permute(1,0,2).contiguous()
 
+                ans = ans.float().permute(1,0,2).contiguous()
+                '''
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
                 loss += criterion(ans, target_variable)
+
+
                 '''
                 for i in range(len(target_variable)):
                     #print(target_variable[i])
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
-                '''
+                    #print(target_v,'tv')
+                    #print(ans[i,:,:], 'ans')
+                    #exit()
+
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
@@ -2237,7 +2239,7 @@ class NMT:
 
             loss.backward()
 
-            if True:
+            if False:
                 clip = 50.0
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
@@ -2257,15 +2259,13 @@ class NMT:
 
                 else:
                     loss = None
-                    #ansx = Variable(ans.data.max(dim=2)[1])
-                    #ans = ans.permute(1,0,2)
-                    #target_variable = torch.cat(target_variable, dim=0)
 
-                    # ansx = Variable(ans.data.max(dim=2)[1])
                     ans = ans.float().permute(1, 0, 2).contiguous()
 
-                    ans = ans.view(-1, self.output_lang.n_words)
-                    #target_variable = target_variable.view(-1)
+                    ans = self.prune_tensor(ans, 3)
+                    #print(ans)
+
+
 
             #self._test_embedding()
 
