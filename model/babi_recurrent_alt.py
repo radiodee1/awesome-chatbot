@@ -561,8 +561,8 @@ class AnswerModule(nn.Module):
                 e_out_list.append(prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
-            e_out = F.relu(e_out)
-            e_out = self.dropout_c(e_out)
+            e_out = F.tanh(e_out)
+            #e_out = self.dropout_c(e_out)
 
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
