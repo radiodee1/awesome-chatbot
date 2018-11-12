@@ -502,9 +502,10 @@ class AnswerModule(nn.Module):
         self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout)
+        self.dropout   = nn.Dropout(dropout)
         self.dropout_b = nn.Dropout(dropout)
         self.dropout_c = nn.Dropout(dropout)
+        self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
@@ -584,7 +585,8 @@ class AnswerModule(nn.Module):
 
                 if self.lstm is not None:
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
-                    self.h0 = nn.Parameter(hn, requires_grad=False) #self.dropout_c(hn)
+                    hn = self.dropout_d(hn)
+                    self.h0 = nn.Parameter(hn, requires_grad=False)
                     self.c0 = nn.Parameter(cn, requires_grad=False)
                     #print(i, hn.size(), cn.size(),'hn,cn')
                     pass
