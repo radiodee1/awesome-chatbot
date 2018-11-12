@@ -610,11 +610,11 @@ class AnswerModule(nn.Module):
         self.h0 = None
         self.c0 = None
 
-        self.h0, self.c0 = self.init_hidden(1)
+        self.h0, self.c0 = self.init_hidden(self.decoder_layers)
 
     def init_hidden(self, batch_size):
-        hidden = Variable(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size))
-        cell = Variable(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size))
+        hidden = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
         return (hidden, cell)
 
     def reset_parameters(self):
@@ -681,7 +681,7 @@ class AnswerModule(nn.Module):
                 decoder_hidden = decoder_hidden.permute(1,0,2)
                 #_, self.c0 = self.init_hidden(1)
 
-                self.h0 = decoder_hidden
+                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
                 #self.c0 = decoder_hidden
             ##############################################
 
@@ -693,8 +693,8 @@ class AnswerModule(nn.Module):
 
                 if self.lstm is not None:
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
-                    self.h0 = hn #self.dropout_c(hn)
-                    self.c0 = cn
+                    self.h0 = nn.Parameter(hn, requires_grad=False) #self.dropout_c(hn)
+                    self.c0 = nn.Parameter(cn, requires_grad=False)
                     #print(i, hn.size(), cn.size(),'hn,cn')
                     pass
                 else:
