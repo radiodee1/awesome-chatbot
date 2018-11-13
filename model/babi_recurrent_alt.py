@@ -560,9 +560,9 @@ class AnswerModule(nn.Module):
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
-                self.h0, _ = self.init_hidden(self.decoder_layers)
+                #self.h0, _ = self.init_hidden(self.decoder_layers)
 
-                #self.h0 =  nn.Parameter(decoder_hidden, requires_grad=False)
+                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
                 self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
