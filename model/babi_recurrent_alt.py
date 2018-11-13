@@ -531,17 +531,6 @@ class AnswerModule(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    '''
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
-    '''
-
     def load_embedding(self, embed):
 
         self.embed = embed
@@ -561,7 +550,7 @@ class AnswerModule(nn.Module):
                 e_out_list.append(prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
-            #e_out = F.softmax(e_out, dim=1)
+            e_out = F.softmax(e_out, dim=1)
             #e_out = self.dropout_c(e_out)
 
             outputs = []
@@ -573,8 +562,8 @@ class AnswerModule(nn.Module):
                 decoder_hidden = decoder_hidden.permute(1,0,2)
                 #_, self.c0 = self.init_hidden(1)
 
-                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                #self.c0 = decoder_hidden
+                self.h0 =  nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
             for i in range(self.maxtokens):
@@ -608,7 +597,9 @@ class AnswerModule(nn.Module):
 
                 if token == EOS_token:
                     for _ in range(i + 1, self.maxtokens):
-                        out_early = Variable(torch.zeros((1,1,self.vocab_size)))
+                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False).detach()
+                        #out_early = self.embed(Variable(torch.tensor([UNK_token])))
+                        #out_early = prune_tensor(out_early, 3)
                         outputs.append(out_early)
                     #print(len(outputs))
                     break
@@ -839,15 +830,7 @@ class WrapMemRNN(nn.Module):
                     e, _ = self.wrap_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
                     out = prune_tensor(e, 3)
-                    '''
-                    ## can use?? ##
-                    if False:
-                        slot_list[iter] = out
-                        s = torch.cat(slot_list, dim=1)
-                        s = encoding_positional(s,sum=True)
-                        s = self.prune_tensor(s, 3)
-                        out = F.tanh(s)
-                    '''
+
                     m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
@@ -953,18 +936,7 @@ class WrapMemRNN(nn.Module):
 
     def wrap_answer_module_simple(self):
         #outputs
-        '''
-        if self.recurrent_output and self.memory_hops > 1 and False :
-            lst = []
-            for i in range(len(self.memory_list)):
-                encoding = self.prune_tensor(self.memory_list[i], 3)
-                encoding = encoding_positional(encoding, sum=True)
-                lst.append(encoding)
-            lst = torch.cat(lst, dim=0)
 
-            self.last_mem = self.prune_tensor(lst, 3).permute(1,0,2)
-            #print(self.last_mem.size(),'lm')
-        '''
         #print(self.last_mem.size())
         q = self.q_q_last
 
@@ -2219,7 +2191,7 @@ class NMT:
 
             loss.backward()
 
-            if False:
+            if True:
                 clip = 50.0
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
@@ -2305,11 +2277,11 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output and False:
+        if self.do_recurrent_output: # and False:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
-
+            #self.criterion = nn.MSELoss()
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
