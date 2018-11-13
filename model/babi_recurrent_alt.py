@@ -263,7 +263,7 @@ class EpisodicAttn(nn.Module):
 
         l_2 = self.out_b( l_1)
 
-        self.G = l_2 #* F.softmax(l_2, dim=1)
+        self.G = l_2
 
         return self.G
 
@@ -561,7 +561,7 @@ class AnswerModule(nn.Module):
                 e_out_list.append(prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
-            e_out = F.tanh(e_out)
+            #e_out = F.softmax(e_out, dim=1)
             #e_out = self.dropout_c(e_out)
 
             outputs = []
@@ -585,8 +585,8 @@ class AnswerModule(nn.Module):
 
                 if self.lstm is not None:
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
-                    hn = self.dropout_d(hn)
-                    cn = self.dropout_c(cn)
+                    #hn = self.dropout_d(hn)
+                    #cn = self.dropout_c(cn)
                     self.h0 = nn.Parameter(hn, requires_grad=False)
                     self.c0 = nn.Parameter(cn, requires_grad=False)
                     #print(i, hn.size(), cn.size(),'hn,cn')
@@ -599,7 +599,7 @@ class AnswerModule(nn.Module):
 
                 output_x = self.dropout(output_x)
 
-                output_x = F.log_softmax(output_x, dim=2) ## log_softmax
+                #output_x = F.log_softmax(output_x, dim=2) ## log_softmax
                 #output_x = self.dropout(output_x) ## <---
 
                 outputs.append(output_x)
@@ -628,7 +628,7 @@ class AnswerModule(nn.Module):
 
         question_h = F.relu(question_h)
         mem = F.relu(mem)
-        question_h = F.relu(question_h)
+        #question_h = F.relu(question_h)
 
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
