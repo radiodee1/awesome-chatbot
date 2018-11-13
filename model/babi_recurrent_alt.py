@@ -490,8 +490,8 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        #self.out_b1 = nn.Linear(hidden_size , hidden_size , bias=True)
-        #init.xavier_normal_(self.out_b1.state_dict()['weight'])
+        self.out_b = nn.Linear(hidden_size , hidden_size , bias=True)
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
         #init.xavier_normal_(self.out_b2.state_dict()['weight'])
@@ -556,6 +556,9 @@ class AnswerModule(nn.Module):
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
 
+            decoder_hidden = self.out_b(decoder_hidden)
+            decoder_hidden = F.relu(decoder_hidden)
+
             token = SOS_token #EOS_token
 
             if self.lstm is not None:
@@ -563,7 +566,7 @@ class AnswerModule(nn.Module):
                 #self.h0, _ = self.init_hidden(self.decoder_layers)
 
                 self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
             for i in range(self.maxtokens):
