@@ -558,6 +558,7 @@ class AnswerModule(nn.Module):
 
             decoder_hidden = self.out_b(decoder_hidden)
             decoder_hidden = F.relu(decoder_hidden)
+            decoder_hidden = self.dropout_c(decoder_hidden)
 
             token = SOS_token #EOS_token
 
