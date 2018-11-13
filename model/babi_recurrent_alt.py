@@ -550,7 +550,7 @@ class AnswerModule(nn.Module):
                 e_out_list.append(prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
-            e_out = F.softmax(e_out, dim=1)
+            #e_out = F.softmax(e_out, dim=1)
             #e_out = self.dropout_c(e_out)
 
             outputs = []
@@ -560,10 +560,10 @@ class AnswerModule(nn.Module):
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
-                #_, self.c0 = self.init_hidden(1)
+                self.h0, _ = self.init_hidden(self.decoder_layers)
 
-                self.h0 =  nn.Parameter(decoder_hidden, requires_grad=False)
-                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.h0 =  nn.Parameter(decoder_hidden, requires_grad=False)
+                self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
             for i in range(self.maxtokens):
