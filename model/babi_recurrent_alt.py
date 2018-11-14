@@ -535,6 +535,232 @@ class AnswerModule(nn.Module):
 
         self.embed = embed
 
+    '''
+    def recurrent(self, out, hid1=None):
+
+        l, hid = out.size()
+
+        all_out = []
+        for k in range(l):
+
+            e_out_list = [
+                prune_tensor(out[k,:],2)
+            ]
+
+            while len(e_out_list) < self.decoder_layers:
+                e_out_list.append(prune_tensor(out[k,:],2))
+
+            e_out = torch.cat(e_out_list, dim=0)
+            #e_out = F.softmax(e_out, dim=1)
+            #e_out = self.dropout_c(e_out)
+
+            outputs = []
+            decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
+
+            decoder_hidden = self.out_b(decoder_hidden)
+            decoder_hidden = F.tanh(decoder_hidden)
+            decoder_hidden = self.dropout_c(decoder_hidden)
+
+            token = SOS_token #EOS_token
+
+            if self.lstm is not None:
+                decoder_hidden = decoder_hidden.permute(1,0,2)
+                #self.h0, _ = self.init_hidden(self.decoder_layers)
+
+                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+            ##############################################
+
+            for i in range(self.maxtokens):
+
+                output = self.embed(Variable(torch.tensor([token])))
+                output = prune_tensor(output, 3)
+                output = self.dropout_b(output)
+
+                if self.lstm is not None:
+                    output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
+                    #hn = self.dropout_d(hn)
+                    #cn = self.dropout_c(cn)
+                    self.h0 = nn.Parameter(hn, requires_grad=False)
+                    self.c0 = nn.Parameter(cn, requires_grad=False)
+                    #print(i, hn.size(), cn.size(),'hn,cn')
+                    pass
+                else:
+
+                    output, decoder_hidden = self.decoder(output, decoder_hidden)
+
+                output_x = self.out_c(output)
+
+                output_x = self.dropout(output_x)
+
+                #output_x = F.log_softmax(output_x, dim=2) ## log_softmax
+                #output_x = self.dropout(output_x) ## <---
+
+                outputs.append(output_x)
+
+                token = torch.argmax(output_x, dim=2)
+
+                if token == EOS_token:
+                    for _ in range(i + 1, self.maxtokens):
+                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False).detach()
+                        #out_early = self.embed(Variable(torch.tensor([UNK_token])))
+                        #out_early = prune_tensor(out_early, 3)
+                        outputs.append(out_early)
+                    #print(len(outputs))
+                    break
+
+            some_out = torch.cat(outputs, dim=0)
+
+            some_out = prune_tensor(some_out, 3)
+
+            all_out.append(some_out)
+
+        val_out = torch.cat(all_out, dim=1)
+        #val_out = F.softmax(val_out, dim=2)
+
+        return val_out
+    '''
+
+    def forward(self, mem, question_h):
+
+        question_h = F.relu(question_h)
+        mem = F.relu(mem)
+        #question_h = F.relu(question_h)
+
+        mem_in = mem.permute(1,0,2)
+        question_h = question_h.permute(1,0,2)
+
+        mem_in = torch.cat([mem_in, question_h], dim=2)
+
+        mem_in = self.dropout(mem_in)
+        mem_in = mem_in.squeeze(0)
+
+        out = self.out_a(mem_in)
+
+        return out.permute(1,0)
+
+#################### Wrapper ####################
+
+class WrapOutputRNN(nn.Module):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
+                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False,
+                 cancel_attention=False, sol_token=0, simple_input=False):
+        super(WrapOutputRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.n_layers = n_layers
+        self.do_babi = do_babi
+        self.print_to_screen = print_to_screen
+        self.bad_token_lst = bad_token_lst
+        self.embedding = embedding
+        self.freeze_embedding = freeze_embedding
+        self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
+        self.recurrent_output = recurrent_output
+        self.sol_token = sol_token
+        self.cancel_attention = cancel_attention
+        self.simple_input = simple_input
+        position = hparams['split_sentences']
+        self.decoder_layers = 1 # hparams['decoder_layers']
+        self.vocab_size = vocab_size
+        gru_dropout = dropout #* 0.0 #0.5
+
+        self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
+
+        self.model_1_dec = None
+
+        self.reset_parameters()
+
+        if self.embedding is not None:
+            self.load_embedding(self.embedding)
+        self.share_embedding()
+
+        if self.freeze_embedding or self.embedding is not None:
+            self.wrap_freeze_embedding()
+        # self.criterion = nn.CrossEntropyLoss()
+
+        out_size = vocab_size
+        if recurrent_output: out_size = hidden_size
+
+        self.out_a = nn.Linear(hidden_size * 2, out_size, bias=True)
+        init.xavier_normal_(self.out_a.state_dict()['weight'])
+
+        self.out_b = nn.Linear(hidden_size, hidden_size, bias=True)
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
+
+        # self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
+        # init.xavier_normal_(self.out_b2.state_dict()['weight'])
+
+        self.out_c = nn.Linear(hidden_size, vocab_size, bias=True)
+        init.xavier_normal_(self.out_c.state_dict()['weight'])
+
+        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
+        init.xavier_normal_(self.out_d.state_dict()['weight'])
+
+        self.dropout = nn.Dropout(dropout)
+        self.dropout_b = nn.Dropout(dropout)
+        self.dropout_c = nn.Dropout(dropout)
+        self.dropout_d = nn.Dropout(dropout)
+        self.maxtokens = hparams['tokens_per_sentence']
+
+        self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers,
+                              dropout=dropout, bidirectional=False, batch_first=True)
+
+        self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
+
+        self.h0 = None
+        self.c0 = None
+
+        self.h0, self.c0 = self.init_hidden(self.decoder_layers)
+        pass
+
+    def init_hidden(self, batch_size):
+        hidden = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        return (hidden, cell)
+
+
+    def load_embedding(self, embedding):
+        #embedding = np.transpose(embedding,(1,0))
+        e = torch.from_numpy(embedding)
+        #e = e.permute(1,0)
+        self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
+
+    def share_embedding(self):
+        #self.model_1_enc.load_embedding(self.embed)
+        #self.model_2_enc.load_embedding(self.embed)
+        #self.model_5_ans.load_embedding(self.embed)
+        pass
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+
+        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
+        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
+
+    def wrap_freeze_embedding(self, do_freeze=True):
+        self.embed.weight.requires_grad = not do_freeze
+        #self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
+        #self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
+        #self.model_5_ans.decoder.embed.weight.requires_grad = not do_freeze
+        print('freeze embedding')
+        pass
+
+    def test_embedding(self, num=None):
+
+        if num is None:
+            num = 55  # magic number for testing = garden
+        e = self.embed(num)
+        print('encoder 0:')
+        print(e.size(), 'test embedding')
+        print(e[0, 0, 0:10])  # print first ten values
+
+    def forward(self, out):
+        return self.recurrent(out)
+
     def recurrent(self, out, hid1=None):
 
         l, hid = out.size()
@@ -619,31 +845,6 @@ class AnswerModule(nn.Module):
 
         return val_out
 
-    def forward(self, mem, question_h):
-
-        question_h = F.relu(question_h)
-        mem = F.relu(mem)
-        #question_h = F.relu(question_h)
-
-        mem_in = mem.permute(1,0,2)
-        question_h = question_h.permute(1,0,2)
-
-        mem_in = torch.cat([mem_in, question_h], dim=2)
-
-        mem_in = self.dropout(mem_in)
-        mem_in = mem_in.squeeze(0)
-
-        out = self.out_a(mem_in)
-
-        if self.recurrent_output:
-
-            #out = F.tanh(out) ## <-- not this
-
-            return self.recurrent(out, None)
-
-        return out.permute(1,0)
-
-#################### Wrapper ####################
 
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
@@ -988,7 +1189,9 @@ class NMT:
     def __init__(self):
 
         self.model_0_wra = None
+        self.model_0_dec = None
         self.opt_1 = None
+        self.opt_2 = None
         self.embedding_matrix = None
         self.embedding_matrix_is_loaded = False
         self.criterion = None
@@ -1409,7 +1612,7 @@ class NMT:
             self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
                                                                              lang3=self.train_ques, reverse=False,
                                                                              omit_unk=self.do_hide_unk)
-            #self.model_0_wra.test_embedding()
+
 
             #self.first_load = True
             self.epoch_length = self.starting_epoch_length
@@ -1769,13 +1972,16 @@ class NMT:
                     'arch': None,
                     'state_dict': self.model_0_wra.state_dict(),
                     'best_prec1': None,
-                    'optimizer': None , # self.opt_1.state_dict(),
+                    'optimizer': None,
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
                     'tag': self.tag,
                     'score': self.score
                 }
             ]
+        if self.do_recurrent_output:
+            z['state_dict_dec'] = self.model_0_dec.state_dict()
+            z['optimizer_dec'] = self.opt_2.state_dict()
         #print(z)
         return z
         pass
@@ -1858,13 +2064,19 @@ class NMT:
 
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
 
+                if self.do_recurrent_output:
+                    self.model_0_dec.load_state_dict(checkpoint[0]['state_dict_dec'])
+
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
+                    self.model_0_dec.load_embedding(self.embedding_matrix)
                     self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
                     self.model_0_wra.wrap_freeze_embedding()
+                    self.model_0_dec.wrap_freeze_embedding()
                 else:
                     self.model_0_wra.wrap_freeze_embedding(do_freeze=False)
+                    self.model_0_dec.wrap_freeze_embedding(do_freeze=False)
                 if self.opt_1 is not None:
                     #####
                     try:
@@ -1872,10 +2084,17 @@ class NMT:
                         if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
-                        #print('new optimizer', hparams['learning_rate'])
-                        #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-                        #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
+
                         self.opt_1 = self._make_optimizer()
+                if self.opt_2 is not None:
+                    #####
+                    try:
+                        self.opt_2.load_state_dict(checkpoint[0]['optimizer_dec'])
+                        if self.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
+                            raise Exception('new optimizer...')
+                    except:
+
+                        self.opt_2 = self._make_optimizer()
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -1883,9 +2102,17 @@ class NMT:
             else:
                 print("no checkpoint found at '"+ basename + "'")
 
-    def _make_optimizer(self):
+    def _make_optimizer(self, params=None):
         print('new optimizer', hparams['learning_rate'])
-        parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+        if params is None:
+            lst1 = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+            if self.do_recurrent_output:
+                lst2 = filter(lambda p: p.requires_grad, self.model_0_dec.parameters())
+            else:
+                lst2 = list()
+            parameters = list(lst1) + list(lst2)
+        else:
+            parameters = filter(lambda p: p.requires_grad, params)
         return optim.Adam(parameters, lr=hparams['learning_rate'],weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
@@ -2044,6 +2271,7 @@ class NMT:
         num = self.variableFromSentence(self.output_lang, str(num))
         print('\n',num)
         self.model_0_wra.test_embedding(num)
+        self.model_0_dec.test_embedding(num)
         if exit: exit()
 
     def _print_control(self, iter):
@@ -2153,8 +2381,13 @@ class NMT:
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         if criterion is not None:
+
             wrapper_optimizer.zero_grad()
+            if self.do_recurrent_output:
+                decoder_optimizer.zero_grad()
+                self.model_0_dec.train()
             self.model_0_wra.train()
+
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
             loss = 0
@@ -2162,9 +2395,13 @@ class NMT:
             if self.do_recurrent_output :
                 #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
-                ans = prune_tensor(ans, 3)
+                ans = prune_tensor(ans, 2)
 
-                ans = ans.float().permute(1,0,2).contiguous()
+                ans = ans.float().permute(1,0).contiguous()
+
+                ans = self.model_0_dec(ans)
+                ans = ans.permute(1,0,2)
+
                 '''
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
@@ -2172,6 +2409,8 @@ class NMT:
 
 
                 '''
+
+
                 for i in range(len(target_variable)):
                     #print(target_variable[i])
                     target_v = target_variable[i].squeeze(0).squeeze(1)
@@ -2183,6 +2422,10 @@ class NMT:
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
+                if self.do_recurrent_output:
+                    ans = self.model_0_dec(ans)
+
+
             else:
                 target_variable = target_variable[0]
                 ans = torch.argmax(ans,dim=1)
@@ -2200,14 +2443,18 @@ class NMT:
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
             wrapper_optimizer.step()
+            if self.do_recurrent_output:
+                decoder_optimizer.step()
 
 
         else:
             #self.model_0_wra.eval()
             with torch.no_grad():
                 self.model_0_wra.eval()
-                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                      criterion)
+                if self.do_recurrent_output:
+                    self.model_0_dec.eval()
+
+                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
                 if not self.do_recurrent_output:
                     loss = None
@@ -2218,7 +2465,9 @@ class NMT:
 
                     ans = ans.float().permute(1, 0, 2).contiguous()
 
-                    ans = prune_tensor(ans, 3)
+                    ans = prune_tensor(ans, 2)
+
+                    ans = self.model_0_dec(ans)
                     #print(ans)
 
 
@@ -2229,6 +2478,7 @@ class NMT:
         if self.do_recurrent_output:
             #print(ans.size())
             if len(ans.size()) is not 2:
+                ans = ans.contiguous()
                 ans = ans.view(-1, self.output_lang.n_words)
                 #print(ans.size(),'redo with view')
                 #exit()
@@ -2252,6 +2502,9 @@ class NMT:
         num_right_small = 0
         num_count = 0
         temp_batch_size = hparams['batch_size'] #0
+
+        wrapper_optimizer = None
+        decoder_optimizer = None
 
         epoch_len = self.epoch_length
         epoch_start = self.this_epoch * self.epoch_length
@@ -2278,8 +2531,12 @@ class NMT:
 
         if self.opt_1 is None or self.first_load:
 
-            wrapper_optimizer = self._make_optimizer()
+            wrapper_optimizer = self._make_optimizer(self.model_0_wra.parameters())
             self.opt_1 = wrapper_optimizer
+
+        if (self.opt_2 is None or self.first_load) and self.do_recurrent_output:
+            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters())
+            self.opt_2 = decoder_optimizer
 
         if self.do_recurrent_output: # and False:
             weight = torch.ones(self.output_lang.n_words)
@@ -2324,9 +2581,13 @@ class NMT:
         if self.do_load_babi:
             if self.do_test_not_train:
                 self.model_0_wra.eval()
+                if self.do_recurrent_output:
+                    self.model_0_dec.eval()
 
             else:
                 self.model_0_wra.train()
+                if self.do_recurrent_output:
+                    self.model_0_dec.train()
 
         if self.do_batch_process:
             step = hparams['batch_size']
@@ -2368,7 +2629,7 @@ class NMT:
                 pass
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
-                                            decoder, self.opt_1, None,
+                                            decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
             num_count += 1
 
@@ -2609,8 +2870,15 @@ class NMT:
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
         self.model_0_wra.eval()
+        if self.do_recurrent_output:
+            self.model_0_dec.eval()
+
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
+            if self.do_recurrent_output:
+                ans = ans.permute(1,0)
+                ans = self.model_0_dec(ans)
+
 
         outputs = [ans]
         #####################
@@ -2641,8 +2909,9 @@ class NMT:
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
-                    output = output.permute(1, 0)
                     #print(output.size(),'out')
+
+                    output = output.permute(1, 0)
                     ni = torch.argmax(output, dim=0)[0]
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
@@ -2706,6 +2975,15 @@ class NMT:
                                       sol_token=sol_token, cancel_attention=self.do_no_attention,
                                       simple_input=self.do_simple_input)
 
+        if self.do_recurrent_output:
+            self.model_0_dec = WrapOutputRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
+                                          dropout=dropout, do_babi=self.do_load_babi,
+                                          freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
+                                          print_to_screen=self.do_print_to_screen,
+                                          recurrent_output=self.do_recurrent_output,
+                                          sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                          simple_input=self.do_simple_input)
+
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2734,6 +3012,14 @@ class NMT:
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
                                       sol_token=sol_token, cancel_attention=self.do_no_attention,
                                       simple_input=self.do_simple_input)
+        if self.do_recurrent_output:
+            self.model_0_dec = WrapOutputRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
+                                          dropout=dropout, do_babi=self.do_load_babi,
+                                          freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
+                                          print_to_screen=self.do_print_to_screen,
+                                          recurrent_output=self.do_recurrent_output,
+                                          sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                          simple_input=self.do_simple_input)
 
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
@@ -2853,6 +3139,13 @@ if __name__ == '__main__':
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
                                    sol_token=sol_token, cancel_attention=n.do_no_attention,
                                    simple_input=n.do_simple_input)
+        if n.do_recurrent_output:
+            n.model_0_dec = WrapOutputRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size, layers,
+                                       dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
+                                       freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
+                                       print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
+                                       sol_token=sol_token, cancel_attention=n.do_no_attention,
+                                       simple_input=n.do_simple_input)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
