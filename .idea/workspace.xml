@@ -37,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="36634" />
+          <entry key="py" value="36645" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="36634" />
+          <entry key="Python" value="36645" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -94,14 +94,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4222">
-              <caret line="2829" lean-forward="true" selection-start-line="2829" selection-end-line="2829" />
+            <state relative-caret-position="442">
+              <caret line="2388" column="41" selection-start-line="2388" selection-start-column="41" selection-end-line="2388" selection-end-column="41" />
               <folding>
-                <marker date="1542226948625" expanded="true" signature="18723:26609" ph="..." />
-                <marker date="1542226948625" expanded="true" signature="22292:22301" ph="..." />
-                <marker date="1542226948625" expanded="true" signature="23615:23656" ph="..." />
-                <marker date="1542226948625" expanded="true" signature="30041:30074" ph="..." />
-                <marker date="1542226948625" expanded="true" signature="30517:30549" ph="..." />
+                <marker date="1542227471261" expanded="true" signature="18723:26609" ph="..." />
+                <marker date="1542227471261" expanded="true" signature="22292:22301" ph="..." />
+                <marker date="1542227471261" expanded="true" signature="23615:23656" ph="..." />
+                <marker date="1542227471261" expanded="true" signature="30041:30074" ph="..." />
+                <marker date="1542227471261" expanded="true" signature="30517:30549" ph="..." />
               </folding>
             </state>
           </provider>
@@ -189,10 +189,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>out_b1</find>
-      <find>out_a</find>
-      <find>out_c</find>
-      <find>out_d</find>
       <find>parameters</find>
       <find>Decoder</find>
       <find>ansx</find>
@@ -219,6 +215,10 @@
       <find>model_0_wra</find>
       <find>load_embedding</find>
       <find>get_embedding</find>
+      <find>do_recurrent_output</find>
+      <find>decoded_words</find>
+      <find>evaluate</find>
+      <find>words</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -627,14 +627,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4222">
-          <caret line="2829" lean-forward="true" selection-start-line="2829" selection-end-line="2829" />
+        <state relative-caret-position="442">
+          <caret line="2388" column="41" selection-start-line="2388" selection-start-column="41" selection-end-line="2388" selection-end-column="41" />
           <folding>
-            <marker date="1542226948625" expanded="true" signature="18723:26609" ph="..." />
-            <marker date="1542226948625" expanded="true" signature="22292:22301" ph="..." />
-            <marker date="1542226948625" expanded="true" signature="23615:23656" ph="..." />
-            <marker date="1542226948625" expanded="true" signature="30041:30074" ph="..." />
-            <marker date="1542226948625" expanded="true" signature="30517:30549" ph="..." />
+            <marker date="1542227471261" expanded="true" signature="18723:26609" ph="..." />
+            <marker date="1542227471261" expanded="true" signature="22292:22301" ph="..." />
+            <marker date="1542227471261" expanded="true" signature="23615:23656" ph="..." />
+            <marker date="1542227471261" expanded="true" signature="30041:30074" ph="..." />
+            <marker date="1542227471261" expanded="true" signature="30517:30549" ph="..." />
           </folding>
         </state>
       </provider>

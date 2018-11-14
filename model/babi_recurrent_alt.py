@@ -2386,6 +2386,7 @@ class NMT:
                     #ans = prune_tensor(ans, 2)
 
                     ans = self.model_0_dec(ans)
+                    ans = ans.permute(1,0,2)
                     #print(ans)
 
 
@@ -2586,7 +2587,7 @@ class NMT:
 
                 self.score = float(num_right / num_tot) * 100
 
-            if self.do_load_babi and not self.do_recurrent_output : #and  self.do_sample_on_screen:
+            if self.do_load_babi and not self.do_recurrent_output :
 
                 for i in range(len(target_variable)):
                     #print(ans[i].size())
@@ -2777,10 +2778,6 @@ class NMT:
                 if b > i and i == 1: question_variable = question_variable.permute(1,0)
             question_variable = question_variable.squeeze(0)
             question_variable = [question_variable]
-
-            #print(question_variable[0].size())
-
-            #question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
 
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
 
