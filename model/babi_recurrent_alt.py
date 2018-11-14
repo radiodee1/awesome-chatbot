@@ -696,7 +696,7 @@ class WrapOutputRNN(nn.Module):
 
             #decoder_hidden = self.out_b(decoder_hidden)
             #decoder_hidden = F.tanh(decoder_hidden)
-            #decoder_hidden = self.dropout_c(decoder_hidden)
+            decoder_hidden = self.dropout_c(decoder_hidden)
 
             token = SOS_token #EOS_token
 
@@ -2003,7 +2003,7 @@ class NMT:
                             raise Exception('new optimizer...')
                     except:
 
-                        self.opt_1 = self._make_optimizer()
+                        self.opt_1 = self._make_optimizer(self.model_0_wra.parameters())
                 if self.opt_2 is not None:
                     #####
                     try:
@@ -2012,7 +2012,7 @@ class NMT:
                             raise Exception('new optimizer...')
                     except:
 
-                        self.opt_2 = self._make_optimizer()
+                        self.opt_2 = self._make_optimizer(self.model_0_dec.parameters(), multiplier=0.5)
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -2020,8 +2020,8 @@ class NMT:
             else:
                 print("no checkpoint found at '"+ basename + "'")
 
-    def _make_optimizer(self, params=None):
-        print('new optimizer', hparams['learning_rate'])
+    def _make_optimizer(self, params=None, multiplier=1.0):
+        print('new optimizer', hparams['learning_rate'] * multiplier)
         if params is None:
             lst1 = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
             if self.do_recurrent_output:
@@ -2031,7 +2031,7 @@ class NMT:
             parameters = list(lst1) + list(lst2)
         else:
             parameters = filter(lambda p: p.requires_grad, params)
-        return optim.Adam(parameters, lr=hparams['learning_rate'],weight_decay=hparams['weight_decay'])
+        return optim.Adam(parameters, lr=hparams['learning_rate'] * multiplier,weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
@@ -2284,16 +2284,7 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
-    '''
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
-    '''
+
     #######################################
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
@@ -2359,6 +2350,8 @@ class NMT:
             if True:
                 clip = 50.0
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_dec.parameters(), clip)
+
 
             wrapper_optimizer.step()
             if self.do_recurrent_output:
@@ -2454,7 +2447,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         if (self.opt_2 is None or self.first_load) and self.do_recurrent_output:
-            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters())
+            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=0.5)
             self.opt_2 = decoder_optimizer
 
         if self.do_recurrent_output: # and False:
