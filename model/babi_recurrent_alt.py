@@ -286,14 +286,6 @@ class MemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    '''
-    def prune_tensor(self, input, size):
-        if len(input.size()) < size:
-            input = input.unsqueeze(0)
-        if len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
-    '''
 
     def forward(self, input, hidden=None, g=None):
 
@@ -535,91 +527,6 @@ class AnswerModule(nn.Module):
 
         self.embed = embed
 
-    '''
-    def recurrent(self, out, hid1=None):
-
-        l, hid = out.size()
-
-        all_out = []
-        for k in range(l):
-
-            e_out_list = [
-                prune_tensor(out[k,:],2)
-            ]
-
-            while len(e_out_list) < self.decoder_layers:
-                e_out_list.append(prune_tensor(out[k,:],2))
-
-            e_out = torch.cat(e_out_list, dim=0)
-            #e_out = F.softmax(e_out, dim=1)
-            #e_out = self.dropout_c(e_out)
-
-            outputs = []
-            decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
-
-            decoder_hidden = self.out_b(decoder_hidden)
-            decoder_hidden = F.tanh(decoder_hidden)
-            decoder_hidden = self.dropout_c(decoder_hidden)
-
-            token = SOS_token #EOS_token
-
-            if self.lstm is not None:
-                decoder_hidden = decoder_hidden.permute(1,0,2)
-                #self.h0, _ = self.init_hidden(self.decoder_layers)
-
-                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
-            ##############################################
-
-            for i in range(self.maxtokens):
-
-                output = self.embed(Variable(torch.tensor([token])))
-                output = prune_tensor(output, 3)
-                output = self.dropout_b(output)
-
-                if self.lstm is not None:
-                    output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
-                    #hn = self.dropout_d(hn)
-                    #cn = self.dropout_c(cn)
-                    self.h0 = nn.Parameter(hn, requires_grad=False)
-                    self.c0 = nn.Parameter(cn, requires_grad=False)
-                    #print(i, hn.size(), cn.size(),'hn,cn')
-                    pass
-                else:
-
-                    output, decoder_hidden = self.decoder(output, decoder_hidden)
-
-                output_x = self.out_c(output)
-
-                output_x = self.dropout(output_x)
-
-                #output_x = F.log_softmax(output_x, dim=2) ## log_softmax
-                #output_x = self.dropout(output_x) ## <---
-
-                outputs.append(output_x)
-
-                token = torch.argmax(output_x, dim=2)
-
-                if token == EOS_token:
-                    for _ in range(i + 1, self.maxtokens):
-                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False).detach()
-                        #out_early = self.embed(Variable(torch.tensor([UNK_token])))
-                        #out_early = prune_tensor(out_early, 3)
-                        outputs.append(out_early)
-                    #print(len(outputs))
-                    break
-
-            some_out = torch.cat(outputs, dim=0)
-
-            some_out = prune_tensor(some_out, 3)
-
-            all_out.append(some_out)
-
-        val_out = torch.cat(all_out, dim=1)
-        #val_out = F.softmax(val_out, dim=2)
-
-        return val_out
-    '''
 
     def forward(self, mem, question_h):
 
@@ -717,6 +624,8 @@ class WrapOutputRNN(nn.Module):
         cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
         return (hidden, cell)
 
+    def load_embed_module(self, embed):
+        self.embed = embed
 
     def load_embedding(self, embedding):
         #embedding = np.transpose(embedding,(1,0))
@@ -729,6 +638,9 @@ class WrapOutputRNN(nn.Module):
         #self.model_2_enc.load_embedding(self.embed)
         #self.model_5_ans.load_embedding(self.embed)
         pass
+
+    def get_embedding(self):
+        return self.embed
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
@@ -782,9 +694,9 @@ class WrapOutputRNN(nn.Module):
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
 
-            decoder_hidden = self.out_b(decoder_hidden)
-            decoder_hidden = F.tanh(decoder_hidden)
-            decoder_hidden = self.dropout_c(decoder_hidden)
+            #decoder_hidden = self.out_b(decoder_hidden)
+            #decoder_hidden = F.tanh(decoder_hidden)
+            #decoder_hidden = self.dropout_c(decoder_hidden)
 
             token = SOS_token #EOS_token
 
@@ -918,6 +830,9 @@ class WrapMemRNN(nn.Module):
 
         pass
 
+    def load_embed_module(self, embed):
+        self.embed = embed
+
     def load_embedding(self, embedding):
         #embedding = np.transpose(embedding,(1,0))
         e = torch.from_numpy(embedding)
@@ -928,6 +843,9 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc.load_embedding(self.embed)
         self.model_2_enc.load_embedding(self.embed)
         self.model_5_ans.load_embedding(self.embed)
+
+    def get_embedding(self):
+        return self.embed
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
@@ -1980,8 +1898,8 @@ class NMT:
                 }
             ]
         if self.do_recurrent_output:
-            z['state_dict_dec'] = self.model_0_dec.state_dict()
-            z['optimizer_dec'] = self.opt_2.state_dict()
+            z[0]['state_dict_dec'] = self.model_0_dec.state_dict()
+            z[0]['optimizer_dec'] = self.opt_2.state_dict()
         #print(z)
         return z
         pass
@@ -2462,10 +2380,10 @@ class NMT:
 
                 else:
                     loss = None
-
-                    ans = ans.float().permute(1, 0, 2).contiguous()
-
                     ans = prune_tensor(ans, 2)
+                    ans = ans.float().permute(1, 0).contiguous()
+
+                    #ans = prune_tensor(ans, 2)
 
                     ans = self.model_0_dec(ans)
                     #print(ans)
@@ -2909,7 +2827,6 @@ class NMT:
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
-                    #print(output.size(),'out')
 
                     output = output.permute(1, 0)
                     ni = torch.argmax(output, dim=0)[0]
@@ -2926,7 +2843,7 @@ class NMT:
                             print('...etc')
                         decoded_words.append(self.output_lang.index2word[int(ni)])
 
-        return decoded_words, None #decoder_attentions[:di + 1]
+        return decoded_words, None
 
 
 
@@ -2983,6 +2900,7 @@ class NMT:
                                           recurrent_output=self.do_recurrent_output,
                                           sol_token=sol_token, cancel_attention=self.do_no_attention,
                                           simple_input=self.do_simple_input)
+            self.model_0_dec.load_embed_module(self.model_0_wra.get_embedding())
 
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
@@ -3020,6 +2938,9 @@ class NMT:
                                           recurrent_output=self.do_recurrent_output,
                                           sol_token=sol_token, cancel_attention=self.do_no_attention,
                                           simple_input=self.do_simple_input)
+
+            self.model_0_dec.load_embed_module(self.model_0_wra.get_embedding())
+
 
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
@@ -3146,6 +3067,9 @@ if __name__ == '__main__':
                                        print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
                                        sol_token=sol_token, cancel_attention=n.do_no_attention,
                                        simple_input=n.do_simple_input)
+
+            n.model_0_dec.load_embed_module(n.model_0_wra.get_embedding())
+
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
