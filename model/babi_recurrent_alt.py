@@ -2290,14 +2290,18 @@ class NMT:
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         if criterion is not None:
+            clip = 50.0
 
-            wrapper_optimizer.zero_grad()
             if self.do_recurrent_output:
-                decoder_optimizer.zero_grad()
-                
-            self.model_0_wra.train()
-            if self.do_recurrent_output:
+                #decoder_optimizer.zero_grad()
+                #wrapper_optimizer.zero_grad()
                 self.model_0_dec.train()
+                self.model_0_wra.train()
+
+            if not self.do_recurrent_output:
+                self.model_0_wra.train()
+                wrapper_optimizer.zero_grad()
+                pass
 
             loss = 0.0
 
@@ -2320,15 +2324,26 @@ class NMT:
 
 
                 '''
-                print(target_variable.size(), ans.size(), 'tv,a')
+                #print(target_variable.size(), ans.size(), 'tv,a')
 
                 for i in range(len(target_variable)):
                     #print(target_variable[i])
+                    decoder_optimizer.zero_grad()
+                    wrapper_optimizer.zero_grad()
+
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
                     #print(target_v,'tv')
                     #print(ans[i,:,:], 'ans')
                     #exit()
+                    loss.backward(retain_graph=True)
+
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_dec.parameters(), clip)
+
+                    decoder_optimizer.step()
+                    wrapper_optimizer.step()
+
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
@@ -2346,19 +2361,11 @@ class NMT:
 
             if not self.do_recurrent_output:
                 loss = criterion(ans, target_variable)
-
-            loss.backward()
-
-            if True:
-                clip = 50.0
+                loss.backward()
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
-                _ = torch.nn.utils.clip_grad_norm_(self.model_0_dec.parameters(), clip)
 
-
-            wrapper_optimizer.step()
-            if self.do_recurrent_output:
-                decoder_optimizer.step()
-
+            if not self.do_recurrent_output:
+                wrapper_optimizer.step()
 
         else:
             #self.model_0_wra.eval()
