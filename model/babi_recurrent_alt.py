@@ -2324,7 +2324,6 @@ class NMT:
 
 
                 '''
-                #print(target_variable.size(), ans.size(), 'tv,a')
 
                 for i in range(len(target_variable)):
                     #print(target_variable[i])
@@ -2333,9 +2332,7 @@ class NMT:
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
-                    #print(target_v,'tv')
-                    #print(ans[i,:,:], 'ans')
-                    #exit()
+
                     loss.backward(retain_graph=True)
 
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
