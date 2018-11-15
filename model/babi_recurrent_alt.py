@@ -698,7 +698,7 @@ class WrapOutputRNN(nn.Module):
             #decoder_hidden = F.tanh(decoder_hidden)
             decoder_hidden = self.dropout_c(decoder_hidden)
 
-            token = SOS_token #EOS_token
+            token = SOS_token
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
@@ -2294,12 +2294,14 @@ class NMT:
             wrapper_optimizer.zero_grad()
             if self.do_recurrent_output:
                 decoder_optimizer.zero_grad()
-                self.model_0_dec.train()
+                
             self.model_0_wra.train()
+            if self.do_recurrent_output:
+                self.model_0_dec.train()
+
+            loss = 0.0
 
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
-
-            loss = 0
 
             if self.do_recurrent_output :
                 #print('do_rec_out')
@@ -2318,7 +2320,7 @@ class NMT:
 
 
                 '''
-
+                print(target_variable.size(), ans.size(), 'tv,a')
 
                 for i in range(len(target_variable)):
                     #print(target_variable[i])
