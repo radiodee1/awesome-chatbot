@@ -510,8 +510,10 @@ class AnswerModule(nn.Module):
         self.h0, self.c0 = self.init_hidden(self.decoder_layers)
 
     def init_hidden(self, batch_size):
-        hidden = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
-        cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        #hidden = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        hidden = nn.Parameter(torch.randn(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        #cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        cell = nn.Parameter(torch.randn(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
         return (hidden, cell)
 
     def reset_parameters(self):
