@@ -2392,17 +2392,13 @@ class NMT:
                     #print(ans)
 
 
-
-            #self._test_embedding()
-
-        #ansx = ans
         if self.do_recurrent_output:
-            #print(ans.size())
             if len(ans.size()) is not 2:
-                ans = ans.contiguous()
-                ans = ans.view(-1, self.output_lang.n_words)
-                #print(ans.size(),'redo with view')
-                #exit()
+                ansview = []
+                for ii in ans:
+                    ansview.append(ii)
+                ans = torch.cat(ansview, dim=0)
+                ans = prune_tensor(ans, 2)
             ans = ans.permute(1,0)
             #print(ans,ans.size(),'ans')
 
