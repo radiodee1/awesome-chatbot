@@ -3004,6 +3004,14 @@ class NMT:
             with open(basename) as z:
                 json_data = json.load(z)
             self.best_accuracy_dict = json_data # json.loads(json_data)
+            #x = max(self.best_accuracy_dict.iterkeys())
+            x = max(k for k, v in self.best_accuracy_dict.items() )
+            x = int(int(x) / self.epoch_length)
+            if self.best_accuracy_record_offset is 0:
+                self.best_accuracy_record_offset = x
+            if self.start_epoch is 0:
+                self.start_epoch = x
+
 
 
 if __name__ == '__main__':
