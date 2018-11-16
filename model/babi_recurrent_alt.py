@@ -696,16 +696,15 @@ class WrapOutputRNN(nn.Module):
 
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
+            decoder_hidden = F.relu(decoder_hidden) #, dim=2)
 
-            #decoder_hidden = self.out_b(decoder_hidden)
-            #decoder_hidden = F.tanh(decoder_hidden)
             decoder_hidden = self.dropout_c(decoder_hidden)
 
             token = SOS_token
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
-                #self.h0, _ = self.init_hidden(self.decoder_layers)
+                _, self.c0 = self.init_hidden(self.decoder_layers)
 
                 self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
                 #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
@@ -715,7 +714,7 @@ class WrapOutputRNN(nn.Module):
 
                 output = self.embed(Variable(torch.tensor([token])))
                 output = prune_tensor(output, 3)
-                output = self.dropout_b(output)
+                #output = self.dropout_b(output)
 
                 if self.lstm is not None:
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
@@ -731,9 +730,9 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.out_c(output)
 
-                output_x = self.dropout(output_x)
+                #output_x = self.dropout(output_x)
 
-                #output_x = F.log_softmax(output_x, dim=2) ## log_softmax
+                output_x = F.softmax(output_x, dim=2) ## log_softmax
                 #output_x = self.dropout(output_x) ## <---
 
                 outputs.append(output_x)
@@ -3005,11 +3004,11 @@ class NMT:
                 json_data = json.load(z)
             self.best_accuracy_dict = json_data # json.loads(json_data)
             #x = max(self.best_accuracy_dict.iterkeys())
-            x = max(k for k, v in self.best_accuracy_dict.items() )
+            x = max(int(k) for k, v in self.best_accuracy_dict.items() )
             x = int(int(x) / self.epoch_length)
-            if self.best_accuracy_record_offset is 0:
+            if self.args['json_record_offset'] is None:
                 self.best_accuracy_record_offset = x
-            if self.start_epoch is 0:
+            if self.args['start_epoch'] is None: #self.start_epoch is 0:
                 self.start_epoch = x
 
 
