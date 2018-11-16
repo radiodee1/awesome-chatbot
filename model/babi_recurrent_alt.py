@@ -2296,8 +2296,7 @@ class NMT:
             clip = 50.0
 
             if self.do_recurrent_output:
-                #decoder_optimizer.zero_grad()
-                #wrapper_optimizer.zero_grad()
+
                 self.model_0_dec.train()
                 self.model_0_wra.train()
 
@@ -2328,21 +2327,22 @@ class NMT:
 
                 '''
 
+                decoder_optimizer.zero_grad()
+                wrapper_optimizer.zero_grad()
+
                 for i in range(len(target_variable)):
-                    #print(target_variable[i])
-                    decoder_optimizer.zero_grad()
-                    wrapper_optimizer.zero_grad()
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
 
-                    loss.backward(retain_graph=True)
+                loss.backward(retain_graph=True)
 
+                if True:
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_dec.parameters(), clip)
 
-                    decoder_optimizer.step()
-                    wrapper_optimizer.step()
+                decoder_optimizer.step()
+                wrapper_optimizer.step()
 
 
             elif self.do_batch_process:
