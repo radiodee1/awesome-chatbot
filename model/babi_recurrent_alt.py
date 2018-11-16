@@ -698,31 +698,31 @@ class WrapOutputRNN(nn.Module):
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
             decoder_hidden = F.relu(decoder_hidden) #, dim=2)
 
-            decoder_hidden = self.dropout_c(decoder_hidden)
+            #decoder_hidden = self.dropout_c(decoder_hidden)
 
             token = SOS_token
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
-                _, self.c0 = self.init_hidden(self.decoder_layers)
 
                 self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
             for i in range(self.maxtokens):
 
                 output = self.embed(Variable(torch.tensor([token])))
                 output = prune_tensor(output, 3)
-                #output = self.dropout_b(output)
+                output = self.dropout_b(output)
 
                 if self.lstm is not None:
+
                     output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
                     #hn = self.dropout_d(hn)
                     #cn = self.dropout_c(cn)
                     self.h0 = nn.Parameter(hn, requires_grad=False)
                     self.c0 = nn.Parameter(cn, requires_grad=False)
-                    #print(i, hn.size(), cn.size(),'hn,cn')
+
                     pass
                 else:
 
@@ -732,7 +732,7 @@ class WrapOutputRNN(nn.Module):
 
                 #output_x = self.dropout(output_x)
 
-                output_x = F.softmax(output_x, dim=2) ## log_softmax
+                #output_x = F.softmax(output_x, dim=2) ## log_softmax
                 #output_x = self.dropout(output_x) ## <---
 
                 outputs.append(output_x)
@@ -741,7 +741,7 @@ class WrapOutputRNN(nn.Module):
 
                 if token == EOS_token:
                     for _ in range(i + 1, self.maxtokens):
-                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False).detach()
+                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)#.detach()
                         #out_early = self.embed(Variable(torch.tensor([UNK_token])))
                         #out_early = prune_tensor(out_early, 3)
                         outputs.append(out_early)
