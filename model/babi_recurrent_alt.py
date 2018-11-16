@@ -131,6 +131,7 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 
 #hparams['teacher_forcing_ratio'] = 0.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
+decoder_mult = 0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
 #hparams['dropout'] = 0.3
@@ -2014,7 +2015,7 @@ class NMT:
                             raise Exception('new optimizer...')
                     except:
 
-                        self.opt_2 = self._make_optimizer(self.model_0_dec.parameters(), multiplier=0.5)
+                        self.opt_2 = self._make_optimizer(self.model_0_dec.parameters(), multiplier=decoder_mult)
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -2455,7 +2456,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         if (self.opt_2 is None or self.first_load) and self.do_recurrent_output:
-            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=0.5)
+            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=decoder_mult)
             self.opt_2 = decoder_optimizer
 
         if self.do_recurrent_output: # and False:
