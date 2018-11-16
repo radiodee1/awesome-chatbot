@@ -2323,8 +2323,6 @@ class NMT:
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
                 loss += criterion(ans, target_variable)
-
-
                 '''
 
                 decoder_optimizer.zero_grad()
