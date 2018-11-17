@@ -614,7 +614,7 @@ class WrapOutputRNN(nn.Module):
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers,
                               dropout=dropout, bidirectional=False, batch_first=True)
 
-        self.lstm = None # nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
+        self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
 
         self.h0 = None
         self.c0 = None
@@ -704,9 +704,10 @@ class WrapOutputRNN(nn.Module):
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
+                self.h0, _ = self.init_hidden(self.decoder_layers)
 
-                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                self.c0 = nn.Parameter(F.softmax(decoder_hidden, dim=2), requires_grad=False)
+                #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
             for i in range(self.maxtokens):
