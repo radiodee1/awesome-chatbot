@@ -42,5 +42,6 @@ hparams = {
     'batch_constant': 512, #
     'zero_start': False,
     'cuda': False,
-    'split_sentences': True
+    'split_sentences': True,
+    'multiplier': 0.5
 }

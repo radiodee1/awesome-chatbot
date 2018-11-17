@@ -131,7 +131,6 @@ MAX_LENGTH = hparams['tokens_per_sentence']
 
 #hparams['teacher_forcing_ratio'] = 0.0
 teacher_forcing_ratio = hparams['teacher_forcing_ratio'] #0.5
-decoder_mult = 0.5
 hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
 #hparams['dropout'] = 0.3
@@ -1231,6 +1230,7 @@ class NMT:
         parser.add_argument('--test',help='Disable all training. No weights will be changed and no new weights will be saved.',
                             action='store_true')
         parser.add_argument('--lr', help='learning rate')
+        parser.add_argument('--multiplier', help='learning rate ratio between encoder and decoder stages.')
         parser.add_argument('--freeze-embedding', help='Stop training on embedding elements',action='store_true')
         parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
         parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
@@ -1343,6 +1343,8 @@ class NMT:
         if self.args['skip_unk'] is True: self.do_skip_unk = True
         if self.args['json_record_offset'] is not None:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
+        if self.args['multiplier'] is not None:
+            hparams['multiplier'] = float(self.args['multiplier'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -2016,7 +2018,7 @@ class NMT:
                             raise Exception('new optimizer...')
                     except:
 
-                        self.opt_2 = self._make_optimizer(self.model_0_dec.parameters(), multiplier=decoder_mult)
+                        self.opt_2 = self._make_optimizer(self.model_0_dec.parameters(), multiplier=hparams['multiplier'])
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -2451,7 +2453,7 @@ class NMT:
             self.opt_1 = wrapper_optimizer
 
         if (self.opt_2 is None or self.first_load) and self.do_recurrent_output:
-            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=decoder_mult)
+            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=hparams['multiplier'] )
             self.opt_2 = decoder_optimizer
 
         if self.do_recurrent_output and False:

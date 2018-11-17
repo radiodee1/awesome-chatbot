@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,7 +16,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="228" />
+          <entry key="project.closed" value="231" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -24,20 +26,20 @@
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.2" value="3" />
           <entry key="project.open.time.3" value="7" />
-          <entry key="project.open.time.4" value="60" />
+          <entry key="project.open.time.4" value="62" />
           <entry key="project.open.time.5" value="21" />
           <entry key="project.open.time.6" value="56" />
-          <entry key="project.open.time.7" value="39" />
+          <entry key="project.open.time.7" value="40" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="229" />
+          <entry key="project.opened" value="232" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="37393" />
+          <entry key="py" value="37625" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +49,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="37393" />
+          <entry key="Python" value="37625" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -94,14 +96,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="290">
-              <caret line="693" column="12" lean-forward="true" selection-start-line="693" selection-start-column="12" selection-end-line="693" selection-end-column="12" />
+            <state relative-caret-position="262">
+              <caret line="133" column="12" selection-start-line="133" selection-end-line="133" selection-end-column="12" />
               <folding>
-                <marker date="1542465275520" expanded="true" signature="18972:26739" ph="..." />
-                <marker date="1542465275520" expanded="true" signature="22541:22550" ph="..." />
-                <marker date="1542465275520" expanded="true" signature="23864:23905" ph="..." />
-                <marker date="1542465275520" expanded="true" signature="30171:30204" ph="..." />
-                <marker date="1542465275520" expanded="true" signature="30647:30679" ph="..." />
+                <marker date="1542489683499" expanded="true" signature="18953:26720" ph="..." />
+                <marker date="1542489683499" expanded="true" signature="22522:22531" ph="..." />
+                <marker date="1542489683499" expanded="true" signature="23845:23886" ph="..." />
+                <marker date="1542489683499" expanded="true" signature="30152:30185" ph="..." />
+                <marker date="1542489683499" expanded="true" signature="30628:30660" ph="..." />
               </folding>
             </state>
           </provider>
@@ -151,8 +153,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="720">
-              <caret line="40" column="29" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
+            <state relative-caret-position="678">
+              <caret line="45" column="21" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -266,7 +268,6 @@
         <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
         <option value="$PROJECT_DIR$/do_make_vocab_copy.sh" />
         <option value="$PROJECT_DIR$/requirements.txt" />
-        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/babi_rec_mask.py" />
         <option value="$PROJECT_DIR$/do_make_rename_train.sh" />
         <option value="$PROJECT_DIR$/do_make_rename_train_valid_test.sh" />
@@ -277,6 +278,7 @@
         <option value="$PROJECT_DIR$/do_plot.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent_alt.py" />
       </list>
     </option>
@@ -578,11 +580,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -593,18 +590,16 @@
           </second_editor>
         </state>
       </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="54">
           <caret line="3" column="9" selection-start-line="3" selection-start-column="9" selection-end-line="3" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="720">
-          <caret line="40" column="29" selection-start-line="40" selection-start-column="29" selection-end-line="40" selection-end-column="29" />
         </state>
       </provider>
     </entry>
@@ -625,16 +620,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="678">
+          <caret line="45" column="21" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="693" column="12" lean-forward="true" selection-start-line="693" selection-start-column="12" selection-end-line="693" selection-end-column="12" />
+        <state relative-caret-position="262">
+          <caret line="133" column="12" selection-start-line="133" selection-end-line="133" selection-end-column="12" />
           <folding>
-            <marker date="1542465275520" expanded="true" signature="18972:26739" ph="..." />
-            <marker date="1542465275520" expanded="true" signature="22541:22550" ph="..." />
-            <marker date="1542465275520" expanded="true" signature="23864:23905" ph="..." />
-            <marker date="1542465275520" expanded="true" signature="30171:30204" ph="..." />
-            <marker date="1542465275520" expanded="true" signature="30647:30679" ph="..." />
+            <marker date="1542489683499" expanded="true" signature="18953:26720" ph="..." />
+            <marker date="1542489683499" expanded="true" signature="22522:22531" ph="..." />
+            <marker date="1542489683499" expanded="true" signature="23845:23886" ph="..." />
+            <marker date="1542489683499" expanded="true" signature="30152:30185" ph="..." />
+            <marker date="1542489683499" expanded="true" signature="30628:30660" ph="..." />
           </folding>
         </state>
       </provider>
