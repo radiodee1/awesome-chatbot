@@ -691,7 +691,7 @@ class WrapOutputRNN(nn.Module):
                 e_out_list.append(prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
-            #e_out = F.softmax(e_out, dim=1)
+            e_out = F.softmax(e_out, dim=1)
             #e_out = self.dropout_c(e_out)
 
             outputs = []
@@ -704,10 +704,10 @@ class WrapOutputRNN(nn.Module):
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
-                self.h0, _ = self.init_hidden(self.decoder_layers)
+                #self.h0, _ = self.init_hidden(self.decoder_layers)
 
-                #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
             for i in range(self.maxtokens):
@@ -2454,7 +2454,7 @@ class NMT:
             decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=decoder_mult)
             self.opt_2 = decoder_optimizer
 
-        if self.do_recurrent_output: # and False:
+        if self.do_recurrent_output and False:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
