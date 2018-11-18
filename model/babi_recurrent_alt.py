@@ -570,7 +570,7 @@ class WrapOutputRNN(nn.Module):
         position = hparams['split_sentences']
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.vocab_size = vocab_size
-        gru_dropout = dropout #* 0.0 #0.5
+        dropout = dropout * 1 # 0.0 #0.5
 
         self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
 
@@ -691,7 +691,7 @@ class WrapOutputRNN(nn.Module):
 
             e_out = torch.cat(e_out_list, dim=0)
             e_out = F.softmax(e_out, dim=1)
-            #e_out = self.dropout_c(e_out)
+            e_out = self.dropout_c(e_out)
 
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
@@ -713,7 +713,7 @@ class WrapOutputRNN(nn.Module):
 
                 output = self.embed(Variable(torch.tensor([token])))
                 output = prune_tensor(output, 3)
-                output = self.dropout_b(output)
+                #output = self.dropout_b(output)
 
                 if self.lstm is not None:
 
@@ -730,7 +730,7 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.out_c(output)
 
-                #output_x = self.dropout(output_x)
+                output_x = self.dropout(output_x)
 
                 #output_x = F.softmax(output_x, dim=2) ## log_softmax
                 #output_x = self.dropout(output_x) ## <---
