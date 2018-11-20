@@ -534,7 +534,6 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        question_h = F.relu(question_h)
         mem = F.relu(mem)
         #question_h = F.relu(question_h)
 
@@ -699,7 +698,7 @@ class WrapOutputRNN(nn.Module):
 
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
-            decoder_hidden = F.relu(decoder_hidden) #, dim=2)
+            #decoder_hidden = F.relu(decoder_hidden) #, dim=2)
 
             #decoder_hidden = self.dropout_c(decoder_hidden)
 
@@ -783,7 +782,7 @@ class WrapMemRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        gru_dropout = dropout #* 0.0 #0.5
+        gru_dropout = dropout * 0.0 #0.5
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
@@ -1997,14 +1996,17 @@ class NMT:
 
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
-                    self.model_0_dec.load_embedding(self.embedding_matrix)
+                    if self.do_recurrent_output:
+                        self.model_0_dec.load_embedding(self.embedding_matrix)
                     self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
                     self.model_0_wra.wrap_freeze_embedding()
-                    self.model_0_dec.wrap_freeze_embedding()
+                    if self.do_recurrent_output:
+                        self.model_0_dec.wrap_freeze_embedding()
                 else:
                     self.model_0_wra.wrap_freeze_embedding(do_freeze=False)
-                    self.model_0_dec.wrap_freeze_embedding(do_freeze=False)
+                    if self.do_recurrent_output:
+                        self.model_0_dec.wrap_freeze_embedding(do_freeze=False)
                 if self.opt_1 is not None:
                     #####
                     try:
@@ -2199,7 +2201,8 @@ class NMT:
         num = self.variableFromSentence(self.output_lang, str(num))
         print('\n',num)
         self.model_0_wra.test_embedding(num)
-        self.model_0_dec.test_embedding(num)
+        if self.do_recurrent_output:
+            self.model_0_dec.test_embedding(num)
         if exit: exit()
 
     def _print_control(self, iter):

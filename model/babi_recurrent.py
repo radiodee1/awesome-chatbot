@@ -988,11 +988,8 @@ class WrapMemRNN(nn.Module):
 
             qq = self.prune_tensor(q_q, 3)
 
-
             concat_list = [
-                #c,
-                #mem,
-                #qq,
+
                 (c * qq),
                 (c * mem),
                 torch.abs(c - qq) ,
@@ -1028,18 +1025,7 @@ class WrapMemRNN(nn.Module):
 
     def wrap_answer_module_simple(self):
         #outputs
-        '''
-        if self.recurrent_output and self.memory_hops > 1 and False:
-            lst = []
-            for i in range(len(self.memory_list)):
-                encoding = self.prune_tensor(self.memory_list[i], 3)
-                encoding = encoding_positional(encoding, sum=True)
-                lst.append(encoding)
-            lst = torch.cat(lst, dim=0)
 
-            self.last_mem = self.prune_tensor(lst, 3).permute(1,0,2)
-            #print(self.last_mem.size(),'lm')
-        '''
         #print(self.last_mem.size())
         q = self.q_q_last
 
