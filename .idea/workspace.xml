@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="232" />
+          <entry key="project.closed" value="235" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -23,22 +23,22 @@
           <entry key="project.open.time.13" value="4" />
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="1" />
-          <entry key="project.open.time.2" value="3" />
+          <entry key="project.open.time.2" value="4" />
           <entry key="project.open.time.3" value="7" />
-          <entry key="project.open.time.4" value="62" />
+          <entry key="project.open.time.4" value="63" />
           <entry key="project.open.time.5" value="21" />
           <entry key="project.open.time.6" value="57" />
-          <entry key="project.open.time.7" value="40" />
+          <entry key="project.open.time.7" value="41" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="233" />
+          <entry key="project.opened" value="236" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="37629" />
+          <entry key="py" value="37642" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -48,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="37629" />
+          <entry key="Python" value="37642" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -95,14 +95,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="56">
-              <caret line="572" column="30" selection-start-line="572" selection-start-column="30" selection-end-line="572" selection-end-column="30" />
+            <state relative-caret-position="578">
+              <caret line="502" column="7" selection-start-line="502" selection-start-column="7" selection-end-line="502" selection-end-column="7" />
               <folding>
-                <marker date="1542550461248" expanded="true" signature="18953:26719" ph="..." />
-                <marker date="1542550461248" expanded="true" signature="22521:22530" ph="..." />
-                <marker date="1542550461248" expanded="true" signature="23844:23885" ph="..." />
-                <marker date="1542550461248" expanded="true" signature="30151:30184" ph="..." />
-                <marker date="1542550461248" expanded="true" signature="30627:30659" ph="..." />
+                <marker date="1542745128965" expanded="true" signature="18969:26964" ph="..." />
+                <marker date="1542745128965" expanded="true" signature="22767:22776" ph="..." />
+                <marker date="1542745128965" expanded="true" signature="24090:24131" ph="..." />
+                <marker date="1542745128965" expanded="true" signature="30396:30429" ph="..." />
+                <marker date="1542745128965" expanded="true" signature="30872:30904" ph="..." />
               </folding>
             </state>
           </provider>
@@ -345,25 +345,6 @@
     <frame x="538" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-    <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -381,7 +362,7 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+    </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -579,6 +560,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -587,11 +573,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -628,14 +609,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="56">
-          <caret line="572" column="30" selection-start-line="572" selection-start-column="30" selection-end-line="572" selection-end-column="30" />
+        <state relative-caret-position="578">
+          <caret line="502" column="7" selection-start-line="502" selection-start-column="7" selection-end-line="502" selection-end-column="7" />
           <folding>
-            <marker date="1542550461248" expanded="true" signature="18953:26719" ph="..." />
-            <marker date="1542550461248" expanded="true" signature="22521:22530" ph="..." />
-            <marker date="1542550461248" expanded="true" signature="23844:23885" ph="..." />
-            <marker date="1542550461248" expanded="true" signature="30151:30184" ph="..." />
-            <marker date="1542550461248" expanded="true" signature="30627:30659" ph="..." />
+            <marker date="1542745128965" expanded="true" signature="18969:26964" ph="..." />
+            <marker date="1542745128965" expanded="true" signature="22767:22776" ph="..." />
+            <marker date="1542745128965" expanded="true" signature="24090:24131" ph="..." />
+            <marker date="1542745128965" expanded="true" signature="30396:30429" ph="..." />
+            <marker date="1542745128965" expanded="true" signature="30872:30904" ph="..." />
           </folding>
         </state>
       </provider>
