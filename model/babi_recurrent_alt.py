@@ -693,8 +693,9 @@ class WrapOutputRNN(nn.Module):
                 e_out_list.append(prune_tensor(out[k,:],2))
 
             e_out = torch.cat(e_out_list, dim=0)
+            #print(e_out.size(),'eout')
             e_out = F.softmax(e_out, dim=1)
-            e_out = self.dropout_c(e_out)
+            #e_out = self.dropout_c(e_out)
 
             outputs = []
             decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
@@ -716,7 +717,7 @@ class WrapOutputRNN(nn.Module):
 
                 output = self.embed(Variable(torch.tensor([token])))
                 output = prune_tensor(output, 3)
-                #output = self.dropout_b(output)
+                output = self.dropout_b(output)
 
                 if self.lstm is not None:
 
