@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,7 +83,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="658">
+            <state relative-caret-position="820">
               <caret line="752" column="47" selection-start-line="752" selection-start-column="47" selection-end-line="752" selection-end-column="47" />
               <folding>
                 <marker date="1542822750034" expanded="true" signature="18929:27142" ph="..." />
@@ -537,7 +535,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="658">
+        <state relative-caret-position="820">
           <caret line="752" column="47" selection-start-line="752" selection-start-column="47" selection-end-line="752" selection-end-column="47" />
           <folding>
             <marker date="1542822750034" expanded="true" signature="18929:27142" ph="..." />
