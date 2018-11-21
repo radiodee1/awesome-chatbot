@@ -62,7 +62,8 @@ def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_o
                 if not add_eol_only:
                     x.append( hparams['sol'] + ' ' + i + ' ' + hparams['eol'] + ' . ' )
                 else:
-                    x.append( i + ' ' + hparams['eol'] + ' . ')
+                    if i.split(' ')[-1] != hparams['eol']:
+                        x.append( i + ' ' + hparams['eol'] + ' . ')
 
         if only_one_phrase and len(x) > 1: ## return just first phrase
             return x[-1]

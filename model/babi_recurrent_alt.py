@@ -740,7 +740,7 @@ class WrapOutputRNN(nn.Module):
                 output_x = self.out_c(output)
 
                 output_x = F.relu(output_x)
-                output_x = self.dropout(output_x)
+                #output_x = self.dropout(output_x)
 
                 #output_x = F.softmax(output_x, dim=2) ## log_softmax
                 #output_x = self.dropout(output_x) ## <---
