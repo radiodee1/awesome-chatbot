@@ -750,7 +750,7 @@ class WrapOutputRNN(nn.Module):
                 token = torch.argmax(output_x, dim=2)
 
 
-                if token == EOS_token:
+                if token == EOS_token and False:
                     for _ in range(i + 1, self.maxtokens):
                         out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)#.detach()
                         #out_early = self.embed(Variable(torch.tensor([UNK_token])))
