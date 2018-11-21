@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="235" />
+          <entry key="project.closed" value="236" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -25,20 +25,20 @@
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.2" value="4" />
           <entry key="project.open.time.3" value="7" />
-          <entry key="project.open.time.4" value="63" />
+          <entry key="project.open.time.4" value="64" />
           <entry key="project.open.time.5" value="21" />
           <entry key="project.open.time.6" value="57" />
           <entry key="project.open.time.7" value="41" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="236" />
+          <entry key="project.opened" value="237" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="37704" />
+          <entry key="py" value="37705" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -48,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="37704" />
+          <entry key="Python" value="37705" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -74,7 +74,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4112">
+            <state relative-caret-position="12204">
               <caret line="704" column="20" selection-start-line="704" selection-start-column="14" selection-end-line="704" selection-end-column="20" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -86,14 +86,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1322">
-              <caret line="700" column="13" selection-start-line="700" selection-start-column="13" selection-end-line="700" selection-end-column="13" />
+            <state relative-caret-position="918">
+              <caret line="735" column="17" selection-start-line="735" selection-start-column="17" selection-end-line="735" selection-end-column="17" />
               <folding>
-                <marker date="1542751083619" expanded="true" signature="18929:26925" ph="..." />
-                <marker date="1542751083619" expanded="true" signature="22727:22736" ph="..." />
-                <marker date="1542751083619" expanded="true" signature="24050:24091" ph="..." />
-                <marker date="1542751083619" expanded="true" signature="30356:30389" ph="..." />
-                <marker date="1542751083619" expanded="true" signature="30832:30864" ph="..." />
+                <marker date="1542804475979" expanded="true" signature="18929:26926" ph="..." />
+                <marker date="1542804475979" expanded="true" signature="22727:22736" ph="..." />
+                <marker date="1542804475979" expanded="true" signature="24050:24091" ph="..." />
+                <marker date="1542804475979" expanded="true" signature="30357:30390" ph="..." />
+                <marker date="1542804475979" expanded="true" signature="30833:30865" ph="..." />
               </folding>
             </state>
           </provider>
@@ -102,7 +102,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="782">
+            <state relative-caret-position="810">
               <caret line="45" column="21" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="21" />
             </state>
           </provider>
@@ -222,6 +222,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -238,7 +239,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -519,16 +519,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="782">
-          <caret line="45" column="21" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4112">
+        <state relative-caret-position="12204">
           <caret line="704" column="20" selection-start-line="704" selection-start-column="14" selection-end-line="704" selection-end-column="20" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
@@ -536,16 +529,23 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="45" column="21" selection-start-line="45" selection-start-column="21" selection-end-line="45" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1322">
-          <caret line="700" column="13" selection-start-line="700" selection-start-column="13" selection-end-line="700" selection-end-column="13" />
+        <state relative-caret-position="918">
+          <caret line="735" column="17" selection-start-line="735" selection-start-column="17" selection-end-line="735" selection-end-column="17" />
           <folding>
-            <marker date="1542751083619" expanded="true" signature="18929:26925" ph="..." />
-            <marker date="1542751083619" expanded="true" signature="22727:22736" ph="..." />
-            <marker date="1542751083619" expanded="true" signature="24050:24091" ph="..." />
-            <marker date="1542751083619" expanded="true" signature="30356:30389" ph="..." />
-            <marker date="1542751083619" expanded="true" signature="30832:30864" ph="..." />
+            <marker date="1542804475979" expanded="true" signature="18929:26926" ph="..." />
+            <marker date="1542804475979" expanded="true" signature="22727:22736" ph="..." />
+            <marker date="1542804475979" expanded="true" signature="24050:24091" ph="..." />
+            <marker date="1542804475979" expanded="true" signature="30357:30390" ph="..." />
+            <marker date="1542804475979" expanded="true" signature="30833:30865" ph="..." />
           </folding>
         </state>
       </provider>
