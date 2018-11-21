@@ -735,6 +735,8 @@ class WrapOutputRNN(nn.Module):
 
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
+                output = F.relu(output)
+
                 output_x = self.out_c(output)
 
                 #output_x = self.dropout(output_x)
