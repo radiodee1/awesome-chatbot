@@ -710,15 +710,16 @@ class WrapOutputRNN(nn.Module):
 
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
-                #self.h0, _ = self.init_hidden(self.decoder_layers)
 
-                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
-                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+
             ##############################################
 
-            output = self.embed(Variable(torch.tensor([token])))
+            #output = self.embed(Variable(torch.tensor([token]))) ## <-- ????
+
+            output = decoder_hidden
             output = prune_tensor(output, 3)
-            # output = self.dropout_b(output)
+            #output = self.dropout_b(output)
 
             for i in range(self.maxtokens):
 
@@ -2581,7 +2582,7 @@ class NMT:
                         if int(o_val) == int(t_val):
                             num_right += 1
                             num_right_small += 1
-                            if int(o_val) == EOS_token:
+                            if int(o_val) == EOS_token: # and jj is not 0:
                                 num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
                                 num_right += hparams['tokens_per_sentence'] - (jj + 1)
                                 #print('full line', i, j, num_right_small)
