@@ -109,7 +109,7 @@ def init_babi(fname, add_eol=False, replace_directions=False):
                     task["A"] = ' '.join(dl)
 
 
-                if add_eol:
+                if add_eol and False:
                     task["A"] = task["A"] + ' . '
 
             if add_eol:
