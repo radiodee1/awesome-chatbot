@@ -18,6 +18,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Plot some NMT values.')
     parser.add_argument('--files', help='File glob for plotting. Must be json files!!')
     parser.add_argument('--title', help='Graph title.')
+    parser.add_argument('--label-x', help='X axis label.')
+    parser.add_argument('--label-y', help='Y axis label.')
 
     args = parser.parse_args()
     args = vars(args)
@@ -65,7 +67,11 @@ if __name__ == '__main__':
     arg_plot_color = [ 'r', 'b', 'g', 'y','c','m']
     fig, ax = plt.subplots()
     plt.ylabel('Accuracy')
+    if args['label_y'] is not None:
+        plt.ylabel(args['label_y'])
     plt.xlabel('Sentence Pairs')
+    if args['label_x'] is not None:
+        plt.xlabel(args['label_x'])
     plt.title(arg_title)
     handles = []
     for i in range(len(arg_list)):
