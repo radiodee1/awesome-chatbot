@@ -716,11 +716,13 @@ class WrapOutputRNN(nn.Module):
                 #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
             ##############################################
 
+            output = self.embed(Variable(torch.tensor([token])))
+            output = prune_tensor(output, 3)
+            # output = self.dropout_b(output)
+
             for i in range(self.maxtokens):
 
-                output = self.embed(Variable(torch.tensor([token])))
-                output = prune_tensor(output, 3)
-                #output = self.dropout_b(output)
+                ## embed lines here ???
 
                 if self.lstm is not None:
 
@@ -751,11 +753,9 @@ class WrapOutputRNN(nn.Module):
                 token = torch.argmax(output_x, dim=2)
 
 
-                if token == EOS_token and False:
+                if token == EOS_token:
                     for _ in range(i + 1, self.maxtokens):
-                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)#.detach()
-                        #out_early = self.embed(Variable(torch.tensor([UNK_token])))
-                        #out_early = prune_tensor(out_early, 3)
+                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
                         outputs.append(out_early)
                     #print(len(outputs))
                     break
