@@ -695,7 +695,7 @@ class WrapOutputRNN(nn.Module):
             e_out = torch.cat(e_out_list, dim=0)
             #print(e_out.size(),'eout')
             #e_out = self.dropout_c(e_out)
-            e_out = F.relu(e_out)
+            #e_out = F.sigmoid(e_out)
             #e_out = F.softmax(e_out, dim=1)
 
             #e_out = self.dropout_c(e_out)
@@ -736,10 +736,11 @@ class WrapOutputRNN(nn.Module):
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #output = F.relu(output)
+                output = self.dropout(output)
 
                 output_x = self.out_c(output)
 
-                output_x = F.relu(output_x)
+                #output_x = F.relu(output_x)
                 #output_x = self.dropout(output_x)
 
                 #output_x = F.softmax(output_x, dim=2) ## log_softmax
