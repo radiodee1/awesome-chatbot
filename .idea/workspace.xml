@@ -35,7 +35,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="37866" />
+          <entry key="py" value="37872" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +45,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="37866" />
+          <entry key="Python" value="37872" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -80,11 +80,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3734">
-              <caret line="2614" column="40" selection-start-line="2614" selection-start-column="40" selection-end-line="2614" selection-end-column="40" />
+            <state relative-caret-position="424">
+              <caret line="2590" column="54" selection-start-line="2590" selection-start-column="45" selection-end-line="2590" selection-end-column="54" />
               <folding>
                 <marker date="1543067527828" expanded="true" signature="18929:27054" ph="..." />
                 <marker date="1543067527828" expanded="true" signature="22727:22736" ph="..." />
@@ -96,11 +96,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-258">
-              <caret line="65" column="4" selection-start-line="65" selection-start-column="4" selection-end-line="65" selection-end-column="4" />
+            <state relative-caret-position="570">
+              <caret line="111" column="36" selection-start-line="111" selection-start-column="36" selection-end-line="111" selection-end-column="36" />
             </state>
           </provider>
         </entry>
@@ -125,7 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>reset_parameters</find>
       <find>WrapMemRNN</find>
       <find>Module</find>
       <find>model_0_wra</find>
@@ -155,6 +154,7 @@
       <find>F.relu</find>
       <find>AnswerModule</find>
       <find>dropout</find>
+      <find>EOS_token</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -212,8 +212,8 @@
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
-        <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent_alt.py" />
+        <option value="$PROJECT_DIR$/model/do_make_train_test_from_babi.py" />
       </list>
     </option>
   </component>
@@ -535,10 +535,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="570">
+          <caret line="111" column="36" selection-start-line="111" selection-start-column="36" selection-end-line="111" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3734">
-          <caret line="2614" column="40" selection-start-line="2614" selection-start-column="40" selection-end-line="2614" selection-end-column="40" />
+        <state relative-caret-position="424">
+          <caret line="2590" column="54" selection-start-line="2590" selection-start-column="45" selection-end-line="2590" selection-end-column="54" />
           <folding>
             <marker date="1543067527828" expanded="true" signature="18929:27054" ph="..." />
             <marker date="1543067527828" expanded="true" signature="22727:22736" ph="..." />
@@ -546,13 +553,6 @@
             <marker date="1543067527828" expanded="true" signature="30485:30518" ph="..." />
             <marker date="1543067527828" expanded="true" signature="30961:30993" ph="..." />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-258">
-          <caret line="65" column="4" selection-start-line="65" selection-start-column="4" selection-end-line="65" selection-end-column="4" />
         </state>
       </provider>
     </entry>
