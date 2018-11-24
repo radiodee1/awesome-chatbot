@@ -1933,7 +1933,9 @@ class NMT:
             print('save', basename)
             #####
             if self.do_test_not_train:
-                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = str(self.score)
+                accuracy = str("%.4f" % self.score)
+                #print(accuracy)
+                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = accuracy # str(self.score)
                 print('offset',self.best_accuracy_record_offset, ', epoch', self.this_epoch)
                 self.update_json_file()
             #####
