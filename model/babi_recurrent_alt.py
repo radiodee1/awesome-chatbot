@@ -619,7 +619,7 @@ class WrapOutputRNN(nn.Module):
         self.h0 = None
         self.c0 = None
 
-        self.h0, self.c0 = self.init_hidden(self.decoder_layers)
+        self.h0, self.c0 = self.init_hidden(1)
         pass
 
     def init_hidden(self, batch_size):
@@ -711,7 +711,7 @@ class WrapOutputRNN(nn.Module):
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
 
-                #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
 
             ##############################################
 
