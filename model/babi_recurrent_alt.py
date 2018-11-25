@@ -711,7 +711,9 @@ class WrapOutputRNN(nn.Module):
             if self.lstm is not None:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
 
-                self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+
+                self.h0, self.c0 = self.init_hidden(1)
 
             ##############################################
 

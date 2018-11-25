@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,17 +27,17 @@
           <entry key="project.open.time.4" value="64" />
           <entry key="project.open.time.5" value="24" />
           <entry key="project.open.time.6" value="57" />
-          <entry key="project.open.time.7" value="41" />
+          <entry key="project.open.time.7" value="42" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="240" />
+          <entry key="project.opened" value="241" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="38113" />
+          <entry key="py" value="38120" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -48,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="38113" />
+          <entry key="Python" value="38120" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,14 +85,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="208">
-              <caret line="571" column="31" selection-start-line="571" selection-start-column="31" selection-end-line="571" selection-end-column="31" />
+            <state relative-caret-position="622">
+              <caret line="715" column="16" selection-start-line="715" selection-start-column="16" selection-end-line="715" selection-end-column="16" />
               <folding>
-                <marker date="1543182552800" expanded="true" signature="18929:26942" ph="..." />
-                <marker date="1543182552800" expanded="true" signature="22709:22718" ph="..." />
-                <marker date="1543182552800" expanded="true" signature="24032:24073" ph="..." />
-                <marker date="1543182552800" expanded="true" signature="30373:30406" ph="..." />
-                <marker date="1543182552800" expanded="true" signature="30849:30881" ph="..." />
+                <marker date="1543184073825" expanded="true" signature="18929:26998" ph="..." />
+                <marker date="1543184073825" expanded="true" signature="22709:22718" ph="..." />
+                <marker date="1543184073825" expanded="true" signature="24032:24073" ph="..." />
+                <marker date="1543184073825" expanded="true" signature="30429:30462" ph="..." />
+                <marker date="1543184073825" expanded="true" signature="30905:30937" ph="..." />
               </folding>
             </state>
           </provider>
@@ -102,7 +101,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_plot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="782">
+            <state relative-caret-position="1278">
               <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
             </state>
           </provider>
@@ -137,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Module</find>
       <find>model_0_wra</find>
       <find>load_embedding</find>
       <find>get_embedding</find>
@@ -167,6 +165,7 @@
       <find>EOS_token</find>
       <find>best_accuracy_dict</find>
       <find>decoder_layers</find>
+      <find>soft</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -240,6 +239,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -256,7 +256,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -483,6 +482,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -491,11 +495,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -533,6 +532,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/do_plot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1278">
+          <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1926">
@@ -547,23 +553,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_plot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="782">
-          <caret line="73" column="35" selection-start-line="73" selection-start-column="35" selection-end-line="73" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="208">
-          <caret line="571" column="31" selection-start-line="571" selection-start-column="31" selection-end-line="571" selection-end-column="31" />
+        <state relative-caret-position="622">
+          <caret line="715" column="16" selection-start-line="715" selection-start-column="16" selection-end-line="715" selection-end-column="16" />
           <folding>
-            <marker date="1543182552800" expanded="true" signature="18929:26942" ph="..." />
-            <marker date="1543182552800" expanded="true" signature="22709:22718" ph="..." />
-            <marker date="1543182552800" expanded="true" signature="24032:24073" ph="..." />
-            <marker date="1543182552800" expanded="true" signature="30373:30406" ph="..." />
-            <marker date="1543182552800" expanded="true" signature="30849:30881" ph="..." />
+            <marker date="1543184073825" expanded="true" signature="18929:26998" ph="..." />
+            <marker date="1543184073825" expanded="true" signature="22709:22718" ph="..." />
+            <marker date="1543184073825" expanded="true" signature="24032:24073" ph="..." />
+            <marker date="1543184073825" expanded="true" signature="30429:30462" ph="..." />
+            <marker date="1543184073825" expanded="true" signature="30905:30937" ph="..." />
           </folding>
         </state>
       </provider>
