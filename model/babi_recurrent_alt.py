@@ -606,7 +606,7 @@ class WrapOutputRNN(nn.Module):
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
-        self.dropout_b = nn.Dropout(dropout)
+        self.dropout_b = nn.Dropout(dropout * 0.5)
         self.dropout_c = nn.Dropout(dropout)
         self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
@@ -750,7 +750,7 @@ class WrapOutputRNN(nn.Module):
                 #output_x = self.dropout(output_x)
 
                 #output_x = F.softmax(output_x, dim=2) ## log_softmax
-                output_x = self.dropout(output_x) ## <---
+                output_x = self.dropout_b(output_x) ## <---
 
                 outputs.append(output_x)
 
