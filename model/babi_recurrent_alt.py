@@ -605,10 +605,10 @@ class WrapOutputRNN(nn.Module):
         self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout)
-        self.dropout_b = nn.Dropout(dropout * 0.5)
-        self.dropout_c = nn.Dropout(dropout)
-        self.dropout_d = nn.Dropout(dropout)
+        self.dropout = nn.Dropout(dropout * 0.5)
+        self.dropout_b = nn.Dropout(dropout )
+        #self.dropout_c = nn.Dropout(dropout)
+        #self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers,
@@ -741,15 +741,11 @@ class WrapOutputRNN(nn.Module):
 
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                #output = F.relu(output)
-                output = self.dropout(output)
+                #output = self.dropout(output)
 
                 output_x = self.out_c(output)
 
-                #output_x = F.relu(output_x)
-                #output_x = self.dropout(output_x)
-
-                #output_x = F.softmax(output_x, dim=2) ## log_softmax
+                
                 output_x = self.dropout_b(output_x) ## <---
 
                 outputs.append(output_x)
