@@ -2997,6 +2997,7 @@ class NMT:
         if len(self.best_accuracy_dict) > 0:
             with open(basename, 'w') as z:
                 z.write(json.dumps(self.best_accuracy_dict))
+                z.write('\n')
             z.close()
 
     def read_json_file(self):

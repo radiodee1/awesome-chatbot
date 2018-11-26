@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -14,7 +12,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="243" />
+          <entry key="project.closed" value="244" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -24,20 +22,20 @@
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.2" value="4" />
           <entry key="project.open.time.3" value="7" />
-          <entry key="project.open.time.4" value="64" />
+          <entry key="project.open.time.4" value="65" />
           <entry key="project.open.time.5" value="26" />
           <entry key="project.open.time.6" value="57" />
           <entry key="project.open.time.7" value="42" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="243" />
+          <entry key="project.opened" value="244" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="38152" />
+          <entry key="py" value="38163" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +45,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="38152" />
+          <entry key="Python" value="38163" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -85,14 +83,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="972">
-              <caret line="728" selection-start-line="728" selection-end-line="728" />
+            <state relative-caret-position="190">
+              <caret line="590" column="49" selection-start-line="590" selection-start-column="49" selection-end-line="590" selection-end-column="49" />
               <folding>
-                <marker date="1543256003948" expanded="true" signature="17937:25886" ph="..." />
-                <marker date="1543256003948" expanded="true" signature="21726:21735" ph="..." />
-                <marker date="1543256003948" expanded="true" signature="23049:23090" ph="..." />
-                <marker date="1543256003948" expanded="true" signature="29317:29350" ph="..." />
-                <marker date="1543256003948" expanded="true" signature="29793:29825" ph="..." />
+                <marker date="1543261140025" expanded="true" signature="17937:25897" ph="..." />
+                <marker date="1543261140025" expanded="true" signature="21737:21746" ph="..." />
+                <marker date="1543261140025" expanded="true" signature="23060:23101" ph="..." />
+                <marker date="1543261140025" expanded="true" signature="29328:29361" ph="..." />
+                <marker date="1543261140025" expanded="true" signature="29804:29836" ph="..." />
               </folding>
             </state>
           </provider>
@@ -555,14 +553,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="972">
-          <caret line="728" selection-start-line="728" selection-end-line="728" />
+        <state relative-caret-position="190">
+          <caret line="590" column="49" selection-start-line="590" selection-start-column="49" selection-end-line="590" selection-end-column="49" />
           <folding>
-            <marker date="1543256003948" expanded="true" signature="17937:25886" ph="..." />
-            <marker date="1543256003948" expanded="true" signature="21726:21735" ph="..." />
-            <marker date="1543256003948" expanded="true" signature="23049:23090" ph="..." />
-            <marker date="1543256003948" expanded="true" signature="29317:29350" ph="..." />
-            <marker date="1543256003948" expanded="true" signature="29793:29825" ph="..." />
+            <marker date="1543261140025" expanded="true" signature="17937:25897" ph="..." />
+            <marker date="1543261140025" expanded="true" signature="21737:21746" ph="..." />
+            <marker date="1543261140025" expanded="true" signature="23060:23101" ph="..." />
+            <marker date="1543261140025" expanded="true" signature="29328:29361" ph="..." />
+            <marker date="1543261140025" expanded="true" signature="29804:29836" ph="..." />
           </folding>
         </state>
       </provider>
