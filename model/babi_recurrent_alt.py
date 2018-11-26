@@ -587,8 +587,8 @@ class WrapOutputRNN(nn.Module):
         self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout * 0.5 * 0.0)
-        self.dropout_b = nn.Dropout(dropout * 0.0)
+        self.dropout = nn.Dropout(dropout * 0.5 )
+        self.dropout_b = nn.Dropout(dropout )
         #self.dropout_c = nn.Dropout(dropout)
         #self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
