@@ -741,11 +741,11 @@ class WrapOutputRNN(nn.Module):
 
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                #output = self.dropout(output)
+                output = self.dropout(output)
 
                 output_x = self.out_c(output)
 
-                
+
                 output_x = self.dropout_b(output_x) ## <---
 
                 outputs.append(output_x)
