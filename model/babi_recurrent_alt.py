@@ -714,7 +714,7 @@ class WrapOutputRNN(nn.Module):
                 #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
                 #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
 
-                self.h0, self.c0 = self.init_hidden(1)
+                #self.h0, self.c0 = self.init_hidden(1)
 
             ##############################################
 
