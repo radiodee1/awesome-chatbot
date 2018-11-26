@@ -1772,6 +1772,9 @@ class NMT:
         if start + size >= len(pairs) and start < len(pairs) - 1:
             size = len(pairs) - start #- 1
             print('process size', size,'next')
+        if start + size >= self.starting_epoch_length and start < self.starting_epoch_length - 1:
+            size = self.starting_epoch_length - start #- 1
+            print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
             return self.variablesFromPair(('','',''))
