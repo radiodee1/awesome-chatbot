@@ -85,14 +85,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="622">
-              <caret line="716" column="17" selection-start-line="716" selection-start-column="17" selection-end-line="716" selection-end-column="17" />
+            <state relative-caret-position="172">
+              <caret line="501" lean-forward="true" selection-start-line="501" selection-end-line="501" />
               <folding>
-                <marker date="1543238733426" expanded="true" signature="18929:26879" ph="..." />
-                <marker date="1543238733426" expanded="true" signature="22718:22727" ph="..." />
-                <marker date="1543238733426" expanded="true" signature="24041:24082" ph="..." />
-                <marker date="1543238733426" expanded="true" signature="30310:30343" ph="..." />
-                <marker date="1543238733426" expanded="true" signature="30786:30818" ph="..." />
+                <marker date="1543239019727" expanded="true" signature="17937:25887" ph="..." />
+                <marker date="1543239019727" expanded="true" signature="21726:21735" ph="..." />
+                <marker date="1543239019727" expanded="true" signature="23049:23090" ph="..." />
+                <marker date="1543239019727" expanded="true" signature="29318:29351" ph="..." />
+                <marker date="1543239019727" expanded="true" signature="29794:29826" ph="..." />
               </folding>
             </state>
           </provider>
@@ -136,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_0_wra</find>
       <find>load_embedding</find>
       <find>get_embedding</find>
       <find>do_recurrent_output</find>
@@ -166,6 +165,7 @@
       <find>decoder_layers</find>
       <find>soft</find>
       <find>dropout</find>
+      <find>next</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -555,14 +555,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="622">
-          <caret line="716" column="17" selection-start-line="716" selection-start-column="17" selection-end-line="716" selection-end-column="17" />
+        <state relative-caret-position="172">
+          <caret line="501" lean-forward="true" selection-start-line="501" selection-end-line="501" />
           <folding>
-            <marker date="1543238733426" expanded="true" signature="18929:26879" ph="..." />
-            <marker date="1543238733426" expanded="true" signature="22718:22727" ph="..." />
-            <marker date="1543238733426" expanded="true" signature="24041:24082" ph="..." />
-            <marker date="1543238733426" expanded="true" signature="30310:30343" ph="..." />
-            <marker date="1543238733426" expanded="true" signature="30786:30818" ph="..." />
+            <marker date="1543239019727" expanded="true" signature="17937:25887" ph="..." />
+            <marker date="1543239019727" expanded="true" signature="21726:21735" ph="..." />
+            <marker date="1543239019727" expanded="true" signature="23049:23090" ph="..." />
+            <marker date="1543239019727" expanded="true" signature="29318:29351" ph="..." />
+            <marker date="1543239019727" expanded="true" signature="29794:29826" ph="..." />
           </folding>
         </state>
       </provider>

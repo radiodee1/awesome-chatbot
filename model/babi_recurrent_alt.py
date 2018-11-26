@@ -500,24 +500,6 @@ class AnswerModule(nn.Module):
         self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
-    '''
-        self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
-
-        self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
-
-        self.h0 = None
-        self.c0 = None
-
-        self.h0, self.c0 = self.init_hidden(self.decoder_layers)
-
-    def init_hidden(self, batch_size):
-        #hidden = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
-        hidden = nn.Parameter(torch.randn(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
-        #cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
-        cell = nn.Parameter(torch.randn(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
-        return (hidden, cell)
-    '''
-
     def reset_parameters(self):
 
         stdv = 1.0 / math.sqrt(self.hidden_size)
