@@ -677,7 +677,7 @@ class WrapOutputRNN(nn.Module):
             e_out = torch.cat(e_out_list, dim=0)
             #print(e_out.size(),'eout')
             #e_out = self.dropout_c(e_out)
-            e_out = torch.tanh(e_out)
+            e_out = torch.relu(e_out)
             #e_out = F.softmax(e_out, dim=1)
 
             #e_out = self.dropout_c(e_out)

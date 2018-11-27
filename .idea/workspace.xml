@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,8 +83,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="550">
-              <caret line="2322" selection-start-line="2322" selection-end-line="2322" />
+            <state relative-caret-position="4582">
+              <caret line="927" column="12" selection-start-line="927" selection-start-column="12" selection-end-line="927" selection-end-column="12" />
               <folding>
                 <marker date="1543354987811" expanded="true" signature="17963:25921" ph="..." />
                 <marker date="1543354987811" expanded="true" signature="21752:21761" ph="..." />
@@ -574,8 +572,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="2322" selection-start-line="2322" selection-end-line="2322" />
+        <state relative-caret-position="4582">
+          <caret line="927" column="12" selection-start-line="927" selection-start-column="12" selection-end-line="927" selection-end-column="12" />
           <folding>
             <marker date="1543354987811" expanded="true" signature="17963:25921" ph="..." />
             <marker date="1543354987811" expanded="true" signature="21752:21761" ph="..." />
