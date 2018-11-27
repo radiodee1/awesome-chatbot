@@ -202,12 +202,12 @@ class CustomGRU(nn.Module):
         init.xavier_normal_(self.W.state_dict()['weight'])
         self.U = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.U.state_dict()['weight'])
-
+        '''
         self.Wz = nn.Linear(input_size, hidden_size)
         init.xavier_normal_(self.Wz.state_dict()['weight'])
         self.Uz = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.Uz.state_dict()['weight'])
-
+        '''
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, fact, C, g=None):
@@ -587,7 +587,7 @@ class WrapOutputRNN(nn.Module):
         self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout * 0.5 )
+        self.dropout = nn.Dropout(dropout) # * 0.5 )
         self.dropout_b = nn.Dropout(dropout )
         #self.dropout_c = nn.Dropout(dropout)
         #self.dropout_d = nn.Dropout(dropout)
@@ -677,7 +677,7 @@ class WrapOutputRNN(nn.Module):
             e_out = torch.cat(e_out_list, dim=0)
             #print(e_out.size(),'eout')
             #e_out = self.dropout_c(e_out)
-            #e_out = F.sigmoid(e_out)
+            e_out = torch.tanh(e_out)
             #e_out = F.softmax(e_out, dim=1)
 
             #e_out = self.dropout_c(e_out)
@@ -723,11 +723,11 @@ class WrapOutputRNN(nn.Module):
 
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
-                output = self.dropout(output)
+                output = self.dropout(output) ## <---
 
                 output_x = self.out_c(output)
 
-                output_x = self.dropout_b(output_x) ## <---
+                #output_x = self.dropout_b(output_x) ## <---
 
                 outputs.append(output_x)
 
