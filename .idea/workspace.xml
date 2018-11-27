@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="38346" />
+          <entry key="py" value="38351" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="38346" />
+          <entry key="Python" value="38351" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -83,14 +85,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4582">
-              <caret line="927" column="12" selection-start-line="927" selection-start-column="12" selection-end-line="927" selection-end-column="12" />
+            <state relative-caret-position="262">
+              <caret line="680" column="27" selection-start-line="680" selection-start-column="23" selection-end-line="680" selection-end-column="27" />
               <folding>
-                <marker date="1543354987811" expanded="true" signature="17963:25921" ph="..." />
-                <marker date="1543354987811" expanded="true" signature="21752:21761" ph="..." />
-                <marker date="1543354987811" expanded="true" signature="23075:23116" ph="..." />
-                <marker date="1543354987811" expanded="true" signature="29352:29385" ph="..." />
-                <marker date="1543354987811" expanded="true" signature="29828:29860" ph="..." />
+                <marker date="1543358236818" expanded="true" signature="17963:25921" ph="..." />
+                <marker date="1543358236818" expanded="true" signature="21752:21761" ph="..." />
+                <marker date="1543358236818" expanded="true" signature="23075:23116" ph="..." />
+                <marker date="1543358236818" expanded="true" signature="29352:29385" ph="..." />
+                <marker date="1543358236818" expanded="true" signature="29828:29860" ph="..." />
               </folding>
             </state>
           </provider>
@@ -154,7 +156,6 @@
       <find>EOS_token</find>
       <find>best_accuracy_dict</find>
       <find>decoder_layers</find>
-      <find>soft</find>
       <find>dropout</find>
       <find>next</find>
       <find>dropout_b</find>
@@ -164,6 +165,7 @@
       <find>WrapMemRNN</find>
       <find>model_0_dec</find>
       <find>.model_0_wra.last_mem</find>
+      <find>soft</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -572,14 +574,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4582">
-          <caret line="927" column="12" selection-start-line="927" selection-start-column="12" selection-end-line="927" selection-end-column="12" />
+        <state relative-caret-position="262">
+          <caret line="680" column="27" selection-start-line="680" selection-start-column="23" selection-end-line="680" selection-end-column="27" />
           <folding>
-            <marker date="1543354987811" expanded="true" signature="17963:25921" ph="..." />
-            <marker date="1543354987811" expanded="true" signature="21752:21761" ph="..." />
-            <marker date="1543354987811" expanded="true" signature="23075:23116" ph="..." />
-            <marker date="1543354987811" expanded="true" signature="29352:29385" ph="..." />
-            <marker date="1543354987811" expanded="true" signature="29828:29860" ph="..." />
+            <marker date="1543358236818" expanded="true" signature="17963:25921" ph="..." />
+            <marker date="1543358236818" expanded="true" signature="21752:21761" ph="..." />
+            <marker date="1543358236818" expanded="true" signature="23075:23116" ph="..." />
+            <marker date="1543358236818" expanded="true" signature="29352:29385" ph="..." />
+            <marker date="1543358236818" expanded="true" signature="29828:29860" ph="..." />
           </folding>
         </state>
       </provider>

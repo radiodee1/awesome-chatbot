@@ -1048,7 +1048,7 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
 
-        z = torch.softmax(z, dim=0) # <--- use this!!
+        z = F.softmax(z, dim=0) # <--- use this!!
 
         return z
 
