@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,8 +83,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="679" column="30" selection-start-line="679" selection-start-column="30" selection-end-line="679" selection-end-column="30" />
+            <state relative-caret-position="262">
+              <caret line="941" column="39" selection-start-line="941" selection-start-column="37" selection-end-line="941" selection-end-column="39" />
               <folding>
                 <marker date="1543352957220" expanded="true" signature="17959:25921" ph="..." />
                 <marker date="1543352957220" expanded="true" signature="21752:21761" ph="..." />
@@ -137,8 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>do_recurrent_output</find>
-      <find>decoded_words</find>
       <find>evaluate</find>
       <find>words</find>
       <find>_make_optimizer</find>
@@ -167,6 +162,8 @@
       <find>next</find>
       <find>dropout_b</find>
       <find>relu</find>
+      <find>tanh</find>
+      <find>F.</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -556,8 +553,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="679" column="30" selection-start-line="679" selection-start-column="30" selection-end-line="679" selection-end-column="30" />
+        <state relative-caret-position="262">
+          <caret line="941" column="39" selection-start-line="941" selection-start-column="37" selection-end-line="941" selection-end-column="39" />
           <folding>
             <marker date="1543352957220" expanded="true" signature="17959:25921" ph="..." />
             <marker date="1543352957220" expanded="true" signature="21752:21761" ph="..." />

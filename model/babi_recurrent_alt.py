@@ -516,7 +516,7 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        mem = F.relu(mem)
+        mem = torch.relu(mem)
         #question_h = F.relu(question_h)
 
         mem_in = mem.permute(1,0,2)
@@ -594,7 +594,7 @@ class WrapOutputRNN(nn.Module):
         self.maxtokens = hparams['tokens_per_sentence']
 
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers,
-                              dropout=dropout, bidirectional=False, batch_first=True)
+                              dropout=0.0, bidirectional=False, batch_first=True)
 
         self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
 
@@ -939,7 +939,7 @@ class WrapMemRNN(nn.Module):
                 for iter in range(self.memory_hops):
 
                     if len(m_list) is 1 : mem_last = m_list[index]
-                    else: mem_last = F.relu(m_list[index])
+                    else: mem_last = torch.relu(m_list[index])
 
                     x = self.wrap_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
@@ -1048,7 +1048,7 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
 
-        z = F.softmax(z, dim=0) # <--- use this!!
+        z = torch.softmax(z, dim=0) # <--- use this!!
 
         return z
 
