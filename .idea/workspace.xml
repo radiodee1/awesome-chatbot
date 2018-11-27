@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="38233" />
+          <entry key="py" value="38346" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="38233" />
+          <entry key="Python" value="38346" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -83,14 +85,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="262">
-              <caret line="941" column="39" selection-start-line="941" selection-start-column="37" selection-end-line="941" selection-end-column="39" />
+            <state relative-caret-position="550">
+              <caret line="2322" selection-start-line="2322" selection-end-line="2322" />
               <folding>
-                <marker date="1543352957220" expanded="true" signature="17959:25921" ph="..." />
-                <marker date="1543352957220" expanded="true" signature="21752:21761" ph="..." />
-                <marker date="1543352957220" expanded="true" signature="23075:23116" ph="..." />
-                <marker date="1543352957220" expanded="true" signature="29352:29385" ph="..." />
-                <marker date="1543352957220" expanded="true" signature="29828:29860" ph="..." />
+                <marker date="1543354987811" expanded="true" signature="17963:25921" ph="..." />
+                <marker date="1543354987811" expanded="true" signature="21752:21761" ph="..." />
+                <marker date="1543354987811" expanded="true" signature="23075:23116" ph="..." />
+                <marker date="1543354987811" expanded="true" signature="29352:29385" ph="..." />
+                <marker date="1543354987811" expanded="true" signature="29828:29860" ph="..." />
               </folding>
             </state>
           </provider>
@@ -134,8 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>evaluate</find>
-      <find>words</find>
       <find>_make_optimizer</find>
       <find>init</find>
       <find>multipli</find>
@@ -144,7 +144,6 @@
       <find>best_accuracy_record_offset</find>
       <find>json_record_offset</find>
       <find>decoder_mult</find>
-      <find>model_0_dec</find>
       <find>_test_embedding</find>
       <find>split_sentences</find>
       <find>do_simple_input</find>
@@ -164,6 +163,9 @@
       <find>relu</find>
       <find>tanh</find>
       <find>F.</find>
+      <find>WrapMemRNN</find>
+      <find>model_0_dec</find>
+      <find>.model_0_wra.last_mem</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -289,7 +291,7 @@
     <frame x="537" y="80" width="1380" height="1000" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -307,6 +309,25 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -553,14 +574,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="262">
-          <caret line="941" column="39" selection-start-line="941" selection-start-column="37" selection-end-line="941" selection-end-column="39" />
+        <state relative-caret-position="550">
+          <caret line="2322" selection-start-line="2322" selection-end-line="2322" />
           <folding>
-            <marker date="1543352957220" expanded="true" signature="17959:25921" ph="..." />
-            <marker date="1543352957220" expanded="true" signature="21752:21761" ph="..." />
-            <marker date="1543352957220" expanded="true" signature="23075:23116" ph="..." />
-            <marker date="1543352957220" expanded="true" signature="29352:29385" ph="..." />
-            <marker date="1543352957220" expanded="true" signature="29828:29860" ph="..." />
+            <marker date="1543354987811" expanded="true" signature="17963:25921" ph="..." />
+            <marker date="1543354987811" expanded="true" signature="21752:21761" ph="..." />
+            <marker date="1543354987811" expanded="true" signature="23075:23116" ph="..." />
+            <marker date="1543354987811" expanded="true" signature="29352:29385" ph="..." />
+            <marker date="1543354987811" expanded="true" signature="29828:29860" ph="..." />
           </folding>
         </state>
       </provider>
