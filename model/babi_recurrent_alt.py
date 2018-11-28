@@ -1060,6 +1060,11 @@ class WrapMemRNN(nn.Module):
 
         ansx = self.model_5_ans(mem, q_q)
 
+        if self.recurrent_output:
+            ansx = self.last_mem.permute(1,0,2)
+            ansx = prune_tensor(ansx, 2)
+            return [None], ansx
+
         return [None], ansx
 
         pass
@@ -2313,9 +2318,9 @@ class NMT:
                 target_variable = torch.cat(target_variable, dim=0)
                 ans = prune_tensor(ans, 2)
 
-                #ans = ans.float().permute(1,0).contiguous()
+                ans = ans.float().contiguous()
 
-                ans = prune_tensor(self.model_0_wra.last_mem.permute(1,0,2), 2)
+                #ans = prune_tensor(self.model_0_wra.last_mem.permute(1,0,2), 2)
 
                 ans = self.model_0_dec(ans)
                 ans = ans.permute(1,0,2)
@@ -2788,10 +2793,7 @@ class NMT:
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
             if self.do_recurrent_output:
-                ans = ans.permute(1,0)
-                #ans = self.model_0_dec(ans)
 
-                ans = prune_tensor(self.model_0_wra.last_mem, 2)
                 ans = self.model_0_dec(ans)
 
 
