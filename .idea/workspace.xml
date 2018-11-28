@@ -15,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="247" />
+          <entry key="project.closed" value="249" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -24,21 +24,21 @@
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.2" value="4" />
-          <entry key="project.open.time.3" value="8" />
+          <entry key="project.open.time.3" value="9" />
           <entry key="project.open.time.4" value="66" />
-          <entry key="project.open.time.5" value="27" />
+          <entry key="project.open.time.5" value="28" />
           <entry key="project.open.time.6" value="58" />
           <entry key="project.open.time.7" value="42" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="248" />
+          <entry key="project.opened" value="250" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="38352" />
+          <entry key="py" value="38378" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -48,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="38352" />
+          <entry key="Python" value="38378" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -86,14 +86,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
-              <caret line="679" column="12" selection-start-line="679" selection-start-column="12" selection-end-line="679" selection-end-column="12" />
+            <state relative-caret-position="928">
+              <caret line="729" column="16" selection-start-line="729" selection-start-column="16" selection-end-line="729" selection-end-column="16" />
               <folding>
-                <marker date="1543413238752" expanded="true" signature="17963:25919" ph="..." />
-                <marker date="1543413238752" expanded="true" signature="21751:21760" ph="..." />
-                <marker date="1543413238752" expanded="true" signature="23074:23115" ph="..." />
-                <marker date="1543413238752" expanded="true" signature="29350:29383" ph="..." />
-                <marker date="1543413238752" expanded="true" signature="29826:29858" ph="..." />
+                <marker date="1543431392199" expanded="true" signature="17966:25922" ph="..." />
+                <marker date="1543431392199" expanded="true" signature="21754:21763" ph="..." />
+                <marker date="1543431392199" expanded="true" signature="23077:23118" ph="..." />
+                <marker date="1543431392199" expanded="true" signature="29353:29386" ph="..." />
+                <marker date="1543431392199" expanded="true" signature="29829:29861" ph="..." />
               </folding>
             </state>
           </provider>
@@ -137,11 +137,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_make_optimizer</find>
-      <find>init</find>
-      <find>multipli</find>
-      <find>view</find>
-      <find>this_epoch</find>
       <find>best_accuracy_record_offset</find>
       <find>json_record_offset</find>
       <find>decoder_mult</find>
@@ -153,7 +148,6 @@
       <find>Encoder</find>
       <find>NLLLoss</find>
       <find>F.relu</find>
-      <find>AnswerModule</find>
       <find>EOS_token</find>
       <find>best_accuracy_dict</find>
       <find>decoder_layers</find>
@@ -167,6 +161,12 @@
       <find>model_0_dec</find>
       <find>.model_0_wra.last_mem</find>
       <find>soft</find>
+      <find>model_5_ans</find>
+      <find>AnswerModule</find>
+      <find>gru</find>
+      <find>sum_bidirectional</find>
+      <find>model_0_wra</find>
+      <find>forward</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -502,11 +502,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -515,6 +510,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -575,14 +575,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="679" column="12" selection-start-line="679" selection-start-column="12" selection-end-line="679" selection-end-column="12" />
+        <state relative-caret-position="928">
+          <caret line="729" column="16" selection-start-line="729" selection-start-column="16" selection-end-line="729" selection-end-column="16" />
           <folding>
-            <marker date="1543413238752" expanded="true" signature="17963:25919" ph="..." />
-            <marker date="1543413238752" expanded="true" signature="21751:21760" ph="..." />
-            <marker date="1543413238752" expanded="true" signature="23074:23115" ph="..." />
-            <marker date="1543413238752" expanded="true" signature="29350:29383" ph="..." />
-            <marker date="1543413238752" expanded="true" signature="29826:29858" ph="..." />
+            <marker date="1543431392199" expanded="true" signature="17966:25922" ph="..." />
+            <marker date="1543431392199" expanded="true" signature="21754:21763" ph="..." />
+            <marker date="1543431392199" expanded="true" signature="23077:23118" ph="..." />
+            <marker date="1543431392199" expanded="true" signature="29353:29386" ph="..." />
+            <marker date="1543431392199" expanded="true" signature="29829:29861" ph="..." />
           </folding>
         </state>
       </provider>

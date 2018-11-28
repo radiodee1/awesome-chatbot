@@ -495,9 +495,9 @@ class AnswerModule(nn.Module):
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
         self.dropout   = nn.Dropout(dropout)
-        self.dropout_b = nn.Dropout(dropout)
-        self.dropout_c = nn.Dropout(dropout)
-        self.dropout_d = nn.Dropout(dropout)
+        #self.dropout_b = nn.Dropout(dropout)
+        #self.dropout_c = nn.Dropout(dropout)
+        #self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
 
     def reset_parameters(self):
@@ -677,7 +677,7 @@ class WrapOutputRNN(nn.Module):
             e_out = torch.cat(e_out_list, dim=0)
             #print(e_out.size(),'eout')
             e_out = self.dropout_c(e_out)
-            e_out = torch.relu(e_out)
+            #e_out = torch.relu(e_out)
             #e_out = F.softmax(e_out, dim=1)
 
             #e_out = self.dropout_c(e_out)
@@ -727,7 +727,7 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.out_c(output)
 
-                #output_x = self.dropout_b(output_x) ## <---
+                output_x = self.dropout_b(output_x) ## <---
 
                 outputs.append(output_x)
 
