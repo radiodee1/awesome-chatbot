@@ -2387,7 +2387,7 @@ class NMT:
                 else:
                     loss = None
                     ans = prune_tensor(ans, 2)
-                    ans = ans.float().permute(1, 0).contiguous()
+                    ans = ans.float().permute(0, 1).contiguous()
 
                     #ans = prune_tensor(ans, 2)
 
