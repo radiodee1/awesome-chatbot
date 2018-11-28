@@ -186,9 +186,9 @@ def prune_tensor( input, size):
             break
     return input
 
-'''
+
 ###################################
-'''
+
 
 class CustomGRU(nn.Module):
     def __init__(self, input_size, hidden_size, dropout=0.3):
@@ -202,12 +202,7 @@ class CustomGRU(nn.Module):
         init.xavier_normal_(self.W.state_dict()['weight'])
         self.U = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.U.state_dict()['weight'])
-        '''
-        self.Wz = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.Wz.state_dict()['weight'])
-        self.Uz = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.Uz.state_dict()['weight'])
-        '''
+        
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, fact, C, g=None):

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -86,14 +85,14 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="928">
-              <caret line="729" column="16" selection-start-line="729" selection-start-column="16" selection-end-line="729" selection-end-column="16" />
+            <state relative-caret-position="414">
+              <caret line="204" column="8" selection-start-line="204" selection-start-column="8" selection-end-line="204" selection-end-column="8" />
               <folding>
-                <marker date="1543431392199" expanded="true" signature="17966:25922" ph="..." />
-                <marker date="1543431392199" expanded="true" signature="21754:21763" ph="..." />
-                <marker date="1543431392199" expanded="true" signature="23077:23118" ph="..." />
-                <marker date="1543431392199" expanded="true" signature="29353:29386" ph="..." />
-                <marker date="1543431392199" expanded="true" signature="29829:29861" ph="..." />
+                <marker date="1543433131905" expanded="true" signature="17718:25674" ph="..." />
+                <marker date="1543433131905" expanded="true" signature="21506:21515" ph="..." />
+                <marker date="1543433131905" expanded="true" signature="22829:22870" ph="..." />
+                <marker date="1543433131905" expanded="true" signature="29105:29138" ph="..." />
+                <marker date="1543433131905" expanded="true" signature="29581:29613" ph="..." />
               </folding>
             </state>
           </provider>
@@ -151,7 +150,6 @@
       <find>EOS_token</find>
       <find>best_accuracy_dict</find>
       <find>decoder_layers</find>
-      <find>dropout</find>
       <find>next</find>
       <find>dropout_b</find>
       <find>relu</find>
@@ -167,6 +165,7 @@
       <find>sum_bidirectional</find>
       <find>model_0_wra</find>
       <find>forward</find>
+      <find>dropout</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -575,14 +574,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="928">
-          <caret line="729" column="16" selection-start-line="729" selection-start-column="16" selection-end-line="729" selection-end-column="16" />
+        <state relative-caret-position="414">
+          <caret line="204" column="8" selection-start-line="204" selection-start-column="8" selection-end-line="204" selection-end-column="8" />
           <folding>
-            <marker date="1543431392199" expanded="true" signature="17966:25922" ph="..." />
-            <marker date="1543431392199" expanded="true" signature="21754:21763" ph="..." />
-            <marker date="1543431392199" expanded="true" signature="23077:23118" ph="..." />
-            <marker date="1543431392199" expanded="true" signature="29353:29386" ph="..." />
-            <marker date="1543431392199" expanded="true" signature="29829:29861" ph="..." />
+            <marker date="1543433131905" expanded="true" signature="17718:25674" ph="..." />
+            <marker date="1543433131905" expanded="true" signature="21506:21515" ph="..." />
+            <marker date="1543433131905" expanded="true" signature="22829:22870" ph="..." />
+            <marker date="1543433131905" expanded="true" signature="29105:29138" ph="..." />
+            <marker date="1543433131905" expanded="true" signature="29581:29613" ph="..." />
           </folding>
         </state>
       </provider>
