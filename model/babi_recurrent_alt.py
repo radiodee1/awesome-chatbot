@@ -722,7 +722,7 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.out_c(output)
 
-                #output_x = self.dropout_b(output_x) ## <---
+                output_x = self.dropout_b(output_x) ## <---
 
                 outputs.append(output_x)
 
