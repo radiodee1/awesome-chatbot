@@ -731,6 +731,8 @@ class WrapOutputRNN(nn.Module):
 
                 if token == EOS_token:
                     for _ in range(i + 1, self.maxtokens):
+                        #out_early = self.embed(Variable(torch.tensor([UNK_token]))) ## <-- ????
+                        #out_early = prune_tensor(out_early, 3)
                         out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
                         outputs.append(out_early)
                     #print(len(outputs))
@@ -1197,6 +1199,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_chatbot_train = False
         self.do_load_once = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
@@ -2341,7 +2344,7 @@ class NMT:
 
                 loss.backward(retain_graph=True)
 
-                if True:
+                if self.do_clip_grad_norm:
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_dec.parameters(), clip)
 
@@ -2366,7 +2369,9 @@ class NMT:
             if not self.do_recurrent_output:
                 loss = criterion(ans, target_variable)
                 loss.backward()
-                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+
+                if self.do_clip_grad_norm:
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
             if not self.do_recurrent_output:
                 wrapper_optimizer.step()
@@ -2554,11 +2559,11 @@ class NMT:
                                             None, None, criterion)
             num_count += 1
 
-            if self.do_recurrent_output and self.do_load_babi: # and  self.do_sample_on_screen:
+            if self.do_recurrent_output and self.do_load_babi:
                 ans = ans.permute(1,0)
                 ans = torch.argmax(ans,dim=1)
                 for ii in range(len(target_variable)):
-                    for jj in range(target_variable[ii].size(1)): # target_variable[i].size()[1]):
+                    for jj in range(target_variable[ii].size(1)): 
                         #print(i, j, temp_batch_size)
                         t_val = target_variable[ii][0,jj,0].item()
                         #print(t_val, EOS_token)
