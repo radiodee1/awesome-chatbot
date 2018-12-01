@@ -2563,7 +2563,7 @@ class NMT:
                 ans = ans.permute(1,0)
                 ans = torch.argmax(ans,dim=1)
                 for ii in range(len(target_variable)):
-                    for jj in range(target_variable[ii].size(1)): 
+                    for jj in range(target_variable[ii].size(1)):
                         #print(i, j, temp_batch_size)
                         t_val = target_variable[ii][0,jj,0].item()
                         #print(t_val, EOS_token)
