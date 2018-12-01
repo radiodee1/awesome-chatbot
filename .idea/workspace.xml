@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent_alt.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,19 +25,19 @@
           <entry key="project.open.time.2" value="4" />
           <entry key="project.open.time.3" value="12" />
           <entry key="project.open.time.4" value="67" />
-          <entry key="project.open.time.5" value="29" />
+          <entry key="project.open.time.5" value="30" />
           <entry key="project.open.time.6" value="59" />
           <entry key="project.open.time.7" value="42" />
           <entry key="project.open.time.8" value="15" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="256" />
+          <entry key="project.opened" value="257" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="38583" />
+          <entry key="py" value="38638" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="38583" />
+          <entry key="Python" value="38638" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -84,13 +86,13 @@
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="262">
-              <caret line="2565" column="65" lean-forward="true" selection-start-line="2565" selection-start-column="65" selection-end-line="2565" selection-end-column="65" />
+              <caret line="1556" column="57" selection-start-line="1556" selection-start-column="43" selection-end-line="1556" selection-end-column="57" />
               <folding>
-                <marker date="1543679942647" expanded="true" signature="17710:25829" ph="..." />
-                <marker date="1543679942647" expanded="true" signature="21498:21507" ph="..." />
-                <marker date="1543679942647" expanded="true" signature="22821:22862" ph="..." />
-                <marker date="1543679942647" expanded="true" signature="29260:29293" ph="..." />
-                <marker date="1543679942647" expanded="true" signature="29736:29768" ph="..." />
+                <marker date="1543686616581" expanded="true" signature="17710:25879" ph="..." />
+                <marker date="1543686616581" expanded="true" signature="21498:21507" ph="..." />
+                <marker date="1543686616581" expanded="true" signature="22871:22912" ph="..." />
+                <marker date="1543686616581" expanded="true" signature="29310:29343" ph="..." />
+                <marker date="1543686616581" expanded="true" signature="29786:29818" ph="..." />
               </folding>
             </state>
           </provider>
@@ -134,9 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_test_embedding</find>
-      <find>split_sentences</find>
-      <find>do_simple_input</find>
       <find>simple_input</find>
       <find>encoding_positional</find>
       <find>Encoder</find>
@@ -164,6 +163,9 @@
       <find>model_0_wra</find>
       <find>last_mem</find>
       <find>clip</find>
+      <find>load_embed_module</find>
+      <find>embed</find>
+      <find>test_embedding</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -499,6 +501,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -507,11 +514,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -573,13 +575,13 @@
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="262">
-          <caret line="2565" column="65" lean-forward="true" selection-start-line="2565" selection-start-column="65" selection-end-line="2565" selection-end-column="65" />
+          <caret line="1556" column="57" selection-start-line="1556" selection-start-column="43" selection-end-line="1556" selection-end-column="57" />
           <folding>
-            <marker date="1543679942647" expanded="true" signature="17710:25829" ph="..." />
-            <marker date="1543679942647" expanded="true" signature="21498:21507" ph="..." />
-            <marker date="1543679942647" expanded="true" signature="22821:22862" ph="..." />
-            <marker date="1543679942647" expanded="true" signature="29260:29293" ph="..." />
-            <marker date="1543679942647" expanded="true" signature="29736:29768" ph="..." />
+            <marker date="1543686616581" expanded="true" signature="17710:25879" ph="..." />
+            <marker date="1543686616581" expanded="true" signature="21498:21507" ph="..." />
+            <marker date="1543686616581" expanded="true" signature="22871:22912" ph="..." />
+            <marker date="1543686616581" expanded="true" signature="29310:29343" ph="..." />
+            <marker date="1543686616581" expanded="true" signature="29786:29818" ph="..." />
           </folding>
         </state>
       </provider>

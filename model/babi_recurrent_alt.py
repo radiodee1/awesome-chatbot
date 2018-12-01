@@ -647,6 +647,8 @@ class WrapOutputRNN(nn.Module):
 
         if num is None:
             num = 55  # magic number for testing = garden
+        if self.embed is None:
+            return
         e = self.embed(num)
         print('encoder 0:')
         print(e.size(), 'test embedding')
@@ -870,6 +872,8 @@ class WrapMemRNN(nn.Module):
 
         if num is None:
             num = 55  # magic number for testing = garden
+        if self.embed is None:
+            return
         e = self.embed(num)
         print('encoder 0:')
         print(e.size(), 'test embedding')
@@ -2354,6 +2358,7 @@ class NMT:
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
+
                 ans = ans.permute(1,0)
                 if self.do_recurrent_output:
                     ans = self.model_0_dec(ans)
