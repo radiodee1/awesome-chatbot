@@ -1203,7 +1203,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_chatbot_train = False
         self.do_load_once = True
-        self.do_clip_grad_norm = False
+        self.do_clip_grad_norm = True
 
         self.printable = ''
 
