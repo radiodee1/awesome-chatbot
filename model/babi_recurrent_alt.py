@@ -477,22 +477,20 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear(hidden_size , hidden_size , bias=True)
+        self.out_b = nn.Linear(hidden_size , hidden_size , bias=True) ## remove!!
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
         #self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
         #init.xavier_normal_(self.out_b2.state_dict()['weight'])
 
-        self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
+        self.out_c = nn.Linear(hidden_size , vocab_size, bias=True) ## remove!!
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
-        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
+        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True) ## remove!!
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
-        self.dropout   = nn.Dropout(dropout)
-        #self.dropout_b = nn.Dropout(dropout)
-        #self.dropout_c = nn.Dropout(dropout)
-        #self.dropout_d = nn.Dropout(dropout)
+        self.dropout = nn.Dropout(dropout)
+
         self.maxtokens = hparams['tokens_per_sentence']
 
     def reset_parameters(self):
@@ -511,7 +509,7 @@ class AnswerModule(nn.Module):
 
     def forward(self, mem, question_h):
 
-        mem = torch.relu(mem)
+        mem = F.relu(mem)
         #question_h = F.relu(question_h)
 
         mem_in = mem.permute(1,0,2)
@@ -1814,19 +1812,28 @@ class NMT:
         while pad > sentence_len:
             indexes.append(UNK_token)
             pad -= 1
-        result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
+        result = Variable(torch.LongTensor(indexes).unsqueeze(1))
         #print(result.size(),'r')
         if hparams['cuda']:
             return result.cuda()
         else:
             return result
 
-    def variablesFromPair(self,pair):
+    def variablesFromPair(self, pair):
         pad = hparams['tokens_per_sentence']
         if hparams['split_sentences'] and not self.do_simple_input:
             l = pair[0].strip().split('.')
             sen = []
             max_len = 0
+
+            line_lst = []
+            for line in l:
+                if line.strip().split(' ')[-1] == hparams['eol']:
+                    line = ' '.join( line.split(' ')[0:-2] ) ## only do this if spliting sentences
+
+                line_lst.append(line)
+            l = line_lst
+
             for i in range(len(l)):
                 if len(l[i].strip().split(' ')) > max_len: max_len =  len(l[i].strip().split(' '))
             for i in range(len(l)):
@@ -2542,7 +2549,7 @@ class NMT:
                 if is_auto:
                     target_variable = training_pair[0]
                     #print('is auto')
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
+            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
 
                 input_variable = group[0]
