@@ -477,17 +477,6 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        self.out_b = nn.Linear(hidden_size , hidden_size , bias=True) ## remove!!
-        init.xavier_normal_(self.out_b.state_dict()['weight'])
-
-        #self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
-        #init.xavier_normal_(self.out_b2.state_dict()['weight'])
-
-        self.out_c = nn.Linear(hidden_size , vocab_size, bias=True) ## remove!!
-        init.xavier_normal_(self.out_c.state_dict()['weight'])
-
-        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True) ## remove!!
-        init.xavier_normal_(self.out_d.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout)
 
