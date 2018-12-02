@@ -2587,15 +2587,15 @@ class NMT:
                             num_right += 1
                             num_right_small += 1
                             if int(o_val) == EOS_token: # and jj is not 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
+                                num_right_small += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
+                                num_right += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
                             # next sentence
                             if int(o_val) == EOS_token and int(t_val) == UNK_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
+                                num_right_small += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
+                                num_right += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
                                 break
                             break
                             pass
