@@ -689,6 +689,8 @@ class WrapOutputRNN(nn.Module):
             output = prune_tensor(output, 3)
             #output = self.dropout_b(output)
 
+            flag = False
+
             for i in range(self.maxtokens):
 
                 ## embed lines here ???
@@ -716,8 +718,10 @@ class WrapOutputRNN(nn.Module):
 
                 token = torch.argmax(output_x, dim=2)
 
-
                 if token == EOS_token:
+                    flag = True
+
+                if token != EOS_token and flag:
                     for _ in range(i + 1, self.maxtokens):
                         out_early = self.embed(Variable(torch.tensor([UNK_token]))) ## <-- ????
                         out_early = prune_tensor(out_early, 3)
@@ -2322,6 +2326,8 @@ class NMT:
             loss = 0.0
 
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+
+            #print(ans,'ans', ans.size())
 
             if self.do_recurrent_output :
                 #print('do_rec_out')
