@@ -1835,7 +1835,7 @@ class NMT:
                 question_variable = group[1]
                 target_variable = group[2]
 
-                temp_batch_size = len(input_variable)
+                temp_batch_size = len(input_variable) # - 1 ## - 0
 
             elif self.do_batch_process:
                 continue
