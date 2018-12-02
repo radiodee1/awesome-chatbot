@@ -147,6 +147,10 @@ def encoding_positional(embedded_sentence, sum=False):
 
     slen2 = slen
     elen2 = elen
+
+    if slen == 1 or elen == 1:
+        exit()
+
     if slen == 1: slen2 += 0.01
     if elen == 1: elen2 += 0.01
 
@@ -164,115 +168,30 @@ def encoding_positional(embedded_sentence, sum=False):
         weighted = torch.sum(weighted, dim=1)
     return weighted
 
-class LuongAttention(nn.Module):
-    
-    ## LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
-    ## https://arxiv.org/pdf/1508.04025.pdf
-    
-
-    def __init__(self, dim):
-        super(LuongAttention, self).__init__()
-        self.W = nn.Linear(dim, dim, bias=False)
-
-    def score(self, decoder_hidden, encoder_out):
-        # linear transform encoder out (seq, batch, dim)
-        encoder_out = self.W(encoder_out)
-        # (batch, seq, dim) | (2, 15, 50)
-        encoder_out = encoder_out.permute(1, 0, 2)
-        # (2, 15, 50) @ (2, 50, 1)
-        return encoder_out @ decoder_hidden.permute(1, 2, 0)
-
-    def forward(self, decoder_hidden, encoder_out):
-        energies = self.score(decoder_hidden, encoder_out)
-        mask = F.softmax(energies, dim=1)  # batch, seq, 1
-        context = encoder_out.permute(1, 2, 0) @ mask  # (2, 50, 15) @ (2, 15, 1)
-        context = context.permute(2, 0, 1)  # (seq, batch, dim)
-        mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
-        return context, mask
-
-class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
-        super(Decoder, self).__init__()
-        self.n_layers = n_layers
-        self.maxtokens = hparams['tokens_per_sentence']
-        self.vocab_size = target_vocab_size
-        self.hidden_dim = hidden_dim
-        #self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim)
-
-        gru_in_dim = embed_dim + hidden_dim
-        #linear_in_dim = hidden_dim * 2
-        if cancel_attention:
-
-            gru_in_dim = hidden_dim
-            #linear_in_dim = hidden_dim
-
-        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout , batch_first=True)
-        #self.out = nn.Linear(linear_in_dim, target_vocab_size)
-        self.cancel_attention = cancel_attention
-
-    def load_embedding(self, embedding):
-        self.embed = embedding
-
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
-
-    def forward(self, output, encoder_out, decoder_hidden):
-        
-        #embedded = self.embed(output)  # (1, batch, embed_dim)
+def prune_tensor( input, size):
+    if isinstance(input, list): return input
+    if input is None: return input
+    n = 0
+    while len(input.size()) < size:
+        input = input.unsqueeze(0)
+        n += 1
+        if n > size + 1:
+            break
+    n = 0
+    z = len(input.size()) + 1
+    while len(input.size()) > size and input.size()[0] == 1:
+        input = input.squeeze(0)
+        n += 1
+        if n > z:
+            break
+    return input
 
 
-        if not self.cancel_attention:
-            decoder_hidden_y = decoder_hidden.permute(1,0,2)
-
-            decoder_hidden_y = decoder_hidden_y[:, 0, :]
-            for i in range(1, decoder_hidden.size()[1]):
-                decoder_hidden_y = decoder_hidden_y + decoder_hidden[:, i, :]
-
-            decoder_hidden_y = decoder_hidden_y.unsqueeze(1)
-
-            if self.n_layers > 1:
-
-                context, mask = self.attention(decoder_hidden_y, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-                embedded = output #self.prune_tensor(embedded,3)
-                #context = context.squeeze(0)
-            else:
-                #print(decoder_hidden.size(),'dh')
-                context, mask = self.attention(decoder_hidden_y, encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-                embedded = output #self.prune_tensor(embedded, 3)
-                context = context.permute(1,0,2)
-
-            concat_list = [
-                embedded,
-                context
-            ]
-            #for i in concat_list: print(i.size())
-            #exit()
-
-            gru_in = torch.cat(concat_list, dim=2)  # dim=2
-
-        else:
-            embedded = output
-            gru_in = self.prune_tensor(embedded, 3)
-            mask = None
-            # gru_in = gru_in.contiguous()
-
-        decoder_hidden = decoder_hidden.contiguous()
-
-        rnn_output, decoder_hidden = self.gru(gru_in, decoder_hidden)
-
-        
-        return rnn_output, decoder_hidden, mask
+###################################
 
 
 class CustomGRU(nn.Module):
-    def __init__(self, input_size, hidden_size):
+    def __init__(self, input_size, hidden_size, dropout=0.3):
         super(CustomGRU, self).__init__()
         self.hidden_size = hidden_size
         self.Wr = nn.Linear(input_size, hidden_size)
@@ -284,31 +203,20 @@ class CustomGRU(nn.Module):
         self.U = nn.Linear(hidden_size, hidden_size)
         init.xavier_normal_(self.U.state_dict()['weight'])
 
-        self.Wz = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.Wz.state_dict()['weight'])
-        self.Uz = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.Uz.state_dict()['weight'])
+        self.dropout = nn.Dropout(dropout)
 
     def forward(self, fact, C, g=None):
 
-
         r = torch.sigmoid(self.Wr(fact) + self.Ur(C))
         h_tilda = torch.tanh(self.W(fact) + r * self.U(C))
-        '''
-        if g is None:
-            z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
-            zz = z * C + (1 - z) * h_tilda
-            #print('g is none.')
-        else:
-        '''
+
         g = g.unsqueeze(0).expand_as(h_tilda)
         #print(g)
         #exit()
 
         zz = g * h_tilda + (1-g) * C
-        #print(zz.size(),'zz')
-        #zz = z * C + (1 - z) * h_tilda
-        return zz, zz # h_tilda #zz
+
+        return zz, zz
 
 class EpisodicAttn(nn.Module):
 
@@ -341,18 +249,16 @@ class EpisodicAttn(nn.Module):
 
     def forward(self,concat_list):
 
-        ''' attention list '''
         self.c_list_z = concat_list
 
         self.c_list_z = self.dropout(self.c_list_z)
         l_1 = self.out_a(self.c_list_z)
 
-
         l_1 = torch.tanh(l_1) ## <---- this line? used to be tanh !!
 
         l_2 = self.out_b( l_1)
 
-        self.G = l_2 #* F.softmax(l_2, dim=1)
+        self.G = l_2
 
         return self.G
 
@@ -375,12 +281,6 @@ class MemRNN(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    def prune_tensor(self, input, size):
-        if len(input.size()) < size:
-            input = input.unsqueeze(0)
-        if len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
 
     def forward(self, input, hidden=None, g=None):
 
@@ -497,35 +397,7 @@ class Encoder(nn.Module):
             output = output.unsqueeze(0)
         return output
 
-    '''
-    def position_encoding(self, embedded_sentence, permute_sentence=False):
-        if permute_sentence and False:
-            print('permute sent')
-            embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
-
-        _, slen, elen = embedded_sentence.size()
-
-        slen2 = slen
-        elen2 = elen
-        if slen == 1: slen2 += 0.01
-        if elen == 1: elen2 += 0.01
-
-        #print(slen, elen, 'slen,elen')
-
-        l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
-             range(slen)]
-        l = torch.FloatTensor(l)
-        l = l.unsqueeze(0)  # for #batch
-        #print(l.size(),"l", l)
-        l = l.expand_as(embedded_sentence)
-        if hparams['cuda'] is True: l = l.cuda()
-        weighted = embedded_sentence * Variable(l)
-
-        return weighted
-    '''
-
     def list_encoding(self, lst, hidden, permute_sentence=False):
-        #print(permute_sentence)
 
         l = []
 
@@ -537,13 +409,15 @@ class Encoder(nn.Module):
         embedded = torch.cat(l, dim=0) # dim=0
 
         #if len(l) == 1: permute_sentence=True
-        #print(embedded.size(),'emb')
+        #print(embedded.size(),'e0')
 
         embedded = encoding_positional(embedded)
 
         #embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
+        #print(embedded.size(),'e1')
 
         embedded = torch.sum(embedded, dim=1)
+        #print(embedded.size(),'e2')
 
         embedded = embedded.unsqueeze(0)
         embedded = self.dropout(embedded)
@@ -553,20 +427,22 @@ class Encoder(nn.Module):
         #hidden = None # Variable(torch.zeros(zz, slen, elen))
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
-        #print(encoder_out.size(), 'e-out')
-
         encoder_out = self.sum_output(encoder_out)
+        #print(encoder_out.size(), 'e-out')
+        #print(encoder_hidden.size(), 'e-hid')
 
         #print(encoder_out.size(),'list')
         return encoder_out, encoder_hidden
 
     def forward(self, source, hidden=None):
 
-        if self.position:
+        if self.position :
+
             if isinstance(source, list):
                 return self.list_encoding(source, hidden)
             else:
-                #print(source.size(),'src')
+                print(source.size(),'src')
+                exit()
                 return self.list_encoding([source], hidden, permute_sentence=True)
 
         if isinstance(source, list):
@@ -592,7 +468,7 @@ class AnswerModule(nn.Module):
         self.batch_size = hparams['batch_size']
         self.recurrent_output = recurrent_output
         self.sol_token = sol_token
-        self.decoder_layers = 2 # hparams['decoder_layers']
+        self.decoder_layers = 1 # hparams['decoder_layers']
         self.cancel_attention = cancel_attention
         self.embed = embed
         out_size = vocab_size
@@ -601,18 +477,21 @@ class AnswerModule(nn.Module):
         self.out_a = nn.Linear(hidden_size * 2 , out_size, bias=True)
         init.xavier_normal_(self.out_a.state_dict()['weight'])
 
-        #self.out_b = nn.Linear(hidden_size * 2, hidden_size, bias=True)
-        #init.xavier_normal_(self.out_b.state_dict()['weight'])
+        self.out_b = nn.Linear(hidden_size , hidden_size , bias=True) ## remove!!
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
 
-        self.out_c = nn.Linear(hidden_size , vocab_size, bias=True)
+        #self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
+        #init.xavier_normal_(self.out_b2.state_dict()['weight'])
+
+        self.out_c = nn.Linear(hidden_size , vocab_size, bias=True) ## remove!!
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
-        self.dropout = nn.Dropout(dropout )
-        self.dropout_b = nn.Dropout(dropout )
-        self.maxtokens = hparams['tokens_per_sentence']
+        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True) ## remove!!
+        init.xavier_normal_(self.out_d.state_dict()['weight'])
 
-        self.decoder = None #nn.GRU(self.hidden_size, hidden_size, self.decoder_layers, dropout=dropout, bidirectional=False, batch_first=True)
-        self.decoder_w_attn = Decoder(vocab_size, hidden_size, hidden_size, self.decoder_layers, dropout,embed=self.embed)
+        self.dropout = nn.Dropout(dropout)
+
+        self.maxtokens = hparams['tokens_per_sentence']
 
     def reset_parameters(self):
 
@@ -623,86 +502,14 @@ class AnswerModule(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
-
     def load_embedding(self, embed):
 
         self.embed = embed
 
-    def recurrent(self, out):
-
-        out = F.relu(out)
-
-        l, hid = out.size()
-
-        all_out = []
-        for k in range(l):
-            e_out_list = [
-                self.prune_tensor(out[k,:],2)
-            ]
-
-            if self.decoder_layers == 2 :
-                e_out_list.append(self.prune_tensor(out[k,:],2))
-
-            e_out = torch.cat(e_out_list, dim=0)
-
-            outputs = []
-            decoder_hidden = self.prune_tensor(e_out,3).permute(1,0,2)
-
-            token = EOS_token
-            #output = self.embed(Variable(torch.tensor([EOS_token])))
-            #output = self.prune_tensor(output, 3)
-
-            ##############################################
-
-            for i in range(self.maxtokens):
-
-                output = self.embed(Variable(torch.tensor([token])))
-                output = self.prune_tensor(output, 3)
-                output = self.dropout_b(output)
-                #decoder_hidden = self.dropout_hidden(decoder_hidden)
-
-                if self.decoder_w_attn is not None:
-                    output, decoder_hidden, mask = self.decoder_w_attn(output, output, decoder_hidden)
-                    pass
-                else:
-                    output, decoder_hidden = self.decoder(output, decoder_hidden)
-
-                output_x = self.out_c(output)
-
-                output_x = self.dropout(output_x)
-
-                output_x = F.log_softmax(output_x, dim=2) ### <<--- this line for NLLLoss !!
-
-                outputs.append(output_x)
-
-                #output = self.prune_tensor(output, 3)
-
-                token = torch.argmax(output_x, dim=2)
-                #print(token)
-
-            some_out = torch.cat(outputs, dim=0)
-
-            some_out = self.prune_tensor(some_out, 3)
-
-            all_out.append(some_out)
-
-        val_out = torch.cat(all_out, dim=1)
-
-
-        return val_out
 
     def forward(self, mem, question_h):
 
-        #if not self.recurrent_output or True:
-        mem = F.relu(mem)
+        #mem = F.relu(mem)
 
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
@@ -714,17 +521,233 @@ class AnswerModule(nn.Module):
 
         out = self.out_a(mem_in)
 
-        if self.recurrent_output:
-
-            #out = self.prune_tensor(out, 3)
-
-            #mem = out #.permute(1,0,2).squeeze(0)
-
-            return self.recurrent(out)
-
         return out.permute(1,0)
 
 #################### Wrapper ####################
+
+class WrapOutputRNN(nn.Module):
+    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
+                 freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False,
+                 cancel_attention=False, sol_token=0, simple_input=False):
+        super(WrapOutputRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.n_layers = n_layers
+        self.do_babi = do_babi
+        self.print_to_screen = print_to_screen
+        self.bad_token_lst = bad_token_lst
+        self.embedding = embedding
+        self.freeze_embedding = freeze_embedding
+        self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
+        self.recurrent_output = recurrent_output
+        self.sol_token = sol_token
+        self.cancel_attention = cancel_attention
+        self.simple_input = simple_input
+        position = hparams['split_sentences']
+        self.decoder_layers = 1 # hparams['decoder_layers']
+        self.vocab_size = vocab_size
+        dropout = dropout * 1 # 0.0 #0.5
+
+        self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
+
+        self.model_1_dec = None
+
+        self.reset_parameters()
+
+        if self.embedding is not None:
+            self.load_embedding(self.embedding)
+        self.share_embedding()
+
+        if self.freeze_embedding or self.embedding is not None:
+            self.wrap_freeze_embedding()
+        # self.criterion = nn.CrossEntropyLoss()
+
+        out_size = vocab_size
+        if recurrent_output: out_size = hidden_size
+
+        self.out_a = nn.Linear(hidden_size * 2, out_size, bias=True)
+        init.xavier_normal_(self.out_a.state_dict()['weight'])
+
+        self.out_b = nn.Linear(hidden_size, hidden_size, bias=True)
+        init.xavier_normal_(self.out_b.state_dict()['weight'])
+
+        # self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
+        # init.xavier_normal_(self.out_b2.state_dict()['weight'])
+
+        self.out_c = nn.Linear(hidden_size, vocab_size, bias=True)
+        init.xavier_normal_(self.out_c.state_dict()['weight'])
+
+        self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
+        init.xavier_normal_(self.out_d.state_dict()['weight'])
+
+        self.dropout = nn.Dropout(dropout) # * 0.5 )
+        self.dropout_b = nn.Dropout(dropout )
+        self.dropout_c = nn.Dropout(dropout)
+        #self.dropout_d = nn.Dropout(dropout)
+        self.maxtokens = hparams['tokens_per_sentence']
+
+        self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers,
+                              dropout=0.0, bidirectional=False, batch_first=True)
+
+        self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
+
+        self.h0 = None
+        self.c0 = None
+
+        self.h0, self.c0 = self.init_hidden(1)
+        pass
+
+    def init_hidden(self, batch_size):
+        #hidden = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        hidden = nn.Parameter(torch.randn(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        #cell = nn.Parameter(next(self.parameters()).data.new(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        cell = nn.Parameter(torch.randn(self.decoder_layers, batch_size, self.hidden_size), requires_grad=False)
+        return (hidden, cell)
+
+    def load_embed_module(self, embed):
+        self.embed = embed
+
+    def load_embedding(self, embedding):
+        #embedding = np.transpose(embedding,(1,0))
+        e = torch.from_numpy(embedding)
+        #e = e.permute(1,0)
+        self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
+
+    def share_embedding(self):
+        #self.model_1_enc.load_embedding(self.embed)
+        #self.model_2_enc.load_embedding(self.embed)
+        #self.model_5_ans.load_embedding(self.embed)
+        pass
+
+    def get_embedding(self):
+        return self.embed
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_size)
+        for weight in self.parameters():
+
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+
+        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
+        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
+
+    def wrap_freeze_embedding(self, do_freeze=True):
+        self.embed.weight.requires_grad = not do_freeze
+        #self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
+        #self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
+        #self.model_5_ans.decoder.embed.weight.requires_grad = not do_freeze
+        print('freeze embedding')
+        pass
+
+    def test_embedding(self, num=None):
+
+        if num is None:
+            num = 55  # magic number for testing = garden
+        if self.embed is None:
+            return
+        e = self.embed(num)
+        print('encoder 0:')
+        print(e.size(), 'test embedding')
+        print(e[0, 0, 0:10])  # print first ten values
+
+    def forward(self, out):
+        return self.recurrent(out)
+
+    def recurrent(self, out, hid1=None):
+
+        l, hid = out.size()
+
+        all_out = []
+        for k in range(l):
+
+            e_out_list = [
+                prune_tensor(out[k,:],2)
+            ]
+
+            while len(e_out_list) < self.decoder_layers:
+                e_out_list.append(prune_tensor(out[k,:],2))
+
+            e_out = torch.cat(e_out_list, dim=0)
+            #print(e_out.size(),'eout')
+            #e_out = self.dropout_c(e_out)
+            #e_out = torch.relu(e_out)
+            #e_out = F.softmax(e_out, dim=1)
+
+            #e_out = self.dropout_c(e_out)
+
+            outputs = []
+            decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
+            #decoder_hidden = F.relu(decoder_hidden) #, dim=2)
+
+            #decoder_hidden = self.dropout_c(decoder_hidden)
+
+            token = SOS_token
+
+            if self.lstm is not None:
+                decoder_hidden = decoder_hidden.permute(1,0,2)
+
+                #self.h0 = nn.Parameter(decoder_hidden, requires_grad=False)
+                #self.c0 = nn.Parameter(decoder_hidden, requires_grad=False)
+
+                #self.h0, self.c0 = self.init_hidden(1)
+
+            ##############################################
+
+            #output = self.embed(Variable(torch.tensor([token]))) ## <-- ????
+
+            output = decoder_hidden
+            output = prune_tensor(output, 3)
+            #output = self.dropout_b(output)
+
+            for i in range(self.maxtokens):
+
+                ## embed lines here ???
+
+                if self.lstm is not None:
+
+                    output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
+                    #hn = self.dropout_d(hn)
+                    #cn = self.dropout_c(cn)
+                    self.h0 = nn.Parameter(hn, requires_grad=False)
+                    self.c0 = nn.Parameter(cn, requires_grad=False)
+
+                    pass
+                else:
+
+                    output, decoder_hidden = self.decoder(output, decoder_hidden)
+
+                #output = self.dropout(output) ## <---
+
+                output_x = self.out_c(output)
+
+                output_x = self.dropout_b(output_x) ## <---
+
+                outputs.append(output_x)
+
+                token = torch.argmax(output_x, dim=2)
+
+
+                if token == EOS_token:
+                    for _ in range(i + 1, self.maxtokens):
+                        #out_early = self.embed(Variable(torch.tensor([UNK_token]))) ## <-- ????
+                        #out_early = prune_tensor(out_early, 3)
+                        out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
+                        outputs.append(out_early)
+                    #print(len(outputs))
+                    break
+
+            some_out = torch.cat(outputs, dim=0)
+
+            some_out = prune_tensor(some_out, 3)
+
+            all_out.append(some_out)
+
+        val_out = torch.cat(all_out, dim=1)
+        #val_out = F.softmax(val_out, dim=2)
+
+        return val_out
+
 
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
@@ -744,7 +767,7 @@ class WrapMemRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        gru_dropout = dropout * 0.0 #0.5
+        gru_dropout = dropout * 0.5 #0.5
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
@@ -798,6 +821,9 @@ class WrapMemRNN(nn.Module):
 
         pass
 
+    def load_embed_module(self, embed):
+        self.embed = embed
+
     def load_embedding(self, embedding):
         #embedding = np.transpose(embedding,(1,0))
         e = torch.from_numpy(embedding)
@@ -808,6 +834,9 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc.load_embedding(self.embed)
         self.model_2_enc.load_embedding(self.embed)
         self.model_5_ans.load_embedding(self.embed)
+
+    def get_embedding(self):
+        return self.embed
 
     def reset_parameters(self):
         stdv = 1.0 / math.sqrt(self.hidden_size)
@@ -840,6 +869,8 @@ class WrapMemRNN(nn.Module):
 
         if num is None:
             num = 55  # magic number for testing = garden
+        if self.embed is None:
+            return
         e = self.embed(num)
         print('encoder 0:')
         print(e.size(), 'test embedding')
@@ -852,9 +883,9 @@ class WrapMemRNN(nn.Module):
         hidden1 = None
         for ii in input_variable:
 
-            ii = self.prune_tensor(ii, 2)
+            ii = prune_tensor(ii, 2)
             #print(ii, 'ii')
-            out1, hidden1 = self.model_1_enc(ii, hidden1) #None)
+            out1, hidden1 = self.model_1_enc(ii, None)
             #print(out1.size(),'out1')
 
             prev_h1.append(out1)
@@ -867,7 +898,7 @@ class WrapMemRNN(nn.Module):
         prev_h3 = []
 
         for ii in question_variable:
-            ii = self.prune_tensor(ii, 2)
+            ii = prune_tensor(ii, 2)
 
             out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
 
@@ -891,7 +922,10 @@ class WrapMemRNN(nn.Module):
             self.memory_list = None
             positional_list = []
 
+
             for i in range(len(sequences)):
+
+                #slot_list = [ self.q_q_last[i] for _ in range(self.memory_hops) ]
 
                 z = self.q_q_last[i].clone()
                 m_list = [z]
@@ -903,7 +937,7 @@ class WrapMemRNN(nn.Module):
                 for iter in range(self.memory_hops):
 
                     if len(m_list) is 1 : mem_last = m_list[index]
-                    else: mem_last = F.relu(m_list[index])
+                    else: mem_last = m_list[index] # torch.relu(m_list[index])
 
                     x = self.wrap_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
 
@@ -911,13 +945,14 @@ class WrapMemRNN(nn.Module):
 
                     e, _ = self.wrap_episode_small_step(sequences[i], x, zz, mem_last, self.q_q_last[i])
 
-                    out = self.prune_tensor(e, 3)
+                    out = prune_tensor(e, 3)
 
                     m_list.append(out)
 
                 mem_list.append(m_list[self.memory_hops])
                 tmp = torch.cat(m_list, dim=1)
                 #print(tmp.size(),'tmp')
+
                 positional_list.append(tmp)
 
             mm_list = torch.cat(mem_list, dim=0)
@@ -948,23 +983,25 @@ class WrapMemRNN(nn.Module):
 
             ggg = g[iii,0,0]
 
-            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg) # <<--- iii-1 or iii-0 ??
+            out, gru = self.model_3_mem(prune_tensor(c, 3), prune_tensor(last[iii], 3), ggg) # <<--- iii-1 or iii-0 ??
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
 
         #q_index = question.size()[1] - 1
 
         concat = [
-            self.prune_tensor(prev_mem, 1),
-            self.prune_tensor(out, 1),
-            self.prune_tensor(question,1)#[0, q_index, :], 1)
+            prune_tensor(prev_mem, 1),
+            prune_tensor(out, 1),
+            prune_tensor(question,1)
         ]
         #for i in concat: print(i.size())
         #exit()
 
         concat = torch.cat(concat, dim=0)
         h = self.next_mem(concat)
+        #h = F.tanh(h)
 
+        h = F.relu(h)
 
         if self.recurrent_output and not hparams['split_sentences'] and False:
             #h = out
@@ -976,20 +1013,23 @@ class WrapMemRNN(nn.Module):
 
     def wrap_attention_step(self, ct, prev_g, mem, q_q):
 
-        q_q = self.prune_tensor(q_q,3)
-        mem = self.prune_tensor(mem,3)
+        q_q = prune_tensor(q_q,3)
+        mem = prune_tensor(mem,3)
 
         bat, sen, emb = ct.size()
 
         att = []
         for iii in range(sen):
             c = ct[0,iii,:]
-            c = self.prune_tensor(c, 3)
+            c = prune_tensor(c, 3)
 
-            qq = self.prune_tensor(q_q, 3)
+            qq = prune_tensor(q_q, 3)
+
 
             concat_list = [
-
+                #c,
+                #mem,
+                #qq,
                 (c * qq),
                 (c * mem),
                 torch.abs(c - qq) ,
@@ -1007,21 +1047,9 @@ class WrapMemRNN(nn.Module):
 
         z = self.model_4_att(att)
 
-        if not self.simple_input:
-            z = F.softmax(z, dim=0) # <--- use this!!
-        else:
-            z = F.sigmoid(z)
+        z = F.softmax(z, dim=0) # <--- use this!!
 
         return z
-
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
 
     def wrap_answer_module_simple(self):
         #outputs
@@ -1030,11 +1058,16 @@ class WrapMemRNN(nn.Module):
         q = self.q_q_last
 
         q_q = torch.cat(q, dim=0)
-        q_q = self.prune_tensor(q_q, 3)
+        q_q = prune_tensor(q_q, 3)
 
-        mem = self.prune_tensor(self.last_mem, 3)
+        mem = prune_tensor(self.last_mem, 3)
 
         ansx = self.model_5_ans(mem, q_q)
+
+        if self.recurrent_output:
+            ansx = self.last_mem.permute(1,0,2)
+            ansx = prune_tensor(ansx, 2)
+            return [None], ansx
 
         return [None], ansx
 
@@ -1073,7 +1106,9 @@ class NMT:
     def __init__(self):
 
         self.model_0_wra = None
+        self.model_0_dec = None
         self.opt_1 = None
+        self.opt_2 = None
         self.embedding_matrix = None
         self.embedding_matrix_is_loaded = False
         self.criterion = None
@@ -1166,6 +1201,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_chatbot_train = False
         self.do_load_once = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
@@ -1191,6 +1227,7 @@ class NMT:
         parser.add_argument('--test',help='Disable all training. No weights will be changed and no new weights will be saved.',
                             action='store_true')
         parser.add_argument('--lr', help='learning rate')
+        parser.add_argument('--multiplier', help='learning rate ratio between encoder and decoder stages.')
         parser.add_argument('--freeze-embedding', help='Stop training on embedding elements',action='store_true')
         parser.add_argument('--load-embed-size', help='Load trained embeddings of the following size only: 50, 100, 200, 300')
         parser.add_argument('--auto-stop', help='Auto stop during training.', action='store_true')
@@ -1303,6 +1340,8 @@ class NMT:
         if self.args['skip_unk'] is True: self.do_skip_unk = True
         if self.args['json_record_offset'] is not None:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
+        if self.args['multiplier'] is not None:
+            hparams['multiplier'] = float(self.args['multiplier'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1494,7 +1533,7 @@ class NMT:
             self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
                                                                              lang3=self.train_ques, reverse=False,
                                                                              omit_unk=self.do_hide_unk)
-            #self.model_0_wra.test_embedding()
+
 
             #self.first_load = True
             self.epoch_length = self.starting_epoch_length
@@ -1679,6 +1718,11 @@ class NMT:
                         elif not omit_unk or self.do_skip_unk:
                             c.append(hparams['unk'])
                             skip = True
+                    if not self.do_recurrent_output:
+                        if c[-1] == hparams['eol']:
+                            c = c[:-1]
+                            #print(c)
+
                     pairs.append( ' '.join(c) )
                 if skip is False or not self.do_skip_unk:
                     new_pairs.append(pairs)
@@ -1738,6 +1782,9 @@ class NMT:
         if start + size >= len(pairs) and start < len(pairs) - 1:
             size = len(pairs) - start #- 1
             print('process size', size,'next')
+        elif start + size >= self.starting_epoch_length and start < self.starting_epoch_length - 1:
+            size = self.starting_epoch_length - start #- 1
+            print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
             return self.variablesFromPair(('','',''))
@@ -1770,19 +1817,28 @@ class NMT:
         while pad > sentence_len:
             indexes.append(UNK_token)
             pad -= 1
-        result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
+        result = Variable(torch.LongTensor(indexes).unsqueeze(1))
         #print(result.size(),'r')
         if hparams['cuda']:
             return result.cuda()
         else:
             return result
 
-    def variablesFromPair(self,pair):
+    def variablesFromPair(self, pair):
         pad = hparams['tokens_per_sentence']
         if hparams['split_sentences'] and not self.do_simple_input:
             l = pair[0].strip().split('.')
             sen = []
             max_len = 0
+
+            line_lst = []
+            for line in l:
+                if line.strip().split(' ')[-1] == hparams['eol']:
+                    line = ' '.join( line.split(' ')[0:-2] ) ## only do this if spliting sentences
+
+                line_lst.append(line)
+            l = line_lst
+
             for i in range(len(l)):
                 if len(l[i].strip().split(' ')) > max_len: max_len =  len(l[i].strip().split(' '))
             for i in range(len(l)):
@@ -1854,13 +1910,16 @@ class NMT:
                     'arch': None,
                     'state_dict': self.model_0_wra.state_dict(),
                     'best_prec1': None,
-                    'optimizer': None , # self.opt_1.state_dict(),
+                    'optimizer': None,
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
                     'tag': self.tag,
                     'score': self.score
                 }
             ]
+        if self.do_recurrent_output:
+            z[0]['state_dict_dec'] = self.model_0_dec.state_dict()
+            z[0]['optimizer_dec'] = self.opt_2.state_dict()
         #print(z)
         return z
         pass
@@ -1870,12 +1929,15 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
-        if self.do_load_babi or self.do_conserve_space :
+        if self.do_load_babi or self.do_conserve_space or True:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
+            print('save', basename)
             #####
             if self.do_test_not_train:
-                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = str(self.score)
+                accuracy = str("%.4f" % self.score)
+                #print(accuracy)
+                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = accuracy # str(self.score)
                 print('offset',self.best_accuracy_record_offset, ', epoch', self.this_epoch)
                 self.update_json_file()
             #####
@@ -1942,13 +2004,22 @@ class NMT:
 
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
 
+                if self.do_recurrent_output:
+                    self.model_0_dec.load_state_dict(checkpoint[0]['state_dict_dec'])
+
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
+                    if self.do_recurrent_output:
+                        self.model_0_dec.load_embedding(self.embedding_matrix)
                     self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
                     self.model_0_wra.wrap_freeze_embedding()
+                    if self.do_recurrent_output:
+                        self.model_0_dec.wrap_freeze_embedding()
                 else:
                     self.model_0_wra.wrap_freeze_embedding(do_freeze=False)
+                    if self.do_recurrent_output:
+                        self.model_0_dec.wrap_freeze_embedding(do_freeze=False)
                 if self.opt_1 is not None:
                     #####
                     try:
@@ -1956,10 +2027,17 @@ class NMT:
                         if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
-                        #print('new optimizer', hparams['learning_rate'])
-                        #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-                        #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
-                        self.opt_1 = self._make_optimizer()
+
+                        self.opt_1 = self._make_optimizer(self.model_0_wra.parameters())
+                if self.opt_2 is not None:
+                    #####
+                    try:
+                        self.opt_2.load_state_dict(checkpoint[0]['optimizer_dec'])
+                        if self.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
+                            raise Exception('new optimizer...')
+                    except:
+
+                        self.opt_2 = self._make_optimizer(self.model_0_dec.parameters(), multiplier=hparams['multiplier'])
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -1967,10 +2045,18 @@ class NMT:
             else:
                 print("no checkpoint found at '"+ basename + "'")
 
-    def _make_optimizer(self):
-        print('new optimizer', hparams['learning_rate'])
-        parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-        return optim.Adam(parameters, lr=hparams['learning_rate'],weight_decay=hparams['weight_decay'])
+    def _make_optimizer(self, params=None, multiplier=1.0):
+        print('new optimizer', hparams['learning_rate'] * multiplier)
+        if params is None:
+            lst1 = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+            if self.do_recurrent_output:
+                lst2 = filter(lambda p: p.requires_grad, self.model_0_dec.parameters())
+            else:
+                lst2 = list()
+            parameters = list(lst1) + list(lst2)
+        else:
+            parameters = filter(lambda p: p.requires_grad, params)
+        return optim.Adam(parameters, lr=hparams['learning_rate'] * multiplier,weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
@@ -2128,6 +2214,8 @@ class NMT:
         num = self.variableFromSentence(self.output_lang, str(num))
         print('\n',num)
         self.model_0_wra.test_embedding(num)
+        if self.do_recurrent_output:
+            self.model_0_dec.test_embedding(num)
         if exit: exit()
 
     def _print_control(self, iter):
@@ -2222,71 +2310,97 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
+
     #######################################
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         if criterion is not None:
-            wrapper_optimizer.zero_grad()
-            self.model_0_wra.train()
-            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                  criterion)
-
-            loss = 0
+            clip = 50.0
 
             if self.do_recurrent_output:
 
+                self.model_0_dec.train()
+                self.model_0_wra.train()
+
+            if not self.do_recurrent_output:
+                self.model_0_wra.train()
+                wrapper_optimizer.zero_grad()
+                pass
+
+            loss = 0.0
+
+            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+
+            if self.do_recurrent_output :
+                #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
+                ans = prune_tensor(ans, 2)
 
-                #ansx = Variable(ans.data.max(dim=2)[1])
-                ans = ans.float().permute(1,0,2).contiguous()
+                ans = ans.float().contiguous()
 
+                #ans = prune_tensor(self.model_0_wra.last_mem.permute(1,0,2), 2)
+
+                ans = self.model_0_dec(ans)
+                ans = ans.permute(1,0,2)
+
+                '''
                 ans = ans.view(-1, self.output_lang.n_words)
                 target_variable = target_variable.view(-1)
                 loss += criterion(ans, target_variable)
                 '''
+
+                decoder_optimizer.zero_grad()
+                wrapper_optimizer.zero_grad()
+
                 for i in range(len(target_variable)):
+
                     target_v = target_variable[i].squeeze(0).squeeze(1)
                     loss += criterion(ans[i,:, :], target_v)
-                '''
+
+                loss.backward(retain_graph=True)
+
+                if self.do_clip_grad_norm:
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_dec.parameters(), clip)
+
+                decoder_optimizer.step()
+                wrapper_optimizer.step()
+
+
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
+
                 ans = ans.permute(1,0)
+                if self.do_recurrent_output:
+                    ans = self.model_0_dec(ans)
+
+
             else:
                 target_variable = target_variable[0]
-                #print(len(ans),ans.size())
                 ans = torch.argmax(ans,dim=1)
                 #ans = ans[0]
 
-            #ans = ans.permute(1,0)
 
-            #print(ans.size(), target_variable.size(),'criterion')
 
             if not self.do_recurrent_output:
                 loss = criterion(ans, target_variable)
+                loss.backward()
 
-            loss.backward()
+                if self.do_clip_grad_norm:
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
-            clip = 50.0
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
-
-            wrapper_optimizer.step()
-
+            if not self.do_recurrent_output:
+                wrapper_optimizer.step()
 
         else:
             #self.model_0_wra.eval()
             with torch.no_grad():
                 self.model_0_wra.eval()
-                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                      criterion)
+                if self.do_recurrent_output:
+                    self.model_0_dec.eval()
+
+                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
                 if not self.do_recurrent_output:
                     loss = None
@@ -2294,25 +2408,23 @@ class NMT:
 
                 else:
                     loss = None
-                    #ansx = Variable(ans.data.max(dim=2)[1])
-                    #ans = ans.permute(1,0,2)
-                    #target_variable = torch.cat(target_variable, dim=0)
+                    ans = prune_tensor(ans, 2)
+                    ans = ans.float().permute(0, 1).contiguous()
 
-                    # ansx = Variable(ans.data.max(dim=2)[1])
-                    ans = ans.float().permute(1, 0, 2).contiguous()
+                    #ans = prune_tensor(ans, 2)
 
-                    ans = ans.view(-1, self.output_lang.n_words)
-                    #target_variable = target_variable.view(-1)
+                    ans = self.model_0_dec(ans)
+                    ans = ans.permute(1,0,2)
+                    #print(ans)
 
-            #self._test_embedding()
 
-        #ansx = ans
         if self.do_recurrent_output:
-            #print(ans.size())
             if len(ans.size()) is not 2:
-                ans = ans.view(-1, self.output_lang.n_words)
-                #print(ans.size(),'redo with view')
-                #exit()
+                ansview = []
+                for ii in ans:
+                    ansview.append(ii)
+                ans = torch.cat(ansview, dim=0)
+                ans = prune_tensor(ans, 2)
             ans = ans.permute(1,0)
             #print(ans,ans.size(),'ans')
 
@@ -2333,6 +2445,9 @@ class NMT:
         num_right_small = 0
         num_count = 0
         temp_batch_size = hparams['batch_size'] #0
+
+        wrapper_optimizer = None
+        decoder_optimizer = None
 
         epoch_len = self.epoch_length
         epoch_start = self.this_epoch * self.epoch_length
@@ -2359,18 +2474,22 @@ class NMT:
 
         if self.opt_1 is None or self.first_load:
 
-            wrapper_optimizer = self._make_optimizer()
+            wrapper_optimizer = self._make_optimizer(self.model_0_wra.parameters())
             self.opt_1 = wrapper_optimizer
 
-        if self.do_recurrent_output :
+        if (self.opt_2 is None or self.first_load) and self.do_recurrent_output:
+            decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=hparams['multiplier'] )
+            self.opt_2 = decoder_optimizer
+
+        if self.do_recurrent_output and False:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
-
+            #self.criterion = nn.MSELoss()
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
-            self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
+            self.criterion = nn.CrossEntropyLoss(weight=weight)
 
         if not self.do_batch_process:
             training_pairs = [self.variablesFromPair(
@@ -2405,9 +2524,13 @@ class NMT:
         if self.do_load_babi:
             if self.do_test_not_train:
                 self.model_0_wra.eval()
+                if self.do_recurrent_output:
+                    self.model_0_dec.eval()
 
             else:
                 self.model_0_wra.train()
+                if self.do_recurrent_output:
+                    self.model_0_dec.train()
 
         if self.do_batch_process:
             step = hparams['batch_size']
@@ -2416,6 +2539,7 @@ class NMT:
         for iter in range(start, n_iters + 1, step):
 
             if not self.do_batch_process:
+                '''
                 training_pair = training_pairs[iter - 1]
 
                 input_variable = training_pair[0]
@@ -2431,7 +2555,8 @@ class NMT:
                 if is_auto:
                     target_variable = training_pair[0]
                     #print('is auto')
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
+                '''
+            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
 
                 input_variable = group[0]
@@ -2441,6 +2566,8 @@ class NMT:
 
                 temp_batch_size = len(input_variable)
 
+                #if temp_batch_size != hparams['batch_size']: print(temp_batch_size,'tbs')
+
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
 
@@ -2449,15 +2576,15 @@ class NMT:
                 pass
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
-                                            decoder, self.opt_1, None,
+                                            decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
             num_count += 1
 
-            if self.do_recurrent_output and self.do_load_babi: # and  self.do_sample_on_screen:
+            if self.do_recurrent_output and self.do_load_babi:
                 ans = ans.permute(1,0)
                 ans = torch.argmax(ans,dim=1)
                 for ii in range(len(target_variable)):
-                    for jj in range(target_variable[ii].size(1)): # target_variable[i].size()[1]):
+                    for jj in range(target_variable[ii].size(1)):
                         #print(i, j, temp_batch_size)
                         t_val = target_variable[ii][0,jj,0].item()
                         #print(t_val, EOS_token)
@@ -2468,16 +2595,16 @@ class NMT:
                         if int(o_val) == int(t_val):
                             num_right += 1
                             num_right_small += 1
-                            if int(o_val) == EOS_token:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
+                            if int(o_val) == EOS_token: # and jj is not 0:
+                                num_right_small += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
+                                num_right += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
                             # next sentence
                             if int(o_val) == EOS_token and int(t_val) == UNK_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1)
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
+                                num_right_small += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
+                                num_right += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
                                 break
                             break
                             pass
@@ -2488,12 +2615,14 @@ class NMT:
 
                 self.score = float(num_right / num_tot) * 100
 
-            if self.do_load_babi and not self.do_recurrent_output : #and  self.do_sample_on_screen:
+            if self.do_load_babi and not self.do_recurrent_output :
 
                 for i in range(len(target_variable)):
                     #print(ans[i].size())
                     o_val = torch.argmax(ans[i], dim=0).item() #[0]
                     t_val = target_variable[i].item()
+
+                    #print(o_val, t_val, 'o,t')
 
                     if int(o_val) == int(t_val):
                         num_right += 1
@@ -2512,7 +2641,7 @@ class NMT:
                 print_loss_total = 0
 
                 if self._print_control(iter):
-                    print(epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters) +", countdown = "+ str(save_thresh - save_num)
+                    print(epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters) # +", countdown = "+ str(save_thresh - save_num)
                           + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
@@ -2588,7 +2717,7 @@ class NMT:
 
                     print("-----")
 
-        if self.do_batch_process:
+        if self.do_batch_process or not self.do_test_not_train:
             self.save_checkpoint(num=len(self.pairs))
 
         str_score = ' %.2f'
@@ -2661,10 +2790,10 @@ class NMT:
 
         if True:
             if hparams['split_sentences'] is not True:
-                input_variable = self.prune_tensor(input_variable,2)
+                input_variable = prune_tensor(input_variable,2)
                 b, i = input_variable.size()
                 if b > i and i == 1: input_variable = input_variable.permute(1,0)
-                input_variable = self.prune_tensor(input_variable,1)
+                input_variable = prune_tensor(input_variable,1)
                 input_variable = [input_variable]
 
                 #input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
@@ -2672,7 +2801,7 @@ class NMT:
             else:
                 input_variable = [input_variable]
 
-            question_variable = self.prune_tensor(question_variable, 2)
+            question_variable = prune_tensor(question_variable, 2)
             ql = len(question_variable.size())
             if ql == 2:
                 b, i = question_variable.size()
@@ -2680,18 +2809,21 @@ class NMT:
             question_variable = question_variable.squeeze(0)
             question_variable = [question_variable]
 
-            #print(question_variable[0].size())
-
-            #question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
-
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
 
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
         self.model_0_wra.eval()
+        if self.do_recurrent_output:
+            self.model_0_dec.eval()
+
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
+            if self.do_recurrent_output:
+
+                ans = self.model_0_dec(ans)
+
 
         outputs = [ans]
         #####################
@@ -2722,8 +2854,8 @@ class NMT:
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
+
                     output = output.permute(1, 0)
-                    #print(output.size(),'out')
                     ni = torch.argmax(output, dim=0)[0]
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
@@ -2738,7 +2870,7 @@ class NMT:
                             print('...etc')
                         decoded_words.append(self.output_lang.index2word[int(ni)])
 
-        return decoded_words, None #decoder_attentions[:di + 1]
+        return decoded_words, None
 
 
 
@@ -2787,6 +2919,16 @@ class NMT:
                                       sol_token=sol_token, cancel_attention=self.do_no_attention,
                                       simple_input=self.do_simple_input)
 
+        if self.do_recurrent_output:
+            self.model_0_dec = WrapOutputRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
+                                          dropout=dropout, do_babi=self.do_load_babi,
+                                          freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
+                                          print_to_screen=self.do_print_to_screen,
+                                          recurrent_output=self.do_recurrent_output,
+                                          sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                          simple_input=self.do_simple_input)
+            self.model_0_dec.load_embed_module(self.model_0_wra.get_embedding())
+
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2815,6 +2957,17 @@ class NMT:
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
                                       sol_token=sol_token, cancel_attention=self.do_no_attention,
                                       simple_input=self.do_simple_input)
+        if self.do_recurrent_output:
+            self.model_0_dec = WrapOutputRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
+                                          dropout=dropout, do_babi=self.do_load_babi,
+                                          freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
+                                          print_to_screen=self.do_print_to_screen,
+                                          recurrent_output=self.do_recurrent_output,
+                                          sol_token=sol_token, cancel_attention=self.do_no_attention,
+                                          simple_input=self.do_simple_input)
+
+            self.model_0_dec.load_embed_module(self.model_0_wra.get_embedding())
+
 
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
@@ -2825,7 +2978,7 @@ class NMT:
 
     def update_result_file(self):
 
-        if True: self._test_embedding(exit=False)
+        if self.do_freeze_embedding: self._test_embedding(exit=False)
 
         basename = hparams['save_dir'] + hparams['base_filename'] + '.txt'
         ts = time.time()
@@ -2877,6 +3030,7 @@ class NMT:
         if len(self.best_accuracy_dict) > 0:
             with open(basename, 'w') as z:
                 z.write(json.dumps(self.best_accuracy_dict))
+                z.write('\n')
             z.close()
 
     def read_json_file(self):
@@ -2885,6 +3039,14 @@ class NMT:
             with open(basename) as z:
                 json_data = json.load(z)
             self.best_accuracy_dict = json_data # json.loads(json_data)
+            #x = max(self.best_accuracy_dict.iterkeys())
+            x = max(int(k) for k, v in self.best_accuracy_dict.items() )
+            x = int(int(x) / self.epoch_length)
+            if self.args['json_record_offset'] is None:
+                self.best_accuracy_record_offset = x
+            if self.args['start_epoch'] is None: #self.start_epoch is 0:
+                self.start_epoch = x
+
 
 
 if __name__ == '__main__':
@@ -2934,6 +3096,16 @@ if __name__ == '__main__':
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
                                    sol_token=sol_token, cancel_attention=n.do_no_attention,
                                    simple_input=n.do_simple_input)
+        if n.do_recurrent_output:
+            n.model_0_dec = WrapOutputRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size, layers,
+                                       dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
+                                       freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
+                                       print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
+                                       sol_token=sol_token, cancel_attention=n.do_no_attention,
+                                       simple_input=n.do_simple_input)
+
+            n.model_0_dec.load_embed_module(n.model_0_wra.get_embedding())
+
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
