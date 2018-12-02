@@ -723,11 +723,12 @@ class WrapOutputRNN(nn.Module):
 
                 if token != EOS_token and flag:
                     for _ in range(i + 1, self.maxtokens):
-                        out_early = self.embed(Variable(torch.tensor([UNK_token]))) ## <-- ????
-                        out_early = prune_tensor(out_early, 3)
-                        out_early = self.out_c(out_early)
-
-                        #out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
+                        if False:
+                            out_early = self.embed(Variable(torch.tensor([UNK_token]))) ## <-- ????
+                            out_early = prune_tensor(out_early, 3)
+                            out_early = self.out_c(out_early)
+                        else:
+                            out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
                         outputs.append(out_early)
                     #print(len(outputs))
                     break
