@@ -721,7 +721,7 @@ class WrapOutputRNN(nn.Module):
                 if token == EOS_token:
                     flag = True
 
-                if token != EOS_token and flag:
+                if token != EOS_token and flag and False:
                     for _ in range(i + 1, self.maxtokens):
                         if True:
                             out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
@@ -2592,16 +2592,16 @@ class NMT:
                         if int(o_val) == int(t_val):
                             num_right += 1
                             num_right_small += 1
-                            if int(o_val) == EOS_token: # and jj is not 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
-                                num_right += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
+                            if int(o_val) == EOS_token and jj > 0:
+                                num_right_small += hparams['tokens_per_sentence'] - (jj +1 ) ## jj + 1
+                                num_right += hparams['tokens_per_sentence'] - (jj + 1) ## jj + 1
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
-                            # next sentence
+                            # next
                             if int(o_val) == EOS_token and int(t_val) == UNK_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
-                                num_right += hparams['tokens_per_sentence'] - (jj ) ## jj + 1
+                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1 ) ## jj + 1
+                                num_right += hparams['tokens_per_sentence'] - (jj + 1) ## jj + 1
                                 break
                             break
                             pass
