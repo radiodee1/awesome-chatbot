@@ -2582,12 +2582,11 @@ class NMT:
                 ans = torch.argmax(ans,dim=1)
                 for ii in range(len(target_variable)):
                     for jj in range(target_variable[ii].size(1)):
-                        #print(i, j, temp_batch_size)
+
                         t_val = target_variable[ii][0,jj,0].item()
                         #print(t_val, EOS_token)
-                        #o_val = ans[i][j].item()
+
                         o_val = ans[ ii * target_variable[ii].size(1) + jj].item()
-                        #print( ans.size(),'ans', ii * target_variable[ii].size(1) + jj, 'index')
 
                         if int(o_val) == int(t_val):
                             num_right += 1
