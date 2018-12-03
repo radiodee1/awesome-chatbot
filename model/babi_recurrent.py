@@ -2598,7 +2598,7 @@ class NMT:
                                 break
                         else:
                             # next
-                            if int(o_val) == EOS_token and int(t_val) == UNK_token and jj > 0:
+                            if int(o_val) == EOS_token and jj > 0: # and int(t_val) == UNK_token and jj > 0:
                                 num_right_small += hparams['tokens_per_sentence'] - (jj + 1 ) ## jj + 1
                                 num_right += hparams['tokens_per_sentence'] - (jj + 1) ## jj + 1
                                 break
