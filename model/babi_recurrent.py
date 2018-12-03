@@ -2598,16 +2598,14 @@ class NMT:
                                 break
                         else:
                             # next
-                            if int(o_val) == EOS_token and jj > 0: # and int(t_val) == UNK_token and jj > 0:
+                            if int(o_val) == EOS_token and jj > 0 and False: # and int(t_val) == UNK_token and jj > 0:
                                 num_right_small += hparams['tokens_per_sentence'] - (jj + 1 ) ## jj + 1
                                 num_right += hparams['tokens_per_sentence'] - (jj + 1) ## jj + 1
                                 break
                             break
                             pass
-                    #print( len(target_variable), target_variable[i].size(1), ans[i].size() ,'tv, ans out')
 
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
-
 
                 self.score = float(num_right / num_tot) * 100
 
