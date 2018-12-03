@@ -714,7 +714,11 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.dropout_b(output_x) ## <---
 
-                outputs.append(output_x)
+                #output_x = F.sigmoid(output_x)
+
+                outputs.append(output_x.clone())
+
+                output_x = output_x.detach()
 
                 token = torch.argmax(output_x, dim=2)
 
@@ -1196,7 +1200,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_chatbot_train = False
         self.do_load_once = True
-        self.do_clip_grad_norm = False
+        self.do_clip_grad_norm = True
 
         self.printable = ''
 
@@ -1807,7 +1811,7 @@ class NMT:
 
     def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
         indexes = self.indexesFromSentence(lang, sentence)
-        if add_eol and len(indexes) < pad: indexes.append(EOS_token)
+        if add_eol and len(indexes) < pad and indexes[-1] != EOS_token: indexes.append(EOS_token)
         sentence_len = len(indexes)
         while pad > sentence_len:
             indexes.append(UNK_token)
@@ -2213,6 +2217,23 @@ class NMT:
             self.model_0_dec.test_embedding(num)
         if exit: exit()
 
+    def _mask_from_var(self, var):
+        i = len(var)
+        j = len(var[0])
+
+        mask = []
+        for ii in range(i):
+            line = []
+            for jj in range(j):
+                if var[ii][jj] == UNK_token:
+                    line.append(0)
+                else:
+                    line.append(1)
+            #line = torch.ByteTensor(line)
+            mask.append(line)
+        mask = torch.ByteTensor(mask)
+        return mask
+
     def _print_control(self, iter):
         if self.do_print_control:
             if iter == 0: return True
@@ -2308,6 +2329,14 @@ class NMT:
 
     #######################################
 
+    def maskNLLLoss(self, inp, target, mask):
+        nTotal = mask.sum()
+        crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)))
+        loss = crossEntropy.masked_select(mask).mean()
+        if hparams['cuda'] is True:
+            loss = loss.cuda()
+        return loss, nTotal.item()
+
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         if criterion is not None:
@@ -2332,6 +2361,14 @@ class NMT:
             if self.do_recurrent_output :
                 #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
+
+                #print(target_variable.size())
+                mask = self._mask_from_var(target_variable.squeeze(2))
+                #print(mask.size(),'mask')
+
+                #print(mask)
+                #print(target_variable)
+
                 ans = prune_tensor(ans, 2)
 
                 ans = ans.float().contiguous()
@@ -2350,10 +2387,21 @@ class NMT:
                 decoder_optimizer.zero_grad()
                 wrapper_optimizer.zero_grad()
 
+                #print(target_variable.size(), mask.size(), ans.size(),'tma')
+
                 for i in range(len(target_variable)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
+                    mask_v = mask[i]
+                    if False:
+                        print(mask_v)
+                        print(target_v)
+                        print(ans[i].size())
+                        print('===')
+
                     loss += criterion(ans[i,:, :], target_v)
+                    #loss += self.maskNLLLoss(ans[i], target_v, mask_v)[0]
+                    #loss += self.criterion(ans[i], target_v, mask_v)[0]
 
                 loss.backward(retain_graph=True)
 
@@ -2479,10 +2527,14 @@ class NMT:
             self.opt_2 = decoder_optimizer
 
         if self.do_recurrent_output and False:
+            pass
+            self.criterion = self.maskNLLLoss
+            '''
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.NLLLoss(weight=weight)
             #self.criterion = nn.MSELoss()
+            '''
         else:
             weight = torch.ones(self.output_lang.n_words)
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
@@ -2592,15 +2644,15 @@ class NMT:
                             num_right += 1
                             num_right_small += 1
                             if int(o_val) == EOS_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj +1 ) ## jj + 1
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1) ## jj + 1
+                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1 )
+                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
                             # next
                             if int(o_val) == EOS_token and jj > 0 and False: # and int(t_val) == UNK_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1 ) ## jj + 1
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1) ## jj + 1
+                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1 )
+                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
                                 break
                             break
                             pass
