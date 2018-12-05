@@ -1202,7 +1202,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_chatbot_train = False
         self.do_load_once = True
-        self.do_clip_grad_norm = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
@@ -2349,6 +2349,9 @@ class NMT:
                 self.model_0_dec.train()
                 self.model_0_wra.train()
 
+                decoder_optimizer.zero_grad()
+                wrapper_optimizer.zero_grad()
+
             if not self.do_recurrent_output:
                 self.model_0_wra.train()
                 wrapper_optimizer.zero_grad()
@@ -2364,18 +2367,13 @@ class NMT:
                 #print('do_rec_out')
                 target_variable = torch.cat(target_variable, dim=0)
 
-                #print(target_variable.size())
-                mask = self._mask_from_var(target_variable.squeeze(2))
-                #print(mask.size(),'mask')
 
-                #print(mask)
-                #print(target_variable)
+                #mask = self._mask_from_var(target_variable.squeeze(2))
+
 
                 ans = prune_tensor(ans, 2)
 
                 ans = ans.float().contiguous()
-
-                #ans = prune_tensor(self.model_0_wra.last_mem.permute(1,0,2), 2)
 
                 ans = self.model_0_dec(ans)
                 ans = ans.permute(1,0,2)
@@ -2386,15 +2384,15 @@ class NMT:
                 loss += criterion(ans, target_variable)
                 '''
 
-                decoder_optimizer.zero_grad()
-                wrapper_optimizer.zero_grad()
-
-                #print(target_variable.size(), mask.size(), ans.size(),'tma')
+                #decoder_optimizer.zero_grad()
+                #wrapper_optimizer.zero_grad()
 
                 for i in range(len(target_variable)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
-                    mask_v = mask[i]
+
+                    #mask_v = mask[i]
+
                     if False:
                         print(mask_v)
                         print(target_v)
@@ -2402,10 +2400,9 @@ class NMT:
                         print('===')
 
                     loss += criterion(ans[i,:, :], target_v)
-                    #loss += self.maskNLLLoss(ans[i], target_v, mask_v)[0]
                     #loss += self.criterion(ans[i], target_v, mask_v)[0]
 
-                loss.backward(retain_graph=True)
+                loss.backward() #retain_graph=True)
 
                 if self.do_clip_grad_norm:
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
