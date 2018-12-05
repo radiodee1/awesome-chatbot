@@ -732,7 +732,7 @@ class WrapOutputRNN(nn.Module):
                         if True:
                             out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
                             out_early[0,0,UNK_token] = 0.5
-                            out_early = F.softmax(out_early, dim=3)
+                            out_early = F.softmax(out_early, dim=2)
                             #token = torch.argmax(out_early, dim=2)
                             #print(token, UNK_token,'tokens')
                         outputs.append(out_early)
