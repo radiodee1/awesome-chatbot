@@ -725,7 +725,7 @@ class WrapOutputRNN(nn.Module):
                 if token == EOS_token:
                     flag = True
 
-                if token != EOS_token and flag and False:
+                if token == EOS_token: # and flag and False:
                     for _ in range(i + 1, self.maxtokens):
                         if True:
                             out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
