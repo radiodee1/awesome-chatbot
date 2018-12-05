@@ -532,6 +532,7 @@ class WrapOutputRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
+        self.test_a = True
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.vocab_size = vocab_size
         dropout = dropout * 1 # 0.0 #0.5
@@ -594,7 +595,8 @@ class WrapOutputRNN(nn.Module):
 
     def load_embed_module(self, embed):
         ''' here we comment out this line when embedding is not needed in decoder !! '''
-        #self.embed = embed
+        if self.test_a:
+            self.embed = embed
         pass
 
     def load_embedding(self, embedding):
@@ -685,8 +687,6 @@ class WrapOutputRNN(nn.Module):
 
             ##############################################
 
-            #output = self.embed(Variable(torch.tensor([token]))) ## <-- ????
-
             output = decoder_hidden
             output = prune_tensor(output, 3)
             #output = self.dropout_b(output)
@@ -696,6 +696,10 @@ class WrapOutputRNN(nn.Module):
             for i in range(self.maxtokens):
 
                 ## embed lines here ???
+                if self.test_a:
+                    if i != 0:
+                        output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
+                        output = prune_tensor(output, 3)
 
                 if self.lstm is not None:
 
@@ -704,10 +708,8 @@ class WrapOutputRNN(nn.Module):
                     #cn = self.dropout_c(cn)
                     self.h0 = nn.Parameter(hn, requires_grad=False)
                     self.c0 = nn.Parameter(cn, requires_grad=False)
-
                     pass
                 else:
-
                     output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #output = self.dropout(output) ## <---
@@ -720,18 +722,17 @@ class WrapOutputRNN(nn.Module):
 
                 outputs.append(output_x.clone())
 
-                #output_x = output_x.detach()
-
                 token = torch.argmax(output_x, dim=2)
 
                 if token == EOS_token:
                     flag = True
 
-                if token == EOS_token: # token != EOS_token and flag and False:
+                if token != EOS_token and flag: # and False:
                     for _ in range(i + 1, self.maxtokens):
                         if True:
                             out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
                             out_early[0,0,UNK_token] = 0.5
+                            out_early = torch.softmax(out_early, dim=3)
                             #token = torch.argmax(out_early, dim=2)
                             #print(token, UNK_token,'tokens')
                         outputs.append(out_early)
