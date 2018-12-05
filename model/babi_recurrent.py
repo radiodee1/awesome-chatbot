@@ -716,11 +716,11 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.dropout_b(output_x) ## <---
 
-                #output_x = F.sigmoid(output_x)
+                output_x = torch.softmax(output_x, dim=2)
 
                 outputs.append(output_x.clone())
 
-                output_x = output_x.detach()
+                #output_x = output_x.detach()
 
                 token = torch.argmax(output_x, dim=2)
 
@@ -2368,7 +2368,7 @@ class NMT:
                 target_variable = torch.cat(target_variable, dim=0)
 
 
-                #mask = self._mask_from_var(target_variable.squeeze(2))
+                mask = self._mask_from_var(target_variable.squeeze(2))
 
 
                 ans = prune_tensor(ans, 2)
@@ -2391,7 +2391,7 @@ class NMT:
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
 
-                    #mask_v = mask[i]
+                    mask_v = mask[i]
 
                     if False:
                         print(mask_v)
@@ -2399,8 +2399,8 @@ class NMT:
                         print(ans[i].size())
                         print('===')
 
-                    loss += criterion(ans[i,:, :], target_v)
-                    #loss += self.criterion(ans[i], target_v, mask_v)[0]
+                    #loss += criterion(ans[i,:, :], target_v)
+                    loss += self.criterion(ans[i], target_v, mask_v)[0]
 
                 loss.backward() #retain_graph=True)
 
@@ -2525,7 +2525,7 @@ class NMT:
             decoder_optimizer = self._make_optimizer(self.model_0_dec.parameters(), multiplier=hparams['multiplier'] )
             self.opt_2 = decoder_optimizer
 
-        if self.do_recurrent_output and False:
+        if self.do_recurrent_output:# and False:
             pass
             self.criterion = self.maskNLLLoss
             '''
