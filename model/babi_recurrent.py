@@ -718,7 +718,7 @@ class WrapOutputRNN(nn.Module):
 
                 output_x = self.dropout_b(output_x) ## <---
 
-                output_x = torch.softmax(output_x, dim=2)
+                output_x = F.softmax(output_x, dim=2)
 
                 outputs.append(output_x.clone())
 
