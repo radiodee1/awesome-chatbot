@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="40533" />
+          <entry key="py" value="40535" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -48,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="40533" />
+          <entry key="Python" value="40535" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -74,8 +73,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="254">
-              <caret line="534" column="26" selection-start-line="534" selection-start-column="26" selection-end-line="534" selection-end-column="26" />
+            <state relative-caret-position="262">
+              <caret line="534" column="27" selection-start-line="534" selection-start-column="27" selection-end-line="534" selection-end-column="27" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -130,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>out_b</find>
       <find>out_c</find>
       <find>out_d</find>
       <find>AnswerModule</find>
@@ -160,6 +158,7 @@
       <find>grad</find>
       <find>load_embed_module</find>
       <find>do_clip_grad_norm</find>
+      <find>test_a</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -531,8 +530,8 @@
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py" />
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="254">
-          <caret line="534" column="26" selection-start-line="534" selection-start-column="26" selection-end-line="534" selection-end-column="26" />
+        <state relative-caret-position="262">
+          <caret line="534" column="27" selection-start-line="534" selection-start-column="27" selection-end-line="534" selection-end-column="27" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
