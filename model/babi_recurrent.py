@@ -593,7 +593,9 @@ class WrapOutputRNN(nn.Module):
         return (hidden, cell)
 
     def load_embed_module(self, embed):
-        self.embed = embed
+        ''' here we comment out this line when embedding is not needed in decoder !! '''
+        #self.embed = embed
+        pass
 
     def load_embedding(self, embedding):
         #embedding = np.transpose(embedding,(1,0))
