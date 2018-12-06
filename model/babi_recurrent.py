@@ -2657,8 +2657,8 @@ class NMT:
                             num_right += 1
                             num_right_small += 1
                             if int(o_val) == EOS_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1 )
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
+                                num_right_small += hparams['tokens_per_sentence'] - (jj + 0 )
+                                num_right += hparams['tokens_per_sentence'] - (jj + 0)
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
@@ -2673,6 +2673,7 @@ class NMT:
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
                 num_tot = acc_tot
+                #print(num_tot)
                 self.score = float(num_right / num_tot) * 100
                 #if acc_right != 0.0: self.score = acc_right / acc_tot
 
