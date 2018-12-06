@@ -2342,6 +2342,7 @@ class NMT:
 
     def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
+        tot = 0.0
         if criterion is not None:
             clip = 50.0
 
@@ -2359,7 +2360,7 @@ class NMT:
                 pass
 
             loss = 0.0
-            tot = 0.0
+
             #acc = 0.0
 
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
@@ -2466,8 +2467,22 @@ class NMT:
 
                     ans = self.model_0_dec(ans)
                     ans = ans.permute(1,0,2)
-                    #print(ans)
 
+                    mask = self._mask_from_var(target_variable.squeeze(2))
+                    tot = mask.sum()
+                    '''
+                    for i in range(len(target_variable)):
+
+                        target_v = target_variable[i].squeeze(0).squeeze(1)
+
+                        mask_v = mask[i]
+
+                        # loss += criterion(ans[i,:, :], target_v)
+                        l_out, t_out = self.criterion(ans[i], target_v, mask_v)  # [0]
+
+                        loss += l_out
+                        tot += t_out
+                    '''
 
         if self.do_recurrent_output:
             if len(ans.size()) is not 2:
