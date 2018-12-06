@@ -2388,27 +2388,17 @@ class NMT:
                 loss += criterion(ans, target_variable)
                 '''
 
-                #decoder_optimizer.zero_grad()
-                #wrapper_optimizer.zero_grad()
-
                 for i in range(len(target_variable)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
 
                     mask_v = mask[i]
-
-                    if False:
-                        print(mask_v)
-                        print(target_v)
-                        print(ans[i].size())
-                        print('===')
-
+                    #print(ans.size())
                     #loss += criterion(ans[i,:, :], target_v)
-                    l_out, t_out = self.criterion(ans[i], target_v, mask_v) #[0]
+                    l_out, t_out = self.criterion(ans[i,:,:], target_v, mask_v) #[0]
 
                     loss += l_out
                     tot += t_out #.item()
-                    #acc = (loss/ tot).item()
 
                 loss.backward() #retain_graph=True)
 
@@ -2427,12 +2417,12 @@ class NMT:
                 if self.do_recurrent_output:
                     ans = self.model_0_dec(ans)
 
-
+            '''
             else:
                 target_variable = target_variable[0]
                 ans = torch.argmax(ans,dim=1)
                 #ans = ans[0]
-
+            '''
 
 
             if not self.do_recurrent_output:
@@ -2459,34 +2449,27 @@ class NMT:
                     ans = ans.permute(1,0)
 
                 else:
-                    loss = None
+                    loss = 0.0
                     ans = prune_tensor(ans, 2)
                     ans = ans.float().permute(0, 1).contiguous()
 
                     #ans = prune_tensor(ans, 2)
 
                     ans = self.model_0_dec(ans)
+                    #print(ans.size(),'ans1')
                     ans = ans.permute(1,0,2)
+                    #print(ans.size(),'ans2')
 
-                    target_variable = torch.cat(target_variable, dim=0)
-                    mask = self._mask_from_var(target_variable.squeeze(2))
-                    tot = mask.sum()
-                    '''
-                    for i in range(len(target_variable)):
+                target_variable = torch.cat(target_variable, dim=0)
+                mask = self._mask_from_var(target_variable.squeeze(2))
 
-                        target_v = target_variable[i].squeeze(0).squeeze(1)
-
-                        mask_v = mask[i]
-
-                        # loss += criterion(ans[i,:, :], target_v)
-                        l_out, t_out = self.criterion(ans[i], target_v, mask_v)  # [0]
-
-                        loss += l_out
-                        tot += t_out
-                    '''
+                tot = mask.sum().item()
 
         if self.do_recurrent_output:
             if len(ans.size()) is not 2:
+                ans = torch.argmax(ans, dim=2)
+                ans = ans.unsqueeze(2)
+                #print(ans.size(), 'ans3')
                 ansview = []
                 for ii in ans:
                     ansview.append(ii)
@@ -2495,7 +2478,7 @@ class NMT:
             ans = ans.permute(1,0)
             #print(ans,ans.size(),'ans')
 
-        return outputs, ans , loss, tot
+        return None, ans , loss, tot
 
     #######################################
 
@@ -2612,44 +2595,21 @@ class NMT:
 
         for iter in range(start, n_iters + 1, step):
 
-            if not self.do_batch_process:
-                '''
-                training_pair = training_pairs[iter - 1]
 
-                input_variable = training_pair[0]
-                question_variable = training_pair[1]
-
-                if len(training_pair) > 2:
-                    target_variable = training_pair[2]
-                else:
-                    question_variable = training_pair[0]
-                    target_variable = training_pair[1]
-
-                is_auto = random.random() < hparams['autoencode']
-                if is_auto:
-                    target_variable = training_pair[0]
-                    #print('is auto')
-                '''
-            elif self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
+            if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
 
                 input_variable = group[0]
                 question_variable = group[1]
                 target_variable = group[2]
 
-
                 temp_batch_size = len(input_variable)
-
-                #if temp_batch_size != hparams['batch_size']: print(temp_batch_size,'tbs')
-
-                #if self.do_recurrent_output:
-                #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
 
             elif self.do_batch_process:
                 continue
                 pass
 
-            outputs, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
+            _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
 
@@ -2658,34 +2618,27 @@ class NMT:
             num_count += 1
 
             if self.do_recurrent_output and self.do_load_babi:
-                ans = ans.permute(1,0)
-                ans = torch.argmax(ans,dim=1)
+                #ans = ans.permute(1,0)
+                #ans = torch.argmax(ans,dim=1)
                 sentence_right = 0.0
 
                 for ii in range(len(target_variable)):
                     for jj in range(target_variable[ii].size(1)):
 
                         t_val = target_variable[ii][0,jj,0].item()
-                        #print(t_val, EOS_token)
 
-                        o_val = ans[ ii * target_variable[ii].size(1) + jj].item()
+                        o_val = ans[:, ii * target_variable[ii].size(1) + jj].item()
 
                         if int(o_val) == int(t_val):
-                            sentence_right +=1
-                            #num_right += 1
-                            #num_right_small += 1
-                            if int(o_val) == EOS_token and jj > 0:
+                            sentence_right += 1
 
+                            if int(o_val) == EOS_token : #and jj > 0:
                                 break
 
                 num_right_small += sentence_right
                 num_right += sentence_right
 
-                #num_tot += temp_batch_size * hparams['tokens_per_sentence']
-
                 num_tot = acc_tot * hparams['tokens_per_sentence']
-
-                #print(acc_tot)
 
                 self.score = float(num_right / num_tot) * 100
 
@@ -2708,7 +2661,7 @@ class NMT:
                 self.score = float(num_right/num_tot) * 100
 
             if l is not None:
-                print_loss_total += float(l.clone())
+                print_loss_total += float(l) #.clone())
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
