@@ -37,7 +37,7 @@
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="40946" />
+          <entry key="py" value="40948" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -47,7 +47,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="40946" />
+          <entry key="Python" value="40948" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -73,8 +73,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="442">
-              <caret line="720" column="32" selection-start-line="720" selection-start-column="32" selection-end-line="720" selection-end-column="32" />
+            <state relative-caret-position="262">
+              <caret line="1051" column="25" selection-start-line="1051" selection-start-column="18" selection-end-line="1051" selection-end-column="25" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -129,7 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>AnswerModule</find>
       <find>num_tot</find>
       <find>num_right</find>
       <find>temp_batch_size</find>
@@ -156,9 +155,10 @@
       <find>grad</find>
       <find>load_embed_module</find>
       <find>do_clip_grad_norm</find>
-      <find>test_a</find>
       <find>num_count</find>
       <find>num_right_small</find>
+      <find>test_a</find>
+      <find>softmax</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -530,8 +530,8 @@
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py" />
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="720" column="32" selection-start-line="720" selection-start-column="32" selection-end-line="720" selection-end-column="32" />
+        <state relative-caret-position="262">
+          <caret line="1051" column="25" selection-start-line="1051" selection-start-column="18" selection-end-line="1051" selection-end-column="25" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
