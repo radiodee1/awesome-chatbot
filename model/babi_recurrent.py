@@ -2679,10 +2679,12 @@ class NMT:
                 num_right += sentence_right
 
 
-                num_tot += temp_batch_size * hparams['tokens_per_sentence']
+                #num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
                 num_tot = acc_tot
-                #print(num_tot)
+
+                #print(acc_tot)
+
                 self.score = float(num_right / num_tot) * 100
                 #if acc_right != 0.0: self.score = acc_right / acc_tot
 
@@ -2754,7 +2756,7 @@ class NMT:
                     ############################
                     '''
                 if self.do_recurrent_output:
-                    num_right_small = math.floor(num_right_small / (hparams['tokens_per_sentence'] ))
+                    num_right_small = math.floor(num_right_small)# / (hparams['tokens_per_sentence'] ))
                     pass
 
                 if self._print_control(iter):
