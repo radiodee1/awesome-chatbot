@@ -2645,8 +2645,9 @@ class NMT:
             if self.do_recurrent_output and self.do_load_babi:
                 ans = ans.permute(1,0)
                 ans = torch.argmax(ans,dim=1)
+                sentence_right = 0.0
+
                 for ii in range(len(target_variable)):
-                    sentence_right = 0.0
                     for jj in range(target_variable[ii].size(1)):
 
                         t_val = target_variable[ii][0,jj,0].item()
