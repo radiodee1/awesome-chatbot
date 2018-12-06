@@ -2656,10 +2656,10 @@ class NMT:
 
                         if int(o_val) == int(t_val):
                             sentence_right +=1
-                            num_right += 1
-                            num_right_small += 1
+                            #num_right += 1
+                            #num_right_small += 1
                             if int(o_val) == EOS_token and jj > 0:
-                                sentence_right = hparams['tokens_per_sentence']
+                                #sentence_right = hparams['tokens_per_sentence']
                                 #num_right_small += hparams['tokens_per_sentence'] - (jj + 2 )
                                 #num_right += hparams['tokens_per_sentence'] - (jj + 2)
                                 #print('full line', i, j, num_right_small)
