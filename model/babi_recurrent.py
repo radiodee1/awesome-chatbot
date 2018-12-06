@@ -2646,6 +2646,7 @@ class NMT:
                 ans = ans.permute(1,0)
                 ans = torch.argmax(ans,dim=1)
                 for ii in range(len(target_variable)):
+                    sentence_right = 0.0
                     for jj in range(target_variable[ii].size(1)):
 
                         t_val = target_variable[ii][0,jj,0].item()
@@ -2654,11 +2655,13 @@ class NMT:
                         o_val = ans[ ii * target_variable[ii].size(1) + jj].item()
 
                         if int(o_val) == int(t_val):
+                            sentence_right +=1
                             num_right += 1
                             num_right_small += 1
                             if int(o_val) == EOS_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 0 )
-                                num_right += hparams['tokens_per_sentence'] - (jj + 0)
+                                sentence_right = hparams['tokens_per_sentence']
+                                #num_right_small += hparams['tokens_per_sentence'] - (jj + 2 )
+                                #num_right += hparams['tokens_per_sentence'] - (jj + 2)
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
@@ -2669,6 +2672,9 @@ class NMT:
                                 break
                             break
                             pass
+                    num_right_small += sentence_right
+                    num_right += sentence_right
+
 
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
