@@ -2360,7 +2360,7 @@ class NMT:
 
             loss = 0.0
             tot = 0.0
-            acc = 0.0
+            #acc = 0.0
 
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
@@ -2638,7 +2638,7 @@ class NMT:
                                             None, None, criterion)
 
             acc_tot += tot_base
-            acc_right += l
+            #acc_right += l
 
             num_count += 1
 
@@ -2672,8 +2672,9 @@ class NMT:
 
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
+                num_tot = acc_tot
                 self.score = float(num_right / num_tot) * 100
-                if acc_right != 0.0: self.score = acc_right / acc_tot
+                #if acc_right != 0.0: self.score = acc_right / acc_tot
 
             if self.do_load_babi and not self.do_recurrent_output :
 
