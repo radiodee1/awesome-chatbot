@@ -532,7 +532,7 @@ class WrapOutputRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        self.test_a = False
+        self.test_a = True
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.vocab_size = vocab_size
         dropout = dropout * 1 # 0.0 #0.5
