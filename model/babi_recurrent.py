@@ -2638,7 +2638,6 @@ class NMT:
                                             None, None, criterion)
 
             acc_tot += tot_base
-            #acc_right += l
 
             num_count += 1
 
@@ -2660,33 +2659,19 @@ class NMT:
                             #num_right += 1
                             #num_right_small += 1
                             if int(o_val) == EOS_token and jj > 0:
-                                #sentence_right = hparams['tokens_per_sentence']
-                                #num_right_small += hparams['tokens_per_sentence'] - (jj + 2 )
-                                #num_right += hparams['tokens_per_sentence'] - (jj + 2)
-                                #print('full line', i, j, num_right_small)
+
                                 break
-                        '''
-                        else:
-                            # next
-                            if int(o_val) == EOS_token and jj > 0 and False: # and int(t_val) == UNK_token and jj > 0:
-                                num_right_small += hparams['tokens_per_sentence'] - (jj + 1 )
-                                num_right += hparams['tokens_per_sentence'] - (jj + 1)
-                                break
-                            break
-                            pass
-                        '''
+
                 num_right_small += sentence_right
                 num_right += sentence_right
 
-
                 #num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
-                num_tot = acc_tot
+                num_tot = acc_tot * temp_batch_size
 
                 #print(acc_tot)
 
                 self.score = float(num_right / num_tot) * 100
-                #if acc_right != 0.0: self.score = acc_right / acc_tot
 
             if self.do_load_babi and not self.do_recurrent_output :
 
