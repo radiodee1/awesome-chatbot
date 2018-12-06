@@ -2407,7 +2407,7 @@ class NMT:
 
                     loss += l_out
                     tot += t_out #.item()
-                    acc = (loss/ tot).item()
+                    #acc = (loss/ tot).item()
 
                 loss.backward() #retain_graph=True)
 
@@ -2479,7 +2479,7 @@ class NMT:
             ans = ans.permute(1,0)
             #print(ans,ans.size(),'ans')
 
-        return outputs, ans , loss, acc
+        return outputs, ans , loss, tot
 
     #######################################
 
@@ -2496,6 +2496,9 @@ class NMT:
         num_right_small = 0
         num_count = 0
         temp_batch_size = hparams['batch_size'] #0
+
+        acc_tot = 0.0
+        acc_right = 0.0
 
         wrapper_optimizer = None
         decoder_optimizer = None
@@ -2630,9 +2633,13 @@ class NMT:
                 continue
                 pass
 
-            outputs, ans, l, acc = self.train(input_variable, target_variable, question_variable, encoder,
+            outputs, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
+
+            acc_tot += tot_base
+            acc_right += l
+
             num_count += 1
 
             if self.do_recurrent_output and self.do_load_babi:
@@ -2666,7 +2673,7 @@ class NMT:
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
                 self.score = float(num_right / num_tot) * 100
-                if acc != 0.0: self.score = acc
+                if acc_right != 0.0: self.score = acc_right / acc_tot
 
             if self.do_load_babi and not self.do_recurrent_output :
 
