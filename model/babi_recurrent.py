@@ -2664,6 +2664,7 @@ class NMT:
                                 #num_right += hparams['tokens_per_sentence'] - (jj + 2)
                                 #print('full line', i, j, num_right_small)
                                 break
+                        '''
                         else:
                             # next
                             if int(o_val) == EOS_token and jj > 0 and False: # and int(t_val) == UNK_token and jj > 0:
@@ -2672,6 +2673,7 @@ class NMT:
                                 break
                             break
                             pass
+                        '''
                     num_right_small += sentence_right
                     num_right += sentence_right
 
