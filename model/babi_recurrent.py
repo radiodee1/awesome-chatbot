@@ -532,7 +532,7 @@ class WrapOutputRNN(nn.Module):
         self.cancel_attention = cancel_attention
         self.simple_input = simple_input
         position = hparams['split_sentences']
-        self.test_a = True
+        self.test_a = False
         self.decoder_layers = 1 # hparams['decoder_layers']
         self.vocab_size = vocab_size
         dropout = dropout * 1 # 0.0 #0.5
@@ -2359,6 +2359,8 @@ class NMT:
                 pass
 
             loss = 0.0
+            tot = 0.0
+            acc = 0.0
 
             outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
@@ -2401,7 +2403,11 @@ class NMT:
                         print('===')
 
                     #loss += criterion(ans[i,:, :], target_v)
-                    loss += self.criterion(ans[i], target_v, mask_v)[0]
+                    l_out, t_out = self.criterion(ans[i], target_v, mask_v) #[0]
+
+                    loss += l_out
+                    tot += t_out #.item()
+                    acc = (loss/ tot).item()
 
                 loss.backward() #retain_graph=True)
 
@@ -2473,7 +2479,7 @@ class NMT:
             ans = ans.permute(1,0)
             #print(ans,ans.size(),'ans')
 
-        return outputs, ans , loss
+        return outputs, ans , loss, acc
 
     #######################################
 
@@ -2624,7 +2630,7 @@ class NMT:
                 continue
                 pass
 
-            outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
+            outputs, ans, l, acc = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
             num_count += 1
@@ -2660,6 +2666,7 @@ class NMT:
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
                 self.score = float(num_right / num_tot) * 100
+                if acc != 0.0: self.score = acc
 
             if self.do_load_babi and not self.do_recurrent_output :
 
