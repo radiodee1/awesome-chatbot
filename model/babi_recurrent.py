@@ -2468,6 +2468,7 @@ class NMT:
                     ans = self.model_0_dec(ans)
                     ans = ans.permute(1,0,2)
 
+                    target_variable = torch.cat(target_variable, dim=0)
                     mask = self._mask_from_var(target_variable.squeeze(2))
                     tot = mask.sum()
                     '''
