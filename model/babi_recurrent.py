@@ -2667,7 +2667,7 @@ class NMT:
 
                 #num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
-                num_tot = acc_tot * temp_batch_size
+                num_tot = acc_tot * hparams['tokens_per_sentence']
 
                 #print(acc_tot)
 
