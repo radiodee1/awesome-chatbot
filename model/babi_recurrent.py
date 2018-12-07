@@ -2464,6 +2464,7 @@ class NMT:
                 mask = self._mask_from_var(target_variable.squeeze(2))
 
                 tot = mask.sum().item()
+                tot = tot #/ 10 # magic number for validation
 
         if self.do_recurrent_output:
             if len(ans.size()) is not 2:
@@ -2639,6 +2640,8 @@ class NMT:
                 num_right += sentence_right
 
                 num_tot = acc_tot * hparams['tokens_per_sentence']
+                if self.do_test_not_train:
+                    num_tot = acc_tot
 
                 self.score = float(num_right / num_tot) * 100
 
