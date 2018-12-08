@@ -669,7 +669,7 @@ class WrapOutputRNN(nn.Module):
 
             token = SOS_token
 
-            if self.lstm is not None:
+            if self.lstm is not None: # or self.test_a:
                 decoder_hidden = decoder_hidden.permute(1,0,2)
 
             ##############################################
