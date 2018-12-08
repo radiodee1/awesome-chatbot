@@ -563,9 +563,6 @@ class WrapOutputRNN(nn.Module):
         self.out_b = nn.Linear(hidden_size, hidden_size, bias=True)
         init.xavier_normal_(self.out_b.state_dict()['weight'])
 
-        # self.out_b2 = nn.Linear(hidden_size , hidden_size , bias=True)
-        # init.xavier_normal_(self.out_b2.state_dict()['weight'])
-
         self.out_c = nn.Linear(hidden_size, vocab_size, bias=True)
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
@@ -2648,15 +2645,16 @@ class NMT:
                         if int(o_val) == int(t_val):
                             sentence_right += 1
 
-                            if int(o_val) == EOS_token : #and jj > 0:
+                            if int(o_val) == EOS_token : 
+                                sentence_right = hparams['tokens_per_sentence']
                                 break
+                        else:
+                            break
 
                 num_right_small += sentence_right
                 num_right += sentence_right
 
-                num_tot = acc_tot * hparams['tokens_per_sentence']
-                if self.do_test_not_train:
-                    num_tot = acc_tot
+                num_tot = temp_batch_size * hparams['tokens_per_sentence']
 
                 self.score = float(num_right / num_tot) * 100
 
