@@ -2654,7 +2654,7 @@ class NMT:
                     num_right_small += sentence_right
                     num_right += sentence_right
 
-                num_tot = temp_batch_size * hparams['tokens_per_sentence']
+                num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
                 self.score = float(num_right / num_tot) #* 100
 
