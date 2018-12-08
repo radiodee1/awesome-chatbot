@@ -2645,14 +2645,14 @@ class NMT:
                         if int(o_val) == int(t_val):
                             sentence_right += 1
 
-                            if int(o_val) == EOS_token : 
+                            if int(o_val) == EOS_token :
                                 sentence_right = hparams['tokens_per_sentence']
                                 break
                         else:
                             break
 
-                num_right_small += sentence_right
-                num_right += sentence_right
+                    num_right_small += sentence_right
+                    num_right += sentence_right
 
                 num_tot = temp_batch_size * hparams['tokens_per_sentence']
 
