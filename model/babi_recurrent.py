@@ -665,10 +665,7 @@ class WrapOutputRNN(nn.Module):
             e_out = torch.cat(e_out_list, dim=0)
 
             outputs = []
-            decoder_hidden = prune_tensor(e_out,3) #.permute(1,0,2)
-            #decoder_hidden = F.relu(decoder_hidden) #, dim=2)
-
-            #decoder_hidden = self.dropout_c(decoder_hidden)
+            decoder_hidden = prune_tensor(e_out,3)
 
             token = SOS_token
 
