@@ -503,6 +503,9 @@ class AnswerModule(nn.Module):
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
+        if not self.recurrent_output:
+            return mem_in, question_h
+
         mem_in = torch.cat([mem_in, question_h], dim=2)
 
         mem_in = self.dropout(mem_in)
@@ -510,7 +513,7 @@ class AnswerModule(nn.Module):
 
         out = self.out_a(mem_in)
 
-        return out.permute(1,0)
+        return out.permute(1,0), question_h
 
 #################### Wrapper ####################
 
@@ -566,6 +569,7 @@ class WrapOutputRNN(nn.Module):
         self.out_c = nn.Linear(hidden_size, vocab_size, bias=True)
         init.xavier_normal_(self.out_c.state_dict()['weight'])
 
+        ''' this is unused '''
         self.out_d = nn.Linear(hidden_size, hidden_size * 2, bias=True)
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
@@ -644,10 +648,10 @@ class WrapOutputRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def forward(self, out):
-        return self.recurrent(out)
+    def forward(self, out, ques=None):
+        return self.recurrent(out, ques)
 
-    def recurrent(self, out, hid1=None):
+    def recurrent(self, out, ques):
 
         l, hid = out.size()
 
@@ -700,6 +704,17 @@ class WrapOutputRNN(nn.Module):
                     if i != 0:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
+
+                    cat = [
+                        prune_tensor(output, 1),
+                        prune_tensor(ques, 2)[k,:]
+                    ]
+                    #for i in cat: print(i.size())
+                    #exit()
+
+                    cat = torch.cat(cat, dim=0)
+                    output = self.out_a(cat)
+                    output = prune_tensor(output, 3)
 
                 if self.lstm is not None:
 
@@ -855,9 +870,9 @@ class WrapMemRNN(nn.Module):
 
         self.wrap_input_module(input_variable, question_variable)
         self.wrap_episodic_module()
-        outputs,  ans = self.wrap_answer_module_simple()
+        outputs,  ans, ques = self.wrap_answer_module_simple()
 
-        return outputs, None, ans, None
+        return outputs, None, ans, None, ques
 
     def wrap_freeze_embedding(self, do_freeze=True):
         self.embed.weight.requires_grad = not do_freeze
@@ -1064,14 +1079,14 @@ class WrapMemRNN(nn.Module):
 
         mem = prune_tensor(self.last_mem, 3)
 
-        ansx = self.model_5_ans(mem, q_q)
+        ansx, ques = self.model_5_ans(mem, q_q)
 
         if self.recurrent_output:
             ansx = self.last_mem.permute(1,0,2)
             ansx = prune_tensor(ansx, 2)
-            return [None], ansx
+            return [None], ansx, ques
 
-        return [None], ansx
+        return [None], ansx, ques
 
         pass
 
@@ -2363,7 +2378,7 @@ class NMT:
 
             #acc = 0.0
 
-            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
             #print(ans,'ans', ans.size())
 
@@ -2379,7 +2394,7 @@ class NMT:
 
                 ans = ans.float().contiguous()
 
-                ans = self.model_0_dec(ans)
+                ans = self.model_0_dec(ans, ques)
                 ans = ans.permute(1,0,2)
 
                 '''
@@ -2442,7 +2457,7 @@ class NMT:
                 if self.do_recurrent_output:
                     self.model_0_dec.eval()
 
-                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+                outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
                 if not self.do_recurrent_output:
                     loss = None
@@ -2455,7 +2470,7 @@ class NMT:
 
                     #ans = prune_tensor(ans, 2)
 
-                    ans = self.model_0_dec(ans)
+                    ans = self.model_0_dec(ans, ques)
                     #print(ans.size(),'ans1')
                     ans = ans.permute(1,0,2)
                     #print(ans.size(),'ans2')
@@ -2849,10 +2864,10 @@ class NMT:
             self.model_0_dec.eval()
 
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
+            outputs, _, ans , _, ques = self.model_0_wra( input_variable, question_variable, sos_token, None)
             if self.do_recurrent_output:
 
-                ans = self.model_0_dec(ans)
+                ans = self.model_0_dec(ans, ques)
 
 
         outputs = [ans]

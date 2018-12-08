@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -12,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="274" />
+          <entry key="project.closed" value="275" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -22,20 +25,20 @@
           <entry key="project.open.time.15" value="1" />
           <entry key="project.open.time.2" value="4" />
           <entry key="project.open.time.3" value="16" />
-          <entry key="project.open.time.4" value="73" />
+          <entry key="project.open.time.4" value="75" />
           <entry key="project.open.time.5" value="33" />
           <entry key="project.open.time.6" value="61" />
           <entry key="project.open.time.7" value="43" />
           <entry key="project.open.time.8" value="16" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="274" />
+          <entry key="project.opened" value="276" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="41512" />
+          <entry key="py" value="41818" />
           <entry key="sh" value="627" />
           <entry key="txt" value="21" />
         </counts>
@@ -45,7 +48,7 @@
           <entry key="Bash" value="627" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="91" />
-          <entry key="Python" value="41512" />
+          <entry key="Python" value="41818" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -71,8 +74,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2698">
-              <caret line="2455" column="20" selection-start-line="2455" selection-start-column="20" selection-end-line="2455" selection-end-column="20" />
+            <state relative-caret-position="496">
+              <caret line="571" column="14" lean-forward="true" selection-start-line="571" selection-start-column="14" selection-end-line="571" selection-end-column="14" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -127,17 +130,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variablesFromPair</find>
-      <find>pairs</find>
-      <find>_pad_list</find>
-      <find>UNK_token</find>
-      <find>ans</find>
-      <find>embed</find>
-      <find>EOS_token</find>
-      <find>zero_grad</find>
-      <find>cuda</find>
-      <find>bias</find>
-      <find>criterion</find>
       <find>max</find>
       <find>grad</find>
       <find>load_embed_module</find>
@@ -157,6 +149,17 @@
       <find>score_list</find>
       <find>score</find>
       <find>acc_tot</find>
+      <find>out_d</find>
+      <find>out_a</find>
+      <find>out_c</find>
+      <find>torch.c</find>
+      <find>recurrent_output</find>
+      <find>AnswerModule</find>
+      <find>model_5_ans</find>
+      <find>WrapMemRNN</find>
+      <find>model_0_wra</find>
+      <find>WrapOutputRNN</find>
+      <find>ques</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -485,11 +488,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -498,6 +496,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -528,8 +531,8 @@
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent_alt.py" />
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2698">
-          <caret line="2455" column="20" selection-start-line="2455" selection-start-column="20" selection-end-line="2455" selection-end-column="20" />
+        <state relative-caret-position="496">
+          <caret line="571" column="14" lean-forward="true" selection-start-line="571" selection-start-column="14" selection-end-line="571" selection-end-column="14" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
