@@ -503,7 +503,7 @@ class AnswerModule(nn.Module):
         mem_in = mem.permute(1,0,2)
         question_h = question_h.permute(1,0,2)
 
-        if not self.recurrent_output:
+        if self.recurrent_output:
             return mem_in, question_h
 
         mem_in = torch.cat([mem_in, question_h], dim=2)
@@ -2415,6 +2415,7 @@ class NMT:
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
+                ans = prune_tensor(ans, 2)
 
                 ans = ans.permute(1,0)
                 if self.do_recurrent_output:
@@ -2653,11 +2654,9 @@ class NMT:
             if self.do_load_babi and not self.do_recurrent_output and not self.do_pos_input:
 
                 for i in range(len(target_variable)):
-                    #print(ans[i].size())
+
                     o_val = torch.argmax(ans[i], dim=0).item() #[0]
                     t_val = target_variable[i].item()
-
-                    #print(o_val, t_val, 'o,t')
 
                     if int(o_val) == int(t_val):
                         num_right += 1
