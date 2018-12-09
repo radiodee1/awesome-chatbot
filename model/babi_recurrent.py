@@ -684,7 +684,7 @@ class WrapOutputRNN(nn.Module):
 
                 ## embed lines here ???
                 if self.test_a:
-                    if i != 0:
+                    if i != 0 and False:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
 
