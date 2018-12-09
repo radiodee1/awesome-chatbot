@@ -1171,6 +1171,7 @@ class NMT:
         self.pairs_valid = []
 
         self.blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+        self.pos_list = []
 
         self.do_train = False
         self.do_infer = False
@@ -1201,6 +1202,7 @@ class NMT:
         self.do_skip_unk = False
         self.do_chatbot_train = False
         self.do_load_once = True
+        self.do_pos_input = False
         self.do_clip_grad_norm = True
 
         self.printable = ''
@@ -1217,6 +1219,7 @@ class NMT:
         parser.add_argument('--load-babi', help='Load three babi input files instead of chatbot data',
                             action='store_true')
         parser.add_argument('--load-recurrent',help='load files from "train.big" recurrent filenames', action='store_true')
+        parser.add_argument('--pos-input', help='apply input as from P.O.S. corpus.', action='store_true')
         parser.add_argument('--hide-unk', help='hide all unk tokens', action='store_true')
         parser.add_argument('--skip-unk', help='do not use sentences with unknown words.', action='store_true')
         parser.add_argument('--use-filename', help='use base filename as basename for saved weights.', action='store_true')
@@ -1342,6 +1345,8 @@ class NMT:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
         if self.args['multiplier'] is not None:
             hparams['multiplier'] = float(self.args['multiplier'])
+        if self.args['pos_input'] is True:
+            self.do_pos_input = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -2616,7 +2621,7 @@ class NMT:
 
             num_count += 1
 
-            if self.do_recurrent_output and self.do_load_babi:
+            if self.do_recurrent_output and self.do_load_babi and not self.do_pos_input:
                 #ans = ans.permute(1,0)
                 #ans = torch.argmax(ans,dim=1)
                 #sentence_right = 0.0
@@ -2645,7 +2650,7 @@ class NMT:
 
                 self.score = float(num_right / num_tot) * 100
 
-            if self.do_load_babi and not self.do_recurrent_output :
+            if self.do_load_babi and not self.do_recurrent_output and not self.do_pos_input:
 
                 for i in range(len(target_variable)):
                     #print(ans[i].size())
@@ -2662,6 +2667,10 @@ class NMT:
                 else: num_tot += 1
 
                 self.score = float(num_right/num_tot) * 100
+
+            if self.do_pos_input and not self.do_recurrent_output:
+                print('implement P.O.S. tagging here.')
+                pass
 
             if l is not None:
                 print_loss_total += float(l) #.clone())
