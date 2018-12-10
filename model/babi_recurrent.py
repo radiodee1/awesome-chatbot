@@ -649,6 +649,7 @@ class WrapOutputRNN(nn.Module):
         return self.recurrent(out, ques)
 
     def recurrent(self, out, ques):
+        ''' don't use ques from here. '''
 
         l, hid = out.size()
 
@@ -674,9 +675,10 @@ class WrapOutputRNN(nn.Module):
 
             ##############################################
 
-            output = decoder_hidden
-            output = prune_tensor(output, 3)
-            #output = self.dropout_b(output)
+            ques = decoder_hidden
+            ques = prune_tensor(ques, 3)
+
+            token = SOS_token
 
             flag = False
 
@@ -684,13 +686,13 @@ class WrapOutputRNN(nn.Module):
 
                 ## embed lines here ???
                 if self.test_a:
-                    if i != 0 and False:
+                    if i == 0: # and False:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
 
                     cat = [
                         prune_tensor(output, 1),
-                        prune_tensor(ques, 2)[k,:]
+                        prune_tensor(ques, 1) #2)[k,:]
                     ]
                     #for i in cat: print(i.size())
                     #exit()
