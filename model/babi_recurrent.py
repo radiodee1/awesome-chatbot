@@ -675,8 +675,8 @@ class WrapOutputRNN(nn.Module):
 
             ##############################################
 
-            ques = decoder_hidden
-            ques = prune_tensor(ques, 3)
+            #ques = decoder_hidden
+            decoder_hidden = prune_tensor(decoder_hidden, 3)
 
             token = SOS_token
 
@@ -690,7 +690,7 @@ class WrapOutputRNN(nn.Module):
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
 
-                    ques = self.dropout_c(ques)
+                    ques = self.dropout_c(decoder_hidden)
 
                     cat = [
                         prune_tensor(output, 1),
