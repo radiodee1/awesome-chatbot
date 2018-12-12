@@ -690,7 +690,7 @@ class WrapOutputRNN(nn.Module):
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
 
-                    ques = self.dropout_c(decoder_hidden)
+                    ques = decoder_hidden #self.dropout_c(decoder_hidden)
 
                     cat = [
                         prune_tensor(output, 1),
