@@ -1174,7 +1174,8 @@ class NMT:
         self.pairs_valid = []
 
         self.blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
-        self.pos_list = []
+        self.pos_list_out = []
+        self.pos_list_ques_index = []
 
         self.do_train = False
         self.do_infer = False
@@ -1630,6 +1631,9 @@ class NMT:
 
                         lans = l_out[i].strip('\n')
                         line = [ lin, lques , lans]
+                    if self.do_pos_input:
+                        if (i == 0 or l_in[i] == hparams['eol'] + ' ' + hparams['eol']) and i < len(l_in):
+                            self.pos_list_ques_index.append(i + 1)
                     self.pairs.append(line)
 
         # Reverse pairs, make Lang instances

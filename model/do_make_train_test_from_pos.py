@@ -35,9 +35,9 @@ if __name__ == '__main__':
     args = vars(args)
     print(args)
 
-    args_split_train = 0.7
-    args_split_valid = 0.15
-    args_split_test = 0.15
+    args_split_train = 0.9
+    args_split_valid = 0.05
+    args_split_test = 0.05
 
     args_input_path = '../raw/' + 'ner_dataset.csv'
 
@@ -161,6 +161,7 @@ if __name__ == '__main__':
         print(idx_start_0_train)
         print(idx_start_1_test)
         print(idx_start_2_valid)
+        print(len(pos_answer) - idx_start_2_valid)
 
         save_to_file(
             pos_context[:idx_start_0_train],
