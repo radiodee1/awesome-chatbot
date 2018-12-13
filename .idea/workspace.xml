@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -14,7 +15,7 @@
     <session id="-1791013246">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="286" />
+          <entry key="project.closed" value="287" />
           <entry key="project.open.time.0" value="3" />
           <entry key="project.open.time.1" value="2" />
           <entry key="project.open.time.10" value="6" />
@@ -25,19 +26,19 @@
           <entry key="project.open.time.2" value="4" />
           <entry key="project.open.time.3" value="19" />
           <entry key="project.open.time.4" value="77" />
-          <entry key="project.open.time.5" value="37" />
+          <entry key="project.open.time.5" value="38" />
           <entry key="project.open.time.6" value="62" />
           <entry key="project.open.time.7" value="44" />
           <entry key="project.open.time.8" value="16" />
           <entry key="project.open.time.9" value="8" />
-          <entry key="project.opened" value="287" />
+          <entry key="project.opened" value="288" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="7" />
           <entry key="md" value="5527" />
-          <entry key="py" value="44271" />
+          <entry key="py" value="45335" />
           <entry key="sh" value="692" />
           <entry key="txt" value="99" />
         </counts>
@@ -47,7 +48,7 @@
           <entry key="Bash" value="692" />
           <entry key="Markdown" value="5464" />
           <entry key="PLAIN_TEXT" value="169" />
-          <entry key="Python" value="44271" />
+          <entry key="Python" value="45335" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -73,10 +74,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="570">
-              <caret line="1634" column="104" selection-start-line="1634" selection-start-column="104" selection-end-line="1634" selection-end-column="104" />
+            <state relative-caret-position="478">
+              <caret line="1761" column="60" selection-start-line="1761" selection-start-column="60" selection-end-line="1761" selection-end-column="60" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
+                <marker date="1544738436113" expanded="true" signature="114147:114156" ph="..." />
+                <marker date="1544738436113" expanded="true" signature="115452:115482" ph="..." />
               </folding>
             </state>
           </provider>
@@ -94,11 +97,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="763">
-              <caret line="189" column="36" selection-start-line="189" selection-start-column="36" selection-end-line="189" selection-end-column="36" />
+            <state relative-caret-position="-1476">
+              <caret line="38" column="26" selection-start-line="38" selection-start-column="26" selection-end-line="38" selection-end-column="26" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
-                <marker date="1544549457355" expanded="true" signature="230:641" ph="..." />
+                <marker date="1544623802019" expanded="true" signature="230:641" ph="..." />
               </folding>
             </state>
           </provider>
@@ -151,9 +154,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>do_clip_grad_norm</find>
-      <find>num_count</find>
-      <find>softmax</find>
       <find>num_right_small</find>
       <find>num_right</find>
       <find>validate_iters</find>
@@ -181,6 +181,9 @@
       <find>WrapMemRNN</find>
       <find>AnswerModule</find>
       <find>dropout_c</find>
+      <find>run_pos_random</find>
+      <find>'src'</find>
+      <find>pos_list_ques_index</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -244,8 +247,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="525" />
-    <option name="y" value="80" />
+    <option name="x" value="529" />
+    <option name="y" value="79" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -308,7 +311,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="525" y="80" width="1380" height="999" extended-state="0" />
+    <frame x="529" y="79" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -485,11 +488,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -498,6 +496,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -575,6 +578,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1476">
+          <caret line="38" column="26" selection-start-line="38" selection-start-column="26" selection-end-line="38" selection-end-column="26" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+            <marker date="1544623802019" expanded="true" signature="230:641" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -582,23 +596,14 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="763">
-          <caret line="189" column="36" selection-start-line="189" selection-start-column="36" selection-end-line="189" selection-end-column="36" />
-          <folding>
-            <element signature="e#23#38#0" expanded="true" />
-            <marker date="1544549457355" expanded="true" signature="230:641" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="570">
-          <caret line="1634" column="104" selection-start-line="1634" selection-start-column="104" selection-end-line="1634" selection-end-column="104" />
+        <state relative-caret-position="478">
+          <caret line="1761" column="60" selection-start-line="1761" selection-start-column="60" selection-end-line="1761" selection-end-column="60" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
+            <marker date="1544738436113" expanded="true" signature="114147:114156" ph="..." />
+            <marker date="1544738436113" expanded="true" signature="115452:115482" ph="..." />
           </folding>
         </state>
       </provider>

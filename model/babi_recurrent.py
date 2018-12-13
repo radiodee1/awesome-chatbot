@@ -1611,6 +1611,8 @@ class NMT:
             if lang3 is not None:
                 l_ques = self.open_sentences(lang3)
 
+            self.pos_list_ques_index = []
+
             #pairs = []
             for i in range(len(l_in)):
                 #print(i)
@@ -1632,8 +1634,10 @@ class NMT:
                         lans = l_out[i].strip('\n')
                         line = [ lin, lques , lans]
                     if self.do_pos_input:
-                        if (i == 0 or l_in[i] == hparams['eol'] + ' ' + hparams['eol']) and i < len(l_in):
-                            self.pos_list_ques_index.append(i + 1)
+                        if i == 0:
+                            self.pos_list_ques_index.append(0)
+                        if (l_in[i] == str(hparams['eol'] + ' ' + hparams['eol'])) and i < len(l_in):
+                            self.pos_list_ques_index.append(i +1)
                     self.pairs.append(line)
 
         # Reverse pairs, make Lang instances
@@ -1706,10 +1710,13 @@ class NMT:
                 a = []
                 b = []
                 c = []
-                if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
-                if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
-                if lang3 is not None:
-                    if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
+
+                if not self.do_pos_input:
+                    if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                    if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                    if lang3 is not None:
+                        if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
+
                 for word in self.pairs[p][0].split(' '):
                     if word in self.vocab_lang.word2index and word not in self.blacklist:
                         a.append(word)
@@ -1730,7 +1737,7 @@ class NMT:
                         elif not omit_unk or self.do_skip_unk:
                             c.append(hparams['unk'])
                             skip = True
-                    if not self.do_recurrent_output:
+                    if not self.do_recurrent_output and not self.do_pos_input:
                         if c[-1] == hparams['eol']:
                             c = c[:-1]
                             #print(c)
@@ -1751,6 +1758,8 @@ class NMT:
         print(self.input_lang.name, self.input_lang.n_words)
         print(self.output_lang.name, self.output_lang.n_words)
         print('skip count', skip_count)
+        if self.do_pos_input:
+            print('index list', len(self.pos_list_ques_index))
 
         if self.do_load_embeddings:
             print('embedding option detected.')
@@ -2658,7 +2667,7 @@ class NMT:
 
                 self.score = float(num_right / num_tot) * 100
 
-            if self.do_load_babi and not self.do_recurrent_output and not self.do_pos_input:
+            if self.do_load_babi and not self.do_recurrent_output:# and not self.do_pos_input:
 
                 for i in range(len(target_variable)):
 
@@ -2795,6 +2804,13 @@ class NMT:
             choice = random.choice(self.pairs)
         else:
             choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
+
+        if self.do_pos_input:
+            part_of_speech = self.run_pos_random()
+            print(part_of_speech, 'pos')
+            print(' '.join(self.pos_list_out))
+            return
+
         print('src:', choice[0])
         question = None
         if self.do_load_babi:
@@ -2917,7 +2933,51 @@ class NMT:
 
         return decoded_words, None
 
+    def _call_model(self, input_variable=None, question_variable=None, sos_token=None):
+        self.model_0_wra.eval()
 
+        with torch.no_grad():
+            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, sos_token, None)
+            ans = torch.argmax(ans, dim=0).item()
+            ans = self.output_lang.index2word[ans]
+
+        print(ans, '= ans')
+        return ans
+
+    def run_pos_random(self, input_string=None, index=-1):
+
+        sentence = None
+        if index == -1:
+            index = random.choice(self.pos_list_ques_index)
+        if input_string is not None:
+            t_in = []
+            for i in input_string.split():
+                t_in.append(self.input_lang.word2index[i])
+                ''' do predict here -- add to output '''
+                ans = self._call_model(t_in)
+            sentence = ' '.join(t_in)
+            pass
+        else:
+            self.pos_list_out = []
+            while self.pairs[index][0] != str(hparams['eol'] +' ' + hparams['eol']):
+                t_in, q_in, ans_out = self.pairs[index]
+                print(t_in)
+                ''' do predict here -- add to output '''
+                input_var = []
+                for i in t_in.split():
+                    input_var.append(self.input_lang.word2index[i])
+                input_var = Variable(torch.LongTensor([input_var]))
+                ques_var = []
+                for i in q_in.split():
+                    ques_var.append(self.input_lang.word2index[i])
+                ques_var = Variable(torch.LongTensor([ques_var]))
+                ans = self._call_model(input_var, ques_var)
+                self.pos_list_out.append(ans)
+                index += 1
+            sentence = self.pairs[index - 1]
+            pass
+
+        return sentence
 
     def validate_iters(self):
         if self.do_skip_validation:
