@@ -1636,7 +1636,8 @@ class NMT:
                     if self.do_pos_input:
                         if i == 0:
                             self.pos_list_ques_index.append(0)
-                        if (l_in[i] == str(hparams['eol'] + ' ' + hparams['eol'])) and i < len(l_in):
+                            #print(l_in[0])
+                        if (l_in[i].strip() == str(hparams['eol'] + ' ' + hparams['eol'])) and i < len(l_in):
                             self.pos_list_ques_index.append(i +1)
                     self.pairs.append(line)
 
@@ -2941,7 +2942,7 @@ class NMT:
             ans = torch.argmax(ans, dim=0).item()
             ans = self.output_lang.index2word[ans]
 
-        print(ans, '= ans')
+        #print(ans, '= ans')
         return ans
 
     def run_pos_random(self, input_string=None, index=-1):
@@ -2961,7 +2962,7 @@ class NMT:
             self.pos_list_out = []
             while self.pairs[index][0] != str(hparams['eol'] +' ' + hparams['eol']):
                 t_in, q_in, ans_out = self.pairs[index]
-                print(t_in)
+                #print(t_in)
                 ''' do predict here -- add to output '''
                 input_var = []
                 for i in t_in.split():
