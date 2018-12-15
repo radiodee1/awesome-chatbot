@@ -81,7 +81,7 @@ directions = [
 
 v = []
 
-def make_vocab(train_file, order=False, read_glove=False, contractions=False):
+def make_vocab(train_file, order=False, read_glove=False, contractions=False, csv_cutoff=10000):
     global v
     wordlist = []
 
@@ -92,7 +92,24 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False):
         print('add whitelist.')
 
     for filename in train_file:
-        if os.path.isfile(filename):
+        if os.path.isfile(filename) and filename.endswith('.csv'):
+            print('csv file:', filename)
+            with open(filename, 'rb') as x:
+                text = x.readlines()
+
+                for xx in text: #[:csv_cutoff]:
+                    line = xx.strip().decode('utf-8', errors='ignore')
+
+                    y = line.split(',')[1:-1] # magic numbers -- which columns to use.
+                    y[0] = y[0].lower()
+                    #print(y)
+                    for word in y:
+                        if word not in wordlist or True:
+                            wordlist.append(word)
+                pass
+
+    for filename in train_file:
+        if os.path.isfile(filename) and not filename.endswith('.csv'):
             print('found:', filename)
             with open(filename, 'r') as x:
                 xx = x.read()

@@ -20,6 +20,7 @@ def save_to_file(pos_context, pos_ques, pos_ans, context_filename, ques_filename
 
     with open(ans_filename, 'w') as z:
         for line in pos_ans:
+            if lowercase: line = line.lower()
             z.write(line + '\n')
 
 
@@ -31,6 +32,7 @@ if __name__ == '__main__':
 
     parser.add_argument('--file', help='file name with path for POS input.')
     parser.add_argument('--lowercase', help='record all input data in lowercase.', action='store_true')
+    parser.add_argument('--split', help='float for split of valid/test files')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -38,6 +40,11 @@ if __name__ == '__main__':
     args_split_train = 0.9
     args_split_valid = 0.05
     args_split_test = 0.05
+
+    if args['split'] is not None:
+        args_split_test = float(args['split'])
+        args_split_valid = float(args['split'])
+        args_split_train = 1.0 - (args_split_valid + args_split_test)
 
     args_input_path = '../raw/' + 'ner_dataset.csv'
 
@@ -148,9 +155,15 @@ if __name__ == '__main__':
                     context_string += ' '
 
                 context_string += line[1]
+
+                context_string = context_string.replace('"', '')
+                context_string = context_string.replace("'", '')
+
                 pos_context.append(context_string)
                 pos_question.append(hparams['unk'])
                 pos_answer.append(line[2])
+
+                #print(line[2],'line 2')
             pass
         ''' save files '''
 

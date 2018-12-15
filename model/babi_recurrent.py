@@ -1702,6 +1702,9 @@ class NMT:
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
 
+            pos_index = 0
+            pos_list_index = []
+            pos_skip = False
             skip_count = 0
             new_pairs = []
             for p in range(len(self.pairs)):
@@ -1724,12 +1727,14 @@ class NMT:
                     elif not omit_unk or self.do_skip_unk:
                         a.append(hparams['unk'])
                         skip = True
+                        pos_skip = True
                 for word in self.pairs[p][1].split(' '):
                     if word in self.vocab_lang.word2index and word not in self.blacklist:
                         b.append(word)
                     elif not omit_unk or self.do_skip_unk:
                         b.append(hparams['unk'])
                         skip = True
+                        pos_skip = True
                 pairs = [' '.join(a), ' '.join(b)]
                 if lang3 is not None:
                     for word in self.pairs[p][2].split(' '):
@@ -1738,17 +1743,54 @@ class NMT:
                         elif not omit_unk or self.do_skip_unk:
                             c.append(hparams['unk'])
                             skip = True
+                            pos_skip = True
                     if not self.do_recurrent_output and not self.do_pos_input:
                         if c[-1] == hparams['eol']:
                             c = c[:-1]
                             #print(c)
 
                     pairs.append( ' '.join(c) )
+
+                if self.do_pos_input:
+                    if p is 0 and not pos_skip:
+                        pos_list_index.append(pos_index)
+                    if (self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol'])) and not pos_skip:
+                        pos_list_index.append(pos_index)
+                    if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
+                        pos_index = p
+
                 if skip is False or not self.do_skip_unk:
                     new_pairs.append(pairs)
                 else:
                     skip_count += 1
             self.pairs = new_pairs
+
+            if self.do_pos_input:
+                self.pos_list_ques_index = pos_list_index
+
+                ''' remove skips '''
+                new_pairs = []
+                pos_list_index = [ 0 ]
+                for idx in self.pos_list_ques_index:
+                    num = idx
+                    while num + 1 not in self.pos_list_ques_index and num + 1 is not idx:
+                        if num >= len(self.pairs):
+                            break
+                        if self.pairs[num][0] != str(hparams['eol'] + ' ' + hparams['eol']):
+                            new_pairs.append(self.pairs[num])
+                        #print(num)
+                        num += 1
+                    num += 1
+                    if num in self.pos_list_ques_index and num is not idx:
+                        pos_list_index.append(len(new_pairs))
+                    pass
+
+                self.pairs = new_pairs
+                self.pos_list_ques_index = pos_list_index
+
+                #print( pos_list_index[0], new_pairs[0])
+                #print(new_pairs[pos_list_index[1] - 1])
+                #exit()
 
         else:
             for pair in self.pairs:
@@ -2382,6 +2424,7 @@ class NMT:
             loss = 0.0
 
             #acc = 0.0
+
 
             outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
 
