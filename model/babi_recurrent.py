@@ -777,7 +777,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc = None
 
         if simple_input:
-            self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 2, dropout=dropout,
+            self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 2, dropout=gru_dropout,
                                    embedding=self.embed, bidirectional=True, position=position,
                                    batch_first=True)
         else:
@@ -885,10 +885,12 @@ class WrapMemRNN(nn.Module):
 
         hidden1 = None
         for ii in input_variable:
-
+            if not self.simple_input:
+                hidden1 = None
+                
             ii = prune_tensor(ii, 2)
             #print(ii, 'ii')
-            out1, hidden1 = self.model_1_enc(ii, None)
+            out1, hidden1 = self.model_1_enc(ii, hidden1)
             #print(out1.size(),'out1')
 
             prev_h1.append(out1)
