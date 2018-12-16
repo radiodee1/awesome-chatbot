@@ -3012,9 +3012,13 @@ class NMT:
         if input_string is not None:
             t_in = []
             for i in input_string.split():
+                q_in = self.input_lang.word2index[hparams['unk']]
                 t_in.append(self.input_lang.word2index[i])
+                t_in = Variable(torch.LondTensor([t_in]))
+                q_in = Variable(torch.LongTensor([q_in]))
                 ''' do predict here -- add to output '''
-                ans = self._call_model(t_in)
+                ans = self._call_model(t_in, q_in)
+                self.pos_list_out.append(ans)
             sentence = ' '.join(t_in)
             pass
         else:

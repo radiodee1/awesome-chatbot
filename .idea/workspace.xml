@@ -15,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="3028" column="117" selection-start-line="3028" selection-start-column="117" selection-end-line="3028" selection-end-column="117" />
+            <state relative-caret-position="224">
+              <caret line="3020" column="44" selection-start-line="3020" selection-start-column="44" selection-end-line="3020" selection-end-column="44" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1544990459496" expanded="true" signature="116994:117003" ph="..." />
+                <marker date="1544991371670" expanded="true" signature="116994:117003" ph="..." />
               </folding>
             </state>
           </provider>
@@ -263,7 +263,7 @@
     <frame x="540" y="71" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -281,6 +281,25 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/test.md" />
@@ -525,11 +544,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="3028" column="117" selection-start-line="3028" selection-start-column="117" selection-end-line="3028" selection-end-column="117" />
+        <state relative-caret-position="224">
+          <caret line="3020" column="44" selection-start-line="3020" selection-start-column="44" selection-end-line="3020" selection-end-column="44" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1544990459496" expanded="true" signature="116994:117003" ph="..." />
+            <marker date="1544991371670" expanded="true" signature="116994:117003" ph="..." />
           </folding>
         </state>
       </provider>
