@@ -2531,11 +2531,14 @@ class NMT:
                     ans = ans.permute(1,0,2)
                     #print(ans.size(),'ans2')
 
-                target_variable = torch.cat(target_variable, dim=0)
-                mask = self._mask_from_var(target_variable.squeeze(2))
+                    target_variable = torch.cat(target_variable, dim=0)
+                    target_variable = prune_tensor(target_variable, 3)
+                    mask = self._mask_from_var(target_variable.squeeze(2))
 
-                tot = mask.sum().item()
-                tot = tot #/ 10 # magic number for validation
+                    tot = mask.sum().item()
+                    tot = tot #/ 10 # magic number for validation
+
+                    #print('totals')
 
         if self.do_recurrent_output:
             if len(ans.size()) is not 2:
@@ -2735,7 +2738,7 @@ class NMT:
                 self.score = float(num_right/num_tot) * 100
 
             if self.do_pos_input and not self.do_recurrent_output:
-                print('implement P.O.S. tagging here.')
+                #print('implement P.O.S. tagging here.')
                 pass
 
             if l is not None:
@@ -3018,7 +3021,8 @@ class NMT:
             self.pos_list_out = []
             num = index
             index += 1
-            while num != index and index not in self.pos_list_ques_index: #self.pairs[index][0] != str(hparams['eol'] +' ' + hparams['eol']):
+            z = 0
+            while num != index and index not in self.pos_list_ques_index and z < 200: 
                 if index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index]
                 #print(t_in)
@@ -3038,6 +3042,7 @@ class NMT:
                 ans = self._call_model(input_var, ques_var)
                 self.pos_list_out.append(ans)
                 index += 1
+                z += 1
             sentence = self.pairs[index - 1]
             pass
 
@@ -3316,6 +3321,6 @@ if __name__ == '__main__':
             words, _ = n.evaluate(None,None,choice)
             print(words)
 
-    except KeyboardInterrupt:
+    except ValueError: #KeyboardInterrupt:
         n.update_result_file()
 
