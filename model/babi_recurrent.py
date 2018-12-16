@@ -1766,7 +1766,7 @@ class NMT:
                         if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
                             pos_index = p
 
-                    if skip is False or not self.do_skip_unk:
+                    if skip is False or not self.do_skip_unk or self.do_pos_input:
                         new_pairs.append(pairs)
                     else:
                         skip_count += 1
@@ -1789,7 +1789,7 @@ class NMT:
                             num += 1
                         num += 1
                         if num in self.pos_list_ques_index and num is not idx:
-                            pos_list_index.append(len(new_pairs))
+                            pos_list_index.append(len(new_pairs) )
                         pass
 
                     self.pairs = new_pairs
