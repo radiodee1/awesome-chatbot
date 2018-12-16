@@ -33,9 +33,20 @@ if __name__ == '__main__':
     parser.add_argument('--file', help='file name with path for POS input.')
     parser.add_argument('--lowercase', help='record all input data in lowercase.', action='store_true')
     parser.add_argument('--split', help='float for split of valid/test files')
+    parser.add_argument('--start', help='starting position')
+    parser.add_argument('--length', help='length of corpus segment, (10000 default)')
     args = parser.parse_args()
     args = vars(args)
     print(args)
+
+    args_start = 0
+    args_length = 10000
+
+    if args['start'] is not None:
+        args_start = int(args['start'])
+
+    if args['length'] is not None:
+        args_length = int(args['length'])
 
     args_split_train = 0.9
     args_split_valid = 0.05
@@ -130,7 +141,7 @@ if __name__ == '__main__':
         with open(args_input_path, 'rb') as z:
             text = z.readlines()
             line = ''
-            for xx in text:
+            for xx in text[args_start: args_length]:
                 if xx.endswith((b'\n', b'\r')):
                     line += xx.strip().decode('utf-8', errors='ignore')
                     pos_input.append(line.split(',')[:-1])
@@ -173,7 +184,7 @@ if __name__ == '__main__':
 
         print(idx_start_0_train)
         print(idx_start_1_test)
-        print(idx_start_2_valid)
+        #print(idx_start_2_valid)
         print(len(pos_answer) - idx_start_2_valid)
 
         save_to_file(

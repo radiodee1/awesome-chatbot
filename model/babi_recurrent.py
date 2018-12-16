@@ -1670,6 +1670,9 @@ class NMT:
         if self.do_load_once and len(self.pairs_train) is not 0 and len(self.pairs_valid) is not 0:
             return self.input_lang, self.output_lang, self.pairs
 
+        #if self.do_load_once and len(self.pairs) is not 0:
+        #    return self.input_lang, self.output_lang, self.pairs
+
         if hparams['vocab_name'] is not None:
             v_name = hparams['data_dir'] + hparams['vocab_name']
             v_name = v_name.replace('big', hparams['babi_name'])
@@ -1702,94 +1705,98 @@ class NMT:
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
 
-            pos_index = 0
-            pos_list_index = []
-            pos_skip = False
-            skip_count = 0
-            new_pairs = []
-            for p in range(len(self.pairs)):
-                #print(self.pairs[p])
-                skip = False
+            if True: #not (self.do_pos_input and len(self.pos_list_ques_index) == 0):
 
-                a = []
-                b = []
-                c = []
+                pos_index = 0
+                pos_list_index = []
+                pos_skip = False
+                skip_count = 0
+                new_pairs = []
+                for p in range(len(self.pairs)):
+                    #print(self.pairs[p])
+                    skip = False
 
-                if not self.do_pos_input:
-                    if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
-                    if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
-                    if lang3 is not None:
-                        if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                    a = []
+                    b = []
+                    c = []
 
-                for word in self.pairs[p][0].split(' '):
-                    if word in self.vocab_lang.word2index and word not in self.blacklist:
-                        a.append(word)
-                    elif not omit_unk or self.do_skip_unk:
-                        a.append(hparams['unk'])
-                        skip = True
-                        pos_skip = True
-                for word in self.pairs[p][1].split(' '):
-                    if word in self.vocab_lang.word2index and word not in self.blacklist:
-                        b.append(word)
-                    elif not omit_unk or self.do_skip_unk:
-                        b.append(hparams['unk'])
-                        skip = True
-                        pos_skip = True
-                pairs = [' '.join(a), ' '.join(b)]
-                if lang3 is not None:
-                    for word in self.pairs[p][2].split(' '):
+                    if not self.do_pos_input:
+                        if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                        if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
+                        if lang3 is not None:
+                            if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
+
+                    for word in self.pairs[p][0].split(' '):
                         if word in self.vocab_lang.word2index and word not in self.blacklist:
-                            c.append(word)
+                            a.append(word)
                         elif not omit_unk or self.do_skip_unk:
-                            c.append(hparams['unk'])
+                            a.append(hparams['unk'])
                             skip = True
                             pos_skip = True
-                    if not self.do_recurrent_output and not self.do_pos_input:
-                        if c[-1] == hparams['eol']:
-                            c = c[:-1]
-                            #print(c)
+                    for word in self.pairs[p][1].split(' '):
+                        if word in self.vocab_lang.word2index and word not in self.blacklist:
+                            b.append(word)
+                        elif not omit_unk or self.do_skip_unk:
+                            b.append(hparams['unk'])
+                            skip = True
+                            pos_skip = True
+                    pairs = [' '.join(a), ' '.join(b)]
+                    if lang3 is not None:
+                        for word in self.pairs[p][2].split(' '):
+                            if word in self.vocab_lang.word2index and word not in self.blacklist:
+                                c.append(word)
+                            elif not omit_unk or self.do_skip_unk:
+                                c.append(hparams['unk'])
+                                skip = True
+                                pos_skip = True
+                        if not self.do_recurrent_output and not self.do_pos_input:
+                            if c[-1] == hparams['eol']:
+                                c = c[:-1]
+                                #print(c)
 
-                    pairs.append( ' '.join(c) )
+                        pairs.append( ' '.join(c) )
+
+                    if self.do_pos_input:
+                        if p is 0 and not pos_skip:
+                            pos_list_index.append(pos_index)
+                            pos_skip = False
+                        if (self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol'])) and not pos_skip:
+                            pos_list_index.append(pos_index)
+                            pos_skip = False
+                        if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
+                            pos_index = p
+
+                    if skip is False or not self.do_skip_unk:
+                        new_pairs.append(pairs)
+                    else:
+                        skip_count += 1
+                self.pairs = new_pairs
 
                 if self.do_pos_input:
-                    if p is 0 and not pos_skip:
-                        pos_list_index.append(pos_index)
-                    if (self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol'])) and not pos_skip:
-                        pos_list_index.append(pos_index)
-                    if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
-                        pos_index = p
+                    self.pos_list_ques_index = pos_list_index
 
-                if skip is False or not self.do_skip_unk:
-                    new_pairs.append(pairs)
-                else:
-                    skip_count += 1
-            self.pairs = new_pairs
-
-            if self.do_pos_input:
-                self.pos_list_ques_index = pos_list_index
-
-                ''' remove skips '''
-                new_pairs = []
-                pos_list_index = [ 0 ]
-                for idx in self.pos_list_ques_index:
-                    num = idx
-                    while num + 1 not in self.pos_list_ques_index and num + 1 is not idx:
-                        if num >= len(self.pairs):
-                            break
-                        if self.pairs[num][0] != str(hparams['eol'] + ' ' + hparams['eol']):
-                            new_pairs.append(self.pairs[num])
-                        #print(num)
+                    ''' remove skips '''
+                    new_pairs = []
+                    pos_list_index = [ 0 ]
+                    for idx in self.pos_list_ques_index:
+                        num = idx
+                        while num + 1 not in self.pos_list_ques_index and num + 1 is not idx:
+                            if num >= len(self.pairs):
+                                break
+                            if True: #self.pairs[num][0] != str(hparams['eol'] + ' ' + hparams['eol']):
+                                new_pairs.append(self.pairs[num])
+                            #print(num)
+                            num += 1
                         num += 1
-                    num += 1
-                    if num in self.pos_list_ques_index and num is not idx:
-                        pos_list_index.append(len(new_pairs))
-                    pass
+                        if num in self.pos_list_ques_index and num is not idx:
+                            pos_list_index.append(len(new_pairs))
+                        pass
 
-                self.pairs = new_pairs
-                self.pos_list_ques_index = pos_list_index
+                    self.pairs = new_pairs
+                    self.pos_list_ques_index = pos_list_index
 
-                #print( pos_list_index[0], new_pairs[0])
-                #print(new_pairs[pos_list_index[1] - 1])
+                #print( pos_list_index[22], new_pairs[22: 100])
+                #print(new_pairs[pos_list_index[22] - 1])
                 #exit()
 
         else:
@@ -2851,7 +2858,7 @@ class NMT:
 
         if self.do_pos_input:
             part_of_speech = self.run_pos_random()
-            print(part_of_speech, 'pos')
+            print('src:', part_of_speech[0])
             print(' '.join(self.pos_list_out))
             return
 
@@ -2977,10 +2984,11 @@ class NMT:
 
         return decoded_words, None
 
-    def _call_model(self, input_variable=None, question_variable=None, sos_token=None):
+    def _call_model(self, input_variable=None, question_variable=None, sos_token=SOS_token):
         self.model_0_wra.eval()
 
         with torch.no_grad():
+            #print(input_variable, question_variable)
             outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, sos_token, None)
             ans = torch.argmax(ans, dim=0).item()
             ans = self.output_lang.index2word[ans]
@@ -3003,7 +3011,9 @@ class NMT:
             pass
         else:
             self.pos_list_out = []
-            while self.pairs[index][0] != str(hparams['eol'] +' ' + hparams['eol']):
+            num = index
+            index += 1
+            while num != index and index not in self.pos_list_ques_index: #self.pairs[index][0] != str(hparams['eol'] +' ' + hparams['eol']):
                 t_in, q_in, ans_out = self.pairs[index]
                 #print(t_in)
                 ''' do predict here -- add to output '''
@@ -3059,7 +3069,7 @@ class NMT:
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-        sol_token = self.output_lang.word2index[hparams['sol']]
+        sol_token = SOS_token #self.output_lang.word2index[hparams['sol']]
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers,
                                       dropout=dropout,do_babi=self.do_load_babi,
@@ -3098,7 +3108,7 @@ class NMT:
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-        sol_token = self.output_lang.word2index[hparams['sol']]
+        sol_token = SOS_token #self.output_lang.word2index[hparams['sol']]
 
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi,
@@ -3223,17 +3233,18 @@ if __name__ == '__main__':
             print('load test set -- no training.')
             print(n.train_fr)
 
-        n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
+        if True:
+            n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
                                                              omit_unk=n.do_hide_unk)
 
 
-        if n.do_load_babi:
+        if n.do_load_babi and False:
             hparams['num_vocab_total'] = n.output_lang.n_words
 
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-        sol_token = n.output_lang.word2index[hparams['sol']]
+        sol_token = SOS_token #n.output_lang.word2index[hparams['sol']]
 
         token_list = []
         if False:
