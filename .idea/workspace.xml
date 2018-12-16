@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,11 +16,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="605">
-              <caret line="3323" column="11" lean-forward="true" selection-start-line="3323" selection-start-column="11" selection-end-line="3323" selection-end-column="11" />
+            <state relative-caret-position="728">
+              <caret line="3047" column="24" selection-start-line="3047" selection-start-column="24" selection-end-line="3047" selection-end-column="24" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1544974370962" expanded="true" signature="117002:117011" ph="..." />
+                <marker date="1544979542466" expanded="true" signature="116968:116977" ph="..." />
               </folding>
             </state>
           </provider>
@@ -37,7 +38,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
+            <state relative-caret-position="3276">
               <caret line="186" column="9" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
@@ -94,8 +95,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>torch.c</find>
-      <find>recurrent_output</find>
       <find>model_5_ans</find>
       <find>WrapOutputRNN</find>
       <find>ques</find>
@@ -122,6 +121,8 @@
       <find>pos_list_out</find>
       <find>str(hparams['eol']</find>
       <find>_mask_from_var</find>
+      <find>index</find>
+      <find>prepare</find>
       <find>_show_sample</find>
       <find>run_pos_random</find>
     </findStrings>
@@ -487,10 +488,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="728">
+          <caret line="3047" column="24" selection-start-line="3047" selection-start-column="24" selection-end-line="3047" selection-end-column="24" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+            <marker date="1544979542466" expanded="true" signature="116968:116977" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_pos_download.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
           <caret line="4" column="1" selection-start-line="4" selection-start-column="1" selection-end-line="4" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3276">
+          <caret line="186" column="9" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+            <marker date="1544969333629" expanded="true" signature="230:687" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -519,28 +542,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="15" column="22" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
-          <caret line="186" column="9" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
-          <folding>
-            <element signature="e#23#38#0" expanded="true" />
-            <marker date="1544969333629" expanded="true" signature="230:687" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="605">
-          <caret line="3323" column="11" lean-forward="true" selection-start-line="3323" selection-start-column="11" selection-end-line="3323" selection-end-column="11" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-            <marker date="1544974370962" expanded="true" signature="117002:117011" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>

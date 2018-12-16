@@ -1783,7 +1783,7 @@ class NMT:
                         while num + 1 not in self.pos_list_ques_index and num + 1 is not idx:
                             if num >= len(self.pairs):
                                 break
-                            if True: #self.pairs[num][0] != str(hparams['eol'] + ' ' + hparams['eol']):
+                            if num not in self.pos_list_ques_index: #
                                 new_pairs.append(self.pairs[num])
                             #print(num)
                             num += 1
@@ -3045,6 +3045,7 @@ class NMT:
                 z += 1
             sentence = self.pairs[index - 1]
             pass
+        print('pairs index:',index - 1)
 
         return sentence
 
