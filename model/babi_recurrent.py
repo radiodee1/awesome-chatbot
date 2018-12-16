@@ -3024,9 +3024,9 @@ class NMT:
             z = 0
             while num != index and index not in self.pos_list_ques_index and z < 200:
                 if index >= len(self.pairs): index -= 1
-                t_in, q_in, ans_out = self.pairs[index]
+                t_in, q_in, ans_out = self.pairs[index - 1]
                 #print(t_in)
-                if len(t_in) < 1 or len(q_in) < 1:
+                if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index] == str(hparams['eol'] + ' ' + hparams['eol']):
                     print('no model output.')
                     return self.pairs[index]
 
