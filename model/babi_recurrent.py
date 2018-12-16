@@ -341,7 +341,6 @@ class SimpleInputEncoder(nn.Module):
             s = source
 
             embedded = self.embed(s)
-
             embedded = self.dropout(embedded)
             embedded = embedded.permute(1,0,2) ## batch first
 
@@ -890,6 +889,8 @@ class WrapMemRNN(nn.Module):
 
             ii = prune_tensor(ii, 2)
             #print(ii, 'ii')
+            print(ii.size(),'size')
+
             out1, hidden1 = self.model_1_enc(ii, hidden1)
             #print(out1.size(),'out1')
 
@@ -1353,6 +1354,8 @@ class NMT:
             hparams['multiplier'] = float(self.args['multiplier'])
         if self.args['pos_input'] is True:
             self.do_pos_input = True
+            MAX_LENGTH = 200
+            hparams['tokens_per_sentence'] = 200
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1834,7 +1837,7 @@ class NMT:
                 sent.append(word)
             elif not self.do_hide_unk:
                 sent.append(lang.word2index[hparams['unk']])
-        if len(sent) >= MAX_LENGTH and not self.do_load_babi:
+        if len(sent) >= MAX_LENGTH and not self.do_load_babi and not self.do_pos_input:
             sent = sent[:MAX_LENGTH]
             sent[-1] = EOS_token
         if self.do_load_babi and False:
@@ -1845,7 +1848,7 @@ class NMT:
             #print(sent,'<===')
             pass
         if len(sent) == 0: sent.append(0)
-        if self.do_load_recurrent:
+        if self.do_load_recurrent and not self.do_pos_input:
             sent = sent[:MAX_LENGTH]
         return sent
 
@@ -1932,6 +1935,8 @@ class NMT:
             pass
         else:
             #pad = 1
+            if self.do_pos_input:
+                pad = 0
             add_eol = True
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, add_eol=add_eol)
         question_variable = self.variableFromSentence(self.output_lang, pair[1], add_eol=True, pad=pad)
