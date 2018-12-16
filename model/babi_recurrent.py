@@ -3027,6 +3027,7 @@ class NMT:
                 t_in, q_in, ans_out = self.pairs[index]
                 #print(t_in)
                 if len(t_in) < 1 or len(q_in) < 1:
+                    print('no model output.')
                     return self.pairs[index]
 
                 ''' do predict here -- add to output '''

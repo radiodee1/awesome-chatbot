@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="728">
-              <caret line="3047" column="24" selection-start-line="3047" selection-start-column="24" selection-end-line="3047" selection-end-column="24" />
+            <state relative-caret-position="404">
+              <caret line="3029" column="43" selection-start-line="3029" selection-start-column="43" selection-end-line="3029" selection-end-column="43" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1544979542466" expanded="true" signature="116968:116977" ph="..." />
+                <marker date="1544980285210" expanded="true" signature="116968:116977" ph="..." />
               </folding>
             </state>
           </provider>
@@ -490,11 +489,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="728">
-          <caret line="3047" column="24" selection-start-line="3047" selection-start-column="24" selection-end-line="3047" selection-end-column="24" />
+        <state relative-caret-position="404">
+          <caret line="3029" column="43" selection-start-line="3029" selection-start-column="43" selection-end-line="3029" selection-end-column="43" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1544979542466" expanded="true" signature="116968:116977" ph="..." />
+            <marker date="1544980285210" expanded="true" signature="116968:116977" ph="..." />
           </folding>
         </state>
       </provider>
