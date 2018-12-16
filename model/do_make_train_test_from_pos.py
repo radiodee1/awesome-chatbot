@@ -157,7 +157,7 @@ if __name__ == '__main__':
                 if len(context_string) > 1:
                     pos_context.append(args_end_string)
                     pos_question.append(args_end_string)
-                    pos_answer.append(args_end_string)
+                    pos_answer.append(hparams['eol']) #args_end_string)
 
                 context_string = '' # line[1]
 

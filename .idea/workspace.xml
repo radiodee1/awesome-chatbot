@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,11 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="3029" column="43" selection-start-line="3029" selection-start-column="43" selection-end-line="3029" selection-end-column="43" />
+            <state relative-caret-position="-1576">
+              <caret line="1666" column="19" selection-start-line="1666" selection-start-column="8" selection-end-line="1666" selection-end-column="19" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
                 <marker date="1544980285210" expanded="true" signature="116968:116977" ph="..." />
@@ -34,14 +34,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3276">
-              <caret line="186" column="9" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
+            <state relative-caret-position="216">
+              <caret line="159" column="50" selection-start-line="159" selection-start-column="50" selection-end-line="159" selection-end-column="50" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
-                <marker date="1544969333629" expanded="true" signature="230:687" ph="..." />
+                <marker date="1544982126980" expanded="true" signature="230:687" ph="..." />
               </folding>
             </state>
           </provider>
@@ -114,7 +114,6 @@
       <find>num_vocab_total</find>
       <find>do_load_once</find>
       <find>validate_iters</find>
-      <find>prepareData</find>
       <find>pos_skip</find>
       <find>model_0_wra</find>
       <find>pos_list_out</find>
@@ -124,6 +123,7 @@
       <find>prepare</find>
       <find>_show_sample</find>
       <find>run_pos_random</find>
+      <find>prepareData</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -181,8 +181,8 @@
         <option value="$PROJECT_DIR$/do_make_pos_download.sh" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
-        <option value="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" />
       </list>
     </option>
   </component>
@@ -489,8 +489,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="3029" column="43" selection-start-line="3029" selection-start-column="43" selection-end-line="3029" selection-end-column="43" />
+        <state relative-caret-position="-1576">
+          <caret line="1666" column="19" selection-start-line="1666" selection-start-column="8" selection-end-line="1666" selection-end-column="19" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
             <marker date="1544980285210" expanded="true" signature="116968:116977" ph="..." />
@@ -502,17 +502,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
           <caret line="4" column="1" selection-start-line="4" selection-start-column="1" selection-end-line="4" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3276">
-          <caret line="186" column="9" selection-start-line="186" selection-start-column="9" selection-end-line="186" selection-end-column="9" />
-          <folding>
-            <element signature="e#23#38#0" expanded="true" />
-            <marker date="1544969333629" expanded="true" signature="230:687" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -541,6 +530,17 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="15" column="22" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="159" column="50" selection-start-line="159" selection-start-column="50" selection-end-line="159" selection-end-column="50" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+            <marker date="1544982126980" expanded="true" signature="230:687" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
