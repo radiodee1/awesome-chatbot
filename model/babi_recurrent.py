@@ -2985,6 +2985,11 @@ class NMT:
         return decoded_words, None
 
     def _call_model(self, input_variable=None, question_variable=None, sos_token=SOS_token):
+        if input_variable is None: # or input_variable.item() == '':
+            return hparams['unk']
+        if question_variable is None: # or question_variable.item() == '':
+            return hparams['unk']
+
         self.model_0_wra.eval()
 
         with torch.no_grad():
@@ -3014,8 +3019,12 @@ class NMT:
             num = index
             index += 1
             while num != index and index not in self.pos_list_ques_index: #self.pairs[index][0] != str(hparams['eol'] +' ' + hparams['eol']):
+                if index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index]
                 #print(t_in)
+                if len(t_in) < 1 or len(q_in) < 1:
+                    return self.pairs[index]
+
                 ''' do predict here -- add to output '''
                 input_var = []
                 for i in t_in.split():
@@ -3025,6 +3034,7 @@ class NMT:
                 for i in q_in.split():
                     ques_var.append(self.input_lang.word2index[i])
                 ques_var = Variable(torch.LongTensor([ques_var]))
+
                 ans = self._call_model(input_var, ques_var)
                 self.pos_list_out.append(ans)
                 index += 1
