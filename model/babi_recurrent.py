@@ -2862,6 +2862,7 @@ class NMT:
         if self.do_pos_input:
             part_of_speech = self.run_pos_random()
             print('src:', part_of_speech[0])
+            print('last tgt:', part_of_speech[2])
             print(' '.join(self.pos_list_out))
             return
 
@@ -3024,11 +3025,12 @@ class NMT:
         else:
             self.pos_list_out = []
             num = index
-            index += 1
+
             z = 0
-            while num != index and index not in self.pos_list_ques_index and z < 200:
-                if index >= len(self.pairs): index -= 1
-                t_in, q_in, ans_out = self.pairs[index - 1]
+            words = []
+            while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
+                if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
+                t_in, q_in, ans_out = self.pairs[index + 1]
                 #print(t_in)
                 if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index] == str(hparams['eol'] + ' ' + hparams['eol']):
                     print('no model output.')
@@ -3038,6 +3040,12 @@ class NMT:
                 input_var = []
                 for i in t_in.split():
                     input_var.append(self.input_lang.word2index[i])
+                    #print(input_var)
+
+                words.append(t_in.split()[-1])
+                #print(input_var,'-nums-')
+                #print(t_in,'-t-in-')
+
                 input_var = Variable(torch.LongTensor([input_var]))
                 ques_var = []
                 for i in q_in.split():
@@ -3048,9 +3056,11 @@ class NMT:
                 self.pos_list_out.append(ans)
                 index += 1
                 z += 1
-            sentence = self.pairs[index - 1]
+            sentence = self.pairs[index ]
             pass
-        print('pairs index:',index - 1)
+        #print(self.pos_list_out,'pos out')
+        print('pairs index:',index )
+        #print(' '.join(words),'-words-')
 
         return sentence
 
