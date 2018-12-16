@@ -3022,7 +3022,7 @@ class NMT:
             num = index
             index += 1
             z = 0
-            while num != index and index not in self.pos_list_ques_index and z < 200: 
+            while num != index and index not in self.pos_list_ques_index and z < 200:
                 if index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index]
                 #print(t_in)
@@ -3321,6 +3321,6 @@ if __name__ == '__main__':
             words, _ = n.evaluate(None,None,choice)
             print(words)
 
-    except ValueError: #KeyboardInterrupt:
+    except KeyboardInterrupt:
         n.update_result_file()
 
