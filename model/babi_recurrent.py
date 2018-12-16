@@ -1783,7 +1783,7 @@ class NMT:
                         while num + 1 not in self.pos_list_ques_index and num + 1 is not idx:
                             if num >= len(self.pairs):
                                 break
-                            if num not in self.pos_list_ques_index: #
+                            if True: #num not in self.pos_list_ques_index or True: #
                                 new_pairs.append(self.pairs[num])
                             #print(num)
                             num += 1
@@ -1795,8 +1795,8 @@ class NMT:
                     self.pairs = new_pairs
                     self.pos_list_ques_index = pos_list_index
 
-                #print( pos_list_index[22], new_pairs[22: 100])
-                #print(new_pairs[pos_list_index[22] - 1])
+                #print( pos_list_index[0], new_pairs[0])
+                #print(new_pairs[pos_list_index[0] ])
                 #exit()
 
         else:

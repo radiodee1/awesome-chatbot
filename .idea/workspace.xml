@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,14 +12,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1576">
-              <caret line="1666" column="19" selection-start-line="1666" selection-start-column="8" selection-end-line="1666" selection-end-column="19" />
+            <state relative-caret-position="404">
+              <caret line="1785" column="38" selection-start-line="1785" selection-start-column="38" selection-end-line="1785" selection-end-column="38" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1544980285210" expanded="true" signature="116968:116977" ph="..." />
+                <marker date="1544985470663" expanded="true" signature="116972:116981" ph="..." />
               </folding>
             </state>
           </provider>
@@ -34,7 +34,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="216">
@@ -181,8 +181,8 @@
         <option value="$PROJECT_DIR$/do_make_pos_download.sh" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
-        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
       </list>
     </option>
   </component>
@@ -487,17 +487,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1576">
-          <caret line="1666" column="19" selection-start-line="1666" selection-start-column="8" selection-end-line="1666" selection-end-column="19" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-            <marker date="1544980285210" expanded="true" signature="116968:116977" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_pos_download.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -540,6 +529,17 @@
           <folding>
             <element signature="e#23#38#0" expanded="true" />
             <marker date="1544982126980" expanded="true" signature="230:687" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="404">
+          <caret line="1785" column="38" selection-start-line="1785" selection-start-column="38" selection-end-line="1785" selection-end-column="38" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+            <marker date="1544985470663" expanded="true" signature="116972:116981" ph="..." />
           </folding>
         </state>
       </provider>
