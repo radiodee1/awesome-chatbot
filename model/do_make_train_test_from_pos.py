@@ -141,7 +141,7 @@ if __name__ == '__main__':
         with open(args_input_path, 'rb') as z:
             text = z.readlines()
             line = ''
-            for xx in text[args_start: args_length]:
+            for xx in text[args_start: args_start + args_length]:
                 if xx.endswith((b'\n', b'\r')):
                     line += xx.strip().decode('utf-8', errors='ignore')
                     pos_input.append(line.split(',')[:-1])
@@ -184,8 +184,9 @@ if __name__ == '__main__':
 
         print(idx_start_0_train)
         print(idx_start_1_test)
-        #print(idx_start_2_valid)
+        
         print(len(pos_answer) - idx_start_2_valid)
+        print(len(pos_answer), 'len')
 
         save_to_file(
             pos_context[:idx_start_0_train],

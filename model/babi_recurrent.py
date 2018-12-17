@@ -149,7 +149,8 @@ def encoding_positional(embedded_sentence, sum=False):
     elen2 = elen
 
     if slen == 1 or elen == 1:
-        exit()
+        #exit()
+        pass
 
     if slen == 1: slen2 += 0.01
     if elen == 1: elen2 += 0.01
@@ -402,6 +403,7 @@ class Encoder(nn.Module):
 
         for i in lst:
             #print(i)
+            #if len(i) == 1: i = i[0]
             embedded = self.embed(i)
             #print(embedded.size(),'list')
             l.append(embedded.permute(1,0,2))
@@ -1755,7 +1757,7 @@ class NMT:
                                 skip = True
                                 pos_skip = True
                         if not self.do_recurrent_output and not self.do_pos_input:
-                            if c[-1] == hparams['eol']:
+                            if len(c) > 0 and c[-1] == hparams['eol']:
                                 c = c[:-1]
                                 #print(c)
 
@@ -1932,6 +1934,8 @@ class NMT:
             #for i in sen: print(i.size())
             #print('---')
             input_variable = sen
+            if self.do_pos_input and not self.do_simple_input:
+                input_variable = [sen]
             pass
         else:
             #pad = 1
@@ -1939,6 +1943,9 @@ class NMT:
                 pad = 0
             add_eol = True
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, add_eol=add_eol)
+            if self.do_pos_input and not self.do_simple_input:
+                input_variable = [input_variable]
+                pass
         question_variable = self.variableFromSentence(self.output_lang, pair[1], add_eol=True, pad=pad)
 
         if len(pair) > 2 or self.do_recurrent_output:
@@ -2436,6 +2443,7 @@ class NMT:
                 pass
 
             loss = 0.0
+
 
             #acc = 0.0
 
