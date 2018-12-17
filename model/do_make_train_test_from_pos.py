@@ -169,6 +169,7 @@ if __name__ == '__main__':
 
                 context_string = context_string.replace('"', '')
                 context_string = context_string.replace("'", '')
+                
 
                 pos_context.append(context_string)
                 pos_question.append(hparams['unk'])
@@ -184,7 +185,7 @@ if __name__ == '__main__':
 
         print(idx_start_0_train)
         print(idx_start_1_test)
-        
+
         print(len(pos_answer) - idx_start_2_valid)
         print(len(pos_answer), 'len')
 

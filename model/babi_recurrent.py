@@ -3058,7 +3058,7 @@ class NMT:
                     input_var.append(self.input_lang.word2index[i])
                     #print(input_var)
 
-                words.append(t_in.split()[-1])
+                words.append(ans_out) #  t_in.split()[-1])
                 #print(input_var,'-nums-')
                 #print(t_in,'-t-in-')
 
@@ -3076,7 +3076,7 @@ class NMT:
             pass
         #print(self.pos_list_out,'pos out')
         print('pairs index:',index )
-        #print(' '.join(words),'-words-')
+        print('ans:',' '.join(words))
 
         return sentence
 
