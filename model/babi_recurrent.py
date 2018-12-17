@@ -889,7 +889,7 @@ class WrapMemRNN(nn.Module):
 
             ii = prune_tensor(ii, 2)
             #print(ii, 'ii')
-            print(ii.size(),'size')
+            #print(ii.size(),'size')
 
             out1, hidden1 = self.model_1_enc(ii, hidden1)
             #print(out1.size(),'out1')
@@ -1769,7 +1769,7 @@ class NMT:
                             pos_list_index.append(pos_index)
                             pos_skip = False
                         if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
-                            pos_index = p
+                            pos_index = p + 1
 
                     if skip is False or not self.do_skip_unk or self.do_pos_input:
                         new_pairs.append(pairs)
@@ -1800,8 +1800,8 @@ class NMT:
                     self.pairs = new_pairs
                     self.pos_list_ques_index = pos_list_index
 
-                #print( pos_list_index[0], new_pairs[0])
-                #print(new_pairs[pos_list_index[0] ])
+                #print( pos_list_index[10], new_pairs[10: 20])
+                #print(new_pairs[pos_list_index[10] ])
                 #exit()
 
         else:
@@ -3036,10 +3036,11 @@ class NMT:
             z = 0
             words = []
             while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
+
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index + 1]
                 #print(t_in)
-                if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index] == str(hparams['eol'] + ' ' + hparams['eol']):
+                if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index + 1] == str(hparams['eol'] + ' ' + hparams['eol']):
                     print('no model output.')
                     return self.pairs[index]
 
