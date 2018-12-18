@@ -15,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-334">
-              <caret line="3042" column="22" selection-start-line="3042" selection-start-column="8" selection-end-line="3042" selection-end-column="22" />
+            <state relative-caret-position="-442">
+              <caret line="294" column="32" selection-start-line="294" selection-start-column="14" selection-end-line="294" selection-end-column="32" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545164395947" expanded="true" signature="118738:118747" ph="..." />
+                <marker date="1545166266607" expanded="true" signature="118739:118748" ph="..." />
               </folding>
             </state>
           </provider>
@@ -96,7 +96,6 @@
       <find>tokens</find>
       <find>MAX_LENGTH</find>
       <find>gru</find>
-      <find>SimpleInputEncoder</find>
       <find>rain(</find>
       <find>split_sentences</find>
       <find>position</find>
@@ -115,6 +114,7 @@
       <find>prepareData</find>
       <find>_show_sample</find>
       <find>run_pos_random</find>
+      <find>SimpleInputEncoder</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -531,11 +531,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-334">
-          <caret line="3042" column="22" selection-start-line="3042" selection-start-column="8" selection-end-line="3042" selection-end-column="22" />
+        <state relative-caret-position="-442">
+          <caret line="294" column="32" selection-start-line="294" selection-start-column="14" selection-end-line="294" selection-end-column="32" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545164395947" expanded="true" signature="118738:118747" ph="..." />
+            <marker date="1545166266607" expanded="true" signature="118739:118748" ph="..." />
           </folding>
         </state>
       </provider>
