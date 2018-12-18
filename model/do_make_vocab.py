@@ -343,7 +343,7 @@ if __name__ == '__main__':
     v = []
 
     if True:
-        v = make_vocab(train_file, order=order, read_glove=read_glove, contractions=use_contractions)
+        v = make_vocab(train_file, order=order, read_glove=read_glove, contractions=use_contractions, no_limit=no_limit)
         save_vocab(v, args['babi'], both=store_two_files)
     if len(v) == 0:
         filename = hparams['data_dir'] + hparams['vocab_name']

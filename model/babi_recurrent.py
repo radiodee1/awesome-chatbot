@@ -886,7 +886,7 @@ class WrapMemRNN(nn.Module):
 
         hidden1 = None
         for ii in input_variable:
-            if not self.simple_input:
+            if not self.simple_input or True:
                 hidden1 = None
 
             ii = prune_tensor(ii, 2)
@@ -1266,6 +1266,7 @@ class NMT:
         parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
         parser.add_argument('--json-record-offset', help='starting record number for json file')
         parser.add_argument('--window', help='input window size in words (pos input only).')
+        parser.add_argument('--no-vocab-limit', help='no vocabulary size limit.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1362,6 +1363,7 @@ class NMT:
             hparams['tokens_per_sentence'] = 200
         if self.args['window'] is not None:
             self.window_size = int(self.args['window'])
+        if self.args['no_vocab_limit']: hparams['num_vocab_total'] = None
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -3295,7 +3297,7 @@ if __name__ == '__main__':
                                                              omit_unk=n.do_hide_unk)
 
 
-        if n.do_load_babi and False:
+        if n.do_load_babi :#and False:
             hparams['num_vocab_total'] = n.output_lang.n_words
 
         layers = hparams['layers']
