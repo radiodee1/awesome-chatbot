@@ -1181,6 +1181,7 @@ class NMT:
         self.blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
         self.pos_list_out = []
         self.pos_list_ques_index = []
+        self.window_size = 3
 
         self.do_train = False
         self.do_infer = False
@@ -1941,7 +1942,10 @@ class NMT:
             #pad = 1
             if self.do_pos_input:
                 pad = 0
+                pair_in = pair[0].split()
+                pair[0] = ' '.join(pair_in[- self.window_size:])
             add_eol = True
+
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, add_eol=add_eol)
             if self.do_pos_input and not self.do_simple_input:
                 input_variable = [input_variable]
@@ -3353,6 +3357,6 @@ if __name__ == '__main__':
             words, _ = n.evaluate(None,None,choice)
             print(words)
 
-    except KeyboardInterrupt:
+    except  KeyboardInterrupt:
         n.update_result_file()
 

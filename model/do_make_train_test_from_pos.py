@@ -169,7 +169,7 @@ if __name__ == '__main__':
 
                 context_string = context_string.replace('"', '')
                 context_string = context_string.replace("'", '')
-                
+
 
                 pos_context.append(context_string)
                 pos_question.append(hparams['unk'])
