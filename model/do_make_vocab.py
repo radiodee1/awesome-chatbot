@@ -81,9 +81,12 @@ directions = [
 
 v = []
 
-def make_vocab(train_file, order=False, read_glove=False, contractions=False, csv_cutoff=10000):
+def make_vocab(train_file, order=False, read_glove=False, contractions=False, no_limit=False):
     global v
     wordlist = []
+
+    vocab_length = hparams['num_vocab_total']
+
 
     if contractions:
         whitelist.extend(directions)
@@ -137,7 +140,10 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, cs
     c = Counter(wordlist)
     l = len(wordlist)
     print(l,'length of raw vocab data')
-    if l > vocab_length: l = vocab_length
+    if l > vocab_length and not no_limit: l = vocab_length
+    if no_limit:
+        vocab_length = l
+        hparams['num_vocab_total'] = vocab_length
     cc = c.most_common()
 
     #cc = wordlist
@@ -168,6 +174,9 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, cs
 
 def save_vocab(v, babi=False, save_big=True, both=False):
     ''' remember to leave 3 spots blank '''
+
+    #hparams['num_vocab_total'] = vocab_length
+
     sol = hparams['sol']
     eol = hparams['eol']
     unk = hparams['unk']
@@ -259,6 +268,7 @@ if __name__ == '__main__':
     parser.add_argument('--order', help='put in alpha order.', action='store_true')
     parser.add_argument('--contractions', help='add some contractions to the vocab that are not present in glove.',
                         action='store_true')
+    parser.add_argument('--no-limit', help='do not constrain vocab size', action='store_true')
     parser.add_argument('--both-files',help='save "babi" and "big" named vocab files.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
@@ -270,6 +280,7 @@ if __name__ == '__main__':
     use_w2v = False
     use_contractions = False
     store_two_files = False
+    no_limit = False
 
     if args['babi']:
         pass
@@ -311,6 +322,8 @@ if __name__ == '__main__':
     if args['contractions'] is True: use_contractions = True
 
     if args['both_files'] is True: store_two_files = True
+
+    if args['no_limit']: no_limit = True
 
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']

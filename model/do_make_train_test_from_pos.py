@@ -34,7 +34,7 @@ if __name__ == '__main__':
     parser.add_argument('--lowercase', help='record all input data in lowercase.', action='store_true')
     parser.add_argument('--split', help='float for split of valid/test files')
     parser.add_argument('--start', help='starting position')
-    parser.add_argument('--length', help='length of corpus segment, (10000 default)')
+    parser.add_argument('--length', help='length of corpus segment, (10,000 default)')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -187,7 +187,7 @@ if __name__ == '__main__':
         print(idx_start_1_test)
 
         print(len(pos_answer) - idx_start_2_valid)
-        print(len(pos_answer), 'len')
+        print(len(text), 'len')
 
         save_to_file(
             pos_context[:idx_start_0_train],

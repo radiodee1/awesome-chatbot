@@ -1265,6 +1265,7 @@ class NMT:
         parser.add_argument('--print-control', help='set print control num to space out output.')
         parser.add_argument('--start-epoch', help='Starting epoch number if desired.')
         parser.add_argument('--json-record-offset', help='starting record number for json file')
+        parser.add_argument('--window', help='input window size in words (pos input only).')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1359,6 +1360,8 @@ class NMT:
             self.do_pos_input = True
             MAX_LENGTH = 200
             hparams['tokens_per_sentence'] = 200
+        if self.args['window'] is not None:
+            self.window_size = int(self.args['window'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -3047,6 +3050,7 @@ class NMT:
 
             z = 0
             words = []
+            sample = []
             while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
 
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
@@ -3062,7 +3066,8 @@ class NMT:
                     input_var.append(self.input_lang.word2index[i])
                     #print(input_var)
 
-                words.append(ans_out) #  t_in.split()[-1])
+                words.append(ans_out)
+                sample.append(t_in.split()[-1])
                 #print(input_var,'-nums-')
                 #print(t_in,'-t-in-')
 
@@ -3080,6 +3085,7 @@ class NMT:
             pass
         #print(self.pos_list_out,'pos out')
         print('pairs index:',index )
+        #print('sample:', ' '.join(sample))
         print('ans:',' '.join(words))
 
         return sentence
