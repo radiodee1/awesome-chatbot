@@ -883,24 +883,35 @@ class WrapMemRNN(nn.Module):
     def wrap_input_module(self, input_variable, question_variable):
 
         prev_h1 = []
-
         hidden1 = None
         for ii in input_variable:
-            if not self.simple_input or True:
+            if self.simple_input:#and False:
                 hidden1 = None
+                ii = prune_tensor(ii, 2)
+                prev_h = []
+                for jj in ii:
+                    jj = prune_tensor(jj, 2)
+                    out1, hidden1 = self.model_1_enc(jj, hidden1)
+                    prev_h.append(out1)
 
-            ii = prune_tensor(ii, 2)
-            #print(ii, 'ii')
-            #print(ii.size(),'size')
 
-            out1, hidden1 = self.model_1_enc(ii, hidden1)
-            #print(out1.size(),'out1')
+                prev_h = torch.cat(prev_h, dim=0)
+                prev_h1.append(prev_h) # = torch.cat(prev_h, dim=0)
+                prev_h1 = prune_tensor(prev_h1, 3)
+                #prev_h1 = prev_h1.permute(1,0,2)
+            else:
+                ii = prune_tensor(ii, 2)
 
-            prev_h1.append(out1)
+                out1, hidden1 = self.model_1_enc(ii, hidden1)
+                #print(out1.size(),'out1')
+
+                prev_h1.append(out1)
 
 
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
+
+        #print(len(self.inp_c_seq),'seq')
 
         #prev_h2 = [None]
         prev_h3 = []
