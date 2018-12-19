@@ -302,6 +302,7 @@ class SimpleInputEncoder(nn.Module):
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional, batch_first=batch_first)
 
         self.dropout = nn.Dropout(dropout)
+        self.dropout_b = nn.Dropout(dropout)
         self.reset_parameters()
 
         if embedding is not None:
@@ -346,6 +347,7 @@ class SimpleInputEncoder(nn.Module):
             embedded = embedded.permute(1,0,2) ## batch first
 
             encoder_out, hidden = self.gru( embedded, hidden)
+            #encoder_out = self.dropout_b(encoder_out)
 
             encoder_out = self.sum_output(encoder_out)
 
@@ -911,7 +913,9 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
 
-        #print(len(self.inp_c_seq),'seq', self.inp_c_seq[0].size(),'size')
+        #for z in range(len(self.inp_c_seq)):
+        #    print(len(self.inp_c_seq),'seq', self.inp_c_seq[z].size(),'size0')
+        #print(len(self.inp_c_seq),'seq', self.inp_c_seq[1].size(),'size1')
 
         #prev_h2 = [None]
         prev_h3 = []
@@ -2897,8 +2901,8 @@ class NMT:
         if self.do_pos_input:
             part_of_speech = self.run_pos_random()
             print('src:', part_of_speech[0])
-            print('last tgt:', part_of_speech[2])
-            print(' '.join(self.pos_list_out))
+            print('last tgt:', part_of_speech[2][-self.window_size:])
+            print(' '.join(self.pos_list_out[- self.window_size:]))
             return
 
         print('src:', choice[0])
@@ -3041,10 +3045,11 @@ class NMT:
         return ans
 
     def run_pos_random(self, input_string=None, index=-1):
-
+        idx = 0
         sentence = None
         if index == -1:
-            index = random.choice(self.pos_list_ques_index)
+            idx = random.randint(0, len(self.pos_list_ques_index) - 2)
+            index = self.pos_list_ques_index[idx] # random.choice(self.pos_list_ques_index)
         if input_string is not None:
             t_in = []
             for i in input_string.split():
@@ -3075,7 +3080,7 @@ class NMT:
 
                 ''' do predict here -- add to output '''
                 input_var = []
-                for i in t_in.split():
+                for i in t_in.split()[ - self.window_size:]:
                     input_var.append(self.input_lang.word2index[i])
                     #print(input_var)
 
@@ -3095,11 +3100,13 @@ class NMT:
                 index += 1
                 z += 1
             sentence = self.pairs[index ]
+            #sentence = self.pairs[self.pos_list_ques_index[idx + 1] - 1]
+
             pass
         #print(self.pos_list_out,'pos out')
         print('pairs index:',index )
         #print('sample:', ' '.join(sample))
-        print('ans:',' '.join(words))
+        print('ans:',' '.join(words[- self.window_size:]))
 
         return sentence
 
