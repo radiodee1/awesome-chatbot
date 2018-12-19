@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,11 +16,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="2750" column="84" selection-start-line="2750" selection-start-column="84" selection-end-line="2750" selection-end-column="84" />
+            <state relative-caret-position="-1684">
+              <caret line="2542" column="41" selection-start-line="2542" selection-start-column="24" selection-end-line="2542" selection-end-column="41" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545252067712" expanded="true" signature="118981:118990" ph="..." />
+                <marker date="1545254459573" expanded="true" signature="119018:119027" ph="..." />
               </folding>
             </state>
           </provider>
@@ -28,11 +29,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="666">
-              <caret line="173" column="63" selection-start-line="173" selection-start-column="63" selection-end-line="173" selection-end-column="63" />
+            <state relative-caret-position="144">
+              <caret line="36" column="93" selection-start-line="36" selection-start-column="93" selection-end-line="36" selection-end-column="93" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
-                <marker date="1545251713305" expanded="true" signature="230:687" ph="..." />
+                <marker date="1545254252535" expanded="true" signature="230:687" ph="..." />
               </folding>
             </state>
           </provider>
@@ -85,7 +86,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>index</find>
       <find>prepare</find>
       <find>pos_list_ques_index</find>
       <find>pos_list_out</find>
@@ -115,6 +115,7 @@
       <find>model_1_enc</find>
       <find>run_pos_random</find>
       <find>inp_c</find>
+      <find>do_clip_grad_norm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -520,22 +521,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="173" column="63" selection-start-line="173" selection-start-column="63" selection-end-line="173" selection-end-column="63" />
+        <state relative-caret-position="144">
+          <caret line="36" column="93" selection-start-line="36" selection-start-column="93" selection-end-line="36" selection-end-column="93" />
           <folding>
             <element signature="e#23#38#0" expanded="true" />
-            <marker date="1545251713305" expanded="true" signature="230:687" ph="..." />
+            <marker date="1545254252535" expanded="true" signature="230:687" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="2750" column="84" selection-start-line="2750" selection-start-column="84" selection-end-line="2750" selection-end-column="84" />
+        <state relative-caret-position="-1684">
+          <caret line="2542" column="41" selection-start-line="2542" selection-start-column="24" selection-end-line="2542" selection-end-column="41" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545252067712" expanded="true" signature="118981:118990" ph="..." />
+            <marker date="1545254459573" expanded="true" signature="119018:119027" ph="..." />
           </folding>
         </state>
       </provider>

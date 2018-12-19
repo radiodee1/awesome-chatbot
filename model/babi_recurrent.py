@@ -1780,6 +1780,7 @@ class NMT:
                         if not self.do_recurrent_output and not self.do_pos_input:
                             if len(c) > 0 and c[-1] == hparams['eol']:
                                 c = c[:-1]
+                                pass
                                 #print(c)
 
                         pairs.append( ' '.join(c) )
