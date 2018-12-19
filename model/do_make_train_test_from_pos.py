@@ -140,6 +140,8 @@ if __name__ == '__main__':
         ''' read input '''
         with open(args_input_path, 'rb') as z:
             text = z.readlines()
+            if args_length == -1:
+                args_length = (len(text) - args_start) -1
             line = ''
             for xx in text[args_start: args_start + args_length]:
                 if xx.endswith((b'\n', b'\r')):
@@ -167,8 +169,9 @@ if __name__ == '__main__':
 
                 context_string += line[1]
 
-                context_string = context_string.replace('"', '')
-                context_string = context_string.replace("'", '')
+                if False:
+                    context_string = context_string.replace('" ', '')
+                    context_string = context_string.replace("' ", '')
 
 
                 pos_context.append(context_string)
