@@ -2732,9 +2732,6 @@ class NMT:
             num_count += 1
 
             if self.do_recurrent_output and self.do_load_babi and not self.do_pos_input:
-                #ans = ans.permute(1,0)
-                #ans = torch.argmax(ans,dim=1)
-                #sentence_right = 0.0
 
                 for ii in range(len(target_variable)):
                     sentence_right = 0.0
@@ -2751,7 +2748,8 @@ class NMT:
                                 sentence_right = hparams['tokens_per_sentence']
                                 break
                         else:
-                            break
+                            #break ## insert if both output must be right at once...
+                            pass
 
                     num_right_small += sentence_right
                     num_right += sentence_right
