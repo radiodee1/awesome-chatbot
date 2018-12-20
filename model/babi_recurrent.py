@@ -2747,7 +2747,7 @@ class NMT:
                             sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
 
                             if int(o_val) == EOS_token :
-                                if jj == len(target_variable[ii]) - 1:
+                                if jj == target_variable[ii].size(1) - 1:
                                     sentence_right = hparams['tokens_per_sentence'] #- jj
                                 break
                         else:
