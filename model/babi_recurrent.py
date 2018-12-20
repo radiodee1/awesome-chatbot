@@ -2747,7 +2747,7 @@ class NMT:
                             sentence_right += 1
 
                             if int(o_val) == EOS_token :
-                                #sentence_right = hparams['tokens_per_sentence']
+                                sentence_right += hparams['tokens_per_sentence'] - jj
                                 break
                         else:
                             #break ## insert if both output must be right at once...
