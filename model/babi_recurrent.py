@@ -2747,7 +2747,8 @@ class NMT:
                             sentence_right += 1
 
                             if int(o_val) == EOS_token :
-                                sentence_right += hparams['tokens_per_sentence'] - jj
+                                if jj == len(target_variable[ii]) - 1:
+                                    sentence_right = hparams['tokens_per_sentence'] #- jj
                                 break
                         else:
                             #break ## insert if both output must be right at once...
@@ -2901,8 +2902,8 @@ class NMT:
         if self.do_pos_input:
             part_of_speech = self.run_pos_random()
             print('src:', part_of_speech[0])
-            print('last tgt:', part_of_speech[2][-self.window_size:])
-            print(' '.join(self.pos_list_out[- self.window_size:]))
+            print('last tgt:', part_of_speech[2])
+            print('model:',' '.join(self.pos_list_out[- self.window_size:]))
             return
 
         print('src:', choice[0])
