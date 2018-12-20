@@ -2744,7 +2744,7 @@ class NMT:
                         o_val = ans[:, ii * target_variable[ii].size(1) + jj].item()
 
                         if int(o_val) == int(t_val):
-                            sentence_right += int(hparams['tokens_per_sentence'] / float(len(target_variable[ii])))
+                            sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
 
                             if int(o_val) == EOS_token :
                                 if jj == len(target_variable[ii]) - 1:
