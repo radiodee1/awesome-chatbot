@@ -1562,7 +1562,7 @@ class NMT:
         i = self.start_epoch
 
         while True:
-            self.this_epoch = i
+            self.this_epoch = i ## start with 0
             self.printable = 'step #' + str(i+1)
             self.do_test_not_train = False
             #self.score = 0.0
@@ -2675,7 +2675,7 @@ class NMT:
         self.load_checkpoint()
 
         start = 1
-        if self.do_load_babi  and not self.do_chatbot_train:
+        if self.do_load_babi and not self.do_chatbot_train and self.start > len(self.pairs):
             self.start = 0
 
         if self.start != 0 and self.start is not None and not self.do_batch_process:
@@ -2706,13 +2706,14 @@ class NMT:
 
         if self.do_batch_process:
             step = hparams['batch_size']
-            start = 0
+            start = self.start
+            #n_iters = n_iters * self.this_epoch - 1
 
         for iter in range(start, n_iters + 1, step):
 
-
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
-                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter)
+
+                group = self.variables_for_batch(self.pairs, hparams['batch_size'], epoch_start + iter) #iter)
 
                 input_variable = group[0]
                 question_variable = group[1]
@@ -2878,7 +2879,7 @@ class NMT:
             if self.do_auto_stop:
                 self._auto_stop()
 
-        if self._print_control(iter):
+        if self._print_control(0):
             if self.do_load_babi:
                 print('train list:', ', '.join(self.score_list_training))
                 print('valid list:', ', '.join(self.score_list))
