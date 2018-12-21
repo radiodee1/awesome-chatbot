@@ -2786,7 +2786,7 @@ class NMT:
                 self.score = float(num_right / num_tot) * 100
                 #num_right = 0.0
 
-            if self.do_load_babi and not self.do_recurrent_output:# and not self.do_pos_input:
+            elif self.do_load_babi and not self.do_recurrent_output:# and not self.do_pos_input:
 
                 for i in range(len(target_variable)):
 
@@ -2871,7 +2871,7 @@ class NMT:
                         num_right_small = 0
 
                 num_right_small = 0
-                num_right = 0
+                #num_right = 0
 
                 if self._print_control(iter):
                     if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
