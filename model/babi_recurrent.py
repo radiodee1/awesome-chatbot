@@ -2926,7 +2926,7 @@ class NMT:
 
         if self.do_pos_input:
             part_of_speech = self.run_pos_random()
-            print('src:', part_of_speech[0])
+            print('src:', part_of_speech[0].split(' ')[-self.window_size:])
             #print('last tgt:', part_of_speech[2])
             print('model:',' '.join(self.pos_list_out[- self.window_size:]))
             return
@@ -3075,7 +3075,8 @@ class NMT:
         sentence = None
         if index == -1:
             idx = random.randint(0, len(self.pos_list_ques_index) - 2)
-            index = self.pos_list_ques_index[idx] # random.choice(self.pos_list_ques_index)
+            index = self.pos_list_ques_index[idx ] + 1
+            if index >= len(self.pairs): index -= 1
         if input_string is not None:
             t_in = []
             for i in input_string.split():
@@ -3099,7 +3100,7 @@ class NMT:
 
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index ] ## + 1
-                #print(t_in)
+
                 if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index + 1] == str(hparams['eol'] + ' ' + hparams['eol']):
                     print('no model output.')
                     return self.pairs[index]
@@ -3111,7 +3112,7 @@ class NMT:
                         input_var.append(self.input_lang.word2index[i])
                     else:
                         input_var.append(UNK_token)
-                    #print(input_var)
+
 
                 words.append(ans_out)
                 #sample.append(t_in.split()[-1])
@@ -3134,7 +3135,7 @@ class NMT:
                 self.pos_list_out.append(ans)
                 #index += 1
                 z += 1
-            sentence = self.pairs[index + 1]
+            sentence = self.pairs[index ]
 
 
             #print(self.pos_list_out,'pos out')
