@@ -2689,6 +2689,10 @@ class NMT:
                 print(param_group['lr'], 'lr')
             print(self.output_lang.n_words, 'num words')
 
+            start = 0
+            epoch_start = 0
+            self.start = 0
+
         print(self.train_fr,'loaded file')
 
         print("-----")
@@ -2754,9 +2758,7 @@ class NMT:
                                 if jj == target_variable[ii].size(1) - 1 and jj == count:
                                     sentence_right = hparams['tokens_per_sentence'] #- jj
                                 break
-                        else:
-                            #break ## insert if both output must be right at once...
-                            pass
+
 
                     num_right_small += sentence_right
                     num_right += sentence_right
@@ -3179,8 +3181,7 @@ class NMT:
         self.printable = hparams['base_filename']
 
         self.do_test_not_train = True
-        #self.task_babi_files()
-        #self.task_babi_test_files()
+
         mode = 'test'
         self.task_choose_files(mode=mode)
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False,
