@@ -2871,6 +2871,7 @@ class NMT:
                         num_right_small = 0
 
                 num_right_small = 0
+                num_right = 0
 
                 if self._print_control(iter):
                     if self.lr_adjustment_num > 0 and (self.do_recipe_dropout or self.do_recipe_lr):
