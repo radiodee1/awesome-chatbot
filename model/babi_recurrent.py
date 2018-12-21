@@ -1561,7 +1561,7 @@ class NMT:
             num = hparams['epochs']
         i = self.start_epoch
 
-        num_epochs = len(self.pairs) // self.epoch_length
+        num_epochs = len(self.pairs) // self.starting_epoch_length
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
             i = i % num_epochs
 
