@@ -1580,7 +1580,12 @@ class NMT:
             self.epoch_length = self.starting_epoch_length
             if self.epoch_length > len(self.pairs): self.epoch_length = len(self.pairs) - 1
 
+            old_start = self.start
             self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
+
+            if old_start == self.start:
+                continue
+
             self.start = 0
 
             print('auto save.')
@@ -2733,7 +2738,8 @@ class NMT:
                 continue
                 pass
 
-            if not has_data:
+            if not has_data :
+                self.start = iter
                 return
 
             _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
@@ -3080,14 +3086,14 @@ class NMT:
             z = 0
             words = []
             sample = []
-            while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
+            if True: #while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
 
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index + 1]
                 #print(t_in)
                 if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index + 1] == str(hparams['eol'] + ' ' + hparams['eol']):
                     print('no model output.')
-                    return self.pairs[index]
+                    return self.pairs[index][- self.window_size:]
 
                 ''' do predict here -- add to output '''
                 input_var = []
@@ -3097,12 +3103,10 @@ class NMT:
 
                 words.append(ans_out)
                 sample.append(t_in.split()[-1])
-                #print(input_var,'-nums-')
-                #print(t_in,'-t-in-')
 
                 input_var = Variable(torch.LongTensor([input_var]))
                 ques_var = []
-                for i in q_in.split():
+                for i in q_in.split()[ - self.window_size:]:
                     ques_var.append(self.input_lang.word2index[i])
                 ques_var = Variable(torch.LongTensor([ques_var]))
 
@@ -3111,7 +3115,6 @@ class NMT:
                 index += 1
                 z += 1
             sentence = self.pairs[index ]
-            #sentence = self.pairs[self.pos_list_ques_index[idx + 1] - 1]
 
             pass
         #print(self.pos_list_out,'pos out')

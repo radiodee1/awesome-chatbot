@@ -15,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="1563" column="66" selection-start-line="1563" selection-start-column="66" selection-end-line="1563" selection-end-column="66" />
+            <state relative-caret-position="3860">
+              <caret line="2740" column="28" selection-start-line="2740" selection-start-column="28" selection-end-line="2740" selection-end-column="28" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545410411485" expanded="true" signature="119534:119543" ph="..." />
+                <marker date="1545416365571" expanded="true" signature="119671:119680" ph="..." />
               </folding>
             </state>
           </provider>
@@ -99,22 +99,22 @@
       <find>inp_c</find>
       <find>do_clip_grad_norm</find>
       <find>n_iters</find>
-      <find>self.start</find>
       <find>this_epoch</find>
       <find>epoch_start</find>
       <find>iter</find>
       <find>pos_list_out</find>
       <find>sample</find>
       <find>_show_sample</find>
-      <find>run_pos_random</find>
-      <find>validate_iters</find>
       <find>do_test_not_train</find>
       <find>setup_for_babi_test</find>
-      <find>train_iters</find>
       <find>variables_for_batch</find>
       <find>start_epoch</find>
       <find>read_json_file</find>
       <find>best_accuracy_dict</find>
+      <find>run_pos_random</find>
+      <find>validate_iters</find>
+      <find>train_iters</find>
+      <find>self.start</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -492,11 +492,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="1563" column="66" selection-start-line="1563" selection-start-column="66" selection-end-line="1563" selection-end-column="66" />
+        <state relative-caret-position="3860">
+          <caret line="2740" column="28" selection-start-line="2740" selection-start-column="28" selection-end-line="2740" selection-end-column="28" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545410411485" expanded="true" signature="119534:119543" ph="..." />
+            <marker date="1545416365571" expanded="true" signature="119671:119680" ph="..." />
           </folding>
         </state>
       </provider>
