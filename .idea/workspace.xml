@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3014">
-              <caret line="2927" column="48" selection-start-line="2927" selection-start-column="34" selection-end-line="2927" selection-end-column="48" />
+            <state relative-caret-position="-1720">
+              <caret line="2786" column="17" selection-start-line="2786" selection-start-column="17" selection-end-line="2786" selection-end-column="17" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545427341023" expanded="true" signature="119971:119980" ph="..." />
+                <marker date="1545428826422" expanded="true" signature="120003:120012" ph="..." />
               </folding>
             </state>
           </provider>
@@ -83,7 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>dropout</find>
       <find>model_1_enc</find>
       <find>inp_c</find>
       <find>do_clip_grad_norm</find>
@@ -113,6 +114,7 @@
       <find>model_0_wra</find>
       <find>window_size</find>
       <find>run_pos_random</find>
+      <find>num_right</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -245,7 +247,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="70" width="1380" height="999" extended-state="0" />
+    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -529,11 +531,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3014">
-          <caret line="2927" column="48" selection-start-line="2927" selection-start-column="34" selection-end-line="2927" selection-end-column="48" />
+        <state relative-caret-position="-1720">
+          <caret line="2786" column="17" selection-start-line="2786" selection-start-column="17" selection-end-line="2786" selection-end-column="17" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545427341023" expanded="true" signature="119971:119980" ph="..." />
+            <marker date="1545428826422" expanded="true" signature="120003:120012" ph="..." />
           </folding>
         </state>
       </provider>
