@@ -15,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="116">
-              <caret line="2693" column="26" selection-start-line="2693" selection-start-column="26" selection-end-line="2693" selection-end-column="26" />
+            <state relative-caret-position="656">
+              <caret line="1564" column="74" selection-start-line="1564" selection-start-column="74" selection-end-line="1564" selection-end-column="74" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545403071225" expanded="true" signature="119420:119429" ph="..." />
+                <marker date="1545408492333" expanded="true" signature="119483:119492" ph="..." />
               </folding>
             </state>
           </provider>
@@ -85,7 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>position</find>
       <find>Encoder</find>
       <find>exit</find>
       <find>args_start</find>
@@ -110,11 +109,12 @@
       <find>sample</find>
       <find>_show_sample</find>
       <find>run_pos_random</find>
-      <find>variables_for_batch</find>
       <find>validate_iters</find>
       <find>do_test_not_train</find>
       <find>setup_for_babi_test</find>
       <find>train_iters</find>
+      <find>variables_for_batch</find>
+      <find>start_epoch</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -492,11 +492,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="2693" column="26" selection-start-line="2693" selection-start-column="26" selection-end-line="2693" selection-end-column="26" />
+        <state relative-caret-position="656">
+          <caret line="1564" column="74" selection-start-line="1564" selection-start-column="74" selection-end-line="1564" selection-end-column="74" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545403071225" expanded="true" signature="119420:119429" ph="..." />
+            <marker date="1545408492333" expanded="true" signature="119483:119492" ph="..." />
           </folding>
         </state>
       </provider>

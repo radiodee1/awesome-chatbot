@@ -1561,6 +1561,10 @@ class NMT:
             num = hparams['epochs']
         i = self.start_epoch
 
+        num_epochs = len(self.pairs) // self.epoch_length
+        if i > num_epochs and self.starting_epoch_length != len(self.pairs):
+            i = 0
+
         while True:
             self.this_epoch = i ## start with 0
             self.printable = 'step #' + str(i+1)
@@ -1879,6 +1883,7 @@ class NMT:
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
     def variables_for_batch(self, pairs, size, start):
+
         if start + size >= len(pairs) and start < len(pairs) - 1:
             size = len(pairs) - start #- 1
             print('process size', size,'next')
@@ -1887,7 +1892,7 @@ class NMT:
             print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
-            return self.variablesFromPair(('','',''))
+            return self.variablesFromPair(['','','']), False
         g1 = []
         g2 = []
         g3 = []
@@ -1908,7 +1913,7 @@ class NMT:
                 #print(g[2][0],g[2], 'target', len(g[2]),self.input_lang.index2word[g[2][0].item()])
                 g3.append(g[2][0])
 
-        return (g1, g2, g3)
+        return (g1, g2, g3) , True
 
     def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
         indexes = self.indexesFromSentence(lang, sentence)
@@ -2683,7 +2688,6 @@ class NMT:
 
         if self.do_load_babi and self.do_test_not_train:
 
-            #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
             for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr')
@@ -2717,7 +2721,7 @@ class NMT:
 
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
 
-                group = self.variables_for_batch(self.pairs, hparams['batch_size'], epoch_start + iter) #iter)
+                group, has_data = self.variables_for_batch(self.pairs, hparams['batch_size'], epoch_start + iter) #iter)
 
                 input_variable = group[0]
                 question_variable = group[1]
@@ -2729,7 +2733,7 @@ class NMT:
                 continue
                 pass
 
-            if len(input_variable) + len(question_variable) + len(target_variable) == 0:
+            if not has_data:
                 return
 
             _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
