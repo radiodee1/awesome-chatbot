@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="548">
-              <caret line="3078" column="51" selection-start-line="3078" selection-start-column="51" selection-end-line="3078" selection-end-column="51" />
+            <state relative-caret-position="3014">
+              <caret line="2927" column="48" selection-start-line="2927" selection-start-column="34" selection-end-line="2927" selection-end-column="48" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
                 <marker date="1545427341023" expanded="true" signature="119971:119980" ph="..." />
@@ -113,8 +111,8 @@
       <find>setup_for_babi_test</find>
       <find>prepareData</find>
       <find>model_0_wra</find>
-      <find>run_pos_random</find>
       <find>window_size</find>
+      <find>run_pos_random</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -179,7 +177,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="540" />
-    <option name="y" value="70" />
+    <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -531,8 +529,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="548">
-          <caret line="3078" column="51" selection-start-line="3078" selection-start-column="51" selection-end-line="3078" selection-end-column="51" />
+        <state relative-caret-position="3014">
+          <caret line="2927" column="48" selection-start-line="2927" selection-start-column="34" selection-end-line="2927" selection-end-column="48" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
             <marker date="1545427341023" expanded="true" signature="119971:119980" ph="..." />

@@ -2778,13 +2778,13 @@ class NMT:
                                     sentence_right = hparams['tokens_per_sentence'] #- jj
                                 break
 
-
                     num_right_small += sentence_right
                     num_right += sentence_right
 
                 num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
                 self.score = float(num_right / num_tot) * 100
+                num_right = 0.0
 
             if self.do_load_babi and not self.do_recurrent_output:# and not self.do_pos_input:
 
