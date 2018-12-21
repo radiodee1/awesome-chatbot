@@ -1811,7 +1811,7 @@ class NMT:
                         skip_count += 1
                 self.pairs = new_pairs
 
-                if self.do_pos_input:
+                if self.do_pos_input and self.do_skip_unk:
                     self.pos_list_ques_index = pos_list_index
 
                     ''' remove skips '''
@@ -3335,6 +3335,11 @@ if __name__ == '__main__':
             print('load test set -- no training.')
             print(n.train_fr)
 
+        if n.do_test_not_train and n.do_load_babi:
+            print('test not train')
+            n.setup_for_babi_test()
+            exit()
+
         if True:
             n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
                                                              omit_unk=n.do_hide_unk)
@@ -3376,12 +3381,12 @@ if __name__ == '__main__':
         if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
 
         #n._test_embedding()
-
+        '''
         if n.do_test_not_train and n.do_load_babi:
             print('test not train')
             n.setup_for_babi_test()
             exit()
-
+        '''
         if n.do_train:
             lr = hparams['learning_rate']
             n.train_iters(None, None, n.epoch_length, print_every=n.print_every, learning_rate=lr)

@@ -176,16 +176,12 @@ if __name__ == '__main__':
 
                 context_string += line[1]
 
-                if False: ## this is covered in 'is_ok()'
-                    context_string = context_string.replace('" ', '')
-                    context_string = context_string.replace("' ", '')
-
-
                 pos_context.append(context_string)
                 pos_question.append(hparams['unk'])
                 pos_answer.append(line[2])
 
-                #print(line[2],'line 2')
+                #print(context_string, line[2],'line 2')
+
             pass
         ''' save files '''
 
