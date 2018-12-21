@@ -7,6 +7,13 @@ import argparse
 from settings import hparams
 import tokenize_weak
 
+def is_ok(line):
+    l = True
+    lst = ['"', "'", ".", ',']
+    if line.strip() in lst:
+        l = False
+    return l
+
 def save_to_file(pos_context, pos_ques, pos_ans, context_filename, ques_filename, ans_filename, lowercase=False):
     with open(context_filename, 'w') as z:
         for line in pos_context:
@@ -163,13 +170,13 @@ if __name__ == '__main__':
 
                 context_string = '' # line[1]
 
-            if True:
+            if True and is_ok(line[1]):
                 if len(context_string) > 0:
                     context_string += ' '
 
                 context_string += line[1]
 
-                if False:
+                if False: ## this is covered in 'is_ok()'
                     context_string = context_string.replace('" ', '')
                     context_string = context_string.replace("' ", '')
 

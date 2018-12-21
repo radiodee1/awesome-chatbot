@@ -2725,6 +2725,9 @@ class NMT:
                 continue
                 pass
 
+            if len(input_variable) + len(question_variable) + len(target_variable) == 0:
+                return
+
             _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
@@ -2737,6 +2740,7 @@ class NMT:
 
                 for ii in range(len(target_variable)):
                     sentence_right = 0.0
+                    count = -1
                     for jj in range(target_variable[ii].size(1)):
 
                         t_val = target_variable[ii][0,jj,0].item()
@@ -2745,9 +2749,9 @@ class NMT:
 
                         if int(o_val) == int(t_val):
                             sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
-
+                            count += 1
                             if int(o_val) == EOS_token :
-                                if jj == target_variable[ii].size(1) - 1:
+                                if jj == target_variable[ii].size(1) - 1 and jj == count:
                                     sentence_right = hparams['tokens_per_sentence'] #- jj
                                 break
                         else:
@@ -2902,7 +2906,7 @@ class NMT:
         if self.do_pos_input:
             part_of_speech = self.run_pos_random()
             print('src:', part_of_speech[0])
-            print('last tgt:', part_of_speech[2])
+            #print('last tgt:', part_of_speech[2])
             print('model:',' '.join(self.pos_list_out[- self.window_size:]))
             return
 
