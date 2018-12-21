@@ -1563,11 +1563,11 @@ class NMT:
 
         num_epochs = len(self.pairs) // self.epoch_length
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
-            i = 0
+            i = i % num_epochs
 
         while True:
             self.this_epoch = i ## start with 0
-            self.printable = 'step #' + str(i+1)
+            self.printable = 'step #' + str(len(self.best_accuracy_dict) + 1)
             self.do_test_not_train = False
             #self.score = 0.0
 
