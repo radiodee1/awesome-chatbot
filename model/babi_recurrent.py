@@ -1907,6 +1907,12 @@ class NMT:
         for i in group:
             g = self.variablesFromPair(i)
             #print(g[0])
+            g = list(g)
+            if self.do_pos_input:
+                g[0] = g[0][-self.window_size:]
+                g[1] = g[1][-self.window_size:]
+                g[2] = g[2][-self.window_size:]
+
             if not hparams['split_sentences']:
                 g1.append(g[0].squeeze(1))
             else:
@@ -2743,6 +2749,8 @@ class NMT:
                 self.start = iter
                 return
 
+
+
             _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
                                             decoder, self.opt_1, self.opt_2,
                                             None, None, criterion)
@@ -3393,6 +3401,8 @@ if __name__ == '__main__':
 
 
         if n.do_train_long:
+            #print(len(n.pairs))
+            #exit()
             n.task_train_epochs()
 
         if n.do_interactive:

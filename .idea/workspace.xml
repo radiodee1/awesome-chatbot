@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="3340" column="18" selection-start-line="3340" selection-start-column="18" selection-end-line="3340" selection-end-column="18" />
+            <state relative-caret-position="530">
+              <caret line="1913" column="27" selection-start-line="1913" selection-start-column="27" selection-end-line="1913" selection-end-column="27" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545423319938" expanded="true" signature="119735:119744" ph="..." />
+                <marker date="1545425376840" expanded="true" signature="119946:119955" ph="..." />
               </folding>
             </state>
           </provider>
@@ -104,7 +103,6 @@
       <find>validate_iters</find>
       <find>train_iters</find>
       <find>self.start</find>
-      <find>model_0_wra</find>
       <find>sample</find>
       <find>run_pos_random</find>
       <find>do_pos_input</find>
@@ -116,6 +114,7 @@
       <find>do_test_not_train</find>
       <find>setup_for_babi_test</find>
       <find>prepareData</find>
+      <find>model_0_wra</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -532,11 +531,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="3340" column="18" selection-start-line="3340" selection-start-column="18" selection-end-line="3340" selection-end-column="18" />
+        <state relative-caret-position="530">
+          <caret line="1913" column="27" selection-start-line="1913" selection-start-column="27" selection-end-line="1913" selection-end-column="27" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545423319938" expanded="true" signature="119735:119744" ph="..." />
+            <marker date="1545425376840" expanded="true" signature="119946:119955" ph="..." />
           </folding>
         </state>
       </provider>
