@@ -1562,6 +1562,7 @@ class NMT:
         i = self.start_epoch
 
         num_epochs = len(self.pairs) // self.starting_epoch_length
+        if num_epochs == 0: num_epochs = 1
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
             i = i % num_epochs
 
@@ -3089,38 +3090,49 @@ class NMT:
             if True: #while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
 
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
-                t_in, q_in, ans_out = self.pairs[index + 1]
+                t_in, q_in, ans_out = self.pairs[index ] ## + 1
                 #print(t_in)
                 if len(t_in) < 1 or len(q_in) < 1 or self.pairs[index + 1] == str(hparams['eol'] + ' ' + hparams['eol']):
                     print('no model output.')
-                    return self.pairs[index][- self.window_size:]
+                    return self.pairs[index]
 
                 ''' do predict here -- add to output '''
                 input_var = []
                 for i in t_in.split()[ - self.window_size:]:
-                    input_var.append(self.input_lang.word2index[i])
+                    if i in self.input_lang.word2index:
+                        input_var.append(self.input_lang.word2index[i])
+                    else:
+                        input_var.append(UNK_token)
                     #print(input_var)
 
                 words.append(ans_out)
-                sample.append(t_in.split()[-1])
+                #sample.append(t_in.split()[-1])
 
                 input_var = Variable(torch.LongTensor([input_var]))
+                '''
                 ques_var = []
-                for i in q_in.split()[ - self.window_size:]:
-                    ques_var.append(self.input_lang.word2index[i])
+                for i in q_in.split()[ -1]: # self.window_size:]:
+                    if i in self.input_lang.word2index:
+                        ques_var.append(self.input_lang.word2index[i])
+                    else:
+                        ques_var.append(UNK_token)
+                '''
+                ques_var = UNK_token
+                if q_in in self.input_lang.word2index:
+                    ques_var = self.input_lang.word2index[q_in]
                 ques_var = Variable(torch.LongTensor([ques_var]))
 
                 ans = self._call_model(input_var, ques_var)
                 self.pos_list_out.append(ans)
-                index += 1
+                #index += 1
                 z += 1
-            sentence = self.pairs[index ]
+            sentence = self.pairs[index + 1]
 
-            pass
-        #print(self.pos_list_out,'pos out')
-        print('pairs index:',index )
-        #print('sample:', ' '.join(sample))
-        print('ans:',' '.join(words[- self.window_size:]))
+
+            #print(self.pos_list_out,'pos out')
+            print('pairs index:',index )
+            #print('sample:', ' '.join(sample))
+            print('ans:',ans_out)
 
         return sentence
 
