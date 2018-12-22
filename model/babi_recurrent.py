@@ -2775,11 +2775,11 @@ class NMT:
                         #o_val = ans[:, ii * target_variable[ii].size(1) + jj].item()
 
                         if int(o_val) == int(t_val):
-                            sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
+                            #sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
                             #count += 1
                             if int(o_val) == EOS_token :
                                 #if jj == target_variable[ii].size(1) - 1 and jj == count:
-                                    #sentence_right = hparams['tokens_per_sentence']
+                                sentence_right = hparams['tokens_per_sentence']
                                 break
 
                     num_right_small += sentence_right
