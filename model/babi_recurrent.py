@@ -2777,7 +2777,7 @@ class NMT:
                         if int(o_val) == int(t_val):
                             #sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
                             #count += 1
-                            if int(o_val) == EOS_token :
+                            if int(o_val) == EOS_token and jj > 0:
                                 #if jj == target_variable[ii].size(1) - 1 and jj == count:
                                 sentence_right = hparams['tokens_per_sentence']
                                 break
@@ -3014,7 +3014,7 @@ class NMT:
             self.model_0_wra.train()
             if self.do_recurrent_output:
                 self.model_0_dec.train()
-                
+
         outputs = [ans]
         #####################
 
