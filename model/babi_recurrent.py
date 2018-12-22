@@ -1562,6 +1562,7 @@ class NMT:
         i = self.start_epoch
 
         num_epochs = len(self.pairs) // self.starting_epoch_length
+        print(num_epochs,'num of epochs')
         if num_epochs == 0: num_epochs = 1
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
             i = i % num_epochs
