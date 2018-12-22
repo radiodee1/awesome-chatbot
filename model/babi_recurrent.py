@@ -1586,6 +1586,7 @@ class NMT:
             self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
 
             if old_start == self.start:
+                i += 1
                 continue
 
             self.start = 0
@@ -2764,7 +2765,7 @@ class NMT:
 
                 for ii in range(len(target_variable)):
                     sentence_right = 0.0
-                    count = -1
+                    #count = -1
                     for jj in range(target_variable[ii].size(1)):
 
                         t_val = target_variable[ii][0,jj,0].item()
@@ -2773,10 +2774,10 @@ class NMT:
 
                         if int(o_val) == int(t_val):
                             sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
-                            count += 1
+                            #count += 1
                             if int(o_val) == EOS_token :
-                                if jj == target_variable[ii].size(1) - 1 and jj == count:
-                                    sentence_right = hparams['tokens_per_sentence'] #- jj
+                                #if jj == target_variable[ii].size(1) - 1 and jj == count:
+                                    #sentence_right = hparams['tokens_per_sentence']
                                 break
 
                     num_right_small += sentence_right
