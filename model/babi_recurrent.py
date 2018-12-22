@@ -574,7 +574,7 @@ class WrapOutputRNN(nn.Module):
         init.xavier_normal_(self.out_d.state_dict()['weight'])
 
         self.dropout = nn.Dropout(dropout) # * 0.5 )
-        self.dropout_b = nn.Dropout(dropout )
+        self.dropout_b = nn.Dropout(dropout * 0.5)
         self.dropout_c = nn.Dropout(dropout * 0.5)
         #self.dropout_d = nn.Dropout(dropout)
         self.maxtokens = hparams['tokens_per_sentence']
@@ -1563,8 +1563,9 @@ class NMT:
 
         num_epochs = len(self.pairs) // self.starting_epoch_length
         print(num_epochs,'num of epochs')
-        if num_epochs == 0: num_epochs = 1
+
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
+            if num_epochs == 0: num_epochs = 1
             i = i % num_epochs
 
         while True:
@@ -2583,20 +2584,18 @@ class NMT:
                     ans = prune_tensor(ans, 2)
                     ans = ans.float().permute(0, 1).contiguous()
 
-                    #ans = prune_tensor(ans, 2)
-
                     ans = self.model_0_dec(ans, ques)
                     #print(ans.size(),'ans1')
                     ans = ans.permute(1,0,2)
-                    #print(ans.size(),'ans2')
-
+                    print(ans.size(),'ans2')
+                    '''
                     target_variable = torch.cat(target_variable, dim=0)
                     target_variable = prune_tensor(target_variable, 3)
                     mask = self._mask_from_var(target_variable.squeeze(2))
 
                     tot = mask.sum().item()
                     tot = tot #/ 10 # magic number for validation
-
+                    '''
                     #print('totals')
 
         if self.do_recurrent_output:
@@ -2607,10 +2606,10 @@ class NMT:
                 ansview = []
                 for ii in ans:
                     ansview.append(ii)
-                ans = torch.cat(ansview, dim=0)
+                #ans = torch.cat(ansview, dim=0)
                 ans = prune_tensor(ans, 2)
-            ans = ans.permute(1,0)
-            #print(ans,ans.size(),'ans')
+            #ans = ans.permute(1,0)
+            #print(ans.size(),'ans')
 
         return None, ans , loss, tot
 
@@ -2763,6 +2762,8 @@ class NMT:
 
             if self.do_recurrent_output and self.do_load_babi and not self.do_pos_input:
 
+                #print(ans[0].size(),'ans', len(ans), ans.size())
+
                 for ii in range(len(target_variable)):
                     sentence_right = 0.0
                     #count = -1
@@ -2770,7 +2771,8 @@ class NMT:
 
                         t_val = target_variable[ii][0,jj,0].item()
 
-                        o_val = ans[:, ii * target_variable[ii].size(1) + jj].item()
+                        o_val = ans[ii, jj, :].item()
+                        #o_val = ans[:, ii * target_variable[ii].size(1) + jj].item()
 
                         if int(o_val) == int(t_val):
                             sentence_right += int(hparams['tokens_per_sentence'] / float(target_variable[ii].size(1)))
