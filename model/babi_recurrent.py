@@ -3010,7 +3010,11 @@ class NMT:
 
                 ans = self.model_0_dec(ans, ques)
 
-
+        if True:
+            self.model_0_wra.train()
+            if self.do_recurrent_output:
+                self.model_0_dec.train()
+                
         outputs = [ans]
         #####################
 
@@ -3071,6 +3075,8 @@ class NMT:
             outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, sos_token, None)
             ans = torch.argmax(ans, dim=0).item()
             ans = self.output_lang.index2word[ans]
+
+        self.model_0_wra.train()
 
         #print(ans, '= ans')
         return ans

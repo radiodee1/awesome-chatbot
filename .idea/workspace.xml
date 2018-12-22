@@ -15,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-64">
-              <caret line="1710" column="108" selection-start-line="1710" selection-start-column="108" selection-end-line="1710" selection-end-column="108" />
+            <state relative-caret-position="638">
+              <caret line="3016" column="16" selection-start-line="3016" selection-start-column="16" selection-end-line="3016" selection-end-column="16" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545506320487" expanded="true" signature="120231:120240" ph="..." />
+                <marker date="1545508128270" expanded="true" signature="120417:120426" ph="..." />
               </folding>
             </state>
           </provider>
@@ -85,15 +85,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_show_sample</find>
-      <find>variables_for_batch</find>
-      <find>start_epoch</find>
       <find>read_json_file</find>
       <find>best_accuracy_dict</find>
-      <find>train_iters</find>
       <find>self.start</find>
       <find>sample</find>
-      <find>do_pos_input</find>
       <find>new_pairs</find>
       <find>task_normal_test</find>
       <find>task_choose_files</find>
@@ -102,7 +97,6 @@
       <find>setup_for_babi_test</find>
       <find>model_0_wra</find>
       <find>window_size</find>
-      <find>run_pos_random</find>
       <find>score</find>
       <find>tot_base</find>
       <find>num_count</find>
@@ -115,6 +109,12 @@
       <find>tot</find>
       <find>dropout</find>
       <find>prepareData</find>
+      <find>train_iters</find>
+      <find>_show_sample</find>
+      <find>do_load_babi</find>
+      <find>do_recurrent_output</find>
+      <find>do_pos_input</find>
+      <find>run_pos_random</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -531,11 +531,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-64">
-          <caret line="1710" column="108" selection-start-line="1710" selection-start-column="108" selection-end-line="1710" selection-end-column="108" />
+        <state relative-caret-position="638">
+          <caret line="3016" column="16" selection-start-line="3016" selection-start-column="16" selection-end-line="3016" selection-end-column="16" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545506320487" expanded="true" signature="120231:120240" ph="..." />
+            <marker date="1545508128270" expanded="true" signature="120417:120426" ph="..." />
           </folding>
         </state>
       </provider>
