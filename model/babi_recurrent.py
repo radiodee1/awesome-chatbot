@@ -1708,7 +1708,7 @@ class NMT:
     def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False):
         ''' NOTE: pairs switch from train to embedding all the time. '''
 
-        if self.do_load_once and len(self.pairs_train) is not 0 and len(self.pairs_valid) is not 0:
+        if self.do_load_once and len(self.pairs_train) is not 0 and len(self.pairs_valid) is not 0 and False:
             return self.input_lang, self.output_lang, self.pairs
 
         #if self.do_load_once and len(self.pairs) is not 0:
