@@ -3005,6 +3005,10 @@ class NMT:
             self.model_0_dec.eval()
 
         with torch.no_grad():
+            self.model_0_wra.eval()
+            if self.do_recurrent_output:
+                self.model_0_dec.eval()
+                
             outputs, _, ans , _, ques = self.model_0_wra( input_variable, question_variable, sos_token, None)
             if self.do_recurrent_output:
 
