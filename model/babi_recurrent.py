@@ -2787,6 +2787,8 @@ class NMT:
                                 #if jj == target_variable[ii].size(1) - 1 and jj == count:
                                 sentence_right = hparams['tokens_per_sentence']
                                 break
+                        else:
+                            break
 
                     num_right_small += sentence_right
                     num_right += sentence_right
@@ -3006,9 +3008,10 @@ class NMT:
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
-        self.model_0_wra.eval()
-        if self.do_recurrent_output:
-            self.model_0_dec.eval()
+        if False:
+            self.model_0_wra.eval()
+            if self.do_recurrent_output:
+                self.model_0_dec.eval()
 
         with torch.no_grad():
             self.model_0_wra.eval()
