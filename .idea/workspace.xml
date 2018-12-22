@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="602">
-              <caret line="3010" column="16" selection-start-line="3010" selection-start-column="16" selection-end-line="3010" selection-end-column="16" />
+            <state relative-caret-position="260">
+              <caret line="2576" column="30" selection-start-line="2576" selection-start-column="17" selection-end-line="2576" selection-end-column="30" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545514795487" expanded="true" signature="120545:120554" ph="..." />
+                <marker date="1545518518421" expanded="true" signature="120950:120959" ph="..." />
               </folding>
             </state>
           </provider>
@@ -86,7 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>self.start</find>
       <find>sample</find>
       <find>new_pairs</find>
       <find>task_normal_test</find>
@@ -112,10 +110,11 @@
       <find>do_load_babi</find>
       <find>do_recurrent_output</find>
       <find>do_pos_input</find>
-      <find>run_pos_random</find>
       <find>eval()</find>
       <find>model_0_wra</find>
       <find>no_grad</find>
+      <find>run_pos_random</find>
+      <find>torch.no_grad</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -493,11 +492,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="602">
-          <caret line="3010" column="16" selection-start-line="3010" selection-start-column="16" selection-end-line="3010" selection-end-column="16" />
+        <state relative-caret-position="260">
+          <caret line="2576" column="30" selection-start-line="2576" selection-start-column="17" selection-end-line="2576" selection-end-column="30" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545514795487" expanded="true" signature="120545:120554" ph="..." />
+            <marker date="1545518518421" expanded="true" signature="120950:120959" ph="..." />
           </folding>
         </state>
       </provider>

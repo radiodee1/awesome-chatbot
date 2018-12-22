@@ -1751,11 +1751,13 @@ class NMT:
                 pos_index = 0
                 pos_list_index = []
                 pos_skip = False
+                pos_skip_eos = False
                 skip_count = 0
                 new_pairs = []
                 for p in range(len(self.pairs)):
                     #print(self.pairs[p])
                     skip = False
+                    pos_skip_eos = False
 
                     a = []
                     b = []
@@ -1805,12 +1807,16 @@ class NMT:
                         if (self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol'])) and not pos_skip:
                             pos_list_index.append(pos_index)
                             pos_skip = False
+                            pos_skip_eos = True
                         if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
-                            pos_index = p + 1
+                            pos_index = len(new_pairs) +1 #p + 1
+                            pos_skip_eos = True
 
-                    if skip is False or not self.do_skip_unk or self.do_pos_input:
-                        new_pairs.append(pairs)
+                    if (skip is False or not self.do_skip_unk): # and (not self.do_pos_input or not pos_skip_eos):
+                        if not self.do_pos_input or (not pos_skip_eos and self.do_skip_unk) or not self.do_skip_unk:
+                            new_pairs.append(pairs)
                     else:
+                        #print(pairs)
                         skip_count += 1
                 self.pairs = new_pairs
 
@@ -3008,7 +3014,7 @@ class NMT:
             self.model_0_wra.eval()
             if self.do_recurrent_output:
                 self.model_0_dec.eval()
-                
+
             outputs, _, ans , _, ques = self.model_0_wra( input_variable, question_variable, sos_token, None)
             if self.do_recurrent_output:
 
@@ -3075,6 +3081,7 @@ class NMT:
         self.model_0_wra.eval()
 
         with torch.no_grad():
+            #self.model_0_wra.eval()
             #print(input_variable, question_variable)
             outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, sos_token, None)
             ans = torch.argmax(ans, dim=0).item()
@@ -3091,7 +3098,7 @@ class NMT:
         if index == -1:
             idx = random.randint(0, len(self.pos_list_ques_index) - 2)
             index = self.pos_list_ques_index[idx ] + 1
-            if index >= len(self.pairs): index -= 1
+            if index >= len(self.pairs): index = random.randint(0, len(self.pairs))
         if input_string is not None:
             t_in = []
             for i in input_string.split():
