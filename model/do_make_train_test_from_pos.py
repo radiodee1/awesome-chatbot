@@ -66,7 +66,7 @@ if __name__ == '__main__':
         args_split_valid = float(args['split'])
         args_split_train = 1.0 - (args_split_valid + args_split_test)
 
-    if args['question']: args_question = True
+    if args['question'] is not None: args_question = True
 
     args_input_path = '../raw/' + 'ner_dataset.csv'
 
@@ -187,7 +187,7 @@ if __name__ == '__main__':
                     pos_question.append(line[1])
                 pos_answer.append(line[2])
 
-                #print(context_string, line[2],'line 2')
+                #print(context_string, line[2],line[1],'line 2')
 
             pass
         ''' save files '''

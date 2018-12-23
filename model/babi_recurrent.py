@@ -1193,7 +1193,7 @@ class NMT:
         self.pairs_train = []
         self.pairs_valid = []
 
-        self.blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+        self.blacklist = [] #'re', 've', 's', 't', 'll', 'm', 'don', 'd']
         self.pos_list_out = []
         self.pos_list_ques_index = []
         self.window_size = 3
@@ -1285,7 +1285,7 @@ class NMT:
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
-        # print(self.args)
+        #print(self.args)
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
@@ -1642,7 +1642,7 @@ class NMT:
                 t_yyy.append(xx)
         return t_yyy
 
-    def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
+    def readLangs(self,lang1, lang2, lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
         print("Reading lines...")
         self.pairs = []
         if not self.do_interactive:
@@ -1737,14 +1737,18 @@ class NMT:
         print("Counting words...")
         if v_name is not None:
             #####
+
             if self.vocab_lang.n_words <= 3:
                 v = self.open_sentences(self.vocab_lang.name)
                 for word in v:
-                    self.vocab_lang.addSentence(word.strip())
-                    #print(word)
+                    self.vocab_lang.addSentence(word.strip().lower())
+
             #####
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
+
+            #print(self.vocab_lang.name, self.vocab_lang.n_words, self.input_lang.name, self.input_lang.n_words)
+            #exit()
 
             if True: #not (self.do_pos_input and len(self.pos_list_ques_index) == 0):
 
@@ -1755,7 +1759,7 @@ class NMT:
                 skip_count = 0
                 new_pairs = []
                 for p in range(len(self.pairs)):
-                    #print(self.pairs[p])
+
                     skip = False
                     pos_skip_eos = False
 
@@ -1812,11 +1816,12 @@ class NMT:
                             pos_index = len(new_pairs) +1 #p + 1
                             pos_skip_eos = True
 
-                    if (skip is False or not self.do_skip_unk): # and (not self.do_pos_input or not pos_skip_eos):
+                    if (skip is False or not self.do_skip_unk):
                         if not self.do_pos_input or (not pos_skip_eos and self.do_skip_unk) or not self.do_skip_unk:
                             new_pairs.append(pairs)
+                            pos_skip_eos = False
                     else:
-                        #print(pairs)
+
                         skip_count += 1
                 self.pairs = new_pairs
 
@@ -3100,7 +3105,7 @@ class NMT:
         sentence = None
         if index == -1:
             idx = random.randint(0, len(self.pos_list_ques_index) - 2)
-            index = self.pos_list_ques_index[idx ] + 1
+            index = self.pos_list_ques_index[idx ] + self.window_size
             if index >= len(self.pairs): index = random.randint(0, len(self.pairs))
         if input_string is not None:
             t_in = []
@@ -3116,7 +3121,7 @@ class NMT:
             pass
         else:
             self.pos_list_out = []
-            
+
 
             if True: #while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
 
@@ -3153,11 +3158,12 @@ class NMT:
             #sentence = self.pairs[index ]
             t_in, q_in, ans_out = self.pairs[index - 1]  ## + 1
 
+            #print(self.pairs[index -1])
             #print(self.pos_list_out,'pos out')
             print('pairs index:',index )
 
             print('ans:',ans_out)
-            print('src:', t_in.split(' ')[-self.window_size:])
+            print('src:', t_in) #.split(' ')[-self.window_size:])
 
             print('model:', ' '.join(self.pos_list_out[- self.window_size:]))
         return None
