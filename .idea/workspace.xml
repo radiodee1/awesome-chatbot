@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,11 +17,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="2790" column="33" selection-start-line="2790" selection-start-column="33" selection-end-line="2790" selection-end-column="33" />
+            <state relative-caret-position="224">
+              <caret line="3118" column="12" lean-forward="true" selection-start-line="3118" selection-start-column="12" selection-end-line="3118" selection-end-column="12" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545519867853" expanded="true" signature="121044:121053" ph="..." />
+                <marker date="1545573681513" expanded="true" signature="121029:121038" ph="..." />
               </folding>
             </state>
           </provider>
@@ -28,7 +30,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1188">
+            <state relative-caret-position="31392">
               <caret line="1770" column="8" selection-start-line="1770" selection-start-column="8" selection-end-line="1770" selection-end-column="8" />
             </state>
           </provider>
@@ -37,11 +39,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3204">
-              <caret line="182" column="17" selection-start-line="182" selection-start-column="17" selection-end-line="182" selection-end-column="17" />
+            <state relative-caret-position="685">
+              <caret line="186" column="48" selection-start-line="186" selection-start-column="48" selection-end-line="186" selection-end-column="48" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
-                <marker date="1545422160626" expanded="true" signature="351:808" ph="..." />
+                <marker date="1545572651794" expanded="true" signature="351:808" ph="..." />
               </folding>
             </state>
           </provider>
@@ -77,7 +79,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="775">
+            <state relative-caret-position="828">
               <caret line="46" column="23" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
             </state>
           </provider>
@@ -94,9 +96,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sample</find>
-      <find>new_pairs</find>
-      <find>task_normal_test</find>
       <find>task_choose_files</find>
       <find>test</find>
       <find>do_test_not_train</find>
@@ -115,7 +114,6 @@
       <find>dropout</find>
       <find>prepareData</find>
       <find>train_iters</find>
-      <find>_show_sample</find>
       <find>do_load_babi</find>
       <find>do_recurrent_output</find>
       <find>do_pos_input</find>
@@ -123,7 +121,11 @@
       <find>model_0_wra</find>
       <find>no_grad</find>
       <find>torch.no_grad</find>
+      <find>_make_optimizer</find>
+      <find>multiplier</find>
+      <find>_show_sample</find>
       <find>run_pos_random</find>
+      <find>words</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -420,11 +422,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -433,6 +430,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -492,14 +494,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
+    <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3204">
-          <caret line="182" column="17" selection-start-line="182" selection-start-column="17" selection-end-line="182" selection-end-column="17" />
-          <folding>
-            <element signature="e#23#38#0" expanded="true" />
-            <marker date="1545422160626" expanded="true" signature="351:808" ph="..." />
-          </folding>
+        <state relative-caret-position="31392">
+          <caret line="1770" column="8" selection-start-line="1770" selection-start-column="8" selection-end-line="1770" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -524,27 +522,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi.py">
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1188">
-          <caret line="1770" column="8" selection-start-line="1770" selection-start-column="8" selection-end-line="1770" selection-end-column="8" />
+        <state relative-caret-position="828">
+          <caret line="46" column="23" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="775">
-          <caret line="46" column="23" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
+        <state relative-caret-position="685">
+          <caret line="186" column="48" selection-start-line="186" selection-start-column="48" selection-end-line="186" selection-end-column="48" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+            <marker date="1545572651794" expanded="true" signature="351:808" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="2790" column="33" selection-start-line="2790" selection-start-column="33" selection-end-line="2790" selection-end-column="33" />
+        <state relative-caret-position="224">
+          <caret line="3118" column="12" lean-forward="true" selection-start-line="3118" selection-start-column="12" selection-end-line="3118" selection-end-column="12" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545519867853" expanded="true" signature="121044:121053" ph="..." />
+            <marker date="1545573681513" expanded="true" signature="121029:121038" ph="..." />
           </folding>
         </state>
       </provider>

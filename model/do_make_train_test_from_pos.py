@@ -42,12 +42,14 @@ if __name__ == '__main__':
     parser.add_argument('--split', help='float for split of valid/test files')
     parser.add_argument('--start', help='starting position')
     parser.add_argument('--length', help='length of corpus segment, (10,000 default, -1 for "all")')
+    parser.add_argument('--question', help='copy target word to question variable.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
     print(args)
 
     args_start = 0
     args_length = 10000
+    args_question = False
 
     if args['start'] is not None:
         args_start = int(args['start'])
@@ -63,6 +65,8 @@ if __name__ == '__main__':
         args_split_test = float(args['split'])
         args_split_valid = float(args['split'])
         args_split_train = 1.0 - (args_split_valid + args_split_test)
+
+    if args['question']: args_question = True
 
     args_input_path = '../raw/' + 'ner_dataset.csv'
 
@@ -177,7 +181,10 @@ if __name__ == '__main__':
                 context_string += line[1]
 
                 pos_context.append(context_string)
-                pos_question.append(hparams['unk'])
+                if not args_question:
+                    pos_question.append(hparams['unk'])
+                else:
+                    pos_question.append(line[1])
                 pos_answer.append(line[2])
 
                 #print(context_string, line[2],'line 2')
