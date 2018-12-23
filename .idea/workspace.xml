@@ -15,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-388">
-              <caret line="3108" column="38" selection-start-line="3108" selection-start-column="33" selection-end-line="3108" selection-end-column="38" />
+            <state relative-caret-position="414">
+              <caret line="1588" column="48" selection-start-line="1588" selection-start-column="48" selection-end-line="1588" selection-end-column="48" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545594116263" expanded="true" signature="121063:121072" ph="..." />
+                <marker date="1545599962385" expanded="true" signature="121073:121082" ph="..." />
               </folding>
             </state>
           </provider>
@@ -37,7 +37,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="660">
+            <state relative-caret-position="3330">
               <caret line="189" column="17" selection-start-line="189" selection-start-column="17" selection-end-line="189" selection-end-column="17" />
               <folding>
                 <element signature="e#23#38#0" expanded="true" />
@@ -492,10 +492,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="1588" column="48" selection-start-line="1588" selection-start-column="48" selection-end-line="1588" selection-end-column="48" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+            <marker date="1545599962385" expanded="true" signature="121073:121082" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="31392">
           <caret line="1770" column="8" selection-start-line="1770" selection-start-column="8" selection-end-line="1770" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3330">
+          <caret line="189" column="17" selection-start-line="189" selection-start-column="17" selection-end-line="189" selection-end-column="17" />
+          <folding>
+            <element signature="e#23#38#0" expanded="true" />
+            <marker date="1545581488286" expanded="true" signature="351:808" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -520,32 +542,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="189" column="17" selection-start-line="189" selection-start-column="17" selection-end-line="189" selection-end-column="17" />
-          <folding>
-            <element signature="e#23#38#0" expanded="true" />
-            <marker date="1545581488286" expanded="true" signature="351:808" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
           <caret line="46" column="23" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-388">
-          <caret line="3108" column="38" selection-start-line="3108" selection-start-column="33" selection-end-line="3108" selection-end-column="38" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545594116263" expanded="true" signature="121063:121072" ph="..." />
-          </folding>
         </state>
       </provider>
     </entry>

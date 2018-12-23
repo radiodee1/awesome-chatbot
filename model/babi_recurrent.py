@@ -1586,7 +1586,7 @@ class NMT:
             old_start = self.start
             self.train_iters(None, None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
 
-            if old_start == self.start:
+            if old_start == self.start and False:
                 i += 1
                 continue
 
@@ -3162,7 +3162,7 @@ class NMT:
                 #index += 1
                 #z += 1
             #sentence = self.pairs[index ]
-            t_in, q_in, ans_out = self.pairs[index - 1]  ## + 1
+            t_in, q_in, ans_out = self.pairs[index ]  ## - 1
 
             #print(self.pairs[index -1])
             #print(self.pos_list_out,'pos out')
