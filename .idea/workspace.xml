@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="512">
-              <caret line="3160" column="13" selection-start-line="3160" selection-start-column="13" selection-end-line="3160" selection-end-column="13" />
+            <state relative-caret-position="-388">
+              <caret line="3108" column="38" selection-start-line="3108" selection-start-column="33" selection-end-line="3108" selection-end-column="38" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545585956189" expanded="true" signature="121063:121072" ph="..." />
+                <marker date="1545594116263" expanded="true" signature="121063:121072" ph="..." />
               </folding>
             </state>
           </provider>
@@ -96,7 +94,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>score</find>
       <find>tot_base</find>
       <find>num_count</find>
       <find>num_right</find>
@@ -126,6 +123,7 @@
       <find>_show_sample</find>
       <find>run_pos_random</find>
       <find>window_size</find>
+      <find>pairs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -542,11 +540,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="512">
-          <caret line="3160" column="13" selection-start-line="3160" selection-start-column="13" selection-end-line="3160" selection-end-column="13" />
+        <state relative-caret-position="-388">
+          <caret line="3108" column="38" selection-start-line="3108" selection-start-column="33" selection-end-line="3108" selection-end-column="38" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545585956189" expanded="true" signature="121063:121072" ph="..." />
+            <marker date="1545594116263" expanded="true" signature="121063:121072" ph="..." />
           </folding>
         </state>
       </provider>

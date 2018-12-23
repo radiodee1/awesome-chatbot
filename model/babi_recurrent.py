@@ -3128,9 +3128,15 @@ class NMT:
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
                 t_in, q_in, ans_out = self.pairs[index ] ## + 1
 
-                if len(t_in) < 1 or len(q_in) < 1 : #or self.pairs[index + 1] == str(hparams['eol'] + ' ' + hparams['eol']):
+                z = 0
+                while (len(t_in) < 1 or len(q_in) < 1) and z < 20 :
                     print('no model output.')
-                    return None #self.pairs[index]
+                    index = random.randint(0, len(self.pairs))
+                    t_in, q_in, ans_out = self.pairs[index]
+                    z += 1
+                    #return None #self.pairs[index]
+
+                if (len(t_in) < 1 or len(q_in) < 1): return None
 
                 ''' do predict here -- add to output '''
                 input_var = []
