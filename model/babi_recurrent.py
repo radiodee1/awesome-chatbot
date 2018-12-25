@@ -3129,7 +3129,7 @@ class NMT:
                 ''' do predict here -- add to output '''
                 ans_out = self._call_model(input_var_out, ques_var_out)
                 self.pos_list_out.append(ans_out)
-                sentence = ' '.join(t_in)
+                #sentence = ' '.join(t_in)
             pass
         else:
             self.pos_list_out = []
