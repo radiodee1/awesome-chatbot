@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/sub.txt" beforeDir="false" afterPath="$PROJECT_DIR$/model/sub.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,15 +12,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="1638" lean-forward="true" selection-start-line="1638" selection-end-line="1638" />
+            <state relative-caret-position="314">
+              <caret line="1637" column="18" selection-start-line="1637" selection-start-column="18" selection-end-line="1637" selection-end-column="18" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545752130736" expanded="true" signature="121339:121340" ph="..." />
+                <marker date="1545752149412" expanded="true" signature="121359:121360" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/sub.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="800">
+              <caret line="60" column="35" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
             </state>
           </provider>
         </entry>
@@ -141,7 +150,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_make_movie_download.sh" />
         <option value="$PROJECT_DIR$/do_make_db_from_reddit.py" />
         <option value="$PROJECT_DIR$/do_make_french_download.sh" />
         <option value="$PROJECT_DIR$/do_make_db_from_french.py" />
@@ -192,6 +200,7 @@
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/do_make_train_test_from_pos.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
+        <option value="$PROJECT_DIR$/model/sub.txt" />
       </list>
     </option>
   </component>
@@ -293,7 +302,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/test.md" />
     <entry file="file://$PROJECT_DIR$/saved/test.md" />
     <entry file="file://$PROJECT_DIR$/saved/test.md.txt.md" />
     <entry file="file://$PROJECT_DIR$/model/attention_decoder.py" />
@@ -476,11 +484,11 @@
     <entry file="file://$PROJECT_DIR$/do_make_rename_train.sh" />
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="1638" lean-forward="true" selection-start-line="1638" selection-end-line="1638" />
+        <state relative-caret-position="314">
+          <caret line="1637" column="18" selection-start-line="1637" selection-start-column="18" selection-end-line="1637" selection-end-column="18" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545752130736" expanded="true" signature="121339:121340" ph="..." />
+            <marker date="1545752149412" expanded="true" signature="121359:121360" ph="..." />
           </folding>
         </state>
       </provider>
@@ -535,6 +543,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="828">
           <caret line="46" column="23" selection-start-line="46" selection-start-column="23" selection-end-line="46" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/sub.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="800">
+          <caret line="60" column="35" selection-start-line="60" selection-start-column="35" selection-end-line="60" selection-end-column="35" />
         </state>
       </provider>
     </entry>
