@@ -887,7 +887,7 @@ class WrapMemRNN(nn.Module):
         prev_h1 = []
         hidden1 = None
         for ii in input_variable:
-            if self.simple_input:# and False:
+            if self.simple_input and False:
                 hidden1 = None
                 ii = prune_tensor(ii, 2)
                 #print(ii.size(),'ii')
