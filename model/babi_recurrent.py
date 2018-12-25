@@ -3125,6 +3125,9 @@ class NMT:
             self.pos_list_out = []
             t_in = input_string
             for i in input_string.split():
+                if not i in self.input_lang.word2index:
+                    self.pos_list_out.append(hparams['unk'])
+                    continue
                 input_var.append(self.input_lang.word2index[i])
                 ques_var = self.input_lang.word2index[i] #self.input_lang.word2index[hparams['unk']]
                 input_var_out = Variable(torch.LongTensor([input_var]))
@@ -3132,7 +3135,7 @@ class NMT:
                 ''' do predict here -- add to output '''
                 ans_out = self._call_model(input_var_out, ques_var_out)
                 self.pos_list_out.append(ans_out)
-                #sentence = ' '.join(t_in)
+            print('all:', self.pos_list_out)
             pass
         else:
             self.pos_list_out = []
