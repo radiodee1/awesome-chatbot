@@ -1623,17 +1623,20 @@ class NMT:
     def task_interactive(self):
 
         print('-------------------')
-        while True:
-            line = input("> ")
-            line = tokenize_weak.format(line)
-            print(line)
-            if not self.do_pos_input:
-                line = self.variableFromSentence(self.input_lang, line, add_eol=True)
-                out , _ =self.evaluate(None, None, line)
-                print(out)
-            else:
-                self.run_pos_random(line)
-
+        try:
+            while True:
+                line = input("> ")
+                line = tokenize_weak.format(line)
+                print(line)
+                if not self.do_pos_input:
+                    line = self.variableFromSentence(self.input_lang, line, add_eol=True)
+                    out , _ =self.evaluate(None, None, line)
+                    print(out)
+                else:
+                    self.run_pos_random(line)
+        except EOFError:
+            print()
+            exit()
 
     def task_convert(self):
         hparams['base_filename'] += '.small'
@@ -3120,7 +3123,7 @@ class NMT:
             ques_var = []
             #for i in input_string.split():
             self.pos_list_out = []
-
+            t_in = input_string
             for i in input_string.split():
                 input_var.append(self.input_lang.word2index[i])
                 ques_var = self.input_lang.word2index[i] #self.input_lang.word2index[hparams['unk']]
@@ -3178,7 +3181,7 @@ class NMT:
 
             #print(self.pairs[index -1])
             #print(self.pos_list_out,'pos out')
-        print('pairs index:',index )
+            print('pairs index:',index )
 
         print('ans:',ans_out)
         print('src:', t_in) #.split(' ')[-self.window_size:])
