@@ -1627,9 +1627,13 @@ class NMT:
             line = input("> ")
             line = tokenize_weak.format(line)
             print(line)
-            line = self.variableFromSentence(self.input_lang, line, add_eol=True)
-            out , _ =self.evaluate(None, None, line)
-            print(out)
+            if not self.do_pos_input:
+                line = self.variableFromSentence(self.input_lang, line, add_eol=True)
+                out , _ =self.evaluate(None, None, line)
+                print(out)
+            else:
+                self.run_pos_random(line)
+
 
     def task_convert(self):
         hparams['base_filename'] += '.small'
@@ -3105,22 +3109,27 @@ class NMT:
 
     def run_pos_random(self, input_string=None, index=-1):
         idx = 0
-        sentence = None
-        if index == -1:
+        t_in = ''
+        q_in = ''
+        if index == -1 and input_string is None:
             idx = random.randint(0, len(self.pos_list_ques_index) - 2)
             index = self.pos_list_ques_index[idx ] + self.window_size
             if index >= len(self.pairs): index = random.randint(0, len(self.pairs))
-        if input_string is not None:
-            t_in = []
+        if input_string is not None and index == -1:
+            input_var = []
+            ques_var = []
+            #for i in input_string.split():
+            self.pos_list_out = []
+
             for i in input_string.split():
-                q_in = self.input_lang.word2index[hparams['unk']]
-                t_in.append(self.input_lang.word2index[i])
-                t_in = Variable(torch.LondTensor([t_in]))
-                q_in = Variable(torch.LongTensor([q_in]))
+                input_var.append(self.input_lang.word2index[i])
+                ques_var = self.input_lang.word2index[i] #self.input_lang.word2index[hparams['unk']]
+                input_var_out = Variable(torch.LongTensor([input_var]))
+                ques_var_out = Variable(torch.LongTensor([ques_var]))
                 ''' do predict here -- add to output '''
-                ans = self._call_model(t_in, q_in)
-                self.pos_list_out.append(ans)
-            sentence = ' '.join(t_in)
+                ans_out = self._call_model(input_var_out, ques_var_out)
+                self.pos_list_out.append(ans_out)
+                sentence = ' '.join(t_in)
             pass
         else:
             self.pos_list_out = []
@@ -3169,12 +3178,12 @@ class NMT:
 
             #print(self.pairs[index -1])
             #print(self.pos_list_out,'pos out')
-            print('pairs index:',index )
+        print('pairs index:',index )
 
-            print('ans:',ans_out)
-            print('src:', t_in) #.split(' ')[-self.window_size:])
+        print('ans:',ans_out)
+        print('src:', t_in) #.split(' ')[-self.window_size:])
 
-            print('model:', ' '.join(self.pos_list_out[- self.window_size:]))
+        print('model:', ' '.join(self.pos_list_out[- self.window_size:]))
         return None
 
     def validate_iters(self):
