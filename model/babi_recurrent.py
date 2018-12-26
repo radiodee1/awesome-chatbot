@@ -690,7 +690,7 @@ class WrapOutputRNN(nn.Module):
             for i in range(self.maxtokens):
 
                 ## embed lines here ???
-                if self.test_a:
+                if self.test_a or True:
 
                     use_teacher = False
                     if random.random() < self.teacher_forcing_ratio and i > 0 and target_variable is not None:
@@ -700,6 +700,8 @@ class WrapOutputRNN(nn.Module):
                     if i == 0 or use_teacher: # and False:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
+
+                if self.test_a:
 
                     ques = decoder_hidden
 
