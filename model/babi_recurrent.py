@@ -693,7 +693,7 @@ class WrapOutputRNN(nn.Module):
                 if self.test_a:
 
                     use_teacher = False
-                    if random.random() < self.teacher_forcing_ratio and i > 0:
+                    if random.random() < self.teacher_forcing_ratio and i > 0 and target_variable is not None:
                         use_teacher = True
                         token = target_variable[k,i, 0]
 

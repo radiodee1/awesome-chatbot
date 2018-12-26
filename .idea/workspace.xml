@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,11 +15,11 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="1394" column="85" selection-start-line="1394" selection-start-column="85" selection-end-line="1394" selection-end-column="85" />
+            <state relative-caret-position="224">
+              <caret line="695" column="109" selection-start-line="695" selection-start-column="109" selection-end-line="695" selection-end-column="109" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
-                <marker date="1545836097588" expanded="true" signature="122023:122024" ph="..." />
+                <marker date="1545836474537" expanded="true" signature="122010:122011" ph="..." />
               </folding>
             </state>
           </provider>
@@ -96,7 +94,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>acc_tot</find>
       <find>tot</find>
       <find>dropout</find>
       <find>do_load_babi</find>
@@ -123,9 +120,10 @@
       <find>run_pos_random</find>
       <find>window_size</find>
       <find>teacher_forcing_ratio</find>
-      <find>model_0_dec</find>
       <find>test_a</find>
       <find>forcing</find>
+      <find>model_0_dec</find>
+      <find>target_variable</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -547,11 +545,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="1394" column="85" selection-start-line="1394" selection-start-column="85" selection-end-line="1394" selection-end-column="85" />
+        <state relative-caret-position="224">
+          <caret line="695" column="109" selection-start-line="695" selection-start-column="109" selection-end-line="695" selection-end-column="109" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
-            <marker date="1545836097588" expanded="true" signature="122023:122024" ph="..." />
+            <marker date="1545836474537" expanded="true" signature="122010:122011" ph="..." />
           </folding>
         </state>
       </provider>
