@@ -695,7 +695,7 @@ class WrapOutputRNN(nn.Module):
                     use_teacher = False
                     if random.random() < self.teacher_forcing_ratio and i > 0 and target_variable is not None:
                         use_teacher = True
-                        token = target_variable[k,i, 0]
+                        token = target_variable[k,i - 1, 0]
 
                     if i == 0 or use_teacher: # and False:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
