@@ -532,7 +532,7 @@ class WrapOutputRNN(nn.Module):
         self.bad_token_lst = bad_token_lst
         self.embedding = embedding
         self.freeze_embedding = freeze_embedding
-        self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
+        self.teacher_forcing_ratio = float(hparams['teacher_forcing_ratio'])
         self.recurrent_output = recurrent_output
         self.sol_token = sol_token
         self.cancel_attention = cancel_attention
@@ -648,11 +648,13 @@ class WrapOutputRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def forward(self, out, ques=None):
-        return self.recurrent(out, ques)
+    def forward(self, out, ques=None, target_variable=None):
+        return self.recurrent(out, ques, target_variable)
 
-    def recurrent(self, out, ques):
+    def recurrent(self, out, ques=None, target_variable=None):
         ''' don't use ques from here. '''
+
+        #print(target_variable.size(),'tv')
 
         l, hid = out.size()
 
@@ -689,11 +691,17 @@ class WrapOutputRNN(nn.Module):
 
                 ## embed lines here ???
                 if self.test_a:
-                    if i == 0: # and False:
+
+                    use_teacher = False
+                    if random.random() < self.teacher_forcing_ratio and i > 0:
+                        use_teacher = True
+                        token = target_variable[k,i, 0]
+
+                    if i == 0 or use_teacher: # and False:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
 
-                    ques = decoder_hidden #self.dropout_c(decoder_hidden)
+                    ques = decoder_hidden
 
                     cat = [
                         prune_tensor(output, 1),
@@ -1285,6 +1293,7 @@ class NMT:
         parser.add_argument('--json-record-offset', help='starting record number for json file')
         parser.add_argument('--window', help='input window size in words (pos input only).')
         parser.add_argument('--no-vocab-limit', help='no vocabulary size limit.', action='store_true')
+        parser.add_argument('--teacher-forcing', help='set forcing for recurrent output')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1382,6 +1391,8 @@ class NMT:
         if self.args['window'] is not None:
             self.window_size = int(self.args['window'])
         if self.args['no_vocab_limit']: hparams['num_vocab_total'] = None
+        if self.args['teacher_forcing'] is not None and not self.do_test_not_train: # self.args['test']:
+            hparams['teacher_forcing_ratio'] = float(self.args['teacher_forcing'])
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -2005,7 +2016,7 @@ class NMT:
             if self.do_pos_input:
                 pad = 0
                 pair_in = pair[0].split()
-                pair[0] = ' '.join(pair_in[- self.window_size:])
+                pair[0] = ' '.join(pair_in) #[- self.window_size:])
             add_eol = True
 
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, add_eol=add_eol)
@@ -2530,7 +2541,7 @@ class NMT:
 
                 ans = ans.float().contiguous()
 
-                ans = self.model_0_dec(ans, ques)
+                ans = self.model_0_dec(ans, ques, target_variable)
                 ans = ans.permute(1,0,2)
 
                 '''
@@ -3185,9 +3196,10 @@ class NMT:
             #print(self.pairs[index -1])
             #print(self.pos_list_out,'pos out')
             print('pairs index:',index )
+            print('q:', self.pairs[index])
 
         print('ans:',ans_out)
-        print('src:', t_in) #.split(' ')[-self.window_size:])
+        print('src:', t_in)
 
         print('model:', ' '.join(self.pos_list_out[- self.window_size:]))
         return None
