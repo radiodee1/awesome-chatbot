@@ -221,7 +221,7 @@ class CustomGRU(nn.Module):
 
 class EpisodicAttn(nn.Module):
 
-    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
+    def __init__(self,  hidden_size, a_list_size=5, dropout=0.3):
         super(EpisodicAttn, self).__init__()
 
         self.hidden_size = hidden_size
@@ -791,6 +791,7 @@ class WrapMemRNN(nn.Module):
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
 
         self.model_1_enc = None
+        self.model_6_hist = None
 
         if simple_input:
             self.model_1_enc = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 2, dropout=dropout,
@@ -811,14 +812,20 @@ class WrapMemRNN(nn.Module):
                                         recurrent_output=self.recurrent_output, sol_token=self.sol_token,
                                         cancel_attention=self.cancel_attention)
 
+        if simple_input:
+            self.model_6_hist = SimpleInputEncoder(vocab_size, embed_dim, hidden_size, 2, dropout=dropout,
+                                   embedding=self.embed, bidirectional=True, position=position,
+                                   batch_first=True)
+
         self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
-        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
+
 
         self.input_var = None  # for input
         #self.q_var = None  # for question
         self.answer_var = None  # for answer
         #self.q_q = None  # extra question
         self.q_q_last = None # question
+        self.q_hist = None
         self.inp_c = None  # extra input
         self.inp_c_seq = None
         self.all_mem = None
@@ -868,9 +875,9 @@ class WrapMemRNN(nn.Module):
         init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
         init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
-    def forward(self, input_variable, question_variable, target_variable, criterion=None):
+    def forward(self, input_variable, question_variable, target_variable, history_variable=None, criterion=None):
 
-        self.wrap_input_module(input_variable, question_variable)
+        self.wrap_input_module(input_variable, question_variable, history_variable)
         self.wrap_episodic_module()
         outputs,  ans, ques = self.wrap_answer_module_simple()
 
@@ -880,6 +887,8 @@ class WrapMemRNN(nn.Module):
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
         self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
+        if self.simple_input:
+            self.model_6_hist.embed.weight.requires_grad = not do_freeze
         #self.model_5_ans.decoder.embed.weight.requires_grad = not do_freeze
         print('freeze embedding')
         pass
@@ -895,30 +904,12 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def wrap_input_module(self, input_variable, question_variable):
+    def wrap_input_module(self, input_variable, question_variable, history_variable=None):
 
         prev_h1 = []
         hidden1 = None
         for ii in input_variable:
-            if self.simple_input and False:
-                pass
-                '''
-                hidden1 = None
-                ii = prune_tensor(ii, 2)
-                #print(ii.size(),'ii')
-                prev_h = []
-                for jj in ii:
-                    jj = prune_tensor(jj, 2)
-                    out1, hidden1 = self.model_1_enc(jj, hidden1)
-                    #out = out1.permute(1,0,2)
-                    prev_h.append(out1)
 
-                prev_h = torch.cat(prev_h, dim=1)
-                prev_h1.append(prev_h)
-                prev_h1 = prune_tensor(prev_h1, 3)
-                #prev_h1 = prev_h1.permute(1,0,2)
-                '''
-            else:
                 ii = prune_tensor(ii, 2)
 
                 out1, hidden1 = self.model_1_enc(ii, hidden1)
@@ -929,9 +920,8 @@ class WrapMemRNN(nn.Module):
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
 
-        #for z in range(len(self.inp_c_seq)):
-        #    print(len(self.inp_c_seq),'seq', self.inp_c_seq[z].size(),'size0')
-        #print(len(self.inp_c_seq),'seq', self.inp_c_seq[1].size(),'size1')
+
+
 
         #prev_h2 = [None]
         prev_h3 = []
@@ -948,6 +938,24 @@ class WrapMemRNN(nn.Module):
         self.q_q_last = prev_h3
         #for i in self.q_q_last: print(i.size())
         #exit()
+
+        if history_variable == None:
+            return
+
+        prev_h4 = []
+
+        for ii in history_variable:
+            ii = prune_tensor(ii, 2)
+
+            out2, hidden2 = self.model_6_hist(ii, None)  # , prev_h2[-1])
+
+            # prev_h2.append(out2)
+            prev_h4.append(hidden2)
+
+        # self.q_q = prev_h2[1:] # hidden2[:,-1,:]
+        self.q_hist = prev_h4
+        # for i in self.q_q_last: print(i.size())
+        # exit()
         return
 
 
@@ -960,7 +968,8 @@ class WrapMemRNN(nn.Module):
 
             self.memory_list = None
             positional_list = []
-
+            if self.q_hist == None:
+                self.q_hist = [ None for _ in range(len(sequences))]
 
             for i in range(len(sequences)):
 
@@ -978,7 +987,7 @@ class WrapMemRNN(nn.Module):
                     if len(m_list) is 1 : mem_last = m_list[index]
                     else: mem_last = m_list[index] # torch.relu(m_list[index])
 
-                    x = self.wrap_attention_step(sequences[i], None, mem_last, self.q_q_last[i])
+                    x = self.wrap_attention_step(sequences[i], self.q_hist[i], mem_last, self.q_q_last[i])
 
                     #print( x.size(), len(self.inp_c_seq),self.inp_c_seq[0].size(),'info')
 
@@ -1026,8 +1035,6 @@ class WrapMemRNN(nn.Module):
 
             last.append(gru) # gru <<--- this is supposed to be the hidden value
 
-        #q_index = question.size()[1] - 1
-
         concat = [
             prune_tensor(prev_mem, 1),
             prune_tensor(out, 1),
@@ -1048,9 +1055,7 @@ class WrapMemRNN(nn.Module):
 
         return h, gru # h, gru
 
-
-
-    def wrap_attention_step(self, ct, prev_g, mem, q_q):
+    def wrap_attention_step(self, ct, hist, mem, q_q):
 
         q_q = prune_tensor(q_q,3)
         mem = prune_tensor(mem,3)
@@ -1064,11 +1069,12 @@ class WrapMemRNN(nn.Module):
 
             qq = prune_tensor(q_q, 3)
 
+            hh = prune_tensor(hist, 3)
 
             concat_list = [
                 #c,
                 #mem,
-                #qq,
+                hh,
                 (c * qq),
                 (c * mem),
                 torch.abs(c - qq) ,
@@ -1204,6 +1210,7 @@ class NMT:
         self.train_fr = None
         self.train_to = None
         self.train_ques = None
+        self.train_hist = None
         self.pairs = []
 
         self.pairs_train = []
@@ -1454,18 +1461,24 @@ class NMT:
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
         self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['question_ending']
+        self.train_hist = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['hist_ending']
+
         pass
 
     def task_normal_valid(self):
         self.train_fr = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['tgt_ending']
         self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['question_ending']
+        self.train_hist = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['hist_ending']
+
         pass
 
     def task_normal_test(self):
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
         self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['question_ending']
+        self.train_hist = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['hist_ending']
+
         pass
 
     def task_babi_files(self):
@@ -1594,7 +1607,7 @@ class NMT:
             #self.score = 0.0
 
             self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
-                                                                             lang3=self.train_ques, reverse=False,
+                                                                             lang3=self.train_ques, lang4=self.train_hist, reverse=False,
                                                                              omit_unk=self.do_hide_unk)
 
 
@@ -1631,7 +1644,7 @@ class NMT:
             if i > num and not self.do_load_babi:
                 break
 
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques,lang4=self.train_hist, reverse=False, omit_unk=self.do_hide_unk)
 
         self.update_result_file()
         pass
@@ -1668,7 +1681,7 @@ class NMT:
                 t_yyy.append(xx)
         return t_yyy
 
-    def readLangs(self,lang1, lang2, lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
+    def readLangs(self,lang1, lang2, lang3=None, reverse=False, load_vocab_file=None, babi_ending=False, lang4=None):
         print("Reading lines...")
         self.pairs = []
         if not self.do_interactive:
@@ -1677,6 +1690,8 @@ class NMT:
             l_out = self.open_sentences( lang2)
             if lang3 is not None:
                 l_ques = self.open_sentences(lang3)
+                if lang4 is not None:
+                    l_hist = self.open_sentences(lang4)
 
             self.pos_list_ques_index = []
 
@@ -1699,7 +1714,10 @@ class NMT:
                             lques = ' '.join(lques)
 
                         lans = l_out[i].strip('\n')
-                        line = [ lin, lques , lans]
+
+                        lhist = l_hist[i].strip('\n')
+
+                        line = [ lin, lques , lans, lhist]
                     if self.do_pos_input:
                         if i == 0:
                             self.pos_list_ques_index.append(0)
@@ -1731,7 +1749,7 @@ class NMT:
 
 
 
-    def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False):
+    def prepareData(self,lang1, lang2,lang3=None, reverse=False, omit_unk=False, lang4=None):
         ''' NOTE: pairs switch from train to embedding all the time. '''
 
         if self.do_load_once and len(self.pairs_train) is not 0 and len(self.pairs_valid) is not 0 and False:
@@ -1752,7 +1770,7 @@ class NMT:
                                                                            load_vocab_file=v_name)
             #lang3 = None
         else:
-            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=lang3, #self.train_ques,
+            self.input_lang, self.output_lang, self.pairs = self.readLangs(lang1, lang2, lang3=lang3, lang4=lang4, #self.train_ques,
                                                                            reverse=False,
                                                                            babi_ending=True,
                                                                            load_vocab_file=v_name)
@@ -1793,6 +1811,7 @@ class NMT:
                     a = []
                     b = []
                     c = []
+                    d = []
 
                     if not self.do_pos_input:
                         if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
@@ -1822,8 +1841,10 @@ class NMT:
                             word = word.lower()
                             if word in self.vocab_lang.word2index and word not in self.blacklist:
                                 c.append(word)
+
                             elif not omit_unk or self.do_skip_unk:
                                 c.append(hparams['unk'])
+
                                 skip = True
                                 pos_skip = True
                         if not self.do_recurrent_output and not self.do_pos_input:
@@ -1833,6 +1854,19 @@ class NMT:
                                 #print(c)
 
                         pairs.append( ' '.join(c) )
+
+                    if lang4 is not None:
+                        for word in self.pairs[p][3].split(' '):
+                            word = word.lower()
+                            if word in self.vocab_lang.word2index and word not in self.blacklist:
+                                d.append(word)
+
+                            elif not omit_unk or self.do_skip_unk:
+                                d.append(hparams['unk'])
+
+                                skip = True
+                                pos_skip = True
+                        pairs.append( ' '.join(d) )
 
                     if self.do_pos_input:
                         if p is 0 and not pos_skip:
@@ -1859,30 +1893,7 @@ class NMT:
                 self.pairs = new_pairs
                 self.pos_list_ques_index = pos_list_index
 
-                '''
-                if self.do_pos_input and self.do_skip_unk and False:
-                    self.pos_list_ques_index = pos_list_index
 
-                    
-                    new_pairs = []
-                    pos_list_index = [ 0 ]
-                    for idx in self.pos_list_ques_index:
-                        num = idx
-                        while num + 1 not in self.pos_list_ques_index and num + 1 is not idx:
-                            if num >= len(self.pairs):
-                                break
-                            if True: #num not in self.pos_list_ques_index or True: #
-                                new_pairs.append(self.pairs[num])
-                            #print(num)
-                            num += 1
-                        num += 1
-                        if num in self.pos_list_ques_index and num is not idx:
-                            pos_list_index.append(len(new_pairs) )
-                        pass
-
-                    self.pairs = new_pairs
-                    self.pos_list_ques_index = pos_list_index
-                '''
                 #print( pos_list_index[10], new_pairs[10: 20])
                 #print(new_pairs[pos_list_index[10] ])
                 #exit()
@@ -2516,7 +2527,7 @@ class NMT:
             loss = loss.cuda()
         return loss, nTotal.item()
 
-    def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
+    def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer,  criterion, history_variable=None):
 
         tot = 0.0
         if criterion is not None:
@@ -2541,7 +2552,7 @@ class NMT:
             #acc = 0.0
 
 
-            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, history_variable)
 
             #print(ans,'ans', ans.size())
 
@@ -3235,7 +3246,7 @@ class NMT:
         mode = 'valid'
         self.task_choose_files(mode=mode)
         self.printable = 'validate'
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques,lang4=self.train_hist ,reverse=False, omit_unk=self.do_hide_unk)
         self.do_test_not_train = True
         self.first_load = True
         self.load_checkpoint()
@@ -3252,7 +3263,7 @@ class NMT:
 
     def setup_for_interactive(self):
         self.do_interactive = True
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False, omit_unk=self.do_hide_unk)
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques,lang4=self.train_hist ,reverse=False, omit_unk=self.do_hide_unk)
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
@@ -3287,7 +3298,7 @@ class NMT:
 
         mode = 'test'
         self.task_choose_files(mode=mode)
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques, reverse=False,
+        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,lang3=self.train_ques,lang4=self.train_hist, reverse=False,
                                                                          omit_unk=self.do_hide_unk)
         hparams['num_vocab_total'] = self.output_lang.n_words
 
@@ -3425,7 +3436,7 @@ if __name__ == '__main__':
             exit()
 
         if True:
-            n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
+            n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques,lang4=n.train_hist, reverse=False,
                                                              omit_unk=n.do_hide_unk)
 
 
@@ -3465,12 +3476,7 @@ if __name__ == '__main__':
         if hparams['cuda'] :n.model_0_wra = n.model_0_wra.cuda()
 
         #n._test_embedding()
-        '''
-        if n.do_test_not_train and n.do_load_babi:
-            print('test not train')
-            n.setup_for_babi_test()
-            exit()
-        '''
+
         if n.do_train:
             lr = hparams['learning_rate']
             n.train_iters(None, None, n.epoch_length, print_every=n.print_every, learning_rate=lr)

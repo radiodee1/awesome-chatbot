@@ -12,6 +12,7 @@ hparams = {
     'src_ending': "from",
     'tgt_ending': "to",
     'question_ending':'ques',
+    'hist_ending': 'hist',
     'babi_name':'babi',
     'pos_name': 'pos',
     'babi_memory_hops': 4,
