@@ -685,6 +685,9 @@ class WrapOutputRNN(nn.Module):
 
             token = SOS_token
 
+            if not self.test_a:
+                output = decoder_hidden
+
             flag = False
 
             for i in range(self.maxtokens):
