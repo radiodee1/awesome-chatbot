@@ -1581,7 +1581,7 @@ class NMT:
         i = self.start_epoch
 
         num_epochs = len(self.pairs) // self.starting_epoch_length
-        print(num_epochs,'num of epochs')
+        print(num_epochs,'num of steps per epoch')
 
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
             if num_epochs == 0: num_epochs = 1
