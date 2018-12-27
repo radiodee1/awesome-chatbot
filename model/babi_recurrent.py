@@ -700,7 +700,7 @@ class WrapOutputRNN(nn.Module):
                         use_teacher = True
                         token = target_variable[k,i - 1, 0]
 
-                    if i == 0 or use_teacher: # and False:
+                    if use_teacher: # and False:
                         output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                         output = prune_tensor(output, 3)
 
