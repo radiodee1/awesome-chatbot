@@ -1758,6 +1758,7 @@ class NMT:
                                                                            load_vocab_file=v_name)
             #lang3 = self.train_ques
         print("Read %s sentence pairs" % len(self.pairs))
+        old_pairs = len(self.pairs)
         #self.pairs = self.filterPairs(self.pairs)
         #print("Trimmed to %s sentence pairs" % len(self.pairs))
         print("Counting words...")
@@ -1800,6 +1801,7 @@ class NMT:
                             if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
 
                     for word in self.pairs[p][0].split(' '):
+                        word = word.lower()
                         if word in self.vocab_lang.word2index and word not in self.blacklist:
                             a.append(word)
                         elif not omit_unk or self.do_skip_unk:
@@ -1807,6 +1809,7 @@ class NMT:
                             skip = True
                             pos_skip = True
                     for word in self.pairs[p][1].split(' '):
+                        word = word.lower()
                         if word in self.vocab_lang.word2index and word not in self.blacklist:
                             b.append(word)
                         elif not omit_unk or self.do_skip_unk:
@@ -1816,6 +1819,7 @@ class NMT:
                     pairs = [' '.join(a), ' '.join(b)]
                     if lang3 is not None:
                         for word in self.pairs[p][2].split(' '):
+                            word = word.lower()
                             if word in self.vocab_lang.word2index and word not in self.blacklist:
                                 c.append(word)
                             elif not omit_unk or self.do_skip_unk:
@@ -1833,28 +1837,33 @@ class NMT:
                     if self.do_pos_input:
                         if p is 0 and not pos_skip:
                             pos_list_index.append(pos_index)
-                            pos_skip = False
-                        if (self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol'])) and not pos_skip:
+                            #pos_skip = False
+                        if (self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol'])): # and not pos_skip:
                             pos_list_index.append(pos_index)
-                            pos_skip = False
-                            pos_skip_eos = True
-                        if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
-                            pos_index = len(new_pairs) +1 #p + 1
-                            pos_skip_eos = True
+                            skip = True
+                            #pos_skip = False
+                            #pos_skip_eos = True
+                            #if self.pairs[p][0].strip() == str(hparams['eol'] + ' ' + hparams['eol']):
+                            pos_index = len(new_pairs) + 1
+                            #pos_skip_eos = True
 
                     if (skip is False or not self.do_skip_unk):
-                        if not self.do_pos_input or (not pos_skip_eos and self.do_skip_unk) or not self.do_skip_unk:
+                        if not self.do_pos_input or (not skip and self.do_skip_unk) or not self.do_skip_unk:
                             new_pairs.append(pairs)
                             pos_skip_eos = False
+
                     else:
 
                         skip_count += 1
-                self.pairs = new_pairs
 
-                if self.do_pos_input and self.do_skip_unk:
+                self.pairs = new_pairs
+                self.pos_list_ques_index = pos_list_index
+
+                '''
+                if self.do_pos_input and self.do_skip_unk and False:
                     self.pos_list_ques_index = pos_list_index
 
-                    ''' remove skips '''
+                    
                     new_pairs = []
                     pos_list_index = [ 0 ]
                     for idx in self.pos_list_ques_index:
@@ -1873,7 +1882,7 @@ class NMT:
 
                     self.pairs = new_pairs
                     self.pos_list_ques_index = pos_list_index
-
+                '''
                 #print( pos_list_index[10], new_pairs[10: 20])
                 #print(new_pairs[pos_list_index[10] ])
                 #exit()
@@ -1889,13 +1898,15 @@ class NMT:
         print('skip count', skip_count)
         if self.do_pos_input:
             print('index list', len(self.pos_list_ques_index))
+            print('pairs reduced', old_pairs - len(self.pairs))
 
         if self.do_load_embeddings:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
         if self.epoch_length > len(self.pairs):
-            self.epoch_length = len(self.pairs)
+            self.epoch_length = len(self.pairs) - 1
+            print('epoch length changed', self.epoch_length)
 
         return self.input_lang, self.output_lang, self.pairs
 
