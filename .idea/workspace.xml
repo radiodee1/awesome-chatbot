@@ -29,7 +29,7 @@
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="260">
-              <caret line="2857" column="53" selection-start-line="2857" selection-start-column="53" selection-end-line="2857" selection-end-column="53" />
+              <caret line="2679" column="105" selection-start-line="2679" selection-start-column="95" selection-end-line="2679" selection-end-column="105" />
             </state>
           </provider>
         </entry>
@@ -103,26 +103,7 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>window_size</find>
-      <find>teacher_forcing_ratio</find>
-      <find>forcing</find>
-      <find>model_0_dec</find>
-      <find>target_variable</find>
-      <find>test_a</find>
-      <find>output</find>
-      <find>pos_skip_eos</find>
-      <find>epoch length</find>
-      <find>epoch</find>
-      <find>skip</find>
-      <find>validate_iters</find>
-      <find>num of e</find>
-      <find>concat_list</find>
-      <find>a_list_size</find>
-      <find>EpisodicAttn</find>
       <find>model_6_hist</find>
-      <find>WrapMemRNN</find>
-      <find>model_0_wra</find>
-      <find>pairs</find>
       <find>train_fr</find>
       <find>prepareData</find>
       <find>train_hist</find>
@@ -133,6 +114,25 @@
       <find>variables_for_batch</find>
       <find>variablesFromPair</find>
       <find>q_hist</find>
+      <find>ansx</find>
+      <find>model_5_ans</find>
+      <find>AnswerModule</find>
+      <find>torch.lon</find>
+      <find>load_embedding</find>
+      <find>share_embedding</find>
+      <find>WrapMemRNN</find>
+      <find>SimpleInputEncoder</find>
+      <find>prediction</find>
+      <find>pairs</find>
+      <find>indexesFromSentence</find>
+      <find>history_variable</find>
+      <find>variableFromSentence</find>
+      <find>hist</find>
+      <find>model_0_wra</find>
+      <find>ans_out</find>
+      <find>_call_model</find>
+      <find>run_pos_random</find>
+      <find>target_var</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -550,7 +550,7 @@
     <entry file="file://$PROJECT_DIR$/model/babi_four.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
-          <caret line="2857" column="53" selection-start-line="2857" selection-start-column="53" selection-end-line="2857" selection-end-column="53" />
+          <caret line="2679" column="105" selection-start-line="2679" selection-start-column="95" selection-end-line="2679" selection-end-column="105" />
         </state>
       </provider>
     </entry>

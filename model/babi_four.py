@@ -347,7 +347,6 @@ class SimpleInputEncoder(nn.Module):
             embedded = embedded.permute(1,0,2) ## batch first
 
             encoder_out, hidden = self.gru( embedded, hidden)
-            #encoder_out = self.dropout_b(encoder_out)
 
             encoder_out = self.sum_output(encoder_out)
 
@@ -832,6 +831,7 @@ class WrapMemRNN(nn.Module):
         self.last_mem = None  # output of mem unit
         self.memory_list = None
         self.prediction = None  # final single word prediction
+        self.history_variable = [] # modifiable history variable
         self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
@@ -860,6 +860,7 @@ class WrapMemRNN(nn.Module):
         self.model_1_enc.load_embedding(self.embed)
         self.model_2_enc.load_embedding(self.embed)
         self.model_5_ans.load_embedding(self.embed)
+        self.model_6_hist.load_embedding(self.embed)
 
     def get_embedding(self):
         return self.embed
@@ -875,7 +876,9 @@ class WrapMemRNN(nn.Module):
         init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
         init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
-    def forward(self, input_variable, question_variable, target_variable, history_variable=None, criterion=None):
+    def forward(self, input_variable, question_variable, target_variable, history_variable, criterion=None):
+
+        #history_variable = self.wrap_mod_history(history_variable)
 
         self.wrap_input_module(input_variable, question_variable, history_variable)
         self.wrap_episodic_module()
@@ -904,6 +907,29 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
+    def wrap_mod_history(self, history_variable=None):
+        if self.prediction is None or len(self.prediction) != len(self.history_variable):
+
+            self.history_variable = history_variable
+            return history_variable
+
+        ret_val = []
+
+        for ii in range(len(self.prediction)):
+            lst_val = []
+
+            for i in self.history_variable[ii]:
+                lst_val.append(i)
+            lst_val.append(self.prediction[ii])
+            if self.prediction[ii].item() == EOS_token:
+                lst_val = [ SOS_token ]
+            var = Variable(torch.LongTensor(lst_val))
+
+            ret_val.append(var)
+
+        return ret_val
+        pass
+
     def wrap_input_module(self, input_variable, question_variable, history_variable=None):
 
         prev_h1 = []
@@ -919,9 +945,6 @@ class WrapMemRNN(nn.Module):
 
         self.inp_c_seq = prev_h1
         self.inp_c = prev_h1[-1]
-
-
-
 
         #prev_h2 = [None]
         prev_h3 = []
@@ -939,8 +962,7 @@ class WrapMemRNN(nn.Module):
         #for i in self.q_q_last: print(i.size())
         #exit()
 
-        if history_variable == None:
-            return
+        #if history_variable == None and False: return
 
         prev_h4 = []
 
@@ -1113,6 +1135,8 @@ class WrapMemRNN(nn.Module):
         mem = prune_tensor(self.last_mem, 3)
 
         ansx, ques = self.model_5_ans(mem, q_q)
+
+        self.prediction = torch.argmax(ansx, dim=0)
 
         if self.recurrent_output:
             ansx = self.last_mem.permute(1,0,2)
@@ -1965,7 +1989,7 @@ class NMT:
             print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
-            return self.variablesFromPair(['','','']), False
+            return self.variablesFromPair(['','','','']), False
         g1 = []
         g2 = []
         g3 = []
@@ -2078,11 +2102,9 @@ class NMT:
             if self.do_recurrent_output:
                 target_variable = target_variable.unsqueeze(0)
 
-        else:
 
-            return (input_variable, question_variable)
 
-        if len(pair) > 3 or self.do_recurrent_output:
+        if True: #len(pair) > 3 or self.do_recurrent_output:
 
             pad = 0
             add_eol = False
@@ -2575,7 +2597,7 @@ class NMT:
             #acc = 0.0
 
 
-            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, history_variable)
+            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, history_variable=history_variable)
 
             #print(ans,'ans', ans.size())
 
@@ -2655,7 +2677,7 @@ class NMT:
                 if self.do_recurrent_output:
                     self.model_0_dec.eval()
 
-                outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+                outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, history_variable=history_variable)
 
                 if not self.do_recurrent_output:
                     loss = None
@@ -3026,6 +3048,7 @@ class NMT:
 
         print('src:', choice[0])
         question = None
+        history = None
         if self.do_load_babi:
             print('ques:', choice[1])
             print('ref:', choice[2])
@@ -3035,11 +3058,12 @@ class NMT:
         if self.do_load_babi:
             question = nums[1]
             target = nums[2]
+            history = nums[3]
 
         if not self.do_load_babi:
             question = nums[0]
             target = None
-        words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
+        words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target, history_variable=history)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
             print('ans:', words)
@@ -3048,7 +3072,7 @@ class NMT:
         ############################
         pass
 
-    def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
+    def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, history_variable=None, max_length=MAX_LENGTH):
 
         input_variable = sentence
         question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
@@ -3098,7 +3122,7 @@ class NMT:
             if self.do_recurrent_output:
                 self.model_0_dec.eval()
 
-            outputs, _, ans , _, ques = self.model_0_wra( input_variable, question_variable, sos_token, None)
+            outputs, _, ans , _, ques = self.model_0_wra( input_variable, question_variable, history_variable=history_variable)
             if self.do_recurrent_output:
 
                 ans = self.model_0_dec(ans, ques)
@@ -3155,7 +3179,7 @@ class NMT:
 
         return decoded_words, None
 
-    def _call_model(self, input_variable=None, question_variable=None, sos_token=SOS_token):
+    def _call_model(self, input_variable, question_variable, target_variable, history_variable):
         if input_variable is None: # or input_variable.item() == '':
             return hparams['unk']
         if question_variable is None: # or question_variable.item() == '':
@@ -3165,8 +3189,8 @@ class NMT:
 
         with torch.no_grad():
             #self.model_0_wra.eval()
-            #print(input_variable, question_variable)
-            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, sos_token, None)
+            #print(input_variable,'\n' ,question_variable,'\n', history_variable)
+            outputs, _, ans, _, ques = self.model_0_wra(input_variable, question_variable, target_variable, history_variable=history_variable)
             ans = torch.argmax(ans, dim=0).item()
             ans = self.output_lang.index2word[ans]
 
@@ -3184,8 +3208,10 @@ class NMT:
             index = self.pos_list_ques_index[idx ] + self.window_size
             if index >= len(self.pairs): index = random.randint(0, len(self.pairs))
         if input_string is not None and index == -1:
+            ans_out = ''
             input_var = []
             ques_var = []
+            hist_var = []
             #for i in input_string.split():
             self.pos_list_out = []
             t_in = input_string
@@ -3195,10 +3221,13 @@ class NMT:
                     continue
                 input_var.append(self.input_lang.word2index[i])
                 ques_var = self.input_lang.word2index[i] #self.input_lang.word2index[hparams['unk']]
+                if ans_out != '':
+                    hist_var.append(ans_out)
                 input_var_out = Variable(torch.LongTensor([input_var]))
                 ques_var_out = Variable(torch.LongTensor([ques_var]))
+                hist_var_out = Variable(torch.LongTensor([hist_var]))
                 ''' do predict here -- add to output '''
-                ans_out = self._call_model(input_var_out, ques_var_out)
+                ans_out = self._call_model(input_var_out, ques_var_out, hist_var_out)
                 self.pos_list_out.append(ans_out)
             print('all:', self.pos_list_out)
             pass
@@ -3229,9 +3258,6 @@ class NMT:
                     else:
                         input_var.append(UNK_token)
 
-
-                #words.append(ans_out)
-
                 input_var = Variable(torch.LongTensor([input_var]))
 
                 ques_var = UNK_token
@@ -3239,7 +3265,21 @@ class NMT:
                     ques_var = self.input_lang.word2index[q_in]
                 ques_var = Variable(torch.LongTensor([ques_var]))
 
-                ans = self._call_model(input_var, ques_var)
+                target_var = UNK_token
+                if ans_out in self.input_lang.word2index:
+                    target_var = self.input_lang.word2index[ans_out]
+                target_var = Variable(torch.LongTensor([target_var]))
+
+                hist_var = []
+
+                for i in hist.split(' ')[- self.window_size:]:
+                    if i in self.input_lang.word2index:
+                        hist_var.append(self.input_lang.word2index[i])
+                    else:
+                        hist_var.append(UNK_token)
+                hist_var = Variable(torch.LongTensor(hist_var))
+
+                ans = self._call_model(input_var, ques_var, target_var, hist_var )
 
                 self.pos_list_out.append(ans)
                 #index += 1
