@@ -3211,7 +3211,7 @@ class NMT:
             ans_out = ''
             input_var = []
             ques_var = []
-            hist_var = []
+            hist_var = [ UNK_token ]
             #for i in input_string.split():
             self.pos_list_out = []
             t_in = input_string
@@ -3222,12 +3222,13 @@ class NMT:
                 input_var.append(self.input_lang.word2index[i])
                 ques_var = self.input_lang.word2index[i] #self.input_lang.word2index[hparams['unk']]
                 if ans_out != '':
-                    hist_var.append(ans_out)
+                    hist_var.append(self.input_lang.word2index[ans_out])
                 input_var_out = Variable(torch.LongTensor([input_var]))
                 ques_var_out = Variable(torch.LongTensor([ques_var]))
+                tgt_var_out = Variable(torch.LongTensor([UNK_token]))
                 hist_var_out = Variable(torch.LongTensor([hist_var]))
                 ''' do predict here -- add to output '''
-                ans_out = self._call_model(input_var_out, ques_var_out, hist_var_out)
+                ans_out = self._call_model(input_var_out, ques_var_out, tgt_var_out, hist_var_out)
                 self.pos_list_out.append(ans_out)
             print('all:', self.pos_list_out)
             pass

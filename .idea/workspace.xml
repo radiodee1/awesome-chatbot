@@ -28,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2679" column="105" selection-start-line="2679" selection-start-column="95" selection-end-line="2679" selection-end-column="105" />
+            <state relative-caret-position="566">
+              <caret line="3224" column="71" selection-start-line="3224" selection-start-column="71" selection-end-line="3224" selection-end-column="71" />
             </state>
           </provider>
         </entry>
@@ -131,8 +131,8 @@
       <find>model_0_wra</find>
       <find>ans_out</find>
       <find>_call_model</find>
-      <find>run_pos_random</find>
       <find>target_var</find>
+      <find>run_pos_random</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -549,8 +549,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_four.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2679" column="105" selection-start-line="2679" selection-start-column="95" selection-end-line="2679" selection-end-column="105" />
+        <state relative-caret-position="566">
+          <caret line="3224" column="71" selection-start-line="3224" selection-start-column="71" selection-end-line="3224" selection-end-column="71" />
         </state>
       </provider>
     </entry>
