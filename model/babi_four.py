@@ -950,7 +950,7 @@ class WrapMemRNN(nn.Module):
             out2, hidden2 = self.model_6_hist(ii, None)  # , prev_h2[-1])
 
             # prev_h2.append(out2)
-            prev_h4.append(hidden2)
+            prev_h4.append(out2)
 
         # self.q_q = prev_h2[1:] # hidden2[:,-1,:]
         self.q_hist = prev_h4
@@ -1069,7 +1069,11 @@ class WrapMemRNN(nn.Module):
 
             qq = prune_tensor(q_q, 3)
 
-            hh = prune_tensor(hist, 3)
+            #if hist.size(0) > 1:
+            #    hist = hist.permute(1,0,2)
+            #print(hist.size(),'hist')
+            hh = encoding_positional(hist, sum=True)
+            hh = prune_tensor(hh, 3)
 
             concat_list = [
                 #c,
@@ -1081,6 +1085,7 @@ class WrapMemRNN(nn.Module):
                 torch.abs(c - mem)
             ]
             #for ii in concat_list: print(ii.size())
+            #print('----')
             #for ii in concat_list: print(ii)
             #exit()
 
@@ -1964,6 +1969,7 @@ class NMT:
         g1 = []
         g2 = []
         g3 = []
+        g4 = []
 
         group = pairs[start:start + size]
         for i in group:
@@ -1974,6 +1980,7 @@ class NMT:
                 g[0] = g[0][-self.window_size:]
                 g[1] = g[1][-self.window_size:]
                 g[2] = g[2][-self.window_size:]
+                g[3] = g[3][-self.window_size:]
 
             if not hparams['split_sentences']:
                 g1.append(g[0].squeeze(1))
@@ -1986,8 +1993,9 @@ class NMT:
             else:
                 #print(g[2][0],g[2], 'target', len(g[2]),self.input_lang.index2word[g[2][0].item()])
                 g3.append(g[2][0])
+            g4.append(g[3].squeeze(1))
 
-        return (g1, g2, g3) , True
+        return (g1, g2, g3, g4) , True
 
     def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
         indexes = self.indexesFromSentence(lang, sentence)
@@ -2004,6 +2012,9 @@ class NMT:
             return result
 
     def variablesFromPair(self, pair):
+
+        history_variable = None
+
         pad = hparams['tokens_per_sentence']
         if hparams['split_sentences'] and not self.do_simple_input:
             l = pair[0].strip().split('.')
@@ -2071,8 +2082,20 @@ class NMT:
 
             return (input_variable, question_variable)
 
+        if len(pair) > 3 or self.do_recurrent_output:
 
-        return (input_variable,question_variable, target_variable)
+            pad = 0
+            add_eol = False
+            if self.do_recurrent_output:
+                pad = hparams['tokens_per_sentence']
+                add_eol = True
+            history_variable = self.variableFromSentence(self.output_lang, pair[3],
+                                                        add_eol=add_eol,
+                                                        pad=pad)
+            if self.do_recurrent_output:
+                history_variable = history_variable.unsqueeze(0)
+
+        return (input_variable,question_variable, target_variable, history_variable)
 
 
     def make_state(self, converted=False):
@@ -2527,7 +2550,7 @@ class NMT:
             loss = loss.cuda()
         return loss, nTotal.item()
 
-    def train(self,input_variable, target_variable,question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer,  criterion, history_variable=None):
+    def train(self,input_variable, target_variable,question_variable, wrapper_optimizer=None, decoder_optimizer=None,  criterion=None , history_variable=None):
 
         tot = 0.0
         if criterion is not None:
@@ -2799,6 +2822,10 @@ class NMT:
                 question_variable = group[1]
                 target_variable = group[2]
 
+                history_variable = None
+                if len(group) > 3:
+                    history_variable = group[3]
+
                 temp_batch_size = len(input_variable)
 
             elif self.do_batch_process:
@@ -2811,9 +2838,9 @@ class NMT:
 
 
 
-            _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable, encoder,
-                                            decoder, self.opt_1, self.opt_2,
-                                            None, None, criterion)
+            _, ans, l, tot_base = self.train(input_variable, target_variable, question_variable,
+                                            wrapper_optimizer=self.opt_1, decoder_optimizer=self.opt_2,
+                                            criterion=criterion, history_variable=history_variable)
 
             acc_tot += tot_base
 
@@ -3182,13 +3209,13 @@ class NMT:
             if True: #while num != index + 1 and index + 1 not in self.pos_list_ques_index and z < 200:
 
                 if index + 1 >= len(self.pairs) or index >= len(self.pairs): index -= 1
-                t_in, q_in, ans_out = self.pairs[index ] ## + 1
+                t_in, q_in, ans_out, hist = self.pairs[index ] ## + 1
 
                 z = 0
                 while (len(t_in) < 1 or len(q_in) < 1) and z < 20 :
                     print('no model output.')
                     index = random.randint(0, len(self.pairs))
-                    t_in, q_in, ans_out = self.pairs[index]
+                    t_in, q_in, ans_out, hist = self.pairs[index]
                     z += 1
                     #return None #self.pairs[index]
 
@@ -3218,7 +3245,7 @@ class NMT:
                 #index += 1
                 #z += 1
             #sentence = self.pairs[index ]
-            t_in, q_in, ans_out = self.pairs[index ]  ## - 1
+            t_in, q_in, ans_out, hist = self.pairs[index ]  ## - 1
 
             #print(self.pairs[index -1])
             #print(self.pos_list_out,'pos out')
