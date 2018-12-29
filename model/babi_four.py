@@ -878,7 +878,8 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, history_variable, criterion=None):
 
-        #history_variable = self.wrap_mod_history(history_variable)
+        history_variable = self.wrap_mod_history(question_variable, history_variable)
+        #self.history_variable = history_variable
 
         self.wrap_input_module(input_variable, question_variable, history_variable)
         self.wrap_episodic_module()
@@ -907,26 +908,44 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def wrap_mod_history(self, history_variable=None):
-        if self.prediction is None or len(self.prediction) != len(self.history_variable):
+    def wrap_mod_history(self,question_variable=None, history_variable=None):
 
-            self.history_variable = history_variable
+        if not self.training or self.prediction is None or len(self.prediction) == 1:
+
+            #self.history_variable = history_variable
+            #print('no hist')
             return history_variable
 
         ret_val = []
 
+        if len(self.history_variable) == 0:
+            self.history_variable = [ [ SOS_token ] for _ in range(len(self.prediction)) ]
+
         for ii in range(len(self.prediction)):
             lst_val = []
 
-            for i in self.history_variable[ii]:
-                lst_val.append(i)
-            lst_val.append(self.prediction[ii])
-            if self.prediction[ii].item() == EOS_token:
-                lst_val = [ SOS_token ]
-            var = Variable(torch.LongTensor(lst_val))
+            #print(self.history_variable)
+            #print(len(self.history_variable))
+
+            if len(self.history_variable[ii]) > 1:
+
+                for i in self.history_variable[ii]:
+                    lst_val.append(i)
+                lst_val.append(self.prediction[ii])
+                if len(question_variable) > ii and question_variable[ii].item() == EOS_token:
+                    lst_val = [ SOS_token ]
+                var = Variable(torch.LongTensor(lst_val))
+
+            else:
+                var = self.history_variable[ii]
+                var = Variable(torch.LongTensor(var))
+
+            var = prune_tensor(var, 3)
 
             ret_val.append(var)
 
+        self.history_variable = ret_val
+        #print(len(ret_val), 'rv')
         return ret_val
         pass
 
@@ -1136,7 +1155,9 @@ class WrapMemRNN(nn.Module):
 
         ansx, ques = self.model_5_ans(mem, q_q)
 
-        self.prediction = torch.argmax(ansx, dim=0)
+        if self.training:
+            self.prediction = torch.argmax(ansx, dim=0)
+
 
         if self.recurrent_output:
             ansx = self.last_mem.permute(1,0,2)
@@ -1280,7 +1301,9 @@ class NMT:
         self.do_chatbot_train = False
         self.do_load_once = True
         self.do_pos_input = False
+
         self.do_clip_grad_norm = True
+        self.do_space_batches = True
 
         self.printable = ''
 
@@ -1948,6 +1971,10 @@ class NMT:
             self.epoch_length = len(self.pairs) - 1
             print('epoch length changed', self.epoch_length)
 
+        if self.do_space_batches:
+            self.epoch_length = int(math.floor(math.sqrt(len(self.pairs))))
+            self.starting_epoch_length = self.epoch_length
+
         return self.input_lang, self.output_lang, self.pairs
 
 
@@ -1995,7 +2022,21 @@ class NMT:
         g3 = []
         g4 = []
 
-        group = pairs[start:start + size]
+        group = []
+        if self.do_space_batches:
+            sqrt = math.sqrt(len(pairs))
+            sqrt = int(math.floor(sqrt))
+            for i in range(sqrt):
+                n = sqrt * i +  self.this_epoch -1
+                if n < len(pairs):
+                    group.append(pairs[n])
+                else:
+                    pass
+                #print(sqrt * i + self.this_epoch)
+            print('modified batch size =', sqrt, self.this_epoch)
+            pass
+        else:
+            group = pairs[start:start + size]
         for i in group:
             g = self.variablesFromPair(i)
             #print(g[0])

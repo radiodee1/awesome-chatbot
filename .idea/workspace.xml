@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_four.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_four.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="566">
-              <caret line="3224" column="71" selection-start-line="3224" selection-start-column="71" selection-end-line="3224" selection-end-column="71" />
+            <state relative-caret-position="656">
+              <caret line="946" column="39" selection-start-line="946" selection-start-column="39" selection-end-line="946" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -37,7 +38,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="800">
+            <state relative-caret-position="1620">
               <caret line="90" selection-start-line="90" selection-end-line="90" />
             </state>
           </provider>
@@ -103,15 +104,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_6_hist</find>
-      <find>train_fr</find>
-      <find>prepareData</find>
-      <find>train_hist</find>
       <find>criterion</find>
       <find>encoder</find>
       <find>train</find>
       <find>train(</find>
-      <find>variables_for_batch</find>
       <find>variablesFromPair</find>
       <find>q_hist</find>
       <find>ansx</find>
@@ -122,10 +118,8 @@
       <find>share_embedding</find>
       <find>WrapMemRNN</find>
       <find>SimpleInputEncoder</find>
-      <find>prediction</find>
       <find>pairs</find>
       <find>indexesFromSentence</find>
-      <find>history_variable</find>
       <find>variableFromSentence</find>
       <find>hist</find>
       <find>model_0_wra</find>
@@ -133,6 +127,13 @@
       <find>_call_model</find>
       <find>target_var</find>
       <find>run_pos_random</find>
+      <find>history_variable</find>
+      <find>print_control_num</find>
+      <find>_print_control</find>
+      <find>epoch_length</find>
+      <find>do_space_batches</find>
+      <find>variables_for_batch</find>
+      <find>prediction</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -196,7 +197,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="540" />
+    <option name="x" value="539" />
     <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -255,7 +256,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="539" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -501,6 +502,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="31392">
@@ -540,17 +548,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="800">
-          <caret line="90" selection-start-line="90" selection-end-line="90" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_four.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="566">
-          <caret line="3224" column="71" selection-start-line="3224" selection-start-column="71" selection-end-line="3224" selection-end-column="71" />
+        <state relative-caret-position="656">
+          <caret line="946" column="39" selection-start-line="946" selection-start-column="39" selection-end-line="946" selection-end-column="39" />
         </state>
       </provider>
     </entry>
