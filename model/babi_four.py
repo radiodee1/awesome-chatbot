@@ -1249,6 +1249,7 @@ class NMT:
         self.best_accuracy_old = None
         self.best_accuracy_dict = {}
         self.best_accuracy_record_offset = 0
+        self.best_accuracy_graph_size = self.epoch_length
         self.record_threshold = 95.00
         self._recipe_switching = 0
         self._highest_validation_for_quit = 0
@@ -1640,6 +1641,10 @@ class NMT:
 
 
     def task_train_epochs(self,num=0):
+        #if self.do_space_batches and not self.do_test_not_train:
+        #    self.epoch_length = int(math.floor(math.sqrt(len(self.pairs))))
+        #    self.starting_epoch_length = self.epoch_length
+
         lr = hparams['learning_rate']
         if num == 0:
             num = hparams['epochs']
@@ -1647,10 +1652,12 @@ class NMT:
 
         num_epochs = len(self.pairs) // self.starting_epoch_length
         print(num_epochs,'num of steps per epoch')
+        #print(self.starting_epoch_length,'graph')
 
         if i > num_epochs and self.starting_epoch_length != len(self.pairs):
             if num_epochs == 0: num_epochs = 1
             i = i % num_epochs
+
 
         while True:
             self.this_epoch = i ## start with 0
@@ -1933,8 +1940,8 @@ class NMT:
                             pos_index = len(new_pairs) + 1
                             #pos_skip_eos = True
 
-                    if (skip is False or not self.do_skip_unk):
-                        if not self.do_pos_input or (not skip and self.do_skip_unk) or not self.do_skip_unk:
+                    if (skip is False or not self.do_skip_unk or self.do_test_not_train):
+                        if not self.do_pos_input or (not skip and self.do_skip_unk) or not self.do_skip_unk or self.do_test_not_train:
                             new_pairs.append(pairs)
                             pos_skip_eos = False
 
@@ -1967,13 +1974,15 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
-        if self.epoch_length > len(self.pairs):
+        if self.epoch_length > len(self.pairs) and not self.do_test_not_train:
             self.epoch_length = len(self.pairs) - 1
             print('epoch length changed', self.epoch_length)
 
-        if self.do_space_batches:
+        if self.do_space_batches and not self.do_test_not_train:
             self.epoch_length = int(math.floor(math.sqrt(len(self.pairs))))
             self.starting_epoch_length = self.epoch_length
+            self.best_accuracy_graph_size = self.epoch_length
+            #hparams['batch_size'] = self.starting_epoch_length
 
         return self.input_lang, self.output_lang, self.pairs
 
@@ -2007,33 +2016,39 @@ class NMT:
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
     def variables_for_batch(self, pairs, size, start):
-
-        if start + size >= len(pairs) and start < len(pairs) - 1:
-            size = len(pairs) - start #- 1
-            print('process size', size,'next')
-        elif start + size >= self.starting_epoch_length and start < self.starting_epoch_length - 1:
-            size = self.starting_epoch_length - start #- 1
-            print('process size', size,'next')
-        if size == 0 or start >= len(pairs):
-            print('empty return.')
-            return self.variablesFromPair(['','','','']), False
+        if not self.do_space_batches : #and not self.do_test_not_train:
+            if start + size >= len(pairs) and start < len(pairs) - 1:
+                size = len(pairs) - start #- 1
+                print('process size', size,'next')
+            elif start + size >= self.starting_epoch_length and start < self.starting_epoch_length - 1:
+                size = self.starting_epoch_length - start #- 1
+                print('process size', size,'next')
+            if size == 0 or start >= len(pairs):
+                print('empty return.')
+                return self.variablesFromPair(['','','','']), False
         g1 = []
         g2 = []
         g3 = []
         g4 = []
 
         group = []
-        if self.do_space_batches:
+        if self.do_space_batches and not self.do_test_not_train:
             sqrt = math.sqrt(len(pairs))
             sqrt = int(math.floor(sqrt))
+            #print( sqrt * 0 + self.this_epoch -1, sqrt * sqrt + self.this_epoch - 1, len(self.pairs) - (sqrt * sqrt + self.this_epoch))
             for i in range(sqrt):
-                n = sqrt * i +  self.this_epoch -1
+                n = sqrt * i + self.this_epoch
                 if n < len(pairs):
                     group.append(pairs[n])
                 else:
                     pass
                 #print(sqrt * i + self.this_epoch)
-            print('modified batch size =', sqrt, self.this_epoch)
+            if not self.do_test_not_train:
+                self.epoch_length = sqrt
+                self.best_accuracy_graph_size = self.epoch_length
+
+                #self.epoch_length = self.starting_epoch_length
+                print('modified batch size =', sqrt, 'step', self.this_epoch)
             pass
         else:
             group = pairs[start:start + size]
@@ -2212,8 +2227,8 @@ class NMT:
             if self.do_test_not_train:
                 accuracy = str("%.4f" % self.score)
                 #print(accuracy)
-                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = accuracy # str(self.score)
-                print('offset',self.best_accuracy_record_offset, ', epoch', self.this_epoch)
+                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.best_accuracy_graph_size)] = accuracy # str(self.score)
+                print('offset',self.best_accuracy_record_offset, ', step', self.this_epoch)
                 self.update_json_file()
             #####
             #if self.do_test_not_train: self.score_list.append('%.2f' % self.score)
@@ -2797,9 +2812,11 @@ class NMT:
 
         if not self.do_test_not_train :
             print('limit pairs:', len(self.pairs),
-                  '- end of this epoch:',epoch_stop,
-                  '- epochs:', len(self.pairs) // self.epoch_length,
-                  '- this epoch:', self.this_epoch + 1)
+                  '- start:', epoch_start,
+                  '- end of this step:',epoch_stop,
+                  '- steps:', len(self.pairs) // self.epoch_length,
+                  '- this step:', self.this_epoch + 1)
+            #print('left:', len(self.pairs) - math.sqrt(len(self.pairs)))
 
         self.time_str = self._as_minutes(self.time_num)
 
@@ -2826,9 +2843,9 @@ class NMT:
             weight[self.output_lang.word2index[hparams['unk']]] = 0.0
             self.criterion = nn.CrossEntropyLoss(weight=weight)
 
-        if not self.do_batch_process:
-            training_pairs = [self.variablesFromPair(
-                self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
+        #if not self.do_batch_process:
+        #    training_pairs = [self.variablesFromPair(
+        #        self.pairs[epoch_start:epoch_stop][i]) for i in range(epoch_len)] ## n_iters
 
         if not self.do_test_not_train:
             criterion = self.criterion
@@ -2877,7 +2894,8 @@ class NMT:
 
         for iter in range(start, n_iters + 1, step):
 
-            if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs) :
+            #if self.do_batch_process and iter % self.epoch_length == 0 and iter < len(self.pairs) :
+            if self.do_batch_process and iter % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
                 group, has_data = self.variables_for_batch(self.pairs, hparams['batch_size'], epoch_start + iter) #iter)
 
@@ -2969,8 +2987,10 @@ class NMT:
                 print_loss_total = 0
 
                 if self._print_control(iter):
-                    print(epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters) # +", countdown = "+ str(save_thresh - save_num)
-                          + ', ' + self.printable + ', saved files = ' + str(self.saved_files) + ', low loss = %.6f' % self.long_term_loss)
+                    print( epoch_start ,'iter = '+str(iter)+ ', num of iters = '+str(n_iters)
+                          + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
+                          + ', low loss = %.6f' % self.long_term_loss)
+
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
                     if (self.long_term_loss is None or print_loss_avg <= self.long_term_loss or save_num > save_thresh):
@@ -3505,8 +3525,14 @@ class NMT:
                 json_data = json.load(z)
             self.best_accuracy_dict = json_data # json.loads(json_data)
             #x = max(self.best_accuracy_dict.iterkeys())
+            y = min(int(k) for k, v in self.best_accuracy_dict.items())
+            if int(y) != self.epoch_length:
+                self.best_accuracy_graph_size = int(y)
+            else:
+                self.best_accuracy_graph_size = self.epoch_length
             x = max(int(k) for k, v in self.best_accuracy_dict.items() )
-            x = int(int(x) / self.epoch_length)
+            x = int(int(x) / self.best_accuracy_graph_size)
+
             if self.args['json_record_offset'] is None:
                 self.best_accuracy_record_offset = x
             if self.args['start_epoch'] is None: #self.start_epoch is 0:
@@ -3520,6 +3546,7 @@ if __name__ == '__main__':
 
     try:
         mode = ''
+
         if (not n.do_review and not n.do_load_babi) or n.do_load_recurrent:
             #n.task_normal_train()
             mode = 'train'
@@ -3545,6 +3572,7 @@ if __name__ == '__main__':
             exit()
 
         if True:
+            #n.do_test_not_train = False
             n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques,lang4=n.train_hist, reverse=False,
                                                              omit_unk=n.do_hide_unk)
 
