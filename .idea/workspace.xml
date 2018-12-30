@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_four.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_four.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2797" column="37" selection-start-line="2797" selection-start-column="25" selection-end-line="2797" selection-end-column="37" />
+            <state relative-caret-position="278">
+              <caret line="1457" column="46" selection-start-line="1457" selection-start-column="46" selection-end-line="1457" selection-end-column="46" />
             </state>
           </provider>
         </entry>
@@ -104,7 +103,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_0_wra</find>
       <find>ans_out</find>
       <find>_call_model</find>
       <find>target_var</find>
@@ -113,7 +111,6 @@
       <find>print_control_num</find>
       <find>_print_control</find>
       <find>do_space_batches</find>
-      <find>prediction</find>
       <find>update_json_file</find>
       <find>train</find>
       <find>self.start</find>
@@ -134,6 +131,8 @@
       <find>starting_epoch_length</find>
       <find>best_accuracy_graph_size</find>
       <find>epoch_length</find>
+      <find>prediction</find>
+      <find>MAX_LENGTH</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -197,7 +196,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="540" />
+    <option name="x" value="539" />
     <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -256,7 +255,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="539" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -550,8 +549,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_four.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2797" column="37" selection-start-line="2797" selection-start-column="25" selection-end-line="2797" selection-end-column="37" />
+        <state relative-caret-position="278">
+          <caret line="1457" column="46" selection-start-line="1457" selection-start-column="46" selection-end-line="1457" selection-end-column="46" />
         </state>
       </provider>
     </entry>

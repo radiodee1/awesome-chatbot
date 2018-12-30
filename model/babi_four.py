@@ -912,7 +912,7 @@ class WrapMemRNN(nn.Module):
 
         if not self.training or self.prediction is None or len(self.prediction) == 1:
 
-            #self.history_variable = history_variable
+            #self.history_variable = [] #history_variable
             #print('no hist')
             return history_variable
 
@@ -924,18 +924,21 @@ class WrapMemRNN(nn.Module):
         for ii in range(len(self.prediction)):
             lst_val = []
 
-            #print(self.history_variable)
-            #print(len(self.history_variable))
-
-            if len(self.history_variable[ii]) > 1:
-
+            if len(self.history_variable[ii]) > 0:
+                self.history_variable[ii] = prune_tensor(self.history_variable[ii], 1)
                 for i in self.history_variable[ii]:
-                    lst_val.append(i)
+                    if isinstance(i, int):
+                        lst_val.append(i)
+                    else:
+                        #print(i.size(),'i', i)
+                        lst_val.append(i.item())
+                #print(self.prediction[ii].size(),'pred')
                 lst_val.append(self.prediction[ii])
-                if len(question_variable) > ii and question_variable[ii].item() == EOS_token:
+                if (len(question_variable) > ii and question_variable[ii].item() in [EOS_token, SOS_token, UNK_token]) or len(lst_val) < 1 or len(lst_val) > MAX_LENGTH:
                     lst_val = [ SOS_token ]
+                    if self.print_to_screen: print('eos token.')
                 var = Variable(torch.LongTensor(lst_val))
-
+                if self.print_to_screen : print(ii, var, 'var', question_variable[ii].item(),'qv')
             else:
                 var = self.history_variable[ii]
                 var = Variable(torch.LongTensor(var))
@@ -945,9 +948,9 @@ class WrapMemRNN(nn.Module):
             ret_val.append(var)
 
         self.history_variable = ret_val
-        #print(len(ret_val), 'rv')
+        #print('-----')
         return ret_val
-        pass
+
 
     def wrap_input_module(self, input_variable, question_variable, history_variable=None):
 
@@ -1451,8 +1454,8 @@ class NMT:
             hparams['multiplier'] = float(self.args['multiplier'])
         if self.args['pos_input'] is True:
             self.do_pos_input = True
-            MAX_LENGTH = 200
-            hparams['tokens_per_sentence'] = 200
+            MAX_LENGTH = 30
+            hparams['tokens_per_sentence'] = 30
         if self.args['window'] is not None:
             self.window_size = int(self.args['window'])
         if self.args['no_vocab_limit']: hparams['num_vocab_total'] = None
