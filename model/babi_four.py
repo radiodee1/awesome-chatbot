@@ -932,13 +932,14 @@ class WrapMemRNN(nn.Module):
                     else:
                         #print(i.size(),'i', i)
                         lst_val.append(i.item())
-                #print(self.prediction[ii].size(),'pred')
+
                 lst_val.append(self.prediction[ii])
+
                 if (len(question_variable) > ii and question_variable[ii].item() in [EOS_token, SOS_token, UNK_token]) or len(lst_val) < 1 or len(lst_val) > MAX_LENGTH:
                     lst_val = [ SOS_token ]
-                    if self.print_to_screen: print('eos token.')
+
                 var = Variable(torch.LongTensor(lst_val))
-                if self.print_to_screen : print(ii, var, 'var', question_variable[ii].item(),'qv')
+
             else:
                 var = self.history_variable[ii]
                 var = Variable(torch.LongTensor(var))
@@ -1308,6 +1309,7 @@ class NMT:
 
         self.do_clip_grad_norm = True
         self.do_space_batches = True
+        self.do_add_sol_token = True
 
         self.printable = ''
 
@@ -1719,9 +1721,12 @@ class NMT:
                 line = input("> ")
                 line = tokenize_weak.format(line)
                 print(line)
+                line = line.strip()
+                if not line.startswith(hparams['sol'] + ' ') and False:
+                    line = hparams['sol'] + ' ' + line
                 if not self.do_pos_input:
                     line = self.variableFromSentence(self.input_lang, line, add_eol=True)
-                    out , _ =self.evaluate(None, None, line)
+                    out , _ =self.evaluate(None, None, line, history_variable=hparams['sol'])
                     print(out)
                 else:
                     self.run_pos_random(line)
@@ -1990,7 +1995,9 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence):
+    def indexesFromSentence(self,lang, sentence, add_sol=True):
+        if add_sol:
+            sentence = hparams['sol'] + ' ' + sentence
         s = sentence.split(' ')
         sent = []
         for word in s:
@@ -2080,8 +2087,8 @@ class NMT:
 
         return (g1, g2, g3, g4) , True
 
-    def variableFromSentence(self,lang, sentence, add_eol=False, pad=0):
-        indexes = self.indexesFromSentence(lang, sentence)
+    def variableFromSentence(self,lang, sentence, add_eol=False, pad=0, add_sol=True):
+        indexes = self.indexesFromSentence(lang, sentence, add_sol)
         if add_eol and len(indexes) < pad and indexes[-1] != EOS_token: indexes.append(EOS_token)
         sentence_len = len(indexes)
         while pad > sentence_len:
@@ -2144,7 +2151,7 @@ class NMT:
             if self.do_pos_input and not self.do_simple_input:
                 input_variable = [input_variable]
                 pass
-        question_variable = self.variableFromSentence(self.output_lang, pair[1], add_eol=True, pad=pad)
+        question_variable = self.variableFromSentence(self.output_lang, pair[1], add_eol=True, pad=pad, add_sol=False)
 
         if len(pair) > 2 or self.do_recurrent_output:
             #print(pair[2],',pair')
@@ -2156,7 +2163,7 @@ class NMT:
                 add_eol = True
             target_variable = self.variableFromSentence(self.output_lang, pair[2],
                                                         add_eol=add_eol,
-                                                        pad=pad)
+                                                        pad=pad, add_sol=False)
             #print(target_variable, 'tv')
             if self.do_recurrent_output:
                 target_variable = target_variable.unsqueeze(0)
@@ -3274,8 +3281,11 @@ class NMT:
         if input_string is not None and index == -1:
             ans_out = ''
             input_var = []
+            if self.do_add_sol_token:
+                input_var.append(SOS_token)
+            #input_var = []
             ques_var = []
-            hist_var = [ UNK_token ]
+            hist_var = [ SOS_token ]
             #for i in input_string.split():
             self.pos_list_out = []
             t_in = input_string
@@ -3317,6 +3327,8 @@ class NMT:
 
                 ''' do predict here -- add to output '''
                 input_var = []
+                if self.do_add_sol_token:
+                    input_var.append(SOS_token)
                 for i in t_in.split()[ - self.window_size:]:
                     if i in self.input_lang.word2index:
                         input_var.append(self.input_lang.word2index[i])
@@ -3336,6 +3348,8 @@ class NMT:
                 target_var = Variable(torch.LongTensor([target_var]))
 
                 hist_var = []
+                if self.do_add_sol_token:
+                    hist_var.append(SOS_token)
 
                 for i in hist.split(' ')[- self.window_size:]:
                     if i in self.input_lang.word2index:
