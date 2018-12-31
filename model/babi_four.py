@@ -935,11 +935,11 @@ class WrapMemRNN(nn.Module):
 
                 lst_val.append(self.prediction[ii])
 
-                if (len(question_variable) > ii and question_variable[ii].item() in [EOS_token, SOS_token, UNK_token]) or len(lst_val) < 1 or len(lst_val) > MAX_LENGTH:
+                if (len(question_variable) > ii and question_variable[ii].item() in [EOS_token,  UNK_token]) or len(lst_val) < 1 or len(lst_val) > MAX_LENGTH:
                     lst_val = [ SOS_token ]
 
-                var = Variable(torch.LongTensor(lst_val))
-
+                var = Variable(torch.LongTensor(lst_val[-5:]))
+                #print(ii, var)
             else:
                 var = self.history_variable[ii]
                 var = Variable(torch.LongTensor(var))
@@ -2052,13 +2052,13 @@ class NMT:
                     group.append(pairs[n])
                 else:
                     pass
-                #print(sqrt * i + self.this_epoch)
+                #print(sqrt * i + self.this_epoch, self.this_epoch)
             if not self.do_test_not_train:
                 self.epoch_length = sqrt
                 self.best_accuracy_graph_size = self.epoch_length
 
                 #self.epoch_length = self.starting_epoch_length
-                print('modified batch size =', sqrt, 'step', self.this_epoch)
+                #print('modified batch size =', sqrt, 'step', self.this_epoch)
             pass
         else:
             group = pairs[start:start + size]
@@ -2901,6 +2901,11 @@ class NMT:
             step = hparams['batch_size']
             start = self.start
             #n_iters = n_iters * self.this_epoch - 1
+
+        if self.do_space_batches:
+            start = 0
+            n_iters = 1
+            step = 1
 
         for iter in range(start, n_iters + 1, step):
 

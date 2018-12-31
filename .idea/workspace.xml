@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/babi_four.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_four.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1198">
-              <caret line="2037" column="49" selection-start-line="2037" selection-start-column="49" selection-end-line="2037" selection-end-column="49" />
+            <state relative-caret-position="206">
+              <caret line="941" column="17" selection-start-line="941" selection-start-column="17" selection-end-line="941" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -103,7 +104,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>print_control_num</find>
       <find>_print_control</find>
       <find>do_space_batches</find>
       <find>update_json_file</find>
@@ -117,7 +117,6 @@
       <find>n_iters</find>
       <find>step</find>
       <find>prepare</find>
-      <find>variables_for_batch</find>
       <find>json</find>
       <find>best_accuracy_dict</find>
       <find>best_accuracy_record_offset</find>
@@ -133,6 +132,8 @@
       <find>indexesFromSentence</find>
       <find>variableFromSentence</find>
       <find>run_pos_random</find>
+      <find>start</find>
+      <find>variables_for_batch</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -549,8 +550,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_four.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1198">
-          <caret line="2037" column="49" selection-start-line="2037" selection-start-column="49" selection-end-line="2037" selection-end-column="49" />
+        <state relative-caret-position="206">
+          <caret line="941" column="17" selection-start-line="941" selection-start-column="17" selection-end-line="941" selection-end-column="17" />
         </state>
       </provider>
     </entry>
