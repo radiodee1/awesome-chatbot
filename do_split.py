@@ -212,18 +212,18 @@ if __name__ == '__main__':
 
                     if not arg_stagger:
 
-                        src.write(line[0])
+                        src.write(line[0].lower())
                         save = line[0][:]
                         if not line[0].endswith('\n'):
                             src.write('\n')
                         if arg_triplets:
                             if arg_question is not None and arg_question != '':
                                 line[0] = arg_question
-                            ques.write(line[0])
+                            ques.write(line[0].lower())
                             if not line[0].endswith('\n'):
                                 ques.write('\n')
                         if auto_flag: line[1] = save #line[0]
-                        tgt.write(line[1])
+                        tgt.write(line[1].lower())
                         if not line[1].endswith('\n'):
                             tgt.write('\n')
 
@@ -261,24 +261,24 @@ if __name__ == '__main__':
                                 hist_stagger = ''
 
                             src_stagger = stop_repeats(src_stagger)
-                            src.write(src_stagger)
+                            src.write(src_stagger.lower())
                             save = src_stagger
                             if not src_stagger.endswith('\n'):
                                 src.write('\n')
                             if arg_triplets:
                                 if arg_question is not None and arg_question != '':
                                     ques_stagger = arg_question
-                                ques.write(ques_stagger)
+                                ques.write(ques_stagger.lower())
                                 if not ques_stagger.endswith('\n'):
                                     ques.write('\n')
                             if arg_fours:
-                                hist.write(hist_stagger)
+                                hist.write(hist_stagger.lower())
                                 if not hist_stagger.endswith('\n'):
                                     hist.write('\n')
                             tgt_stagger = tgt_lst[ii]
                             if eol_flag: tgt_stagger = hparams['unk']
                             if auto_flag: tgt_stagger = word
-                            tgt.write(tgt_stagger)
+                            tgt.write(tgt_stagger.lower())
                             if tgt_stagger == hparams['eol']:
                                 eol_flag = True
 

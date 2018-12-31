@@ -665,6 +665,7 @@ class NMT:
         parser.add_argument('--print-control', help='set print control num to space out output.')
         parser.add_argument('--no-attention', help='disable attention if desired.', action='store_true')
         parser.add_argument('--json-record-offset', help='starting record number for json file')
+        parser.add_argument('--no-vocab-limit', help='no vocabulary size limit.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -752,6 +753,7 @@ class NMT:
             self.print_control_num = float(self.args['print_control'])
         if self.args['json_record_offset'] is not None:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
+        if self.args['no_vocab_limit']: hparams['num_vocab_total'] = None
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
