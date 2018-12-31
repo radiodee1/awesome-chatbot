@@ -2095,7 +2095,7 @@ class NMT:
         print('src:', choice[0])
         question = None
         if self.do_load_babi:
-            print('ques:', choice[1])
+            #print('ques:', choice[1])
             print('ref:', choice[2])
         else:
             print('tgt:', choice[1])

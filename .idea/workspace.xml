@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_split.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,7 +14,7 @@
         <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="260">
-              <caret line="1118" column="10" selection-start-line="1118" selection-start-column="6" selection-end-line="1118" selection-end-column="10" />
+              <caret line="3292" column="32" selection-start-line="3292" selection-start-column="17" selection-end-line="3292" selection-end-column="32" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
                 <marker date="1546284387732" expanded="true" signature="122615:122616" ph="..." />
@@ -39,7 +36,7 @@
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="260">
-              <caret line="1817" column="8" selection-start-line="1817" selection-start-column="8" selection-end-line="1817" selection-end-column="8" />
+              <caret line="755" column="64" selection-start-line="755" selection-start-column="49" selection-end-line="755" selection-end-column="64" />
             </state>
           </provider>
         </entry>
@@ -131,9 +128,9 @@
       <find>write</find>
       <find>do_pos_input</find>
       <find>wind</find>
-      <find>num_vocab_total</find>
       <find>best_accuracy_graph_size</find>
       <find>Lang</find>
+      <find>num_vocab_total</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -546,7 +543,7 @@
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
-          <caret line="1118" column="10" selection-start-line="1118" selection-start-column="6" selection-end-line="1118" selection-end-column="10" />
+          <caret line="3292" column="32" selection-start-line="3292" selection-start-column="17" selection-end-line="3292" selection-end-column="32" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
             <marker date="1546284387732" expanded="true" signature="122615:122616" ph="..." />
@@ -557,7 +554,7 @@
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
-          <caret line="1817" column="8" selection-start-line="1817" selection-start-column="8" selection-end-line="1817" selection-end-column="8" />
+          <caret line="755" column="64" selection-start-line="755" selection-start-column="49" selection-end-line="755" selection-end-column="64" />
         </state>
       </provider>
     </entry>
