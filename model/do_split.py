@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import random
+from tokenize_weak import format
 
 hparams = {
 
@@ -203,6 +204,9 @@ if __name__ == '__main__':
                 save = ''
                 if num >= arg_start and (arg_length == 0 or num < arg_start + arg_length):
                     line = line.split('\t')
+
+                    line[0] = format(line[0])
+                    line[1] = format(line[1])
 
                     if arg_eol and len(line[0]) > 1:
                         line[0] += ' ' + hparams['eol']
