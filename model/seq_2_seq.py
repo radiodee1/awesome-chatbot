@@ -568,6 +568,7 @@ class NMT:
         self.best_accuracy_old = None
         self.best_accuracy_dict = {}
         self.best_accuracy_record_offset = 0
+        self.best_accuracy_graph_size = self.epoch_length
         self.record_threshold = 95.00
         self._recipe_switching = 0
         self._highest_validation_for_quit = 0
@@ -1378,7 +1379,7 @@ class NMT:
             torch.save(state,basename+ '.best.pth')
             #####
             if self.do_test_not_train:
-                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.starting_epoch_length)] = str(self.score)
+                self.best_accuracy_dict[str((self.best_accuracy_record_offset + self.saved_files) * self.best_accuracy_graph_size)] = str(self.score)
                 print('offset', self.best_accuracy_record_offset, ', epoch', self.this_epoch)
                 self.update_json_file()
             #####
@@ -2351,13 +2352,34 @@ class NMT:
                 z.write(json.dumps(self.best_accuracy_dict))
             z.close()
 
+    '''
     def read_json_file(self):
         basename = hparams['save_dir'] + hparams['base_filename'] + '.json'
         if os.path.isfile(basename):
             with open(basename) as z:
                 json_data = json.load(z)
             self.best_accuracy_dict = json_data # json.loads(json_data)
+    '''
 
+    def read_json_file(self):
+        basename = hparams['save_dir'] + hparams['base_filename'] + '.json'
+        if os.path.isfile(basename):
+            with open(basename) as z:
+                json_data = json.load(z)
+            self.best_accuracy_dict = json_data # json.loads(json_data)
+            #x = max(self.best_accuracy_dict.iterkeys())
+            y = min(int(k) for k, v in self.best_accuracy_dict.items())
+            if int(y) != self.epoch_length:
+                self.best_accuracy_graph_size = int(y)
+            else:
+                self.best_accuracy_graph_size = self.epoch_length
+            x = max(int(k) for k, v in self.best_accuracy_dict.items() )
+            x = int(int(x) / self.best_accuracy_graph_size)
+
+            if self.args['json_record_offset'] is None:
+                self.best_accuracy_record_offset = x
+            if self.args['start_epoch'] is None: #self.start_epoch is 0:
+                self.start_epoch = x
 
 if __name__ == '__main__':
 
