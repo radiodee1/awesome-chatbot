@@ -832,6 +832,7 @@ class WrapMemRNN(nn.Module):
         self.memory_list = None
         self.prediction = None  # final single word prediction
         self.history_variable = [] # modifiable history variable
+        self.history_window = 5
         self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
@@ -938,7 +939,7 @@ class WrapMemRNN(nn.Module):
                 if (len(question_variable) > ii and question_variable[ii].item() in [EOS_token,  UNK_token]) or len(lst_val) < 1 or len(lst_val) > MAX_LENGTH:
                     lst_val = [ SOS_token ]
 
-                var = Variable(torch.LongTensor(lst_val[-5:]))
+                var = Variable(torch.LongTensor(lst_val[-self.history_window:]))
                 #print(ii, var)
             else:
                 var = self.history_variable[ii]

@@ -599,7 +599,7 @@ class WrapOutputRNN(nn.Module):
 
     def load_embed_module(self, embed):
         ''' here we comment out this line when embedding is not needed in decoder !! '''
-        if self.test_a:
+        if self.test_a or True:
             self.embed = embed
         pass
 
@@ -685,7 +685,7 @@ class WrapOutputRNN(nn.Module):
 
             token = SOS_token
 
-            if not self.test_a:
+            if not self.test_a or True:
                 output = decoder_hidden
 
             flag = False
@@ -2810,6 +2810,7 @@ class NMT:
 
             if self.do_recurrent_output and self.do_load_babi and not self.do_pos_input:
 
+                ans = prune_tensor(ans, 3)
                 #print(ans[0].size(),'ans', len(ans), ans.size())
 
                 for ii in range(len(target_variable)):
