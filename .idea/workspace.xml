@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-766">
-              <caret line="238" column="9" selection-start-line="238" selection-start-column="9" selection-end-line="238" selection-end-column="9" />
+            <state relative-caret-position="242">
+              <caret line="1034" column="21" selection-start-line="1034" selection-start-column="21" selection-end-line="1034" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -116,19 +115,15 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>prepare</find>
-      <find>json</find>
       <find>best_accuracy_record_offset</find>
       <find>do_test_not_train</find>
       <find>starting_epoch_length</find>
       <find>epoch_length</find>
       <find>prediction</find>
       <find>MAX_LENGTH</find>
-      <find>evaluate</find>
       <find>prepareData</find>
       <find>do_add_sol_token</find>
       <find>indexesFromSentence</find>
-      <find>variableFromSentence</find>
       <find>run_pos_random</find>
       <find>start</find>
       <find>variables_for_batch</find>
@@ -146,6 +141,10 @@
       <find>do_no_attention</find>
       <find>LuongAttention</find>
       <find>mask</find>
+      <find>do_interactive</find>
+      <find>setup_for_interactive</find>
+      <find>evaluate</find>
+      <find>variableFromSentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -571,8 +570,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-766">
-          <caret line="238" column="9" selection-start-line="238" selection-start-column="9" selection-end-line="238" selection-end-column="9" />
+        <state relative-caret-position="242">
+          <caret line="1034" column="21" selection-start-line="1034" selection-start-column="21" selection-end-line="1034" selection-end-column="21" />
         </state>
       </provider>
     </entry>

@@ -1033,7 +1033,8 @@ class NMT:
             line = tokenize_weak.format(line)
             print(line)
             pad = hparams['tokens_per_sentence']
-            line = self.variableFromSentence(self.input_lang, line, add_eol=True, pad=pad)
+            add_eol = False
+            line = self.variableFromSentence(self.input_lang, line, add_eol=add_eol, pad=pad)
 
             out , _ =self.evaluate(None, None, line, question=line)
             print(out)
