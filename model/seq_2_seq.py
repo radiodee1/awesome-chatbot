@@ -146,7 +146,7 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.embed = embed# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
-
+        self.sum_encoder = True
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=True, batch_first=True)
         self.dropout = nn.Dropout(dropout)
 
@@ -159,8 +159,17 @@ class Encoder(nn.Module):
         #print(embedded.size(),'emb')
         encoder_out, encoder_hidden = self.gru(embedded, hidden)  # (seq_len, batch, hidden_dim*2)
         # sum bidirectional outputs, the other option is to retain concat features
-        encoder_out = (encoder_out[:, :, :self.hidden_dim] +
-                       encoder_out[:, :, self.hidden_dim:])
+        if self.sum_encoder:
+            encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+                           encoder_out[:, :, self.hidden_dim:])
+        else:
+            encoder_out = torch.cat(
+                [
+                    encoder_out[1, :, :self.hidden_dim],
+                    encoder_out[1, :, self.hidden_dim:]
+                ],
+                dim=1
+            )
         return encoder_out, encoder_hidden
 
 class LuongAttention(nn.Module):
@@ -190,12 +199,53 @@ class LuongAttention(nn.Module):
         context = torch.sum(context, dim=0) ## why?
         return F.softmax(context, dim=1), mask
 
+class Attn(torch.nn.Module):
+    def __init__(self,  hidden_size):
+        method = 'general'
+        super(Attn, self).__init__()
+        self.method = method
+        if self.method not in ['dot', 'general', 'concat']:
+            raise ValueError(self.method, "is not an appropriate attention method.")
+        self.hidden_size = hidden_size
+        if self.method == 'general':
+            self.attn = torch.nn.Linear(self.hidden_size, hidden_size)
+        elif self.method == 'concat':
+            self.attn = torch.nn.Linear(self.hidden_size * 2, hidden_size)
+            self.v = torch.nn.Parameter(torch.FloatTensor(hidden_size))
+
+    def dot_score(self, hidden, encoder_output):
+        return torch.sum(hidden * encoder_output, dim=2)
+
+    def general_score(self, hidden, encoder_output):
+        energy = self.attn(encoder_output)
+        return torch.sum(hidden * energy, dim=2)
+
+    def concat_score(self, hidden, encoder_output):
+        #print(encoder_output.size(),'eo')
+        energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
+        return torch.sum(self.v * energy, dim=2)
+
+    def forward(self, hidden, encoder_outputs):
+        # Calculate the attention weights (energies) based on the given method
+        if self.method == 'general':
+            attn_energies = self.general_score(hidden, encoder_outputs)
+        elif self.method == 'concat':
+            attn_energies = self.concat_score(hidden, encoder_outputs)
+        elif self.method == 'dot':
+            attn_energies = self.dot_score(hidden, encoder_outputs)
+
+        # Transpose max_length and batch_size dimensions
+        #attn_energies = attn_energies.t()
+        #print(attn_energies.size(),'att', attn_energies)
+        # Return the softmax normalized probability scores (with added dimension)
+        return F.softmax(attn_energies, dim=0).unsqueeze(1)
+
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = LuongAttention(hidden_dim)
+        self.attention = Attn(hidden_dim) # LuongAttention(hidden_dim)
 
         gru_in_dim = hidden_dim
         linear_in_dim = hidden_dim * 2
@@ -275,16 +325,23 @@ class Decoder(nn.Module):
         embedded = self.dropout_e(embedded)
 
         ## CHANGE HIDDEN STATE HERE ##
-        decoder_hidden = decoder_hidden[:, :self.n_layers].permute(1, 0, 2)
-
-        #encoder_out = self.prune_tensor(encoder_out, 3)
+        #decoder_hidden = decoder_hidden[:, :self.n_layers].permute(1, 0, 2)
+        decoder_hidden = decoder_hidden[:, : self.n_layers].permute(1, 0, 2)
 
         rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
 
         if not self.cancel_attention:
 
-            context, mask = self.attention(decoder_hidden, encoder_out)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-            context = self.prune_tensor(context, 3)#.permute(1, 0, 2)
+            #print(decoder_hidden.size(), encoder_out.size(),'dh,eo')
+            mask = None
+            context = self.attention(decoder_hidden, encoder_out)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            #context = self.prune_tensor(context, 3).permute(2, 1, 0)
+            #context = self.prune_tensor(context, 1)
+            #encoder_out = self.prune_tensor(encoder_out, 1)
+            context = self.prune_tensor(context[0,0,:],3)
+
+            #print(context.size(), encoder_out.transpose(0,1).size(), 'cont,enc')
+            context = context.bmm(encoder_out.transpose(0,1))
 
             concat_list = [
                 rnn_output,
