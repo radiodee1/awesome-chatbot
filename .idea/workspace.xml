@@ -28,8 +28,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="22140">
-              <caret line="1256" column="25" selection-start-line="1256" selection-end-line="1257" />
+            <state relative-caret-position="422">
+              <caret line="3552" column="45" selection-start-line="3552" selection-start-column="21" selection-end-line="3552" selection-end-column="45" />
             </state>
           </provider>
         </entry>
@@ -37,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
-              <caret line="1034" column="21" selection-start-line="1034" selection-start-column="21" selection-end-line="1034" selection-end-column="21" />
+            <state relative-caret-position="655">
+              <caret line="2462" column="12" selection-start-line="2462" selection-start-column="12" selection-end-line="2462" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -115,8 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>best_accuracy_record_offset</find>
-      <find>do_test_not_train</find>
       <find>starting_epoch_length</find>
       <find>epoch_length</find>
       <find>prediction</find>
@@ -132,7 +130,6 @@
       <find>Encoder</find>
       <find>do_pos_input</find>
       <find>wind</find>
-      <find>best_accuracy_graph_size</find>
       <find>Lang</find>
       <find>num_vocab_total</find>
       <find>'ques</find>
@@ -145,6 +142,9 @@
       <find>setup_for_interactive</find>
       <find>evaluate</find>
       <find>variableFromSentence</find>
+      <find>record_loss</find>
+      <find>best_loss</find>
+      <find>best_accuracy_graph_size</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -512,13 +512,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22140">
-          <caret line="1256" column="25" selection-start-line="1256" selection-end-line="1257" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1944">
@@ -568,10 +561,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="3552" column="45" selection-start-line="3552" selection-start-column="21" selection-end-line="3552" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
-          <caret line="1034" column="21" selection-start-line="1034" selection-start-column="21" selection-end-line="1034" selection-end-column="21" />
+        <state relative-caret-position="655">
+          <caret line="2462" column="12" selection-start-line="2462" selection-start-column="12" selection-end-line="2462" selection-end-column="12" />
         </state>
       </provider>
     </entry>
