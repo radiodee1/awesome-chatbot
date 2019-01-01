@@ -585,6 +585,7 @@ class NMT:
 
         self.best_loss = None
         self.long_term_loss = 0
+        self.best_loss_graph = 0
         self.tag = ''
 
         self.input_lang = None
@@ -1452,7 +1453,7 @@ class NMT:
 
                 self.best_loss_dict[
                     str((self.best_loss_record_offset + self.saved_files)* self.best_loss_graph_size)
-                ] = str(self.best_loss)
+                ] = str(self.best_loss_graph)
 
                 print('offset', self.best_accuracy_record_offset, ', epoch', self.this_epoch)
                 self.update_json_file()
@@ -2078,6 +2079,10 @@ class NMT:
                         extra = ''
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
+
+                        if not self.do_test_not_train:
+                            self.best_loss_graph = print_loss_avg
+
                         if not self.do_test_not_train and not self.do_load_babi:
                             self.save_checkpoint(num=iter,extra=extra)
                             self.saved_files += 1

@@ -37,8 +37,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="655">
-              <caret line="2462" column="12" selection-start-line="2462" selection-start-column="12" selection-end-line="2462" selection-end-column="12" />
+            <state relative-caret-position="260">
+              <caret line="587" column="32" selection-start-line="587" selection-start-column="32" selection-end-line="587" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -115,8 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>starting_epoch_length</find>
-      <find>epoch_length</find>
       <find>prediction</find>
       <find>MAX_LENGTH</find>
       <find>prepareData</find>
@@ -143,8 +141,10 @@
       <find>evaluate</find>
       <find>variableFromSentence</find>
       <find>record_loss</find>
-      <find>best_loss</find>
       <find>best_accuracy_graph_size</find>
+      <find>long_term_loss</find>
+      <find>best_loss</find>
+      <find>best_loss_graph</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -570,8 +570,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="655">
-          <caret line="2462" column="12" selection-start-line="2462" selection-start-column="12" selection-end-line="2462" selection-end-column="12" />
+        <state relative-caret-position="260">
+          <caret line="587" column="32" selection-start-line="587" selection-start-column="32" selection-end-line="587" selection-end-column="32" />
         </state>
       </provider>
     </entry>
