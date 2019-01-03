@@ -121,6 +121,14 @@ The code can be found at the following site:
 
 https://github.com/dandelin/Dynamic-memory-networks-plus-Pytorch
 
+---------------------------
+
+Some code came from a Pytorch tutorial on creating a chatbot by Mathew Inkawhich.
+Specifically the code for the Attention Mechanism was used.
+It can be found at the following site:
+
+https://pytorch.org/tutorials/beginner/chatbot_tutorial.html
+
 '''
 
 use_cuda = torch.cuda.is_available()
@@ -172,32 +180,6 @@ class Encoder(nn.Module):
             )
         return encoder_out, encoder_hidden
 
-class LuongAttention(nn.Module):
-    """
-    LuongAttention from Effective Approaches to Attention-based Neural Machine Translation
-    https://arxiv.org/pdf/1508.04025.pdf
-    """
-
-    def __init__(self, dim):
-        super(LuongAttention, self).__init__()
-        self.W = nn.Linear(dim, dim, bias=False)
-
-    def score(self, decoder_hidden, encoder_out):
-        # linear transform encoder out (seq, batch, dim)
-        encoder_out = self.W(encoder_out)
-        # (batch, seq, dim) | (2, 15, 50)
-        encoder_out = encoder_out.permute(1, 0, 2)
-        # (2, 15, 50) @ (2, 50, 1)
-        return encoder_out @ decoder_hidden.permute(1, 2, 0)
-
-    def forward(self, decoder_hidden, encoder_out):
-        energies = self.score(decoder_hidden, encoder_out)
-        mask = F.softmax(energies, dim=1)  # batch, seq, 1
-        context = encoder_out.permute(1, 2, 0) @ mask  # (2, 50, 15) @ (2, 15, 1)
-        context = context.permute(2, 0, 1)  # (seq, batch, dim)
-        mask = mask.permute(2, 0, 1)  # (seq2, batch, seq1)
-        context = torch.sum(context, dim=0) ## why?
-        return F.softmax(context, dim=1), mask
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
@@ -245,7 +227,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = Attn(hidden_dim) # LuongAttention(hidden_dim)
+        self.attention = Attn(hidden_dim)
 
         gru_in_dim = hidden_dim
         linear_in_dim = hidden_dim * 2

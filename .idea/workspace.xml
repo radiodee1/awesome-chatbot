@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,7 +29,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
+            <state relative-caret-position="63468">
               <caret line="3552" column="45" selection-start-line="3552" selection-start-column="21" selection-end-line="3552" selection-end-column="45" />
             </state>
           </provider>
@@ -37,8 +38,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="587" column="32" selection-start-line="587" selection-start-column="32" selection-end-line="587" selection-end-column="32" />
+            <state relative-caret-position="134">
+              <caret line="181" lean-forward="true" selection-start-line="181" selection-end-line="181" />
             </state>
           </provider>
         </entry>
@@ -134,7 +135,6 @@
       <find>write</find>
       <find>cancel_attention</find>
       <find>do_no_attention</find>
-      <find>LuongAttention</find>
       <find>mask</find>
       <find>do_interactive</find>
       <find>setup_for_interactive</find>
@@ -145,6 +145,7 @@
       <find>long_term_loss</find>
       <find>best_loss</find>
       <find>best_loss_graph</find>
+      <find>LuongAttention</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -512,6 +513,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="63468">
+          <caret line="3552" column="45" selection-start-line="3552" selection-start-column="21" selection-end-line="3552" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1944">
@@ -561,17 +569,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="3552" column="45" selection-start-line="3552" selection-start-column="21" selection-end-line="3552" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="587" column="32" selection-start-line="587" selection-start-column="32" selection-end-line="587" selection-end-column="32" />
+        <state relative-caret-position="134">
+          <caret line="181" lean-forward="true" selection-start-line="181" selection-end-line="181" />
         </state>
       </provider>
     </entry>
