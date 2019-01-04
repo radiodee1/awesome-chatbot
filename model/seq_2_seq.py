@@ -159,6 +159,7 @@ def plot_vector(vec):
         lst_x.append(i)
         lst_y.append(vec[i])
     ax.plot(lst_x, lst_y, 'b' + '-')
+    plt.show()
     pass
 
 
