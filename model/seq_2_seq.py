@@ -23,6 +23,8 @@ import json
 import cpuinfo
 from settings import hparams
 import tokenize_weak
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
 import numpy as np
@@ -146,6 +148,65 @@ hparams['pytorch_embed_size'] = hparams['units']
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+
+def plot_vector(vec):
+    fig, ax = plt.subplots()
+    lst_x = []
+    lst_y = []
+    vec = prune_tensor(vec, 1)
+
+    for i in vec:
+        lst_x.append(i)
+        lst_y.append(vec[i])
+    ax.plot(lst_x, lst_y, 'b' + '-')
+    pass
+
+
+def encoding_positional(embedded_sentence, sum=False):
+
+    _, slen, elen = embedded_sentence.size()
+
+    slen2 = slen
+    elen2 = elen
+
+    if slen == 1 or elen == 1:
+        #exit()
+        pass
+
+    if slen == 1: slen2 += 0.01
+    if elen == 1: elen2 += 0.01
+
+    # print(slen, elen, 'slen,elen')
+
+    l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
+         range(slen)]
+    l = torch.FloatTensor(l)
+    l = l.unsqueeze(0)  # for #batch
+    # print(l.size(),"l", l)
+    l = l.expand_as(embedded_sentence)
+    if hparams['cuda'] is True: l = l.cuda()
+    weighted = embedded_sentence * Variable(l)
+    if sum:
+        weighted = torch.sum(weighted, dim=1)
+    return weighted
+
+def prune_tensor( input, size):
+    if isinstance(input, list): return input
+    if input is None: return input
+    n = 0
+    while len(input.size()) < size:
+        input = input.unsqueeze(0)
+        n += 1
+        if n > size + 1:
+            break
+    n = 0
+    z = len(input.size()) + 1
+    while len(input.size()) > size and input.size()[0] == 1:
+        input = input.squeeze(0)
+        n += 1
+        if n > z:
+            break
+    return input
 
 ################# pytorch modules ###############
 
