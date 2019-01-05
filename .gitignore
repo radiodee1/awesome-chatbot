@@ -1,6 +1,8 @@
 raw/*
 data/*
 saved/*
+.idea/*
+
 *.db
 *.db-journal
 *.txt
