@@ -41,5 +41,5 @@ for i in sys.argv[1:]:
 
 
 os.system('zip -r ' + basename + '.zip ' + './saved/' + basename + '*' )
-os.system('zip -r ' + basename + '.zip ' + './data/vocab.*.txt ./data/embed.txt ./model/settings.py')
+os.system('zip -r ' + basename + '.zip ' + './data/vocab.*.txt ./data/embed.txt') #./model/settings.py')
 os.system('mv ' + basename + '.zip ../.')
