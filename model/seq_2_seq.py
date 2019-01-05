@@ -564,11 +564,11 @@ class WrapMemRNN(nn.Module):
             prev_h2.append(self.prune_tensor(out2,3))
 
             #h = None
-            h = Variable(torch.zeros([1, 1, self.hidden_size]))
+            h = Variable(torch.zeros([4, 1, self.hidden_size]))
             for j in range(len(ii)):
                 if ii[j].item() is not 0:
                     h = self.prune_tensor(hidden2[:,j,:].unsqueeze(1), 3)
-                    #print('ii hid', j)
+                    #print('h', h.size())
             prev_h3.append(h)
 
         prev_h2 = torch.cat(prev_h2, dim=1)
