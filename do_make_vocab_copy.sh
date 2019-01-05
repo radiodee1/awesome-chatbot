@@ -7,8 +7,8 @@ cp data/vocab.babi.txt saved/saved_vocab.babi.txt
 cp model/settings.py saved/saved_settings.py.txt
 cp data/embed.txt saved/saved_embed.txt
 
-cd saved
-zip vocab.zip saved*.txt
-rm saved*.txt
+#cd saved
+zip -r vocab.zip saved/saved_*.txt
+rm saved/saved_*.txt
 
 mv vocab.zip ../
