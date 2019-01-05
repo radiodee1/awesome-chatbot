@@ -269,6 +269,7 @@ if __name__ == '__main__':
     parser.add_argument('--contractions', help='add some contractions to the vocab that are not present in glove.',
                         action='store_true')
     parser.add_argument('--no-limit', help='do not constrain vocab size', action='store_true')
+    parser.add_argument('--limit', help='new limit')
     parser.add_argument('--both-files',help='save "babi" and "big" named vocab files.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
@@ -324,6 +325,9 @@ if __name__ == '__main__':
     if args['both_files'] is True: store_two_files = True
 
     if args['no_limit']: no_limit = True
+
+    if args['limit'] is not None:
+        hparams['num_vocab_total'] = int(args['limit'])
 
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
