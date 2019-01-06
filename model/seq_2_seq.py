@@ -1851,6 +1851,7 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
+    '''
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
         if input is None: return input
@@ -1859,6 +1860,7 @@ class NMT:
         while len(input.size()) > size:
             input = input.squeeze(0)
         return input
+    '''
     #######################################
 
     def train(self,input_variable, target_variable, question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):

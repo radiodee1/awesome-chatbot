@@ -110,8 +110,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>indexesFromSentence</find>
-      <find>run_pos_random</find>
       <find>start</find>
       <find>variables_for_batch</find>
       <find>test_a</find>
@@ -140,6 +138,8 @@
       <find>sql_insert_complete</find>
       <find>wrap_question_module</find>
       <find>do_record_loss</find>
+      <find>self.prune</find>
+      <find>def prune</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
