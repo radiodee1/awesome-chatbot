@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="493" column="57" selection-start-line="493" selection-start-column="57" selection-end-line="493" selection-end-column="57" />
+            <state relative-caret-position="278">
+              <caret line="536" selection-start-line="536" selection-end-line="536" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -134,11 +134,11 @@
       <find>LuongAttention</find>
       <find>create_table</find>
       <find>sql_insert_complete</find>
-      <find>wrap_question_module</find>
       <find>do_record_loss</find>
       <find>self.prune</find>
       <find>def prune</find>
       <find>Decoder</find>
+      <find>wrap_question_module</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -518,8 +518,8 @@
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh" />
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="493" column="57" selection-start-line="493" selection-start-column="57" selection-end-line="493" selection-end-column="57" />
+        <state relative-caret-position="278">
+          <caret line="536" selection-start-line="536" selection-end-line="536" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

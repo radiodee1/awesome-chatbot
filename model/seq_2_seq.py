@@ -535,7 +535,6 @@ class WrapMemRNN(nn.Module):
 
     def wrap_question_module(self, question_variable):
 
-
         prev_h2 = []
         prev_h3 = []
 
