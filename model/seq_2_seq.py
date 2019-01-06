@@ -351,7 +351,7 @@ class Decoder(nn.Module):
 
     def new_inner(self, output, encoder_out, decoder_hidden):
 
-        embedded = self.embed(output)  
+        embedded = self.embed(output)
         embedded = prune_tensor(embedded, 3)
         embedded = self.dropout_e(embedded)
 
@@ -491,6 +491,7 @@ class WrapMemRNN(nn.Module):
         hidden = prune_tensor(hidden,3)
 
         if self.print_to_screen:
+            ''' here we test the plot_vector() function. '''
             print(question_variable.size(),'qv')
             out = prune_tensor(question_variable[0][0], 1)
             plot_vector(out)

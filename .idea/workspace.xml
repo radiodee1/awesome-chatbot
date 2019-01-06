@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="728">
-              <caret line="353" column="39" lean-forward="true" selection-start-line="353" selection-start-column="39" selection-end-line="353" selection-end-column="39" />
+            <state relative-caret-position="440">
+              <caret line="493" column="57" selection-start-line="493" selection-start-column="57" selection-end-line="493" selection-end-column="57" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -518,8 +518,8 @@
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh" />
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="728">
-          <caret line="353" column="39" lean-forward="true" selection-start-line="353" selection-start-column="39" selection-end-line="353" selection-end-column="39" />
+        <state relative-caret-position="440">
+          <caret line="493" column="57" selection-start-line="493" selection-start-column="57" selection-end-line="493" selection-end-column="57" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
