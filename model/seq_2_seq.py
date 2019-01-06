@@ -310,16 +310,7 @@ class Decoder(nn.Module):
     def load_embedding(self, embedding):
         self.embed = embedding
 
-    '''
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
-    '''
+
 
     def forward(self, encoder_out, decoder_hidden):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
@@ -575,16 +566,7 @@ class WrapMemRNN(nn.Module):
 
         return prev_h2.permute(1,0,2), prev_h3.permute(1,0,2)
 
-    '''
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size and input.size()[0] == 1:
-            input = input.squeeze(0)
-        return input
-    '''
+
 
 
 ######################## end pytorch modules ####################
@@ -1851,16 +1833,7 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
-    '''
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
-    '''
+
     #######################################
 
     def train(self,input_variable, target_variable, question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
