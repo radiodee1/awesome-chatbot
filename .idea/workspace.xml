@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="193" column="9" selection-start-line="193" selection-end-line="193" selection-end-column="9" />
+            <state relative-caret-position="728">
+              <caret line="353" column="39" lean-forward="true" selection-start-line="353" selection-start-column="39" selection-end-line="353" selection-end-column="39" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -109,7 +109,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>start</find>
       <find>variables_for_batch</find>
       <find>test_a</find>
       <find>best_accuracy_dict</find>
@@ -139,6 +138,7 @@
       <find>do_record_loss</find>
       <find>self.prune</find>
       <find>def prune</find>
+      <find>Decoder</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -518,8 +518,8 @@
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh" />
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="193" column="9" selection-start-line="193" selection-end-line="193" selection-end-column="9" />
+        <state relative-caret-position="728">
+          <caret line="353" column="39" lean-forward="true" selection-start-line="353" selection-start-column="39" selection-end-line="353" selection-end-column="39" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

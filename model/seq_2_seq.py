@@ -155,9 +155,9 @@ def plot_vector(vec):
     lst_y = []
     vec = prune_tensor(vec, 1)
 
-    for i in vec:
+    for i in range(len(vec)):
         lst_x.append(i)
-        lst_y.append(vec[i])
+        lst_y.append(vec[i].item())
     ax.plot(lst_x, lst_y, 'b' + '-')
     plt.show()
     pass
@@ -313,7 +313,6 @@ class Decoder(nn.Module):
 
 
     def forward(self, encoder_out, decoder_hidden):
-        #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
 
         l, s, hid = encoder_out.size()
 
@@ -325,7 +324,7 @@ class Decoder(nn.Module):
             decoder_hidden_x = prune_tensor(decoder_hidden[k,:,:],3)
 
             encoder_out_x = prune_tensor(encoder_out[k,:,:],3)
-            #print(encoder_out_x.size(),'eo')
+
             token = EOS_token
 
             for i in range(self.maxtokens):
@@ -338,10 +337,9 @@ class Decoder(nn.Module):
                     decoder_hidden_x
                 )
 
-                #output = self.out(output)
                 output = prune_tensor(output, 3)
                 outputs.append(output)
-                #print(output.size())
+
                 token = torch.argmax(output, dim=2)
 
             some_out = torch.cat(outputs, dim=0)
@@ -349,31 +347,26 @@ class Decoder(nn.Module):
 
         val_out = torch.cat(all_out, dim=1)
 
-        #print(val_out.size(),'out all')
-
         return val_out
 
     def new_inner(self, output, encoder_out, decoder_hidden):
 
-        embedded = self.embed(output)  # (1, batch, embed_dim)
+        embedded = self.embed(output)  
         embedded = prune_tensor(embedded, 3)
         embedded = self.dropout_e(embedded)
 
         ## CHANGE HIDDEN STATE HERE ##
-        #decoder_hidden = decoder_hidden[:, :self.n_layers].permute(1, 0, 2)
         decoder_hidden = decoder_hidden[:, : self.n_layers].permute(1, 0, 2)
 
         rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
 
         if not self.cancel_attention:
 
-            #print(decoder_hidden.size(), encoder_out.size(),'dh,eo')
             mask = None
-            context = self.attention(decoder_hidden, encoder_out)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
+            context = self.attention(decoder_hidden, encoder_out)
 
             context = prune_tensor(context[0,0,:],3)
 
-            #print(context.size(), encoder_out.transpose(0,1).size(), 'cont,enc')
             context = context.bmm(encoder_out.transpose(0,1))
 
             concat_list = [
@@ -387,19 +380,17 @@ class Decoder(nn.Module):
             attn_out = self.concat_out(attn_out)
             attn_out = self.dropout_o(attn_out)
 
-            #out_x = F.softmax(attn_out, dim=2)
             out_x = attn_out
 
             output = out_x.clone()
         else:
             context = None
             mask = None
-            #attn_out = rnn_output
-            #out_x = attn_out #self.out(attn_out)
+
             rnn_output = self.concat_out(rnn_output)
             rnn_output = self.dropout_o(rnn_output)
             out_x = rnn_output # torch.tanh(rnn_output)
-            #out_x = self.dropout_o(rnn_output)
+
             output = out_x.clone()
 
         decoder_hidden = decoder_hidden.contiguous()
@@ -498,6 +489,12 @@ class WrapMemRNN(nn.Module):
 
         question_variable = prune_tensor(question_variable,3)
         hidden = prune_tensor(hidden,3)
+
+        if self.print_to_screen:
+            print(question_variable.size(),'qv')
+            out = prune_tensor(question_variable[0][0], 1)
+            plot_vector(out)
+            exit()
 
         ans = self.model_6_dec(question_variable, hidden)
 
