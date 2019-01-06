@@ -310,6 +310,7 @@ class Decoder(nn.Module):
     def load_embedding(self, embedding):
         self.embed = embedding
 
+    '''
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
         if input is None: return input
@@ -318,6 +319,7 @@ class Decoder(nn.Module):
         while len(input.size()) > size and input.size()[0] == 1:
             input = input.squeeze(0)
         return input
+    '''
 
     def forward(self, encoder_out, decoder_hidden):
         #output = Variable(torch.LongTensor([EOS_token]))  # self.sol_token
@@ -329,17 +331,15 @@ class Decoder(nn.Module):
 
             outputs = []
 
-            decoder_hidden_x = self.prune_tensor(decoder_hidden[k,:,:],3)
+            decoder_hidden_x = prune_tensor(decoder_hidden[k,:,:],3)
 
-            encoder_out_x = self.prune_tensor(encoder_out[k,:,:],3)
+            encoder_out_x = prune_tensor(encoder_out[k,:,:],3)
             #print(encoder_out_x.size(),'eo')
             token = EOS_token
-            #output = Variable(torch.LongTensor([EOS_token]))
-            #output = self.prune_tensor(output, 3)
 
             for i in range(self.maxtokens):
                 output = Variable(torch.LongTensor([token]))
-                output = self.prune_tensor(output, 3)
+                output = prune_tensor(output, 3)
 
                 output, decoder_hidden_x, mask, out_x = self.new_inner(
                     output,
@@ -348,7 +348,7 @@ class Decoder(nn.Module):
                 )
 
                 #output = self.out(output)
-                output = self.prune_tensor(output, 3)
+                output = prune_tensor(output, 3)
                 outputs.append(output)
                 #print(output.size())
                 token = torch.argmax(output, dim=2)
@@ -365,7 +365,7 @@ class Decoder(nn.Module):
     def new_inner(self, output, encoder_out, decoder_hidden):
 
         embedded = self.embed(output)  # (1, batch, embed_dim)
-        embedded = self.prune_tensor(embedded, 3)
+        embedded = prune_tensor(embedded, 3)
         embedded = self.dropout_e(embedded)
 
         ## CHANGE HIDDEN STATE HERE ##
@@ -379,10 +379,8 @@ class Decoder(nn.Module):
             #print(decoder_hidden.size(), encoder_out.size(),'dh,eo')
             mask = None
             context = self.attention(decoder_hidden, encoder_out)# encoder_out)  # 1, 1, 50 (seq, batch, hidden_dim)
-            #context = self.prune_tensor(context, 3).permute(2, 1, 0)
-            #context = self.prune_tensor(context, 1)
-            #encoder_out = self.prune_tensor(encoder_out, 1)
-            context = self.prune_tensor(context[0,0,:],3)
+
+            context = prune_tensor(context[0,0,:],3)
 
             #print(context.size(), encoder_out.transpose(0,1).size(), 'cont,enc')
             context = context.bmm(encoder_out.transpose(0,1))
@@ -400,8 +398,7 @@ class Decoder(nn.Module):
 
             #out_x = F.softmax(attn_out, dim=2)
             out_x = attn_out
-            #out_x = attn_out #self.out(attn_out)  # torch.cat([rnn_output, context], 2))
-            #out_x = F.softmax(attn_out, dim=2)
+
             output = out_x.clone()
         else:
             context = None
@@ -508,8 +505,8 @@ class WrapMemRNN(nn.Module):
 
         question_variable, hidden = self.wrap_question_module(input_variable)
 
-        question_variable = self.prune_tensor(question_variable,3)
-        hidden = self.prune_tensor(hidden,3)
+        question_variable = prune_tensor(question_variable,3)
+        hidden = prune_tensor(hidden,3)
 
         ans = self.model_6_dec(question_variable, hidden)
 
@@ -557,17 +554,17 @@ class WrapMemRNN(nn.Module):
             #print(len(ii),'ii')
             #ii = Variable(torch.LongTensor([ii]))
 
-            ii = self.prune_tensor(ii, 2)
+            ii = prune_tensor(ii, 2)
 
             out2, hidden2 = self.model_1_seq(ii, None) #, prev_h2[-1])
 
-            prev_h2.append(self.prune_tensor(out2,3))
+            prev_h2.append(prune_tensor(out2,3))
 
             #h = None
             h = Variable(torch.zeros([4, 1, self.hidden_size]))
             for j in range(len(ii)):
                 if ii[j].item() is not 0:
-                    h = self.prune_tensor(hidden2[:,j,:].unsqueeze(1), 3)
+                    h = prune_tensor(hidden2[:,j,:].unsqueeze(1), 3)
                     #print('h', h.size())
             prev_h3.append(h)
 
@@ -578,7 +575,7 @@ class WrapMemRNN(nn.Module):
 
         return prev_h2.permute(1,0,2), prev_h3.permute(1,0,2)
 
-
+    '''
     def prune_tensor(self, input, size):
         if isinstance(input, list): return input
         if input is None: return input
@@ -587,7 +584,7 @@ class WrapMemRNN(nn.Module):
         while len(input.size()) > size and input.size()[0] == 1:
             input = input.squeeze(0)
         return input
-
+    '''
 
 
 ######################## end pytorch modules ####################
@@ -2252,10 +2249,10 @@ class NMT:
 
         if True:
             if hparams['split_sentences'] is not True:
-                input_variable = self.prune_tensor(input_variable,2)
+                input_variable = prune_tensor(input_variable,2)
                 b, i = input_variable.size()
                 if b > i and i == 1: input_variable = input_variable.permute(1,0)
-                input_variable = self.prune_tensor(input_variable,1)
+                input_variable = prune_tensor(input_variable,1)
                 input_variable = [input_variable]
 
                 #input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
@@ -2263,7 +2260,7 @@ class NMT:
             else:
                 input_variable = [input_variable]
 
-            question_variable = self.prune_tensor(question_variable, 2)
+            question_variable = prune_tensor(question_variable, 2)
             ql = len(question_variable.size())
             if ql == 2:
                 b, i = question_variable.size()
