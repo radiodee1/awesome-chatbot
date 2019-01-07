@@ -1056,16 +1056,20 @@ class NMT:
     def task_interactive(self):
 
         print('-------------------')
-        while True:
-            line = input("> ")
-            line = tokenize_weak.format(line)
-            print(line)
-            pad = hparams['tokens_per_sentence']
-            add_eol = False
-            line = self.variableFromSentence(self.input_lang, line, add_eol=add_eol, pad=pad)
+        try:
+            while True:
+                line = input("> ")
+                line = tokenize_weak.format(line)
+                print(line)
+                pad = hparams['tokens_per_sentence']
+                add_eol = False
+                line = self.variableFromSentence(self.input_lang, line, add_eol=add_eol, pad=pad)
 
-            out , _ =self.evaluate(None, None, line, question=line)
-            print(out)
+                out , _ =self.evaluate(None, None, line, question=line)
+                print(out)
+        except EOFError:
+            print()
+            exit()
 
     def task_convert(self):
         hparams['base_filename'] += '.small'
