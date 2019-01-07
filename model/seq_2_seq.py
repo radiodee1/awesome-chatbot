@@ -367,6 +367,8 @@ class Decoder(nn.Module):
 
             context = prune_tensor(context[0,0,:],3)
 
+            #print(context.size(), encoder_out.size(),'c,eo')
+
             context = context.bmm(encoder_out.transpose(0,1))
 
             concat_list = [
@@ -698,6 +700,8 @@ class NMT:
         self.do_record_loss = False
         self.do_print_control = False
         self.do_load_once = True
+
+        self.do_clip_grad_norm = True
 
         self.printable = ''
 
@@ -1905,8 +1909,10 @@ class NMT:
             ans = ansx.permute(1,0)
             #print(ans.size(),'ans')
 
-        #clip = 50.0
-        #_ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+        if self.do_clip_grad_norm:
+            clip = 50.0
+            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+            #print('clip')
 
         return outputs, ans , loss
 

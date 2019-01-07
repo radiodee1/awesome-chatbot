@@ -15,11 +15,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="536" selection-start-line="536" selection-end-line="536" />
+            <state relative-caret-position="203">
+              <caret line="370" column="12" selection-start-line="370" selection-start-column="12" selection-end-line="370" selection-end-column="12" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -109,9 +118,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variables_for_batch</find>
-      <find>test_a</find>
-      <find>best_accuracy_dict</find>
       <find>Encoder</find>
       <find>do_pos_input</find>
       <find>wind</find>
@@ -122,8 +128,6 @@
       <find>cancel_attention</find>
       <find>do_no_attention</find>
       <find>mask</find>
-      <find>do_interactive</find>
-      <find>setup_for_interactive</find>
       <find>evaluate</find>
       <find>variableFromSentence</find>
       <find>record_loss</find>
@@ -139,6 +143,11 @@
       <find>def prune</find>
       <find>Decoder</find>
       <find>wrap_question_module</find>
+      <find>do_interactive</find>
+      <find>setup_for_interactive</find>
+      <find>EOF</find>
+      <find>validate_iters</find>
+      <find>do_clip_grad_norm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -202,7 +211,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="535" />
+    <option name="x" value="536" />
     <option name="y" value="70" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -261,28 +270,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="535" y="70" width="1380" height="999" extended-state="0" />
+    <frame x="536" y="70" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-    <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -300,7 +290,7 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+    </layout>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/saved/stat.md.md" />
@@ -468,13 +458,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="63468">
-          <caret line="3552" column="45" selection-start-line="3552" selection-start-column="21" selection-end-line="3552" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_plot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
@@ -516,16 +499,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh" />
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="536" selection-start-line="536" selection-end-line="536" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1494">
@@ -581,6 +554,23 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="252">
           <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="203">
+          <caret line="370" column="12" selection-start-line="370" selection-start-column="12" selection-end-line="370" selection-end-column="12" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
