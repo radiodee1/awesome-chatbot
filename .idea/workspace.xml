@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_db_from_cornell_movie.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_db_from_cornell_movie.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,32 +13,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="203">
-              <caret line="370" column="12" selection-start-line="370" selection-start-column="12" selection-end-line="370" selection-end-column="12" />
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/babi_four.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
+            <state relative-caret-position="48222">
               <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1494">
-              <caret line="88" column="23" selection-start-line="88" selection-start-column="4" selection-end-line="88" selection-end-column="23" />
+            <state relative-caret-position="245">
+              <caret line="44" column="41" selection-start-line="44" selection-start-column="41" selection-end-line="44" selection-end-column="41" />
               <folding>
                 <element signature="e#20#33#0" expanded="true" />
               </folding>
@@ -81,6 +70,11 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raw/cornell movie-dialogs corpus/movie_lines.txt">
+          <provider selected="true" editor-type-id="LargeFileEditor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1458">
@@ -118,7 +112,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Encoder</find>
       <find>do_pos_input</find>
       <find>wind</find>
       <find>Lang</find>
@@ -148,6 +141,7 @@
       <find>EOF</find>
       <find>validate_iters</find>
       <find>do_clip_grad_norm</find>
+      <find>+</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -202,11 +196,11 @@
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/do_split.py" />
         <option value="$PROJECT_DIR$/model/do_split.py" />
-        <option value="$PROJECT_DIR$/do_make_db_from_cornell_movie.py" />
         <option value="$PROJECT_DIR$/do_make_vocab_copy.sh" />
         <option value="$PROJECT_DIR$/do_make_zip_copy.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/do_make_db_from_cornell_movie.py" />
       </list>
     </option>
   </component>
@@ -221,7 +215,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -234,10 +227,22 @@
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="model" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="raw" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="raw" type="462c0819:PsiDirectoryNode" />
+              <item name="cornell movie-dialogs corpus" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -293,7 +298,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/saved/stat.md.md" />
     <entry file="file://$PROJECT_DIR$/model/babi_iii.py" />
     <entry file="file://$PROJECT_DIR$/do_make_glove_download.sh">
       <provider selected="true" editor-type-id="text-editor">
@@ -499,13 +503,20 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh" />
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1494">
-          <caret line="88" column="23" selection-start-line="88" selection-start-column="4" selection-end-line="88" selection-end-column="23" />
+        <state relative-caret-position="777">
+          <caret line="369" column="13" selection-start-line="369" selection-start-column="13" selection-end-line="369" selection-end-column="13" />
           <folding>
-            <element signature="e#20#33#0" expanded="true" />
+            <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="48222">
+          <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
         </state>
       </provider>
     </entry>
@@ -533,9 +544,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1458">
@@ -557,19 +565,18 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+    <entry file="file://$PROJECT_DIR$/raw/cornell movie-dialogs corpus/movie_lines.txt">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="370" column="12" selection-start-line="370" selection-start-column="12" selection-end-line="370" selection-end-column="12" />
+        <state relative-caret-position="245">
+          <caret line="44" column="41" selection-start-line="44" selection-start-column="41" selection-end-line="44" selection-end-column="41" />
           <folding>
-            <element signature="e#21#86#0" expanded="true" />
+            <element signature="e#20#33#0" expanded="true" />
           </folding>
         </state>
       </provider>

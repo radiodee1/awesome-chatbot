@@ -38,8 +38,11 @@ if args['repeat'] is not None: shift_and_repeat = args['repeat']
 if args['switch_order'] is not None: switch_comment_order = args['switch_order']
 if args['text_file'] is not False: use_text_file = True
 
-connection = sqlite3.connect('{}.db'.format(timeframe))
-c = connection.cursor()
+if not use_text_file:
+    connection = sqlite3.connect('{}.db'.format(timeframe))
+    c = connection.cursor()
+else:
+    w_file = open(txtname +'.tab.txt', 'w')
 
 def create_table():
     c.execute("CREATE TABLE IF NOT EXISTS parent_reply(parent_id TEXT PRIMARY KEY, comment_id TEXT UNIQUE, parent TEXT, comment TEXT, subreddit TEXT, unix INT, score INT)")
@@ -87,12 +90,15 @@ def sql_insert_no_parent(commentid,parentid,comment,subreddit,time,score):
         print('s0 insertion',str(e))
 
 def sql_insert_complete(commentid,parentid,parent,comment,subreddit,time,score):
-    try:
-        sql = """INSERT INTO parent_reply (parent_id, comment_id,parent, comment, subreddit, unix, score) VALUES ("{}","{}","{}","{}","{}",{},{});""".format(parentid, commentid,parent, comment, subreddit, int(time), 5)
-        transaction_bldr(sql)
-    except Exception as e:
-        print('s0 insertion',str(e))
-
+    if not use_text_file:
+        try:
+            sql = """INSERT INTO parent_reply (parent_id, comment_id,parent, comment, subreddit, unix, score) VALUES ("{}","{}","{}","{}","{}",{},{});""".format(parentid, commentid,parent, comment, subreddit, int(time), 5)
+            transaction_bldr(sql)
+        except Exception as e:
+            print('s0 insertion',str(e))
+    else:
+        print('print to file')
+        w_file.write(parent + '\t' + comment + '\t' + str(1) + '\n')
 
 def acceptable(data):
     return True
@@ -134,7 +140,8 @@ def find_existing_score(pid):
         return False
     
 if __name__ == '__main__':
-    create_table()
+    if not use_text_file:
+        create_table()
     row_counter = 0
     paired_rows = 0
     #txtname = 'movie_lines'
@@ -239,6 +246,9 @@ if __name__ == '__main__':
 
                 num += 1
 
-        transaction_bldr('', force=True)
-
-    os.system("mv input.db raw/input_movie.db")
+        if not use_text_file:
+            transaction_bldr('', force=True)
+    if use_text_file:
+        w_file.close()
+    else:
+        os.system("mv input.db raw/input_movie.db")
