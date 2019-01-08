@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_tab_file_from_srt.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tab_file_from_srt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,32 +14,73 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/babi_four.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/raw/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor />
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_zip_copy.py">
+        <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="756">
-              <caret line="43" column="79" selection-start-line="43" selection-start-column="79" selection-end-line="43" selection-end-column="79" />
+            <state relative-caret-position="342">
+              <caret line="24" selection-start-line="22" selection-end-line="24" />
               <folding>
-                <element signature="e#22#31#0" expanded="true" />
+                <element signature="e#20#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_unpack_text.sh">
+        <entry file="file://$PROJECT_DIR$/raw/srt_zip/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="36">
+                <caret line="2" column="62" selection-start-line="2" selection-start-column="62" selection-end-line="2" selection-end-column="62" />
+              </first_editor>
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/do_make_tab_file_from_srt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="162">
-              <caret line="9" selection-start-line="9" selection-end-line="9" />
+            <state relative-caret-position="599">
+              <caret line="63" selection-start-line="63" selection-end-line="63" />
+              <folding>
+                <element signature="e#22#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="458">
+              <caret line="554" column="12" selection-start-line="554" selection-start-column="12" selection-end-line="554" selection-end-column="12" />
+              <folding>
+                <element signature="e#21#86#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="108">
+              <caret line="6" column="28" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -50,20 +95,22 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/raw/cornell movie-dialogs corpus/movie_lines.txt">
-          <provider selected="true" editor-type-id="LargeFileEditor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
+        <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1458">
-              <caret line="89" selection-start-line="89" selection-end-line="89" />
+            <state relative-caret-position="1620">
+              <caret line="90" selection-start-line="90" selection-end-line="90" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2952">
+              <caret line="169" column="79" selection-start-line="169" selection-start-column="58" selection-end-line="169" selection-end-column="79" />
+              <folding>
+                <element signature="e#20#34#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -71,17 +118,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5760">
-              <caret line="329" column="8" selection-start-line="329" selection-start-column="8" selection-end-line="329" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/settings.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
-              <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+            <state relative-caret-position="5202">
+              <caret line="298" column="22" selection-start-line="298" selection-start-column="18" selection-end-line="298" selection-end-column="22" />
+              <folding>
+                <element signature="e#20#51#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -97,8 +138,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>do_pos_input</find>
-      <find>wind</find>
       <find>Lang</find>
       <find>num_vocab_total</find>
       <find>'ques</find>
@@ -120,13 +159,15 @@
       <find>self.prune</find>
       <find>def prune</find>
       <find>Decoder</find>
-      <find>wrap_question_module</find>
       <find>do_interactive</find>
       <find>setup_for_interactive</find>
       <find>EOF</find>
       <find>validate_iters</find>
       <find>do_clip_grad_norm</find>
       <find>+</find>
+      <find>glob</find>
+      <find>hparams</find>
+      <find>wrap_question_module</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -135,8 +176,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_launch_pytorch.sh" />
-        <option value="$PROJECT_DIR$/do_launch_model.sh" />
         <option value="$PROJECT_DIR$/model/model.py" />
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/pytorch.py" />
@@ -184,8 +223,10 @@
         <option value="$PROJECT_DIR$/do_make_vocab_copy.sh" />
         <option value="$PROJECT_DIR$/do_make_zip_copy.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/do_make_db_from_cornell_movie.py" />
+        <option value="$PROJECT_DIR$/raw/srt_zip/README.md" />
+        <option value="$PROJECT_DIR$/do_make_tab_file_from_srt.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
       </list>
     </option>
   </component>
@@ -212,11 +253,6 @@
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="model" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="raw" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -227,6 +263,11 @@
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/raw/srt_zip" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -277,21 +318,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/babi_iii.py" />
-    <entry file="file://$PROJECT_DIR$/do_make_glove_download.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="7" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/raw/tasks_1-20_v1-2/en-10k/qa1_single-supporting-fact_test.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="575">
-          <caret line="2990" selection-start-line="2990" selection-end-line="2990" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/raw/tasks_1-20_v1-2/shuffled/qa1_single-supporting-fact_test.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -317,13 +343,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_db_from_cornel_movie.py" />
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_babi_rand.py" />
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2952">
-          <caret line="169" column="79" selection-start-line="169" selection-start-column="58" selection-end-line="169" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/babi_rec_mask.py" />
     <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
       <provider selected="true" editor-type-id="text-editor">
@@ -342,11 +361,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -355,6 +369,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -422,13 +441,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="800">
-          <caret line="90" selection-start-line="90" selection-end-line="90" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_split.py" />
     <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -445,13 +457,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="126">
           <caret line="9" column="37" selection-start-line="8" selection-end-line="9" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1944">
-          <caret line="108" selection-start-line="108" selection-end-line="108" />
         </state>
       </provider>
     </entry>
@@ -482,16 +487,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_vocab_copy.sh" />
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
-          <caret line="369" column="13" selection-start-line="369" selection-start-column="13" selection-end-line="369" selection-end-column="13" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_zip_copy.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="756">
@@ -509,24 +504,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_sr_test.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1458">
           <caret line="89" selection-start-line="89" selection-end-line="89" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5760">
-          <caret line="329" column="8" selection-start-line="329" selection-start-column="8" selection-end-line="329" selection-end-column="8" />
         </state>
       </provider>
     </entry>
@@ -543,20 +524,103 @@
     <entry file="file://$PROJECT_DIR$/raw/cornell movie-dialogs corpus/movie_lines.txt">
       <provider selected="true" editor-type-id="LargeFileEditor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="34" selection-start-line="34" selection-end-line="34" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/raw/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="569">
-          <caret line="143" column="4" selection-start-line="143" selection-start-column="4" selection-end-line="143" selection-end-column="4" />
+        <state relative-caret-position="342">
+          <caret line="24" selection-start-line="22" selection-end-line="24" />
           <folding>
             <element signature="e#20#33#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
+    <entry file="file://$PROJECT_DIR$/raw/srt_zip/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="36">
+            <caret line="2" column="62" selection-start-line="2" selection-start-column="62" selection-end-line="2" selection-end-column="62" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2705" column="41" selection-start-line="2705" selection-start-column="24" selection-end-line="2705" selection-end-column="41" />
+        <state relative-caret-position="108">
+          <caret line="6" column="28" selection-start-line="6" selection-start-column="21" selection-end-line="6" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_sr_test.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="54">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1620">
+          <caret line="90" selection-start-line="90" selection-end-line="90" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2952">
+          <caret line="169" column="79" selection-start-line="169" selection-start-column="58" selection-end-line="169" selection-end-column="79" />
+          <folding>
+            <element signature="e#20#34#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5202">
+          <caret line="298" column="22" selection-start-line="298" selection-start-column="18" selection-end-line="298" selection-end-column="22" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_tab_file_from_srt.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="599">
+          <caret line="63" selection-start-line="63" selection-end-line="63" />
+          <folding>
+            <element signature="e#22#37#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="458">
+          <caret line="554" column="12" selection-start-line="554" selection-start-column="12" selection-end-line="554" selection-end-column="12" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
