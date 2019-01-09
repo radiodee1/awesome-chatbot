@@ -312,7 +312,7 @@ class Decoder(nn.Module):
 
 
 
-    def forward(self, encoder_out, decoder_hidden):
+    def forward(self, encoder_out, decoder_hidden, encoder_output=None):
 
         l, s, hid = encoder_out.size()
 
@@ -363,7 +363,7 @@ class Decoder(nn.Module):
         if not self.cancel_attention:
 
             mask = None
-            context = self.attention(decoder_hidden, encoder_out)
+            context = self.attention(rnn_output, encoder_out)
 
             context = prune_tensor(context[0,0,:],3)
 
