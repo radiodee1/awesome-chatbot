@@ -338,7 +338,7 @@ class Decoder(nn.Module):
                 output = Variable(torch.LongTensor([token]))
                 output = prune_tensor(output, 3)
 
-                output, decoder_hidden_x, mask, out_x = self.new_inner(
+                output, decoder_hidden_x = self.new_inner(
                     output,
                     encoder_out_x[:,i,:].unsqueeze(0),
                     decoder_hidden_x
@@ -393,6 +393,7 @@ class Decoder(nn.Module):
 
             out_x = self.out_target(attn_out)
             out_x = torch.softmax(out_x, dim=2)
+
             output = out_x #.clone()
         else:
             context = None
@@ -407,7 +408,7 @@ class Decoder(nn.Module):
         decoder_hidden = decoder_hidden.contiguous()
         #decoder_hidden = decoder_hidden.permute(1,0,2)
 
-        return output, decoder_hidden, mask, out_x
+        return output, decoder_hidden 
 
 
 #################### Wrapper ####################
