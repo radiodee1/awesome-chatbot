@@ -380,7 +380,11 @@ class Decoder(nn.Module):
 
             attn_out = torch.cat(concat_list, dim=2)  # dim=2
             attn_out = self.concat_out(attn_out)
+            attn_out = torch.tanh(attn_out)
             attn_out = self.dropout_o(attn_out)
+
+            attn_out = torch.softmax(attn_out, dim=2)
+            print(attn_out.size(),'att')
 
             out_x = attn_out
 
