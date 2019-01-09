@@ -384,7 +384,6 @@ class Decoder(nn.Module):
             attn_out = self.dropout_o(attn_out)
 
             attn_out = torch.softmax(attn_out, dim=2)
-            print(attn_out.size(),'att')
 
             out_x = attn_out
 
