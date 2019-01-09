@@ -373,7 +373,7 @@ class Decoder(nn.Module):
 
             #print(context.size(), encoder_out.size(),'c,eo')
 
-            context = context.bmm(encoder_out.transpose(0,1))
+            context = context.bmm(encoder_out) #.transpose(0,1))
 
             concat_list = [
                 rnn_output,
@@ -399,7 +399,7 @@ class Decoder(nn.Module):
             context = None
             mask = None
 
-            rnn_output = self.concat_out(rnn_output)
+            rnn_output = self.out_target(rnn_output)
             rnn_output = self.dropout_o(rnn_output)
             out_x = rnn_output # torch.tanh(rnn_output)
 
@@ -408,7 +408,7 @@ class Decoder(nn.Module):
         decoder_hidden = decoder_hidden.contiguous()
         #decoder_hidden = decoder_hidden.permute(1,0,2)
 
-        return output, decoder_hidden 
+        return output, decoder_hidden
 
 
 #################### Wrapper ####################
