@@ -298,9 +298,9 @@ class Decoder(nn.Module):
             linear_in_dim = hidden_dim
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
-        self.out = nn.Linear(hidden_dim, target_vocab_size)
+        self.out_target = nn.Linear(hidden_dim, target_vocab_size)
 
-        self.concat_out = nn.Linear(linear_in_dim, target_vocab_size)
+        self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -312,7 +312,7 @@ class Decoder(nn.Module):
 
 
 
-    def forward(self, encoder_out, decoder_hidden, encoder_output=None):
+    def forward(self, encoder_out, decoder_hidden):
 
         l, s, hid = encoder_out.size()
 
@@ -321,7 +321,14 @@ class Decoder(nn.Module):
 
             outputs = []
 
+            ## CHANGE HIDDEN STATE HERE ##
             decoder_hidden_x = prune_tensor(decoder_hidden[k,:,:],3)
+            decoder_hidden_x = (
+                    decoder_hidden_x[:, : self.n_layers, :] +
+                    decoder_hidden_x[:, self.n_layers:, :]
+            )
+
+            decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
 
             encoder_out_x = prune_tensor(encoder_out[k,:,:],3)
 
@@ -355,9 +362,6 @@ class Decoder(nn.Module):
         embedded = prune_tensor(embedded, 3)
         embedded = self.dropout_e(embedded)
 
-        ## CHANGE HIDDEN STATE HERE ##
-        decoder_hidden = decoder_hidden[:, : self.n_layers].permute(1, 0, 2)
-
         rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
 
         if not self.cancel_attention:
@@ -379,15 +383,17 @@ class Decoder(nn.Module):
             #exit()
 
             attn_out = torch.cat(concat_list, dim=2)  # dim=2
+            #print(attn_out.size(),'att')
+            #exit()
             attn_out = self.concat_out(attn_out)
             attn_out = torch.tanh(attn_out)
-            attn_out = self.dropout_o(attn_out)
+            #attn_out = self.dropout_o(attn_out)
 
-            attn_out = torch.softmax(attn_out, dim=2)
+            #attn_out = torch.softmax(attn_out, dim=2)
 
-            out_x = attn_out
-
-            output = out_x.clone()
+            out_x = self.out_target(attn_out)
+            out_x = torch.softmax(out_x, dim=2)
+            output = out_x #.clone()
         else:
             context = None
             mask = None
@@ -399,7 +405,7 @@ class Decoder(nn.Module):
             output = out_x.clone()
 
         decoder_hidden = decoder_hidden.contiguous()
-        decoder_hidden = decoder_hidden.permute(1,0,2)
+        #decoder_hidden = decoder_hidden.permute(1,0,2)
 
         return output, decoder_hidden, mask, out_x
 
