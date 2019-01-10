@@ -378,7 +378,8 @@ class Decoder(nn.Module):
 
                     #context = context * encoder_out_bmm #.transpose(1,0))
                     #print(encoder_out_bmm.size(),'bmm')
-                    encoder_out_bmm = torch.tanh(encoder_out_bmm)
+
+                    #encoder_out_bmm = torch.tanh(encoder_out_bmm)
 
                     encoder_out_bmm = prune_tensor(encoder_out_bmm[:,m,:], 3)
 
@@ -387,6 +388,7 @@ class Decoder(nn.Module):
 
                     context = context.bmm(encoder_out_bmm) #.transpose(1,0))
                     #context = prune_tensor(context[:,m,:], 3)
+                    #print(context,'context')
 
                     concat_list = [
                         rnn_output,
@@ -401,7 +403,9 @@ class Decoder(nn.Module):
 
                     #attn_out = context
                     out_x = self.out_target(attn_out)
+
                     #print(out_x.size(),'outx')
+
                     out_x = torch.softmax(out_x, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
