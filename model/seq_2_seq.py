@@ -406,7 +406,7 @@ class Decoder(nn.Module):
 
                     #print(out_x.size(),'outx')
 
-                    out_x = torch.softmax(out_x, dim=2)
+                    out_x = torch.tanh(out_x) #, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
