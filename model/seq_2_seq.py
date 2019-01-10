@@ -317,7 +317,7 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
         decoder_hidden_x = (
-                decoder_hidden_x[:, : self.n_layers, :] +
+                #decoder_hidden_x[:, : self.n_layers, :] +
                 decoder_hidden_x[:, self.n_layers:, :]
         )
 
@@ -327,13 +327,7 @@ class Decoder(nn.Module):
 
         l, s, hid = encoder_out_x.size()
 
-        token = SOS_token
-
-        #word_out = [token for _ in range(l)]
-
-        output_start = torch.argmax(encoder_out_x, dim=2)
-
-        #print(output_start.size(),'start', encoder_out_x.size())
+        token = EOS_token
 
         outputs = []
 
@@ -352,9 +346,6 @@ class Decoder(nn.Module):
 
                 for m in range(s):
 
-                    #output = prune_tensor(output_start[k,:], 3)
-                    #print(output.size(),'out')
-
                     embedded = self.embed(output)
                     embedded = prune_tensor(embedded, 3)
                     embedded = self.dropout_e(embedded)
@@ -362,33 +353,16 @@ class Decoder(nn.Module):
 
                     rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
 
-                    #print(rnn_output,'rnn out')
 
                     encoder_out_bmm = prune_tensor(encoder_out_x[k, :, :], 3)
 
-                    #print(hidden_attn.size(),'hattn', rnn_output.size(),'rnn')
-
                     attn = self.attention(rnn_output, encoder_out_bmm)
 
-                    #print(attn.size(),'attn')
-                    # context = self.attention(rnn_output, encoder_out)
-
                     context = prune_tensor(attn[:,:,m], 3)
-                    #context = context.expand(encoder_out_bmm.size())
-
-                    #context = context * encoder_out_bmm #.transpose(1,0))
-                    #print(encoder_out_bmm.size(),'bmm')
-
-                    #encoder_out_bmm = torch.tanh(encoder_out_bmm)
 
                     encoder_out_bmm = prune_tensor(encoder_out_bmm[:,m,:], 3)
 
-                    #print(encoder_out_bmm, 'full enc bmm')
-                    #print(context, encoder_out_bmm.size(), 'cont,bmm')
-
-                    context = context.bmm(encoder_out_bmm) #.transpose(1,0))
-                    #context = prune_tensor(context[:,m,:], 3)
-                    #print(context,'context')
+                    context = context.bmm(encoder_out_bmm)
 
                     concat_list = [
                         rnn_output,
@@ -401,16 +375,11 @@ class Decoder(nn.Module):
                     attn_out = self.concat_out(attn_out)
                     attn_out = torch.tanh(attn_out)
 
-                    #attn_out = context
                     out_x = self.out_target(attn_out)
-
-                    #print(out_x.size(),'outx')
 
                     out_x = torch.tanh(out_x) #, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
-
-                    #print(output,'output')
 
                     all_out.append(out_x)
                 #word_out = output
