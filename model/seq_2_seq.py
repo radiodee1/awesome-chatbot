@@ -228,7 +228,7 @@ class Encoder(nn.Module):
         embedded = self.dropout(embedded)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
-        if True:
+        if False:
             #print(encoder_out.size(), encoder_hidden.size(),'encoder o,h')
             return encoder_out[:, :, self.hidden_dim:], encoder_hidden
 
@@ -249,7 +249,7 @@ class Encoder(nn.Module):
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
-        method = 'dot'
+        method = 'general'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
