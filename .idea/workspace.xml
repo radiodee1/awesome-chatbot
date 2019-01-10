@@ -65,8 +65,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="278">
-              <caret line="390" column="16" selection-start-line="390" selection-start-column="16" selection-end-line="390" selection-end-column="16" />
+            <state relative-caret-position="-1144">
+              <caret line="314" column="30" selection-start-line="314" selection-start-column="30" selection-end-line="314" selection-end-column="30" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -136,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>best_accuracy_graph_size</find>
       <find>long_term_loss</find>
       <find>best_loss</find>
       <find>best_loss_graph</find>
@@ -166,6 +165,7 @@
       <find>Decoder</find>
       <find>next_mem</find>
       <find>reset_parameters</find>
+      <find>gru</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -230,7 +230,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="538" />
-    <option name="y" value="69" />
+    <option name="y" value="70" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -293,7 +293,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="538" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="538" y="70" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -633,8 +633,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="278">
-          <caret line="390" column="16" selection-start-line="390" selection-start-column="16" selection-end-line="390" selection-end-column="16" />
+        <state relative-caret-position="-1144">
+          <caret line="314" column="30" selection-start-line="314" selection-start-column="30" selection-end-line="314" selection-end-column="30" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

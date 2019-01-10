@@ -226,8 +226,12 @@ class Encoder(nn.Module):
     def forward(self, source, hidden=None):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
-        #print(embedded.size(),'emb')
-        encoder_out, encoder_hidden = self.gru(embedded, hidden)  # (seq_len, batch, hidden_dim*2)
+
+        encoder_out, encoder_hidden = self.gru(embedded, hidden)
+        if True:
+            #print(encoder_out.size(), encoder_hidden.size(),'encoder o,h')
+            return encoder_out[:, :, self.hidden_dim:], encoder_hidden
+
         # sum bidirectional outputs, the other option is to retain concat features
         if self.sum_encoder:
             encoder_out = (encoder_out[:, :, :self.hidden_dim] +
@@ -245,7 +249,7 @@ class Encoder(nn.Module):
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
-        method = 'general'
+        method = 'dot'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
@@ -298,7 +302,7 @@ class Decoder(nn.Module):
             linear_in_dim = hidden_dim
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
-        self.out_target = nn.Linear(hidden_dim, target_vocab_size)
+        self.out_target = nn.Linear(linear_in_dim, target_vocab_size)
 
         self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
@@ -309,8 +313,6 @@ class Decoder(nn.Module):
 
     def load_embedding(self, embedding):
         self.embed = embedding
-
-
 
     def forward(self, encoder_out, decoder_hidden):
 
@@ -327,7 +329,7 @@ class Decoder(nn.Module):
 
         l, s, hid = encoder_out_x.size()
 
-        token = EOS_token
+        token = UNK_token
 
         outputs = []
 
@@ -361,7 +363,7 @@ class Decoder(nn.Module):
 
                     context = prune_tensor(attn[:,:,m], 3)
 
-                    encoder_out_bmm = prune_tensor(encoder_out_bmm[:,m,:], 3)
+                    encoder_out_bmm = prune_tensor(encoder_out_bmm[:, -1 ,:], 3)
 
                     context = context.bmm(encoder_out_bmm)
 
@@ -373,19 +375,18 @@ class Decoder(nn.Module):
                     #exit()
                     attn_out = torch.cat(concat_list, dim=2)
 
-                    attn_out = self.concat_out(attn_out)
-                    attn_out = torch.tanh(attn_out)
+                    #attn_out = self.concat_out(attn_out)
+                    #attn_out = torch.tanh(attn_out)
 
                     out_x = self.out_target(attn_out)
 
-                    out_x = torch.tanh(out_x) #, dim=2)
+                    out_x = torch.softmax(out_x, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
                     all_out.append(out_x)
                 #word_out = output
             else:
-                #print('unimplemented without attention')
 
                 output = torch.LongTensor([token])
 
@@ -399,7 +400,7 @@ class Decoder(nn.Module):
                     rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
                     out_x = self.out_target(rnn_output)
 
-                    out_x = torch.tanh(out_x)  # , dim=2)
+                    out_x = torch.softmax(out_x, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
