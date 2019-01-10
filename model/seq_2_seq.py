@@ -370,18 +370,20 @@ class Decoder(nn.Module):
 
                     attn = self.attention(rnn_output, encoder_out_bmm)
 
-
+                    #print(attn.size(),'attn')
                     # context = self.attention(rnn_output, encoder_out)
 
-                    context = prune_tensor(attn, 2).unsqueeze(2)#.unsqueeze(1)
-                    context = context.expand(encoder_out_bmm.size())
+                    context = prune_tensor(attn[:,:,m], 3) # prune_tensor(attn, 2).unsqueeze(2)#.unsqueeze(1)
+                    #context = context.expand(encoder_out_bmm.size())
 
-                    #print(context.size(), context[0,0,0], context[0,1,1], 'rnn,con')
-                    context = context * encoder_out_bmm #.transpose(1,0))
+                    #context = context * encoder_out_bmm #.transpose(1,0))
                     #print(encoder_out_bmm.size(),'bmm')
+                    encoder_out_bmm = prune_tensor(encoder_out_bmm[:,m,:], 3)
 
-                    #context = context.bmm(encoder_out_bmm) #.transpose(1,0))
-                    context = prune_tensor(context[:,m,:], 3)
+                    #print(context.size(), encoder_out_bmm.size(), 'rnn,bmm')
+
+                    context = context.bmm(encoder_out_bmm.transpose(1,0))
+                    #context = prune_tensor(context[:,m,:], 3)
 
                     concat_list = [
                         rnn_output,
