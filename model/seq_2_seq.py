@@ -317,7 +317,7 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
         decoder_hidden_x = (
-                #decoder_hidden_x[:, : self.n_layers, :] +
+                decoder_hidden_x[:, :self.n_layers, :] +
                 decoder_hidden_x[:, self.n_layers:, :]
         )
 
@@ -343,18 +343,19 @@ class Decoder(nn.Module):
                 #print(output.size(), 'argmax')
 
                 output = torch.LongTensor([token])
+                #print(self.embed(output))
 
                 for m in range(s):
 
                     embedded = self.embed(output)
+                    #print(output, embedded)
                     embedded = prune_tensor(embedded, 3)
                     embedded = self.dropout_e(embedded)
-                    #embedded = embedded.permute(1, 0, 2)
 
                     rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
 
-
                     encoder_out_bmm = prune_tensor(encoder_out_x[k, :, :], 3)
+                    #decoder_hidden_mod = prune_tensor(decoder_hidden[1,:,:], 3)
 
                     attn = self.attention(rnn_output, encoder_out_bmm)
 
@@ -371,7 +372,7 @@ class Decoder(nn.Module):
                     #for i in concat_list: print(i.size(), self.n_layers)
                     #exit()
                     attn_out = torch.cat(concat_list, dim=2)
-                    #print(attn_out.size(),'attout')
+
                     attn_out = self.concat_out(attn_out)
                     attn_out = torch.tanh(attn_out)
 
@@ -384,21 +385,34 @@ class Decoder(nn.Module):
                     all_out.append(out_x)
                 #word_out = output
             else:
-                print('unimplemented without attention')
+                #print('unimplemented without attention')
+
+                output = torch.LongTensor([token])
+
+                for m in range(s):
+
+                    embedded = self.embed(output)
+                    # print(output, embedded)
+                    embedded = prune_tensor(embedded, 3)
+                    embedded = self.dropout_e(embedded)
+
+                    rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
+                    out_x = self.out_target(rnn_output)
+
+                    out_x = torch.tanh(out_x)  # , dim=2)
+
+                    output = torch.argmax(out_x, dim=2)
+
+                    all_out.append(out_x)
+
                 pass
 
             all_out = torch.cat(all_out, dim=1)
-            #output = torch.argmax(output, dim=2)
-            #print(output.size(), 'argmax')
-            #print(all_out.size(),'all_out')
+
             outputs.append(all_out)
 
         all_output = torch.cat(outputs, dim=0)
-        #all_out.append(sublist)
 
-        #all_output = torch.cat(all_output, dim=0)
-
-        #print(all_output.size(),'ao')
         return all_output.permute(1,0,2)
 
 
@@ -434,7 +448,7 @@ class WrapMemRNN(nn.Module):
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
                                    cancel_attention=self.cancel_attention)
 
-        self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
+        #self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
         self.input_var = None  # for input
@@ -450,7 +464,7 @@ class WrapMemRNN(nn.Module):
         self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
-        self.reset_parameters()
+        #self.reset_parameters()
 
         if self.embedding is not None:
             self.load_embedding(self.embedding)
@@ -485,7 +499,7 @@ class WrapMemRNN(nn.Module):
                 init.xavier_normal_(weight)
 
         init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
-        init.xavier_normal_(self.next_mem.state_dict()['weight'])
+        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
     def forward(self, input_variable, question_variable, target_variable, criterion=None):
 
@@ -531,7 +545,7 @@ class WrapMemRNN(nn.Module):
     def test_embedding(self, num=None):
 
         if num is None:
-            num = 55  # magic number for testing = garden
+            num = EOS_token  # magic number for testing = garden
         e = self.embed(num)
         print('encoder 0:')
         print(e.size(), 'test embedding')
