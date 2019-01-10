@@ -282,7 +282,7 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att', attn_energies)
         # Return the softmax normalized probability scores (with added dimension)
-        return F.softmax(attn_energies, dim=0).unsqueeze(1)
+        return attn_energies.unsqueeze(1) #F.softmax(attn_energies, dim=0).unsqueeze(1)
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
@@ -314,101 +314,119 @@ class Decoder(nn.Module):
 
     def forward(self, encoder_out, decoder_hidden):
 
-        l, s, hid = encoder_out.size()
+        ## CHANGE HIDDEN STATE HERE ##
+        decoder_hidden_x = prune_tensor(decoder_hidden, 3)
+        decoder_hidden_x = (
+                decoder_hidden_x[:, : self.n_layers, :] +
+                decoder_hidden_x[:, self.n_layers:, :]
+        )
 
-        all_out = []
+        decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
+
+        encoder_out_x = prune_tensor(encoder_out, 3)
+
+        l, s, hid = encoder_out_x.size()
+
+        token = EOS_token
+
+        #word_out = [token for _ in range(l)]
+
+        output_start = torch.argmax(encoder_out_x, dim=2)
+
+
+        outputs = []
+
+        #all_out = []
         for k in range(l):
 
-            outputs = []
 
-            ## CHANGE HIDDEN STATE HERE ##
-            decoder_hidden_x = prune_tensor(decoder_hidden[k,:,:],3)
-            decoder_hidden_x = (
-                    decoder_hidden_x[:, : self.n_layers, :] +
-                    decoder_hidden_x[:, self.n_layers:, :]
-            )
+            if not self.cancel_attention:
 
-            decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
+                #output = torch.argmax(encoder_out_x, dim=2)
+                #print(output.size(), 'argmax')
 
-            encoder_out_x = prune_tensor(encoder_out[k,:,:],3)
+                #output = Variable(torch.LongTensor([word_out[ii] for ii in range(l)]))
+                output = prune_tensor(output_start[k,:], 3)
 
-            token = EOS_token
+                embedded = self.embed(output)
+                embedded = prune_tensor(embedded, 3)
+                embedded = self.dropout_e(embedded)
+                #embedded = embedded.permute(1, 0, 2)
 
-            for i in range(self.maxtokens):
-                output = Variable(torch.LongTensor([token]))
-                output = prune_tensor(output, 3)
 
-                output, decoder_hidden_x = self.new_inner(
-                    output,
-                    encoder_out_x[:,i,:].unsqueeze(0),
-                    decoder_hidden_x
-                )
+                hidden_x = decoder_hidden_x[:,k,:].unsqueeze(1)
 
-                output = prune_tensor(output, 3)
-                outputs.append(output)
+                rnn_output, decoder_hidden = self.gru(embedded, hidden_x)
 
-                token = torch.argmax(output, dim=2)
+                encoder_out_bmm = prune_tensor(encoder_out_x[k, :, :], 3)
 
-            some_out = torch.cat(outputs, dim=0)
-            all_out.append(some_out)
+                #hidden_attn = decoder_hidden[1:,:,:] + decoder_hidden[:1,:,:]
+                #print(hidden_attn.size(),'hattn', rnn_output.size(),'rnn')
 
-        val_out = torch.cat(all_out, dim=1)
+                attn = self.attention(rnn_output, encoder_out_bmm)
 
-        return val_out
 
-    def new_inner(self, output, encoder_out, decoder_hidden):
+                # context = self.attention(rnn_output, encoder_out)
 
-        embedded = self.embed(output)
-        embedded = prune_tensor(embedded, 3)
-        embedded = self.dropout_e(embedded)
+                context = prune_tensor(attn, 2).unsqueeze(2)#.unsqueeze(1)
+                context = context.expand(encoder_out_bmm.size())
 
-        rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
+                #print(context.size(), context[0,0,0], context[0,1,1], 'rnn,con')
+                context = context * encoder_out_bmm #.transpose(1,0))
 
-        if not self.cancel_attention:
+                concat_list = [
+                    rnn_output,
+                    context
+                ]
+                #for i in concat_list: print(i.size(), self.n_layers)
+                #exit()
+                attn_out = torch.cat(concat_list, dim=2)
 
-            mask = None
-            context = self.attention(rnn_output, encoder_out)
 
-            context = prune_tensor(context[0,0,:],3)
+                attn_out = self.concat_out(attn_out)
+                attn_out = torch.tanh(attn_out)
 
-            #print(context.size(), encoder_out.size(),'c,eo')
+                #attn_out = context
+                out_x = self.out_target(attn_out)
+                out_x = torch.softmax(out_x, dim=2)
 
-            context = context.bmm(encoder_out) #.transpose(0,1))
+                output = out_x
 
-            concat_list = [
-                rnn_output,
-                context
-            ]
-            #for i in concat_list: print(i.size(), self.n_layers)
-            #exit()
+                #word_out = output
+            else:
+                context = None
+                mask = None
 
-            attn_out = torch.cat(concat_list, dim=2)  # dim=2
-            #print(attn_out.size(),'att')
-            #exit()
-            attn_out = self.concat_out(attn_out)
-            attn_out = torch.tanh(attn_out)
-            #attn_out = self.dropout_o(attn_out)
+                output = prune_tensor(output_start[k, :], 3)
 
-            #attn_out = torch.softmax(attn_out, dim=2)
+                embedded = self.embed(output)
+                embedded = prune_tensor(embedded, 3)
+                embedded = self.dropout_e(embedded)
+                # embedded = embedded.permute(1, 0, 2)
 
-            out_x = self.out_target(attn_out)
-            out_x = torch.softmax(out_x, dim=2)
 
-            output = out_x #.clone()
-        else:
-            context = None
-            mask = None
+                hidden_x = decoder_hidden_x[:, k, :].unsqueeze(1)
 
-            rnn_output = self.out_target(rnn_output)
-            rnn_output = self.dropout_o(rnn_output)
-            out_x = rnn_output # torch.tanh(rnn_output)
+                rnn_output, decoder_hidden = self.gru(embedded, hidden_x)
 
-            output = out_x.clone()
+                rnn_output = self.out_target(rnn_output)
+                rnn_output = self.dropout_o(rnn_output)
+                out_x = rnn_output  # torch.tanh(rnn_output)
 
-        decoder_hidden = decoder_hidden.contiguous()
-        #decoder_hidden = decoder_hidden.permute(1,0,2)
+                output = out_x #.clone()
 
-        return output, decoder_hidden
+            #output = torch.argmax(output, dim=2)
+            #print(output.size(), 'argmax')
+
+            outputs.append(output)
+
+        output = torch.cat(outputs, dim=0)
+        #all_out.append(sublist)
+
+        #output = torch.cat(all_out, dim=0)
+
+        return output.permute(1,0,2)
+
 
 
 #################### Wrapper ####################
@@ -1874,6 +1892,7 @@ class NMT:
 
                 for i in range(len(target_variable)):
                     target_v = target_variable[i].squeeze(0).squeeze(1)
+
                     loss += criterion(ans[i, :, :], target_v)
                 #print( ans.size(),'ans', target_variable.size(), 'tv')
 
