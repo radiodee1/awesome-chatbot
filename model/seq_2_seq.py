@@ -215,9 +215,10 @@ class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
+        self.bidirectional = True
         self.embed = embed# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.sum_encoder = True
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=True, batch_first=True)
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=True)
         self.dropout = nn.Dropout(dropout)
 
     def load_embedding(self, embedding):
@@ -228,13 +229,13 @@ class Encoder(nn.Module):
         embedded = self.dropout(embedded)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
-        if False:
+        if not self.bidirectional:
             #print(encoder_out.size(), encoder_hidden.size(),'encoder o,h')
-            return encoder_out[:, :, self.hidden_dim:], encoder_hidden
+            return encoder_out, encoder_hidden
 
         # sum bidirectional outputs, the other option is to retain concat features
         if self.sum_encoder:
-            encoder_out = (encoder_out[:, :, :self.hidden_dim] +
+            encoder_out = ( #encoder_out[:, :, :self.hidden_dim] +
                            encoder_out[:, :, self.hidden_dim:])
         else:
             encoder_out = torch.cat(
@@ -244,6 +245,7 @@ class Encoder(nn.Module):
                 ],
                 dim=1
             )
+
         return encoder_out, encoder_hidden
 
 
@@ -329,7 +331,7 @@ class Decoder(nn.Module):
 
         l, s, hid = encoder_out_x.size()
 
-        token = UNK_token
+        token = SOS_token
 
         outputs = []
 
@@ -341,8 +343,6 @@ class Decoder(nn.Module):
 
             if not self.cancel_attention:
 
-                #output = torch.argmax(encoder_out_x, dim=2)
-                #print(output.size(), 'argmax')
 
                 output = torch.LongTensor([token])
                 #print(self.embed(output))
@@ -363,7 +363,7 @@ class Decoder(nn.Module):
 
                     context = prune_tensor(attn[:,:,m], 3)
 
-                    encoder_out_bmm = prune_tensor(encoder_out_bmm[:, -1 ,:], 3)
+                    encoder_out_bmm = prune_tensor(encoder_out_bmm[:, m ,:], 3)
 
                     context = context.bmm(encoder_out_bmm)
 
@@ -465,7 +465,7 @@ class WrapMemRNN(nn.Module):
         self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
 
-        #self.reset_parameters()
+        self.reset_parameters()
 
         if self.embedding is not None:
             self.load_embedding(self.embedding)
@@ -546,9 +546,9 @@ class WrapMemRNN(nn.Module):
     def test_embedding(self, num=None):
 
         if num is None:
-            num = EOS_token  # magic number for testing = garden
+            num = 0 #EOS_token  # magic number for testing = garden
         e = self.embed(num)
-        print('encoder 0:')
+        print('encoder :',num)
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
@@ -1296,9 +1296,10 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence, skip_unk=False):
+    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True):
         s = sentence.split(' ')
         sent = []
+        if add_sos: sent = [ SOS_token ]
         for word in s:
             if word in lang.word2index:
                 if word == hparams['eol']: word = EOS_token
