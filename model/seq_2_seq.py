@@ -23,6 +23,7 @@ import json
 import cpuinfo
 from settings import hparams
 import tokenize_weak
+import itertools
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 #import matplotlib.pyplot as plt
@@ -224,24 +225,31 @@ class Encoder(nn.Module):
     def load_embedding(self, embedding):
         self.embed = embedding
 
-    def forward(self, source, hidden=None):
+    def forward(self, source, input_lengths, hidden=None):
         embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
         embedded = self.dropout(embedded)
 
-        encoder_out, encoder_hidden = self.gru(embedded, hidden)
+        packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
+
+        encoder_out, encoder_hidden = self.gru(packed, hidden)
+
+        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
+
+        encoder_hidden = encoder_hidden.permute(1,0,2)
+
         if not self.bidirectional:
             #print(encoder_out.size(), encoder_hidden.size(),'encoder o,h')
-            return encoder_out, encoder_hidden
+            return outputs, encoder_hidden
 
         # sum bidirectional outputs, the other option is to retain concat features
         if self.sum_encoder:
-            encoder_out = ( #encoder_out[:, :, :self.hidden_dim] +
-                           encoder_out[:, :, self.hidden_dim:])
+            encoder_out = (outputs[:, :, :self.hidden_dim] +
+                           outputs[:, :, self.hidden_dim:])
         else:
             encoder_out = torch.cat(
                 [
-                    encoder_out[1, :, :self.hidden_dim],
-                    encoder_out[1, :, self.hidden_dim:]
+                    outputs[1, :, :self.hidden_dim],
+                    outputs[1, :, self.hidden_dim:]
                 ],
                 dim=1
             )
@@ -404,6 +412,8 @@ class Decoder(nn.Module):
 
                     output = torch.argmax(out_x, dim=2)
 
+
+
                     all_out.append(out_x)
 
                 pass
@@ -502,9 +512,11 @@ class WrapMemRNN(nn.Module):
         init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
 
-    def forward(self, input_variable, question_variable, target_variable, criterion=None):
+    def forward(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
-        question_variable, hidden = self.wrap_question_module(input_variable)
+        input_variable = input_variable.permute(1,0)
+
+        question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
 
         question_variable = prune_tensor(question_variable,3)
         hidden = prune_tensor(hidden,3)
@@ -552,17 +564,23 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def wrap_question_module(self, question_variable):
+    def wrap_question_module(self, question_variable, length_variable):
 
-        prev_h2 = []
-        prev_h3 = []
+        #prev_h2 = []
+        #prev_h3 = []
 
-        for ii in question_variable:
+        out2, hidden2 = self.model_1_seq(question_variable, length_variable, None)
 
-            ii = ii.squeeze(1)
-            ii = prune_tensor(ii, 2)
 
-            out2, hidden2 = self.model_1_seq(ii, None) #, prev_h2[-1])
+        return out2, hidden2
+        '''
+        for z in range(len(question_variable)):
+
+            #ii = ii.squeeze(1)
+            ii = prune_tensor(question_variable[z], 2)
+            lv = prune_tensor(length_variable[z], 2)
+
+            out2, hidden2 = self.model_1_seq(ii, lv, None) #, prev_h2[-1])
 
             prev_h2.append(prune_tensor(out2,3))
 
@@ -581,7 +599,7 @@ class WrapMemRNN(nn.Module):
         prev_h3 = torch.cat(prev_h3, dim=0)
 
         return prev_h2, prev_h3
-
+        '''
 
 
 
@@ -1324,14 +1342,77 @@ class NMT:
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
-    def variables_for_batch(self, pairs, size, start, skip_unk=False):
+    def zeroPadding(self, l, fillvalue=UNK_token):
+        return list(itertools.zip_longest(*l, fillvalue=fillvalue))
+
+    def binaryMatrix(self, l, value=UNK_token):
+        m = []
+        for i, seq in enumerate(l):
+            m.append([])
+            for token in seq:
+                if token == UNK_token:
+                    m[i].append(0)
+                else:
+                    m[i].append(1)
+        return m
+
+    # Returns padded input sequence tensor and lengths
+    def inputVar(self, l, voc):
+        indexes_batch = [self.indexesFromSentence(voc, sentence) for sentence in l]
+        lengths = torch.tensor([len(indexes) for indexes in indexes_batch])
+        padList = self.zeroPadding(indexes_batch)
+        padVar = torch.LongTensor(padList)
+        return padVar, lengths
+
+    # Returns padded target sequence tensor, padding mask, and max target length
+    def outputVar(self, l, voc):
+        indexes_batch = [self.indexesFromSentence(voc, sentence) for sentence in l]
+        max_target_len = max([len(indexes) for indexes in indexes_batch])
+        padList = self.zeroPadding(indexes_batch)
+        mask = self.binaryMatrix(padList)
+        mask = torch.ByteTensor(mask)
+        padVar = torch.LongTensor(padList)
+        return padVar, mask, max_target_len
+
+    # Returns all items for a given batch of pairs
+    def batch2TrainData(self, voc, pair_batch):
+        pair_batch.sort(key=lambda x: len(x[0].split(" ")), reverse=True)
+        input_batch, output_batch = [], []
+        pad = hparams['tokens_per_sentence']
+        add_eol = False
+
+        for pair in pair_batch:
+            input_batch.append(pair[0])
+            #output_batch.append(pair[2]) ## 1
+            out = self.variableFromSentence(self.output_lang, pair[2],add_eol=add_eol, pad=pad)
+            out = prune_tensor(out, 3)
+            output_batch.append(out)
+        inp, lengths = self.inputVar(input_batch, voc)
+        #output, mask, max_target_len = self.outputVar(output_batch, voc)
+        output = output_batch
+        mask = None
+        max_target_len = None
+        return inp, lengths, output, mask, max_target_len
+
+    def variables_for_batch(self, pairs, size, start, skip_unk=False, pad_and_batch=True):
         e = self.epoch_length * self.this_epoch + self.epoch_length
+        length = 0
+
         if start + size > e  and start < e :
             size = e - start #- 1
             print('process size', size,'next')
         if size == 0 or start >= len(pairs):
             print('empty return.')
-            return self.variablesFromPair(('','',''))
+            return self.variablesFromPair(('','',''), length)
+
+        if pad_and_batch:
+            training_batches = self.batch2TrainData(self.output_lang, pairs[start:start+ size])
+            input_variable, lengths, target_variable, mask, max_target_len = training_batches
+            length = lengths
+            ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
+
+            return (input_variable,ques_variable, target_variable, length)
+
         g1 = []
         g2 = []
         g3 = []
@@ -1348,6 +1429,7 @@ class NMT:
                 #print(start + num, end=', ')
 
                 triplet = pairs[start + num]
+
                 x = self.variablesFromPair(triplet, skip_unk=skip_unk)
                 if x is not None:
                     if not hparams['split_sentences']:
@@ -1360,7 +1442,8 @@ class NMT:
                     self._skipped += 1
                 num += 1
             #print(self._skipped)
-            return (g1, g2, g3)
+
+            return (g1, g2, g3, length)
             pass
         else:
             group = pairs[start:start + size]
@@ -1375,7 +1458,7 @@ class NMT:
             g2.append(g[1].squeeze(1))
             g3.append(g[2].squeeze(1))
 
-        return (g1, g2, g3)
+        return (g1, g2, g3, length)
 
     def variableFromSentence(self, lang, sentence, add_eol=False, pad=0, skip_unk=False):
         max = hparams['tokens_per_sentence']
@@ -1394,31 +1477,11 @@ class NMT:
             return result[:max]
 
     def variablesFromPair(self,pair, skip_unk=False):
-        if hparams['split_sentences'] and False :
-            l = pair[0].strip().split('.')
-            sen = []
-            max_len = 0
-            for i in range(len(l)):
-                if len(l[i].strip().split(' ')) > max_len: max_len =  len(l[i].strip().split(' '))
-            for i in range(len(l)):
-                if len(l[i]) > 0:
-                    #line = l[i].strip()
-                    l[i] = l[i].strip()
-                    while len(l[i].strip().split(' ')) < max_len:
-                        l[i] += " " + hparams['unk']
-                    #print(l[i],',l')
-                    z = self.variableFromSentence(self.input_lang, l[i], skip_unk=skip_unk)
-                    if skip_unk and z is None: return None
-                    #print(z)
-                    sen.append(z)
-            #sen = torch.cat(sen, dim=0)
-            #for i in sen: print(i.size())
-            #print('---')
-            input_variable = sen
-            pass
-        else:
+
+        if True:
             pad = hparams['tokens_per_sentence']
             input_variable = self.variableFromSentence(self.input_lang, pair[0], pad=pad, skip_unk=skip_unk)
+
 
         pad = hparams['tokens_per_sentence']
         question_variable = self.variableFromSentence(self.output_lang, pair[1], pad=pad, skip_unk=skip_unk)
@@ -1859,12 +1922,12 @@ class NMT:
 
     #######################################
 
-    def train(self,input_variable, target_variable, question_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
+    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
         if criterion is not None:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
-            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
+            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, length_variable,
                                                   criterion)
             loss = 0
 
@@ -1879,8 +1942,10 @@ class NMT:
 
                 #ans = ans.view(-1, self.output_lang.n_words)
                 #target_variable = target_variable.view(-1)
+                #target_variable = target_variable.permute(1,0)
 
                 for i in range(len(target_variable)):
+
                     target_v = target_variable[i].squeeze(0).squeeze(1)
 
                     loss += criterion(ans[i, :, :], target_v)
@@ -1910,7 +1975,7 @@ class NMT:
             #self.model_0_wra.eval()
             with torch.no_grad():
                 self.model_0_wra.eval()
-                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
+                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, length_variable,
                                                       criterion)
 
                 if not self.do_recurrent_output:
@@ -2036,6 +2101,7 @@ class NMT:
                 input_variable = group[0]
                 question_variable = group[1]
                 target_variable = group[2]
+                length_variable = group[3]
 
                 temp_batch_size = len(input_variable)
                 #print(temp_batch_size,'temp')
@@ -2046,16 +2112,21 @@ class NMT:
                 continue
                 pass
 
-            outputs, ans, l = self.train(input_variable, target_variable, question_variable, encoder,
+            outputs, ans, l = self.train(input_variable, target_variable, question_variable,length_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
             num_count += 1
 
             if self.do_recurrent_output and self.do_load_babi:
 
+                #target_variable = target_variable.permute(1,0).unsqueeze(2)
+                #print(target_variable.size(),'tv-after')
+
                 for i in range(len(target_variable)):
                     for j in range(target_variable[i].size()[1]):
                         t_val = target_variable[i][0,j,0].item()
+                        #t_val = target_variable[i][j,0].item()
+
                         o_val = ans[i][j].item()
 
                         if int(o_val) == int(t_val):
@@ -2211,6 +2282,13 @@ class NMT:
             choice = random.choice(self.pairs)
         else:
             choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
+
+        training_batches = self.batch2TrainData(self.output_lang, choice)
+        input_variable, lengths, target_variable, mask, max_target_len = training_batches
+
+        ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
+
+
         print('src:', choice[0])
         question = None
         if self.do_load_babi:
@@ -2225,7 +2303,7 @@ class NMT:
         if not self.do_load_babi:
             question = nums[0]
             target = None
-        words, _ = self.evaluate(None, None, nums[0], question=question, target_variable=target)
+        words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
             print('ans:', words)
@@ -2234,7 +2312,7 @@ class NMT:
         ############################
         pass
 
-    def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, max_length=MAX_LENGTH):
+    def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, lengths=None, max_length=MAX_LENGTH):
 
         input_variable = sentence
         question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
@@ -2254,12 +2332,13 @@ class NMT:
                 b, i = input_variable.size()
                 if b > i and i == 1: input_variable = input_variable.permute(1,0)
                 input_variable = prune_tensor(input_variable,1)
-                input_variable = [input_variable]
+                #input_variable = [input_variable]
 
                 #input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
                 #print(input_variable[0].size(), 'size')
             else:
-                input_variable = [input_variable]
+                #input_variable = [input_variable]
+                pass
 
             question_variable = prune_tensor(question_variable, 2)
             ql = len(question_variable.size())
@@ -2269,10 +2348,6 @@ class NMT:
             question_variable = question_variable.squeeze(0)
             question_variable = [question_variable]
 
-            #print(question_variable[0].size())
-
-            #question_variable = [question_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
-
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
 
 
@@ -2280,7 +2355,7 @@ class NMT:
 
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
+            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, lengths, None)
 
         outputs = [ans]
         #####################
