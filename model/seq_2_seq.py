@@ -226,16 +226,20 @@ class Encoder(nn.Module):
         self.embed = embedding
 
     def forward(self, source, input_lengths, hidden=None):
-        embedded = self.embed(source)  # (batch_size, seq_len, embed_dim)
+        #source = prune_tensor(source, 3)
+        #input_lengths = prune_tensor(input_lengths, 2)
+
+        embedded = self.embed(source)
         embedded = self.dropout(embedded)
 
-        packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
+        packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=False)
 
         encoder_out, encoder_hidden = self.gru(packed, hidden)
 
-        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
+        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=False)
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
+
 
         if not self.bidirectional:
             #print(encoder_out.size(), encoder_hidden.size(),'encoder o,h')
@@ -412,8 +416,6 @@ class Decoder(nn.Module):
 
                     output = torch.argmax(out_x, dim=2)
 
-
-
                     all_out.append(out_x)
 
                 pass
@@ -423,6 +425,8 @@ class Decoder(nn.Module):
             outputs.append(all_out)
 
         all_output = torch.cat(outputs, dim=0)
+
+        #print(all_output.size(),'all')
 
         return all_output.permute(1,0,2)
 
@@ -514,12 +518,13 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
-        input_variable = input_variable.permute(1,0)
+        #input_variable = input_variable.permute(1,0)
 
+        #print(input_variable.size(), length_variable.size(), 'i,l')
         question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
 
-        question_variable = prune_tensor(question_variable,3)
-        hidden = prune_tensor(hidden,3)
+        question_variable = prune_tensor(question_variable,3).permute(1,0,2)
+        hidden = prune_tensor(hidden,3) #.permute(1,0,2)
 
         if self.print_to_screen:
             ''' here we test the plot_vector() function. '''
@@ -566,40 +571,10 @@ class WrapMemRNN(nn.Module):
 
     def wrap_question_module(self, question_variable, length_variable):
 
-        #prev_h2 = []
-        #prev_h3 = []
 
-        out2, hidden2 = self.model_1_seq(question_variable, length_variable, None)
+        out, hidden = self.model_1_seq(question_variable, length_variable, None)
 
-
-        return out2, hidden2
-        '''
-        for z in range(len(question_variable)):
-
-            #ii = ii.squeeze(1)
-            ii = prune_tensor(question_variable[z], 2)
-            lv = prune_tensor(length_variable[z], 2)
-
-            out2, hidden2 = self.model_1_seq(ii, lv, None) #, prev_h2[-1])
-
-            prev_h2.append(prune_tensor(out2,3))
-
-            #h = None
-            h = Variable(torch.zeros([4, 1, self.hidden_size]))
-
-            #print(ii.size(),'ii')
-
-            if ii.size(1) > 0:
-                h = prune_tensor(hidden2[:,-1,:], 3)
-
-            #print(h.size(),'h')
-            prev_h3.append(h)
-
-        prev_h2 = torch.cat(prev_h2, dim=0)
-        prev_h3 = torch.cat(prev_h3, dim=0)
-
-        return prev_h2, prev_h3
-        '''
+        return out, hidden
 
 
 
@@ -1358,6 +1333,9 @@ class NMT:
 
     # Returns padded input sequence tensor and lengths
     def inputVar(self, l, voc):
+        #pad = hparams['tokens_per_sentence']
+        #add_eol = False
+
         indexes_batch = [self.indexesFromSentence(voc, sentence) for sentence in l]
         lengths = torch.tensor([len(indexes) for indexes in indexes_batch])
         padList = self.zeroPadding(indexes_batch)
@@ -1386,6 +1364,7 @@ class NMT:
             #output_batch.append(pair[2]) ## 1
             out = self.variableFromSentence(self.output_lang, pair[2],add_eol=add_eol, pad=pad)
             out = prune_tensor(out, 3)
+            #out = out.permute(1,0,2)
             output_batch.append(out)
         inp, lengths = self.inputVar(input_batch, voc)
         #output, mask, max_target_len = self.outputVar(output_batch, voc)
@@ -1408,8 +1387,11 @@ class NMT:
         if pad_and_batch:
             training_batches = self.batch2TrainData(self.output_lang, pairs[start:start+ size])
             input_variable, lengths, target_variable, mask, max_target_len = training_batches
-            length = lengths
-            ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
+            length = lengths #.transpose(1,0)
+            ques_variable = [
+                self.variableFromSentence(self.output_lang, hparams['unk']) for _ in length
+            ]
+            #input_variable = input_variable.permute(1,0)
 
             return (input_variable,ques_variable, target_variable, length)
 
@@ -2098,12 +2080,14 @@ class NMT:
                 skip_unk = self.do_skip_unk
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
 
+                for i in group: print(i.size() if not isinstance(i,list) else ('->', i[0].size()), len(i))
+                print('---')
+
                 input_variable = group[0]
                 question_variable = group[1]
                 target_variable = group[2]
                 length_variable = group[3]
 
-                temp_batch_size = len(input_variable)
                 #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
@@ -2115,7 +2099,14 @@ class NMT:
             outputs, ans, l = self.train(input_variable, target_variable, question_variable,length_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
+
+            print(ans.size(),'ans')
+
+            temp_batch_size = len(input_variable)
+
             num_count += 1
+
+            input_variable = input_variable.permute(1,0)
 
             if self.do_recurrent_output and self.do_load_babi:
 
@@ -2320,7 +2311,10 @@ class NMT:
         if target_variable is None:
             sos_token = Variable(torch.LongTensor([SOS_token]))
         else:
-            sos_token = target_variable[0]
+            sos_token = target_variable[0].permute(1,0,2)
+            for i in target_variable: print( i.size(),'eval <-')
+            print('--')
+            print(len(target_variable), target_variable[0].size(),'eval-tv')
 
         if question is not None:
             question_variable = question
