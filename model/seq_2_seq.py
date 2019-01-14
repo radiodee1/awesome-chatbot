@@ -232,31 +232,18 @@ class Encoder(nn.Module):
         embedded = self.embed(source)
         embedded = self.dropout(embedded)
 
-        packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=False)
+        print(embedded.size(),'embed')
+
+        packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
 
         encoder_out, encoder_hidden = self.gru(packed, hidden)
 
-        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=False)
+        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
 
-
-        if not self.bidirectional:
-            #print(encoder_out.size(), encoder_hidden.size(),'encoder o,h')
-            return outputs, encoder_hidden
-
-        # sum bidirectional outputs, the other option is to retain concat features
-        if self.sum_encoder:
-            encoder_out = (outputs[:, :, :self.hidden_dim] +
-                           outputs[:, :, self.hidden_dim:])
-        else:
-            encoder_out = torch.cat(
-                [
-                    outputs[1, :, :self.hidden_dim],
-                    outputs[1, :, self.hidden_dim:]
-                ],
-                dim=1
-            )
+        encoder_out = (outputs[:, :, :self.hidden_dim] +
+                       outputs[:, :, self.hidden_dim:])
 
         return encoder_out, encoder_hidden
 
@@ -518,12 +505,12 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
-        #input_variable = input_variable.permute(1,0)
+        input_variable = input_variable.permute(1,0)
 
         #print(input_variable.size(), length_variable.size(), 'i,l')
         question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
 
-        question_variable = prune_tensor(question_variable,3).permute(1,0,2)
+        question_variable = prune_tensor(question_variable,3) #.permute(1,0,2)
         hidden = prune_tensor(hidden,3) #.permute(1,0,2)
 
         if self.print_to_screen:
@@ -533,8 +520,9 @@ class WrapMemRNN(nn.Module):
             plot_vector(out)
             exit()
 
+        print(question_variable.size(), hidden.size(), 'qv,hid')
         ans = self.model_6_dec(question_variable, hidden)
-
+        print(ans.size(), 'ans')
         outputs = None
 
         return outputs, None, ans, None
@@ -2312,8 +2300,9 @@ class NMT:
             sos_token = Variable(torch.LongTensor([SOS_token]))
         else:
             sos_token = target_variable[0].permute(1,0,2)
-            for i in target_variable: print( i.size(),'eval <-')
-            print('--')
+
+            #for i in target_variable: print( i.size(),'eval <-')
+            #print('--')
             print(len(target_variable), target_variable[0].size(),'eval-tv')
 
         if question is not None:
@@ -2355,6 +2344,7 @@ class NMT:
         #####################
 
         if not self.do_recurrent_output:
+            '''
             decoded_words = []
             for di in range(len(outputs)):
 
@@ -2362,6 +2352,7 @@ class NMT:
                 output = output.permute(1,0)
 
                 ni = torch.argmax(output, dim=1)[0]
+
 
                 if int(ni) == int(EOS_token):
                     xxx = hparams['eol']
@@ -2374,14 +2365,17 @@ class NMT:
                     if di == 5 and len(outputs) > 5:
                         print('...etc')
                     decoded_words.append(self.output_lang.index2word[int(ni)])
-
+            '''
         else:
             decoded_words = []
+            print(outputs[0].size(),'outs.size()')
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
                     output = output.permute(1, 0)
-                    #print(output.size(),'out')
+
+                    print(output.size(),'out')
+
                     ni = torch.argmax(output, dim=0)[0]
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
