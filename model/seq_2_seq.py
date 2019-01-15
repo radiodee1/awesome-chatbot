@@ -377,7 +377,7 @@ class Decoder(nn.Module):
 
                     out_x = self.out_target(attn_out)
 
-                    out_x = torch.softmax(out_x, dim=2)
+                    out_x = torch.tanh(out_x) #, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
@@ -395,9 +395,12 @@ class Decoder(nn.Module):
                     embedded = self.dropout_e(embedded)
 
                     rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
+
                     out_x = self.out_target(rnn_output)
 
-                    out_x = torch.softmax(out_x, dim=2)
+                    out_x = torch.tanh(out_x) #, dim=2)
+
+                    #print(out_x,'out_x')
 
                     output = torch.argmax(out_x, dim=2)
 
@@ -1279,7 +1282,7 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True):
+    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False):
         s = sentence.split(' ')
         sent = []
         if add_sos: sent = [ SOS_token ]
@@ -1294,10 +1297,10 @@ class NMT:
                 return None
             elif not self.do_hide_unk:
                 sent.append(lang.word2index[hparams['unk']])
-        if len(sent) >= MAX_LENGTH and not self.do_load_babi:
+        if len(sent) >= MAX_LENGTH and add_eos: #not self.do_load_babi:
             sent = sent[:MAX_LENGTH]
             sent[-1] = EOS_token
-        if self.do_load_babi and False:
+        elif add_eos: #self.do_load_babi :
             sent.append(EOS_token)
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
@@ -1347,12 +1350,12 @@ class NMT:
         pair_batch.sort(key=lambda x: len(x[0].split(" ")), reverse=True)
         input_batch, output_batch = [], []
         pad = hparams['tokens_per_sentence']
-        add_eol = False
+        add_eos = True
 
         for pair in pair_batch:
             input_batch.append(pair[0])
             #output_batch.append(pair[2]) ## 1
-            out = self.variableFromSentence(self.output_lang, pair[2],add_eol=add_eol, pad=pad)
+            out = self.variableFromSentence(self.output_lang, pair[2],add_eos=add_eos, pad=pad)
             out = prune_tensor(out, 3)
             #out = out.permute(1,0,2)
             output_batch.append(out)
@@ -1377,11 +1380,10 @@ class NMT:
         if pad_and_batch:
             training_batches = self.batch2TrainData(self.output_lang, pairs[start:start+ size])
             input_variable, lengths, target_variable, mask, max_target_len = training_batches
-            length = lengths #.transpose(1,0)
+            length = lengths
             ques_variable = [
                 self.variableFromSentence(self.output_lang, hparams['unk']) for _ in length
             ]
-            #input_variable = input_variable.permute(1,0)
 
             return (input_variable, target_variable, ques_variable,  length)
 
@@ -1432,11 +1434,11 @@ class NMT:
 
         return (g1, g2, g3, length)
 
-    def variableFromSentence(self, lang, sentence, add_eol=False, pad=0, skip_unk=False):
+    def variableFromSentence(self, lang, sentence, add_eos=True, pad=0, skip_unk=False):
         max = hparams['tokens_per_sentence']
-        indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk)
+        indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk, add_eos=add_eos)
         if indexes is None and skip_unk: return indexes
-        if add_eol and len(indexes) < pad: indexes.append(EOS_token)
+        #if add_eol and len(indexes) < pad: indexes.append(EOS_token)
         sentence_len = len(indexes)
         while pad > sentence_len:
             indexes.append(UNK_token)
@@ -1462,12 +1464,12 @@ class NMT:
             #print(pair[2],',pair')
             #if (len(pair[2]) > 0) or True:
             pad = 0
-            add_eol = False
+            add_eos = False
             if self.do_recurrent_output:
                 pad = hparams['tokens_per_sentence']
-                add_eol = True
+                add_eos = True
             target_variable = self.variableFromSentence(self.output_lang, pair[2],
-                                                        add_eol=add_eol,
+                                                        add_eos=add_eos,
                                                         pad=pad,
                                                         skip_unk=skip_unk)
             if self.do_recurrent_output:
@@ -1916,12 +1918,17 @@ class NMT:
                 #target_variable = target_variable.view(-1)
                 #target_variable = target_variable.permute(1,0)
 
-                for i in range(len(target_variable)):
+                for i in range(len(ans)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
 
+                    if target_v.size(0) > ans[i].size(0):
+                        #print('odd sizes:', target_v.size(0), length_variable[i].item(), ans[i].size() )
+                        continue
+
                     loss += criterion(ans[i, :, :], target_v)
-                #print( ans.size(),'ans', target_variable.size(), 'tv')
+
+                #print( ans[0],'ans', target_variable[0], 'tv')
 
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
@@ -1939,7 +1946,8 @@ class NMT:
             if not self.do_recurrent_output:
                 loss = criterion(ans, target_variable)
 
-            loss.backward()
+            if not isinstance(loss, int):
+                loss.backward()
             wrapper_optimizer.step()
 
 
@@ -2020,9 +2028,9 @@ class NMT:
             wrapper_optimizer = self._make_optimizer()
             self.opt_1 = wrapper_optimizer
 
-        weight = torch.ones(self.output_lang.n_words)
-        weight[self.output_lang.word2index[hparams['unk']]] = 0.0
-        self.criterion = nn.CrossEntropyLoss(weight=weight) #size_average=False)
+        #weight = torch.ones(self.output_lang.n_words)
+        #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+        self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
         #self.criterion = nn.NLLLoss(weight=weight)
 
 
@@ -2103,8 +2111,8 @@ class NMT:
 
                 #print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
 
-                for i in range(len(target_variable)):
-                    for j in range(target_variable[i].size()[1]):
+                for i in range(len(ans)):
+                    for j in range(ans[i].size(0)):
                         t_val = target_variable[i][0,j,0].item()
                         #t_val = target_variable[i][j,0].item()
 
@@ -2130,23 +2138,8 @@ class NMT:
 
                 self.score = float(num_right / num_tot) * 100
 
-            if self.do_load_babi and not self.do_recurrent_output:
-                '''
-                for i in range(len(target_variable)):
-                    o_val = torch.argmax(ans[i], dim=0).item() #[0]
-                    t_val = target_variable[i].item()
-
-                    if int(o_val) == int(t_val):
-                        num_right += 1
-                        num_right_small += 1
-
-                if self.do_batch_process: num_tot += temp_batch_size
-                else: num_tot += 1
-
-                self.score = float(num_right/num_tot) * 100
-                '''
             if l is not None:
-                print_loss_total += float(l.clone())
+                print_loss_total += float(l) #.clone())
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
@@ -2270,7 +2263,7 @@ class NMT:
         training_batches = self.batch2TrainData(self.output_lang, [choice])
         input_variable, lengths, target_variable, mask, max_target_len = training_batches
 
-        ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
+        ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'], add_eos=True)
 
 
         print('src:', choice[0])
@@ -2299,47 +2292,11 @@ class NMT:
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, lengths=None, max_length=MAX_LENGTH):
 
         input_variable = sentence
-        question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
+        #question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
 
-        if target_variable is None:
-            sos_token = Variable(torch.LongTensor([SOS_token]))
-        else:
-            sos_token = target_variable[0].permute(1,0,2)
+        sos_token = target_variable[0].permute(1,0,2)
 
-            #for i in target_variable: print( i.size(),'eval <-')
-            #print('--')
-            #print(len(target_variable), target_variable[0].size(),'eval-tv')
-
-        if question is not None:
-            question_variable = question
-            if not self.do_load_babi: sos_token = question_variable
-
-        if True:
-            if hparams['split_sentences'] is not True:
-                input_variable = prune_tensor(input_variable,2)
-                b, i = input_variable.size()
-                if b > i and i == 1: input_variable = input_variable.permute(1,0)
-                input_variable = prune_tensor(input_variable,1)
-                #input_variable = [input_variable]
-
-                #input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
-                #print(input_variable[0].size(), 'size')
-            else:
-                #input_variable = [input_variable]
-                pass
-
-            question_variable = prune_tensor(question_variable, 2)
-            ql = len(question_variable.size())
-            if ql == 2:
-                b, i = question_variable.size()
-                if b > i and i == 1: question_variable = question_variable.permute(1,0)
-            question_variable = question_variable.squeeze(0)
-            question_variable = [question_variable]
-
-            sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
-
-
-        #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
+        question_variable = question
 
         self.model_0_wra.eval()
         with torch.no_grad():
@@ -2348,30 +2305,8 @@ class NMT:
         outputs = [ans]
         #####################
 
-        if not self.do_recurrent_output:
-            '''
-            decoded_words = []
-            for di in range(len(outputs)):
 
-                output = outputs[di]
-                output = output.permute(1,0)
-
-                ni = torch.argmax(output, dim=1)[0]
-
-
-                if int(ni) == int(EOS_token):
-                    xxx = hparams['eol']
-                    decoded_words.append(xxx)
-                    print('eol found.')
-                    if True: break
-                else:
-                    if di < 4:
-                        print(int(ni), self.output_lang.index2word[int(ni)])
-                    if di == 5 and len(outputs) > 5:
-                        print('...etc')
-                    decoded_words.append(self.output_lang.index2word[int(ni)])
-            '''
-        else:
+        if True:
             decoded_words = []
 
             for db in range(len(outputs)):
