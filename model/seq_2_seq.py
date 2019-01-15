@@ -1068,7 +1068,7 @@ class NMT:
                 ques_variable = [
                     self.variableFromSentence(self.output_lang, hparams['unk']) for _ in lengths
                 ]
-                ques_variable =self.variableFromSentence(self.output_lang, hparams['unk']) # Variable(torch.tensor(ques_variable))
+                ques_variable =self.variableFromSentence(self.output_lang, hparams['unk'])
                 out , _ =self.evaluate(None, None, input_variable,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
         except EOFError:
@@ -2091,17 +2091,17 @@ class NMT:
                                             None, None, criterion)
 
             #print(ans.size(),'ans')
+            input_variable = input_variable.permute(1,0)
+
 
             temp_batch_size = len(input_variable)
 
             num_count += 1
 
-            input_variable = input_variable.permute(1,0)
 
             if self.do_recurrent_output and self.do_load_babi:
 
-                #target_variable = target_variable.permute(1,0).unsqueeze(2)
-                #print(target_variable.size(),'tv-after')
+                print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
 
                 for i in range(len(target_variable)):
                     for j in range(target_variable[i].size()[1]):
