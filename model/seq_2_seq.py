@@ -232,8 +232,6 @@ class Encoder(nn.Module):
         embedded = self.embed(source)
         embedded = self.dropout(embedded)
 
-        print(embedded.size(),'embed')
-
         packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
 
         encoder_out, encoder_hidden = self.gru(packed, hidden)
@@ -520,9 +518,8 @@ class WrapMemRNN(nn.Module):
             plot_vector(out)
             exit()
 
-        print(question_variable.size(), hidden.size(), 'qv,hid')
         ans = self.model_6_dec(question_variable, hidden)
-        print(ans.size(), 'ans')
+
         outputs = None
 
         return outputs, None, ans, None
@@ -1381,7 +1378,7 @@ class NMT:
             ]
             #input_variable = input_variable.permute(1,0)
 
-            return (input_variable,ques_variable, target_variable, length)
+            return (input_variable, target_variable, ques_variable,  length)
 
         g1 = []
         g2 = []
@@ -2068,12 +2065,12 @@ class NMT:
                 skip_unk = self.do_skip_unk
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
 
-                for i in group: print(i.size() if not isinstance(i,list) else ('->', i[0].size()), len(i))
-                print('---')
+                #for i in group: print(i.size() if not isinstance(i,list) else ('->', i[0].size()), len(i))
+                #print('---')
 
                 input_variable = group[0]
-                question_variable = group[1]
-                target_variable = group[2]
+                question_variable = group[2]
+                target_variable = group[1]
                 length_variable = group[3]
 
                 #print(temp_batch_size,'temp')
@@ -2088,7 +2085,7 @@ class NMT:
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
-            print(ans.size(),'ans')
+            #print(ans.size(),'ans')
 
             temp_batch_size = len(input_variable)
 
@@ -2262,7 +2259,7 @@ class NMT:
         else:
             choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
 
-        training_batches = self.batch2TrainData(self.output_lang, choice)
+        training_batches = self.batch2TrainData(self.output_lang, [choice])
         input_variable, lengths, target_variable, mask, max_target_len = training_batches
 
         ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'])
@@ -2303,7 +2300,7 @@ class NMT:
 
             #for i in target_variable: print( i.size(),'eval <-')
             #print('--')
-            print(len(target_variable), target_variable[0].size(),'eval-tv')
+            #print(len(target_variable), target_variable[0].size(),'eval-tv')
 
         if question is not None:
             question_variable = question
@@ -2332,7 +2329,8 @@ class NMT:
             question_variable = [question_variable]
 
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
-
+            print(sos_token[0].size(),'sos')
+            print(lengths,'lengths')
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
@@ -2368,13 +2366,11 @@ class NMT:
             '''
         else:
             decoded_words = []
-            print(outputs[0].size(),'outs.size()')
+
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
                     output = output.permute(1, 0)
-
-                    print(output.size(),'out')
 
                     ni = torch.argmax(output, dim=0)[0]
                     #print(ni, 'ni')
