@@ -1062,9 +1062,14 @@ class NMT:
                 print(line)
                 pad = hparams['tokens_per_sentence']
                 add_eol = False
-                line = self.variableFromSentence(self.input_lang, line, add_eol=add_eol, pad=pad)
-
-                out , _ =self.evaluate(None, None, line, question=line)
+                #line = self.variableFromSentence(self.input_lang, line, add_eol=add_eol, pad=pad)
+                training_batches = self.batch2TrainData(self.output_lang, [line])
+                input_variable, lengths, target_variable, mask, max_target_len = training_batches
+                ques_variable = [
+                    self.variableFromSentence(self.output_lang, hparams['unk']) for _ in lengths
+                ]
+                ques_variable =self.variableFromSentence(self.output_lang, hparams['unk']) # Variable(torch.tensor(ques_variable))
+                out , _ =self.evaluate(None, None, input_variable,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
         except EOFError:
             print()
@@ -2329,7 +2334,7 @@ class NMT:
             question_variable = [question_variable]
 
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
-            
+
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
