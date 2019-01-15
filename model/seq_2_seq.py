@@ -2329,8 +2329,7 @@ class NMT:
             question_variable = [question_variable]
 
             sos_token = [sos_token.squeeze(0).squeeze(0).squeeze(0)]
-            print(sos_token[0].size(),'sos')
-            print(lengths,'lengths')
+            
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
