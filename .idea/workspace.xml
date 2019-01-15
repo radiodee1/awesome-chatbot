@@ -66,8 +66,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="2103" column="127" selection-start-line="2103" selection-start-column="127" selection-end-line="2103" selection-end-column="127" />
+            <state relative-caret-position="775">
+              <caret line="2127" column="17" selection-start-line="2127" selection-start-column="17" selection-end-line="2127" selection-end-column="17" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -137,7 +137,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>decoder_hidden</find>
       <find>load_embedding</find>
       <find>next_mem</find>
       <find>reset_parameters</find>
@@ -167,6 +166,7 @@
       <find>_show_sample</find>
       <find>'ans'</find>
       <find>batch2TrainData</find>
+      <find>temp_batch_size</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -634,8 +634,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="2103" column="127" selection-start-line="2103" selection-start-column="127" selection-end-line="2103" selection-end-column="127" />
+        <state relative-caret-position="775">
+          <caret line="2127" column="17" selection-start-line="2127" selection-start-column="17" selection-end-line="2127" selection-end-column="17" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

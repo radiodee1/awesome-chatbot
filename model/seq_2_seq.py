@@ -2101,7 +2101,7 @@ class NMT:
 
             if self.do_recurrent_output and self.do_load_babi:
 
-                print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
+                #print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
 
                 for i in range(len(target_variable)):
                     for j in range(target_variable[i].size()[1]):
@@ -2109,20 +2109,23 @@ class NMT:
                         #t_val = target_variable[i][j,0].item()
 
                         o_val = ans[i][j].item()
+                        l_val = length_variable[i].item()
+
+                        num_tot += l_val
 
                         if int(o_val) == int(t_val):
                             num_right += 1
                             num_right_small += 1
                             if int(o_val) == EOS_token:
-                                num_right_small += hparams['tokens_per_sentence'] - (j + 1)
-                                num_right += hparams['tokens_per_sentence'] - (j + 1)
+                                num_right_small += l_val - (j+1) # hparams['tokens_per_sentence'] - (j + 1)
+                                num_right += l_val - (j+1) # hparams['tokens_per_sentence'] - (j + 1)
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
                             # next sentence
                             break
 
-                num_tot += temp_batch_size * hparams['tokens_per_sentence']
+                #num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
 
                 self.score = float(num_right / num_tot) * 100
