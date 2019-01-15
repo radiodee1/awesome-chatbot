@@ -2131,7 +2131,7 @@ class NMT:
                 self.score = float(num_right / num_tot) * 100
 
             if self.do_load_babi and not self.do_recurrent_output:
-
+                '''
                 for i in range(len(target_variable)):
                     o_val = torch.argmax(ans[i], dim=0).item() #[0]
                     t_val = target_variable[i].item()
@@ -2144,7 +2144,7 @@ class NMT:
                 else: num_tot += 1
 
                 self.score = float(num_right/num_tot) * 100
-
+                '''
             if l is not None:
                 print_loss_total += float(l.clone())
 
