@@ -547,8 +547,8 @@ class WrapMemRNN(nn.Module):
 
         question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
 
-        question_variable = prune_tensor(question_variable,3) #.permute(1,0,2)
-        hidden = prune_tensor(hidden,3) #.permute(1,0,2)
+        question_variable = prune_tensor(question_variable,3)
+        hidden = prune_tensor(hidden,3)
 
         if self.print_to_screen:
             ''' here we test the plot_vector() function. '''
@@ -2131,7 +2131,7 @@ class NMT:
                 continue
                 pass
 
-            outputs, ans, l = self.train(input_variable, target_variable, question_variable,length_variable, encoder,
+            outputs, ans, l = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
                                             decoder, self.opt_1, None,
                                             None, None, criterion)
 
@@ -2335,13 +2335,13 @@ class NMT:
         input_variable = sentence
         #question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
 
-        sos_token = target_variable[0].permute(1,0,2)
+        t_var = target_variable[0].permute(1,0,2)
 
         question_variable = question
 
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, lengths, None)
+            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, t_var, lengths, None)
 
         outputs = [ans]
         #####################
