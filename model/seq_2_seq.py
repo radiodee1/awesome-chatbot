@@ -1943,7 +1943,7 @@ class NMT:
         if criterion is not None:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
-            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, length_variable,
+            outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                   criterion)
             loss = 0
 
@@ -1997,7 +1997,7 @@ class NMT:
             #self.model_0_wra.eval()
             with torch.no_grad():
                 self.model_0_wra.eval()
-                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, length_variable,
+                outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                       criterion)
 
                 if not self.do_recurrent_output:
@@ -2346,7 +2346,7 @@ class NMT:
 
         self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, t_var, lengths, None)
+            outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
 
         outputs = [ans]
         #####################
