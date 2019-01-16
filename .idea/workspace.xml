@@ -65,8 +65,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="80">
-              <caret line="543" column="9" selection-start-line="543" selection-start-column="9" selection-end-line="543" selection-end-column="9" />
+            <state relative-caret-position="-1990">
+              <caret line="433" selection-start-line="433" selection-end-line="433" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -136,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>GRU</find>
       <find>self.train</find>
       <find>wrap_question_module</find>
       <find>Encoder</find>
@@ -166,6 +165,7 @@
       <find>encoder_out</find>
       <find>decoder_hidden_x</find>
       <find>dropout_e</find>
+      <find>do_clip_grad_norm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -633,8 +633,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="543" column="9" selection-start-line="543" selection-start-column="9" selection-end-line="543" selection-end-column="9" />
+        <state relative-caret-position="-1990">
+          <caret line="433" selection-start-line="433" selection-end-line="433" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

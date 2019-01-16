@@ -374,8 +374,6 @@ class Decoder(nn.Module):
                     attn_list = [
                         hidden[0, 0, :],
                         hidden[1, 0, :],
-                        #decoder_hidden[2, k, :],
-                        #decoder_hidden[3, k, :],
                         embedded[0,0,:]
                     ]
                     #for iii in attn_list: print(iii.size())
@@ -407,6 +405,8 @@ class Decoder(nn.Module):
 
                     out_x = self.out_target(rnn_output)
 
+                    out_x = self.dropout_o(out_x)
+
                     out_x = torch.relu(out_x) #, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
@@ -430,6 +430,8 @@ class Decoder(nn.Module):
                     rnn_output, decoder_hidden_x = self.gru(embedded, decoder_hidden_x)
 
                     out_x = self.out_target(rnn_output)
+
+                    out_x = self.dropout_o(out_x)
 
                     #out_x = torch.tanh(out_x) #, dim=2)
 
@@ -733,7 +735,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
 
-        self.do_clip_grad_norm = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
