@@ -247,7 +247,7 @@ class Encoder(nn.Module):
 
         return encoder_out, encoder_hidden
 
-
+'''
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
         method = 'general'
@@ -288,13 +288,14 @@ class Attn(torch.nn.Module):
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
         return F.softmax(attn_energies, dim=1).unsqueeze(1)
+'''
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention = Attn(hidden_dim)
+        #self.attention = Attn(hidden_dim)
         self.hidden_dim = hidden_dim
 
         gru_in_dim = hidden_dim
@@ -307,7 +308,7 @@ class Decoder(nn.Module):
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
-        self.out_attn = nn.Linear(hidden_dim * 5, hparams['tokens_per_sentence'])
+        self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -329,8 +330,7 @@ class Decoder(nn.Module):
                     decoder_hidden_x[:, self.n_layers:, :]
             )
 
-            decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
-            decoder_hidden = decoder_hidden.permute(1, 0, 2)
+            #decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
 
         else:
             decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
@@ -351,13 +351,13 @@ class Decoder(nn.Module):
 
             all_out = []
 
-            decoder_hidden_y = decoder_hidden_x[:, k, :].unsqueeze(1)
+            hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
+            hidden = hidden.permute(1,0,2)
 
             if not self.cancel_attention:
 
 
                 output = torch.LongTensor([token])
-                #print(self.embed(output))
 
                 for m in range(s):
 
@@ -372,10 +372,10 @@ class Decoder(nn.Module):
                     #print(decoder_hidden.size(),'dh raw')
 
                     attn_list = [
-                        decoder_hidden[0, k, :],
-                        decoder_hidden[1, k, :],
-                        decoder_hidden[2, k, :],
-                        decoder_hidden[3, k, :],
+                        hidden[0, 0, :],
+                        hidden[1, 0, :],
+                        #decoder_hidden[2, k, :],
+                        #decoder_hidden[3, k, :],
                         embedded[0,0,:]
                     ]
                     #for iii in attn_list: print(iii.size())
@@ -401,9 +401,9 @@ class Decoder(nn.Module):
 
                     embedded = self.out_combine(output_list)
 
-                    embedded = torch.tanh(embedded)
+                    #embedded = torch.tanh(embedded)
 
-                    rnn_output, decoder_hidden_y = self.gru(embedded, decoder_hidden_y)
+                    rnn_output, hidden = self.gru(embedded, hidden)
 
                     out_x = self.out_target(rnn_output)
 
@@ -427,7 +427,7 @@ class Decoder(nn.Module):
 
                     embedded = self.dropout_e(embedded)
 
-                    rnn_output, decoder_hidden_y = self.gru(embedded, decoder_hidden_y)
+                    rnn_output, decoder_hidden_x = self.gru(embedded, decoder_hidden_x)
 
                     out_x = self.out_target(rnn_output)
 

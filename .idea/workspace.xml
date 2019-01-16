@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,8 +65,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="405" column="86" selection-start-line="405" selection-start-column="70" selection-end-line="405" selection-end-column="86" />
+            <state relative-caret-position="242">
+              <caret line="354" column="27" selection-start-line="354" selection-start-column="27" selection-end-line="354" selection-end-column="27" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -134,7 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>gru</find>
       <find>embed</find>
       <find>GRU</find>
       <find>self.train</find>
@@ -164,6 +165,7 @@
       <find>batch2TrainData</find>
       <find>variableFromSentence</find>
       <find>encoder_out</find>
+      <find>decoder_hidden_x</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -227,8 +229,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="538" />
-    <option name="y" value="70" />
+    <option name="x" value="540" />
+    <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -631,8 +633,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="405" column="86" selection-start-line="405" selection-start-column="70" selection-end-line="405" selection-end-column="86" />
+        <state relative-caret-position="242">
+          <caret line="354" column="27" selection-start-line="354" selection-start-column="27" selection-end-line="354" selection-end-column="27" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
