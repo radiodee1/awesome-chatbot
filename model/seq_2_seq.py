@@ -220,7 +220,8 @@ class Encoder(nn.Module):
         self.embed = embed# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.sum_encoder = True
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=True)
-        self.dropout = nn.Dropout(dropout)
+        self.dropout_e = nn.Dropout(dropout)
+        self.dropout_o = nn.Dropout(dropout)
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -230,7 +231,7 @@ class Encoder(nn.Module):
         #input_lengths = prune_tensor(input_lengths, 2)
 
         embedded = self.embed(source)
-        embedded = self.dropout(embedded)
+        embedded = self.dropout_e(embedded)
 
         packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
 
@@ -243,7 +244,7 @@ class Encoder(nn.Module):
         #encoder_out = (outputs[:, :, :self.hidden_dim] +
         #               outputs[:, :, self.hidden_dim:])
 
-        encoder_out = outputs
+        encoder_out = self.dropout_o(outputs)
 
         return encoder_out, encoder_hidden
 
@@ -336,6 +337,7 @@ class Decoder(nn.Module):
             decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
 
             decoder_hidden_x = prune_tensor(decoder_hidden_x, 3)
+            decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
 
         decoder_hidden_x = torch.relu(decoder_hidden_x)
 
@@ -427,7 +429,7 @@ class Decoder(nn.Module):
 
                     embedded = self.dropout_e(embedded)
 
-                    rnn_output, decoder_hidden_x = self.gru(embedded, decoder_hidden_x)
+                    rnn_output, hidden = self.gru(embedded, hidden)
 
                     out_x = self.out_target(rnn_output)
 
@@ -1418,9 +1420,10 @@ class NMT:
             training_batches = self.batch2TrainData(self.output_lang, pairs[start:start+ size])
             input_variable, lengths, target_variable, mask, max_target_len = training_batches
             length = lengths
-            ques_variable = [
-                self.variableFromSentence(self.output_lang, hparams['unk']) for _ in length
-            ]
+            #ques_variable = [
+            #    self.variableFromSentence(self.output_lang, hparams['unk']) for _ in length
+            #]
+            ques_variable = None
 
             return (input_variable, target_variable, ques_variable,  length)
 
@@ -1935,6 +1938,8 @@ class NMT:
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
 
+        question_variable = None
+
         if criterion is not None:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
@@ -2119,7 +2124,7 @@ class NMT:
                 #print('---')
 
                 input_variable = group[0]
-                question_variable = group[2]
+                question_variable = None #group[2]
                 target_variable = group[1]
                 length_variable = group[3]
 
