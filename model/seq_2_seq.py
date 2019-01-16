@@ -240,8 +240,10 @@ class Encoder(nn.Module):
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
 
-        encoder_out = (outputs[:, :, :self.hidden_dim] +
-                       outputs[:, :, self.hidden_dim:])
+        #encoder_out = (outputs[:, :, :self.hidden_dim] +
+        #               outputs[:, :, self.hidden_dim:])
+
+        encoder_out = outputs
 
         return encoder_out, encoder_hidden
 
@@ -290,9 +292,10 @@ class Attn(torch.nn.Module):
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
-        self.n_layers = n_layers
+        self.n_layers = n_layers if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention = Attn(hidden_dim)
+        self.hidden_dim = hidden_dim
 
         gru_in_dim = hidden_dim
         linear_in_dim = hidden_dim * 2
@@ -300,10 +303,12 @@ class Decoder(nn.Module):
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
-        self.gru = nn.GRU(gru_in_dim, hidden_dim, n_layers, dropout=dropout, batch_first=True)
-        self.out_target = nn.Linear(linear_in_dim, target_vocab_size)
+        self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=False)
+        self.out_target = nn.Linear(hidden_dim, target_vocab_size)
 
-        self.concat_out = nn.Linear(linear_in_dim, hidden_dim)
+        self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
+        self.out_attn = nn.Linear(hidden_dim * 5, hparams['tokens_per_sentence'])
+        self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -317,12 +322,22 @@ class Decoder(nn.Module):
 
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
-        decoder_hidden_x = (
-                decoder_hidden_x[:, :self.n_layers, :] +
-                decoder_hidden_x[:, self.n_layers:, :]
-        )
 
-        decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
+        if not self.cancel_attention:
+            decoder_hidden_x = (
+                    decoder_hidden_x[:, :self.n_layers, :] +
+                    decoder_hidden_x[:, self.n_layers:, :]
+            )
+
+            decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
+            decoder_hidden = decoder_hidden.permute(1, 0, 2)
+
+        else:
+            decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
+
+            decoder_hidden_x = prune_tensor(decoder_hidden_x, 3)
+
+        decoder_hidden_x = torch.relu(decoder_hidden_x)
 
         encoder_out_x = prune_tensor(encoder_out, 3)
 
@@ -336,7 +351,7 @@ class Decoder(nn.Module):
 
             all_out = []
 
-            decoder_hidden = decoder_hidden_x[:, k, :].unsqueeze(1)
+            decoder_hidden_y = decoder_hidden_x[:, k, :].unsqueeze(1)
 
             if not self.cancel_attention:
 
@@ -349,10 +364,48 @@ class Decoder(nn.Module):
                     embedded = self.embed(output)
                     #print(output, embedded)
                     embedded = prune_tensor(embedded, 3)
+
+                    embedded = torch.relu(embedded)
+
                     embedded = self.dropout_e(embedded)
 
-                    rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
+                    #print(decoder_hidden.size(),'dh raw')
 
+                    attn_list = [
+                        decoder_hidden[0, k, :],
+                        decoder_hidden[1, k, :],
+                        decoder_hidden[2, k, :],
+                        decoder_hidden[3, k, :],
+                        embedded[0,0,:]
+                    ]
+                    #for iii in attn_list: print(iii.size())
+                    #print('---')
+
+                    attn_list = torch.cat(attn_list, dim=0)
+
+                    attn_list = self.out_attn(attn_list)
+
+                    attn_list = torch.softmax(attn_list, dim=0)
+
+                    #print(encoder_out_x.size(), 'eox')
+
+                    attn_applied = torch.bmm(prune_tensor(attn_list, 3), prune_tensor(encoder_out_x[k,:,:], 3))
+
+                    output_list = [
+                        embedded,
+                        attn_applied[:,:, :self.hidden_dim],
+                        attn_applied[:,:, self.hidden_dim:]
+                    ]
+
+                    output_list = torch.cat(output_list, dim=2)
+
+                    embedded = self.out_combine(output_list)
+
+                    embedded = torch.tanh(embedded)
+
+                    rnn_output, decoder_hidden_y = self.gru(embedded, decoder_hidden_y)
+
+                    '''
                     encoder_out_bmm = prune_tensor(encoder_out_x[k, :, :], 3)
                     #decoder_hidden_mod = prune_tensor(decoder_hidden[1,:,:], 3)
 
@@ -371,13 +424,13 @@ class Decoder(nn.Module):
                     #for i in concat_list: print(i.size(), self.n_layers)
                     #exit()
                     attn_out = torch.cat(concat_list, dim=2)
-
+                    '''
                     #attn_out = self.concat_out(attn_out)
                     #attn_out = torch.tanh(attn_out)
 
-                    out_x = self.out_target(attn_out)
+                    out_x = self.out_target(rnn_output)
 
-                    out_x = torch.tanh(out_x) #, dim=2)
+                    out_x = torch.relu(out_x) #, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
@@ -392,13 +445,16 @@ class Decoder(nn.Module):
                     embedded = self.embed(output)
                     # print(output, embedded)
                     embedded = prune_tensor(embedded, 3)
+
+                    embedded = torch.relu(embedded)
+
                     embedded = self.dropout_e(embedded)
 
-                    rnn_output, decoder_hidden = self.gru(embedded, decoder_hidden)
+                    rnn_output, decoder_hidden_y = self.gru(embedded, decoder_hidden_y)
 
                     out_x = self.out_target(rnn_output)
 
-                    out_x = torch.tanh(out_x) #, dim=2)
+                    #out_x = torch.tanh(out_x) #, dim=2)
 
                     #print(out_x,'out_x')
 
@@ -518,7 +574,7 @@ class WrapMemRNN(nn.Module):
             ''' here we test the plot_vector() function. '''
             print(question_variable.size(),'qv')
             out = prune_tensor(question_variable[0][0], 1)
-            plot_vector(out)
+            #plot_vector(out)
             exit()
 
         ans = self.model_6_dec(question_variable, hidden)
@@ -771,7 +827,7 @@ class NMT:
             self.do_plot = True
         if self.args['basename'] is not None:
             hparams['base_filename'] = self.args['basename']
-            print(hparams['base_filename'], 'set name')
+            print('set name:',hparams['base_filename'])
         if self.args['autoencode_words'] is not False: self.do_autoencode_words = True
         if self.args['autoencode'] is not  None and float(self.args['autoencode']) > 0.0:
             hparams['autoencode'] = float(self.args['autoencode'])
@@ -1283,6 +1339,7 @@ class NMT:
 
 
     def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False):
+        MAX_LENGTH = hparams['tokens_per_sentence']
         s = sentence.split(' ')
         sent = []
         if add_sos: sent = [ SOS_token ]
@@ -2263,7 +2320,11 @@ class NMT:
         training_batches = self.batch2TrainData(self.output_lang, [choice])
         input_variable, lengths, target_variable, mask, max_target_len = training_batches
 
-        ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'], add_eos=True)
+        pad = hparams['tokens_per_sentence']
+        input_variable = self.variableFromSentence(self.output_lang, choice[0], pad=pad, add_eos=True)
+
+        lengths = Variable(torch.LongTensor([pad]))
+        ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'],  add_eos=True)
 
 
         print('src:', choice[0])
