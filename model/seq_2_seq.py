@@ -541,7 +541,8 @@ class WrapMemRNN(nn.Module):
 
         input_variable = input_variable.permute(1,0)
 
-        #print(input_variable.size(), length_variable.size(), 'i,l')
+        #print(input_variable, length_variable, 'i,l')
+
         question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
 
         question_variable = prune_tensor(question_variable,3) #.permute(1,0,2)
@@ -1361,9 +1362,9 @@ class NMT:
     # Returns padded input sequence tensor and lengths
     def inputVar(self, l, voc):
         #pad = hparams['tokens_per_sentence']
-        #add_eol = False
+        add_eos = True
 
-        indexes_batch = [self.indexesFromSentence(voc, sentence) for sentence in l]
+        indexes_batch = [self.indexesFromSentence(voc, sentence,add_eos=add_eos) for sentence in l]
         lengths = torch.tensor([len(indexes) for indexes in indexes_batch])
         padList = self.zeroPadding(indexes_batch)
         padVar = torch.LongTensor(padList)
