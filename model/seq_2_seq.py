@@ -405,29 +405,6 @@ class Decoder(nn.Module):
 
                     rnn_output, decoder_hidden_y = self.gru(embedded, decoder_hidden_y)
 
-                    '''
-                    encoder_out_bmm = prune_tensor(encoder_out_x[k, :, :], 3)
-                    #decoder_hidden_mod = prune_tensor(decoder_hidden[1,:,:], 3)
-
-                    attn = self.attention(rnn_output, encoder_out_bmm)
-
-                    context = prune_tensor(attn[:,:,m], 3)
-
-                    encoder_out_bmm = prune_tensor(encoder_out_bmm[:, m ,:], 3)
-
-                    context = context.bmm(encoder_out_bmm)
-
-                    concat_list = [
-                        rnn_output,
-                        context
-                    ]
-                    #for i in concat_list: print(i.size(), self.n_layers)
-                    #exit()
-                    attn_out = torch.cat(concat_list, dim=2)
-                    '''
-                    #attn_out = self.concat_out(attn_out)
-                    #attn_out = torch.tanh(attn_out)
-
                     out_x = self.out_target(rnn_output)
 
                     out_x = torch.relu(out_x) #, dim=2)
