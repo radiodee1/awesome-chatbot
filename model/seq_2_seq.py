@@ -1320,7 +1320,7 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False):
+    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False):
         MAX_LENGTH = hparams['tokens_per_sentence']
         s = sentence.split(' ')
         sent = []
@@ -1345,6 +1345,9 @@ class NMT:
         if len(sent) == 0: sent.append(0)
         if self.do_load_recurrent:
             sent = sent[:MAX_LENGTH]
+
+        if return_string:
+            return sentence
         return sent
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
@@ -1392,12 +1395,14 @@ class NMT:
         add_eos = True
 
         for pair in pair_batch:
+            #in_val = self.variableFromSentence(self.output_lang, pair[0],add_eos=add_eos, pad=0)
+
             input_batch.append(pair[0])
             #output_batch.append(pair[2]) ## 1
-            out = self.variableFromSentence(self.output_lang, pair[2],add_eos=add_eos, pad=pad)
-            out = prune_tensor(out, 3)
+            out_val = self.variableFromSentence(self.output_lang, pair[2],add_eos=add_eos, pad=pad)
+            out_val = prune_tensor(out_val, 3)
             #out = out.permute(1,0,2)
-            output_batch.append(out)
+            output_batch.append(out_val)
         inp, lengths = self.inputVar(input_batch, voc)
         #output, mask, max_target_len = self.outputVar(output_batch, voc)
         output = output_batch
@@ -1416,8 +1421,8 @@ class NMT:
             print('empty return.')
             return self.variablesFromPair(('','',''), length)
 
-        if pad_and_batch:
-            training_batches = self.batch2TrainData(self.output_lang, pairs[start:start+ size])
+        def pad_and_batch(pairs ):
+            training_batches = self.batch2TrainData(self.output_lang, pairs)
             input_variable, lengths, target_variable, mask, max_target_len = training_batches
             length = lengths
             #ques_variable = [
@@ -1435,8 +1440,9 @@ class NMT:
 
         if skip_unk:
             num = 0
+            pairs2 = []
             self._skipped = 0
-            while len(g1) < size:
+            while len(g1) < size and len(pairs2) < size:
 
                 if start + num >= len(pairs): break
 
@@ -1444,8 +1450,18 @@ class NMT:
 
                 triplet = pairs[start + num]
 
-                x = self.variablesFromPair(triplet, skip_unk=skip_unk)
-                if x is not None:
+                if not pad_and_batch:
+                    x = self.variablesFromPair(triplet, skip_unk=skip_unk)
+                else:
+                    #x = triplet
+                    x = [
+                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_eos=True, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_eos=False, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_eos=False, return_string=True)
+                    ]
+                    if x[0] is None: x = None
+
+                if x is not None and not pad_and_batch:
                     if not hparams['split_sentences']:
                         g1.append(x[0].squeeze(1))
                     else:
@@ -1454,13 +1470,23 @@ class NMT:
                     g3.append(x[2].squeeze(1))
                 else:
                     self._skipped += 1
+
+                if pad_and_batch and x is not None:
+                    pairs2.append(x)
+                else:
+                    self._skipped += 1
                 num += 1
             #print(self._skipped)
+
+            if pad_and_batch:
+                return pad_and_batch(pairs2)
 
             return (g1, g2, g3, length)
             pass
         else:
             group = pairs[start:start + size]
+            if pad_and_batch:
+                return pad_and_batch(group)
 
         for i in group:
             g = self.variablesFromPair(i)
@@ -2342,7 +2368,7 @@ class NMT:
 
         t_var = target_variable[0].permute(1,0,2)
 
-        question_variable = question
+        #question_variable = question
 
         self.model_0_wra.eval()
         with torch.no_grad():
