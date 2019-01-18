@@ -46,29 +46,51 @@ if __name__ == '__main__':
                 continue
             with open(i, 'r') as r:
                 lines = r.readlines()
+                num = 0
                 for l in lines:
+                    #print(l)
 
-                    l_out += ' ' + l.strip()
+                    if is_good(l):
+                        l_out += ' ' + l.strip()
 
                     #start_b = start_a
 
                     if not is_good(l):
-                        if flag_use_both : #or print_out:
 
-                            start_b = start_a
-                            start_a = format(l_out)
 
-                            if len(start_b) > 0 and len(start_a) > 0 :
-                                z.write(start_a + '\t' + start_b + '\t' + str(1) + '\n')
-                                #l_out = ''
-                        else:
-                            start_b = start_a
-                            start_a = format(l_out)
+                        if flag_use_both :
+
+                            #start_b = start_a
+                            #start_a = format(l_out)
 
                             print_out = True
+                        else:
+                            #start_b = start_a
+                            #start_a = format(l_out)
+
+                            if num % 2 == 0: print_out = True
                             #print(start_a, start_b)
-                        l_out = ''
+
+
+
+                        if print_out:
+                            if len(start_b) > 0 and len(start_a) > 0:
+                                z.write(start_a + '\t' + start_b + '\t' + str(1) + '\n')
+                                l_out = ''
+
+                            start_b = start_a
+                            start_a = format(l_out)
+                            #l_out = ''
+
+                            print_out = False
+
                     else:
                         pass #start_b = start_a
 
+                    #start_b = start_a
+                    #start_a = format(l_out)
+                    num += 1
+
+            r.close()
+    z.close()
     pass

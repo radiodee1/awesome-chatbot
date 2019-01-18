@@ -1414,7 +1414,7 @@ class NMT:
         training_batches = self.batch2TrainData(self.output_lang, pairs)
         input_variable, lengths, target_variable, mask, max_target_len = training_batches
         length = lengths
-        
+
         ques_variable = None
 
         return (input_variable, target_variable, ques_variable, length)
