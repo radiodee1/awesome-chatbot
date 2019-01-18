@@ -1410,6 +1410,15 @@ class NMT:
         max_target_len = None
         return inp, lengths, output, mask, max_target_len
 
+    def pad_and_batch(self, pairs):
+        training_batches = self.batch2TrainData(self.output_lang, pairs)
+        input_variable, lengths, target_variable, mask, max_target_len = training_batches
+        length = lengths
+        
+        ques_variable = None
+
+        return (input_variable, target_variable, ques_variable, length)
+
     def variables_for_batch(self, pairs, size, start, skip_unk=False, pad_and_batch=True):
         e = self.epoch_length * self.this_epoch + self.epoch_length
         length = 0
@@ -1420,17 +1429,6 @@ class NMT:
         if size == 0 or start >= len(pairs):
             print('empty return.')
             return self.variablesFromPair(('','',''), length)
-
-        def pad_and_batch(pairs ):
-            training_batches = self.batch2TrainData(self.output_lang, pairs)
-            input_variable, lengths, target_variable, mask, max_target_len = training_batches
-            length = lengths
-            #ques_variable = [
-            #    self.variableFromSentence(self.output_lang, hparams['unk']) for _ in length
-            #]
-            ques_variable = None
-
-            return (input_variable, target_variable, ques_variable,  length)
 
         g1 = []
         g2 = []
@@ -1479,14 +1477,14 @@ class NMT:
             #print(self._skipped)
 
             if pad_and_batch:
-                return pad_and_batch(pairs2)
+                return self.pad_and_batch(pairs2)
 
             return (g1, g2, g3, length)
             pass
         else:
             group = pairs[start:start + size]
             if pad_and_batch:
-                return pad_and_batch(group)
+                return self.pad_and_batch(group)
 
         for i in group:
             g = self.variablesFromPair(i)
