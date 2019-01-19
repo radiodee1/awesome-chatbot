@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/do_make_tab_file_from_srt.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tab_file_from_srt.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -66,8 +65,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3662">
-              <caret line="411" column="34" selection-start-line="411" selection-start-column="34" selection-end-line="411" selection-end-column="34" />
+            <state relative-caret-position="-199">
+              <caret line="695" selection-start-line="695" selection-end-line="695" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -634,8 +633,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3662">
-          <caret line="411" column="34" selection-start-line="411" selection-start-column="34" selection-end-line="411" selection-end-column="34" />
+        <state relative-caret-position="-199">
+          <caret line="695" selection-start-line="695" selection-end-line="695" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

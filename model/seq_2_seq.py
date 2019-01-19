@@ -1904,7 +1904,7 @@ class NMT:
                 if x == ll:
                     pass
                 else:
-                    if x != hparams['eol']: out.append(x)
+                    if x != hparams['eol'] and x != hparams['sol']: out.append(x)
                 ll = x
             return ' '.join(out)
 
@@ -2339,7 +2339,7 @@ class NMT:
             print(group)
             #exit()
             '''
-            
+
         input_variable = group[0]
         ques_variable = None  # group[2]
         target_variable = group[1]
