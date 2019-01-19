@@ -231,7 +231,8 @@ class Encoder(nn.Module):
         #input_lengths = prune_tensor(input_lengths, 2)
 
         embedded = self.embed(source)
-        embedded = self.dropout_e(embedded)
+
+        #embedded = self.dropout_e(embedded)
 
         #embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
 
@@ -356,6 +357,8 @@ class Decoder(nn.Module):
             hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
             hidden = hidden.permute(1,0,2)
 
+            #hidden = hidden_in.clone()
+
             if not self.cancel_attention:
 
 
@@ -367,7 +370,7 @@ class Decoder(nn.Module):
                     #print(output, embedded)
                     embedded = prune_tensor(embedded, 3)
 
-                    embedded = torch.relu(embedded)
+                    #embedded = torch.relu(embedded)
 
                     embedded = self.dropout_e(embedded)
 
@@ -401,15 +404,15 @@ class Decoder(nn.Module):
 
                     embedded = self.out_combine(output_list)
 
-                    #embedded = torch.tanh(embedded)
+                    embedded = torch.relu(embedded)
 
                     rnn_output, hidden = self.gru(embedded, hidden)
 
                     out_x = self.out_target(rnn_output)
 
-                    out_x = self.dropout_o(out_x)
+                    #out_x = self.dropout_o(out_x)
 
-                    out_x = torch.relu(out_x) #, dim=2)
+                    out_x = torch.softmax(out_x, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
@@ -545,8 +548,6 @@ class WrapMemRNN(nn.Module):
 
         input_variable = input_variable.permute(1,0)
 
-        #print(input_variable, length_variable, 'i,l')
-
         question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
 
         question_variable = prune_tensor(question_variable,3)
@@ -559,6 +560,7 @@ class WrapMemRNN(nn.Module):
             #plot_vector(out)
             exit()
 
+        #print(question_variable.size(),'qv')
 
         ans = self.model_6_dec(question_variable, hidden)
 
@@ -738,7 +740,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
 
-        self.do_clip_grad_norm = False
+        self.do_clip_grad_norm = True
 
         self.printable = ''
 
@@ -2043,7 +2045,7 @@ class NMT:
             #print(ans.size(),'ans')
 
         if self.do_clip_grad_norm:
-            clip = 50.0
+            clip = float(hparams['units'] / 10.0)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
             #print('clip')
 
