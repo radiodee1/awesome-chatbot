@@ -21,6 +21,7 @@ def is_good(line):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Make tab file from srt files.')
     parser.add_argument('--unzip' , help='subtitle files. (place zip files in "raw/srt_zip/" folder)' , action='store_true')
+    parser.add_argument('--use-once', help='do not use each line as question and answer.', action='store_true')
     args = parser.parse_args()
     args = vars(args)
 
@@ -29,7 +30,7 @@ if __name__ == '__main__':
         os.system('cd ./raw/srt_zip/. ; mv *.srt ..')
 
     filename = 'raw/*.srt'
-    flag_use_both = True
+    flag_use_both = not args['use_once']
 
     filelist = []
     for i in glob.glob(filename):
@@ -40,6 +41,8 @@ if __name__ == '__main__':
     start_c = ''
     print_out = False
     l_out = ''
+
+    tot = 0
     with open('movie_srt_text.txt','w') as z:
         for i in filelist:
             if not os.path.isfile(i):
@@ -61,31 +64,39 @@ if __name__ == '__main__':
                     if not is_good(l):
 
                         last_print_bad += 1
+                        print_num += 1
 
                         if flag_use_both :
 
                             print_out = True
                         else:
-                            if print_num % 2 == 0 or print_num < 2:
-                                print_out = True
 
+                            if print_num % 2 == 0 or print_num < 6:
+                                print_out = True
+                                
                         if print_out:
 
                             if (len(start_c) > 0 and len(start_b) > 0) and (len(l_out) > 0 or not flag_use_both):
                                 z.write(start_c + '\t' + start_b + '\t' + str(1) + '\n')
+                                tot += 1
 
-                            print_num += 1
+                            if not flag_use_both:
+                                start_c = start_b
+                                start_b = format(l_out)
+                                pass
 
-                            if len(l_out) > 0 or not flag_use_both:
+                            if len(l_out) > 0 and flag_use_both:
                                 start_c = start_b
                                 start_b = start_a
                                 start_a = format(l_out)
 
-                            if last_print_bad != num or not flag_use_both:
+
+                            if last_print_bad != num :
                                 l_out = ''
 
                             print_out = False
                 num += 1
             r.close()
     z.close()
+    print('tot:', tot)
     pass
