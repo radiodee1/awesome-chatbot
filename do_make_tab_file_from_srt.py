@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
                             if print_num % 2 == 0 or print_num < 6:
                                 print_out = True
-                                
+
                         if print_out:
 
                             if (len(start_c) > 0 and len(start_b) > 0) and (len(l_out) > 0 or not flag_use_both):

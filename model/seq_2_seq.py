@@ -233,18 +233,18 @@ class Encoder(nn.Module):
         embedded = self.embed(source)
         embedded = self.dropout_e(embedded)
 
-        packed = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
+        #embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
 
-        encoder_out, encoder_hidden = self.gru(packed, hidden)
+        encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
-        outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
+        #outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
 
         #encoder_out = (outputs[:, :, :self.hidden_dim] +
         #               outputs[:, :, self.hidden_dim:])
 
-        encoder_out = self.dropout_o(outputs)
+        #encoder_out = self.dropout_o(outputs)
 
         return encoder_out, encoder_hidden
 
@@ -558,6 +558,7 @@ class WrapMemRNN(nn.Module):
             out = prune_tensor(question_variable[0][0], 1)
             #plot_vector(out)
             exit()
+
 
         ans = self.model_6_dec(question_variable, hidden)
 
@@ -1343,6 +1344,8 @@ class NMT:
             sent.append(EOS_token)
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
+        while len(sent) < MAX_LENGTH:
+            sent.append(0)
         if self.do_load_recurrent:
             sent = sent[:MAX_LENGTH]
 
@@ -2321,19 +2324,35 @@ class NMT:
 
     def _show_sample(self, iter=0, epoch_start=0, epoch_stop=hparams['batch_size'], temp_batch_size=hparams['batch_size']):
         ###########################
-        if epoch_start + iter >= epoch_stop:
-            choice = random.choice(self.pairs)
-        else:
-            choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
+        group = []
+        while len(group) < 4:
 
-        training_batches = self.batch2TrainData(self.output_lang, [choice])
-        input_variable, lengths, target_variable, mask, max_target_len = training_batches
+            if epoch_start + iter >= epoch_stop:
+                choice = random.choice(self.pairs)
+            else:
+                choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
+
+            group = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk)
+            '''
+            print(choice)
+            print('----')
+            print(group)
+            #exit()
+            '''
+            
+        input_variable = group[0]
+        ques_variable = None  # group[2]
+        target_variable = group[1]
+        lengths = group[3]
+
+        #training_batches = self.batch2TrainData(self.output_lang, [choice])
+        #input_variable, lengths, target_variable, mask, max_target_len = training_batches
 
         pad = hparams['tokens_per_sentence']
-        input_variable = self.variableFromSentence(self.output_lang, choice[0], pad=pad, add_eos=True)
+        #input_variable = self.variableFromSentence(self.output_lang, choice[0], pad=pad, add_eos=True)
 
-        lengths = Variable(torch.LongTensor([pad]))
-        ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'],  add_eos=True)
+        #lengths = Variable(torch.LongTensor([pad]))
+        #ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'],  add_eos=True)
 
 
         print('src:', choice[0])
