@@ -412,7 +412,7 @@ class Decoder(nn.Module):
 
                     #out_x = self.dropout_o(out_x)
 
-                    #out_x = torch.softmax(out_x, dim=2)
+                    #out_x = torch.softmax(out_x, dim=2) ## softmax is done by CrossEntropy
 
                     output = torch.argmax(out_x, dim=2)
 
@@ -1323,8 +1323,11 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False):
-        MAX_LENGTH = hparams['tokens_per_sentence']
+    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1):
+        if pad == -1:
+            MAX_LENGTH = hparams['tokens_per_sentence']
+        else:
+            MAX_LENGTH = pad
         s = sentence.split(' ')
         sent = []
         if add_sos: sent = [ SOS_token ]
@@ -1346,8 +1349,9 @@ class NMT:
             sent.append(EOS_token)
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
-        while len(sent) < MAX_LENGTH:
-            sent.append(0)
+        if pad == -1:
+            while len(sent) < MAX_LENGTH:
+                sent.append(0)
         if self.do_load_recurrent:
             sent = sent[:MAX_LENGTH]
 
@@ -1505,7 +1509,7 @@ class NMT:
 
     def variableFromSentence(self, lang, sentence, add_eos=True, pad=0, skip_unk=False):
         max = hparams['tokens_per_sentence']
-        indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk, add_eos=add_eos)
+        indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk, add_eos=add_eos, pad=pad)
         if indexes is None and skip_unk: return indexes
         #if add_eol and len(indexes) < pad: indexes.append(EOS_token)
         sentence_len = len(indexes)
@@ -1865,7 +1869,7 @@ class NMT:
     def _test_embedding(self, num=None, exit=True):
         if num is None:
             num = 'garden' #55 #hparams['unk']
-        num = self.variableFromSentence(self.output_lang, str(num))
+        num = self.variableFromSentence(self.output_lang, str(num), pad=1)
         print('\n',num)
         self.model_0_wra.test_embedding(num)
         if exit: exit()
@@ -2183,21 +2187,21 @@ class NMT:
                 #print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
 
                 for i in range(len(ans)):
+
                     for j in range(ans[i].size(0)):
                         t_val = target_variable[i][0,j,0].item()
-                        #t_val = target_variable[i][j,0].item()
 
                         o_val = ans[i][j].item()
                         l_val = length_variable[i].item()
 
-                        num_tot += l_val
+                        num_tot += float(1 / l_val)
 
                         if int(o_val) == int(t_val):
-                            num_right += 1
-                            num_right_small += 1
+                            num_right += 1 * float(1/l_val )
+                            num_right_small += 1 * float(1/l_val)
                             if int(o_val) == EOS_token:
-                                num_right_small += l_val - (j+1) # hparams['tokens_per_sentence'] - (j + 1)
-                                num_right += l_val - (j+1) # hparams['tokens_per_sentence'] - (j + 1)
+                                #num_right_small += 1 - (j+ 1) / l_val #hparams['tokens_per_sentence'] #- (j + 1)
+                                #num_right += 1 - (j+ 1) / l_val # hparams['tokens_per_sentence'] #- (j + 1)
                                 #print('full line', i, j, num_right_small)
                                 break
                         else:
