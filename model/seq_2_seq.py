@@ -740,7 +740,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
 
-        self.do_clip_grad_norm = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
