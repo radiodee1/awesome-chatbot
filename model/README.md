@@ -46,3 +46,7 @@ Then we'll train the rest of the model over again with question/answer oriented 
 We could also employ a seq2seq architecture. This might be easy to implement. The topic is discussed in the following paper. [See Here.](http://arxiv.org/abs/1506.05869v3) This model uses one input and one output. The babi model uses two inputs and one output. Both should be tried.
 
 Then maybe we'll compare our results using the DMN type model with a seq2seq chatbot architecture.
+
+### Part Of Speech: `babi_recurrent.py`:
+We downloaded a POS dataset from kaggle. The babi_recurrent.py code was modified slightly and
+used for this test. Our scores were in the mid 90% range.

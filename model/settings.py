@@ -19,7 +19,7 @@ hparams = {
     'base_filename': "weight",
     'base_file_num': 1,
     'stats_filename':'stat',
-    'num_vocab_total': 15000,
+    'num_vocab_total': 1500,
     'batch_size': 50,#64, #256
     'steps_to_stats': 50,
     'epochs': 500,
