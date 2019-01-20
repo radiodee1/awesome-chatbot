@@ -412,7 +412,7 @@ class Decoder(nn.Module):
 
                     #out_x = self.dropout_o(out_x)
 
-                    out_x = torch.softmax(out_x, dim=2)
+                    #out_x = torch.softmax(out_x, dim=2)
 
                     output = torch.argmax(out_x, dim=2)
 
