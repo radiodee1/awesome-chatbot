@@ -1110,9 +1110,9 @@ class NMT:
                 training_batches = self.batch2TrainData(self.output_lang, [line])
                 input_variable, lengths, target_variable, mask, max_target_len = training_batches
                 ques_variable = [
-                    self.variableFromSentence(self.output_lang, hparams['unk']) for _ in lengths
+                    self.variableFromSentence(self.output_lang, hparams['unk'], pad=pad) for _ in lengths
                 ]
-                ques_variable =self.variableFromSentence(self.output_lang, hparams['unk'])
+                ques_variable =self.variableFromSentence(self.output_lang, hparams['unk'], pad=pad)
                 out , _ =self.evaluate(None, None, input_variable,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
         except EOFError:
