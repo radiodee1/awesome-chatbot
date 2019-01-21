@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="548">
-              <caret line="1124" column="65" selection-start-line="1124" selection-start-column="65" selection-end-line="1124" selection-end-column="65" />
+            <state relative-caret-position="494">
+              <caret line="2004" selection-start-line="2004" selection-end-line="2004" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -296,7 +295,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="539" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="538" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -558,8 +557,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="548">
-          <caret line="1124" column="65" selection-start-line="1124" selection-start-column="65" selection-end-line="1124" selection-end-column="65" />
+        <state relative-caret-position="494">
+          <caret line="2004" selection-start-line="2004" selection-end-line="2004" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

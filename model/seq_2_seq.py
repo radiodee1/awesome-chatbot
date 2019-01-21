@@ -1104,7 +1104,7 @@ class NMT:
                 line = input("> ")
                 line = tokenize_weak.format(line)
                 print(line)
-                
+
                 pad = hparams['tokens_per_sentence']
                 add_eol = False
                 #print(line)
@@ -1117,9 +1117,7 @@ class NMT:
                 ques_variable = None #
                 target_variable = self.variableFromSentence(self.output_lang, hparams['unk'], pad=pad)
                 target_variable = [prune_tensor(target_variable, 3)]
-                #print(input_variable)
-                #print(line_out)
-                #print(self.output_lang.index2word[670], self.output_lang.index2word[696])
+
                 out , _ = self.evaluate(None, None, line_out,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
         except EOFError:
@@ -2168,6 +2166,7 @@ class NMT:
                 target_variable = group[1]
                 length_variable = group[3]
 
+                #print(input_variable)
                 #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
