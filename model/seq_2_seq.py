@@ -1349,9 +1349,11 @@ class NMT:
                 sent.append(lang.word2index[hparams['unk']])
         if len(sent) >= MAX_LENGTH and add_eos: #not self.do_load_babi:
             sent = sent[:MAX_LENGTH]
-            sent[-1] = EOS_token
+            if sent[-1] != EOS_token:
+                sent[-1] = EOS_token
         elif add_eos: #self.do_load_babi :
-            sent.append(EOS_token)
+            if sent[-1] != EOS_token:
+                sent.append(EOS_token)
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
         if pad == -1:
