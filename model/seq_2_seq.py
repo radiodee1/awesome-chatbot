@@ -148,7 +148,8 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-blacklist = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+blacklist_sent = ['i'] + blacklist_vocab
 
 def plot_vector(vec):
     fig, ax = plt.subplots()
@@ -1281,14 +1282,14 @@ class NMT:
                 if lang3 is not None:
                     if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 for word in self.pairs[p][0].split(' '):
-                    if word in self.vocab_lang.word2index and word not in blacklist:
+                    if word in self.vocab_lang.word2index and word not in blacklist_vocab:
                         a.append(word)
                     elif skip_unk:
                         skip = True
                     elif not omit_unk:
                         a.append(hparams['unk'])
                 for word in self.pairs[p][1].split(' '):
-                    if word in self.vocab_lang.word2index and word not in blacklist:
+                    if word in self.vocab_lang.word2index and word not in blacklist_vocab:
                         b.append(word)
                     elif skip_unk:
                         skip = True
@@ -1297,7 +1298,7 @@ class NMT:
                 pairs = [' '.join(a), ' '.join(b)]
                 if lang3 is not None:
                     for word in self.pairs[p][2].split(' '):
-                        if word in self.vocab_lang.word2index and word not in blacklist:
+                        if word in self.vocab_lang.word2index and word not in blacklist_vocab:
                             c.append(word)
                         elif skip_unk:
                             skip = True
@@ -1337,7 +1338,7 @@ class NMT:
         sent = []
         if add_sos: sent = [ SOS_token ]
         for word in s:
-            if word in lang.word2index:
+            if word in lang.word2index and not word in blacklist_sent:
                 if word == hparams['eol']: word = EOS_token
                 elif word == hparams['sol']: word = SOS_token
                 else: word = lang.word2index[word]
