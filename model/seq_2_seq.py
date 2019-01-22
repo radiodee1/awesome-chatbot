@@ -1338,7 +1338,7 @@ class NMT:
         sent = []
         if add_sos: sent = [ SOS_token ]
         for word in s:
-            if word in lang.word2index and not word in blacklist_sent:
+            if word in lang.word2index and word not in blacklist_sent:
                 if word == hparams['eol']: word = EOS_token
                 elif word == hparams['sol']: word = SOS_token
                 else: word = lang.word2index[word]

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="1340" column="65" selection-start-line="1340" selection-start-column="65" selection-end-line="1340" selection-end-column="65" />
+            <state relative-caret-position="98">
+              <caret line="1331" column="27" selection-start-line="1331" selection-start-column="8" selection-end-line="1331" selection-end-column="27" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -150,7 +149,6 @@
       <find>model_0_wra</find>
       <find>variablesFromPair</find>
       <find>_show_sample</find>
-      <find>variables_for_batch</find>
       <find>try</find>
       <find>_shorten</find>
       <find>do_clip_grad_norm</find>
@@ -161,9 +159,10 @@
       <find>variableFromSentence</find>
       <find>train(</find>
       <find>add_eos</find>
-      <find>indexesFromSentence</find>
       <find>word_lst</find>
       <find>blacklist</find>
+      <find>variables_for_batch</find>
+      <find>indexesFromSentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -638,8 +637,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="1340" column="65" selection-start-line="1340" selection-start-column="65" selection-end-line="1340" selection-end-column="65" />
+        <state relative-caret-position="98">
+          <caret line="1331" column="27" selection-start-line="1331" selection-start-column="8" selection-end-line="1331" selection-end-column="27" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
