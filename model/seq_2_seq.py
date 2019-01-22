@@ -149,7 +149,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
-blacklist_sent = ['i'] + blacklist_vocab
+blacklist_sent = blacklist_vocab + ['i']
 
 def plot_vector(vec):
     fig, ax = plt.subplots()
@@ -296,7 +296,7 @@ class Attn(torch.nn.Module):
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
-        self.n_layers = n_layers if not cancel_attention else 1
+        self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         #self.attention = Attn(hidden_dim)
         self.hidden_dim = hidden_dim
@@ -336,10 +336,13 @@ class Decoder(nn.Module):
             #decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
 
         else:
-            decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
+            #decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
 
             decoder_hidden_x = prune_tensor(decoder_hidden_x, 3)
-            decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
+            #decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
+            decoder_hidden_x = decoder_hidden_x[:,  self.n_layers:, :]
+
+            print(decoder_hidden_x.size(),'dhx')
 
         decoder_hidden_x = torch.relu(decoder_hidden_x)
 
@@ -355,13 +358,12 @@ class Decoder(nn.Module):
 
             all_out = []
 
-            hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
-            hidden = hidden.permute(1,0,2)
-
             #hidden = hidden_in.clone()
 
             if not self.cancel_attention:
 
+                hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
+                hidden = hidden.permute(1, 0, 2)
 
                 output = torch.LongTensor([token])
 
@@ -420,6 +422,10 @@ class Decoder(nn.Module):
                     all_out.append(out_x)
                 #word_out = output
             else:
+
+                decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
+                hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
+                hidden = hidden.permute(1, 0, 2)
 
                 output = torch.LongTensor([token])
 
