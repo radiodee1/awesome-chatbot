@@ -149,7 +149,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
-blacklist_sent = blacklist_vocab + ['i']
+blacklist_sent = blacklist_vocab #+ ['i']
 
 def plot_vector(vec):
     fig, ax = plt.subplots()
@@ -336,13 +336,12 @@ class Decoder(nn.Module):
             #decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
 
         else:
+            pass
             #decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
 
             decoder_hidden_x = prune_tensor(decoder_hidden_x, 3)
             #decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
             decoder_hidden_x = decoder_hidden_x[:,  self.n_layers:, :]
-
-            print(decoder_hidden_x.size(),'dhx')
 
         decoder_hidden_x = torch.relu(decoder_hidden_x)
 
