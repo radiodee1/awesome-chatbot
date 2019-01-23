@@ -307,7 +307,7 @@ class Decoder(nn.Module):
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
-        self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=False)
+        self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=True)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
