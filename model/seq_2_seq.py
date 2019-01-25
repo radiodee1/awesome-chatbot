@@ -194,7 +194,7 @@ def encoding_positional(embedded_sentence, sum=False):
     return weighted
 
 def prune_tensor( input, size):
-    if isinstance(input, list): return input
+    if isinstance(input, (list)): return input
     if input is None: return input
     n = 0
     while len(input.size()) < size:
@@ -218,8 +218,9 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.bidirectional = True
-        self.embed = embed# nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.embed = embed
         self.sum_encoder = True
+        self.pack_and_pad = False
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=True)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
@@ -231,22 +232,20 @@ class Encoder(nn.Module):
         #source = prune_tensor(source, 3)
         #input_lengths = prune_tensor(input_lengths, 2)
 
+        if hparams['cuda']: source = source.cuda()
+
         embedded = self.embed(source)
 
-        #embedded = self.dropout_e(embedded)
-
-        #embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
+        if self.pack_and_pad:
+            embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
-        #outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
+        if self.pack_and_pad:
+            outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
+            encoder_out = outputs
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
-
-        #encoder_out = (outputs[:, :, :self.hidden_dim] +
-        #               outputs[:, :, self.hidden_dim:])
-
-        #encoder_out = self.dropout_o(outputs)
 
         return encoder_out, encoder_hidden
 
@@ -368,6 +367,8 @@ class Decoder(nn.Module):
 
                 for m in range(s):
 
+                    if hparams['cuda']: output = output.cuda()
+
                     embedded = self.embed(output)
                     #print(output, embedded)
                     embedded = prune_tensor(embedded, 3)
@@ -419,6 +420,7 @@ class Decoder(nn.Module):
                     output = torch.argmax(out_x, dim=2)
 
                     all_out.append(out_x)
+
                 #word_out = output
             else:
 
@@ -429,6 +431,8 @@ class Decoder(nn.Module):
                 output = torch.LongTensor([token])
 
                 for m in range(s):
+
+                    if hparams['cuda']: output = output.cuda()
 
                     embedded = self.embed(output)
                     # print(output, embedded)
@@ -496,6 +500,11 @@ class WrapMemRNN(nn.Module):
 
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
                                    cancel_attention=self.cancel_attention)
+
+        if hparams['cuda'] == True and False:
+            self.embed = self.embed.cuda()
+            self.model_1_seq = self.model_1_seq.cuda()
+            self.model_6_dec = self.model_6_dec.cuda()
 
         #self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
@@ -567,6 +576,8 @@ class WrapMemRNN(nn.Module):
             exit()
 
         #print(question_variable.size(),'qv')
+
+        hidden = hidden.contiguous()
 
         ans = self.model_6_dec(question_variable, hidden)
 
