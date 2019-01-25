@@ -501,18 +501,8 @@ class WrapMemRNN(nn.Module):
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
                                    cancel_attention=self.cancel_attention)
 
-        if hparams['cuda'] == True and False:
-            self.embed = self.embed.cuda()
-            self.model_1_seq = self.model_1_seq.cuda()
-            self.model_6_dec = self.model_6_dec.cuda()
-
-        #self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
-        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
-
         self.input_var = None  # for input
-        #self.q_var = None  # for question
         self.answer_var = None  # for answer
-        #self.q_q = None  # extra question
         self.q_q_last = None # question
         self.inp_c = None  # extra input
         self.inp_c_seq = None
