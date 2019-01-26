@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="187" column="11" selection-start-line="187" selection-start-column="6" selection-end-line="187" selection-end-column="11" />
+            <state relative-caret-position="-118">
+              <caret line="1774" column="23" selection-start-line="1774" selection-start-column="8" selection-end-line="1774" selection-end-column="23" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -134,9 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>add_eol</find>
-      <find>concat_out</find>
-      <find>encoder_out</find>
       <find>decoder_hidden_x</find>
       <find>dropout_e</find>
       <find>target_variable</find>
@@ -164,6 +161,9 @@
       <find>out_combine</find>
       <find>output</find>
       <find>out_target</find>
+      <find>print</find>
+      <find>update_result_file</find>
+      <find>save_checkpoint</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -558,8 +558,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="187" column="11" selection-start-line="187" selection-start-column="6" selection-end-line="187" selection-end-column="11" />
+        <state relative-caret-position="-118">
+          <caret line="1774" column="23" selection-start-line="1774" selection-start-column="8" selection-end-line="1774" selection-end-column="23" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

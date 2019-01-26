@@ -579,7 +579,7 @@ class Decoder(nn.Module):
 
                     output = torch.argmax(out_x, dim=2)#.permute(1,0)
 
-                    #print(out_x.size(),'ox',output.size(),'out')
+                    #if not self.training : print(out_x.size(),'ox',output,'out')
 
                     all_out.append(out_x)
 
@@ -1772,7 +1772,7 @@ class NMT:
         return z
         pass
 
-    def save_checkpoint(self, state=None, is_best=True, num=0, converted=False, extra=''):
+    def save_checkpoint(self, state=None, is_best=True, num=0, converted=False, extra='', interrupt=False):
         if state is None or True:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
@@ -1781,7 +1781,7 @@ class NMT:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
             #####
-            if self.do_test_not_train:
+            if self.do_test_not_train and not interrupt:
                 self.best_accuracy_dict[
                     str((self.best_accuracy_record_offset + self.saved_files) * self.best_accuracy_graph_size)
                 ] = str(self.score)
@@ -2881,6 +2881,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if not n.do_interactive:
             n.update_result_file()
+            n.save_checkpoint(interrupt=True)
         else:
             print()
 
