@@ -519,9 +519,9 @@ class Decoder(nn.Module):
 
         for m in range(s):
 
-            if self.word_mode_b: #not self.cancel_attention:
+            if self.word_mode_b:
 
-                if True: #for m in range(s):
+                if True:
 
                     if hparams['cuda']: output = output.cuda()
 
@@ -588,18 +588,18 @@ class Decoder(nn.Module):
 
                 #word_out = output
             else:
-                print('not implemented')
+                #print('not implemented')
                 pass
 
                 #decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
                 hidden = prune_tensor(decoder_hidden_x[:, :, :], 3)
                 hidden = hidden.permute(1, 0, 2)
 
-                output = torch.LongTensor([token])
+                #output = torch.LongTensor([token])
 
-                print(output.size(),'outp')
+                #print(output.size(),'outp')
 
-                if True: #for m in range(s):
+                if True:
 
                     if hparams['cuda']: output = output.cuda()
 
@@ -609,15 +609,15 @@ class Decoder(nn.Module):
 
                     embedded = self.dropout_e(embedded)
 
-                    print(embedded.size(),'emb')
+                    #print(embedded.size(),'emb')
 
                     rnn_output, hidden = self.gru(embedded, hidden)
-                    print(rnn_output.size(), encoder_out_x.size(),'rnn,eox',hidden.size())
+                    #print(rnn_output.size(), encoder_out_x.size(),'rnn,eox',hidden.size())
 
                     attn_weights = self.attention_mod(rnn_output, encoder_out_x.permute(1,0,2))
 
                     attn_weights = attn_weights.permute(2,1,0)
-                    print(attn_weights.size(),'attw', encoder_out_x.size(),'eox')
+                    #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox')
 
                     context = attn_weights.bmm(encoder_out_x)#.transpose(0,1))
 
@@ -625,8 +625,8 @@ class Decoder(nn.Module):
                         rnn_output.permute(1, 0, 2),
                         context[:, :, :],
                     ]
-                    for i in output_list: print(i.size())
-                    print('---')
+                    #for i in output_list: print(i.size())
+                    #print('---')
 
                     output_list = torch.cat(output_list, dim=2)
 
@@ -639,7 +639,7 @@ class Decoder(nn.Module):
                     #out_x = torch.tanh(out_x) #, dim=2)
 
                     out_x = out_x.permute(1,0,2)
-                    print(out_x.size(),'out_x')
+                    #print(out_x.size(),'out_x')
 
                     output = torch.argmax(out_x, dim=2)
 
@@ -654,7 +654,7 @@ class Decoder(nn.Module):
         #print(len(all_out))
         all_output = torch.cat(all_out, dim=0)
 
-        print(all_output.size(),'all')
+        #print(all_output.size(),'all')
 
         return all_output #.permute(1,0,2)
 
