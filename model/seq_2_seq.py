@@ -312,11 +312,12 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * 2, target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
+        self.out_concat_b = nn.Linear(hidden_dim * 2, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -521,75 +522,72 @@ class Decoder(nn.Module):
 
             if self.word_mode_b:
 
-                if True:
+                if hparams['cuda']: output = output.cuda()
 
-                    if hparams['cuda']: output = output.cuda()
+                embedded = self.embed(output)
 
-                    embedded = self.embed(output)
+                embedded = prune_tensor(embedded, 3)
 
-                    embedded = prune_tensor(embedded, 3)
+                #embedded = torch.relu(embedded)
 
-                    #embedded = torch.relu(embedded)
+                embedded = self.dropout_e(embedded)
 
-                    embedded = self.dropout_e(embedded)
+                #print(embedded.size(),'emb', hidden.size(),'hid')
 
-                    #print(embedded.size(),'emb', hidden.size(),'hid')
+                attn_list = [
+                    hidden[0, :, :].unsqueeze(0),
+                    hidden[1, :, :].unsqueeze(0),
+                    embedded[0,:,:].unsqueeze(0)
+                ]
+                #for iii in attn_list: print(iii.size())
+                #print('---')
 
-                    attn_list = [
-                        hidden[0, :, :].unsqueeze(0),
-                        hidden[1, :, :].unsqueeze(0),
-                        embedded[0,:,:].unsqueeze(0)
-                    ]
-                    #for iii in attn_list: print(iii.size())
-                    #print('---')
+                attn_list = torch.cat(attn_list, dim=2)
 
-                    attn_list = torch.cat(attn_list, dim=2)
+                attn_list = self.out_attn(attn_list)
 
-                    attn_list = self.out_attn(attn_list)
+                attn_list = torch.softmax(attn_list, dim=2)
 
-                    attn_list = torch.softmax(attn_list, dim=2)
+                attn_list = attn_list.permute(1,0,2)
 
-                    attn_list = attn_list.permute(1,0,2)
+                #print(attn_list.size(), 'al' ,encoder_out_x.size(),'eox')
 
-                    #print(attn_list.size(), 'al' ,encoder_out_x.size(),'eox')
+                attn_applied = torch.bmm(prune_tensor(attn_list, 3), prune_tensor(encoder_out_x[:,:,:], 3))
 
-                    attn_applied = torch.bmm(prune_tensor(attn_list, 3), prune_tensor(encoder_out_x[:,:,:], 3))
+                output_list = [
+                    embedded.permute(1,0,2),
+                    attn_applied[:,:, :self.hidden_dim],
+                    attn_applied[:,:, self.hidden_dim:]
+                ]
+                #for i in output_list: print(i.size())
+                #print('---')
 
-                    output_list = [
-                        embedded.permute(1,0,2),
-                        attn_applied[:,:, :self.hidden_dim],
-                        attn_applied[:,:, self.hidden_dim:]
-                    ]
-                    #for i in output_list: print(i.size())
-                    #print('---')
+                output_list = torch.cat(output_list, dim=2)
 
-                    output_list = torch.cat(output_list, dim=2)
+                embedded = self.out_combine(output_list)
 
-                    embedded = self.out_combine(output_list)
+                embedded = torch.relu(embedded)
 
-                    embedded = torch.relu(embedded)
+                #print(embedded.size(), 'input', hidden.size(),'hidd')
 
-                    #print(embedded.size(), 'input', hidden.size(),'hidd')
+                rnn_output, hidden = self.gru(embedded.permute(1,0,2), hidden)
 
-                    rnn_output, hidden = self.gru(embedded.permute(1,0,2), hidden)
+                out_x = self.out_target(rnn_output)
 
-                    out_x = self.out_target(rnn_output)
+                #out_x = torch.softmax(out_x, dim=2) ## softmax is done by CrossEntropy
+                #print(out_x.size(), 'ox')
 
-                    #out_x = torch.softmax(out_x, dim=2) ## softmax is done by CrossEntropy
-                    #print(out_x.size(), 'ox')
+                output = torch.argmax(out_x, dim=2)#.permute(1,0)
 
-                    output = torch.argmax(out_x, dim=2)#.permute(1,0)
+                #if not self.training : print(out_x.size(),'ox',output,'out')
 
-                    #if not self.training : print(out_x.size(),'ox',output,'out')
+                all_out.append(out_x)
 
-                    all_out.append(out_x)
-
-                    #all_out = out_x
+                #all_out = out_x
 
                 #word_out = output
             else:
                 #print('not implemented')
-                pass
 
                 #decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
                 hidden = prune_tensor(decoder_hidden_x[:, :, :], 3)
@@ -599,51 +597,53 @@ class Decoder(nn.Module):
 
                 #print(output.size(),'outp')
 
-                if True:
+                if hparams['cuda']: output = output.cuda()
 
-                    if hparams['cuda']: output = output.cuda()
+                embedded = self.embed(output)
+                # print(output, embedded)
+                embedded = prune_tensor(embedded, 3)
 
-                    embedded = self.embed(output)
-                    # print(output, embedded)
-                    embedded = prune_tensor(embedded, 3)
+                embedded = self.dropout_e(embedded)
 
-                    embedded = self.dropout_e(embedded)
+                #print(embedded.size(),'emb')
 
-                    #print(embedded.size(),'emb')
+                rnn_output, hidden = self.gru(embedded, hidden)
+                #print(rnn_output.size(), encoder_out_x.size(),'rnn,eox',hidden.size())
 
-                    rnn_output, hidden = self.gru(embedded, hidden)
-                    #print(rnn_output.size(), encoder_out_x.size(),'rnn,eox',hidden.size())
+                attn_weights = self.attention_mod(rnn_output, encoder_out_x.permute(1,0,2))
 
-                    attn_weights = self.attention_mod(rnn_output, encoder_out_x.permute(1,0,2))
+                attn_weights = attn_weights.permute(2,1,0)
+                #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox')
 
-                    attn_weights = attn_weights.permute(2,1,0)
-                    #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox')
+                context = attn_weights.bmm(encoder_out_x)#.transpose(0,1))
 
-                    context = attn_weights.bmm(encoder_out_x)#.transpose(0,1))
+                output_list = [
+                    rnn_output.permute(1, 0, 2),
+                    context[:, :, :],
+                ]
+                #for i in output_list: print(i.size())
+                #print('---')
 
-                    output_list = [
-                        rnn_output.permute(1, 0, 2),
-                        context[:, :, :],
-                    ]
-                    #for i in output_list: print(i.size())
-                    #print('---')
+                output_list = torch.cat(output_list, dim=2)
 
-                    output_list = torch.cat(output_list, dim=2)
+                out_x = self.out_concat_b(output_list)
 
-                    out_x = torch.tanh(output_list)
+                out_x = torch.tanh(out_x)
 
-                    out_x = self.out_target_b(out_x)
+                out_x = self.out_target_b(out_x)
 
-                    #out_x = self.dropout_o(out_x)
+                #out_x = self.dropout_o(out_x)
 
-                    #out_x = torch.tanh(out_x) #, dim=2)
+                #out_x = torch.tanh(out_x) #, dim=2)
 
-                    out_x = out_x.permute(1,0,2)
-                    #print(out_x.size(),'out_x')
+                out_x = out_x.permute(1,0,2)
+                #print(out_x.size(),'out_x')
 
-                    output = torch.argmax(out_x, dim=2)
+                output = torch.argmax(out_x, dim=2)
 
-                    all_out.append(out_x)
+                #print(output,'out')
+
+                all_out.append(out_x)
 
                 pass
 
