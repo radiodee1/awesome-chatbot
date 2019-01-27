@@ -630,7 +630,7 @@ class Decoder(nn.Module):
 
                 out_x = self.out_concat_b(output_list)
 
-                #out_x = torch.tanh(out_x)
+                #out_x = torch.tanh(out_x) ## <<-- use or not use?
 
                 out_x = self.out_target_b(out_x)
 
