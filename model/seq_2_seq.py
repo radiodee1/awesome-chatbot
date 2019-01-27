@@ -491,17 +491,21 @@ class Decoder(nn.Module):
                 decoder_hidden_x[:, :self.n_layers, :] +
                 decoder_hidden_x[:, self.n_layers:, :]
             )
+            decoder_hidden_x = torch.relu(decoder_hidden_x)
 
         else:
             pass
-            decoder_hidden_x = prune_tensor(decoder_hidden_x, 3)
-            decoder_hidden_x = decoder_hidden_x[:,  self.n_layers :, :]
+            decoder_hidden_x = (
+                decoder_hidden_x[:, :self.n_layers, :] +
+                decoder_hidden_x[:, self.n_layers:, :]
+            )
+            #decoder_hidden_x = torch.relu(decoder_hidden_x)
             encoder_out = (
                 encoder_out[:,:,self.hidden_dim:] +
                 encoder_out[:,:,:self.hidden_dim]
             )
-
-        decoder_hidden_x = torch.relu(decoder_hidden_x)
+            #encoder_out = torch.relu(encoder_out)
+            #decoder_hidden_x = torch.relu(decoder_hidden_x)
 
         encoder_out_x = prune_tensor(encoder_out, 3)
 
@@ -587,15 +591,6 @@ class Decoder(nn.Module):
 
                 #word_out = output
             else:
-                #print('not implemented')
-
-                #decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
-                hidden = prune_tensor(decoder_hidden_x[:, :, :], 3)
-                hidden = hidden.permute(1, 0, 2)
-
-                #output = torch.LongTensor([token])
-
-                #print(output.size(),'outp')
 
                 if hparams['cuda']: output = output.cuda()
 
@@ -608,14 +603,21 @@ class Decoder(nn.Module):
                 #print(embedded.size(),'emb')
 
                 rnn_output, hidden = self.gru(embedded, hidden)
+
+                #hidden = torch.relu(hidden)
                 #print(rnn_output.size(), encoder_out_x.size(),'rnn,eox',hidden.size())
 
                 attn_weights = self.attention_mod(rnn_output, encoder_out_x.permute(1,0,2))
 
                 attn_weights = attn_weights.permute(2,1,0)
-                #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox')
+
+                #print(attn_weights.size(),'aw', encoder_out_x.size(),'eox')
 
                 context = attn_weights.bmm(encoder_out_x)#.transpose(0,1))
+
+                #context = torch.relu(context) #, dim=2)
+
+                #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox', rnn_output.size(), context)
 
                 output_list = [
                     rnn_output.permute(1, 0, 2),
@@ -628,16 +630,17 @@ class Decoder(nn.Module):
 
                 out_x = self.out_concat_b(output_list)
 
-                out_x = torch.tanh(out_x)
+                #out_x = torch.tanh(out_x)
 
                 out_x = self.out_target_b(out_x)
 
                 #out_x = self.dropout_o(out_x)
 
-                #out_x = torch.tanh(out_x) #, dim=2)
+                #out_x = torch.relu(out_x) #, dim=2)
 
                 out_x = out_x.permute(1,0,2)
                 #print(out_x.size(),'out_x')
+                #out_x = torch.tanh(out_x) #, dim=2)
 
                 output = torch.argmax(out_x, dim=2)
 
@@ -2195,6 +2198,8 @@ class NMT:
                 #target_variable = target_variable.view(-1)
                 #target_variable = target_variable.permute(1,0)
 
+                #print(ans.size(),'ans')
+
                 for i in range(len(ans)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
@@ -2202,7 +2207,7 @@ class NMT:
                     if target_v.size(0) > ans[i].size(0):
                         #print('odd sizes:', target_v.size(0), length_variable[i].item(), ans[i].size() )
                         continue
-
+                    #print(ans[i].size(), target_v.size(),'ans,tv')
                     loss += criterion(ans[i, :, :], target_v)
 
                 #print( ans[0],'ans', target_variable[0], 'tv')
