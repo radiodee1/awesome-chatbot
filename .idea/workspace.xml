@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2307" column="91" selection-start-line="2307" selection-start-column="91" selection-end-line="2307" selection-end-column="91" />
+            <state relative-caret-position="237">
+              <caret line="498" column="56" selection-start-line="498" selection-start-column="56" selection-end-line="498" selection-end-column="56" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -133,7 +134,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>dropout_e</find>
       <find>target_variable</find>
       <find>WrapMemRNN</find>
       <find>train</find>
@@ -163,6 +163,7 @@
       <find>update_result_file</find>
       <find>save_checkpoint</find>
       <find>decoder_hidden_x</find>
+      <find>true_epoch</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -506,13 +507,7 @@
     <entry file="file://$PROJECT_DIR$/raw/cornell movie-dialogs corpus/movie_lines.txt">
       <provider selected="true" editor-type-id="LargeFileEditor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/babi_four.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="34" selection-start-line="34" selection-end-line="34" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_four.py" />
     <entry file="file://$PROJECT_DIR$/raw/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -557,8 +552,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2307" column="91" selection-start-line="2307" selection-start-column="91" selection-end-line="2307" selection-end-column="91" />
+        <state relative-caret-position="237">
+          <caret line="498" column="56" selection-start-line="498" selection-start-column="56" selection-end-line="498" selection-end-column="56" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

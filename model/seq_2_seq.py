@@ -496,8 +496,8 @@ class Decoder(nn.Module):
         else:
             pass
             decoder_hidden_x = (
-                decoder_hidden_x[:, :self.n_layers, :] +
-                decoder_hidden_x[:, self.n_layers:, :]
+                decoder_hidden_x[:, :self.n_layers, :] #+
+                #decoder_hidden_x[:, self.n_layers:, :]
             )
             #decoder_hidden_x = torch.relu(decoder_hidden_x)
             encoder_out = (
