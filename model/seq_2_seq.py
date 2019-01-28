@@ -257,12 +257,12 @@ class Attn(torch.nn.Module):
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
             raise ValueError(self.method, "is not an appropriate attention method.")
-        self.hidden_size = hidden_size
+        self.hidden_size = hidden_size * 2
         if self.method == 'general':
-            self.attn = torch.nn.Linear(self.hidden_size, hidden_size)
+            self.attn = torch.nn.Linear(self.hidden_size, self.hidden_size)
         elif self.method == 'concat':
-            self.attn = torch.nn.Linear(self.hidden_size * 2, hidden_size)
-            self.v = torch.nn.Parameter(torch.FloatTensor(hidden_size))
+            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
+            self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def dot_score(self, hidden, encoder_output):
         return torch.sum(hidden * encoder_output, dim=2)
@@ -286,6 +286,7 @@ class Attn(torch.nn.Module):
             attn_energies = self.dot_score(hidden, encoder_outputs)
 
         # Transpose max_length and batch_size dimensions
+        #attn_energies = torch.relu(attn_energies)
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
@@ -500,14 +501,14 @@ class Decoder(nn.Module):
                 #decoder_hidden_x[:, self.n_layers:, :]
             )
             #decoder_hidden_x = torch.relu(decoder_hidden_x)
-            encoder_out = (
+            encoder_out_x = (
                 encoder_out[:,:,self.hidden_dim:] +
                 encoder_out[:,:,:self.hidden_dim]
             )
             #encoder_out = torch.relu(encoder_out)
             #decoder_hidden_x = torch.relu(decoder_hidden_x)
 
-        encoder_out_x = prune_tensor(encoder_out, 3)
+        encoder_out_x = prune_tensor(encoder_out_x, 3)
 
         l, s, hid = encoder_out_x.size()
 
@@ -605,16 +606,21 @@ class Decoder(nn.Module):
                 rnn_output, hidden = self.gru(embedded, hidden)
 
                 #hidden = torch.relu(hidden)
-                #print(rnn_output.size(), encoder_out_x.size(),'rnn,eox',hidden.size())
+                #print(decoder_hidden.size(), encoder_out.size(),'rnn,eox',hidden.size())
 
-                attn_weights = self.attention_mod(rnn_output, encoder_out_x.permute(1,0,2))
+                hidden_small = torch.cat((decoder_hidden[:,0,:], decoder_hidden[:,1,:]), dim=1)
+                hidden_small = hidden_small.unsqueeze(0)
+                #print(hidden_small.size(),'hidsmall')
+
+                attn_weights = self.attention_mod(hidden_small, encoder_out.permute(1,0,2))
 
                 attn_weights = attn_weights.permute(2,1,0)
 
-                #print(attn_weights.size(),'aw', encoder_out_x.size(),'eox')
+                #if not self.training : print(attn_weights.size(), 'attn', encoder_out_x.size(),'eox')
 
                 context = attn_weights.bmm(encoder_out_x)#.transpose(0,1))
 
+                #if not self.training: print(context.size(),'context')
                 #context = torch.relu(context) #, dim=2)
 
                 #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox', rnn_output.size(), context)
