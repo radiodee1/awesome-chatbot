@@ -2305,7 +2305,7 @@ class NMT:
                   '- steps:', len(self.pairs) // self.epoch_length,
                   '- this step:', self.this_epoch + 1,
                   '- step len:', self.epoch_length)
-            self.true_epoch = self.this_epoch // (len(self.pairs) // self.epoch_length)
+            self.true_epoch = self.this_epoch // (len(self.pairs) // self.epoch_length) + 1
 
         self.time_str = self._as_minutes(self.time_num)
 
