@@ -862,6 +862,7 @@ class NMT:
         self.memory_hops = 5
         self.start = 0
         self.this_epoch = 0
+        self.true_epoch = 0
         self.score = 0
         self.saved_files = 0
         self.babi_num = '1'
@@ -2285,6 +2286,8 @@ class NMT:
             if n == 0: n = 1
             e = self.this_epoch % n
             epoch_start = e * self.epoch_length
+            #if not self.do_test_not_train:
+            #    self.true_epoch = n
             #exit()
             #length
 
@@ -2302,6 +2305,7 @@ class NMT:
                   '- steps:', len(self.pairs) // self.epoch_length,
                   '- this step:', self.this_epoch + 1,
                   '- step len:', self.epoch_length)
+            self.true_epoch = self.this_epoch // (len(self.pairs) // self.epoch_length)
 
         self.time_str = self._as_minutes(self.time_num)
 
@@ -2431,7 +2435,8 @@ class NMT:
                 if self._print_control(iter):
                     print('iter = '+str(iter)+ ', num of iters = '+str(n_iters)
                           + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
-                          + ', low loss = %.6f' % self.long_term_loss, end=' ')
+                          + ', low loss = %.6f' % self.long_term_loss + ',', end=' ')
+                    print('true-epoch =', self.true_epoch, end=' ')
 
                     print()
 
