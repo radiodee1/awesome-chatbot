@@ -2404,9 +2404,11 @@ class NMT:
 
                 #print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
 
+                ignore_break = True
+
                 for i in range(len(ans)):
 
-                    num_tot += 1  ## <<-- use this or..
+                    if ignore_break: num_tot += 1  ## <<-- use this or..
 
                     for j in range(ans[i].size(0)):
                         t_val = target_variable[i][0,j,0].item()
@@ -2414,7 +2416,7 @@ class NMT:
                         o_val = ans[i][j].item()
                         l_val = length_variable[i].item()
 
-                        #num_tot += float(1 / l_val) ## <<-- maybe use this ??
+                        if not ignore_break: num_tot += float(1 / l_val) ## <<-- maybe use this ??
 
                         if int(o_val) == int(t_val):
                             num_right += 1 * float(1/l_val )
