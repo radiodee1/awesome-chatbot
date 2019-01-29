@@ -2412,7 +2412,7 @@ class NMT:
 
                 #print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
 
-                ignore_break = True
+                ignore_break = False
 
                 for i in range(len(ans)):
 
