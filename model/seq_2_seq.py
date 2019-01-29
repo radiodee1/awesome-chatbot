@@ -2789,7 +2789,7 @@ class NMT:
                 z.write(json.dumps(self.best_accuracy_dict))
                 z.write('\n')
             z.close()
-        if len(self.best_loss_dict) > 0:
+        if len(self.best_loss_dict) > 0 and self.do_record_loss:
             with open(basename_loss, 'w') as z:
                 z.write(json.dumps(self.best_loss_dict))
                 z.write('\n')
@@ -2815,7 +2815,7 @@ class NMT:
                 self.best_accuracy_record_offset = x
             if self.args['start_epoch'] is None:
                 self.start_epoch = x
-        if os.path.isfile(basename_loss):
+        if os.path.isfile(basename_loss) and self.do_record_loss:
             with open(basename_loss) as z:
                 json_data = json.load(z)
             self.best_loss_dict = json_data
