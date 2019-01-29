@@ -618,7 +618,11 @@ class Decoder(nn.Module):
 
                 #if not self.training : print(attn_weights.size(), 'attn', encoder_out_x.size(),'eox')
 
-                context = attn_weights.bmm(encoder_out_x)#.transpose(0,1))
+                attn_weights = attn_weights[:,:,m].unsqueeze(2)
+
+                encoder_out_small = encoder_out_x[:,m,:].unsqueeze(1)
+
+                context = attn_weights.bmm(encoder_out_small)#.transpose(0,1))
 
                 #if not self.training: print(context.size(),'context')
                 #context = torch.relu(context) #, dim=2)
