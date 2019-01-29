@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import random
+import xml.etree.ElementTree as ET
 from tokenize_weak import format
 
 hparams = {
@@ -21,6 +22,39 @@ hparams = {
     'eol': 'eol',
     'unk': 'unk'
 }
+
+xml_list = []
+xml_freq = []
+root = None
+
+def add_to_xml(file):
+    tree = ET.parse(file)
+    root = tree.getroot()
+    x_list = []
+    x_freq = []
+    for x in root:
+        sub_dict = {}
+
+        for e in x:
+            sub_dict[e.tag] = e.text.strip()
+            if e.tag == 'use_every':
+                z = float(e.text.strip())
+                if z < 1:
+                    x_freq.append(float(e.text.strip()))
+                else:
+                    x_freq.append(int(e.text.strip()))
+        x_list.append(sub_dict)
+    print(x_list, x_freq)
+    return x_list, x_freq
+    pass
+
+def insert_xml(iter, from_handle, to_handle, question_handle):
+    for i in xml_list:
+        if iter % int(i['use_every']) == 0:
+            from_handle.write(i['from'] + '\n')
+            to_handle.write(i['to'] + '\n')
+            question_handle.write(i['question'] + '\n')
+    return
 
 def stop_repeats(lst):
     j = []
@@ -48,6 +82,7 @@ if __name__ == '__main__':
     parser.add_argument('--autoencode', help='setup files for autoencode operation. Set as percentage.')
     parser.add_argument('--stagger', help='stagger input for P.O.S.-style training.', action='store_true')
     parser.add_argument('--eol', help='add eol token', action='store_true')
+    parser.add_argument('--xml-file', help='sentences.xml file to use.')
 
     args = parser.parse_args()
     args = vars(args)
@@ -68,6 +103,7 @@ if __name__ == '__main__':
     arg_autoencode = False
     arg_stagger = False
     arg_eol = False
+    arg_xml = False
 
     arg_mode = hparams['train_name']
 
@@ -134,6 +170,11 @@ if __name__ == '__main__':
         if not arg_stagger:
             print('not supported')
             exit()
+
+    if args['xml_file'] is not None:
+        arg_xml = True
+        xml_list, xml_freq = add_to_xml(str(args['xml_file']))
+        #exit()
 
     arg_destination = arg_filename + '.output.txt'
 
@@ -302,6 +343,11 @@ if __name__ == '__main__':
                         if arg_fours:
                             hist.write(args_end_string + '\n')
                         pass
+
+                for i in xml_freq:
+                    if num % i == 0:
+                        insert_xml(num, src, tgt, ques)
+                        break
 
                 if arg_length != 0 and num > arg_start + arg_length:
                     print('early stop')

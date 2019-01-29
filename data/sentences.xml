@@ -5,10 +5,21 @@
 
 <!-- Sentence group - there can be many of these in the file -->
 <sentence>
-<from></from>
-<to></to>
-<question></question>
-<use_every></use_every>
+	<from> who is this ? </from>
+	<to> who is this ? </to>
+	<question>unk</question>
+<use_every>1000</use_every>
+<token>unk</token>
 </sentence>
+
+<sentence>
+        <from> what is this ? </from>
+        <to> what is this ? </to>
+        <question>unk</question>
+<use_every>1000</use_every>
+<token>unk</token>
+</sentence>
+
+<!-- room for more sentence groups here -->
 
 </sentences>
