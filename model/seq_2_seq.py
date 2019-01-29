@@ -290,7 +290,7 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        return F.softmax(attn_energies, dim=1).unsqueeze(1)
+        return F.softmax(attn_energies, dim=0).unsqueeze(1)
 
 
 class Decoder(nn.Module):
@@ -616,11 +616,15 @@ class Decoder(nn.Module):
 
                 attn_weights = attn_weights.permute(2,1,0)
 
-                #if not self.training : print(attn_weights.size(), 'attn', encoder_out_x.size(),'eox')
+                #if not self.training : print(attn_weights, 'attn', encoder_out_x.size(),'eox')
 
-                attn_weights = attn_weights[:,:,m].unsqueeze(2)
+                localize_weights = False
 
-                encoder_out_small = encoder_out_x[:,m,:].unsqueeze(1)
+                encoder_out_small = encoder_out_x
+
+                if localize_weights:
+                    attn_weights = attn_weights[:,:,m].unsqueeze(2)
+                    encoder_out_small = encoder_out_x[:,m,:].unsqueeze(1)
 
                 context = attn_weights.bmm(encoder_out_small)#.transpose(0,1))
 

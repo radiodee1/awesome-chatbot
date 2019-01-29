@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="626" selection-start-line="626" selection-end-line="626" />
+            <state relative-caret-position="252">
+              <caret line="622" column="50" selection-start-line="622" selection-start-column="50" selection-end-line="622" selection-end-column="50" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -551,8 +551,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="626" selection-start-line="626" selection-end-line="626" />
+        <state relative-caret-position="252">
+          <caret line="622" column="50" selection-start-line="622" selection-start-column="50" selection-end-line="622" selection-end-column="50" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
