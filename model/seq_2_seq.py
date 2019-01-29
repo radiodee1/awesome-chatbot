@@ -2406,13 +2406,15 @@ class NMT:
 
                 for i in range(len(ans)):
 
+                    num_tot += 1  ## <<-- use this or..
+
                     for j in range(ans[i].size(0)):
                         t_val = target_variable[i][0,j,0].item()
 
                         o_val = ans[i][j].item()
                         l_val = length_variable[i].item()
 
-                        num_tot += float(1 / l_val)
+                        #num_tot += float(1 / l_val) ## <<-- maybe use this ??
 
                         if int(o_val) == int(t_val):
                             num_right += 1 * float(1/l_val )
