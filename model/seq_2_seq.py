@@ -340,15 +340,17 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
 
-        if not self.cancel_attention:
+        if False: #not self.cancel_attention:
+            pass
+            '''
             decoder_hidden_x = (
                     decoder_hidden_x[:, :self.n_layers, :] +
                     decoder_hidden_x[:, self.n_layers:, :]
             )
 
             #decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
-
-        else:
+            '''
+        if True:
             pass
             #decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
 
