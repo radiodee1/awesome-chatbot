@@ -610,6 +610,7 @@ class Decoder(nn.Module):
                 embedded = self.dropout_e(embedded)
 
                 #print(embedded.size(),'emb')
+                hidden = hidden.contiguous()
 
                 rnn_output, hidden = self.gru(embedded, hidden)
 
