@@ -300,8 +300,8 @@ class Decoder(nn.Module):
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention_mod = Attn(hidden_dim)
         self.hidden_dim = hidden_dim
-        self.word_mode = False
-        self.word_mode_b = False
+        self.word_mode = cancel_attention #False
+        #self.word_mode_b = cancel_attention #False
 
         gru_in_dim = hidden_dim
         linear_in_dim = hidden_dim * 2
@@ -487,14 +487,16 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
 
-        if self.word_mode_b:
+        if False: #self.word_mode_b:
+            pass
+            '''
             decoder_hidden_x = (
                 decoder_hidden_x[:, :self.n_layers, :] +
                 decoder_hidden_x[:, self.n_layers:, :]
             )
             decoder_hidden_x = torch.relu(decoder_hidden_x)
-
-        else:
+            '''
+        if True:
             pass
             decoder_hidden_x = (
                 decoder_hidden_x[:, :self.n_layers, :] #+
@@ -525,8 +527,9 @@ class Decoder(nn.Module):
 
         for m in range(s):
 
-            if self.word_mode_b:
+            if False: #self.word_mode_b:
 
+                '''
                 if hparams['cuda']: output = output.cuda()
 
                 embedded = self.embed(output)
@@ -591,7 +594,8 @@ class Decoder(nn.Module):
                 #all_out = out_x
 
                 #word_out = output
-            else:
+                '''
+            if True:
 
                 if hparams['cuda']: output = output.cuda()
 
