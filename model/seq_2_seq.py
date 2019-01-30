@@ -372,8 +372,8 @@ class Decoder(nn.Module):
 
             #hidden = hidden_in.clone()
 
-            if not self.cancel_attention:
-
+            if False: #not self.cancel_attention:
+                '''
                 hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
                 hidden = hidden.permute(1, 0, 2)
 
@@ -436,7 +436,9 @@ class Decoder(nn.Module):
                     all_out.append(out_x)
 
                 #word_out = output
-            else:
+                '''
+                pass
+            if True:
 
                 decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
                 hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
