@@ -2463,7 +2463,8 @@ class NMT:
                     print('iter = '+str(iter)+ ', num of iters = '+str(n_iters)
                           + ', ' + self.printable + ', saved files = ' + str(self.saved_files)
                           + ', low loss = %.6f' % self.long_term_loss + ',', end=' ')
-                    print('true-epoch =', self.true_epoch, end=' ')
+                    print('true-epoch =', str(self.true_epoch) + ',','pairs = '
+                          + str(len(self.pairs)), end=' ')
 
                     print()
 
