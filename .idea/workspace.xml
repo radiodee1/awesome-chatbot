@@ -13,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="1482" column="22" selection-start-line="1482" selection-start-column="22" selection-end-line="1482" selection-end-column="22" />
+            <state relative-caret-position="368">
+              <caret line="847" column="58" selection-start-line="847" selection-start-column="58" selection-end-line="847" selection-end-column="58" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -104,11 +104,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="333">
-              <caret line="161" column="59" selection-start-line="161" selection-start-column="59" selection-end-line="161" selection-end-column="59" />
+            <state relative-caret-position="335">
+              <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
@@ -127,9 +127,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>try</find>
-      <find>_shorten</find>
-      <find>_test_embedding</find>
       <find>tokens_per_sentence</find>
       <find>indexes</find>
       <find>batch2TrainData</find>
@@ -152,11 +149,14 @@
       <find>decoder_hidden_x</find>
       <find>true_epoch</find>
       <find>add_to_xml</find>
-      <find>hparams</find>
       <find>wordlist</find>
       <find>Lang</find>
-      <find>output_lang</find>
       <find>addSentence</find>
+      <find>addWord</find>
+      <find>hparams</find>
+      <find>limit</find>
+      <find>output_lang</find>
+      <find>save_vocab</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -214,13 +214,13 @@
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/model/do_split.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="539" />
+    <option name="x" value="540" />
     <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -284,28 +284,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="539" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-    <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -323,7 +304,7 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+    </layout>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/raw/tasks_1-20_v1-2/en/qa1_single-supporting-fact_test.txt">
@@ -608,22 +589,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="333">
-          <caret line="161" column="59" selection-start-line="161" selection-start-column="59" selection-end-line="161" selection-end-column="59" />
+        <state relative-caret-position="368">
+          <caret line="847" column="58" selection-start-line="847" selection-start-column="58" selection-end-line="847" selection-end-column="58" />
           <folding>
-            <element signature="e#20#51#0" expanded="true" />
+            <element signature="e#21#86#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="1482" column="22" selection-start-line="1482" selection-start-column="22" selection-end-line="1482" selection-end-column="22" />
+        <state relative-caret-position="335">
+          <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
           <folding>
-            <element signature="e#21#86#0" expanded="true" />
+            <element signature="e#20#51#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -838,7 +838,7 @@ class Lang:
         self.word2index = {} #{hparams['unk']:0, hparams['sol']: 1, hparams['eol']: 2}
         self.word2count = {} #{hparams['unk']:1, hparams['sol']: 1, hparams['eol']: 1}
         self.index2word = {} #{0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
-        self.n_words = 3  # Count SOS and EOS
+        self.n_words = 0  # Count SOS and EOS
 
     def addSentence(self, sentence):
         for word in sentence.split(' '):
@@ -2655,10 +2655,17 @@ class NMT:
                         if not self.do_print_to_screen: break
                     else:
                         if di < 4:
-                            print(int(ni), self.output_lang.index2word[int(ni)])
+                            if int(ni) == 0 and False:
+                                print(ni, '<--', self.output_lang.word2index[hparams['unk']])
+                            if True:
+                                print(int(ni), self.output_lang.index2word[int(ni)])
                         if di == 5 and len(outputs) > 5:
                             print('...etc')
-                        decoded_words.append(self.output_lang.index2word[int(ni)])
+                        ######################
+                        if int(ni) == 0 and False:
+                            print(ni, '<--')
+                        if True:
+                            decoded_words.append(self.output_lang.index2word[int(ni)])
 
         return decoded_words, None #decoder_attentions[:di + 1]
 

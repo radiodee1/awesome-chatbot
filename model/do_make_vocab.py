@@ -178,9 +178,9 @@ def save_vocab(v, babi=False, save_big=True, both=False):
 
     #hparams['num_vocab_total'] = vocab_length
 
-    sol = hparams['sol']
-    eol = hparams['eol']
-    unk = hparams['unk']
+    #sol = hparams['sol']
+    #eol = hparams['eol']
+    #unk = hparams['unk']
 
     name = hparams['data_dir'] + hparams['vocab_name']
 
@@ -199,7 +199,7 @@ def save_vocab(v, babi=False, save_big=True, both=False):
         with open(babi_name, 'w') as x:
             #x.write(unk+'\n'+ sol+'\n'+eol+'\n')
             for z in range(len(v)):
-                if z < int(hparams['num_vocab_total']) - 3: ## magic num for hparams tokens
+                if z < int(hparams['num_vocab_total']): # - 3:
                     x.write(v[z] + "\n")
             print('values written', babi_name)
 
@@ -207,7 +207,7 @@ def save_vocab(v, babi=False, save_big=True, both=False):
         with open(original_name, 'w') as x:
             # x.write(unk+'\n'+ sol+'\n'+eol+'\n')
             for z in range(len(v)):
-                if z < int(hparams['num_vocab_total']) - 3:  ## magic num for hparams tokens
+                if z < int(hparams['num_vocab_total']): # - 3:
                     x.write(v[z] + "\n")
             print('values written',original_name)
 
