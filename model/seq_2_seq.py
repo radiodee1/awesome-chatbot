@@ -2443,6 +2443,7 @@ class NMT:
                             # next sentence
                             break
 
+                    # if ignore_break: num_tot += 1
                 #num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
 
