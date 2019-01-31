@@ -260,7 +260,9 @@ if __name__ == '__main__':
           'file is complete.')
 
     parser = argparse.ArgumentParser(description='Make vocab file.')
-    parser.add_argument('--basefile',metavar='FILE', type=str, help='Base file from training for vocab output. (Can be a comma separated list or glob.)')
+    parser.add_argument('--basefile',metavar='FILE', type=str,
+                        help='Base file from training for vocab output. (Can be a comma separated list or glob.)',
+                        nargs='+')
     parser.add_argument('--babi', help='Flag for babi input. (Override basefile.)', action='store_true')
     parser.add_argument('--all-glove', help='Load all words from the glove set.', action='store_true')
     parser.add_argument('--w2v', help='replace all glove data with data obtained from w2v downloads.', action='store_true')
@@ -286,15 +288,15 @@ if __name__ == '__main__':
     if args['babi']:
         pass
         #train_file = []
-        #args['babi'] = True
+
+    lst = []
     if args['basefile'] is not None :
-        lst = args['basefile']
-        lst = lst.split(',')
+        elist = args['basefile']
+        for ii in elist:
+            lst.extend(ii.split(','))
+
         glist = []
-        if len(lst) > 1:
-            train_file = lst
-        else:
-            train_file = [args['basefile']]
+        train_file = lst
 
         ## expand glob ##
         for i in train_file:
