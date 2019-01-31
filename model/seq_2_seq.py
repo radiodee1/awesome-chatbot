@@ -835,9 +835,9 @@ class Lang:
     def __init__(self, name, limit=None):
         self.name = name
         self.limit = limit
-        self.word2index = {hparams['unk']:0, hparams['sol']: 1, hparams['eol']: 2}
-        self.word2count = {hparams['unk']:1, hparams['sol']: 1, hparams['eol']: 1}
-        self.index2word = {0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
+        self.word2index = {} #{hparams['unk']:0, hparams['sol']: 1, hparams['eol']: 2}
+        self.word2count = {} #{hparams['unk']:1, hparams['sol']: 1, hparams['eol']: 1}
+        self.index2word = {} #{0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
         self.n_words = 3  # Count SOS and EOS
 
     def addSentence(self, sentence):
@@ -1542,11 +1542,7 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
-        '''
-        if self.epoch_length > len(self.pairs) and not self.do_test_not_train:
-            print('reset epoch length:', len(self.pairs))
-            self.epoch_length = len(self.pairs)
-        '''
+
         return self.input_lang, self.output_lang, self.pairs
 
 

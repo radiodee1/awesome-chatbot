@@ -146,7 +146,7 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, no
         hparams['num_vocab_total'] = vocab_length
     cc = c.most_common()
 
-    #cc = wordlist
+
     print(len(cc), 'length of result list')
     #v = []
     num = 0
@@ -159,17 +159,18 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, no
 
     #print(ss[0:10])
     for z in ss: # sorted(cc, key= lambda word: word[1]):
-        if (z[0].lower() not in v and num < vocab_length - len(whitelist)) or z[0].lower() in whitelist:
+        if (z[0].lower() not in v and num < vocab_length ) or z[0].lower() in whitelist:
             v.append(z[0].lower())
-        num +=1
-    #vv = list(set(v))
+            num += 1
+
     v.sort()
 
     vv = [hparams['unk'], hparams['sol'], hparams['eol']]
     for z in v:
         if len(vv) < vocab_length and z not in vv: vv.append(z)
     v = vv
-    #print(v)
+
+    print('len',len(v))
     return v
 
 def save_vocab(v, babi=False, save_big=True, both=False):
