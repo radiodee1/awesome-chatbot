@@ -12,7 +12,7 @@ h5py
 gtts
 google-api-python-client
 google-cloud-speech
-PyAudio
+PyAudio ## install this from linux distro repository, not pip3
 unidecode
 matplotlib
 py-cpuinfo
@@ -28,3 +28,5 @@ kaggle
 
 ## text-to-speech ##
 ## install mpg321 from your linux repository ##
+## install python3-pyaudio
+## install python-pyaudio
