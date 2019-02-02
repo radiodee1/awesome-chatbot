@@ -164,7 +164,7 @@ def plot_vector(vec):
     plt.show()
     pass
 
-
+'''
 def encoding_positional(embedded_sentence, sum=False):
 
     _, slen, elen = embedded_sentence.size()
@@ -192,6 +192,7 @@ def encoding_positional(embedded_sentence, sum=False):
     if sum:
         weighted = torch.sum(weighted, dim=1)
     return weighted
+'''
 
 def prune_tensor( input, size):
     if isinstance(input, (list)): return input
@@ -224,6 +225,16 @@ class Encoder(nn.Module):
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=True)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
+
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_dim)
+        for weight in self.parameters():
+
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
 
     def load_embedding(self, embedding):
         self.embed = embedding
@@ -325,6 +336,16 @@ class Decoder(nn.Module):
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
 
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        stdv = 1.0 / math.sqrt(self.hidden_dim)
+        for weight in self.parameters():
+
+            weight.data.uniform_(-stdv, stdv)
+            if len(weight.size()) > 1:
+                init.xavier_normal_(weight)
+
     def load_embedding(self, embedding):
         self.embed = embedding
 
@@ -340,16 +361,7 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
 
-        if False: #not self.cancel_attention:
-            pass
-            '''
-            decoder_hidden_x = (
-                    decoder_hidden_x[:, :self.n_layers, :] +
-                    decoder_hidden_x[:, self.n_layers:, :]
-            )
 
-            #decoder_hidden_x = decoder_hidden_x.permute(1, 0, 2)
-            '''
         if True:
             pass
             #decoder_hidden_x = decoder_hidden_x[:,  self.n_layers, :]
@@ -374,72 +386,7 @@ class Decoder(nn.Module):
 
             #hidden = hidden_in.clone()
 
-            if False: #not self.cancel_attention:
-                '''
-                hidden = prune_tensor(decoder_hidden_x[k, :, :], 3)
-                hidden = hidden.permute(1, 0, 2)
 
-                output = torch.LongTensor([token])
-
-                for m in range(s):
-
-                    if hparams['cuda']: output = output.cuda()
-
-                    embedded = self.embed(output)
-                    #print(output, embedded)
-                    embedded = prune_tensor(embedded, 3)
-
-                    #embedded = torch.relu(embedded)
-
-                    embedded = self.dropout_e(embedded)
-
-                    #print(decoder_hidden.size(),'dh raw')
-
-                    attn_list = [
-                        hidden[0, 0, :],
-                        hidden[1, 0, :],
-                        embedded[0,0,:]
-                    ]
-                    #for iii in attn_list: print(iii.size())
-                    #print('---')
-
-                    attn_list = torch.cat(attn_list, dim=0)
-
-                    attn_list = self.out_attn(attn_list)
-
-                    attn_list = torch.softmax(attn_list, dim=0)
-
-                    #print(encoder_out_x.size(), 'eox')
-
-                    attn_applied = torch.bmm(prune_tensor(attn_list, 3), prune_tensor(encoder_out_x[k,:,:], 3))
-
-                    output_list = [
-                        embedded,
-                        attn_applied[:,:, :self.hidden_dim],
-                        attn_applied[:,:, self.hidden_dim:]
-                    ]
-
-                    output_list = torch.cat(output_list, dim=2)
-
-                    embedded = self.out_combine(output_list)
-
-                    embedded = torch.relu(embedded)
-
-                    rnn_output, hidden = self.gru(embedded, hidden)
-
-                    out_x = self.out_target(rnn_output)
-
-                    #out_x = self.dropout_o(out_x)
-
-                    #out_x = torch.softmax(out_x, dim=2) ## softmax is done by CrossEntropy
-
-                    output = torch.argmax(out_x, dim=2)
-
-                    all_out.append(out_x)
-
-                #word_out = output
-                '''
-                pass
             if True:
 
                 decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
@@ -491,15 +438,7 @@ class Decoder(nn.Module):
         ## CHANGE HIDDEN STATE HERE ##
         decoder_hidden_x = prune_tensor(decoder_hidden, 3)
 
-        if False: #self.word_mode_b:
-            pass
-            '''
-            decoder_hidden_x = (
-                decoder_hidden_x[:, :self.n_layers, :] +
-                decoder_hidden_x[:, self.n_layers:, :]
-            )
-            decoder_hidden_x = torch.relu(decoder_hidden_x)
-            '''
+
         if True:
             pass
             decoder_hidden_x = (
@@ -531,74 +470,7 @@ class Decoder(nn.Module):
 
         for m in range(s):
 
-            if False: #self.word_mode_b:
-
-                '''
-                if hparams['cuda']: output = output.cuda()
-
-                embedded = self.embed(output)
-
-                embedded = prune_tensor(embedded, 3)
-
-                #embedded = torch.relu(embedded)
-
-                embedded = self.dropout_e(embedded)
-
-                #print(embedded.size(),'emb', hidden.size(),'hid')
-
-                attn_list = [
-                    hidden[0, :, :].unsqueeze(0),
-                    hidden[1, :, :].unsqueeze(0),
-                    embedded[0,:,:].unsqueeze(0)
-                ]
-                #for iii in attn_list: print(iii.size())
-                #print('---')
-
-                attn_list = torch.cat(attn_list, dim=2)
-
-                attn_list = self.out_attn(attn_list)
-
-                attn_list = torch.softmax(attn_list, dim=2)
-
-                attn_list = attn_list.permute(1,0,2)
-
-                #print(attn_list.size(), 'al' ,encoder_out_x.size(),'eox')
-
-                attn_applied = torch.bmm(prune_tensor(attn_list, 3), prune_tensor(encoder_out_x[:,:,:], 3))
-
-                output_list = [
-                    embedded.permute(1,0,2),
-                    attn_applied[:,:, :self.hidden_dim],
-                    attn_applied[:,:, self.hidden_dim:]
-                ]
-                #for i in output_list: print(i.size())
-                #print('---')
-
-                output_list = torch.cat(output_list, dim=2)
-
-                embedded = self.out_combine(output_list)
-
-                embedded = torch.relu(embedded)
-
-                #print(embedded.size(), 'input', hidden.size(),'hidd')
-
-                rnn_output, hidden = self.gru(embedded.permute(1,0,2), hidden)
-
-                out_x = self.out_target(rnn_output)
-
-                #out_x = torch.softmax(out_x, dim=2) ## softmax is done by CrossEntropy
-                #print(out_x.size(), 'ox')
-
-                output = torch.argmax(out_x, dim=2)#.permute(1,0)
-
-                #if not self.training : print(out_x.size(),'ox',output,'out')
-
-                all_out.append(out_x)
-
-                #all_out = out_x
-
-                #word_out = output
-                '''
+            
             if True:
 
                 if hparams['cuda']: output = output.cuda()
