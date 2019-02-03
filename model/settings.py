@@ -45,5 +45,6 @@ hparams = {
     'zero_start': False,
     'cuda': False,
     'split_sentences': True,
-    'multiplier': 1.0 #0.5
+    'multiplier': 1.0, #0.5
+    'beam': False
 }

@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-684">
-              <caret line="230" column="51" selection-start-line="230" selection-start-column="51" selection-end-line="230" selection-end-column="51" />
+            <state relative-caret-position="188">
+              <caret line="601" column="32" selection-start-line="601" selection-start-column="32" selection-end-line="601" selection-end-column="32" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -56,8 +57,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+            <state relative-caret-position="685">
+              <caret line="48" column="17" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -124,10 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>batch2TrainData</find>
-      <find>variableFromSentence</find>
-      <find>train(</find>
-      <find>add_eos</find>
       <find>word_lst</find>
       <find>blacklist</find>
       <find>variables_for_batch</find>
@@ -136,7 +133,6 @@
       <find>do_clip_grad_norm</find>
       <find>cuda</find>
       <find>out_combine</find>
-      <find>output</find>
       <find>out_target</find>
       <find>print</find>
       <find>update_result_file</find>
@@ -154,6 +150,11 @@
       <find>save_vocab</find>
       <find>score</find>
       <find>append</find>
+      <find>readLangs</find>
+      <find>prep_blacklist_supress</find>
+      <find>encoder_out</find>
+      <find>output</find>
+      <find>decoder_hidden</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -209,15 +210,15 @@
         <option value="$PROJECT_DIR$/do_make_tab_file_from_srt.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/model/do_split.py" />
-        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_beam.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="540" />
+    <option name="x" value="539" />
     <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -281,7 +282,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="539" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -585,13 +586,6 @@
     <entry file="file://$PROJECT_DIR$/data/sentences.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -633,10 +627,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="685">
+          <caret line="48" column="17" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-684">
-          <caret line="230" column="51" selection-start-line="230" selection-start-column="51" selection-end-line="230" selection-end-column="51" />
+        <state relative-caret-position="188">
+          <caret line="601" column="32" selection-start-line="601" selection-start-column="32" selection-end-line="601" selection-end-column="32" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

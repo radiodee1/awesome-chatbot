@@ -151,6 +151,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 blacklist_sent = blacklist_vocab #+ ['i']
+blacklist_supress = [['i', 0.01], ['you', 1.0]]
 
 def plot_vector(vec):
     fig, ax = plt.subplots()
@@ -165,35 +166,6 @@ def plot_vector(vec):
     plt.show()
     pass
 
-'''
-def encoding_positional(embedded_sentence, sum=False):
-
-    _, slen, elen = embedded_sentence.size()
-
-    slen2 = slen
-    elen2 = elen
-
-    if slen == 1 or elen == 1:
-        #exit()
-        pass
-
-    if slen == 1: slen2 += 0.01
-    if elen == 1: elen2 += 0.01
-
-    # print(slen, elen, 'slen,elen')
-
-    l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
-         range(slen)]
-    l = torch.FloatTensor(l)
-    l = l.unsqueeze(0)  # for #batch
-    # print(l.size(),"l", l)
-    l = l.expand_as(embedded_sentence)
-    if hparams['cuda'] is True: l = l.cuda()
-    weighted = embedded_sentence * Variable(l)
-    if sum:
-        weighted = torch.sum(weighted, dim=1)
-    return weighted
-'''
 
 def prune_tensor( input, size):
     if isinstance(input, (list)): return input
@@ -228,8 +200,9 @@ class Beam:
         #heapq.heappush(self.heap, (score, sequence, hidden_state))
         self.heap.append((score, sequence, hidden_state))
         self.heap.sort(reverse=True, key=lambda x: x[0])
-        if len(self.heap) > self.beam_width or True:
-            self.heap = self.heap[:self.beam_width]
+        #if len(self.heap) > self.beam_width or True:
+        #print(len(self.heap), self.beam_width)
+        self.heap = self.heap[:self.beam_width]
 
     def __iter__(self):
         return iter(self.heap)
@@ -264,46 +237,52 @@ class BeamHelper:
             sos_tensor = prune_tensor(torch.LongTensor([self.sos_index]), 2)
             self.beam.add(score=1.0, sequence=sos_tensor, hidden_state=None)  # initialize root
 
-    def get_next(self, output):
-        """
-        Given the last item in a sequence and the hidden state used to generate the sequence
-        return the topk most likely words and their scores
-        """
+    def get_next(self, output, decoder_hidden):
 
         probs = F.softmax(output, dim=2)
         next_probs, next_words = probs.topk(self.beam_size)
-        return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), None #hidden_state
+        #print(next_words.size(),'len')
+        return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), decoder_hidden #hidden_state
 
-    def search(self, output):
-
-        for _ in range(self.maxlen):
-            #if True:
+    def search(self, output, decoder_hidden):
+        global blacklist_supress
+        #for _ in range(self.maxlen):
+        if True:
             next_beam = Beam(self.beam_size)
             for score, sequence, _ in self.beam:
-                next_probs, next_words, _ = self.get_next(output)
+                next_probs, next_words, decoder_hidden = self.get_next(output, decoder_hidden)
 
                 if isinstance(sequence, int):
                     sequence = prune_tensor(torch.LongTensor([sequence]), 2)
                 for i in range(self.beam_size):
+                    z = next_words[i]
+                    for ii in blacklist_supress:
+                        if z == ii[0]:
+                            #print(blacklist_supress, z, next_probs[i], ii[1], end=' ')
+                            next_probs[i] = next_probs[i] * ii[1]
+                            #print(next_probs[i])
+                            break
                     score = score * next_probs[i]
+                    #score = next_probs[i]
                     sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
-                    next_beam.add(score, sequence, None)
+                    next_beam.add(score, sequence, decoder_hidden)
                 #break
             # move down one layer (to the next word in sequence up to maxlen )
             self.beam = next_beam
-        best_score, best_sequence, _ = max(self.beam, key=lambda x: x[0])  # get highest scoring sequence
-        return best_score, best_sequence
+        best_score, best_sequence, proposed_hidden = max(self.beam, key=lambda x: x[0])  # get highest scoring sequence
+        return best_score, best_sequence, proposed_hidden
 
-    def __call__(self, token,  output):
+    def __call__(self, token,  output, decoder_hidden, zero_beam=False):
         #print(token)
+        self.zero_beam = zero_beam
         self.token = token
         if self.token == self.sos_index and self.zero_beam:
             self.beam = Beam(self.beam_size)
             sos_tensor = prune_tensor(torch.LongTensor([self.sos_index]), 2)
-            self.beam.add(score=1.0, sequence=sos_tensor, hidden_state=None)  # initialize root
+            self.beam.add(score=1.0, sequence=sos_tensor, hidden_state=decoder_hidden)  # initialize root
 
-        best_score, best_sequence = self.search(output)
-        return best_score, best_sequence
+        best_score, best_sequence, proposed_hidden = self.search(output, decoder_hidden)
+        return best_score, best_sequence, proposed_hidden
 
 
 class Encoder(nn.Module):
@@ -528,123 +507,111 @@ class Decoder(nn.Module):
 
     def mode_batch(self, encoder_out, decoder_hidden):
 
-        ## CHANGE HIDDEN STATE HERE ##
-        decoder_hidden_x = prune_tensor(decoder_hidden, 3)
-
-
-        if True:
-            pass
-            decoder_hidden_x = (
-                decoder_hidden_x[:, :self.n_layers, :] #+
-                #decoder_hidden_x[:, self.n_layers:, :]
-            )
-            #decoder_hidden_x = torch.relu(decoder_hidden_x)
-            encoder_out_x = (
-                encoder_out[:,:,self.hidden_dim:] +
-                encoder_out[:,:,:self.hidden_dim]
-            )
-            #encoder_out = torch.relu(encoder_out)
-            #decoder_hidden_x = torch.relu(decoder_hidden_x)
-
+        encoder_out_x = (
+            encoder_out[:, :, self.hidden_dim:] +
+            encoder_out[:, :, :self.hidden_dim]
+        )
         encoder_out_x = prune_tensor(encoder_out_x, 3)
+
+        decoder_hidden_x = prune_tensor(decoder_hidden, 3)
 
         l, s, hid = encoder_out_x.size()
 
         token = list(SOS_token for _ in range(l))
 
-        outputs = []
-
         output = torch.LongTensor([token])
 
         all_out = []
 
-        hidden = prune_tensor(decoder_hidden_x[:, :, :], 3)
-        hidden = hidden.permute(1, 0, 2)
-
         for m in range(s):
 
+            decoder_hidden_x = decoder_hidden_x[:, - self.n_layers :, :]
 
-            if True:
+            encoder_out_x = prune_tensor(encoder_out_x, 3)
 
-                if hparams['cuda']: output = output.cuda()
+            hidden = prune_tensor(decoder_hidden_x[:, :, :], 3)
+            hidden = hidden.permute(1, 0, 2)
+            #print(hidden.size(),'hid')
 
-                embedded = self.embed(output)
-                # print(output, embedded)
-                embedded = prune_tensor(embedded, 3)
+            if hparams['cuda']: output = output.cuda()
 
-                embedded = self.dropout_e(embedded)
+            embedded = self.embed(output)
+            # print(output, embedded)
+            embedded = prune_tensor(embedded, 3)
 
-                #print(embedded.size(),'emb')
-                hidden = hidden.contiguous()
+            embedded = self.dropout_e(embedded)
 
-                rnn_output, hidden = self.gru(embedded, hidden)
+            #print(embedded.size(),'emb')
+            hidden = hidden.contiguous()
 
-                #hidden = torch.relu(hidden)
-                #print(decoder_hidden.size(), encoder_out.size(),'rnn,eox',hidden.size())
+            rnn_output, hidden = self.gru(embedded, hidden)
 
-                hidden_small = torch.cat((decoder_hidden[:,0,:], decoder_hidden[:,1,:]), dim=1)
-                hidden_small = hidden_small.unsqueeze(0)
-                #print(hidden_small.size(),'hidsmall')
+            #hidden_small = torch.cat((decoder_hidden_x[:,0,:], decoder_hidden_x[:,1,:]), dim=1)
+            hidden_small = torch.cat((hidden.transpose(1,0)[:,0,:], hidden.transpose(1,0)[:,1,:]), dim=1)
 
-                attn_weights = self.attention_mod(hidden_small, encoder_out.permute(1,0,2))
+            hidden_small = hidden_small.unsqueeze(0)
+            #print(hidden_small.size(),'hidsmall')
 
-                attn_weights = attn_weights.permute(2,1,0)
+            attn_weights = self.attention_mod(hidden_small, encoder_out.permute(1,0,2))
 
-                #if not self.training : print(attn_weights, 'attn', encoder_out_x.size(),'eox')
+            attn_weights = attn_weights.permute(2,1,0)
 
-                localize_weights = False
+            localize_weights = False
 
-                encoder_out_small = encoder_out_x
+            encoder_out_small = encoder_out_x
 
-                if localize_weights:
-                    attn_weights = attn_weights[:,:,m].unsqueeze(2)
-                    encoder_out_small = encoder_out_x[:,m,:].unsqueeze(1)
+            if localize_weights:
+                attn_weights = attn_weights[:,:,m].unsqueeze(2)
+                encoder_out_small = encoder_out_x[:,m,:].unsqueeze(1)
 
-                context = attn_weights.bmm(encoder_out_small)#.transpose(0,1))
+            context = attn_weights.bmm(encoder_out_small)
 
-                #if not self.training: print(context.size(),'context')
-                #context = torch.relu(context) #, dim=2)
+            output_list = [
+                rnn_output.permute(1, 0, 2),
+                context[:, :, :],
+            ]
+            #for i in output_list: print(i.size())
+            #print('---')
 
-                #print(attn_weights.size(),'attw', encoder_out_x.size(),'eox', rnn_output.size(), context)
+            output_list = torch.cat(output_list, dim=2)
 
-                output_list = [
-                    rnn_output.permute(1, 0, 2),
-                    context[:, :, :],
-                ]
-                #for i in output_list: print(i.size())
-                #print('---')
+            out_x = self.out_concat_b(output_list)
 
-                output_list = torch.cat(output_list, dim=2)
+            out_x = torch.tanh(out_x) ## <<-- use or not use?
 
-                out_x = self.out_concat_b(output_list)
+            out_x = self.out_target_b(out_x)
 
-                out_x = torch.tanh(out_x) ## <<-- use or not use?
+            out_x = out_x.permute(1,0,2)
 
-                out_x = self.out_target_b(out_x)
+            decoder_hidden_x = hidden.permute(1,0,2)
+            #print(out_x.size(),'out_x')
 
-                #out_x = self.dropout_o(out_x)
+            if self.training or output.size(-1) != 1 or not hparams['beam']:
+                #print(out_x.size(),'ox')
+                output = torch.argmax(out_x, dim=2)
 
-                #out_x = torch.relu(out_x) #, dim=2)
-
-                out_x = out_x.permute(1,0,2)
-                #print(out_x.size(),'out_x')
-                #out_x = torch.tanh(out_x) #, dim=2)
-
-                if self.training or output.size(-1) != 1:
-                    output = torch.argmax(out_x, dim=2)
+            else:
+                zero_beam = False
+                if m == 0: zero_beam = True
+                score, output, proposed_hidden = self.beam_helper(output, out_x, decoder_hidden_x, zero_beam)
+                #print(score)
+                #print(output)
+                if m == 0: print('beam') #, len(output))
+                if len(output) > 1:
+                    output = output[0] ## <<-- put m here??
+                    #print('first')
+                if proposed_hidden is not None:
+                    decoder_hidden_x = proposed_hidden
                 else:
-                    score, output = self.beam_helper(output, out_x)
-                    #print(score)
-                    #print(output.size())
-                    if len(output) > 1: output = output[0]
-                    output = prune_tensor(output, 1)
-                    #exit()
+                    exit()
+                output = prune_tensor(output, 1)
+                #exit()
 
-                #print(output,'out')
+            #print(output,'out')
 
-                all_out.append(out_x)
+            all_out.append(out_x)
 
-                pass
+            pass
 
             #all_out = torch.cat(all_out, dim=1)
 
@@ -988,6 +955,7 @@ class NMT:
         parser.add_argument('--json-record-offset', help='starting record number for json file')
         parser.add_argument('--no-vocab-limit', help='no vocabulary size limit.', action='store_true')
         parser.add_argument('--record-loss', help='record loss for later graphing.', action='store_true')
+        parser.add_argument('--beam', help='activate beam search for eval phase.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1077,6 +1045,8 @@ class NMT:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
         if self.args['no_vocab_limit']: hparams['num_vocab_total'] = None
         if self.args['record_loss']: self.do_record_loss = True
+        if self.args['beam']:
+            hparams['beam'] = True
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1325,12 +1295,21 @@ class NMT:
 
     ################################################
 
+    def prep_blacklist_supress(self):
+        global blacklist_supress
+        bl = []
+        if isinstance(blacklist_supress[0][0],str):
+            for i in blacklist_supress:
+                i[0] = self.output_lang.word2index[i[0]]
+                bl.append([i[0], i[1]])
+            blacklist_supress = bl
+        #print(blacklist_supress)
 
     def open_sentences(self, filename):
         t_yyy = []
         with open(filename, 'r') as r:
             for xx in r:
-                t_yyy.append(xx)
+                t_yyy.append(xx.lower())
         return t_yyy
 
     def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
@@ -1515,6 +1494,8 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
+        if hparams['beam']:
+            self.prep_blacklist_supress()
 
         return self.input_lang, self.output_lang, self.pairs
 
