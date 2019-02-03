@@ -293,7 +293,8 @@ class Encoder(nn.Module):
         self.embed = embed
         self.sum_encoder = True
         self.pack_and_pad = False
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=True)
+        self.batch_first = False
+        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
 
@@ -314,17 +315,21 @@ class Encoder(nn.Module):
         #source = prune_tensor(source, 3)
         #input_lengths = prune_tensor(input_lengths, 2)
 
-        if hparams['cuda']: source = source.cuda()
+        if hparams['cuda']:
+            source = source.cuda()
+            #input_lengths = input_lengths.device('cpu')
 
-        embedded = self.embed(source)
+        embedded = self.embed(source).transpose(1,0)
+
+        #print(embedded.size(),'emb-enc')
 
         if self.pack_and_pad:
-            embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths,batch_first=True)
+            embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         if self.pack_and_pad:
-            outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out,batch_first=True)
+            outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first)
             encoder_out = outputs
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
@@ -511,9 +516,11 @@ class Decoder(nn.Module):
             encoder_out[:, :, self.hidden_dim:] +
             encoder_out[:, :, :self.hidden_dim]
         )
-        encoder_out_x = prune_tensor(encoder_out_x, 3)
+        encoder_out_x = prune_tensor(encoder_out_x, 3).transpose(1,0)
 
-        decoder_hidden_x = prune_tensor(decoder_hidden, 3)
+        decoder_hidden_x = prune_tensor(decoder_hidden, 3).transpose(1,0)
+
+        #print(decoder_hidden_x.size(),'dhx')
 
         l, s, hid = encoder_out_x.size()
 
@@ -525,7 +532,7 @@ class Decoder(nn.Module):
 
         for m in range(s):
 
-            decoder_hidden_x = decoder_hidden_x[:, - self.n_layers :, :]
+            decoder_hidden_x = decoder_hidden_x[ -self.n_layers:, :, :]
 
             encoder_out_x = prune_tensor(encoder_out_x, 3)
 
@@ -542,23 +549,27 @@ class Decoder(nn.Module):
             embedded = self.dropout_e(embedded)
 
             #print(embedded.size(),'emb')
-            hidden = hidden.contiguous()
+
+            hidden = hidden.contiguous().transpose(1,0)
 
             rnn_output, hidden = self.gru(embedded, hidden)
 
             #hidden_small = torch.cat((decoder_hidden_x[:,0,:], decoder_hidden_x[:,1,:]), dim=1)
-            hidden_small = torch.cat((hidden.transpose(1,0)[:,0,:], hidden.transpose(1,0)[:,1,:]), dim=1)
+            #print(hidden.size(),'hid-dec')
+
+            hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
 
             hidden_small = hidden_small.unsqueeze(0)
-            #print(hidden_small.size(),'hidsmall')
+            #print(hidden_small.transpose(1,0).size(), encoder_out.size(), 'hid,eout')
+            attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
 
-            attn_weights = self.attention_mod(hidden_small, encoder_out.permute(1,0,2))
-
-            attn_weights = attn_weights.permute(2,1,0)
+            #attn_weights = attn_weights.permute(2,1,0)
 
             localize_weights = False
 
             encoder_out_small = encoder_out_x
+
+            #print(attn_weights.size(),encoder_out_small.size(),'before bmm')
 
             if localize_weights:
                 attn_weights = attn_weights[:,:,m].unsqueeze(2)
@@ -583,7 +594,7 @@ class Decoder(nn.Module):
 
             out_x = out_x.permute(1,0,2)
 
-            decoder_hidden_x = hidden.permute(1,0,2)
+            decoder_hidden_x = hidden #.permute(1,0,2)
             #print(out_x.size(),'out_x')
 
             if self.training or output.size(-1) != 1 or not hparams['beam']:
