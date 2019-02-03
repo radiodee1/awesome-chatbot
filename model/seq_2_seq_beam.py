@@ -25,6 +25,7 @@ from settings import hparams
 import tokenize_weak
 import itertools
 import matplotlib.pyplot as plt
+import heapq
 import matplotlib.patches as mpatches
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
@@ -214,6 +215,92 @@ def prune_tensor( input, size):
 
 ################# pytorch modules ###############
 
+class Beam:
+    """
+    maintains a heap of size(beam_width), always removes lowest scoring nodes.
+    """
+
+    def __init__(self, beam_width):
+        self.heap = list()
+        self.beam_width = beam_width
+
+    def add(self, score, sequence, hidden_state):
+        #heapq.heappush(self.heap, (score, sequence, hidden_state))
+        self.heap.append((score, sequence, hidden_state))
+        self.heap.sort(reverse=True, key=lambda x: x[0])
+        if len(self.heap) > self.beam_width:
+            self.heap = self.heap[:self.beam_width]
+
+    def __iter__(self):
+        return iter(self.heap)
+
+    def __len__(self):
+        return len(self.heap)
+
+    def __getitem__(self, idx):
+        return self.heap[idx]
+
+
+class BeamHelper:
+    """
+    Model must be in eval mode
+    Note: Will be passed as decoding helper,
+    but does not currently conform to that api so it gets to live here.
+    Does not support batching. Does not work with current eval code
+    (can't compute Xentropy loss on returned indices).
+    """
+
+    def __init__(self, beam_size=3, maxlen=20, sos_index=SOS_token):
+        self.beam_size = beam_size
+        self.maxlen = maxlen
+        self.sos_index = sos_index
+        self.decoder = None
+        self.encoder_out = None
+        self.token = self.sos_index
+        self.beam = Beam(self.beam_size)
+
+    def get_next(self, output):
+        """
+        Given the last item in a sequence and the hidden state used to generate the sequence
+        return the topk most likely words and their scores
+        """
+
+        probs = F.softmax(output, dim=2)
+        next_probs, next_words = probs.topk(self.beam_size)
+        return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), None #hidden_state
+
+    def search(self, output):
+
+        for _ in range(self.maxlen):
+            #if True:
+            next_beam = Beam(self.beam_size)
+            for score, sequence, _ in self.beam:
+                next_probs, next_words, _ = self.get_next(output)
+
+                if isinstance(sequence, int):
+                    sequence = prune_tensor(torch.LongTensor([sequence]), 2)
+                for i in range(self.beam_size):
+                    score = score * next_probs[i]
+                    sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
+                    next_beam.add(score, sequence, None)
+                #break
+            # move down one layer (to the next word in sequence up to maxlen )
+            self.beam = next_beam
+        best_score, best_sequence, _ = max(self.beam)  # get highest scoring sequence
+        return best_score, best_sequence
+
+    def __call__(self, token,  output):
+        #print(token)
+        self.token = token
+        if self.token == self.sos_index:
+            self.beam = Beam(self.beam_size)
+            sos_tensor = prune_tensor(torch.LongTensor([self.sos_index]), 2)
+            self.beam.add(score=1.0, sequence=sos_tensor, hidden_state=None)  # initialize root
+
+        best_score, best_sequence = self.search(output)
+        return best_score, best_sequence
+
+
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
         super(Encoder, self).__init__()
@@ -335,6 +422,7 @@ class Decoder(nn.Module):
         self.decoder_hidden_z = None
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
+        self.beam_helper = BeamHelper(5,hparams['tokens_per_sentence'])
 
         self.reset_parameters()
 
@@ -537,7 +625,15 @@ class Decoder(nn.Module):
                 #print(out_x.size(),'out_x')
                 #out_x = torch.tanh(out_x) #, dim=2)
 
-                output = torch.argmax(out_x, dim=2)
+                if self.training or output.size(-1) != 1:
+                    output = torch.argmax(out_x, dim=2)
+                else:
+                    score, output = self.beam_helper(output, out_x)
+                    #print(score)
+                    #print(output)
+                    if len(output) > 1: output = output[0]
+                    output = prune_tensor(output, 1)
+                    #exit()
 
                 #print(output,'out')
 
