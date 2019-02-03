@@ -228,7 +228,7 @@ class Beam:
         #heapq.heappush(self.heap, (score, sequence, hidden_state))
         self.heap.append((score, sequence, hidden_state))
         self.heap.sort(reverse=True, key=lambda x: x[0])
-        if len(self.heap) > self.beam_width:
+        if len(self.heap) > self.beam_width or True:
             self.heap = self.heap[:self.beam_width]
 
     def __iter__(self):
@@ -257,7 +257,12 @@ class BeamHelper:
         self.decoder = None
         self.encoder_out = None
         self.token = self.sos_index
+        self.zero_beam = False
+
         self.beam = Beam(self.beam_size)
+        if not self.zero_beam:
+            sos_tensor = prune_tensor(torch.LongTensor([self.sos_index]), 2)
+            self.beam.add(score=1.0, sequence=sos_tensor, hidden_state=None)  # initialize root
 
     def get_next(self, output):
         """
@@ -286,13 +291,13 @@ class BeamHelper:
                 #break
             # move down one layer (to the next word in sequence up to maxlen )
             self.beam = next_beam
-        best_score, best_sequence, _ = max(self.beam)  # get highest scoring sequence
+        best_score, best_sequence, _ = max(self.beam, key=lambda x: x[0])  # get highest scoring sequence
         return best_score, best_sequence
 
     def __call__(self, token,  output):
         #print(token)
         self.token = token
-        if self.token == self.sos_index:
+        if self.token == self.sos_index and self.zero_beam:
             self.beam = Beam(self.beam_size)
             sos_tensor = prune_tensor(torch.LongTensor([self.sos_index]), 2)
             self.beam.add(score=1.0, sequence=sos_tensor, hidden_state=None)  # initialize root
@@ -630,7 +635,7 @@ class Decoder(nn.Module):
                 else:
                     score, output = self.beam_helper(output, out_x)
                     #print(score)
-                    #print(output)
+                    #print(output.size())
                     if len(output) > 1: output = output[0]
                     output = prune_tensor(output, 1)
                     #exit()
