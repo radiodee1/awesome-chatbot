@@ -273,7 +273,7 @@ class Encoder(nn.Module):
         self.bidirectional = True
         self.embed = embed
         self.sum_encoder = True
-        self.pack_and_pad = False
+        self.pack_and_pad = True
         self.batch_first = False
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
         self.dropout_e = nn.Dropout(dropout)
@@ -298,7 +298,7 @@ class Encoder(nn.Module):
 
         if hparams['cuda']:
             source = source.cuda()
-            #input_lengths = input_lengths.device('cpu')
+            input_lengths = torch.as_tensor(input_lengths.cpu(), dtype=torch.int64)
 
         embedded = self.embed(source).transpose(1,0)
 
@@ -955,7 +955,7 @@ class NMT:
         if self.args['beam']:
             hparams['beam'] = True
         if self.printable == '': self.printable = hparams['base_filename']
-        if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
+        #if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
         ''' reset lr vars if changed from command line '''
         self.lr_low = hparams['learning_rate'] #/ 100.0
