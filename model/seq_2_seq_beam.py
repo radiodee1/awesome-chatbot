@@ -435,7 +435,9 @@ class Decoder(nn.Module):
         hidden = hidden.permute(1, 0, 2)
         #print(hidden.size(),'hid')
 
-        if hparams['cuda']: output = output.cuda()
+        if hparams['cuda']:
+            output = output.cuda()
+            #hidden = hidden.contiguous()
 
         embedded = self.embed(output)
         # print(output, embedded)
@@ -445,7 +447,7 @@ class Decoder(nn.Module):
 
         #print(embedded.size(),'emb')
 
-        hidden = hidden.contiguous().transpose(1,0)
+        hidden = hidden.transpose(1,0).contiguous()
 
         rnn_output, hidden = self.gru(embedded, hidden)
 
