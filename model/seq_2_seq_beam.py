@@ -213,8 +213,61 @@ class Beam:
     def __getitem__(self, idx):
         return self.heap[idx]
 
-
 class BeamHelper:
+    """
+    Model must be in eval mode
+    Note: Will be passed as decoding helper,
+    but does not currently conform to that api so it gets to live here.
+    Does not support batching. Does not work with current eval code
+    (can't compute Xentropy loss on returned indices).
+    """
+
+    # TODO return attention masks, stop when sos index is sampled
+
+    def __init__(self, beam_size=3, maxlen=20, sos_index=SOS_token):
+        self.beam_size = beam_size
+        self.maxlen = maxlen
+        self.sos_index = sos_index
+        self.decoder = None
+        self.encoder_out = None
+
+    def get_next(self, last_word, hidden_state):
+        """
+        Given the last item in a sequence and the hidden state used to generate the sequence
+        return the topk most likely words and their scores
+        """
+        output, hidden_state, _ = self.decoder( self.encoder_out, hidden_state, last_word)
+        probs = F.softmax(output, dim=2)
+        next_probs, next_words = probs.topk(self.beam_size)
+        return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), hidden_state
+
+    def search(self, start_token, initial_hidden):
+        beam = Beam(self.beam_size)  # starting layer in search tree
+        beam.add(score=1.0, sequence=start_token, hidden_state=initial_hidden)  # initialize root
+        for _ in range(self.maxlen):
+            next_beam = Beam(self.beam_size)
+            for score, sequence, hidden_state in beam:
+                next_probs, next_words, hidden_state = self.get_next(sequence[-1:],
+                                                                     hidden_state)
+                for i in range(self.beam_size):
+                    score = score * next_probs[i]
+                    sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
+                    next_beam.add(score, sequence, hidden_state)
+            # move down one layer (to the next word in sequence up to maxlen )
+            beam = next_beam
+        best_score, best_sequence, _ = max(beam)  # get highest scoring sequence
+        return best_score, best_sequence
+
+    def __call__(self, decoder, encoder_out, encoder_hidden):
+        self.decoder = decoder
+        self.encoder_out = encoder_out
+        decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
+        start_token = Variable(decoder_hidden.data.new(1, 1).fill_(self.sos_index).long())  # start token (ugly hack)
+        best_score, best_sequence = self.search(start_token, decoder_hidden)
+        return best_score, best_sequence
+
+
+class BeamHelperX:
     """
     Model must be in eval mode
     Note: Will be passed as decoding helper,
@@ -411,7 +464,7 @@ class Decoder(nn.Module):
         self.decoder_hidden_z = None
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
-        self.beam_helper = BeamHelper(5,hparams['tokens_per_sentence'])
+        self.beam_helper = BeamHelperX(5,hparams['tokens_per_sentence'])
 
         self.reset_parameters()
 
@@ -426,12 +479,12 @@ class Decoder(nn.Module):
     def load_embedding(self, embedding):
         self.embed = embedding
 
-    def forward(self, encoder_out, decoder_hidden):
+    def forward(self, encoder_out, decoder_hidden, last_word=None):
         if self.word_mode:
             return self.mode_word(encoder_out, decoder_hidden)
         else:
             #print(encoder_out.size(),'eo')
-            return self.mode_batch(encoder_out, decoder_hidden)
+            return self.mode_batch(encoder_out, decoder_hidden, last_word)
 
     def mode_word(self, encoder_out, decoder_hidden):
 
@@ -510,21 +563,33 @@ class Decoder(nn.Module):
 
         return all_output.permute(1,0,2)
 
-    def mode_batch(self, encoder_out, decoder_hidden):
+    def mode_batch(self, encoder_out, decoder_hidden, last_word=None):
 
         encoder_out_x = (
             encoder_out[:, :, self.hidden_dim:] +
             encoder_out[:, :, :self.hidden_dim]
         )
-        encoder_out_x = prune_tensor(encoder_out_x, 3).transpose(1,0)
 
-        decoder_hidden_x = prune_tensor(decoder_hidden, 3).transpose(1,0)
+        if last_word is None:
+            localize_weights = False
+            encoder_out_x = prune_tensor(encoder_out_x, 3).transpose(1,0)
 
-        #print(decoder_hidden_x.size(),'dhx')
+            decoder_hidden_x = prune_tensor(decoder_hidden, 3).transpose(1,0)
 
-        l, s, hid = encoder_out_x.size()
+            #print(decoder_hidden_x.size(),'dhx')
+            l, s, hid = encoder_out_x.size()
+            token = list(SOS_token for _ in range(l))
 
-        token = list(SOS_token for _ in range(l))
+        if last_word is not None:
+            s = 1
+            localize_weights = True
+            decoder_hidden_x = decoder_hidden #.transpose(1,0)
+            encoder_out_x = encoder_out_x.transpose(1,0)
+            #encoder_out = encoder_out.transpose(2,1)
+            token = last_word
+
+            #print(decoder_hidden_x.size(),'dhx', encoder_out_x.size(),'eox', encoder_out.size(),'eo', token, 'token')
+
 
         output = torch.LongTensor([token])
 
@@ -565,15 +630,15 @@ class Decoder(nn.Module):
 
             #attn_weights = attn_weights.permute(2,1,0)
 
-            localize_weights = False
+            #localize_weights = False
 
             encoder_out_small = encoder_out_x
 
             #print(attn_weights.size(),encoder_out_small.size(),'before bmm')
 
             if localize_weights:
-                attn_weights = attn_weights[:,:,m].unsqueeze(2)
-                encoder_out_small = encoder_out_x[:,m,:].unsqueeze(1)
+                attn_weights = attn_weights[0,:,:].unsqueeze(0)
+                encoder_out_small = encoder_out_x[0,:,:].unsqueeze(0)
 
             context = attn_weights.bmm(encoder_out_small)
 
@@ -597,11 +662,13 @@ class Decoder(nn.Module):
             decoder_hidden_x = hidden #.permute(1,0,2)
             #print(out_x.size(),'out_x')
 
-            if self.training or output.size(-1) != 1 or not hparams['beam']:
+            if self.training or output.size(-1) != 1 or not hparams['beam'] or True:
                 #print(out_x.size(),'ox')
                 output = torch.argmax(out_x, dim=2)
 
             else:
+                pass
+                '''
                 zero_beam = False
                 if m == 0: zero_beam = True
                 score, output, proposed_hidden = self.beam_helper(output, out_x, decoder_hidden_x, zero_beam)
@@ -617,8 +684,12 @@ class Decoder(nn.Module):
                     exit()
                 output = prune_tensor(output, 1)
                 #exit()
+                '''
 
             #print(output,'out')
+
+            if last_word is not None:
+                return out_x, decoder_hidden_x, None
 
             all_out.append(out_x)
 
@@ -665,6 +736,8 @@ class WrapMemRNN(nn.Module):
 
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
                                    cancel_attention=self.cancel_attention)
+
+        self.beam_helper = BeamHelper(5, hparams['tokens_per_sentence'])
 
         self.input_var = None  # for input
         self.answer_var = None  # for answer
@@ -718,27 +791,23 @@ class WrapMemRNN(nn.Module):
 
         input_variable = input_variable.permute(1,0)
 
-        question_variable, hidden = self.wrap_question_module(input_variable, length_variable)
+        encoder_output, hidden = self.wrap_encoder_module(input_variable, length_variable)
 
-        question_variable = prune_tensor(question_variable,3)
+        encoder_output = prune_tensor(encoder_output,3)
         hidden = prune_tensor(hidden,3)
 
         if self.print_to_screen:
             ''' here we test the plot_vector() function. '''
-            print(question_variable.size(),'qv')
-            out = prune_tensor(question_variable[0][0], 1)
+            print(encoder_output.size(),'qv')
+            out = prune_tensor(encoder_output[0][0], 1)
             #plot_vector(out)
             exit()
 
-        #print(question_variable.size(),'qv')
+        ans, seq = self.wrap_decoder_module(encoder_output, hidden)
 
-        hidden = hidden.contiguous()
+        #outputs = None
 
-        ans = self.model_6_dec(question_variable, hidden)
-
-        outputs = None
-
-        return outputs, None, ans, None
+        return seq, None, ans, None
 
     def new_freeze_embedding(self, do_freeze=True):
         self.embed.weight.requires_grad = not do_freeze
@@ -770,12 +839,32 @@ class WrapMemRNN(nn.Module):
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
-    def wrap_question_module(self, question_variable, length_variable):
-
+    def wrap_encoder_module(self, question_variable, length_variable):
 
         out, hidden = self.model_1_seq(question_variable, length_variable, None)
 
         return out, hidden
+
+    def wrap_decoder_module(self, encoder_output, encoder_hidden):
+        hidden = encoder_hidden.contiguous()
+
+        if self.training or encoder_output.size(1) != 1 or not hparams['beam']:
+
+            ans = self.model_6_dec(encoder_output, hidden)
+            best_sequence = None
+        else:
+
+            encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
+
+            decoder_hidden_x = prune_tensor(hidden, 3).transpose(1, 0)
+
+            best_score, best_sequence = self.beam_helper(self.model_6_dec, encoder_out_x, decoder_hidden_x)
+
+            ans = None
+
+            best_sequence = prune_tensor(best_sequence, 3)
+
+        return ans, best_sequence
 
 
 
@@ -2224,6 +2313,8 @@ class NMT:
                 self.model_0_wra.eval()
                 outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                       criterion)
+                if outputs is not None and ans is None:
+                    return None, outputs, None
 
                 if not self.do_recurrent_output:
                     loss = None
@@ -2600,7 +2691,11 @@ class NMT:
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
 
-        outputs = [ans]
+        if not hparams['beam']:
+            outputs = [ans]
+        else:
+            outputs = prune_tensor(outputs, 4).transpose(0,2)
+
         #####################
 
 
@@ -2610,9 +2705,14 @@ class NMT:
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
+
                     output = output.permute(1, 0)
 
-                    ni = torch.argmax(output, dim=0)[0]
+                    if not hparams['beam']:
+                        ni = torch.argmax(output, dim=0)[0]
+                    else:
+                        ni = output[di]
+
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
                         xxx = hparams['eol']
