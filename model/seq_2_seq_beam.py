@@ -411,9 +411,8 @@ class Decoder(nn.Module):
 
     def forward(self, encoder_out, decoder_hidden, last_word=None):
 
-        if True:
-            #print(encoder_out.size(),'eo')
-            return self.mode_batch(encoder_out, decoder_hidden, last_word)
+        #print(encoder_out.size(),'eo')
+        return self.mode_batch(encoder_out, decoder_hidden, last_word)
 
 
 
@@ -467,8 +466,13 @@ class Decoder(nn.Module):
         #if self.training or True:
         attn_weights = attn_weights.permute(0,1,2)
 
-        attn_weights = attn_weights[0,:,:].unsqueeze(0).transpose(2,0)
-        encoder_out_small = encoder_out_x[0,:,:].unsqueeze(0).transpose(1,0)
+        #print(attn_weights,'attn')#, encoder_out_x.size(),'eox')
+
+        #attn_weights = attn_weights[0,:,:].unsqueeze(0).transpose(2,0)
+        #encoder_out_small = encoder_out_x[0,:,:].unsqueeze(0).transpose(1,0)
+
+        attn_weights = attn_weights[:, :, :].transpose(2, 0)
+        encoder_out_small = encoder_out_x[:, :, :].transpose(1, 0)
 
         context = attn_weights.bmm(encoder_out_small)
 
