@@ -1420,7 +1420,7 @@ class NMT:
             MAX_LENGTH = pad
         s = sentence.split(' ')
         sent = []
-        if add_sos: sent = [ SOS_token ]
+        if add_sos and len(s) > 0 and s[0] != hparams['sol']: sent = [ SOS_token ]
         for word in s:
             if word in lang.word2index and word not in blacklist_sent:
                 if word == hparams['eol']: word = EOS_token
@@ -2002,7 +2002,7 @@ class NMT:
                 if x == ll:
                     pass
                 else:
-                    if x != hparams['eol'] and x != hparams['sol']: out.append(x)
+                    if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk']: out.append(x)
                 ll = x
             return ' '.join(out)
 
