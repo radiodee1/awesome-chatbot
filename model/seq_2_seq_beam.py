@@ -315,6 +315,8 @@ class Encoder(nn.Module):
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
 
+        #print(encoder_hidden.size(),'hidd')
+
         return encoder_out, encoder_hidden
 
 
