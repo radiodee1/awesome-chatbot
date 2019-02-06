@@ -662,7 +662,7 @@ class WrapMemRNN(nn.Module):
                     out = prune_tensor(out, 2)
                     sub_lst.append(out)
                     num += 1
-                print(test, length_variable[m], ret_hidden, 'hidd')
+                #print(test, length_variable[m], ret_hidden, 'hidd')
 
                 sub_lst = torch.cat(sub_lst, dim=0)
                 sub_lst = prune_tensor(sub_lst, 3)
@@ -1518,7 +1518,17 @@ class NMT:
         add_eos = True
 
         indexes_batch = [self.indexesFromSentence(voc, sentence,add_eos=add_eos) for sentence in l]
-        lengths = torch.tensor([len(indexes) for indexes in indexes_batch])
+        lengths = []
+
+        for indexes in indexes_batch:
+            num = 0
+            test = 0
+            for z in indexes: #.split(' '):
+                if z == self.output_lang.word2index[hparams['eol']] and test == 0:
+                    test = num
+                num += 1
+            lengths.append(test)
+        lengths = torch.tensor(lengths) # [len(indexes) for indexes in indexes_batch])
         padList = self.zeroPadding(indexes_batch)
         padVar = torch.LongTensor(padList)
         return padVar, lengths
