@@ -62,7 +62,7 @@ SOFTWARE.
 ------------------------
 
 Some code was originally written by Austin Jacobson. This refers specifically 
-to the Encoder and Decoder classes and came from:
+to the BeamSearch class and came from:
 
 https://github.com/A-Jacobson/minimal-nmt
 
@@ -409,14 +409,14 @@ class Decoder(nn.Module):
     def load_embedding(self, embedding):
         self.embed = embedding
 
-    def forward(self, encoder_out, decoder_hidden, last_word=None):
+    def forward(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
         #print(encoder_out.size(),'eo')
-        return self.mode_batch(encoder_out, decoder_hidden, last_word)
+        return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
 
 
 
-    def mode_batch(self, encoder_out, decoder_hidden, last_word=None):
+    def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
         encoder_out_x = (
             encoder_out[:, :, self.hidden_dim:] +
@@ -468,11 +468,12 @@ class Decoder(nn.Module):
 
         #print(attn_weights,'attn')#, encoder_out_x.size(),'eox')
 
-        #attn_weights = attn_weights[0,:,:].unsqueeze(0).transpose(2,0)
-        #encoder_out_small = encoder_out_x[0,:,:].unsqueeze(0).transpose(1,0)
-
-        attn_weights = attn_weights[:, :, :].transpose(2, 0)
-        encoder_out_small = encoder_out_x[:, :, :].transpose(1, 0)
+        if index is not None:
+            attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
+            encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
+        else:
+            attn_weights = attn_weights[:, :, :].transpose(2, 0)
+            encoder_out_small = encoder_out_x[:, :, :].transpose(1, 0)
 
         context = attn_weights.bmm(encoder_out_small)
 
@@ -654,8 +655,8 @@ class WrapMemRNN(nn.Module):
 
             token = torch.LongTensor([token])
 
-            for _ in range(s):
-                ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token)
+            for i in range(s):
+                ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
 
                 all_out.append(ans)
                 token = torch.argmax(ans, dim=2)
