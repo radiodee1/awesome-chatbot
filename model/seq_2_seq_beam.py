@@ -662,9 +662,7 @@ class WrapMemRNN(nn.Module):
             hidden = torch.cat(hid_lst, dim=0)
             #print(hidden.size(),'hidd', output.size(),'out')
 
-            if ret_hidden is None:
-                exit()
-                
+            
             out = output.permute(1,0,2)
         else:
 
