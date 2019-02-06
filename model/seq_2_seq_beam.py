@@ -638,29 +638,36 @@ class WrapMemRNN(nn.Module):
     def wrap_encoder_module(self, question_variable, length_variable):
 
         if hparams['single']:
-            ret_hidden = None
-            hidden = None
+
             output = []
             hid_lst = []
 
             #print(question_variable.size(),'qv')
             for m in range(question_variable.size(0)):
+                ret_hidden = None
+                hidden = None
+
                 sub_lst = []
+                num = 0
+                test = 0
                 for n in range(question_variable.size(1)):
                     q_var = prune_tensor(question_variable[m,n], 2)
                     out, hidden = self.model_1_seq(q_var, 0, hidden)
                     hidden = hidden.permute(1,0,2)
                     if q_var.item() == EOS_token and ret_hidden is None:
                         ret_hidden = hidden.permute(1,0,2).clone()
+                        test = num
                     elif ret_hidden is not None:
                         hidden = None
                     out = prune_tensor(out, 2)
                     sub_lst.append(out)
+                    num += 1
+                print(test, length_variable[m], ret_hidden, 'hidd')
+
                 sub_lst = torch.cat(sub_lst, dim=0)
                 sub_lst = prune_tensor(sub_lst, 3)
                 output.append(sub_lst)
                 hid_lst.append(ret_hidden)
-                #print(hid_lst, hidden,'hidd')
             output = torch.cat(output, dim=0)
             hidden = torch.cat(hid_lst, dim=0)
             #print(hidden.size(),'hidd', output.size(),'out')
