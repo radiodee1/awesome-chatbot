@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="1521" column="8" selection-start-line="1521" selection-start-column="8" selection-end-line="1521" selection-end-column="8" />
+            <state relative-caret-position="602">
+              <caret line="2144" column="76" selection-start-line="2144" selection-start-column="76" selection-end-line="2144" selection-end-column="76" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -56,7 +57,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="882">
+            <state relative-caret-position="775">
               <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
             </state>
           </provider>
@@ -124,10 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>cuda</find>
-      <find>out_combine</find>
-      <find>out_target</find>
-      <find>print</find>
       <find>update_result_file</find>
       <find>save_checkpoint</find>
       <find>decoder_hidden_x</find>
@@ -154,6 +151,10 @@
       <find>'sol'</find>
       <find>'bat</find>
       <find>indexesFromSentence</find>
+      <find>do_batch_process</find>
+      <find>eval()</find>
+      <find>beam</find>
+      <find>criterion</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -585,13 +586,6 @@
     <entry file="file://$PROJECT_DIR$/data/sentences.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="882">
-          <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -633,10 +627,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="775">
+          <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="296">
-          <caret line="1521" column="8" selection-start-line="1521" selection-start-column="8" selection-end-line="1521" selection-end-column="8" />
+        <state relative-caret-position="602">
+          <caret line="2144" column="76" selection-start-line="2144" selection-start-column="76" selection-end-line="2144" selection-end-column="76" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

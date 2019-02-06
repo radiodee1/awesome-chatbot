@@ -317,7 +317,7 @@ class Encoder(nn.Module):
         encoder_hidden = encoder_hidden.permute(1,0,2)
 
 
-        #print(encoder_hidden.size(),'hidd')
+        #print(encoder_hidden,'hidd')
 
         return encoder_out, encoder_hidden
 
@@ -396,7 +396,6 @@ class Decoder(nn.Module):
         self.decoder_hidden_z = None
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
-        #self.beam_helper = BeamHelperX(5,hparams['tokens_per_sentence'])
 
         self.reset_parameters()
 
@@ -412,11 +411,7 @@ class Decoder(nn.Module):
         self.embed = embedding
 
     def forward(self, encoder_out, decoder_hidden, last_word=None, index=None):
-
-        #print(encoder_out.size(),'eo')
         return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
-
-
 
     def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
@@ -425,9 +420,9 @@ class Decoder(nn.Module):
             encoder_out[:, :, :self.hidden_dim]
         )
 
-        decoder_hidden_x = decoder_hidden #.transpose(1,0)
+        decoder_hidden_x = decoder_hidden
         encoder_out_x = encoder_out_x.transpose(1,0)
-        #encoder_out = encoder_out.transpose(2,1)
+
         output = last_word
 
         decoder_hidden_x = decoder_hidden_x[ -self.n_layers:, :, :]
@@ -457,7 +452,6 @@ class Decoder(nn.Module):
         hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
 
         hidden_small = hidden_small.unsqueeze(0)
-
 
         hidden_small = hidden_small.transpose(1,0)
         #encoder_out_small = encoder_out_small.transpose(2,0)
@@ -601,8 +595,7 @@ class WrapMemRNN(nn.Module):
 
         ans, seq = self.wrap_decoder_module(encoder_output, hidden)
 
-        #outputs = None
-
+        #print(ans, seq,'ans,seq')
         return seq, None, ans, None
 
     def new_freeze_embedding(self, do_freeze=True):
@@ -672,10 +665,9 @@ class WrapMemRNN(nn.Module):
             hidden = torch.cat(hid_lst, dim=0)
             #print(hidden.size(),'hidd', output.size(),'out')
 
-
             out = output.permute(1,0,2)
-        else:
 
+        else:
             out, hidden = self.model_1_seq(question_variable, length_variable, None)
 
         return out, hidden
@@ -707,6 +699,8 @@ class WrapMemRNN(nn.Module):
 
             ans = torch.cat(all_out, dim=0)
             best_sequence = None
+
+            #print(ans.size(), ans)
         else:
 
             encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
@@ -730,9 +724,9 @@ class Lang:
     def __init__(self, name, limit=None):
         self.name = name
         self.limit = limit
-        self.word2index = {} #{hparams['unk']:0, hparams['sol']: 1, hparams['eol']: 2}
-        self.word2count = {} #{hparams['unk']:1, hparams['sol']: 1, hparams['eol']: 1}
-        self.index2word = {} #{0: hparams['unk'], 1: hparams['sol'], 2: hparams['eol']}
+        self.word2index = {}
+        self.word2count = {}
+        self.index2word = {}
         self.n_words = 0  # Count SOS and EOS
 
     def addSentence(self, sentence):
@@ -857,7 +851,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
 
-        self.do_clip_grad_norm = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
@@ -2120,14 +2114,14 @@ class NMT:
 
         question_variable = None
 
-        if criterion is not None:
+        if criterion is not None : #or not self.do_test_not_train:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
             outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                   criterion)
             loss = 0
 
-            if self.do_recurrent_output:
+            if True: #self.do_recurrent_output:
                 ##lz = len(target_variable[0])
 
                 #target_variable = Variable(torch.LongTensor(target_variable)) #torch.cat(target_variable, dim=0)
@@ -2140,17 +2134,16 @@ class NMT:
                 #target_variable = target_variable.view(-1)
                 #target_variable = target_variable.permute(1,0)
 
-                #print(ans.size(),'ans')
-
                 for i in range(len(ans)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
 
                     if target_v.size(0) > ans[i].size(0):
+                        pass
                         #print('odd sizes:', target_v.size(0), length_variable[i].item(), ans[i].size() )
-                        continue
-                    #print(ans[i].size(), target_v.size(),'ans,tv')
-                    loss += criterion(ans[i, :, :], target_v)
+                        #continue
+                    #print(ans[i], target_v.size(),'ans,tv')
+                    loss += criterion(ans[i, :, :], target_v[: ans[i].size(0)])
 
                 #print( ans[0],'ans', target_variable[0], 'tv')
 
@@ -2261,7 +2254,6 @@ class NMT:
         #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
         self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
         #self.criterion = nn.NLLLoss(weight=weight)
-
 
         if not self.do_test_not_train:
             criterion = self.criterion
