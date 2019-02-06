@@ -652,7 +652,7 @@ class WrapMemRNN(nn.Module):
                     hidden = hidden.permute(1,0,2)
                     if q_var.item() == EOS_token and ret_hidden is None:
                         ret_hidden = hidden.permute(1,0,2).clone()
-                    else:
+                    elif ret_hidden is not None:
                         hidden = None
                     out = prune_tensor(out, 2)
                     sub_lst.append(out)
