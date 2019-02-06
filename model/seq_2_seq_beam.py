@@ -651,18 +651,21 @@ class WrapMemRNN(nn.Module):
                     out, hidden = self.model_1_seq(q_var, 0, hidden)
                     hidden = hidden.permute(1,0,2)
                     if q_var.item() == EOS_token and ret_hidden is None:
-                        ret_hidden = hidden.permute(1,0,2)
+                        ret_hidden = hidden.permute(1,0,2).clone()
+                    else:
+                        hidden = None
                     out = prune_tensor(out, 2)
                     sub_lst.append(out)
                 sub_lst = torch.cat(sub_lst, dim=0)
                 sub_lst = prune_tensor(sub_lst, 3)
                 output.append(sub_lst)
                 hid_lst.append(ret_hidden)
+                #print(hid_lst, hidden,'hidd')
             output = torch.cat(output, dim=0)
             hidden = torch.cat(hid_lst, dim=0)
             #print(hidden.size(),'hidd', output.size(),'out')
 
-            
+
             out = output.permute(1,0,2)
         else:
 
