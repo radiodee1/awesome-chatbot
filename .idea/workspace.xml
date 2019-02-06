@@ -4,6 +4,7 @@
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -28,8 +29,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3096">
-              <caret line="472" column="51" selection-start-line="472" selection-start-column="51" selection-end-line="472" selection-end-column="51" />
+            <state relative-caret-position="126">
+              <caret line="645" selection-start-line="645" selection-end-line="645" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -57,8 +58,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="864">
-              <caret line="48" column="17" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="17" />
+            <state relative-caret-position="882">
+              <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -125,7 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_show_sample</find>
       <find>do_clip_grad_norm</find>
       <find>cuda</find>
       <find>out_combine</find>
@@ -155,6 +155,7 @@
       <find>decoder_hidden</find>
       <find>encoder_out_x</find>
       <find>'sol'</find>
+      <find>'bat</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -372,6 +373,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -380,11 +386,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -588,8 +589,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="48" column="17" selection-start-line="48" selection-start-column="17" selection-end-line="48" selection-end-column="17" />
+        <state relative-caret-position="882">
+          <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -636,8 +637,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3096">
-          <caret line="472" column="51" selection-start-line="472" selection-start-column="51" selection-end-line="472" selection-end-column="51" />
+        <state relative-caret-position="126">
+          <caret line="645" selection-start-line="645" selection-end-line="645" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

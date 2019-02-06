@@ -188,18 +188,17 @@ def prune_tensor( input, size):
 ################# pytorch modules ###############
 
 class Beam:
-    """
-    maintains a heap of size(beam_width), always removes lowest scoring nodes.
-    """
 
     def __init__(self, beam_width):
         self.heap = list()
         self.beam_width = beam_width
+        self.words = list()
 
     def add(self, score, sequence, hidden_state):
         #heapq.heappush(self.heap, (score, sequence, hidden_state))
         self.heap.append((score, sequence, hidden_state))
         self.heap.sort(reverse=True, key=lambda x: x[0])
+
         #if len(self.heap) > self.beam_width or True:
         #print(len(self.heap), self.beam_width)
         self.heap = self.heap[:self.beam_width]
@@ -274,6 +273,8 @@ class Encoder(nn.Module):
         self.embed = embed
         self.sum_encoder = True
         self.pack_and_pad = True
+        if hparams['single']:
+            self.pack_and_pad = False
         self.batch_first = False
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
         self.dropout_e = nn.Dropout(dropout)
@@ -314,6 +315,7 @@ class Encoder(nn.Module):
             encoder_out = outputs
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
+
 
         #print(encoder_hidden.size(),'hidd')
 
@@ -635,7 +637,38 @@ class WrapMemRNN(nn.Module):
 
     def wrap_encoder_module(self, question_variable, length_variable):
 
-        out, hidden = self.model_1_seq(question_variable, length_variable, None)
+        if hparams['single']:
+            ret_hidden = None
+            hidden = None
+            output = []
+            hid_lst = []
+
+            #print(question_variable.size(),'qv')
+            for m in range(question_variable.size(0)):
+                sub_lst = []
+                for n in range(question_variable.size(1)):
+                    q_var = prune_tensor(question_variable[m,n], 2)
+                    out, hidden = self.model_1_seq(q_var, 0, hidden)
+                    hidden = hidden.permute(1,0,2)
+                    if q_var.item() == EOS_token and ret_hidden is None:
+                        ret_hidden = hidden.permute(1,0,2)
+                    out = prune_tensor(out, 2)
+                    sub_lst.append(out)
+                sub_lst = torch.cat(sub_lst, dim=0)
+                sub_lst = prune_tensor(sub_lst, 3)
+                output.append(sub_lst)
+                hid_lst.append(ret_hidden)
+            output = torch.cat(output, dim=0)
+            hidden = torch.cat(hid_lst, dim=0)
+            #print(hidden.size(),'hidd', output.size(),'out')
+
+            if ret_hidden is None:
+                exit()
+                
+            out = output.permute(1,0,2)
+        else:
+
+            out, hidden = self.model_1_seq(question_variable, length_variable, None)
 
         return out, hidden
 
@@ -855,7 +888,7 @@ class NMT:
         parser.add_argument('--save-num', help='threshold for auto-saving files. (0-100)')
         parser.add_argument('--recipe-dropout', help='use dropout recipe', action='store_true')
         parser.add_argument('--recipe-lr', help='use learning rate recipe', action='store_true')
-        parser.add_argument('--batch',help='enable batch processing. (default)',action='store_true')
+        #parser.add_argument('--batch',help='enable batch processing. (default)',action='store_true')
         parser.add_argument('--batch-size', help='actual batch size when batch mode is specified.')
         parser.add_argument('--decay', help='weight decay.')
         parser.add_argument('--hops', help='babi memory hops.')
@@ -870,6 +903,7 @@ class NMT:
         parser.add_argument('--no-vocab-limit', help='no vocabulary size limit.', action='store_true')
         parser.add_argument('--record-loss', help='record loss for later graphing.', action='store_true')
         parser.add_argument('--beam', help='activate beam search for eval phase.', action='store_true')
+        parser.add_argument('--single', help='force single execution instead of batch execution.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -936,9 +970,9 @@ class NMT:
         if self.args['recipe_lr'] is not False:
             self.do_recipe_lr = True
             self.do_auto_stop = True
-        if self.args['batch'] is not False:
-            self.do_batch_process = True
-            print('batch operation now enabled by default.')
+        #if self.args['batch'] is not False:
+        #    self.do_batch_process = True
+        #    print('batch operation now enabled by default.')
         if self.args['batch_size'] is not None: hparams['batch_size'] = int(self.args['batch_size'])
         if self.args['decay'] is not None: hparams['weight_decay'] = float(self.args['decay'])
         if self.args['hops'] is not None: hparams['babi_memory_hops'] = int(self.args['hops'])
@@ -961,6 +995,8 @@ class NMT:
         if self.args['record_loss']: self.do_record_loss = True
         if self.args['beam']:
             hparams['beam'] = True
+        if self.args['single']:
+            hparams['single'] = True
         if self.printable == '': self.printable = hparams['base_filename']
         #if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
