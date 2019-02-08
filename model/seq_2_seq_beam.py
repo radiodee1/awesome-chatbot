@@ -2137,6 +2137,7 @@ class NMT:
 
     def maskNLLLoss(self, inp, target, mask):
         nTotal = mask.sum()
+
         crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)))
         loss = crossEntropy.masked_select(mask).mean()
         if hparams['cuda']:
@@ -2181,8 +2182,12 @@ class NMT:
                     m_var = mask[i][:z]
 
                     #print(a_var.size(), t_var.size(), m_var.size(),'atm')
-                    l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
-                    loss += l
+
+                    try:
+                        l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
+                        loss += l
+                    except:
+                        pass
                     #print(l, loss, n_tot, 'loss')
 
 
