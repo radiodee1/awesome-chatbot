@@ -28,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="602">
-              <caret line="2144" column="76" selection-start-line="2144" selection-start-column="76" selection-end-line="2144" selection-end-column="76" />
+            <state relative-caret-position="476">
+              <caret line="492" column="9" selection-start-line="492" selection-start-column="9" selection-end-line="492" selection-end-column="9" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -57,7 +57,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="775">
+            <state relative-caret-position="882">
               <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
             </state>
           </provider>
@@ -125,12 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>update_result_file</find>
-      <find>save_checkpoint</find>
-      <find>decoder_hidden_x</find>
-      <find>true_epoch</find>
-      <find>add_to_xml</find>
-      <find>wordlist</find>
       <find>Lang</find>
       <find>addSentence</find>
       <find>addWord</find>
@@ -150,11 +144,17 @@
       <find>encoder_out_x</find>
       <find>'sol'</find>
       <find>'bat</find>
-      <find>indexesFromSentence</find>
       <find>do_batch_process</find>
       <find>eval()</find>
       <find>beam</find>
       <find>criterion</find>
+      <find>pad_and_batch</find>
+      <find>train(</find>
+      <find>variables_for_batch</find>
+      <find>indexesFromSentence</find>
+      <find>pairs</find>
+      <find>prepareData</find>
+      <find>variablesFromPair</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -586,6 +586,13 @@
     <entry file="file://$PROJECT_DIR$/data/sentences.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="882">
+          <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -627,17 +634,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="775">
-          <caret line="49" column="19" selection-start-line="49" selection-start-column="19" selection-end-line="49" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="602">
-          <caret line="2144" column="76" selection-start-line="2144" selection-start-column="76" selection-end-line="2144" selection-end-column="76" />
+        <state relative-caret-position="476">
+          <caret line="492" column="9" selection-start-line="492" selection-start-column="9" selection-end-line="492" selection-end-column="9" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

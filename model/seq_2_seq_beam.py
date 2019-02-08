@@ -490,6 +490,9 @@ class Decoder(nn.Module):
 
         out_x = out_x.permute(1,0,2)
 
+        #print(out_x,'ox')
+        out_x = torch.softmax(out_x, dim=2)
+
         decoder_hidden_x = hidden #.permute(1,0,2)
 
         return out_x, decoder_hidden_x, None
@@ -593,7 +596,7 @@ class WrapMemRNN(nn.Module):
             #plot_vector(out)
             exit()
 
-        ans, seq = self.wrap_decoder_module(encoder_output, hidden)
+        ans, seq = self.wrap_decoder_module(encoder_output, hidden, criterion)
 
         #print(ans, seq,'ans,seq')
         return seq, None, ans, None
@@ -672,7 +675,7 @@ class WrapMemRNN(nn.Module):
 
         return out, hidden
 
-    def wrap_decoder_module(self, encoder_output, encoder_hidden):
+    def wrap_decoder_module(self, encoder_output, encoder_hidden, criterion):
         hidden = encoder_hidden.contiguous()
 
         if self.training or encoder_output.size(1) != 1 or not hparams['beam']:
@@ -851,7 +854,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
 
-        self.do_clip_grad_norm = False
+        self.do_clip_grad_norm = True
 
         self.printable = ''
 
@@ -1452,7 +1455,7 @@ class NMT:
         return self.input_lang, self.output_lang, self.pairs
 
 
-    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1):
+    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1, no_padding=False):
         if pad == -1:
             MAX_LENGTH = hparams['tokens_per_sentence']
         else:
@@ -1480,7 +1483,7 @@ class NMT:
                 sent.append(EOS_token)
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
-        if pad == -1:
+        if pad == -1 and not no_padding:
             while len(sent) < MAX_LENGTH:
                 sent.append(0)
         if self.do_load_recurrent:
@@ -1521,7 +1524,7 @@ class NMT:
                 if z == self.output_lang.word2index[hparams['eol']] and test == 0:
                     test = num
                 num += 1
-            lengths.append(test)
+            lengths.append(test + 1)
         lengths = torch.tensor(lengths) # [len(indexes) for indexes in indexes_batch])
         padList = self.zeroPadding(indexes_batch)
         padVar = torch.LongTensor(padList)
@@ -1529,7 +1532,24 @@ class NMT:
 
     # Returns padded target sequence tensor, padding mask, and max target length
     def outputVar(self, l, voc):
-        indexes_batch = [self.indexesFromSentence(voc, sentence) for sentence in l]
+        add_eos = False
+        no_padding = True
+        indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=no_padding) for sentence in l]
+
+        if True:
+            index_lst = []
+            for indexes in indexes_batch:
+                out_lst = []
+                for z in indexes:
+                    if z == self.output_lang.word2index[hparams['eol']]:
+                        out_lst.append(z)
+                        break
+                    else:
+                        out_lst.append(z)
+                index_lst.append(out_lst)
+            indexes_batch = index_lst
+            #print(indexes_batch)
+
         max_target_len = max([len(indexes) for indexes in indexes_batch])
         padList = self.zeroPadding(indexes_batch)
         mask = self.binaryMatrix(padList)
@@ -1552,12 +1572,13 @@ class NMT:
             out_val = self.variableFromSentence(self.output_lang, pair[2],add_eos=add_eos, pad=pad)
             out_val = prune_tensor(out_val, 3)
             #out = out.permute(1,0,2)
-            output_batch.append(out_val)
+            #output_batch.append(out_val)
+            output_batch.append(pair[2])
         inp, lengths = self.inputVar(input_batch, voc)
-        #output, mask, max_target_len = self.outputVar(output_batch, voc)
-        output = output_batch
-        mask = None
-        max_target_len = None
+        output, mask, max_target_len = self.outputVar(output_batch, voc)
+        #output = output_batch
+        #mask = None
+        #max_target_len = None
         return inp, lengths, output, mask, max_target_len
 
     def pad_and_batch(self, pairs):
@@ -1567,7 +1588,7 @@ class NMT:
 
         ques_variable = None
 
-        return (input_variable, target_variable, ques_variable, length)
+        return (input_variable, target_variable, ques_variable, length, mask, max_target_len)
 
     def variables_for_batch(self, pairs, size, start, skip_unk=False, pad_and_batch=True):
         e = self.epoch_length * self.this_epoch + self.epoch_length
@@ -2110,15 +2131,22 @@ class NMT:
 
     #######################################
 
-    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, max_length=MAX_LENGTH):
+    def maskNLLLoss(self, inp, target, mask):
+        nTotal = mask.sum()
+        crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)))
+        loss = crossEntropy.masked_select(mask).mean()
+        if hparams['cuda']:
+            loss = loss.cuda()
+        return loss, nTotal.item()
+
+    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, mask):
 
         question_variable = None
 
         if criterion is not None : #or not self.do_test_not_train:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
-            outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
-                                                  criterion)
+            outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
 
             if True: #self.do_recurrent_output:
@@ -2128,12 +2156,24 @@ class NMT:
 
                 ansx = Variable(ans.data.max(dim=2)[1])
 
-                ans = ans.float().permute(1,0,2).contiguous()
+                #ans = ans.float().permute(1,0,2).contiguous()
 
-                #ans = ans.view(-1, self.output_lang.n_words)
-                #target_variable = target_variable.view(-1)
-                #target_variable = target_variable.permute(1,0)
+                #ans = ans.permute(1,0,2)
+                target_variable = target_variable.squeeze(0)
+                #print(ans.size(), target_variable.size(), mask.size(),'a,tv,m')
 
+                if True:
+                    ans = ans.transpose(1,0)
+                    target_variable = target_variable.transpose(1,0)
+                    mask = mask.transpose(1,0)
+
+                for i in range(ans.size(0)):
+                    #print(ans[i].size(), target_variable[i].size(), mask[i],'a,tv,m')
+                    l, n_tot = self.maskNLLLoss(ans[i], target_variable[i], mask[i])
+                    loss += l
+                    #print(l, loss, n_tot, 'loss')
+
+                '''
                 for i in range(len(ans)):
 
                     target_v = target_variable[i].squeeze(0).squeeze(1)
@@ -2144,9 +2184,10 @@ class NMT:
                         #continue
                     #print(ans[i], target_v.size(),'ans,tv')
                     loss += criterion(ans[i, :, :], target_v[: ans[i].size(0)])
-
+                '''
                 #print( ans[0],'ans', target_variable[0], 'tv')
 
+            '''
             elif self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
@@ -2155,13 +2196,14 @@ class NMT:
                 print(len(ans),ans.size())
                 ans = torch.argmax(ans,dim=1)
                 #ans = ans[0]
-
+            '''
             #ans = ans.permute(1,0)
 
             #print(ans.size(), target_variable.size(),'criterion')
 
             if not self.do_recurrent_output:
-                loss = criterion(ans, target_variable)
+                pass
+                #loss = criterion(ans, target_variable)
 
             if not isinstance(loss, int):
                 loss.backward()
@@ -2252,8 +2294,10 @@ class NMT:
 
         #weight = torch.ones(self.output_lang.n_words)
         #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
-        self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
-        #self.criterion = nn.NLLLoss(weight=weight)
+
+        #self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
+
+        self.criterion = self.maskNLLLoss
 
         if not self.do_test_not_train:
             criterion = self.criterion
@@ -2306,7 +2350,10 @@ class NMT:
                 question_variable = None #group[2]
                 target_variable = group[1]
                 length_variable = group[3]
+                mask_variable = group[4]
+                max_target_length_variable = group[5]
 
+                target_variable = prune_tensor(target_variable, 3)
                 #print(input_variable)
                 #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
@@ -2318,9 +2365,12 @@ class NMT:
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
                                             decoder, self.opt_1, None,
-                                            None, None, criterion)
+                                            None, None, criterion, mask_variable)
 
-            #print(ans.size(),'ans')
+            target_variable = target_variable.unsqueeze(1).transpose(-1,0)
+
+            #print(ans.size(),'ans', target_variable.size(),'ans,tv')
+
             input_variable = input_variable.permute(1,0)
 
 
@@ -2504,6 +2554,8 @@ class NMT:
         ques_variable = None  # group[2]
         target_variable = group[1]
         lengths = group[3]
+        mask = group[4]
+        max_target_length = group[5]
 
         #training_batches = self.batch2TrainData(self.output_lang, [choice])
         #input_variable, lengths, target_variable, mask, max_target_len = training_batches
@@ -2542,6 +2594,7 @@ class NMT:
 
         input_variable = sentence
         #question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
+        target_variable = prune_tensor(target_variable, 4).transpose(-1,0)
 
         t_var = target_variable[0].permute(1,0,2)
 
