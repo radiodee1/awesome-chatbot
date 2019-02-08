@@ -1532,7 +1532,7 @@ class NMT:
 
     # Returns padded target sequence tensor, padding mask, and max target length
     def outputVar(self, l, voc):
-        add_eos = False
+        add_eos = True
         no_padding = False
         indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=no_padding) for sentence in l]
 
