@@ -2187,6 +2187,7 @@ class NMT:
                         l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
                         loss += l
                     except:
+                        print('skip for size...')
                         pass
                     #print(l, loss, n_tot, 'loss')
 
