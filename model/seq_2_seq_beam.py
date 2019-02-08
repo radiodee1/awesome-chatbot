@@ -1538,6 +1538,7 @@ class NMT:
 
         if True:
             index_lst = []
+            max_target_len_lst = []
             for indexes in indexes_batch:
                 out_lst = []
                 for z in indexes:
@@ -1547,10 +1548,13 @@ class NMT:
                     else:
                         out_lst.append(z)
                 index_lst.append(out_lst)
+                max_target_len_lst.append(len(out_lst))
             indexes_batch = index_lst
+            max_target_len = max_target_len_lst
             #print(indexes_batch)
 
-        max_target_len = max([len(indexes) for indexes in indexes_batch])
+        #max_target_len = max([len(indexes) for indexes in indexes_batch])
+        #print(max_target_len)
         padList = self.zeroPadding(indexes_batch)
         mask = self.binaryMatrix(padList)
         mask = torch.ByteTensor(mask)
@@ -2169,7 +2173,7 @@ class NMT:
 
                 for i in range(ans.size(0)):
                     #print(ans[i].size(), target_variable[i].size(), mask[i],'a,tv,m')
-                    z = max_target_length
+                    z = max_target_length[i]
                     #print(z, i)
                     a_var = ans[i][:z]
                     t_var = target_variable[i][:z]
@@ -2178,30 +2182,7 @@ class NMT:
                     loss += l
                     #print(l, loss, n_tot, 'loss')
 
-                '''
-                for i in range(len(ans)):
 
-                    target_v = target_variable[i].squeeze(0).squeeze(1)
-
-                    if target_v.size(0) > ans[i].size(0):
-                        pass
-                        #print('odd sizes:', target_v.size(0), length_variable[i].item(), ans[i].size() )
-                        #continue
-                    #print(ans[i], target_v.size(),'ans,tv')
-                    loss += criterion(ans[i, :, :], target_v[: ans[i].size(0)])
-                '''
-                #print( ans[0],'ans', target_variable[0], 'tv')
-
-            '''
-            elif self.do_batch_process:
-                target_variable = torch.cat(target_variable,dim=0)
-                ans = ans.permute(1,0)
-            else:
-                target_variable = target_variable[0]
-                print(len(ans),ans.size())
-                ans = torch.argmax(ans,dim=1)
-                #ans = ans[0]
-            '''
             #ans = ans.permute(1,0)
 
             #print(ans.size(), target_variable.size(),'criterion')
