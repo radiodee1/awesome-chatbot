@@ -2139,7 +2139,7 @@ class NMT:
             loss = loss.cuda()
         return loss, nTotal.item()
 
-    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, mask):
+    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
 
         question_variable = None
 
@@ -2169,7 +2169,12 @@ class NMT:
 
                 for i in range(ans.size(0)):
                     #print(ans[i].size(), target_variable[i].size(), mask[i],'a,tv,m')
-                    l, n_tot = self.maskNLLLoss(ans[i], target_variable[i], mask[i])
+                    z = max_target_length
+                    #print(z, i)
+                    a_var = ans[i][:z]
+                    t_var = target_variable[i][:z]
+                    m_var = mask[i][:z]
+                    l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
                     loss += l
                     #print(l, loss, n_tot, 'loss')
 
@@ -2365,7 +2370,7 @@ class NMT:
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
                                             decoder, self.opt_1, None,
-                                            None, None, criterion, mask_variable)
+                                            None, None, criterion, mask_variable, max_target_length_variable)
 
             target_variable = target_variable.unsqueeze(1).transpose(-1,0)
 
