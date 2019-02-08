@@ -1533,7 +1533,7 @@ class NMT:
     # Returns padded target sequence tensor, padding mask, and max target length
     def outputVar(self, l, voc):
         add_eos = False
-        no_padding = True
+        no_padding = False
         indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=no_padding) for sentence in l]
 
         if True:
@@ -2179,6 +2179,7 @@ class NMT:
                     a_var = ans[i][:z]
                     t_var = target_variable[i][:z]
                     m_var = mask[i][:z]
+
                     #print(a_var.size(), t_var.size(), m_var.size(),'atm')
                     l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
                     loss += l
