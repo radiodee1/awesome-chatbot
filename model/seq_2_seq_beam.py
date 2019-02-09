@@ -2376,24 +2376,18 @@ class NMT:
 
             num_count += 1
 
+            #print(len(max_target_length_variable))
 
             if self.do_recurrent_output and self.do_load_babi:
 
-                #print(target_variable[0].size(),'tv-after', len(target_variable), len(input_variable), input_variable[0].size())
-
-                ignore_break = False
-
                 for i in range(len(ans)):
-
-                    if ignore_break: num_tot += 1  ## <<-- use this or..
+                    num_tot += int(max_target_length_variable[i])  # += temp_batch_size * hparams['tokens_per_sentence']
 
                     for j in range(ans[i].size(0)):
                         t_val = target_variable[i][0,j,0].item()
 
                         o_val = ans[i][j].item()
                         l_val = length_variable[i].item()
-
-                        if not ignore_break: num_tot += float(1 / l_val) ## <<-- maybe use this ??
 
                         if int(o_val) == int(t_val):
                             num_right += 1 * float(1/l_val )
@@ -2408,7 +2402,6 @@ class NMT:
                             break
 
                     # if ignore_break: num_tot += 1
-                #num_tot += temp_batch_size * hparams['tokens_per_sentence']
 
 
                 self.score = float(num_right / num_tot) * 100
