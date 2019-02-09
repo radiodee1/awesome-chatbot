@@ -464,7 +464,7 @@ class Decoder(nn.Module):
 
         #print(attn_weights,'attn')#, encoder_out_x.size(),'eox')
 
-        if index is not None:
+        if index is not None and False:
             attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
         else:
