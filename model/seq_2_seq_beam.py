@@ -678,6 +678,8 @@ class WrapMemRNN(nn.Module):
     def wrap_decoder_module(self, encoder_output, encoder_hidden, criterion):
         hidden = encoder_hidden.contiguous()
 
+        hidden = hidden[:,self.n_layers:,:] + hidden[:,:self.n_layers,:]
+
         if self.training or encoder_output.size(1) != 1 or not hparams['beam']:
 
             encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
