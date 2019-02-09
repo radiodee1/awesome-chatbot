@@ -1235,10 +1235,11 @@ class NMT:
                 for x in line_out:
                     if x != 0: lengths +=1
 
-
+                lengths = [lengths]
                 ques_variable = None #
                 target_variable = self.variableFromSentence(self.output_lang, hparams['unk'], pad=pad)
-                target_variable = [prune_tensor(target_variable, 3)]
+                target_variable = prune_tensor(target_variable, 4)
+                lengths = torch.tensor(lengths, dtype=torch.int64).cpu()
 
                 out , _ = self.evaluate(None, None, line_out,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
