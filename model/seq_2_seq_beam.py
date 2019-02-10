@@ -2177,32 +2177,52 @@ class NMT:
 
                 #ans = ans.permute(1,0,2)
                 target_variable = target_variable.squeeze(0)
-                #print(ans.size(), target_variable.size(), mask.size(),'a,tv,m')
+                #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
-                if True:
+                if False:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     mask = mask.transpose(1,0)
 
-                for i in range(ans.size(0)):
-                    #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
-                    #print(max_target_length,'mtl-size')
-                    z = max_target_length[i]
-                    #print(z, i,'z,i')
-                    a_var = ans[i][:z]
-                    t_var = target_variable[i][:z]
-                    m_var = mask[i][:z]
+                    for i in range(ans.size(0)):
+                        #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
+                        #print(max_target_length,'mtl-size')
+                        z = max_target_length[i]
+                        #print(z, i,'z,i')
+                        a_var = ans[i][:z]
+                        t_var = target_variable[i][:z]
+                        m_var = mask[i][:z]
 
-                    #print(a_var.size(), t_var.size(), m_var.size(),'atm')
+                        #print(a_var.size(), t_var.size(), m_var.size(),'atm')
 
-                    try:
-                        l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
-                        loss += l
-                    except:
-                        print('skip for size...')
-                        pass
-                    #print(l, loss, n_tot, 'loss')
+                        try:
+                            l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
+                            loss += l
+                        except:
+                            print('skip for size...')
+                            pass
+                        #print(l, loss, n_tot, 'loss')
 
+                if True:
+                    for i in range(ans.size(0)):
+                        z = max(max_target_length) #[i]
+                        if z < i + 1:
+                            print('skip for length')
+                            continue
+                        #print(z, i,'z,i')
+                        a_var = ans[i]
+                        t_var = target_variable[i]
+                        m_var = mask[i]
+
+                        # print(a_var.size(), t_var.size(), m_var.size(),'atm')
+
+                        try:
+                            l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
+                            loss += l
+                        except:
+                            print('skip for size...')
+                            pass
+                        # print(l, loss, n_tot, 'loss')
 
             #ans = ans.permute(1,0)
 
