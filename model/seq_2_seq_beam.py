@@ -483,15 +483,10 @@ class Decoder(nn.Module):
         hidden_small = hidden_small.unsqueeze(0)
 
         hidden_small = hidden_small.transpose(1,0)
-        #encoder_out_small = encoder_out_small.transpose(2,0)
-
 
         attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
 
-        #if self.training or True:
         attn_weights = attn_weights.permute(0,1,2)
-
-        #print(attn_weights,'attn')#, encoder_out_x.size(),'eox')
 
         if index is not None and False:
             attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
@@ -2220,18 +2215,22 @@ class NMT:
                     for i in range(ans.size(0)):
                         #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
                         #print(max_target_length,'mtl-size')
-                        z = max(max_target_length) #[i]
+                        z = max_target_length[i]
                         #print(z, i,'z,i')
                         a_var = ans[i][:z]
                         t_var = target_variable[i][:z]
                         m_var = mask[i][:z]
+
+                        if hparams['cuda']:
+                            t_var = t_var.cuda()
+                            m_var = m_var.cuda()
 
                         #print(a_var.size(), t_var.size(), m_var.size(),'atm')
 
                         try:
                             l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
                             loss += l
-                        except:
+                        except KeyError:
                             print('skip for size...')
                             pass
                         #print(l, loss, n_tot, 'loss')
