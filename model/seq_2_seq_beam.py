@@ -262,21 +262,19 @@ class BeamHelper:
                     if True:
                         black = False
                         supress = 1.0
-                        recorded = False
                         for ii in blacklist_supress:
 
                             if ii[0] == next_words[i].item():
                                 black = True
                                 supress = float(ii[1])
-                                #print(next_words[i], supress,'sup')
+
                                 break
                         if black:
                             if not beam.has_member(next_words[i]):
                                 score = score * next_probs[i] * supress
                                 sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
                                 next_beam.add(score, sequence, hidden_state)
-                                #recorded = True
-                        else: #if not beam.has_member(next_words[i]):
+                        else:
                             score = score * next_probs[i]
                             sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
                             next_beam.add(score, sequence, hidden_state)
