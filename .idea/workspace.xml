@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="638">
-              <caret line="1575" column="50" selection-start-line="1575" selection-start-column="50" selection-end-line="1575" selection-end-column="50" />
+            <state relative-caret-position="511">
+              <caret line="278" column="31" selection-start-line="278" selection-start-column="31" selection-end-line="278" selection-end-column="31" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -124,7 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>save_vocab</find>
       <find>score</find>
       <find>append</find>
       <find>prep_blacklist_supress</find>
@@ -154,6 +154,7 @@
       <find>count_sentences</find>
       <find>zeroPadding</find>
       <find>zero</find>
+      <find>blacklist_supress</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -635,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="638">
-          <caret line="1575" column="50" selection-start-line="1575" selection-start-column="50" selection-end-line="1575" selection-end-column="50" />
+        <state relative-caret-position="511">
+          <caret line="278" column="31" selection-start-line="278" selection-start-column="31" selection-end-line="278" selection-end-column="31" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

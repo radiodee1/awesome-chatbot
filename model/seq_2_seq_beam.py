@@ -151,7 +151,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 blacklist_sent = blacklist_vocab #+ ['i']
-blacklist_supress = [['i', 0.01], ['you', 1.0]]
+blacklist_supress = [['i', 0.0001], ['you', 1.0]]
 
 def plot_vector(vec):
     fig, ax = plt.subplots()
@@ -192,16 +192,25 @@ class Beam:
     def __init__(self, beam_width):
         self.heap = list()
         self.beam_width = beam_width
-        self.words = list()
+        #self.words = list()
 
     def add(self, score, sequence, hidden_state):
         #heapq.heappush(self.heap, (score, sequence, hidden_state))
         self.heap.append((score, sequence, hidden_state))
         self.heap.sort(reverse=True, key=lambda x: x[0])
 
-        #if len(self.heap) > self.beam_width or True:
-        #print(len(self.heap), self.beam_width)
         self.heap = self.heap[:self.beam_width]
+
+    def has_member(self, word_idx, heap=None):
+        if heap is None:
+            heap = self.heap
+        ret = False
+        for i in heap:
+            for j in i[1]:
+                if j.item() == word_idx:
+                    ret = True
+                    #return ret
+        return ret
 
     def __iter__(self):
         return iter(self.heap)
@@ -239,17 +248,39 @@ class BeamHelper:
         return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), hidden_state
 
     def search(self, start_token, initial_hidden):
+        global blacklist_supress
+
         beam = Beam(self.beam_size)  # starting layer in search tree
         beam.add(score=1.0, sequence=start_token, hidden_state=initial_hidden)  # initialize root
         for _ in range(self.maxlen):
             next_beam = Beam(self.beam_size)
             for score, sequence, hidden_state in beam:
-                next_probs, next_words, hidden_state = self.get_next(sequence[-1:],
-                                                                     hidden_state)
+                next_probs, next_words, hidden_state = self.get_next(sequence[-1:], hidden_state)
+
                 for i in range(self.beam_size):
-                    score = score * next_probs[i]
-                    sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
-                    next_beam.add(score, sequence, hidden_state)
+
+                    if True:
+                        black = False
+                        supress = 1.0
+                        recorded = False
+                        for ii in blacklist_supress:
+
+                            if ii[0] == next_words[i].item():
+                                black = True
+                                supress = float(ii[1])
+                                #print(next_words[i], supress,'sup')
+                                break
+                        if black:
+                            if not beam.has_member(next_words[i]):
+                                score = score * next_probs[i] * supress
+                                sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
+                                next_beam.add(score, sequence, hidden_state)
+                                #recorded = True
+                        else: #if not beam.has_member(next_words[i]):
+                            score = score * next_probs[i]
+                            sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
+                            next_beam.add(score, sequence, hidden_state)
+                        pass
             # move down one layer (to the next word in sequence up to maxlen )
             beam = next_beam
         best_score, best_sequence, _ = max(beam)  # get highest scoring sequence
