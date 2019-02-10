@@ -454,7 +454,7 @@ class Decoder(nn.Module):
 
         output = last_word
 
-        decoder_hidden_x = decoder_hidden_x[ -self.n_layers:, :, :]
+        #decoder_hidden_x = decoder_hidden_x[ -self.n_layers:, :, :]
 
         encoder_out_x = prune_tensor(encoder_out_x, 3)
 
