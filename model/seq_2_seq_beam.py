@@ -589,16 +589,20 @@ class WrapMemRNN(nn.Module):
         encoder_output = prune_tensor(encoder_output,3)
         hidden = prune_tensor(hidden,3)
 
-        if self.print_to_screen:
+        if self.print_to_screen :
             ''' here we test the plot_vector() function. '''
-            print(encoder_output.size(),'qv')
+            print(encoder_output.size(),'qv', encoder_output[0][0])
             out = prune_tensor(encoder_output[0][0], 1)
-            #plot_vector(out)
+            plot_vector(torch.relu(out))
             exit()
 
         ans, seq = self.wrap_decoder_module(encoder_output, hidden, criterion)
 
-        #print(ans, seq,'ans,seq')
+        if self.print_to_screen and False:
+            print(ans.size(), seq,'ans,seq')
+            plot_vector(ans[0][0])
+            exit()
+
         return seq, None, ans, None
 
     def new_freeze_embedding(self, do_freeze=True):
@@ -1269,6 +1273,11 @@ class NMT:
             for xx in r:
                 t_yyy.append(xx.lower())
         return t_yyy
+
+    def count_sentences(self, filename):
+        print('count vocab:', filename)
+        z = self.open_sentences(filename)
+        return len(z)
 
     def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
         print("Reading lines...")
@@ -2703,18 +2712,23 @@ class NMT:
         #self.task_babi_test_files()
         mode = 'test'
         self.task_choose_files(mode=mode)
-        self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
-                                                                         lang3=self.train_ques, reverse=False,
-                                                                         omit_unk=self.do_hide_unk,
-                                                                         skip_unk=self.do_skip_unk)
-        hparams['num_vocab_total'] = self.output_lang.n_words
+
+        if True:
+            self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
+                                                                             lang3=self.train_ques, reverse=False,
+                                                                             omit_unk=self.do_hide_unk,
+                                                                             skip_unk=self.do_skip_unk)
+            hparams['num_vocab_total'] = self.output_lang.n_words
+
+
+        words = hparams['num_vocab_total']
 
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-        sol_token = self.output_lang.word2index[hparams['sol']]
+        sol_token = SOS_token #self.output_lang.word2index[hparams['sol']]
 
-        self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
+        self.model_0_wra = WrapMemRNN(words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
@@ -2850,23 +2864,29 @@ if __name__ == '__main__':
             print('load test set -- no training.')
             print(n.train_fr)
 
-        n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
-                                                             omit_unk=n.do_hide_unk, skip_unk=n.do_skip_unk)
+        if False:
+            n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
+                                                                 omit_unk=n.do_hide_unk, skip_unk=n.do_skip_unk)
 
 
         if n.do_load_babi:
-            hparams['num_vocab_total'] = n.output_lang.n_words
+            v_name = hparams['data_dir'] + hparams['vocab_name']
+            v_name = v_name.replace('big', hparams['babi_name'])
+            hparams['num_vocab_total'] = n.count_sentences(v_name)
+            #hparams['num_vocab_total'] = n.output_lang.n_words
+
+        words = hparams['num_vocab_total']
 
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-        sol_token = n.output_lang.word2index[hparams['sol']]
+        sol_token = SOS_token #n.output_lang.word2index[hparams['sol']]
 
         token_list = []
         if False:
             for i in word_lst: token_list.append(n.output_lang.word2index[i])
 
-        n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
+        n.model_0_wra = WrapMemRNN(words, pytorch_embed_size, n.hidden_size,layers,
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
