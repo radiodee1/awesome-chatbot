@@ -515,7 +515,7 @@ class Decoder(nn.Module):
         out_x = out_x.permute(1,0,2)
 
         #print(out_x,'ox')
-        out_x = torch.softmax(out_x, dim=2)
+        out_x = torch.log_softmax(out_x, dim=2)
 
         decoder_hidden_x = hidden #.permute(1,0,2)
 
