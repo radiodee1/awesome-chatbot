@@ -458,7 +458,7 @@ class Decoder(nn.Module):
 
         encoder_out_x = prune_tensor(encoder_out_x, 3)
 
-        hidden = prune_tensor(decoder_hidden_x[:, :, :], 3)
+        hidden = prune_tensor(decoder_hidden_x, 3)
         hidden = hidden.permute(1, 0, 2)
         #print(hidden.size(),'hid')
 
@@ -497,14 +497,14 @@ class Decoder(nn.Module):
             attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
         else:
-            attn_weights = attn_weights[:, :, :].transpose(2, 0)
-            encoder_out_small = encoder_out_x[:, :, :].transpose(1, 0)
+            attn_weights = attn_weights.transpose(2, 0)
+            encoder_out_small = encoder_out_x.transpose(1, 0)
 
         context = attn_weights.bmm(encoder_out_small)
 
         output_list = [
             rnn_output.permute(1, 0, 2),
-            context[:, :, :],
+            context, #[:, :, :],
         ]
         #for i in output_list: print(i.size())
         #print('---')

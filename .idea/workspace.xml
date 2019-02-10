@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="713" column="45" selection-start-line="713" selection-start-column="45" selection-end-line="713" selection-end-column="45" />
+            <state relative-caret-position="206">
+              <caret line="460" column="46" selection-start-line="460" selection-start-column="46" selection-end-line="460" selection-end-column="46" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -132,7 +133,6 @@
       <find>beam_helper</find>
       <find>encoder_out</find>
       <find>decoder_hidden</find>
-      <find>encoder_out_x</find>
       <find>'sol'</find>
       <find>'bat</find>
       <find>do_batch_process</find>
@@ -154,6 +154,7 @@
       <find>zeroPadding</find>
       <find>zero</find>
       <find>blacklist_supress</find>
+      <find>encoder_out_x</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -635,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="713" column="45" selection-start-line="713" selection-start-column="45" selection-end-line="713" selection-end-column="45" />
+        <state relative-caret-position="206">
+          <caret line="460" column="46" selection-start-line="460" selection-start-column="46" selection-end-line="460" selection-end-column="46" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
