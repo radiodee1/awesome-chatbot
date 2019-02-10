@@ -474,11 +474,11 @@ class Decoder(nn.Module):
 
         #print(embedded.size(),'emb')
 
-        hidden = hidden.transpose(1,0).contiguous()
+        hidden_prev = hidden.transpose(1,0).contiguous()
 
-        rnn_output, hidden = self.gru(embedded, hidden)
+        rnn_output, hidden = self.gru(embedded, hidden_prev)
 
-        hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
+        hidden_small = torch.cat((hidden_prev[0,:,:], hidden_prev[1,:,:]), dim=1)
 
         hidden_small = hidden_small.unsqueeze(0)
 

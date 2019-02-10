@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,7 +25,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="242">
+            <state relative-caret-position="-514">
               <caret line="456" column="9" selection-start-line="456" selection-start-column="9" selection-end-line="456" selection-end-column="9" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
@@ -635,7 +633,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="242">
+        <state relative-caret-position="-514">
           <caret line="456" column="9" selection-start-line="456" selection-start-column="9" selection-end-line="456" selection-end-column="9" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
