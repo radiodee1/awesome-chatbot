@@ -2211,15 +2211,16 @@ class NMT:
                 target_variable = target_variable.squeeze(0)
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
-                if False:
+                if True:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     mask = mask.transpose(1,0)
 
+                    
                     for i in range(ans.size(0)):
                         #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
                         #print(max_target_length,'mtl-size')
-                        z = max_target_length[i]
+                        z = max(max_target_length) #[i]
                         #print(z, i,'z,i')
                         a_var = ans[i][:z]
                         t_var = target_variable[i][:z]
@@ -2235,7 +2236,7 @@ class NMT:
                             pass
                         #print(l, loss, n_tot, 'loss')
 
-                if True:
+                if False:
                     for i in range(ans.size(0)):
                         z = max(max_target_length) #[i]
                         if z < i + 1:
@@ -2294,7 +2295,7 @@ class NMT:
             #print(ans.size(),'ans')
 
         if self.do_clip_grad_norm:
-            clip = float(hparams['units'] / 10.0)
+            clip = 30.0 # float(hparams['units'] / 10.0)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
             #print('clip')
 

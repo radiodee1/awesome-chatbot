@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2365">
-              <caret line="270" selection-start-line="270" selection-end-line="270" />
+            <state relative-caret-position="422">
+              <caret line="2221" column="25" selection-start-line="2221" selection-start-column="25" selection-end-line="2221" selection-end-column="25" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -218,7 +219,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="540" />
-    <option name="y" value="71" />
+    <option name="y" value="72" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -281,7 +282,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="71" width="1380" height="999" extended-state="0" />
+    <frame x="540" y="72" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -635,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2365">
-          <caret line="270" selection-start-line="270" selection-end-line="270" />
+        <state relative-caret-position="422">
+          <caret line="2221" column="25" selection-start-line="2221" selection-start-column="25" selection-end-line="2221" selection-end-column="25" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
