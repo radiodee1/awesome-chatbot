@@ -515,7 +515,7 @@ class Decoder(nn.Module):
         out_x = out_x.permute(1,0,2)
 
         #print(out_x,'ox')
-        out_x = torch.log_softmax(out_x, dim=2)
+        out_x = torch.softmax(out_x, dim=2)
 
         decoder_hidden_x = hidden #.permute(1,0,2)
 
@@ -613,11 +613,13 @@ class WrapMemRNN(nn.Module):
         encoder_output = prune_tensor(encoder_output,3)
         hidden = prune_tensor(hidden,3)
 
+        #encoder_output = torch.sigmoid(encoder_output)
+
         if self.print_to_screen :
             ''' here we test the plot_vector() function. '''
-            print(encoder_output.size(),'qv', encoder_output[0][0])
+            print(hidden.size(),'qv', hidden[0][0])
             out = prune_tensor(encoder_output[0][0], 1)
-            plot_vector(torch.relu(out))
+            plot_vector(out)
             exit()
 
         ans, seq = self.wrap_decoder_module(encoder_output, hidden, criterion)
@@ -2230,7 +2232,7 @@ class NMT:
                         try:
                             l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
                             loss += l
-                        except KeyError:
+                        except :
                             print('skip for size...')
                             pass
                         #print(l, loss, n_tot, 'loss')
