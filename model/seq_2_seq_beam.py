@@ -353,7 +353,7 @@ class Encoder(nn.Module):
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
-        method = 'general'
+        method = 'dot' #'general'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
