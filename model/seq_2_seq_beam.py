@@ -711,7 +711,7 @@ class WrapMemRNN(nn.Module):
     def wrap_decoder_module(self, encoder_output, encoder_hidden, criterion):
         hidden = encoder_hidden.contiguous()
 
-        hidden = hidden[:,self.n_layers:,:] + hidden[:,:self.n_layers,:]
+        hidden = hidden[:,self.n_layers:,:] #+ hidden[:,:self.n_layers,:]
 
         if self.training or encoder_output.size(1) != 1 or not hparams['beam']:
 
@@ -2216,7 +2216,7 @@ class NMT:
                     target_variable = target_variable.transpose(1,0)
                     mask = mask.transpose(1,0)
 
-                    
+
                     for i in range(ans.size(0)):
                         #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
                         #print(max_target_length,'mtl-size')
