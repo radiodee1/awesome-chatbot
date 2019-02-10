@@ -1540,6 +1540,8 @@ class NMT:
         lengths = torch.tensor(lengths) # [len(indexes) for indexes in indexes_batch])
         padList = self.zeroPadding(indexes_batch)
         padVar = torch.LongTensor(padList)
+
+        #print(padVar.size(), lengths.size(), 'pad,l')
         return padVar, lengths
 
     # Returns padded target sequence tensor, padding mask, and max target length
@@ -1571,6 +1573,7 @@ class NMT:
         mask = self.binaryMatrix(padList)
         mask = torch.ByteTensor(mask)
         padVar = torch.LongTensor(padList)
+        #print(padVar.size(), mask.size(),'pad,size')
         return padVar, mask, max_target_len
 
     # Returns all items for a given batch of pairs
