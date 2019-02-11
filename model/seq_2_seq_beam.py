@@ -787,7 +787,7 @@ class NMT:
     def __init__(self):
 
         self.model_0_wra = None
-        self.opt_1 = None
+        #self.opt_1 = None
         self.embedding_matrix = None
         self.embedding_matrix_is_loaded = False
         self.criterion = None
