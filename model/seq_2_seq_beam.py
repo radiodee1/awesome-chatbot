@@ -2217,7 +2217,7 @@ class NMT:
                     for i in range(ans.size(0)):
                         #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
                         #print(max_target_length,'mtl-size')
-                        z = max_target_length[i]
+                        z = max(max_target_length) #[i]
                         #print(z, i,'z,i')
                         a_var = ans[i][:z]
                         t_var = target_variable[i][:z]
@@ -2233,7 +2233,7 @@ class NMT:
                             l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
                             loss += l
                         except :
-                            print('skip for size...')
+                            print('skip for size...', z)
                             pass
                         #print(l, loss, n_tot, 'loss')
 
