@@ -556,6 +556,9 @@ class WrapMemRNN(nn.Module):
 
         self.beam_helper = BeamHelper(5, hparams['tokens_per_sentence'])
 
+        self.opt_1 = None
+        self.opt_2 = None
+
         self.input_var = None  # for input
         self.answer_var = None  # for answer
         self.q_q_last = None # question
@@ -1774,7 +1777,8 @@ class NMT:
                     'arch': None,
                     'state_dict': self.model_0_wra.state_dict(),
                     'best_prec1': None,
-                    'optimizer': self.opt_1.state_dict(),
+                    'optimizer_1': self.model_0_wra.opt_1.state_dict(),
+                    'optimizer_2': self.model_0_wra.opt_2.state_dict(),
                     'best_loss': self.best_loss,
                     'long_term_loss' : self.long_term_loss,
                     'tag': self.tag,
@@ -1789,7 +1793,8 @@ class NMT:
                     'arch': None,
                     'state_dict': self.model_0_wra.state_dict(),
                     'best_prec1': None,
-                    'optimizer': None , # self.opt_1.state_dict(),
+                    'optimizer_1': None , # self.opt_1.state_dict(),
+                    'optimizer_2': None,
                     'best_loss': self.best_loss,
                     'long_term_loss': self.long_term_loss,
                     'tag': self.tag,
@@ -1901,17 +1906,30 @@ class NMT:
                 else:
                     self.model_0_wra.new_freeze_decoding(do_freeze=False)
 
-                if self.opt_1 is not None:
+                if self.model_0_wra.opt_1 is not None:
                     #####
                     try:
-                        self.opt_1.load_state_dict(checkpoint[0]['optimizer'])
-                        if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
+                        self.model_0_wra.opt_1.load_state_dict(checkpoint[0]['optimizer_1'])
+                        if self.model_0_wra.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
                         #print('new optimizer', hparams['learning_rate'])
                         #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
                         #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
-                        self.opt_1 = self._make_optimizer()
+
+                        self.model_0_wra.opt_1 = self._make_optimizer(self.model_0_wra.model_1_seq)
+                if self.model_0_wra.opt_2 is not None:
+                    #####
+                    try:
+                        self.model_0_wra.opt_2.load_state_dict(checkpoint[0]['optimizer_2'])
+                        if self.model_0_wra.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
+                            raise Exception('new optimizer...')
+                    except:
+                        #print('new optimizer', hparams['learning_rate'])
+                        #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
+                        #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
+                        lm = hparams['multiplier']
+                        self.model_0_wra.opt_2 = self._make_optimizer(self.model_0_wra.model_6_dec, lm)
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -1919,10 +1937,12 @@ class NMT:
             else:
                 print("no checkpoint found at '"+ basename + "'")
 
-    def _make_optimizer(self):
-        print('new optimizer', hparams['learning_rate'])
-        parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-        return optim.Adam(parameters, lr=hparams['learning_rate'],weight_decay=hparams['weight_decay'])
+    def _make_optimizer(self, module=None, lr=1.0):
+        print('new optimizer', hparams['learning_rate'] * lr)
+        if module is None:
+            module = self.model_0_wra
+        parameters = filter(lambda p: p.requires_grad, module.parameters())
+        return optim.Adam(parameters, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
@@ -2185,12 +2205,14 @@ class NMT:
             loss = loss.cuda()
         return loss, nTotal.item()
 
-    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer, decoder_optimizer, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
+    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
 
         question_variable = None
 
         if criterion is not None : #or not self.do_test_not_train:
-            wrapper_optimizer.zero_grad()
+            wrapper_optimizer_1.zero_grad()
+            wrapper_optimizer_2.zero_grad()
+
             self.model_0_wra.train()
             outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
@@ -2268,7 +2290,8 @@ class NMT:
 
             if not isinstance(loss, int):
                 loss.backward()
-            wrapper_optimizer.step()
+            wrapper_optimizer_1.step()
+            wrapper_optimizer_2.step()
 
 
         else:
@@ -2297,7 +2320,8 @@ class NMT:
 
         if self.do_clip_grad_norm:
             clip = 30.0 # float(hparams['units'] / 10.0)
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
+            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')
 
         return outputs, ans , loss
@@ -2348,10 +2372,15 @@ class NMT:
 
         self.time_str = self._as_minutes(self.time_num)
 
-        if self.opt_1 is None or self.first_load:
+        if self.model_0_wra.opt_1 is None or self.first_load:
 
-            wrapper_optimizer = self._make_optimizer()
-            self.opt_1 = wrapper_optimizer
+            wrapper_optimizer_1 = self._make_optimizer(self.model_0_wra.model_1_seq)
+            self.model_0_wra.opt_1 = wrapper_optimizer_1
+
+        if self.model_0_wra.opt_2 is None or self.first_load:
+            lm = hparams['multiplier']
+            wrapper_optimizer_2 = self._make_optimizer(self.model_0_wra.model_6_dec,lm)
+            self.model_0_wra.opt_2 = wrapper_optimizer_2
 
         #weight = torch.ones(self.output_lang.n_words)
         #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
@@ -2378,8 +2407,10 @@ class NMT:
 
             #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
-            for param_group in self.opt_1.param_groups:
-                print(param_group['lr'], 'lr')
+            for param_group in self.model_0_wra.opt_1.param_groups:
+                print(param_group['lr'], 'lr opt_1')
+            for param_group in self.model_0_wra.opt_2.param_groups:
+                print(param_group['lr'], 'lr_opt_2')
             print(self.output_lang.n_words, 'num words')
 
         print(self.train_fr,'loaded file')
@@ -2425,7 +2456,7 @@ class NMT:
                 pass
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
-                                            decoder, self.opt_1, None,
+                                            decoder, self.model_0_wra.opt_1, self.model_0_wra.opt_2,
                                             None, None, criterion, mask_variable, max_target_length_variable)
 
             target_variable = target_variable.unsqueeze(1).transpose(-1,0)
