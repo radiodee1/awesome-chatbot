@@ -517,7 +517,8 @@ class Decoder(nn.Module):
         out_x = out_x.permute(1,0,2)
 
         #print(out_x,'ox')
-        out_x = torch.softmax(out_x, dim=2)
+        out_x = torch.softmax(out_x, dim=-1)
+        #out_x = torch.sigmoid(out_x)
 
         decoder_hidden_x = hidden #.permute(1,0,2)
 
@@ -724,27 +725,41 @@ class WrapMemRNN: #(nn.Module):
 
         if self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']:
 
-            encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
+            encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
 
-            decoder_hidden_x = prune_tensor(hidden, 3).transpose(1, 0)
+            decoder_hidden = prune_tensor(hidden, 3).transpose(1, 0)
 
             all_out = []
 
             s, l, hid = encoder_output.size()
-            token = list(SOS_token for _ in range(l))
+            token = SOS_token #list(SOS_token for _ in range(l))
 
             token = torch.LongTensor([token])
 
             for i in range(s):
-                ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
 
-                all_out.append(ans)
-                token = torch.argmax(ans, dim=2)
-                token = prune_tensor(token, 1)
+                encoder_out_x = prune_tensor(encoder_output[i], 3) #.permute(1,0,2)
+                decoder_hidden_x = decoder_hidden.permute(1,0,2)
+                decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
 
-                #print(ans.size(),'ans', token.size(), 'token')
+                sent_out = []
+                for j in range(l):
+
+                    ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
+
+                    token = torch.argmax(ans, dim=-1)
+                    token = prune_tensor(token, 1)
+
+                    ans = prune_tensor(ans, 2)
+                    sent_out.append(ans)
+
+                sent_out = torch.cat(sent_out, dim=0)
+                sent_out = prune_tensor(sent_out, 3)
+                all_out.append(sent_out)
 
             ans = torch.cat(all_out, dim=0)
+            ans = ans.permute(1,0,2)
+
             best_sequence = None
 
             #print(ans.size(), ans)
@@ -2213,7 +2228,7 @@ class NMT:
     def maskNLLLoss(self, inp, target, mask):
         nTotal = mask.sum()
 
-        crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)))
+        crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)).squeeze(1))
         loss = crossEntropy.masked_select(mask).mean()
         if hparams['cuda']:
             loss = loss.cuda()
