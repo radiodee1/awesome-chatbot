@@ -2962,10 +2962,11 @@ if __name__ == '__main__':
             print('load test set -- no training.')
             print(n.train_fr)
 
-        if False:
+        if n.do_interactive:
             n.input_lang, n.output_lang, n.pairs = n.prepareData(n.train_fr, n.train_to,lang3=n.train_ques, reverse=False,
                                                                  omit_unk=n.do_hide_unk, skip_unk=n.do_skip_unk)
-
+            words = n.output_lang.n_words
+            hparams['num_vocab_total'] = words
 
         if n.do_load_babi:
             v_name = hparams['data_dir'] + hparams['vocab_name']
@@ -2973,7 +2974,7 @@ if __name__ == '__main__':
             hparams['num_vocab_total'] = n.count_sentences(v_name)
             #hparams['num_vocab_total'] = n.output_lang.n_words
 
-        words = hparams['num_vocab_total']
+            words = hparams['num_vocab_total']
 
         layers = hparams['layers']
         dropout = hparams['dropout']
