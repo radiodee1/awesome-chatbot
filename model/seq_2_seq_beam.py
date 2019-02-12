@@ -312,12 +312,15 @@ class Encoder(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        return
+        '''
         stdv = 1.0 / math.sqrt(self.hidden_dim)
         for weight in self.parameters():
 
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
+        '''
 
     def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
@@ -430,12 +433,15 @@ class Decoder(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
+        return
+        '''
         stdv = 1.0 / math.sqrt(self.hidden_dim)
         for weight in self.parameters():
 
             weight.data.uniform_(-stdv, stdv)
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
+        '''
 
     def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
@@ -694,10 +700,11 @@ class WrapMemRNN: #(nn.Module):
                     out, hidden = self.model_1_seq(q_var, 0, hidden)
                     hidden = hidden.permute(1,0,2)
                     if q_var.item() == EOS_token and ret_hidden is None:
-                        ret_hidden = hidden.permute(1,0,2).clone()
+                        ret_hidden = hidden.permute(1,0,2)#.clone()
                         test = num
                     elif ret_hidden is not None:
-                        hidden = None
+                        #hidden = None
+                        pass
                     out = prune_tensor(out, 2)
                     sub_lst.append(out)
                     num += 1
@@ -1928,7 +1935,7 @@ class NMT:
                     self.model_0_wra.embed.weight.requires_grad = False
                     self.model_0_wra.model_1_seq.embed.weight.requires_grad = False
                     self.model_0_wra.model_6_dec.embed.weight.requires_grad = False
-                    print('freeze')
+                    #print('freeze')
                 else:
                     self.model_0_wra.new_freeze_embedding(do_freeze=False)
                 if self.do_freeze_encoding:
