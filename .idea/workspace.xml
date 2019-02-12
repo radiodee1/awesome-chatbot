@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -27,8 +28,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="2968" column="46" selection-start-line="2968" selection-start-column="46" selection-end-line="2968" selection-end-column="46" />
+            <state relative-caret-position="584">
+              <caret line="1897" column="80" selection-start-line="1897" selection-start-column="80" selection-end-line="1897" selection-end-column="80" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -371,11 +372,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="378">
@@ -384,6 +380,11 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -635,8 +636,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="2968" column="46" selection-start-line="2968" selection-start-column="46" selection-end-line="2968" selection-end-column="46" />
+        <state relative-caret-position="584">
+          <caret line="1897" column="80" selection-start-line="1897" selection-start-column="80" selection-end-line="1897" selection-end-column="80" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

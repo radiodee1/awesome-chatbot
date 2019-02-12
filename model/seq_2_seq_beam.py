@@ -1780,7 +1780,7 @@ class NMT:
                     'arch': None,
                     'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                     'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
-                    'best_prec1': None,
+                    'embedding': self.model_0_wra.embed.state_dict(),
                     'optimizer_1': self.model_0_wra.opt_1.state_dict(),
                     'optimizer_2': self.model_0_wra.opt_2.state_dict(),
                     'best_loss': self.best_loss,
@@ -1797,7 +1797,7 @@ class NMT:
                     'arch': None,
                     'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                     'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
-                    'best_prec1': None,
+                    'embedding': self.model_0_wra.embed.state_dict(),
                     'optimizer_1': None , # self.opt_1.state_dict(),
                     'optimizer_2': None,
                     'best_loss': self.best_loss,
@@ -1895,6 +1895,7 @@ class NMT:
 
                 self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
+                self.model_0_wra.embed.load_state_dict(checkpoint[0]['embedding'])
 
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
