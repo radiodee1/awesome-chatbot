@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="2270" column="23" selection-start-line="2270" selection-start-column="23" selection-end-line="2270" selection-end-column="23" />
+            <state relative-caret-position="566">
+              <caret line="1934" column="51" selection-start-line="1934" selection-start-column="51" selection-end-line="1934" selection-end-column="51" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -125,15 +124,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>decoder_hidden</find>
-      <find>'sol'</find>
-      <find>'bat</find>
-      <find>do_batch_process</find>
-      <find>eval()</find>
-      <find>beam</find>
-      <find>criterion</find>
-      <find>pairs</find>
-      <find>variablesFromPair</find>
       <find>pad_and_batch</find>
       <find>variables_for_batch</find>
       <find>train(</find>
@@ -152,9 +142,18 @@
       <find>relu</find>
       <find>opt_1</find>
       <find>model_1_enc</find>
-      <find>_make_optimizer</find>
       <find>do_clip_grad_norm</find>
       <find>model_1_seq</find>
+      <find>new_freeze_embedding</find>
+      <find>_test_embedding</find>
+      <find>test_embedding</find>
+      <find>model_6_dec</find>
+      <find>Decoder</find>
+      <find>load_embedding</find>
+      <find>requires_grad</find>
+      <find>embed</find>
+      <find>req</find>
+      <find>_make_optimizer</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -636,8 +635,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="2270" column="23" selection-start-line="2270" selection-start-column="23" selection-end-line="2270" selection-end-column="23" />
+        <state relative-caret-position="566">
+          <caret line="1934" column="51" selection-start-line="1934" selection-start-column="51" selection-end-line="1934" selection-end-column="51" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

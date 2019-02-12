@@ -319,8 +319,9 @@ class Encoder(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    def load_embedding(self, embedding):
+    def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
+        self.embed.weight.requires_grad = requires_grad
 
     def forward(self, source, input_lengths, hidden=None):
         #source = prune_tensor(source, 3)
@@ -436,8 +437,9 @@ class Decoder(nn.Module):
             if len(weight.size()) > 1:
                 init.xavier_normal_(weight)
 
-    def load_embedding(self, embedding):
+    def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
+        self.embed.weight.requires_grad = requires_grad
 
     def forward(self, encoder_out, decoder_hidden, last_word=None, index=None):
         return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
@@ -547,6 +549,7 @@ class WrapMemRNN: #(nn.Module):
         self.cancel_attention = cancel_attention
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
+        self.embed.weight.requires_grad = not self.freeze_embedding
 
         self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
                                           2, dropout,embed=self.embed)
@@ -573,7 +576,7 @@ class WrapMemRNN: #(nn.Module):
         self.reset_parameters()
 
         if self.embedding is not None:
-            self.load_embedding(self.embedding)
+            self.load_embedding(self.embedding, not self.freeze_embedding)
         self.share_embedding()
 
         if self.freeze_embedding or self.embedding is not None:
@@ -585,16 +588,17 @@ class WrapMemRNN: #(nn.Module):
             self.new_freeze_decoding()
         pass
 
-    def load_embedding(self, embedding):
+    def load_embedding(self, embedding, requires_grad=True):
         #embedding = np.transpose(embedding,(1,0))
         e = torch.from_numpy(embedding)
         #e = e.permute(1,0)
         self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
+        self.embed.weight.requires_grad = requires_grad
 
     def share_embedding(self):
 
-        self.model_1_seq.load_embedding(self.embed)
-        self.model_6_dec.load_embedding(self.embed)
+        self.model_1_seq.load_embedding(self.embed, not self.freeze_embedding)
+        self.model_6_dec.load_embedding(self.embed, not self.freeze_embedding)
 
     def reset_parameters(self):
         return
@@ -641,6 +645,7 @@ class WrapMemRNN: #(nn.Module):
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_seq.embed.weight.requires_grad = not do_freeze
         self.model_6_dec.embed.weight.requires_grad = not do_freeze
+        #self.embed.weight.requires_grad = not do_freeze
         if do_freeze: print('freeze embedding')
         pass
 
@@ -664,6 +669,7 @@ class WrapMemRNN: #(nn.Module):
             num = 0 #EOS_token  # magic number for testing = garden
         e = self.embed(num)
         print('encoder :',num)
+        print(not self.embed.weight.requires_grad,': grad freeze')
         print(e.size(), 'test embedding')
         print(e[0, 0, 0:10])  # print first ten values
 
@@ -1895,13 +1901,19 @@ class NMT:
 
                 self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
-                self.model_0_wra.embed.load_state_dict(checkpoint[0]['embedding'])
+
+                if not self.do_load_embeddings:
+                    self.model_0_wra.embed.load_state_dict(checkpoint[0]['embedding'])
 
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
                     self.embedding_matrix_is_loaded = True
                 if self.do_freeze_embedding:
                     self.model_0_wra.new_freeze_embedding()
+                    self.model_0_wra.embed.weight.requires_grad = False
+                    self.model_0_wra.model_1_seq.embed.weight.requires_grad = False
+                    self.model_0_wra.model_6_dec.embed.weight.requires_grad = False
+                    print('freeze')
                 else:
                     self.model_0_wra.new_freeze_embedding(do_freeze=False)
                 if self.do_freeze_encoding:
@@ -1920,10 +1932,7 @@ class NMT:
                         if self.model_0_wra.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
-                        #print('new optimizer', hparams['learning_rate'])
-                        #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-                        #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
-
+                        if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         self.model_0_wra.opt_1 = self._make_optimizer(self.model_0_wra.model_1_seq)
                 if self.model_0_wra.opt_2 is not None:
                     #####
@@ -1932,9 +1941,7 @@ class NMT:
                         if self.model_0_wra.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
-                        #print('new optimizer', hparams['learning_rate'])
-                        #parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
-                        #self.opt_1 = optim.Adam(parameters, lr=hparams['learning_rate'])
+                        if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
                         self.model_0_wra.opt_2 = self._make_optimizer(self.model_0_wra.model_6_dec, lm)
                 print("loaded checkpoint '"+ basename + "' ")
