@@ -2239,7 +2239,7 @@ class NMT:
                 target_variable = target_variable.squeeze(0)
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
-                if True:
+                if False:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     mask = mask.transpose(1,0)
@@ -2268,7 +2268,7 @@ class NMT:
                             pass
                         #print(l, loss, n_tot, 'loss')
 
-                if False:
+                if True:
                     for i in range(ans.size(0)):
                         z = max(max_target_length) #[i]
                         if z < i + 1:
