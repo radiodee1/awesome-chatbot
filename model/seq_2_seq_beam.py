@@ -525,12 +525,12 @@ class Decoder(nn.Module):
 
 #################### Wrapper ####################
 
-class WrapMemRNN(nn.Module):
+class WrapMemRNN: #(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
                  cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
 
-        super(WrapMemRNN, self).__init__()
+        #super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -597,6 +597,8 @@ class WrapMemRNN(nn.Module):
         self.model_6_dec.load_embedding(self.embed)
 
     def reset_parameters(self):
+        return
+        '''
         stdv = 1.0 / math.sqrt(self.hidden_size)
         for weight in self.parameters():
 
@@ -606,8 +608,9 @@ class WrapMemRNN(nn.Module):
 
         init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
         #init.xavier_normal_(self.next_mem.state_dict()['weight'])
+        '''
 
-    def forward(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
+    def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
         input_variable = input_variable.permute(1,0)
 
@@ -713,7 +716,7 @@ class WrapMemRNN(nn.Module):
 
         hidden = hidden[:,self.n_layers:,:] #+ hidden[:,:self.n_layers,:]
 
-        if self.training or encoder_output.size(1) != 1 or not hparams['beam']:
+        if self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']:
 
             encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
 
@@ -1775,7 +1778,8 @@ class NMT:
                     'epoch':0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_0_wra.state_dict(),
+                    'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
+                    'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                     'best_prec1': None,
                     'optimizer_1': self.model_0_wra.opt_1.state_dict(),
                     'optimizer_2': self.model_0_wra.opt_2.state_dict(),
@@ -1791,7 +1795,8 @@ class NMT:
                     'epoch': 0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_0_wra.state_dict(),
+                    'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
+                    'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                     'best_prec1': None,
                     'optimizer_1': None , # self.opt_1.state_dict(),
                     'optimizer_2': None,
@@ -1888,7 +1893,8 @@ class NMT:
                 if hparams['zero_start'] is True:
                     self.start = 0
 
-                self.model_0_wra.load_state_dict(checkpoint[0]['state_dict'])
+                self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
+                self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
 
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
@@ -2213,7 +2219,9 @@ class NMT:
             wrapper_optimizer_1.zero_grad()
             wrapper_optimizer_2.zero_grad()
 
-            self.model_0_wra.train()
+            self.model_0_wra.model_1_seq.train()
+            self.model_0_wra.model_6_dec.train()
+
             outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
 
@@ -2297,7 +2305,8 @@ class NMT:
         else:
             #self.model_0_wra.eval()
             with torch.no_grad():
-                self.model_0_wra.eval()
+                self.model_0_wra.model_1_seq.eval()
+                self.model_0_wra.model_6_dec.eval()
                 outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                       criterion)
                 if outputs is not None and ans is None:
@@ -2319,7 +2328,7 @@ class NMT:
             #print(ans.size(),'ans')
 
         if self.do_clip_grad_norm:
-            clip = 30.0 # float(hparams['units'] / 10.0)
+            clip = 50.0 # float(hparams['units'] / 10.0)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')
@@ -2419,10 +2428,12 @@ class NMT:
 
         if self.do_load_babi:
             if self.do_test_not_train:
-                self.model_0_wra.eval()
+                self.model_0_wra.model_1_seq.eval()
+                self.model_0_wra.model_6_dec.eval()
 
             else:
-                self.model_0_wra.train()
+                self.model_0_wra.model_1_seq.train()
+                self.model_0_wra.model_6_dec.train()
 
         if self.do_batch_process:
             step = 1 # hparams['batch_size']
@@ -2685,7 +2696,9 @@ class NMT:
 
         #question_variable = question
 
-        self.model_0_wra.eval()
+        self.model_0_wra.model_1_seq.eval()
+        self.model_0_wra.model_6_dec.eval()
+
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
 
