@@ -632,18 +632,18 @@ class WrapMemRNN: #(nn.Module):
 
         #encoder_output = torch.sigmoid(encoder_output)
 
-        if self.print_to_screen :
+        if self.print_to_screen and False:
             ''' here we test the plot_vector() function. '''
             print(hidden.size(),'qv', hidden[0][0])
             out = prune_tensor(encoder_output[0][0], 1)
             plot_vector(out)
             exit()
 
-        ans, seq = self.wrap_decoder_module(encoder_output, hidden, criterion)
+        ans, seq = self.wrap_decoder_module(encoder_output, hidden, target_variable, criterion)
 
-        if self.print_to_screen and False:
+        if self.print_to_screen and True:
             print(ans.size(), seq,'ans,seq')
-            plot_vector(ans[0][0])
+            plot_vector(ans[4][0])
             exit()
 
         return seq, None, ans, None
@@ -725,10 +725,12 @@ class WrapMemRNN: #(nn.Module):
 
         return out, hidden
 
-    def wrap_decoder_module(self, encoder_output, encoder_hidden, criterion):
+    def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion):
         hidden = encoder_hidden.contiguous()
 
         hidden = hidden[:,self.n_layers:,:] #+ hidden[:,:self.n_layers,:]
+
+        target_variable = target_variable.permute(2,1,0)
 
         if self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']:
 
@@ -756,6 +758,10 @@ class WrapMemRNN: #(nn.Module):
 
                     token = torch.argmax(ans, dim=-1)
                     token = prune_tensor(token, 1)
+
+                    if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
+                        if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
+                            token = target_variable[i,j,:]
 
                     ans = prune_tensor(ans, 2)
                     sent_out.append(ans)

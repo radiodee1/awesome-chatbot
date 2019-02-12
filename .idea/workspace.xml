@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="436" column="11" selection-start-line="436" selection-start-column="11" selection-end-line="436" selection-end-column="11" />
+            <state relative-caret-position="494">
+              <caret line="762" column="74" selection-start-line="762" selection-start-column="74" selection-end-line="762" selection-end-column="74" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -56,7 +56,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="846">
+            <state relative-caret-position="775">
               <caret line="47" column="22" selection-start-line="47" selection-start-column="22" selection-end-line="47" selection-end-column="22" />
             </state>
           </provider>
@@ -585,13 +585,6 @@
     <entry file="file://$PROJECT_DIR$/data/sentences.xml">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="846">
-          <caret line="47" column="22" selection-start-line="47" selection-start-column="22" selection-end-line="47" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -633,10 +626,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="775">
+          <caret line="47" column="22" selection-start-line="47" selection-start-column="22" selection-end-line="47" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="436" column="11" selection-start-line="436" selection-start-column="11" selection-end-line="436" selection-end-column="11" />
+        <state relative-caret-position="494">
+          <caret line="762" column="74" selection-start-line="762" selection-start-column="74" selection-end-line="762" selection-end-column="74" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
