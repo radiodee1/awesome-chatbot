@@ -341,11 +341,10 @@ class Encoder(nn.Module):
             encoder_out, encoder_hidden = self.gru(embedded, hidden)
         else:
             embedded = prune_tensor(embedded, 2)
-            #if hidden is not None:
+
             hidden = prune_tensor(hidden, 2)
             encoder_out = self.gru_cell(embedded, hidden)
-            #else:
-            #encoder_out = self.gru_cell(embedded)
+
             encoder_out = prune_tensor(encoder_out, 3)
             encoder_hidden = prune_tensor(encoder_out, 3)
 

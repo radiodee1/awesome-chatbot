@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_single.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_single.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,10 +13,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="7974">
-              <caret line="472" selection-start-line="472" selection-end-line="472" />
+            <state relative-caret-position="296">
+              <caret line="751" column="13" selection-start-line="751" selection-start-column="13" selection-end-line="751" selection-end-column="13" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -26,13 +25,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
+        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_single.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="751" column="13" selection-start-line="751" selection-start-column="13" selection-end-line="751" selection-end-column="13" />
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="270">
+              <caret line="828" column="12" selection-start-line="828" selection-start-column="12" selection-end-line="828" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -163,7 +159,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/pytorch.py" />
         <option value="$PROJECT_DIR$/test.md" />
         <option value="$PROJECT_DIR$/saved/test.md.txt.md" />
@@ -214,6 +209,7 @@
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_beam.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq_single.py" />
       </list>
     </option>
   </component>
@@ -335,7 +331,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/babi_ii.py" />
     <entry file="file://$PROJECT_DIR$/raw/tasks_1-20_v1-2/README.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -641,6 +636,13 @@
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_single.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="828" column="12" selection-start-line="828" selection-start-column="12" selection-end-line="828" selection-end-column="12" />
         </state>
       </provider>
     </entry>
