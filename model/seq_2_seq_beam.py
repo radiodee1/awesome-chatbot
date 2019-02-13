@@ -832,6 +832,8 @@ class Lang:
 class NMT:
     def __init__(self):
 
+        global teacher_forcing_ratio
+
         self.model_0_wra = None
         #self.opt_1 = None
         self.embedding_matrix = None
@@ -1086,6 +1088,7 @@ class NMT:
             hparams['single'] = True
         if self.args['teacher_forcing'] is not None and not self.do_test_not_train:  # self.args['test']:
             hparams['teacher_forcing_ratio'] = float(self.args['teacher_forcing'])
+            teacher_forcing_ratio = float(self.args['teacher_forcing'])
         if self.printable == '': self.printable = hparams['base_filename']
         #if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 

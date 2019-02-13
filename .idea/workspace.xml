@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-115">
-              <caret line="992" column="89" selection-start-line="992" selection-start-column="89" selection-end-line="992" selection-end-column="89" />
+            <state relative-caret-position="260">
+              <caret line="768" column="44" selection-start-line="768" selection-start-column="23" selection-end-line="768" selection-end-column="44" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -635,8 +635,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-115">
-          <caret line="992" column="89" selection-start-line="992" selection-start-column="89" selection-end-line="992" selection-end-column="89" />
+        <state relative-caret-position="260">
+          <caret line="768" column="44" selection-start-line="768" selection-start-column="23" selection-end-line="768" selection-end-column="44" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
