@@ -304,8 +304,11 @@ class Encoder(nn.Module):
         self.pack_and_pad = True
         if hparams['single']:
             self.pack_and_pad = False
-        self.batch_first = False
+            self.batch_first = True
+        else:
+            self.batch_first = False
         self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
+        self.gru_cell = nn.GRUCell(self.hidden_dim, self.hidden_dim)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
 
@@ -313,14 +316,7 @@ class Encoder(nn.Module):
 
     def reset_parameters(self):
         return
-        '''
-        stdv = 1.0 / math.sqrt(self.hidden_dim)
-        for weight in self.parameters():
 
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-        '''
 
     def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
@@ -341,9 +337,20 @@ class Encoder(nn.Module):
         if self.pack_and_pad:
             embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
-        encoder_out, encoder_hidden = self.gru(embedded, hidden)
+        if not hparams['single']:
+            encoder_out, encoder_hidden = self.gru(embedded, hidden)
+        else:
+            embedded = prune_tensor(embedded, 2)
+            #if hidden is not None:
+            hidden = prune_tensor(hidden, 2)
+            encoder_out = self.gru_cell(embedded, hidden)
+            #else:
+            #encoder_out = self.gru_cell(embedded)
+            encoder_out = prune_tensor(encoder_out, 3)
+            encoder_hidden = prune_tensor(encoder_out, 3)
 
-        #print(encoder_out.size(), encoder_hidden.size(), 'eo,eh')
+            #print(encoder_out.size(), encoder_hidden.size(), 'eo,eh')
+
         if self.pack_and_pad:
             outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first)
             encoder_out = outputs
@@ -453,10 +460,12 @@ class Decoder(nn.Module):
 
     def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
-        encoder_out_x = (
-            encoder_out[:, :, self.hidden_dim:] +
-            encoder_out[:, :, :self.hidden_dim]
-        )
+        if True: #not hparams['single']:
+            encoder_out_x = (
+                encoder_out[:, :, self.hidden_dim:] +
+                encoder_out[:, :, :self.hidden_dim]
+            )
+
 
         decoder_hidden_x = decoder_hidden
         encoder_out_x = encoder_out_x.transpose(1,0)
@@ -469,6 +478,7 @@ class Decoder(nn.Module):
 
         hidden = prune_tensor(decoder_hidden_x, 3)
         hidden = hidden.permute(1, 0, 2)
+
         #print(hidden.size(),'hid')
 
         if hparams['cuda']:
@@ -697,15 +707,26 @@ class WrapMemRNN: #(nn.Module):
                 num = 0
                 test = 0
                 for n in range(question_variable.size(1)):
+
+                    #if hidden is None: print(hidden)
+                    #else: print(hidden.size(),'hid 2')
+
                     q_var = prune_tensor(question_variable[m,n], 2)
                     out, hidden = self.model_1_seq(q_var, 0, hidden)
+
+                    #print(hidden.size(),'hid 1', out.size(), self.model_1_seq.gru.batch_first,'batch first')
+
                     hidden = hidden.permute(1,0,2)
-                    if q_var.item() == EOS_token and ret_hidden is None and True:
-                        ret_hidden = hidden.permute(1,0,2)#.clone()
-                        test = num
-                    elif ret_hidden is not None:
-                        #hidden = None
-                        pass
+
+                    if True:
+                        if q_var.item() == EOS_token and ret_hidden is None and True:
+                            ret_hidden = hidden.permute(1,0,2)#.clone()
+                            test = num
+                        elif ret_hidden is not None:
+                            #hidden = None
+                            pass
+                        else:
+                            ret_hidden = hidden.permute(1,0,2)
                     else:
                         ret_hidden = hidden.permute(1,0,2)
                     out = prune_tensor(out, 2)
@@ -724,6 +745,15 @@ class WrapMemRNN: #(nn.Module):
 
             out = output.permute(1,0,2)
 
+            if hparams['single']:
+                #encoder_out_x = encoder_out
+                out = torch.cat([out, out], dim=2)
+                hidden = torch.cat([hidden, hidden], dim=2)
+                hidden = prune_tensor(hidden, 3).transpose(1, 0)
+                #print(hidden.size(), out.size(), 'dh-dec')
+
+                pass
+
         else:
             out, hidden = self.model_1_seq(question_variable, length_variable, None)
 
@@ -732,7 +762,10 @@ class WrapMemRNN: #(nn.Module):
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion):
         hidden = encoder_hidden.contiguous()
 
-        hidden = hidden[:,self.n_layers:,:] #+ hidden[:,:self.n_layers,:]
+        if not hparams['single']:
+            hidden = hidden[:,self.n_layers:,:] #+ hidden[:,:self.n_layers,:]
+        else:
+            hidden = hidden.permute(1,0,2)
 
         target_variable = target_variable.permute(2,1,0)
 
@@ -749,13 +782,21 @@ class WrapMemRNN: #(nn.Module):
 
             token = torch.LongTensor([token])
 
-            #print(decoder_hidden.size(),'dh-dec')
-
             for i in range(s):
 
                 encoder_out_x = prune_tensor(encoder_output[i], 3) #.permute(1,0,2)
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
+
+                if hparams['single']:
+                    decoder_hidden_x = decoder_hidden.permute(1,0,2)[i]
+                    decoder_hidden_x = torch.cat(
+                        [
+                            decoder_hidden_x[:, self.hidden_size:],
+                            decoder_hidden_x[:, :self.hidden_size]
+                        ], dim=0)
+                    decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
+                    #print(decoder_hidden_x.size(),'dhx')
 
                 sent_out = []
                 for j in range(l):
