@@ -343,6 +343,7 @@ class Encoder(nn.Module):
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
+        #print(encoder_out.size(), encoder_hidden.size(), 'eo,eh')
         if self.pack_and_pad:
             outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first)
             encoder_out = outputs
@@ -523,8 +524,8 @@ class Decoder(nn.Module):
         out_x = out_x.permute(1,0,2)
 
         #print(out_x,'ox')
-        out_x = torch.softmax(out_x, dim=-1)
-        #out_x = torch.sigmoid(out_x)
+        #out_x = torch.softmax(out_x, dim=-1)
+        #out_x = torch.tanh(out_x)
 
         decoder_hidden_x = hidden #.permute(1,0,2)
 
@@ -643,7 +644,7 @@ class WrapMemRNN: #(nn.Module):
 
         if self.print_to_screen and True:
             print(ans.size(), seq,'ans,seq')
-            plot_vector(ans[4][0])
+            plot_vector(ans[1][0])
             exit()
 
         return seq, None, ans, None
@@ -699,12 +700,14 @@ class WrapMemRNN: #(nn.Module):
                     q_var = prune_tensor(question_variable[m,n], 2)
                     out, hidden = self.model_1_seq(q_var, 0, hidden)
                     hidden = hidden.permute(1,0,2)
-                    if q_var.item() == EOS_token and ret_hidden is None:
+                    if q_var.item() == EOS_token and ret_hidden is None and True:
                         ret_hidden = hidden.permute(1,0,2)#.clone()
                         test = num
                     elif ret_hidden is not None:
                         #hidden = None
                         pass
+                    else:
+                        ret_hidden = hidden.permute(1,0,2)
                     out = prune_tensor(out, 2)
                     sub_lst.append(out)
                     num += 1
@@ -756,12 +759,17 @@ class WrapMemRNN: #(nn.Module):
 
                     ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
 
-                    token = torch.argmax(ans, dim=-1)
+                    #token = torch.argmax(ans, dim=-1)
+
+                    ans = prune_tensor(ans, 1)
+                    _, token = ans.topk(1)
+
                     token = prune_tensor(token, 1)
 
                     if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
                         if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                             token = target_variable[i,j,:]
+                            #print(token, 'tf')
 
                     ans = prune_tensor(ans, 2)
                     sent_out.append(ans)
@@ -775,6 +783,7 @@ class WrapMemRNN: #(nn.Module):
 
             best_sequence = None
 
+            #ans = torch.softmax(ans, dim=-1)
             #print(ans.size(), ans)
         else:
 
@@ -2260,6 +2269,7 @@ class NMT:
 
             outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
+            n_tot = 0
 
             if True: #self.do_recurrent_output:
                 ##lz = len(target_variable[0])
@@ -2274,11 +2284,39 @@ class NMT:
                 target_variable = target_variable.squeeze(0)
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
-                if False:
+                if True:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     mask = mask.transpose(1,0)
 
+                    for i in range(ans.size(0)):
+                        #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
+                        #print(max_target_length,'mtl-size')
+                        z = max(max_target_length) #[i]
+                        #print(z, i,'z,i')
+                        a_var = ans[i][:z]
+                        t_var = target_variable[i][:z]
+                        m_var = mask[i][:z]
+
+                        if hparams['cuda']:
+                            t_var = t_var.cuda()
+                            m_var = m_var.cuda()
+
+                        #print(a_var.size(), t_var.size(), m_var.size(),'atm')
+
+                        try:
+                            l = criterion(a_var, t_var)
+                            loss += l
+                            n_tot += t_var.size(0)
+                        except ValueError:
+                            print('skip for size...', z)
+                            pass
+                        #print(l, loss, n_tot, 'loss')
+
+                if False:
+                    ans = ans.transpose(1,0)
+                    target_variable = target_variable.transpose(1,0)
+                    mask = mask.transpose(1,0)
 
                     for i in range(ans.size(0)):
                         #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
@@ -2303,7 +2341,7 @@ class NMT:
                             pass
                         #print(l, loss, n_tot, 'loss')
 
-                if True:
+                if False:
                     for i in range(ans.size(0)):
                         z = max(max_target_length) #[i]
                         if z < i + 1:
@@ -2427,12 +2465,12 @@ class NMT:
             wrapper_optimizer_2 = self._make_optimizer(self.model_0_wra.model_6_dec,lm)
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
-        #weight = torch.ones(self.output_lang.n_words)
-        #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+        weight = torch.ones(self.output_lang.n_words)
+        weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
-        #self.criterion = nn.CrossEntropyLoss() #weight=weight) #size_average=False)
+        self.criterion = nn.CrossEntropyLoss(weight=weight, size_average=False)
 
-        self.criterion = self.maskNLLLoss
+        #self.criterion = self.maskNLLLoss
 
         if not self.do_test_not_train:
             criterion = self.criterion
