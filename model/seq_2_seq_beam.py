@@ -990,6 +990,7 @@ class NMT:
         parser.add_argument('--record-loss', help='record loss for later graphing.', action='store_true')
         parser.add_argument('--beam', help='activate beam search for eval phase.', action='store_true')
         parser.add_argument('--single', help='force single execution instead of batch execution.', action='store_true')
+        parser.add_argument('--teacher-forcing', help='set forcing for recurrent output')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1083,6 +1084,8 @@ class NMT:
             hparams['beam'] = True
         if self.args['single']:
             hparams['single'] = True
+        if self.args['teacher_forcing'] is not None and not self.do_test_not_train:  # self.args['test']:
+            hparams['teacher_forcing_ratio'] = float(self.args['teacher_forcing'])
         if self.printable == '': self.printable = hparams['base_filename']
         #if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
