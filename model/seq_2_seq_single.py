@@ -311,6 +311,7 @@ class Encoder(nn.Module):
         self.gru_cell = nn.GRUCell(self.hidden_dim, self.hidden_dim)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
+        self.out_mod = nn.Linear(self.hidden_dim, self.hidden_dim)
 
         self.reset_parameters()
 
@@ -355,6 +356,9 @@ class Encoder(nn.Module):
             encoder_out = outputs
 
         encoder_hidden = encoder_hidden.permute(1,0,2)
+
+        if not hparams['single']:
+            encoder_hidden = self.out_mod(encoder_hidden)
 
 
         #print(encoder_hidden,'hidd')
@@ -496,7 +500,7 @@ class Decoder(nn.Module):
 
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
-        hidden_small = torch.cat((hidden_prev[0,:,:], hidden_prev[1,:,:]), dim=1)
+        hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
 
         hidden_small = hidden_small.unsqueeze(0)
 
@@ -619,17 +623,7 @@ class WrapMemRNN: #(nn.Module):
 
     def reset_parameters(self):
         return
-        '''
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
 
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
-        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
-        '''
 
     def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
@@ -640,14 +634,18 @@ class WrapMemRNN: #(nn.Module):
         encoder_output = prune_tensor(encoder_output,3)
         hidden = prune_tensor(hidden,3)
 
+        encoder_output = torch.relu(encoder_output)
+        hidden = torch.relu(hidden)
+
         #encoder_output = torch.sigmoid(encoder_output)
 
-        if self.print_to_screen and False:
+        if self.print_to_screen and True:
             ''' here we test the plot_vector() function. '''
             print(hidden.size(),'qv', hidden[0][0])
-            out = prune_tensor(encoder_output[0][0], 1)
+            out = prune_tensor(hidden[0][0], 1)
             plot_vector(out)
             exit()
+
 
         ans, seq = self.wrap_decoder_module(encoder_output, hidden, target_variable, criterion)
 
@@ -717,7 +715,7 @@ class WrapMemRNN: #(nn.Module):
 
                     hidden = hidden.permute(1,0,2)
 
-                    if True:
+                    if False:
                         if q_var.item() == EOS_token and ret_hidden is None and True:
                             ret_hidden = hidden.permute(1,0,2)#.clone()
                             test = num
@@ -789,6 +787,7 @@ class WrapMemRNN: #(nn.Module):
 
                 if hparams['single']:
                     decoder_hidden_x = decoder_hidden.permute(1,0,2)[i]
+                    #print(decoder_hidden_x.size(),'dh-individual')
                     decoder_hidden_x = torch.cat(
                         [
                             decoder_hidden_x[:, self.hidden_size:],
@@ -802,6 +801,7 @@ class WrapMemRNN: #(nn.Module):
 
                     ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
 
+                    #print(decoder_hidden_x.size(),'dhx')
                     #token = torch.argmax(ans, dim=-1)
 
                     ans = prune_tensor(ans, 1)
@@ -2451,7 +2451,7 @@ class NMT:
             #print(ans.size(),'ans')
 
         if self.do_clip_grad_norm:
-            clip = 50.0 # float(hparams['units'] / 10.0)
+            clip = 30.0 # float(hparams['units'] / 10.0)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')

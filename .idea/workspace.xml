@@ -27,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_single.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="828" column="12" selection-start-line="828" selection-start-column="12" selection-end-line="828" selection-end-column="12" />
+            <state relative-caret-position="-820">
+              <caret line="957" column="32" selection-start-line="957" selection-start-column="32" selection-end-line="957" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -121,7 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>readLangs</find>
       <find>prepareData</find>
       <find>train_iters</find>
       <find>count_sentences</find>
@@ -133,13 +132,10 @@
       <find>relu</find>
       <find>opt_1</find>
       <find>model_1_enc</find>
-      <find>do_clip_grad_norm</find>
-      <find>model_1_seq</find>
       <find>new_freeze_embedding</find>
       <find>_test_embedding</find>
       <find>test_embedding</find>
       <find>model_6_dec</find>
-      <find>Decoder</find>
       <find>load_embedding</find>
       <find>requires_grad</find>
       <find>embed</find>
@@ -149,8 +145,12 @@
       <find>reset_parameters</find>
       <find>teacher_forcing_ratio</find>
       <find>batch_first</find>
-      <find>Encoder</find>
       <find>'dh</find>
+      <find>do_clip_grad_norm</find>
+      <find>Decoder</find>
+      <find>wrap_encoder_module</find>
+      <find>model_1_seq</find>
+      <find>Encoder</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -215,7 +215,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="540" />
-    <option name="y" value="70" />
+    <option name="y" value="69" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -278,7 +278,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="70" width="1380" height="999" extended-state="0" />
+    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -641,8 +641,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_single.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="828" column="12" selection-start-line="828" selection-start-column="12" selection-end-line="828" selection-end-column="12" />
+        <state relative-caret-position="-820">
+          <caret line="957" column="32" selection-start-line="957" selection-start-column="32" selection-end-line="957" selection-end-column="32" />
         </state>
       </provider>
     </entry>
