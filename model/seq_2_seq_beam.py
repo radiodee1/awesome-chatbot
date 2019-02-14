@@ -431,18 +431,12 @@ class Decoder(nn.Module):
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
 
+        self.out_mod = nn.Linear(self.hidden_dim * 2, self.hidden_dim)
         self.reset_parameters()
 
     def reset_parameters(self):
         return
-        '''
-        stdv = 1.0 / math.sqrt(self.hidden_dim)
-        for weight in self.parameters():
 
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-        '''
 
     def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
@@ -452,11 +446,13 @@ class Decoder(nn.Module):
         return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
 
     def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
-
+        '''
         encoder_out_x = (
             encoder_out[:, :, self.hidden_dim:] +
             encoder_out[:, :, :self.hidden_dim]
         )
+        '''
+        encoder_out_x = self.out_mod(encoder_out)
 
         decoder_hidden_x = decoder_hidden
         encoder_out_x = encoder_out_x.transpose(1,0)
