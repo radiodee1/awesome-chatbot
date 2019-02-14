@@ -454,6 +454,8 @@ class Decoder(nn.Module):
         '''
         encoder_out_x = self.out_mod(encoder_out)
 
+        encoder_out_x = torch.tanh(encoder_out_x)
+
         decoder_hidden_x = decoder_hidden
         encoder_out_x = encoder_out_x.transpose(1,0)
 
