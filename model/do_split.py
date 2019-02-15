@@ -67,6 +67,15 @@ def stop_repeats(lst):
 
     return ' '.join(j)
 
+def move_order(first, second):
+    mid = ''
+    first = first.strip()
+    second = second.strip()
+    if second.endswith('?'):
+        mid = second[:]
+        second = first[:]
+        first = mid[:]
+    return first, second
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='split raw reddit file.')
@@ -248,6 +257,8 @@ if __name__ == '__main__':
 
                     line[0] = format(line[0])
                     line[1] = format(line[1])
+
+                    line[0], line[1] = move_order(line[0], line[1])
 
                     if arg_eol and len(line[0]) > 1:
                         line[0] += ' ' + hparams['eol']

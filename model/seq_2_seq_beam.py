@@ -339,6 +339,7 @@ class Encoder(nn.Module):
         #print(embedded.size(),'emb-enc')
 
         if self.pack_and_pad:
+            print('pack and pad')
             embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
@@ -473,7 +474,14 @@ class Decoder(nn.Module):
             output = output.cuda()
             #hidden = hidden.contiguous()
 
-        embedded = self.embed(output)
+        #print(output.size(),'out')
+
+        if output.size(-1) == 1:
+            embedded = self.embed(output)
+
+        if output.size(-1) == self.hidden_dim:
+            embedded = output
+
         # print(output, embedded)
         embedded = prune_tensor(embedded, 3)
 
@@ -520,9 +528,9 @@ class Decoder(nn.Module):
 
         out_x = torch.tanh(out_x) ## <<-- use or not use?
 
-        out_x = self.out_target_b(out_x)
+        out_voc = self.out_target_b(out_x)
 
-        out_x = out_x.permute(1,0,2)
+        out_voc = out_voc.permute(1,0,2)
 
         #print(out_x,'ox')
         #out_x = torch.softmax(out_x, dim=-1)
@@ -530,7 +538,7 @@ class Decoder(nn.Module):
 
         decoder_hidden_x = hidden #.permute(1,0,2)
 
-        return out_x, decoder_hidden_x, None
+        return out_voc, decoder_hidden_x, out_x
 
 
 
@@ -748,7 +756,7 @@ class WrapMemRNN: #(nn.Module):
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
 
-                if True:
+                if False:
                     decoder_hidden_list = torch.cat([decoder_hidden_x[0,:,:], decoder_hidden_x[1,:,:]], dim=-1)
                     decoder_hidden_x = self.model_6_dec.out_mod(decoder_hidden_list)
                     decoder_hidden_x = torch.softmax(decoder_hidden_x, dim=-1)
@@ -760,18 +768,20 @@ class WrapMemRNN: #(nn.Module):
                 #teacher_out = []
                 for j in range(l):
 
-                    ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
+                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
 
                     #token = torch.argmax(ans, dim=-1)
 
-                    ans = prune_tensor(ans, 1)
-                    _, token = ans.topk(1)
+                    #ans = prune_tensor(ans, 1)
+                    #_, token = ans.topk(1)
+                    token = ans_small
 
                     token = prune_tensor(token, 1)
 
                     if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
                         if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                             token = target_variable[i,j,:]
+                            token = self.model_6_dec.embed(token)
                             #teacher_out.append(token)
                             #print(token, 'tf')
 

@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_split.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_beam.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_beam.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,32 +14,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5115">
-              <caret line="759" column="17" selection-start-line="759" selection-start-column="17" selection-end-line="759" selection-end-column="17" />
+            <state relative-caret-position="-157">
+              <caret line="89" selection-start-line="89" selection-end-line="89" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2587">
+              <caret line="24" selection-start-line="22" selection-end-line="24" />
               <folding>
-                <element signature="e#21#86#0" expanded="true" />
+                <element signature="e#20#33#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_single.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4824">
-              <caret line="298" column="14" selection-start-line="298" selection-start-column="14" selection-end-line="298" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/do_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5868">
-              <caret line="331" selection-start-line="331" selection-end-line="331" />
+            <state relative-caret-position="522">
+              <caret line="260" column="67" selection-start-line="260" selection-start-column="67" selection-end-line="260" selection-end-column="67" />
               <folding>
                 <element signature="e#26#41#0" expanded="true" />
               </folding>
@@ -205,18 +206,18 @@
         <option value="$PROJECT_DIR$/raw/srt_zip/README.md" />
         <option value="$PROJECT_DIR$/do_make_tab_file_from_srt.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
-        <option value="$PROJECT_DIR$/model/do_split.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_single.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_beam.py" />
+        <option value="$PROJECT_DIR$/model/do_split.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="540" />
-    <option name="y" value="69" />
+    <option name="y" value="68" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -279,28 +280,9 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="69" width="1380" height="999" extended-state="0" />
+    <frame x="540" y="68" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
-      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout>
-    <layout-to-restore>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.24981578" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -318,7 +300,7 @@
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-    </layout-to-restore>
+    </layout>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -481,13 +463,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1458">
-          <caret line="89" selection-start-line="89" selection-end-line="89" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -502,16 +477,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="24" selection-start-line="22" selection-end-line="24" />
-          <folding>
-            <element signature="e#20#33#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -571,8 +536,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5115">
-          <caret line="759" column="17" selection-start-line="759" selection-start-column="17" selection-end-line="759" selection-end-column="17" />
+        <state relative-caret-position="3078">
+          <caret line="758" column="24" selection-start-line="758" selection-start-column="24" selection-end-line="758" selection-end-column="24" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
@@ -583,16 +548,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4824">
           <caret line="298" column="14" selection-start-line="298" selection-start-column="14" selection-end-line="298" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_split.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5868">
-          <caret line="331" selection-start-line="331" selection-end-line="331" />
-          <folding>
-            <element signature="e#26#41#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -643,6 +598,33 @@
           <caret line="209" column="57" selection-start-line="209" selection-start-column="57" selection-end-line="209" selection-end-column="57" />
           <folding>
             <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-157">
+          <caret line="89" selection-start-line="89" selection-end-line="89" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2587">
+          <caret line="24" selection-start-line="22" selection-end-line="24" />
+          <folding>
+            <element signature="e#20#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_split.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="260" column="67" selection-start-line="260" selection-start-column="67" selection-end-line="260" selection-end-column="67" />
+          <folding>
+            <element signature="e#26#41#0" expanded="true" />
           </folding>
         </state>
       </provider>
