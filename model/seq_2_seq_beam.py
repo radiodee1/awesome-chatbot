@@ -313,14 +313,7 @@ class Encoder(nn.Module):
 
     def reset_parameters(self):
         return
-        '''
-        stdv = 1.0 / math.sqrt(self.hidden_dim)
-        for weight in self.parameters():
-
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-        '''
+        
 
     def load_embedding(self, embedding, requires_grad=True):
         self.embed = embedding
