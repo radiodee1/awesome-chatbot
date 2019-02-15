@@ -431,7 +431,7 @@ class Decoder(nn.Module):
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
 
-        self.out_mod = nn.Linear(self.hidden_dim * 2, self.hidden_dim)
+        self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -446,15 +446,15 @@ class Decoder(nn.Module):
         return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
 
     def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
-        '''
+
         encoder_out_x = (
             encoder_out[:, :, self.hidden_dim:] +
             encoder_out[:, :, :self.hidden_dim]
         )
-        '''
-        encoder_out_x = self.out_mod(encoder_out)
 
-        encoder_out_x = torch.tanh(encoder_out_x)
+        #encoder_out_x = self.out_mod(encoder_out)
+
+        #encoder_out_x = torch.softmax(encoder_out_x, dim=-1)
 
         decoder_hidden_x = decoder_hidden
         encoder_out_x = encoder_out_x.transpose(1,0)
@@ -485,7 +485,10 @@ class Decoder(nn.Module):
 
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
-        hidden_small = torch.cat((hidden_prev[0,:,:], hidden_prev[1,:,:]), dim=1)
+        hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
+
+        #hidden_small = self.out_mod(hidden_small)
+        #hidden_small = torch.tanh(hidden_small)
 
         hidden_small = hidden_small.unsqueeze(0)
 
@@ -608,17 +611,7 @@ class WrapMemRNN: #(nn.Module):
 
     def reset_parameters(self):
         return
-        '''
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
 
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
-        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
-        '''
 
     def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
@@ -751,11 +744,20 @@ class WrapMemRNN: #(nn.Module):
 
             for i in range(s):
 
-                encoder_out_x = prune_tensor(encoder_output[i], 3) #.permute(1,0,2)
+                encoder_out_x = prune_tensor(encoder_output[i], 3)
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
 
+                if True:
+                    decoder_hidden_list = torch.cat([decoder_hidden_x[0,:,:], decoder_hidden_x[1,:,:]], dim=-1)
+                    decoder_hidden_x = self.model_6_dec.out_mod(decoder_hidden_list)
+                    decoder_hidden_x = torch.softmax(decoder_hidden_x, dim=-1)
+                    decoder_hidden_x = torch.cat([decoder_hidden_x[:,:self.hidden_size],decoder_hidden_x[:,self.hidden_size:]], dim=0)
+                    decoder_hidden_x = prune_tensor(decoder_hidden_x, 3).permute(1,0,2)
+
                 sent_out = []
+
+                #teacher_out = []
                 for j in range(l):
 
                     ans, decoder_hidden_x, _ = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
@@ -770,11 +772,13 @@ class WrapMemRNN: #(nn.Module):
                     if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
                         if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                             token = target_variable[i,j,:]
+                            #teacher_out.append(token)
                             #print(token, 'tf')
 
                     ans = prune_tensor(ans, 2)
                     sent_out.append(ans)
 
+                #if True: print(teacher_out)
                 sent_out = torch.cat(sent_out, dim=0)
                 sent_out = prune_tensor(sent_out, 3)
                 all_out.append(sent_out)
