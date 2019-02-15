@@ -339,7 +339,7 @@ class Encoder(nn.Module):
         #print(embedded.size(),'emb-enc')
 
         if self.pack_and_pad:
-            print('pack and pad')
+            if self.training: print('pack and pad')
             embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
@@ -589,6 +589,7 @@ class WrapMemRNN: #(nn.Module):
         self.prediction = None  # final single word prediction
         self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
+        self.pass_no_token = False
 
         self.reset_parameters()
 
@@ -772,16 +773,19 @@ class WrapMemRNN: #(nn.Module):
 
                     #token = torch.argmax(ans, dim=-1)
 
-                    #ans = prune_tensor(ans, 1)
-                    #_, token = ans.topk(1)
-                    token = ans_small
+                    if not self.pass_no_token:
+                        ans = prune_tensor(ans, 1)
+                        _, token = ans.topk(1)
+                    else:
+                        token = ans_small
 
                     token = prune_tensor(token, 1)
 
                     if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
                         if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                             token = target_variable[i,j,:]
-                            token = self.model_6_dec.embed(token)
+                            if self.pass_no_token:
+                                token = self.model_6_dec.embed(token)
                             #teacher_out.append(token)
                             #print(token, 'tf')
 
