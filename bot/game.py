@@ -7,11 +7,13 @@ import os
 sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
 
-import model.pytorch as model
+import model.seq_2_seq_beam as model
 import game_sr as sr
 import game_voice as v
 import model.tokenize_weak as tokenize_weak
 import model.settings as settings
+
+import time
 
 class Game:
     def __init__(self):
@@ -26,6 +28,10 @@ class Game:
         self.words_stop = ['stop','exit','quit','quiet','silence']
         self.words_start += self.words_name
         self.count_max = 5
+
+        self.time_start = 0
+        self.time_end = 0
+        self.time_in_seconds = 5
 
     def loop(self):
         count = 0

@@ -1330,15 +1330,17 @@ class NMT:
         self.update_result_file()
         pass
 
-    def task_interactive(self):
+    def task_interactive(self, l=None, call_from_script=False):
 
         print('-------------------')
         try:
             while True:
-                line = input("> ")
-                line = tokenize_weak.format(line)
-                print(line)
-
+                if not call_from_script:
+                    line = input("> ")
+                    line = tokenize_weak.format(line)
+                    print(line)
+                elif l is not None:
+                    line = l
                 pad = hparams['tokens_per_sentence']
                 add_eol = False
                 #print(line)
@@ -1355,9 +1357,15 @@ class NMT:
 
                 out , _ = self.evaluate(None, None, line_out,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
+
+                if call_from_script: return ' '.join(out)
+
         except EOFError:
             print()
             exit()
+
+    def get_sentence(self, i):
+        return self.task_interactive(l=i, call_from_script=True)
 
     def task_convert(self):
         hparams['base_filename'] += '.small'
