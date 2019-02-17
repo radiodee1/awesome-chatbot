@@ -270,7 +270,7 @@ class BeamHelper:
 
                                 break
                         if black:
-                            if not beam.has_member(next_words[i]):
+                            if not beam.has_member(next_words[i]) and not next_beam.has_member(next_words[i]):
                                 score = score * next_probs[i] * supress
                                 sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
                                 next_beam.add(score, sequence, hidden_state)
@@ -954,7 +954,7 @@ class NMT:
         self.printable = ''
 
         parser = argparse.ArgumentParser(description='Train some NMT values.')
-        parser.add_argument('--mode', help='mode of operation. (train, infer, review, long, interactive, plot)')
+        parser.add_argument('--mode', help='mode of operation. (preset, long, interactive, plot)')
         parser.add_argument('--printable', help='a string to print during training for identification.')
         parser.add_argument('--basename', help='base filename to use if it is different from settings file.')
         parser.add_argument('--autoencode', help='enable auto encode from the command line with a ratio.')
@@ -1013,11 +1013,23 @@ class NMT:
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
-        if self.args['mode'] is None or self.args['mode'] not in ['train', 'infer', 'review', 'long', 'interactive', 'plot']:
+        if self.args['mode'] is None or self.args['mode'] not in ['preset', 'long', 'interactive', 'plot']:
+            self.args['mode'] = 'preset'
+            pass
+        if self.args['mode'] == 'preset':
+            ''' some preset flags for a typical run '''
+            print('preset.')
+            self.do_train = False
+            self.do_record_loss = True
+            self.do_load_babi = True
+            self.do_load_recurrent = True
+            self.do_train_long = True
+            self.do_recurrent_output = True
+            self.do_skip_unk = True
+            self.do_hide_unk = True
             self.args['mode'] = 'long'
-        if self.args['mode'] == 'train': self.do_train = True
-        if self.args['mode'] == 'infer': self.do_infer = True
-        if self.args['mode'] == 'review': self.do_review = True
+        #if self.args['mode'] == 'infer': self.do_infer = True
+        #if self.args['mode'] == 'review': self.do_review = True
         if self.args['mode'] == 'long': self.do_train_long = True
         if self.args['mode'] == 'interactive': self.do_interactive = True
         if self.args['mode'] == 'plot':
@@ -3042,6 +3054,7 @@ if __name__ == '__main__':
             #n.task_normal_train()
             mode = 'train'
             n.task_choose_files(mode=mode)
+
         elif not n.do_load_babi:
             mode = 'test'
             n.task_choose_files(mode=mode)
