@@ -16,7 +16,7 @@ import glob
 if __name__ == '__main__':
     #os.chdir('/' + '/'.join(sys.argv[0].split('/')[:-1]))
     parser = argparse.ArgumentParser(description='Plot some NMT values.')
-    parser.add_argument('--files', help='File glob for plotting. Must be json files!!')
+    parser.add_argument('--files', help='File glob for plotting. Must be json files!!', nargs='+')
     parser.add_argument('--title', help='Graph title.')
     parser.add_argument('--label-x', help='X axis label.')
     parser.add_argument('--label-y', help='Y axis label.')
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     arg_title = 'Autoencode Accuracy vs. Steps'
 
     if do_filelist:
-        arg_filename = str(args['files'])
+        arg_filename = str(','.join(args['files']))
 
     if do_title_graph:
         arg_title = str(args['title'])
@@ -46,8 +46,9 @@ if __name__ == '__main__':
     arg_filelist = arg_filename.split(',')
     arg_glob_list = []
     for i in arg_filelist:
-        print(i,'use for plot')
-        arg_glob_list.extend(glob.glob(i))
+        if not i.endswith('.pth') and not i.endswith('.txt'):
+            print(i,'use for plot')
+            arg_glob_list.extend(glob.glob(i))
 
     print(arg_glob_list)
     arg_list = []
