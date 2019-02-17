@@ -16,7 +16,7 @@ hparams = {
     'babi_name':'babi',
     'pos_name': 'pos',
     'babi_memory_hops': 4,
-    'base_filename': "weight",
+    'base_filename': "test_weights",
     'base_file_num': 1,
     'stats_filename':'stat',
     'num_vocab_total': 15000,

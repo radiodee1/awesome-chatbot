@@ -1036,7 +1036,11 @@ class NMT:
             self.do_review = True
             self.do_plot = True
         if self.args['basename'] is not None:
-            hparams['base_filename'] = self.args['basename']
+            name = str(self.args['basename'])
+            print(name)
+            name = name.split('/')[-1]
+            name = name.split('.')[0]
+            hparams['base_filename'] = name #self.args['basename']
             print('set name:',hparams['base_filename'])
         if self.args['autoencode_words'] is not False: self.do_autoencode_words = True
         if self.args['autoencode'] is not  None and float(self.args['autoencode']) > 0.0:
@@ -1358,7 +1362,9 @@ class NMT:
                 out , _ = self.evaluate(None, None, line_out,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
 
-                if call_from_script: return ' '.join(out)
+                if call_from_script:
+                    out = self._shorten(out, just_duplicates=False)
+                    return out #' '.join(out)
 
         except EOFError:
             print()
@@ -2895,7 +2901,12 @@ class NMT:
             self.pairs = self.pairs_train
         pass
 
-    def setup_for_interactive(self):
+    def setup_for_interactive(self, name=None):
+
+        if name is not None:
+            hparams['base_filename'] = name
+        print(hparams['base_filename'], ': load')
+
         self.do_interactive = True
         self.input_lang, self.output_lang, self.pairs = self.prepareData(self.train_fr, self.train_to,
                                                                          lang3=self.train_ques, reverse=False,
