@@ -238,9 +238,8 @@ class BeamHelper:
         self.encoder_out = None
 
         self.bad_sentence = [
-            "sol i don't know",
-            "6478 3929 7337"
             "i don't know",
+            "6478 3929 7337"
             "i do not know"
         ]
 
