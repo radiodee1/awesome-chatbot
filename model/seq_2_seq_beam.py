@@ -239,7 +239,7 @@ class BeamHelper:
 
         self.bad_sentence = [
             "i don't know",
-            "6478 3929 7337"
+            "6478 3929 7337",
             "i do not know"
         ]
 
