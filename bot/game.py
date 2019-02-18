@@ -28,14 +28,15 @@ class Game:
         self.sr = sr.VoiceGoogleSR()
 
         self.words_name = ['chatbot','mutter','robot']
-        self.words_start = ['start']
+        self.words_start = ['start','talk','answer','reply'] # talk answer reply
         self.words_stop = ['stop','exit','quit','quiet','silence']
         self.words_start += self.words_name
         self.count_max = 5
-
+        '''
         self.time_start = 0
         self.time_end = 0
         self.time_in_seconds = 5
+        '''
 
     def loop(self):
         count = 0
