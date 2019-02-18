@@ -32,6 +32,12 @@ class Game:
         self.words_stop = ['stop','exit','quit','quiet','silence']
         self.words_start += self.words_name
         self.count_max = 5
+
+        self.blacklist = [
+            "i don't know",
+            "i do not know"
+        ]
+
         '''
         self.time_start = 0
         self.time_end = 0
@@ -60,7 +66,12 @@ class Game:
                             xx.append(i)
                     out = ' '.join(xx)
                     print(out)
-                    self.voice.speech_out(out)
+                    blacklisted = False
+                    for jj in self.blacklist:
+                        if out.startswith(jj):
+                            blacklisted = True
+                    if not blacklisted:
+                        self.voice.speech_out(out)
             count -= 1
             if count <= 0 :
                 print('quiet')

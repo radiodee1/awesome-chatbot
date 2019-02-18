@@ -237,6 +237,13 @@ class BeamHelper:
         self.decoder = None
         self.encoder_out = None
 
+        self.bad_sentence = [
+            "sol i don't know",
+            "6478 3929 7337"
+            "i don't know",
+            "i do not know"
+        ]
+
     def get_next(self, last_word, hidden_state):
         """
         Given the last item in a sequence and the hidden state used to generate the sequence
@@ -281,7 +288,28 @@ class BeamHelper:
                         pass
             # move down one layer (to the next word in sequence up to maxlen )
             beam = next_beam
-        best_score, best_sequence, _ = max(beam)  # get highest scoring sequence
+
+
+        while True:
+            best_score, best_sequence, _ = max(beam)
+            b = []
+            bb = []
+            for ii in best_sequence:
+                if ii not in [UNK_token, SOS_token, EOS_token, 74]:
+                    b.append(str(ii.item()))
+                    #bb.append(ii.item())
+            blacklisted = False
+            for jj in self.bad_sentence:
+
+                if ' '.join(b).startswith(jj):
+                    blacklisted = True
+            if not blacklisted:
+                ## convert b to tensor!!
+                #best_sequence = torch.LongTensor(bb)
+                break
+            beam.heap.pop(0)
+
+        #best_score, best_sequence, _ = max(beam)  # get highest scoring sequence
         return best_score, best_sequence
 
     def __call__(self, decoder, encoder_out, encoder_hidden):
