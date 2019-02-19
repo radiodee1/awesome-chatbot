@@ -21,6 +21,16 @@ The task #1 experiment worked with the recurrent output code. The #19 tests stil
 10/6/18 - I've completed some code that runs on hadoop and helps clean input from the reddit download. I have been
 keeping it in a separate repository. I will include a link to the github repository here: https://github.com/radiodee1/awesome-hadoop-reddit .
 
+2/19/19 - I stopped working on the babi code and focused on the sequence to sequence code. 
+The code originally ran with batches of 50 sentence pairs at a time. 
+This code ran but I could not tell if it was training properly. 
+I changed the decoder so that while the encoder ran with batches the decoder ran one sentence pair at a time. 
+With this code training is very slow and at first I could not tell if it was learning at all. 
+I found out though, that this model does learn the rudimentary chatbot task if it is trained long enough. 
+I am currently training for several days at a time. 
+It turned out that teacher-forcing was very important for this training process. 
+I will keep working on this sequence to sequence model and if I have time I will return to the babi code and try to finish task # 19.
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
