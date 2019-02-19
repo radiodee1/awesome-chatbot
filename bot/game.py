@@ -53,6 +53,7 @@ class Game:
                 count = self.count_max
                 self.voice.speech_out('yes')
                 print('starting')
+                i = ''
             if self.compare_sentence_to_list(i, self.words_stop):
                 count = 0
                 print('stopping')
