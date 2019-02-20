@@ -2768,8 +2768,8 @@ class NMT:
                 self._auto_stop()
 
         if self.do_load_babi:
-            print('train list:', ', '.join(self.score_list_training))
-            print('valid list:', ', '.join(self.score_list))
+            print('train list:', ', '.join(self.score_list_training[-100:]))
+            print('valid list:', ', '.join(self.score_list[-100:]))
         print('dropout:',hparams['dropout'])
         print('learning rate:', hparams['learning_rate'])
         print('weight decay:', hparams['weight_decay'])
