@@ -34,8 +34,8 @@ class Game:
         self.count_max = 5
 
         self.blacklist = [
-            "i don't know",
-            "i do not know"
+            #"i don't know",
+            #"i do not know"
         ]
 
         '''
