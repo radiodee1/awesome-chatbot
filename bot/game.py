@@ -7,7 +7,7 @@ import os
 sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
 
-import model.seq_2_seq_beam as model
+import model.seq_2_seq as model
 import game_sr as sr
 import game_voice as v
 import model.tokenize_weak as tokenize_weak
@@ -38,11 +38,7 @@ class Game:
             #"i do not know"
         ]
 
-        '''
-        self.time_start = 0
-        self.time_end = 0
-        self.time_in_seconds = 5
-        '''
+
 
     def loop(self):
         count = 0
