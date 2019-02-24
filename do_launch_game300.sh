@@ -8,3 +8,5 @@ TEST_3="--mode=long --basename=test_s2s_long_b_d300_v15000 --load-babi --lr=0.00
 
 cd bot
 python3.6 game.py $TEST_1  2> /dev/null
+
+## this file must be hard coded for any model you want to run
