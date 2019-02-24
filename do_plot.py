@@ -35,7 +35,7 @@ if __name__ == '__main__':
         do_title_graph = True
 
     arg_filename = '/'.join( hparams['save_dir'].split('/')[1:]) + '/' + 'test*.json'
-    arg_title = 'Autoencode Accuracy vs. Steps'
+    arg_title = 'Loss and Accuracy vs. Steps'
 
     if do_filelist:
         arg_filename = str(','.join(args['files']))
