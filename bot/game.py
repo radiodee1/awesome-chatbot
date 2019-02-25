@@ -28,10 +28,10 @@ class Game:
         self.sr = sr.VoiceGoogleSR()
 
         self.words_name = ['chatbot','mutter','robot']
-        self.words_start = ['start','talk','answer','reply'] # talk answer reply
+        self.words_start = ['start','talk','answer','reply','hello','hi']
         self.words_stop = ['stop','exit','quit','quiet','silence']
         self.words_start += self.words_name
-        self.count_max = 5
+        self.count_max = 15
 
         self.blacklist = [
             #"i don't know",
@@ -45,7 +45,7 @@ class Game:
         while True:
             i = self.sr.voice_detection()
             i = tokenize_weak.format(i)
-            if self.compare_sentence_to_list(i, self.words_start):
+            if self.compare_sentence_to_list(i, self.words_start) and count <= 0:
                 count = self.count_max
                 self.voice.speech_out('yes')
                 print('starting')
