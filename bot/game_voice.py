@@ -20,6 +20,10 @@ class VoiceOut:
             os.system("mpg321 " + path + " > /dev/null 2>&1 ")
         pass
 
+    def beep_out(self):
+        path = os.path.join(self.dir_out,"beep.mp3")
+        os.system("mpg321 " + path + " > /dev/null 2>&1 ")
+
 if __name__ == '__main__':
     v = VoiceOut()
     v.speech_out("hello")

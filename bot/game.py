@@ -37,7 +37,7 @@ class Game:
             #"i don't know",
             #"i do not know"
         ]
-
+        self.voice.beep_out()
 
 
     def loop(self):
@@ -93,21 +93,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    '''
-    print('enter one file path for input of saved weights')
-    #parser = argparse.ArgumentParser(description='Chatbot game program.')
-    #parser.add_argument('weights', help='file for saved weights and biases.')
-
-    #args = parser.parse_args()
-    #args = vars(args)
-    #name = str(args['weights'])
-    print(sys.argv)
-    name = str(sys.argv[1])
-    print(name)
-    name = name.split('/')[-1]
-    name = name.split('.')[0]
-    base_filename = name
-    '''
+    
     print('enter command line options for NMT class')
     g = Game()
     g.loop()
