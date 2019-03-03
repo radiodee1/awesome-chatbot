@@ -1033,6 +1033,7 @@ class NMT:
         parser.add_argument('--single', help='force single execution instead of batch execution.', action='store_true')
         parser.add_argument('--teacher-forcing', help='set forcing for recurrent output')
         parser.add_argument('--multiplier', help='learning rate multiplier for decoder.')
+        parser.add_argument('--length', help='number of tokens per sentence.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1147,6 +1148,8 @@ class NMT:
             teacher_forcing_ratio = float(self.args['teacher_forcing'])
         if self.args['multiplier'] is not None:
             hparams['multiplier'] = float(self.args['multiplier'])
+        if self.args['length'] is not None:
+            hparams['tokens_per_sentence'] = int(self.args['length'])
         if self.printable == '': self.printable = hparams['base_filename']
         #if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 

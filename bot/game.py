@@ -93,7 +93,7 @@ class Game:
 
 
 if __name__ == '__main__':
-    
+
     print('enter command line options for NMT class')
     g = Game()
     g.loop()
