@@ -79,7 +79,22 @@ directions = [
     'e'
 ]
 
+consonants = [
+    'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'
+]
+
+vowels = [ 'a', 'e', 'i', 'o', 'u']
+
+punctuation = [ '.', ',', '!', '?', '"', "'"]
+
 v = []
+
+def make_no_vocab_two_lists(list_first, list_second):
+    l = []
+    for i in list_second:
+        for j in list_first:
+            l.append(j + i)
+    return l
 
 def make_vocab(train_file, order=False, read_glove=False, contractions=False, no_limit=False):
     global v
@@ -184,7 +199,7 @@ def save_vocab(v, babi=False, save_big=True, both=False):
 
     name = hparams['data_dir'] + hparams['vocab_name']
 
-    if name == train_file[0]:
+    if not no_vocab and name == train_file[0]:
         name += '.voc.txt'
 
     original_name = name[:]
@@ -274,6 +289,8 @@ if __name__ == '__main__':
     parser.add_argument('--no-limit', help='do not constrain vocab size', action='store_true')
     parser.add_argument('--limit', help='new limit')
     parser.add_argument('--both-files',help='save "babi" and "big" named vocab files.', action='store_true')
+    parser.add_argument('--no-vocab', help='save parts of words in stead of regular vocabulary.', action='store_true')
+
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -285,6 +302,7 @@ if __name__ == '__main__':
     use_contractions = False
     store_two_files = False
     no_limit = False
+    no_vocab = False
 
     if args['babi']:
         pass
@@ -332,6 +350,9 @@ if __name__ == '__main__':
     if args['limit'] is not None:
         hparams['num_vocab_total'] = int(args['limit'])
 
+    if args['no_vocab']:
+        no_vocab = True
+
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
     babi_file3 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
@@ -348,6 +369,19 @@ if __name__ == '__main__':
     TO = '../data/embed.txt'
 
     v = []
+
+    if no_vocab:
+        print('non-standard vocabulary.')
+        v += make_no_vocab_two_lists(vowels, vowels) ## long vowel sounds
+        v += make_no_vocab_two_lists(consonants, vowels) ## start of sylable
+        v += make_no_vocab_two_lists(["'"], consonants) ## end of contractions
+        v += vowels
+        v += consonants
+        v += punctuation
+        save_vocab(v, both=True)
+        print(len(v))
+        print(v)
+        exit()
 
     if True:
         v = make_vocab(train_file, order=order, read_glove=read_glove, contractions=use_contractions, no_limit=no_limit)
