@@ -1649,7 +1649,7 @@ class NMT:
             i += 1
             pass
 
-        l.extend([lang.word2index[hparams['eow']], lang.word2index[hparams['unk']]])
+        l.extend([lang.word2index[hparams['eow']]  ]) #, lang.word2index[hparams['unk']]])
         return l
 
 
@@ -2319,7 +2319,7 @@ class NMT:
         out = []
         if just_duplicates:
             for x in sentence:
-                if x == ll : #and (self.do_no_vocabulary and x != hparams['unk']):
+                if x == ll or (self.do_no_vocabulary and x == hparams['unk']):
                     pass
                 else:
                     if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk'] and x != hparams['eow']:
