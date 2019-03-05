@@ -693,13 +693,13 @@ class WrapMemRNN: #(nn.Module):
 
     def test_embedding(self, num=None):
 
-        if num is None:
-            num = 0 #EOS_token  # magic number for testing = garden
+        if num is None or True:
+            num = torch.LongTensor([0]) #EOS_token  # magic number for testing = garden
         e = self.embed(num)
         print('encoder :',num)
         print(not self.embed.weight.requires_grad,': grad freeze')
         print(e.size(), 'test embedding')
-        print(e[0, 0, 0:10])  # print first ten values
+        print(e[ 0, 0:10])  # print first ten values
 
     def wrap_encoder_module(self, question_variable, length_variable):
 
@@ -970,7 +970,7 @@ class NMT:
         self.do_load_once = True
         self.do_no_vocabulary = False
 
-        self.do_clip_grad_norm = True
+        self.do_clip_grad_norm = False
 
         self.printable = ''
 
@@ -1146,7 +1146,6 @@ class NMT:
         if self.args['length'] is not None:
             hparams['tokens_per_sentence'] = int(self.args['length'])
             MAX_LENGTH = hparams['tokens_per_sentence']
-            print(MAX_LENGTH,'ML')
         if self.args['no_vocab']:
             self.do_no_vocabulary = True
         if self.printable == '': self.printable = hparams['base_filename']
@@ -1678,9 +1677,8 @@ class NMT:
 
             if self.do_no_vocabulary:
                 sent.extend(self.chop_word_for_index(lang, word))
-        #print(sent)
 
-        if len(sent) >= MAX_LENGTH and add_eos: #not self.do_load_babi:
+        if len(sent) >= MAX_LENGTH and add_eos:
             sent = sent[:MAX_LENGTH]
             if len(sent) > 1 and (sent[-1] != EOS_token or sent[-1] == UNK_token):
                 sent[-1] = EOS_token
@@ -1696,6 +1694,8 @@ class NMT:
                 sent.append(0)
         if self.do_load_recurrent:
             sent = sent[:MAX_LENGTH]
+
+        if not self.model_0_wra.model_6_dec.train: print(sent)
 
         if return_string:
             return sentence
@@ -2277,11 +2277,13 @@ class NMT:
         return False
 
     def _test_embedding(self, num=None, exit=True):
+        '''
         if num is None:
-            num = 'garden' #55 #hparams['unk']
+            num = 'dave' #55 #hparams['unk']
         num = self.variableFromSentence(self.output_lang, str(num), pad=1)
         print('\n',num)
-        self.model_0_wra.test_embedding(num)
+        '''
+        self.model_0_wra.test_embedding()
         if exit: exit()
 
     def _print_control(self, iter):
@@ -2321,7 +2323,13 @@ class NMT:
                     pass
                 else:
                     if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk']: out.append(x)
+                    if x == hparams['unk']:
+                        print('!!')
+                        out.append(' ')
                 ll = x
+
+            if self.do_no_vocabulary:
+                return ''.join(out)
             return ' '.join(out)
 
         ## shorten !!!
@@ -2351,6 +2359,9 @@ class NMT:
             if last != i :
                 saved.append(i)
             last = i
+        if self.do_no_vocabulary:
+            return ''.join(out)
+
         return ' '.join(out)
 
     def _pad_list(self, lst, val=None):
@@ -2834,6 +2845,7 @@ class NMT:
             print('ref:', choice[2])
         else:
             print('tgt:', choice[1])
+        '''
         nums = self.variablesFromPair(choice)
         if self.do_load_babi:
             question = nums[1]
@@ -2841,6 +2853,7 @@ class NMT:
         if not self.do_load_babi:
             question = nums[0]
             target = None
+        '''
         words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
@@ -2851,6 +2864,7 @@ class NMT:
         pass
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, lengths=None, max_length=MAX_LENGTH):
+
 
         input_variable = sentence
         #question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
@@ -2868,6 +2882,7 @@ class NMT:
 
         if not hparams['beam']:
             outputs = [ans]
+
         else:
             outputs = prune_tensor(outputs, 4).transpose(0,2)
 
@@ -2882,9 +2897,11 @@ class NMT:
                     output = outputs[db][di]
 
                     output = output.permute(1, 0)
+                    #print(output,'out')
 
                     if not hparams['beam']:
                         ni = torch.argmax(output, dim=0)[0]
+                        #print(ni,'ni')
                     else:
                         ni = output[di]
 
@@ -2905,8 +2922,11 @@ class NMT:
                         ######################
                         if int(ni) == 0 and False:
                             print(ni, '<--')
-                        if True:
+                        if int(ni) != UNK_token:
                             decoded_words.append(self.output_lang.index2word[int(ni)])
+                        if int(ni) == UNK_token:
+                            decoded_words.append(' ')
+                            print('!!')
 
         return decoded_words, None #decoder_attentions[:di + 1]
 

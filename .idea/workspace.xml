@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_novocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_novocab.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -57,8 +54,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="1791" lean-forward="true" selection-start-line="1791" selection-end-line="1791" />
+            <state relative-caret-position="224">
+              <caret line="2885" selection-start-line="2885" selection-end-line="2885" />
             </state>
           </provider>
         </entry>
@@ -120,20 +117,8 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>Encoder</find>
-      <find>do_clip_grad_norm</find>
-      <find>multiplier</find>
-      <find>long</find>
-      <find>task_train_epochs</find>
-      <find>model</find>
-      <find>load_checkpoint</find>
-      <find>setu</find>
-      <find>best_accuracy_dict</find>
       <find>pairs_train</find>
       <find>score_list</find>
-      <find>_test_embedding</find>
-      <find>test_embedding</find>
-      <find>_shorten</find>
       <find>train_file</find>
       <find>task_choose_files</find>
       <find>setup_for_babi_test</find>
@@ -145,11 +130,23 @@
       <find>memory_hops</find>
       <find>model_6_dec</find>
       <find>while</find>
-      <find>_show_sample</find>
       <find>group</find>
       <find>chop_word_for_index</find>
-      <find>variableFromSentence</find>
       <find>indexesFromSentence</find>
+      <find>lengths</find>
+      <find>_show_sample</find>
+      <find>_shor</find>
+      <find>_test_e</find>
+      <find>update_result_file</find>
+      <find>_test_embedding</find>
+      <find>variableFromSentence</find>
+      <find>test_embedding</find>
+      <find>_shorten</find>
+      <find>unk</find>
+      <find>_embedding</find>
+      <find>addSentence</find>
+      <find>readLangs</find>
+      <find>_sh</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -665,8 +662,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="1791" lean-forward="true" selection-start-line="1791" selection-end-line="1791" />
+        <state relative-caret-position="224">
+          <caret line="2885" selection-start-line="2885" selection-end-line="2885" />
         </state>
       </provider>
     </entry>
