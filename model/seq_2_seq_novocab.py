@@ -607,7 +607,7 @@ class WrapMemRNN: #(nn.Module):
         self.all_mem = None
         self.last_mem = None  # output of mem unit
         self.prediction = None  # final single word prediction
-        self.memory_hops = hparams['babi_memory_hops']
+        #self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
         self.pass_no_token = False
 
@@ -777,13 +777,6 @@ class WrapMemRNN: #(nn.Module):
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
 
-                if False:
-                    decoder_hidden_list = torch.cat([decoder_hidden_x[0,:,:], decoder_hidden_x[1,:,:]], dim=-1)
-                    decoder_hidden_x = self.model_6_dec.out_mod(decoder_hidden_list)
-                    decoder_hidden_x = torch.softmax(decoder_hidden_x, dim=-1)
-                    decoder_hidden_x = torch.cat([decoder_hidden_x[:,:self.hidden_size],decoder_hidden_x[:,self.hidden_size:]], dim=0)
-                    decoder_hidden_x = prune_tensor(decoder_hidden_x, 3).permute(1,0,2)
-
                 sent_out = []
 
                 #teacher_out = []
@@ -871,7 +864,7 @@ class Lang:
 class NMT:
     def __init__(self):
 
-        global teacher_forcing_ratio
+        global teacher_forcing_ratio, MAX_LENGTH
 
         self.model_0_wra = None
         #self.opt_1 = None
@@ -896,7 +889,7 @@ class NMT:
         self.hidden_size = hparams['units']
         self.start_epoch = 0
         self.first_load = True
-        self.memory_hops = 5
+        #self.memory_hops = 5
         self.start = 0
         self.this_epoch = 0
         self.true_epoch = 0
@@ -975,6 +968,7 @@ class NMT:
         self.do_record_loss = False
         self.do_print_control = False
         self.do_load_once = True
+        self.do_no_vocabulary = False
 
         self.do_clip_grad_norm = True
 
@@ -1034,6 +1028,7 @@ class NMT:
         parser.add_argument('--teacher-forcing', help='set forcing for recurrent output')
         parser.add_argument('--multiplier', help='learning rate multiplier for decoder.')
         parser.add_argument('--length', help='number of tokens per sentence.')
+        parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1150,6 +1145,10 @@ class NMT:
             hparams['multiplier'] = float(self.args['multiplier'])
         if self.args['length'] is not None:
             hparams['tokens_per_sentence'] = int(self.args['length'])
+            MAX_LENGTH = hparams['tokens_per_sentence']
+            print(MAX_LENGTH,'ML')
+        if self.args['no_vocab']:
+            self.do_no_vocabulary = True
         if self.printable == '': self.printable = hparams['base_filename']
 
         ''' reset lr vars if changed from command line '''
@@ -1572,15 +1571,16 @@ class NMT:
                 if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 if lang3 is not None:
                     if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
+
                 for word in self.pairs[p][0].split(' '):
-                    if word in self.vocab_lang.word2index and word not in blacklist_vocab:
+                    if (word in self.vocab_lang.word2index and word not in blacklist_vocab) or self.do_no_vocabulary:
                         a.append(word)
                     elif skip_unk:
                         skip = True
                     elif not omit_unk:
                         a.append(hparams['unk'])
                 for word in self.pairs[p][1].split(' '):
-                    if word in self.vocab_lang.word2index and word not in blacklist_vocab:
+                    if (word in self.vocab_lang.word2index and word not in blacklist_vocab) or self.do_no_vocabulary:
                         b.append(word)
                     elif skip_unk:
                         skip = True
@@ -1589,14 +1589,14 @@ class NMT:
                 pairs = [' '.join(a), ' '.join(b)]
                 if lang3 is not None:
                     for word in self.pairs[p][2].split(' '):
-                        if word in self.vocab_lang.word2index and word not in blacklist_vocab:
+                        if (word in self.vocab_lang.word2index and word not in blacklist_vocab) or self.do_no_vocabulary:
                             c.append(word)
                         elif skip_unk:
                             skip = True
                         elif not omit_unk:
                             c.append(hparams['unk'])
                     pairs.append( ' '.join(c) )
-                if not skip: new_pairs.append(pairs)
+                if not skip or self.do_no_vocabulary: new_pairs.append(pairs)
             self.pairs = new_pairs
 
         else:
@@ -1617,6 +1617,42 @@ class NMT:
 
         return self.input_lang, self.output_lang, self.pairs
 
+    def chop_word_for_index(self,lang, word):
+        w = word
+
+        l = []
+        i = 0
+        for _ in range(len(w) ):
+
+            if i >= len(w): break
+            part = w[i: i + 3]
+            part = ''.join(part)
+            if part in lang.word2index:
+                index = lang.word2index[part]
+                l.append(index)
+                i += 3
+                continue
+
+            if i >= len(w): break
+            part = w[i: i + 2]
+            part = ''.join(part)
+            if part in lang.word2index:
+                index = lang.word2index[part]
+                l.append(index)
+                i += 2
+                continue
+
+            if i >= len(w): break
+            part = w[i]
+            if part in lang.word2index:
+                index = lang.word2index[part]
+                l.append(index)
+            i += 1
+            pass
+
+        l.append(lang.word2index[hparams['unk']])
+        return l
+
 
     def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1, no_padding=False):
         if pad == -1:
@@ -1624,26 +1660,35 @@ class NMT:
         else:
             MAX_LENGTH = pad
         s = sentence.split(' ')
+
         sent = []
         if add_sos and len(s) > 0 and s[0] != hparams['sol']: sent = [ SOS_token ]
         for word in s:
-            if word in lang.word2index and word not in blacklist_sent:
-                if word == hparams['eol']: word = EOS_token
-                elif word == hparams['sol']: word = SOS_token
-                else: word = lang.word2index[word]
-                sent.append(word)
-            elif skip_unk:
-                print('-')
-                return None
-            elif not self.do_hide_unk:
-                sent.append(lang.word2index[hparams['unk']])
+            if not self.do_no_vocabulary:
+                if word in lang.word2index and word not in blacklist_sent:
+                    if word == hparams['eol']: word = EOS_token
+                    elif word == hparams['sol']: word = SOS_token
+                    else: word = lang.word2index[word]
+                    sent.append(word)
+                elif skip_unk:
+                    print('-')
+                    return None
+                elif not self.do_hide_unk:
+                    sent.append(lang.word2index[hparams['unk']])
+
+            if self.do_no_vocabulary:
+                sent.extend(self.chop_word_for_index(lang, word))
+        #print(sent)
+
         if len(sent) >= MAX_LENGTH and add_eos: #not self.do_load_babi:
             sent = sent[:MAX_LENGTH]
-            if sent[-1] != EOS_token:
+            if len(sent) > 1 and (sent[-1] != EOS_token or sent[-1] == UNK_token):
                 sent[-1] = EOS_token
-        elif add_eos: #self.do_load_babi :
-            if sent[-1] != EOS_token:
+        elif add_eos:
+            if sent[-1] != EOS_token : #or sent[-1] != UNK_token:
                 sent.append(EOS_token)
+            if sent[-1] == UNK_token:
+                sent[-1] = EOS_token
             #print(sent,'<<<<')
         if len(sent) == 0: sent.append(0)
         if pad == -1 and not no_padding:
@@ -1655,8 +1700,6 @@ class NMT:
         if return_string:
             return sentence
         return sent
-
-        #return [lang.word2index[word] for word in sentence.split(' ')]
 
     def zeroPadding(self, l, fillvalue=UNK_token):
         return list(itertools.zip_longest(*l, fillvalue=fillvalue))
@@ -1674,25 +1717,27 @@ class NMT:
 
     # Returns padded input sequence tensor and lengths
     def inputVar(self, l, voc):
-        #pad = hparams['tokens_per_sentence']
+
         add_eos = True
 
-        indexes_batch = [self.indexesFromSentence(voc, sentence,add_eos=add_eos) for sentence in l]
+        indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=True) for sentence in l]
         lengths = []
+        if False:
+            for indexes in indexes_batch:
+                num = 0
+                test = 0
 
-        for indexes in indexes_batch:
-            num = 0
-            test = 0
-            for z in indexes: #.split(' '):
-                if z == self.output_lang.word2index[hparams['eol']] and test == 0:
-                    test = num
-                num += 1
-            lengths.append(test + 1)
+                for z in indexes: #.split(' '):
+                    if z == self.output_lang.word2index[hparams['eol']] and test == 0:
+                        test = num
+                    num += 1
+                lengths.append(test + 1)
+        lengths = [len(indexes) for indexes in indexes_batch]
         lengths = torch.tensor(lengths) # [len(indexes) for indexes in indexes_batch])
+
         padList = self.zeroPadding(indexes_batch)
         padVar = torch.LongTensor(padList)
 
-        #print(padVar.size(), lengths.size(), 'pad,l')
         return padVar, lengths
 
     # Returns padded target sequence tensor, padding mask, and max target length
@@ -1729,13 +1774,23 @@ class NMT:
 
     # Returns all items for a given batch of pairs
     def batch2TrainData(self, voc, pair_batch):
-        pair_batch.sort(key=lambda x: len(x[0].split(" ")), reverse=True)
-        input_batch, output_batch = [], []
-        pad = hparams['tokens_per_sentence']
+
+        def local_func(x):
+            z = self.indexesFromSentence(self.output_lang, x[0], add_eos=True, pad=-1, no_padding=True)
+
+            return len(z)
+
         add_eos = True
+        pad = hparams['tokens_per_sentence']
+
+        if not self.do_no_vocabulary:
+            pair_batch.sort(key=lambda x: len(x[0].split(" ")), reverse=True)
+        else:
+            pair_batch = sorted(pair_batch, key=local_func, reverse=True)
+
+        input_batch, output_batch = [], []
 
         for pair in pair_batch:
-            #in_val = self.variableFromSentence(self.output_lang, pair[0],add_eos=add_eos, pad=0)
 
             input_batch.append(pair[0])
             #output_batch.append(pair[2]) ## 1
@@ -1841,15 +1896,16 @@ class NMT:
 
     def variableFromSentence(self, lang, sentence, add_eos=True, pad=0, skip_unk=False):
         max = hparams['tokens_per_sentence']
+
         indexes = self.indexesFromSentence(lang, sentence, skip_unk=skip_unk, add_eos=add_eos, pad=pad)
         if indexes is None and skip_unk: return indexes
-        #if add_eol and len(indexes) < pad: indexes.append(EOS_token)
+
         sentence_len = len(indexes)
         while pad > sentence_len:
             indexes.append(UNK_token)
             pad -= 1
-        result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
-        #print(result.size(),'r')
+        result = Variable(torch.LongTensor(indexes).unsqueeze(1))
+
         if hparams['cuda']:
             return result[:max].cuda()
         else:
@@ -2333,8 +2389,8 @@ class NMT:
         return loss, nTotal.item()
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
-
-        question_variable = None
+        #max_target_length = [hparams['tokens_per_sentence'] for _ in max_target_length]
+        #question_variable = None
 
         if criterion is not None : #or not self.do_test_not_train:
             wrapper_optimizer_1.zero_grad()
@@ -2363,20 +2419,20 @@ class NMT:
                 if True:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
-                    mask = mask.transpose(1,0)
+                    #mask = mask.transpose(1,0)
 
-                    for i in range(ans.size(0)):
-                        #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
+                    for i in range(ans.size(0)): #ans.size(0)
+
                         #print(max_target_length,'mtl-size')
-                        z = max(max_target_length) #[i]
+                        z = min([ans[i].size(0),target_variable[i].size(0)]) #max(max_target_length) #[i]
                         #print(z, i,'z,i')
                         a_var = ans[i][:z]
                         t_var = target_variable[i][:z]
-                        m_var = mask[i][:z]
+                        #m_var = mask[i][:z]
 
                         if hparams['cuda']:
                             t_var = t_var.cuda()
-                            m_var = m_var.cuda()
+                            #m_var = m_var.cuda()
 
                         #print(a_var.size(), t_var.size(), m_var.size(),'atm')
 
@@ -2384,59 +2440,15 @@ class NMT:
                             l = criterion(a_var, t_var)
                             loss += l
                             n_tot += t_var.size(0)
-                        except ValueError:
+                        except ValueError as e:
                             print('skip for size...', z)
+                            print(e)
+                            print(a_var.size(), t_var.size(),'a,t')
+                            exit()
                             pass
                         #print(l, loss, n_tot, 'loss')
 
-                if False:
-                    ans = ans.transpose(1,0)
-                    target_variable = target_variable.transpose(1,0)
-                    mask = mask.transpose(1,0)
 
-                    for i in range(ans.size(0)):
-                        #print(ans[i].size(), target_variable[i].size(), mask[i].size(),'a,tv,m')
-                        #print(max_target_length,'mtl-size')
-                        z = max(max_target_length) #[i]
-                        #print(z, i,'z,i')
-                        a_var = ans[i][:z]
-                        t_var = target_variable[i][:z]
-                        m_var = mask[i][:z]
-
-                        if hparams['cuda']:
-                            t_var = t_var.cuda()
-                            m_var = m_var.cuda()
-
-                        #print(a_var.size(), t_var.size(), m_var.size(),'atm')
-
-                        try:
-                            l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
-                            loss += l
-                        except :
-                            print('skip for size...', z)
-                            pass
-                        #print(l, loss, n_tot, 'loss')
-
-                if False:
-                    for i in range(ans.size(0)):
-                        z = max(max_target_length) #[i]
-                        if z < i + 1:
-                            print('skip for length')
-                            continue
-                        #print(z, i,'z,i')
-                        a_var = ans[i]
-                        t_var = target_variable[i]
-                        m_var = mask[i]
-
-                        # print(a_var.size(), t_var.size(), m_var.size(),'atm')
-
-                        try:
-                            l, n_tot = self.maskNLLLoss(a_var, t_var, m_var)
-                            loss += l
-                        except:
-                            print('skip for size...')
-                            pass
-                        # print(l, loss, n_tot, 'loss')
 
             #ans = ans.permute(1,0)
 
@@ -2792,9 +2804,11 @@ class NMT:
             '''
             print(choice)
             print('----')
-            print(group)
-            #exit()
             '''
+            #print('choice', choice)
+            #print('group', group)
+            #exit()
+
 
         input_variable = group[0]
         ques_variable = None  # group[2]
@@ -3071,6 +3085,8 @@ class NMT:
             else:
                 self.best_accuracy_graph_size = self.epoch_length
             x = max(int(k) for k, v in self.best_accuracy_dict.items() )
+            if self.best_accuracy_graph_size is None or self.best_accuracy_graph_size < 1:
+                self.best_accuracy_graph_size = 1
             x = int(int(x) / self.best_accuracy_graph_size)
 
             if self.args['json_record_offset'] is None:
@@ -3088,6 +3104,8 @@ class NMT:
             else:
                 self.best_loss_graph_size = self.epoch_length
             x = max(int(k) for k, v in self.best_loss_dict.items() )
+            if self.best_loss_graph_size is None or self.best_loss_graph_size < 1:
+                self.best_loss_graph_size = 1
             x = int(int(x) / self.best_loss_graph_size)
             self.best_loss_record_offset = x
 
@@ -3095,6 +3113,7 @@ class NMT:
 if __name__ == '__main__':
 
     n = NMT()
+
 
     try:
         mode = ''
@@ -3159,6 +3178,13 @@ if __name__ == '__main__':
         if n.do_test_not_train and n.do_load_babi:
             print('test not train')
             n.setup_for_babi_test()
+
+            l = "can't"
+            t = n.chop_word_for_index(n.output_lang, l)
+            print(t)
+            for i in t:
+                print(n.output_lang.index2word[i])
+
             exit()
 
         if n.do_train:
@@ -3173,13 +3199,15 @@ if __name__ == '__main__':
             n.load_checkpoint()
             n.task_interactive()
 
+        '''
         if n.do_review:
             n.task_review_weights(n.pairs,stop_at_fail=False)
 
+        
         if n.do_convert:
             n.load_checkpoint()
             n.task_convert()
-
+        '''
         if n.do_infer:
             n.load_checkpoint()
             choice = random.choice(n.pairs)[0]

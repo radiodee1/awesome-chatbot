@@ -40,7 +40,7 @@ hparams = {
     'dropout': 0.0,
     'learning_rate': 0.01, # adam = 0.001, adagrad = 0.01
     'weight_decay': 0, #5e-4,
-    'tokens_per_sentence': 10, #32,
+    'tokens_per_sentence': 10, #10,
     'batch_constant': 512, #
     'zero_start': False,
     'cuda': False,

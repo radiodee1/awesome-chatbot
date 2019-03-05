@@ -79,6 +79,8 @@ directions = [
     'e'
 ]
 
+special_tokens = [ hparams['unk'], hparams['sol'], hparams['eol'] ]
+
 consonants = [
     'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'
 ]
@@ -372,6 +374,7 @@ if __name__ == '__main__':
 
     if no_vocab:
         print('non-standard vocabulary.')
+        v = special_tokens[:]
         v += make_no_vocab_two_lists(vowels, vowels) ## long vowel sounds
         v += make_no_vocab_two_lists(consonants, vowels) ## start of sylable
         v += make_no_vocab_two_lists(["'"], consonants) ## end of contractions
