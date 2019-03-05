@@ -2319,7 +2319,7 @@ class NMT:
         out = []
         if just_duplicates:
             for x in sentence:
-                if x == ll:
+                if x == ll : #and (self.do_no_vocabulary and x != hparams['unk']):
                     pass
                 else:
                     if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk']: out.append(x)
@@ -3198,13 +3198,13 @@ if __name__ == '__main__':
         if n.do_test_not_train and n.do_load_babi:
             print('test not train')
             n.setup_for_babi_test()
-
-            l = "can't"
-            t = n.chop_word_for_index(n.output_lang, l)
+            '''
+            l = ['unk', 't','h','e','unk','d','a','v','e', 'eol']
+            t = n._shorten( l, just_duplicates=True)
             print(t)
             for i in t:
-                print(n.output_lang.index2word[i])
-
+                print(i) #n.output_lang.index2word[i])
+            '''
             exit()
 
         if n.do_train:

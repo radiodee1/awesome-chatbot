@@ -54,8 +54,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="2885" selection-start-line="2885" selection-end-line="2885" />
+            <state relative-caret-position="296">
+              <caret line="2321" column="30" selection-start-line="2321" selection-start-column="30" selection-end-line="2321" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -141,12 +141,12 @@
       <find>_test_embedding</find>
       <find>variableFromSentence</find>
       <find>test_embedding</find>
-      <find>_shorten</find>
       <find>unk</find>
       <find>_embedding</find>
       <find>addSentence</find>
       <find>readLangs</find>
       <find>_sh</find>
+      <find>_shorten</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -662,8 +662,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="2885" selection-start-line="2885" selection-end-line="2885" />
+        <state relative-caret-position="296">
+          <caret line="2321" column="30" selection-start-line="2321" selection-start-column="30" selection-end-line="2321" selection-end-column="30" />
         </state>
       </provider>
     </entry>
