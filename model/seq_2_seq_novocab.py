@@ -1649,7 +1649,7 @@ class NMT:
             i += 1
             pass
 
-        l.append(lang.word2index[hparams['unk']])
+        l.extend([lang.word2index[hparams['eow']], lang.word2index[hparams['unk']]])
         return l
 
 
@@ -2322,9 +2322,10 @@ class NMT:
                 if x == ll : #and (self.do_no_vocabulary and x != hparams['unk']):
                     pass
                 else:
-                    if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk']: out.append(x)
-                    if x == hparams['unk']:
-                        print('!!')
+                    if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk'] and x != hparams['eow']:
+                        out.append(x)
+                    if x == hparams['eow']:
+                        #print('!!')
                         out.append(' ')
                 ll = x
 

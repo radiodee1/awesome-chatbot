@@ -79,7 +79,7 @@ directions = [
     'e'
 ]
 
-special_tokens = [ hparams['unk'], hparams['sol'], hparams['eol'] ]
+special_tokens = [ hparams['unk'], hparams['sol'], hparams['eol'], hparams['eow'] ]
 
 consonants = [
     'b', 'c', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'w', 'x', 'y', 'z'

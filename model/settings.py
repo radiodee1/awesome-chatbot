@@ -33,6 +33,7 @@ hparams = {
     'sol':'sol',
     'eol':'eol',
     'unk':'unk',
+    'eow':'eow',  # end of word
     'units': 100, #128, #256 , #64,
     'layers':2,
     'decoder_layers': 2,
