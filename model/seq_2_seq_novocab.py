@@ -1388,6 +1388,7 @@ class NMT:
 
                 out , _ = self.evaluate(None, None, line_out,question=ques_variable,target_variable=target_variable,lengths=lengths)
                 print(out)
+                print(self._shorten(out, just_duplicates=True))
 
                 if call_from_script:
                     out = self._shorten(out, just_duplicates=False)
@@ -1408,6 +1409,8 @@ class NMT:
 
     def prep_blacklist_supress(self):
         global blacklist_supress
+        if self.do_no_vocabulary: return 
+
         bl = []
         if isinstance(blacklist_supress[0][0],str):
             for i in blacklist_supress:
