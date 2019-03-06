@@ -1409,7 +1409,7 @@ class NMT:
 
     def prep_blacklist_supress(self):
         global blacklist_supress
-        if self.do_no_vocabulary: return 
+        if self.do_no_vocabulary: return
 
         bl = []
         if isinstance(blacklist_supress[0][0],str):
@@ -1624,33 +1624,52 @@ class NMT:
 
         l = []
         i = 0
-        for _ in range(len(w) ):
+        j = len(w)
+        for _ in range(len(w)): # i == start character
+            for _ in range(len(w)): # j == word size
 
-            if i >= len(w): break
-            part = w[i: i + 3]
-            part = ''.join(part)
-            if part in lang.word2index:
-                index = lang.word2index[part]
-                l.append(index)
-                i += 3
-                continue
+                if i >= len(w): continue
 
-            if i >= len(w): break
-            part = w[i: i + 2]
-            part = ''.join(part)
-            if part in lang.word2index:
-                index = lang.word2index[part]
-                l.append(index)
-                i += 2
-                continue
+                part = w[i: i + j]
+                part = ''.join(part)
+                if part in lang.word2index:
+                    #print(part)
 
-            if i >= len(w): break
-            part = w[i]
-            if part in lang.word2index:
-                index = lang.word2index[part]
-                l.append(index)
+                    index = lang.word2index[part]
+                    l.append(index)
+                    i += len(part)
+                    continue
+                j -= 1
             i += 1
-            pass
+
+        if False:
+            for _ in range(len(w) ):
+
+                if i >= len(w): break
+                part = w[i: i + 3]
+                part = ''.join(part)
+                if part in lang.word2index:
+                    index = lang.word2index[part]
+                    l.append(index)
+                    i += 3
+                    continue
+
+                if i >= len(w): break
+                part = w[i: i + 2]
+                part = ''.join(part)
+                if part in lang.word2index:
+                    index = lang.word2index[part]
+                    l.append(index)
+                    i += 2
+                    continue
+
+                if i >= len(w): break
+                part = w[i]
+                if part in lang.word2index:
+                    index = lang.word2index[part]
+                    l.append(index)
+                i += 1
+                pass
 
         l.extend([lang.word2index[hparams['eow']]  ]) #, lang.word2index[hparams['unk']]])
         return l
@@ -3202,9 +3221,12 @@ if __name__ == '__main__':
         if n.do_test_not_train and n.do_load_babi:
             print('test not train')
             n.setup_for_babi_test()
+
             '''
             l = ['unk', 't','h','e','unk','d','a','v','e', 'eol']
-            t = n._shorten( l, just_duplicates=True)
+            l = 'dave'
+            print(l)
+            t = n.chop_word_for_index(n.output_lang ,l)
             print(t)
             for i in t:
                 print(i) #n.output_lang.index2word[i])

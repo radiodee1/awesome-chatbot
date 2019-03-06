@@ -91,6 +91,8 @@ punctuation = [ '.', ',', '!', '?', '"', "'"]
 
 v = []
 
+v_end = []
+
 def make_no_vocab_two_lists(list_first, list_second):
     l = []
     for i in list_second:
@@ -98,8 +100,22 @@ def make_no_vocab_two_lists(list_first, list_second):
             l.append(j + i)
     return l
 
+def make_no_vocab_all_lists():
+    print('non-standard vocabulary.')
+    global v_end, whitelist
+    v = special_tokens[:]
+    v += make_no_vocab_two_lists(vowels, vowels)  ## long vowel sounds
+    v += make_no_vocab_two_lists(consonants, vowels)  ## start of sylable
+    v += make_no_vocab_two_lists(["'"], consonants)  ## end of contractions
+    v += vowels
+    v += consonants
+    v += punctuation
+    v_end = v
+    whitelist += v
+    return v
+
 def make_vocab(train_file, order=False, read_glove=False, contractions=False, no_limit=False):
-    global v
+    global v , v_end
     wordlist = []
 
     vocab_length = hparams['num_vocab_total']
@@ -157,11 +173,12 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, no
     c = Counter(wordlist)
     l = len(wordlist)
     print(l,'length of raw vocab data')
-    if l > vocab_length and not no_limit: l = vocab_length
+    if l > vocab_length and not no_limit:
+        l = vocab_length
     if no_limit:
         vocab_length = l
         hparams['num_vocab_total'] = vocab_length
-    cc = c.most_common()
+    cc = c.most_common()[:l]
 
 
     print(len(cc), 'length of result list')
@@ -175,17 +192,40 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, no
         ss = cc
 
     #print(ss[0:10])
+    #vocab_length -= m
+    print(vocab_length,'vl')
+
+
     for z in ss: # sorted(cc, key= lambda word: word[1]):
-        if (z[0].lower() not in v and num < vocab_length ) or z[0].lower() in whitelist:
+        if (z[0].lower() not in v and num < vocab_length ) or (z[0].lower() in whitelist and z[0].lower() not in v_end):
             v.append(z[0].lower())
             num += 1
 
-    v.sort()
+    if len(v_end) > 0:
+        v_temp = []
+        for z in v_end:
+            if z not in v:
+                v_temp.append(z)
+        v_end = v_temp
+        v_temp_num = len(v_end)
+        v = v[: - v_temp_num]
+        
 
-    vv = [hparams['unk'], hparams['sol'], hparams['eol']]
+    if order: v.sort()
+
+    if len(v_end) > 0:
+        v.extend(v_end)
+
+
+    vv = [hparams['unk'], hparams['sol'], hparams['eol'], hparams['eow']]
     for z in v:
         if len(vv) < vocab_length and z not in vv: vv.append(z)
+    if len(v_end) > 0:
+        vv.extend(v_end)
+
     v = vv
+
+
 
     print('len',len(v))
     return v
@@ -193,11 +233,11 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, no
 def save_vocab(v, babi=False, save_big=True, both=False):
     ''' remember to leave 3 spots blank '''
 
-    #hparams['num_vocab_total'] = vocab_length
+    global v_end
 
-    #sol = hparams['sol']
-    #eol = hparams['eol']
-    #unk = hparams['unk']
+    print(len(v),'v', len(v_end),'v end')
+
+
 
     name = hparams['data_dir'] + hparams['vocab_name']
 
@@ -292,6 +332,7 @@ if __name__ == '__main__':
     parser.add_argument('--limit', help='new limit')
     parser.add_argument('--both-files',help='save "babi" and "big" named vocab files.', action='store_true')
     parser.add_argument('--no-vocab', help='save parts of words in stead of regular vocabulary.', action='store_true')
+    parser.add_argument('--vocab-with-symbols', help='use sylable parts and regular vocabulary.', action='store_true')
 
     args = parser.parse_args()
     args = vars(args)
@@ -305,6 +346,7 @@ if __name__ == '__main__':
     store_two_files = False
     no_limit = False
     no_vocab = False
+    vocab_with_symbols = False
 
     if args['babi']:
         pass
@@ -352,8 +394,11 @@ if __name__ == '__main__':
     if args['limit'] is not None:
         hparams['num_vocab_total'] = int(args['limit'])
 
-    if args['no_vocab']:
+    if args['no_vocab'] and not args['vocab_with_symbols']:
         no_vocab = True
+
+    if not args['no_vocab'] and args['vocab_with_symbols']:
+        vocab_with_symbols = True
 
     babi_file = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['src_ending']
     babi_file2 = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['babi_name'] + '.' + hparams['tgt_ending']
@@ -373,18 +418,17 @@ if __name__ == '__main__':
     v = []
 
     if no_vocab:
-        print('non-standard vocabulary.')
-        v = special_tokens[:]
-        v += make_no_vocab_two_lists(vowels, vowels) ## long vowel sounds
-        v += make_no_vocab_two_lists(consonants, vowels) ## start of sylable
-        v += make_no_vocab_two_lists(["'"], consonants) ## end of contractions
-        v += vowels
-        v += consonants
-        v += punctuation
+        v = make_no_vocab_all_lists()
         save_vocab(v, both=True)
         print(len(v))
         print(v)
         exit()
+
+    if vocab_with_symbols:
+        s = make_no_vocab_all_lists() ## side effect
+        size = len(s)
+
+        print(size, 's', len(v_end),'wl')
 
     if True:
         v = make_vocab(train_file, order=order, read_glove=read_glove, contractions=use_contractions, no_limit=no_limit)
