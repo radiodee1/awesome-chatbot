@@ -209,7 +209,7 @@ def make_vocab(train_file, order=False, read_glove=False, contractions=False, no
         v_end = v_temp
         v_temp_num = len(v_end)
         v = v[: - v_temp_num]
-        
+
 
     if order: v.sort()
 

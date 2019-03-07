@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_make_vocab.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_novocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_novocab.py" afterDir="false" />
     </list>
@@ -31,11 +32,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="277">
-              <caret line="205" column="23" lean-forward="true" selection-start-line="205" selection-start-column="23" selection-end-line="205" selection-end-column="23" />
+            <state relative-caret-position="3636">
+              <caret line="211" selection-start-line="211" selection-end-line="211" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
               </folding>
@@ -52,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="101">
-              <caret line="3224" column="15" selection-start-line="3224" selection-start-column="15" selection-end-line="3224" selection-end-column="15" />
+            <state relative-caret-position="522">
+              <caret line="1643" column="21" selection-start-line="1643" selection-start-column="21" selection-end-line="1643" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -118,7 +119,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>10</find>
       <find>memory_hops</find>
       <find>model_6_dec</find>
       <find>while</find>
@@ -148,6 +148,7 @@
       <find>wordlist</find>
       <find>m</find>
       <find>v_end</find>
+      <find>chop</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -205,8 +206,8 @@
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq_novocab.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq_novocab.py" />
       </list>
     </option>
   </component>
@@ -603,6 +604,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3636">
+          <caret line="211" selection-start-line="211" selection-end-line="211" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="630">
@@ -632,11 +643,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
-        </state>
-      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="414">
@@ -647,24 +653,19 @@
           </second_editor>
         </state>
       </provider>
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="101">
-          <caret line="3224" column="15" selection-start-line="3224" selection-start-column="15" selection-end-line="3224" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="277">
-          <caret line="205" column="23" lean-forward="true" selection-start-line="205" selection-start-column="23" selection-end-line="205" selection-end-column="23" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="522">
+          <caret line="1643" column="21" selection-start-line="1643" selection-start-column="21" selection-end-line="1643" selection-end-column="21" />
         </state>
       </provider>
     </entry>

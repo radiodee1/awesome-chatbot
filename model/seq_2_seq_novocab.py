@@ -1625,51 +1625,31 @@ class NMT:
         l = []
         i = 0
         j = len(w)
+        #flag = False
         for _ in range(len(w)): # i == start character
+            flag = False
+            j = len(w) - i
+
             for _ in range(len(w)): # j == word size
 
-                if i >= len(w): continue
+                if i >= len(w) or j < 0: break
 
                 part = w[i: i + j]
                 part = ''.join(part)
                 if part in lang.word2index:
-                    #print(part)
 
                     index = lang.word2index[part]
                     l.append(index)
-                    i += len(part)
-                    continue
-                j -= 1
-            i += 1
+                    i += (len(part) )
+                    #j = len(w) - (len(part) -1)
 
-        if False:
-            for _ in range(len(w) ):
+                    flag = True
+                    break
+                else:
+                    j -= 1
+            if not flag: i += 1
 
-                if i >= len(w): break
-                part = w[i: i + 3]
-                part = ''.join(part)
-                if part in lang.word2index:
-                    index = lang.word2index[part]
-                    l.append(index)
-                    i += 3
-                    continue
 
-                if i >= len(w): break
-                part = w[i: i + 2]
-                part = ''.join(part)
-                if part in lang.word2index:
-                    index = lang.word2index[part]
-                    l.append(index)
-                    i += 2
-                    continue
-
-                if i >= len(w): break
-                part = w[i]
-                if part in lang.word2index:
-                    index = lang.word2index[part]
-                    l.append(index)
-                i += 1
-                pass
 
         l.extend([lang.word2index[hparams['eow']]  ]) #, lang.word2index[hparams['unk']]])
         return l
@@ -3222,15 +3202,6 @@ if __name__ == '__main__':
             print('test not train')
             n.setup_for_babi_test()
 
-            '''
-            l = ['unk', 't','h','e','unk','d','a','v','e', 'eol']
-            l = 'dave'
-            print(l)
-            t = n.chop_word_for_index(n.output_lang ,l)
-            print(t)
-            for i in t:
-                print(i) #n.output_lang.index2word[i])
-            '''
             exit()
 
         if n.do_train:
@@ -3245,15 +3216,7 @@ if __name__ == '__main__':
             n.load_checkpoint()
             n.task_interactive()
 
-        '''
-        if n.do_review:
-            n.task_review_weights(n.pairs,stop_at_fail=False)
-
         
-        if n.do_convert:
-            n.load_checkpoint()
-            n.task_convert()
-        '''
         if n.do_infer:
             n.load_checkpoint()
             choice = random.choice(n.pairs)[0]
