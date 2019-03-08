@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/babi_recurrent.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/babi_recurrent.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,15 +13,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_launch_babi.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="4" selection-start-line="4" selection-end-line="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_babi_download.sh">
           <provider selected="true" editor-type-id="text-editor">
@@ -31,7 +25,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1641">
+            <state relative-caret-position="3636">
               <caret line="211" selection-start-line="211" selection-end-line="211" />
               <folding>
                 <element signature="e#20#51#0" expanded="true" />
@@ -43,17 +37,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/settings.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="630">
+            <state relative-caret-position="397">
               <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="57384">
-              <caret line="3218" selection-start-line="3218" selection-end-line="3218" />
             </state>
           </provider>
         </entry>
@@ -85,16 +70,41 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="648">
-                <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
+              <first_editor relative-caret-position="810">
+                <caret line="45" selection-start-line="45" selection-end-line="45" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
               </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="18">
+              <caret line="2354" column="20" selection-start-line="2354" selection-start-column="20" selection-end-line="2354" selection-end-column="20" />
+              <folding>
+                <element signature="e#21#86#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="1782" column="44" selection-start-line="1782" selection-start-column="32" selection-end-line="1782" selection-end-column="44" />
+              <folding>
+                <element signature="e#21#86#0" expanded="true" />
+                <marker date="1552086758166" expanded="true" signature="121897:121898" ph="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -115,14 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>memory_hops</find>
-      <find>model_6_dec</find>
-      <find>while</find>
-      <find>group</find>
-      <find>chop_word_for_index</find>
-      <find>indexesFromSentence</find>
-      <find>lengths</find>
-      <find>_show_sample</find>
       <find>_shor</find>
       <find>_test_e</find>
       <find>update_result_file</find>
@@ -145,6 +147,14 @@
       <find>m</find>
       <find>v_end</find>
       <find>chop</find>
+      <find>SimpleInputEncoder</find>
+      <find>list_encoding</find>
+      <find>Encoder</find>
+      <find>WrapMemRNN</find>
+      <find>model_0_wra</find>
+      <find>model_1_enc</find>
+      <find>input_variable</find>
+      <find>do_pos_input</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -182,7 +192,6 @@
         <option value="$PROJECT_DIR$/model/sub.txt" />
         <option value="$PROJECT_DIR$/do_make_rename_train_valid_test.sh" />
         <option value="$PROJECT_DIR$/model/babi_four.py" />
-        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/do_split.py" />
         <option value="$PROJECT_DIR$/do_make_vocab_copy.sh" />
         <option value="$PROJECT_DIR$/do_make_zip_copy.py" />
@@ -204,12 +213,13 @@
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_novocab.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="540" />
-    <option name="y" value="68" />
+    <option name="y" value="65" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -286,7 +296,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="68" width="1380" height="999" extended-state="0" />
+    <frame x="540" y="65" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.24981578" />
@@ -326,6 +336,17 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout-to-restore>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/model/babi_recurrent.py</url>
+          <line>414</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/model/babi_rec_mask.py" />
@@ -372,17 +393,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_split.py" />
-    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2898">
-          <caret line="187" column="16" selection-start-line="143" selection-end-line="187" selection-end-column="16" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-            <marker date="1546284387732" expanded="true" signature="122615:122616" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_pos.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3330">
@@ -556,16 +566,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_beam.py" />
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22842">
-          <caret line="1299" column="20" selection-start-line="1299" selection-start-column="18" selection-end-line="1299" selection-end-column="20" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/bot/game.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1656">
@@ -586,6 +586,7 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py" />
     <entry file="file://$PROJECT_DIR$/do_launch_babi.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -600,17 +601,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
+    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="630">
-          <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_novocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57384">
-          <caret line="3218" selection-start-line="3218" selection-end-line="3218" />
+        <state relative-caret-position="3636">
+          <caret line="211" selection-start-line="211" selection-end-line="211" />
+          <folding>
+            <element signature="e#20#51#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -635,33 +632,51 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_vocab.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1641">
-          <caret line="211" selection-start-line="211" selection-end-line="211" />
-          <folding>
-            <element signature="e#20#51#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="810">
+            <caret line="45" selection-start-line="45" selection-end-line="45" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
       <provider editor-type-id="text-editor">
         <state relative-caret-position="270">
           <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="648">
-            <caret line="36" lean-forward="true" selection-start-line="36" selection-end-line="36" />
-          </first_editor>
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="2354" column="20" selection-start-line="2354" selection-start-column="20" selection-end-line="2354" selection-end-column="20" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="35" column="31" selection-start-line="35" selection-start-column="31" selection-end-line="35" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/babi_recurrent.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="260">
+          <caret line="1782" column="44" selection-start-line="1782" selection-start-column="32" selection-end-line="1782" selection-end-column="44" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+            <marker date="1552086758166" expanded="true" signature="121897:121898" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
