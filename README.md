@@ -42,6 +42,8 @@ The folders and files in the project are organized in the following manor. The r
 * `bot` This folder is the home of programs that are meant to help the chatbot run. This includes speech-to-text code and speech-recognition code. Ultimately this directory will be the home of a loop of code that monitors audio input from a microphone and decides what to do with it.
 * `raw` This folder holds the raw downloads that are manipulated by the setup scripts. These include the GloVe vectors and the Reddit Comments download.
 * `saved` This folder holds the saved values from the training process.
+* `graph` This folder holds some json files that the author wants to save for later graphs for comparison with other data.
+
 
 Description of the individual setup scripts is included below.
 # Suggested Reading - Acknowledgements
