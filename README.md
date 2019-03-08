@@ -31,6 +31,10 @@ I am currently training for several days at a time.
 It turned out that teacher-forcing was very important for this training process. 
 I will keep working on this sequence to sequence model and if I have time I will return to the babi code and try to finish task # 19.
 
+3/8/19 - The raspberry pi uses a debian based operating system, so to ensure that the chatbot software is run at boot-up, the `/etc/rc.local` file needs to be edited.
+Since the file uses bash styled commands, the change to the file can be made with a single line. `export GOOGLE_APPLICATION_CREDENTIALS=/path/to/credentials.json && cd /path/to/project/ && ./do_launch_game.sh`
+That is the line that must be added to `rc.local`. Also at this time I am experimenting with an open ended vocabulary for `seq_2_seq.py`.
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.

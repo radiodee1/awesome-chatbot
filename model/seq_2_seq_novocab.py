@@ -3216,7 +3216,7 @@ if __name__ == '__main__':
             n.load_checkpoint()
             n.task_interactive()
 
-        
+
         if n.do_infer:
             n.load_checkpoint()
             choice = random.choice(n.pairs)[0]
