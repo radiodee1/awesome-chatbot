@@ -409,6 +409,7 @@ class Encoder(nn.Module):
             embedded = self.embed(i)
             #print(embedded.size(),'list')
             l.append(embedded.permute(1,0,2))
+
         embedded = torch.cat(l, dim=0) # dim=0
 
         #if len(l) == 1: permute_sentence=True
@@ -582,7 +583,7 @@ class WrapOutputRNN(nn.Module):
         self.decoder = nn.GRU(input_size=self.hidden_size, hidden_size=hidden_size, num_layers=self.decoder_layers,
                               dropout=0.0, bidirectional=False, batch_first=True)
 
-        self.lstm = nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
+        self.lstm = None #nn.LSTM(input_size=self.hidden_size, hidden_size=self.hidden_size, num_layers=self.decoder_layers)
 
         self.h0 = None
         self.c0 = None
@@ -673,10 +674,10 @@ class WrapOutputRNN(nn.Module):
             outputs = []
             decoder_hidden = prune_tensor(e_out,3)
 
-            token = SOS_token
+            #token = SOS_token
 
-            if self.lstm is not None: # or self.test_a:
-                decoder_hidden = decoder_hidden.permute(1,0,2)
+            #if self.lstm is not None: # or self.test_a:
+            #    decoder_hidden = decoder_hidden.permute(1,0,2)
 
             ##############################################
 
@@ -690,50 +691,46 @@ class WrapOutputRNN(nn.Module):
 
             flag = False
 
+            #print('----')
             for i in range(self.maxtokens):
 
                 ## embed lines here ???
-                if self.test_a or True:
+                #if self.test_a or True:
 
-                    use_teacher = False
-                    if random.random() < self.teacher_forcing_ratio and i > 0 and target_variable is not None:
-                        use_teacher = True
-                        token = target_variable[k,i - 1, 0]
+                use_teacher = False
+                if random.random() < self.teacher_forcing_ratio and i > 0 and target_variable is not None:
+                    use_teacher = True
+                    token = target_variable[k,i - 1, 0]
+                    #print(token)
 
-                    if use_teacher: # and False:
-                        output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
-                        output = prune_tensor(output, 3)
-
-                if self.test_a:
-
-                    ques = decoder_hidden
-
-                    cat = [
-                        prune_tensor(output, 1),
-                        prune_tensor(ques, 1) #2)[k,:]
-                    ]
-                    #for i in cat: print(i.size())
-                    #exit()
-
-                    cat = torch.cat(cat, dim=0)
-                    output = self.out_a(cat)
+                if use_teacher: # and False:
+                    output = self.embed(Variable(torch.tensor([token])))  ## <-- ????
                     output = prune_tensor(output, 3)
 
-                if self.lstm is not None:
+                #if self.test_a:
 
-                    output, (hn , cn) = self.lstm(output, (self.h0, self.c0))
+                ques = decoder_hidden
 
-                    self.h0 = nn.Parameter(hn, requires_grad=False)
-                    self.c0 = nn.Parameter(cn, requires_grad=False)
-                    pass
-                else:
-                    output, decoder_hidden = self.decoder(output, decoder_hidden)
+                cat = [
+                    prune_tensor(output, 1),
+                    prune_tensor(ques, 1) #2)[k,:]
+                ]
+                #for i in cat: print(i.size())
+                #print('---')
+                #exit()
+
+                cat = torch.cat(cat, dim=0)
+                output = self.out_a(cat)
+                output = prune_tensor(output, 3)
+
+
+                output, decoder_hidden = self.decoder(output, decoder_hidden)
 
                 #output = self.dropout(output) ## <---
 
                 output_x = self.out_c(output)
 
-                output_x = self.dropout_b(output_x) ## <---
+                #output_x = self.dropout_b(output_x) ## <---
 
                 output_x = torch.softmax(output_x, dim=2)
 
@@ -744,7 +741,7 @@ class WrapOutputRNN(nn.Module):
                 if token == EOS_token:
                     flag = True
 
-                if token != EOS_token and flag: # and False:
+                if token != EOS_token and flag and False:
                     for _ in range(i + 1, self.maxtokens):
                         if True:
                             out_early = Variable(torch.zeros((1,1,self.vocab_size)), requires_grad=False)
