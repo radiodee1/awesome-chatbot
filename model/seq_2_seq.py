@@ -151,7 +151,7 @@ word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
 blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 blacklist_sent = blacklist_vocab #+ ['i']
-blacklist_supress = [['i', 0.0001], ['you', 1.0]]
+blacklist_supress = [] #[['i', 0.0001], ['you', 1.0]]
 
 def plot_vector(vec):
     fig, ax = plt.subplots()
