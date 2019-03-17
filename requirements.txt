@@ -17,6 +17,7 @@ unidecode
 matplotlib
 py-cpuinfo
 datetime
+Tensor2Tensor
 
 ## kaggle ##
 kaggle

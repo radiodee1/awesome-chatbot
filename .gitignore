@@ -10,6 +10,9 @@ saved/*
 *.bz2
 *.zip
 
+launch
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
