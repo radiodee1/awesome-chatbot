@@ -584,6 +584,7 @@ class WrapMemRNN: #(nn.Module):
         position = hparams['split_sentences']
         gru_dropout = dropout * 0.0 #0.5
         self.cancel_attention = cancel_attention
+        beam_width = 0 if hparams['beam'] is None else hparams['beam']
 
         self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
         self.embed.weight.requires_grad = not self.freeze_embedding
@@ -594,7 +595,7 @@ class WrapMemRNN: #(nn.Module):
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
                                    cancel_attention=self.cancel_attention)
 
-        self.beam_helper = BeamHelper(5, hparams['tokens_per_sentence'])
+        self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
 
         self.opt_1 = None
         self.opt_2 = None
@@ -1023,7 +1024,7 @@ class NMT:
         parser.add_argument('--json-record-offset', help='starting record number for json file')
         parser.add_argument('--no-vocab-limit', help='no vocabulary size limit.', action='store_true')
         parser.add_argument('--record-loss', help='record loss for later graphing.', action='store_true')
-        parser.add_argument('--beam', help='activate beam search for eval phase.', action='store_true')
+        parser.add_argument('--beam', help='activate beam search for eval phase.')
         parser.add_argument('--single', help='force single execution instead of batch execution.', action='store_true')
         parser.add_argument('--teacher-forcing', help='set forcing for recurrent output')
         parser.add_argument('--multiplier', help='learning rate multiplier for decoder.')
@@ -1134,8 +1135,8 @@ class NMT:
             self.best_accuracy_record_offset = int(self.args['json_record_offset'])
         if self.args['no_vocab_limit']: hparams['num_vocab_total'] = None
         if self.args['record_loss']: self.do_record_loss = True
-        if self.args['beam']:
-            hparams['beam'] = True
+        if self.args['beam'] is not None:
+            hparams['beam'] = int(self.args['beam'])
         if self.args['single']:
             hparams['single'] = True
         if self.args['teacher_forcing'] is not None and not self.do_test_not_train:  # self.args['test']:
@@ -1615,7 +1616,7 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
-        if hparams['beam']:
+        if hparams['beam'] is not None:
             self.prep_blacklist_supress()
 
         return self.input_lang, self.output_lang, self.pairs
@@ -2884,7 +2885,7 @@ class NMT:
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
 
-        if not hparams['beam']:
+        if hparams['beam'] is None:
             outputs = [ans]
 
         else:
@@ -2903,7 +2904,7 @@ class NMT:
                     output = output.permute(1, 0)
                     #print(output,'out')
 
-                    if not hparams['beam']:
+                    if hparams['beam'] is None:
                         ni = torch.argmax(output, dim=0)[0]
                         #print(ni,'ni')
                     else:
