@@ -1391,7 +1391,8 @@ class NMT:
                 print(self._shorten(out, just_duplicates=True))
 
                 if call_from_script:
-                    out = self._shorten(out, just_duplicates=False)
+                    out = self._shorten(out, just_duplicates=True)
+
                     return out #' '.join(out)
 
         except EOFError:

@@ -57,12 +57,7 @@ class Game:
             if len(i) > 0:
                 if count > 0 :
                     out = self.model.get_sentence(i)
-                    xx = []
-                    for i in out.split():
-                        if i != settings.hparams['unk']:
-                            xx.append(i)
-                    out = ' '.join(xx)
-                    print(out)
+                    
                     blacklisted = False
                     for jj in self.blacklist:
                         if out.startswith(jj):
