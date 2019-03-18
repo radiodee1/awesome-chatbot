@@ -37,7 +37,7 @@ That is the line that must be added to `rc.local`. Also at this time I am experi
 
 3/17/19 - Code was added to the `./do_launch_game.sh` script so that it will launch the `seq_2_seq.py` model if there exists in the root project folder a file named 'launch'. 
 This file does not exist in the github repository, so if you use the repository you must add it yourself.
-This is so that the `/etc/rc.local` file can be set up once and the automatic startup of the seq_2_seq model can be disabled at the project directory. 
+This is so that the `/etc/rc.local` file can be set up once and the automatic startup of the seq_2_seq model can be disabled on the raspberry pi at the project directory. 
 
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
