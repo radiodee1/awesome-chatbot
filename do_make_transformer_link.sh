@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "use this to make link to movie or reddit corpus"
 echo
 echo "enter path to corpus as first parameter."
