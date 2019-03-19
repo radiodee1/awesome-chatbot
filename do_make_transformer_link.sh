@@ -10,7 +10,7 @@ echo
 echo $SIMPLE_PATH
 echo $START
 echo $1
-
+echo
 
 ln -s $START/$1 $SIMPLE_PATH/$DATA
 
