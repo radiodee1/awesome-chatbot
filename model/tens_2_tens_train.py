@@ -13,7 +13,7 @@ outdir = hparams['save_dir'] + '/t2t_trained_model/'
 train_steps = str(10) ## 7500
 
 args_train = [
-    '--t2t_usr_dir=' + '../transformer/',
+    '--t2t_usr_dir=' + './transformer/',
     '--problem=' + problem,
     '--data_dir=' + hparams['data_dir'] + '/t2t_data/',
 

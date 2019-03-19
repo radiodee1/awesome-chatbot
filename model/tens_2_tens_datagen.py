@@ -11,7 +11,7 @@ import os
 problem = 'chat_line_problem'
 
 args_datagen = [
-    '--t2t_usr_dir=' + '../transformer/',
+    '--t2t_usr_dir=' + './transformer/',
     '--problem=' + problem,
     '--data_dir=' + hparams['data_dir'] + '/t2t_data/',
     '--tmp_dir=' + hparams['data_dir'] +'/tmp/' #,

@@ -12,7 +12,7 @@ problem = 'chat_line_problem'
 outdir = hparams['save_dir'] + '/t2t_trained_model/'
 
 args_decode = [
-    '--t2t_usr_dir=' + '../transformer/',
+    '--t2t_usr_dir=' + './transformer/',
     '--problem=' + problem,
     '--data_dir=' + hparams['data_dir'] + '/t2t_data/',
 
