@@ -14,6 +14,7 @@ echo $START
 echo $1
 echo
 
+mkdir -p $SIMPLE_PATH
 ln -s $START/$1 $SIMPLE_PATH/$DATA
 
 ls -hal $SIMPLE_PATH
