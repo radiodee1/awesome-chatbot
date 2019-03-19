@@ -3,7 +3,7 @@
 import sys
 
 sys.path.append('..')
-from tensor2tensor.bin import t2t_datagen
+
 from model.settings import hparams
 import tensorflow as tf
 

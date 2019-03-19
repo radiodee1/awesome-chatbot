@@ -10,6 +10,8 @@ saved/*
 *.bz2
 *.zip
 
+*.decodes
+
 launch
 
 
