@@ -18,6 +18,7 @@ matplotlib
 py-cpuinfo
 datetime
 Tensor2Tensor
+tensorflow-hub
 
 ## kaggle ##
 kaggle

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/model/tens_2_tens_export.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,11 +14,29 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/tens_2_tens_train.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/tens_2_tens_train_long.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="216">
-              <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+              <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/tens_2_tens_export.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/requirements.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="20" column="14" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -117,8 +139,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_make_babi_download.sh" />
-        <option value="$PROJECT_DIR$/model/babi_rec_mask.py" />
         <option value="$PROJECT_DIR$/do_make_rename_train.sh" />
         <option value="$PROJECT_DIR$/model/babi_recurrent2.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent_alt_out.py" />
@@ -147,7 +167,6 @@
         <option value="$PROJECT_DIR$/model/seq_2_seq_novocab.py" />
         <option value="$PROJECT_DIR$/model/babi_recurrent.py" />
         <option value="$PROJECT_DIR$/model/babi_rec.py" />
-        <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/tensor_2_tensor.py" />
         <option value="$PROJECT_DIR$/model/tensor_2_tensor.sh" />
         <option value="$PROJECT_DIR$/model/tensor_2_tensor_ende.sh" />
@@ -168,6 +187,9 @@
         <option value="$PROJECT_DIR$/model/tens_2_tens_eval_interactive.py" />
         <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_train.py" />
+        <option value="$PROJECT_DIR$/model/tens_2_tens_train_long.py" />
+        <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/model/tens_2_tens_export.py" />
       </list>
     </option>
   </component>
@@ -182,6 +204,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -209,11 +232,40 @@
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="saved" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_trained_model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_trained_model" type="462c0819:PsiDirectoryNode" />
+              <item name="export" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_trained_model" type="462c0819:PsiDirectoryNode" />
+              <item name="export" type="462c0819:PsiDirectoryNode" />
+              <item name="1553175547" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_trained_model" type="462c0819:PsiDirectoryNode" />
+              <item name="export" type="462c0819:PsiDirectoryNode" />
+              <item name="1553175547" type="462c0819:PsiDirectoryNode" />
+              <item name="variables" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,17 +330,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_single.py" />
-    <entry file="file://$PROJECT_DIR$/data/sentences.xml">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1458">
-          <caret line="89" selection-start-line="89" selection-end-line="89" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_split.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4590">
@@ -412,6 +453,11 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="702">
@@ -420,11 +466,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="15" column="53" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
         </state>
       </provider>
     </entry>
@@ -471,13 +512,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="13" selection-start-line="19" selection-start-column="13" selection-end-line="19" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/transformer/setup.py" />
     <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
       <provider selected="true" editor-type-id="text-editor">
@@ -499,6 +533,20 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/transformer/__init__.py" />
     <entry file="file://$PROJECT_DIR$/transformer/problem.py" />
+    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -536,17 +584,29 @@
     <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_train_long.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
+        <state relative-caret-position="216">
+          <caret line="12" column="23" selection-start-line="12" selection-start-column="23" selection-end-line="12" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_train.py">
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="12" column="22" selection-start-line="12" selection-start-column="22" selection-end-line="12" selection-end-column="22" />
+        <state relative-caret-position="360">
+          <caret line="20" column="14" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553175547/saved_model.pbtxt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5940" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_export.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="32" selection-start-line="20" selection-start-column="32" selection-end-line="20" selection-end-column="32" />
         </state>
       </provider>
     </entry>
