@@ -10,7 +10,7 @@ import os
 import subprocess
 
 pwd = os.getcwd()
-folder = "1553282176"
+#folder = "1553282176"
 problem = 'chat_line_problem'
 outdir = hparams['save_dir'] + '/t2t_trained_model/export/'
 
