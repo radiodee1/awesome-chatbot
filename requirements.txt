@@ -20,6 +20,7 @@ datetime
 Tensor2Tensor
 tensorflow-hub
 
+
 ## kaggle ##
 kaggle
 ## must install kaggle.json file as described here:
@@ -32,3 +33,9 @@ kaggle
 ## install mpg321 from your linux repository ##
 ## install python3-pyaudio
 ## install python-pyaudio
+
+## tensorflow-model-server ##
+## see this url:
+## https://www.tensorflow.org/tfx/serving/setup#installing_the_modelserver
+## this python package is also required
+tensorflow-serving-api

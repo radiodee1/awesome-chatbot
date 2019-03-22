@@ -10,7 +10,7 @@ import tensorflow as tf
 
 problem = 'chat_line_problem'
 outdir = hparams['save_dir'] + '/t2t_trained_model/'
-train_steps = str(7500) ## 7500
+#train_steps = str(7500) ## 7500
 
 args_train = [
     '--t2t_usr_dir=' + './transformer/',
@@ -18,9 +18,10 @@ args_train = [
     '--data_dir=' + hparams['data_dir'] + '/t2t_data/',
 
     '--model=' + 'transformer',
-    '--output_dir=' + outdir , #hparams['save_dir'] + '/t2t_export/',
+    '--output_dir=' + outdir ,
     '--hparams_set=' + 'transformer_chat',
-    #'--job_dir=' + outdir,
+    '--decode_hparams=' + 'beam_size=4,alpha=0.6',
+    '--model_name=' + 'transformer_chat',
     #'--train_steps=' + train_steps,
 
 ]
