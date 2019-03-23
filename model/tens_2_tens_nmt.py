@@ -25,6 +25,7 @@ args_query = [
     '--server=localhost:9000',
     '--servable_name=' + problem,
     '--data_dir=' + hparams['data_dir'] + '/t2t_data/',
+    #'--inputs_once=' + '"true"',
 
 ]
 args_server = [
@@ -48,20 +49,15 @@ class NMT:
         sys.argv.extend(args_query)
 
         #tf.app.run(main=self.main,argv=sys.argv)
-
+        self.args = []
         #self.main(sys.argv)
-        self.q = None
+        #self.q = None
         self.main(sys.argv)
 
 
     def main(self, argv):
-        argv.extend(args_query)
-
-        print(argv,'here 1')
-        #subprocess.Popen(args_server)
-
-        self.q = query.Request(argv)
-
+        self.args = argv
+        self.args.extend(args_query)
         pass
 
     def setup_for_interactive(self):
@@ -72,49 +68,27 @@ class NMT:
 
     def get_sentence(self, inval):
         print('here 2')
-        z = self.q.request(self.q.problem, self.q.request_fn, inval)
+        #argv.extend(args_query)
 
+        #print(self.args, 'here 1')
+        # subprocess.Popen(args_server)
+        inval = inval.replace('"', '\"')
+        args_local = self.args + ['--inputs_once="' + inval + '"']
+
+        print(args_local)
+
+        z = query.main(args_local)
         return z
-        '''
-        global url, headers
-        inval = self.json(inval)
-        r = requests.post(url=url, data=inval, headers=headers)
-        #print(r)
-        return r
-        pass
-        
 
-    def json(self, inval):
-        global problem
-        #inval = serving_utils._encode(inval)
-        d = {
-            #"signature_name": "predict", # "serving_default",
-            "instances": [
-                {
-                    'input':   inval
-                }
-            ]
-        }
-
-        dd = {
-            #"signature_name": "serving_default",
-
-            'instances': [inval]
-        }
-        d = json.dumps(d)
-        print(d, '<<<')
-
-        return d
-        '''
 
 if __name__ == "__main__":
     nmt = NMT()
     nmt.setup_for_interactive()
     while True:
-        inval = input('>>')
-        inval = nmt.get_sentence(inval)
+        inval = input('>==>')
+        outval = nmt.get_sentence(inval)
 
-        print(inval,'===')
+        print(outval,'===')
         print('here...')
 
 
