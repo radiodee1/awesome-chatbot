@@ -20,7 +20,7 @@ args_decode = [
     '--output_dir=' + outdir,
     '--hparams_set=' + 'transformer_chat',
     #'--job_dir=' + outdir,
-    '--decode_hparams=' + 'beam_size=4,alpha=0.6',
+    '--decode_hparams=' + 'beam_size=14,alpha=0.6',
     '--decode_interactive' ,
     #'--hparams=' + 'num_hidden_layers=4,hidden_size=512' ## hparams are not tunable
 ]
