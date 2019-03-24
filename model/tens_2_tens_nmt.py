@@ -77,7 +77,7 @@ class NMT:
         inval = inval.replace('"', '\"')
         args_local = self.args + ['--inputs_once="' + inval + '"']
 
-        print(args_local)
+        #print(args_local)
 
         z = query.main(args_local)
         return z
