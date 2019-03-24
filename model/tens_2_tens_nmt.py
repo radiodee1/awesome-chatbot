@@ -28,9 +28,10 @@ args_query = [
     #'--inputs_once=' + '"true"',
 
 ]
+
 args_server = [
     'tensorflow_model_server',
-    #'--port=9000',
+    '--port=9000',
     '--rest_api_port=9001',
     '--model=' + 'transformer',
     '--model_base_path=' + 'file://' + pwd + '/' + outdir,
@@ -58,20 +59,21 @@ class NMT:
     def main(self, argv):
         self.args = argv
         self.args.extend(args_query)
+        subprocess.Popen(args_server)
+
         pass
 
     def setup_for_interactive(self):
         #sys.stdin = ["hello there"]
         #tf.app.run(main=self.main)
-        print('here 1.5')
+
         pass
 
     def get_sentence(self, inval):
-        print('here 2')
+
         #argv.extend(args_query)
 
         #print(self.args, 'here 1')
-        # subprocess.Popen(args_server)
         inval = inval.replace('"', '\"')
         args_local = self.args + ['--inputs_once="' + inval + '"']
 
@@ -89,6 +91,6 @@ if __name__ == "__main__":
         outval = nmt.get_sentence(inval)
 
         print(outval,'===')
-        print('here...')
+
 
 
