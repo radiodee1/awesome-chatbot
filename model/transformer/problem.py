@@ -21,6 +21,8 @@ from tensor2tensor.data_generators import generator_utils
 tf.summary.FileWriterCache.clear()  # ensure filewriter cache is clear for TensorBoard events file
 
 
+blackllist =["i don't know"]
+
 @registry.register_problem
 class ChatLineProblem(text_problems.Text2TextProblem):
     """Predict next line of poetry from the last line. From Gutenberg texts."""
@@ -47,8 +49,9 @@ class ChatLineProblem(text_problems.Text2TextProblem):
         }]
 
     def generate_samples(self, data_dir, tmp_dir, dataset_split):
+        global blackllist
         with open(DATAFILE, 'r') as rawfp:
-
+            num = 0
             for curr in rawfp:
                 raw = curr.split('\t')
                 if len(raw) > 1:
@@ -56,14 +59,26 @@ class ChatLineProblem(text_problems.Text2TextProblem):
                     curr_line = raw[1]
                     prev_line = prev_line.strip()
                     curr_line = curr_line.strip()
+                    #print(prev_line,'|', curr_line, '====')
+                    flag = False
+                    for i in blackllist:
+                        if curr_line.lower().startswith(i):
+                            flag = True
+                            num += 1
+                            print(curr_line, num)
                     # poems break at empty lines, so this ensures we train only
                     # on lines of the same poem
-                    if len(prev_line) > 0 and len(curr_line) > 0:
+                    if len(prev_line) > 0 and len(curr_line) > 0 and not (prev_line == curr_line) and not flag:
                         yield {
                             "inputs": prev_line,
                             "targets": curr_line
                         }
-
+                    '''
+                    if prev_line.lower().startswith("i don't know"):
+                        num += 1
+                        print(prev_line,'<<<<<<',curr_line, num)
+                        #exit()
+                    '''
 
 # Smaller than the typical translate model, and with more regularization
 @registry.register_hparams
