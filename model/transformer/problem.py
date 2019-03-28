@@ -91,6 +91,8 @@ def transformer_chat():
     hparams.attention_dropout = 0.6
     hparams.layer_prepostprocess_dropout = 0.6
     hparams.learning_rate = 0.05
+    ## try this...
+    #hparams.eval_run_autoregressive=True
     return hparams
 
 
