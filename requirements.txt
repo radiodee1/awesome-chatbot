@@ -22,6 +22,9 @@ datetime
 Tensor2Tensor
 tensorflow-hub
 
+## bert ##
+bert-serving-server
+bert-serving-client
 
 ## kaggle ##
 kaggle
