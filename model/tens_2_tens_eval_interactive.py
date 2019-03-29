@@ -27,6 +27,7 @@ args_decode = [
 ]
 
 beam_size = 4
+alpha = 0.6
 
 
 def main(argv):
@@ -39,6 +40,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser('Eval options...')
     parser.add_argument('--beam', help='enter beam width integer.')
+    parser.add_argument('--alpha', help='float for alpha value.')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -47,7 +49,15 @@ if __name__ == "__main__":
         beam_size = int(args['beam'])
         args.pop('beam')
 
-    last_arg = '--decode_hparams=' + 'beam_size=' + str(beam_size) + ',alpha=0.6'
+    if args['alpha'] is not None:
+        alpha = float(args['alpha'])
+        args.pop('alpha')
+
+    last_arg = ('--decode_hparams=' +
+                'beam_size=' + str(beam_size) +
+                ',alpha=' + str(alpha) # +
+                #',decode_length=5'
+                )
     args_decode.append(last_arg)
 
     sys.argv.extend(args_decode)

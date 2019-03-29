@@ -25,6 +25,7 @@ tensorflow-hub
 ## bert ##
 bert-serving-server
 bert-serving-client
+numpy
 
 ## kaggle ##
 kaggle
