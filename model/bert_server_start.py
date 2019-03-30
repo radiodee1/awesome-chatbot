@@ -10,6 +10,11 @@ args_bert = [
         "-model_dir=../data/bert_data/uncased_L-12_H-768_A-12/" ,
         "-num_worker=4" ,
         '-max_batch_size=1', ## speed considerations !!
+        "-pooling_strategy=FIRST_TOKEN",
+        "-cpu",
+        "-pooling_layer=-2",
+        "-max_seq_len=15",
+        #"-output_dir="
     ]
 
 if __name__ == '__main__':
