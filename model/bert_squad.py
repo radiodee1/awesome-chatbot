@@ -1,3 +1,5 @@
+#!/usr/bin/python3.6
+
 # coding=utf-8
 # Copyright 2018 The Google AI Language Team Authors.
 #
@@ -48,29 +50,31 @@ flags = tf.flags
 
 FLAGS = flags.FLAGS
 
+bert_foldername = "uncased_L-12_H-768_A-12/"
+
 ## Required parameters
 flags.DEFINE_string(
-    "bert_config_file", None,
+    "bert_config_file", hparams['data_dir'] + '/bert_data/' + bert_foldername + '/bert_config.json',
     "The config json file corresponding to the pre-trained BERT model. "
     "This specifies the model architecture.")
 
-flags.DEFINE_string("vocab_file", None,
+flags.DEFINE_string("vocab_file", hparams['data_dir'] + '/bert_data/' + bert_foldername + '/vocab.txt' ,
                     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string(
-    "output_dir", None,
+    "output_dir", hparams['save_dir'] + '/bert_saved/' ,
     "The output directory where the model checkpoints will be written.")
 
 ## Other parameters
-flags.DEFINE_string("train_file", None,
+flags.DEFINE_string("train_file", hparams['data_dir'] + '/bert_data/'  + 'train-v1.1.json',
                     "SQuAD json for training. E.g., train-v1.1.json")
 
 flags.DEFINE_string(
-    "predict_file", None,
+    "predict_file", hparams['data_dir'] + '/bert_data/' + 'dev-v1.1.json',
     "SQuAD json for predictions. E.g., dev-v1.1.json or test-v1.1.json")
 
 flags.DEFINE_string(
-    "init_checkpoint", None,
+    "init_checkpoint", hparams['data_dir'] + '/bert_data/' + bert_foldername + 'bert_model.ckpt',
     "Initial checkpoint (usually from a pre-trained BERT model).")
 
 flags.DEFINE_bool(
