@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_bert_download.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_bert_download.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,8 +27,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="540">
-              <caret line="60" column="102" lean-forward="true" selection-start-line="60" selection-start-column="33" selection-end-line="60" selection-end-column="102" />
+            <state relative-caret-position="558">
+              <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
             </state>
           </provider>
         </entry>
@@ -38,10 +36,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1080">
-              <caret line="54" column="39" lean-forward="true" selection-start-line="54" selection-start-column="39" selection-end-line="54" selection-end-column="39" />
+            <state relative-caret-position="-5616">
+              <caret line="74" column="96" selection-start-line="74" selection-start-column="96" selection-end-line="74" selection-end-column="96" />
               <folding>
-                <element signature="e#668#706#0" expanded="true" />
+                <element signature="e#1129#1167#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -576,17 +574,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="60" column="102" lean-forward="true" selection-start-line="60" selection-start-column="33" selection-end-line="60" selection-end-column="102" />
+        <state relative-caret-position="558">
+          <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1080">
-          <caret line="54" column="39" lean-forward="true" selection-start-line="54" selection-start-column="39" selection-end-line="54" selection-end-column="39" />
+        <state relative-caret-position="-5616">
+          <caret line="74" column="96" selection-start-line="74" selection-start-column="96" selection-end-line="74" selection-end-column="96" />
           <folding>
-            <element signature="e#668#706#0" expanded="true" />
+            <element signature="e#1129#1167#0" expanded="true" />
           </folding>
         </state>
       </provider>
