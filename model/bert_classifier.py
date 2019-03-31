@@ -14,6 +14,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+'''
+@InProceedings{williams2018broad,
+  author    = {Williams, Adina and Nangia, Nikita and Bowman, Samuel R.},
+  title     = {A Broad-Coverage Challenge Corpus for Sentence Understanding through Inference},
+  booktitle = {Proceedings of the 2018 Conference of the North American Chapter of the Association for Computational Linguistics: Human Language Technologies},
+  year      = {2018},
+  publisher = {Association for Computational Linguistics},
+}
+
+'''
+
+
 """BERT finetuning runner."""
 
 from __future__ import absolute_import
@@ -23,33 +36,38 @@ from __future__ import print_function
 import collections
 import csv
 import os
-import modeling
-import optimization
-import tokenization
+import sys
+sys.path.append('..')
+import model.bert_modeling as modeling
+import model.bert_optimization as optimization
+import model.bert_tokenization as tokenization
 import tensorflow as tf
+from model.settings import hparams
 
 flags = tf.flags
 
 FLAGS = flags.FLAGS
 
+bert_foldername = "uncased_L-12_H-768_A-12/"
+
 ## Required parameters
 flags.DEFINE_string(
-    "data_dir", None,
+    "data_dir", hparams['data_dir'] + '/glue_data/MNLI/',
     "The input data dir. Should contain the .tsv files (or other data files) "
     "for the task.")
 
 flags.DEFINE_string(
-    "bert_config_file", None,
+    "bert_config_file", hparams['data_dir'] + '/bert_data/' + bert_foldername + '/bert_config.json',
     "The config json file corresponding to the pre-trained BERT model. "
     "This specifies the model architecture.")
 
-flags.DEFINE_string("task_name", None, "The name of the task to train.")
+flags.DEFINE_string("task_name", 'MNLI', "The name of the task to train.")
 
-flags.DEFINE_string("vocab_file", None,
+flags.DEFINE_string("vocab_file",  hparams['data_dir'] + '/bert_data/' + bert_foldername + '/vocab.txt',
                     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string(
-    "output_dir", None,
+    "output_dir", hparams['save_dir'] + "/glue_saved/",
     "The output directory where the model checkpoints will be written.")
 
 ## Other parameters

@@ -7,6 +7,8 @@ wget https://storage.googleapis.com/bert_models/2018_10_18/uncased_L-12_H-768_A-
 
 mkdir -p ../data/bert_data/
 mkdir -p ../saved/bert_saved/
+mkdir -p ../data/glue_data/
+mkdir -p ../saved/glue_saved/
 
 mv uncased_L-12_H-768_A-12.zip ../data/bert_data/.
 
