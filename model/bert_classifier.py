@@ -48,10 +48,11 @@ flags = tf.flags
 FLAGS = flags.FLAGS
 
 bert_foldername = "uncased_L-12_H-768_A-12/"
+glue_name = "MRPC" ## "MNLI"
 
 ## Required parameters
 flags.DEFINE_string(
-    "data_dir", hparams['data_dir'] + '/glue_data/MRPC/',
+    "data_dir", hparams['data_dir'] + '/glue_data/' + glue_name +"/",
     "The input data dir. Should contain the .tsv files (or other data files) "
     "for the task.")
 
@@ -60,13 +61,13 @@ flags.DEFINE_string(
     "The config json file corresponding to the pre-trained BERT model. "
     "This specifies the model architecture.")
 
-flags.DEFINE_string("task_name", 'MRPC', "The name of the task to train.")
+flags.DEFINE_string("task_name", glue_name, "The name of the task to train.")
 
 flags.DEFINE_string("vocab_file", hparams['data_dir'] + '/bert_data/' + bert_foldername + '/vocab.txt',
                     "The vocabulary file that the BERT model was trained on.")
 
 flags.DEFINE_string(
-    "output_dir", hparams['save_dir'] + "/glue_saved/",
+    "output_dir", hparams['save_dir'] + "/glue_saved/" + glue_name + '/',
     "The output directory where the model checkpoints will be written.")
 
 ## Other parameters
