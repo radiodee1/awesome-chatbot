@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_tokenization.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_tokenization.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,7 +29,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="558">
+            <state relative-caret-position="1116">
               <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
             </state>
           </provider>
@@ -36,10 +38,22 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-5616">
-              <caret line="74" column="96" selection-start-line="74" selection-start-column="96" selection-end-line="74" selection-end-column="96" />
+            <state relative-caret-position="1314">
+              <caret line="88" column="61" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="61" />
               <folding>
-                <element signature="e#1129#1167#0" expanded="true" />
+                <element signature="e#1128#1166#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/bert_tokenization.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1340">
+              <caret line="203" column="74" selection-start-line="203" selection-start-column="74" selection-end-line="203" selection-end-column="74" />
+              <folding>
+                <element signature="e#644#682#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -91,11 +105,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>addSentence</find>
-      <find>readLangs</find>
-      <find>_sh</find>
-      <find>pass_no_token</find>
-      <find>shor</find>
       <find>intera</find>
       <find>prep_blacklist_supress</find>
       <find>make_no_vocab_all_lists</find>
@@ -121,6 +130,11 @@
       <find>arg_processed</find>
       <find>usr_dir</find>
       <find>_set_flags</find>
+      <find>while</find>
+      <find>eval_i</find>
+      <find>file_based_input_fn_builder</find>
+      <find>eval_input_fn</find>
+      <find>dataset</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -129,7 +143,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_make_zip_copy.py" />
         <option value="$PROJECT_DIR$/do_make_db_from_cornell_movie.py" />
         <option value="$PROJECT_DIR$/raw/srt_zip/README.md" />
         <option value="$PROJECT_DIR$/do_make_tab_file_from_srt.py" />
@@ -179,6 +192,7 @@
         <option value="$PROJECT_DIR$/model/bert_squad_eval.py" />
         <option value="$PROJECT_DIR$/do_make_glue_download.py" />
         <option value="$PROJECT_DIR$/do_make_bert_download.sh" />
+        <option value="$PROJECT_DIR$/model/bert_tokenization.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
@@ -194,7 +208,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -250,6 +263,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -331,7 +345,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_launch.py" />
     <entry file="file://$PROJECT_DIR$/data/t2t_data/vocab.chat_line_problem.8192.subwords">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -523,6 +536,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_bert_download.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="9" column="10" lean-forward="true" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="775">
+          <caret line="49" column="17" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_server_client.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="702">
@@ -530,6 +557,13 @@
           <folding>
             <element signature="e#22#40#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1116">
+          <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
         </state>
       </provider>
     </entry>
@@ -545,6 +579,9 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_optimization.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_squad_eval.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1278">
@@ -555,36 +592,22 @@
     <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_bert_download.sh">
+    <entry file="file://$PROJECT_DIR$/model/bert_tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="162">
-          <caret line="9" column="10" lean-forward="true" selection-start-line="9" selection-start-column="10" selection-end-line="9" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="775">
-          <caret line="49" column="17" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_optimization.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
+        <state relative-caret-position="1340">
+          <caret line="203" column="74" selection-start-line="203" selection-start-column="74" selection-end-line="203" selection-end-column="74" />
+          <folding>
+            <element signature="e#644#682#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5616">
-          <caret line="74" column="96" selection-start-line="74" selection-start-column="96" selection-end-line="74" selection-end-column="96" />
+        <state relative-caret-position="1314">
+          <caret line="88" column="61" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="61" />
           <folding>
-            <element signature="e#1129#1167#0" expanded="true" />
+            <element signature="e#1128#1166#0" expanded="true" />
           </folding>
         </state>
       </provider>

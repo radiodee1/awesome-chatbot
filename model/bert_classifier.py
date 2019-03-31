@@ -51,7 +51,7 @@ bert_foldername = "uncased_L-12_H-768_A-12/"
 
 ## Required parameters
 flags.DEFINE_string(
-    "data_dir", hparams['data_dir'] + '/glue_data/MNLI/',
+    "data_dir", hparams['data_dir'] + '/glue_data/MRPC/',
     "The input data dir. Should contain the .tsv files (or other data files) "
     "for the task.")
 
@@ -60,7 +60,7 @@ flags.DEFINE_string(
     "The config json file corresponding to the pre-trained BERT model. "
     "This specifies the model architecture.")
 
-flags.DEFINE_string("task_name", 'MNLI', "The name of the task to train.")
+flags.DEFINE_string("task_name", 'MRPC', "The name of the task to train.")
 
 flags.DEFINE_string("vocab_file", hparams['data_dir'] + '/bert_data/' + bert_foldername + '/vocab.txt',
                     "The vocabulary file that the BERT model was trained on.")
