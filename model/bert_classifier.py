@@ -48,7 +48,7 @@ flags = tf.flags
 FLAGS = flags.FLAGS
 
 bert_foldername = "uncased_L-12_H-768_A-12/"
-glue_name = "MRPC" ## "MNLI"
+glue_name = "MNLI" # "MRPC" ## "MNLI"
 
 ## Required parameters
 flags.DEFINE_string(

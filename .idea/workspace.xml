@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1314">
-              <caret line="88" column="61" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="61" />
+            <state relative-caret-position="337">
+              <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -43,10 +45,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_tokenization.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1340">
+            <state relative-caret-position="777">
               <caret line="203" column="74" selection-start-line="203" selection-start-column="74" selection-end-line="203" selection-end-column="74" />
               <folding>
                 <element signature="e#644#682#0" expanded="true" />
@@ -588,22 +590,22 @@
     <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1314">
-          <caret line="88" column="61" selection-start-line="88" selection-start-column="53" selection-end-line="88" selection-end-column="61" />
+        <state relative-caret-position="777">
+          <caret line="203" column="74" selection-start-line="203" selection-start-column="74" selection-end-line="203" selection-end-column="74" />
           <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
+            <element signature="e#644#682#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_tokenization.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1340">
-          <caret line="203" column="74" selection-start-line="203" selection-start-column="74" selection-end-line="203" selection-end-column="74" />
+        <state relative-caret-position="337">
+          <caret line="50" column="17" selection-start-line="50" selection-start-column="17" selection-end-line="50" selection-end-column="17" />
           <folding>
-            <element signature="e#644#682#0" expanded="true" />
+            <element signature="e#1128#1166#0" expanded="true" />
           </folding>
         </state>
       </provider>
