@@ -802,6 +802,19 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
 
 def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
+    global glue_name
+    glue_name = FLAGS.task_name
+
+    #for name in flags.FLAGS: print(name,end=' | ')
+    delattr(flags.FLAGS,'output_dir')
+    flags.DEFINE_string("output_dir", hparams['save_dir'] + "/glue_saved/" + glue_name + '/',
+        "The output directory where the model checkpoints will be written.")
+
+    delattr(flags.FLAGS, "data_dir")
+    flags.DEFINE_string(
+        "data_dir", hparams['data_dir'] + '/glue_data/' + glue_name + "/",
+        "The input data dir. Should contain the .tsv files (or other data files) "
+        "for the task.")
 
     processors = {
         "cola": ColaProcessor,
