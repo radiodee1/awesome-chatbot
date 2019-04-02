@@ -36,8 +36,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="587">
-              <caret line="1044" column="48" selection-start-line="1044" selection-start-column="48" selection-end-line="1044" selection-end-column="48" />
+            <state relative-caret-position="533">
+              <caret line="1012" column="12" selection-start-line="1012" selection-start-column="12" selection-end-line="1012" selection-end-column="12" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -644,8 +644,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="587">
-          <caret line="1044" column="48" selection-start-line="1044" selection-start-column="48" selection-end-line="1044" selection-end-column="48" />
+        <state relative-caret-position="533">
+          <caret line="1012" column="12" selection-start-line="1012" selection-start-column="12" selection-end-line="1012" selection-end-column="12" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>

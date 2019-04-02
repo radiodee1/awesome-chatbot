@@ -72,6 +72,8 @@ flags.DEFINE_string(
 
 flags.DEFINE_string('predict_filename', 'test_matched.tsv', "Name of file to use if predict is run.")
 
+flags.DEFINE_bool('big_output', True, "Include process for decoding predictions.")
+
 ## Other parameters
 
 flags.DEFINE_string(
@@ -1007,6 +1009,8 @@ def main(_):
                 writer.write(output_line)
                 num_written_lines += 1
         assert num_written_lines == num_actual_predict_examples
+
+    if FLAGS.big_output:
 
         print('process after predict.')
         labels = processor.get_labels()
