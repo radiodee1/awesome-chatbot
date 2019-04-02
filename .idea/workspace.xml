@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/markdown-navigator/profiles_settings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/markdown-navigator/profiles_settings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_split.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -36,11 +33,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3042">
-              <caret line="965" column="54" selection-start-line="965" selection-start-column="37" selection-end-line="965" selection-end-column="54" />
+            <state relative-caret-position="587">
+              <caret line="1044" column="48" selection-start-line="1044" selection-start-column="48" selection-end-line="1044" selection-end-column="48" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -48,11 +45,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="214" column="24" selection-start-line="214" selection-start-column="24" selection-end-line="214" selection-end-column="24" />
+            <state relative-caret-position="1340">
+              <caret line="240" column="33" lean-forward="true" selection-start-line="240" selection-start-column="33" selection-end-line="240" selection-end-column="33" />
             </state>
           </provider>
         </entry>
@@ -202,8 +199,8 @@
         <option value="$PROJECT_DIR$/do_make_glue_download.py" />
         <option value="$PROJECT_DIR$/do_make_bert_download.sh" />
         <option value="$PROJECT_DIR$/model/bert_tokenization.py" />
-        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/do_split.py" />
+        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
   </component>
@@ -638,20 +635,20 @@
     <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+    <entry file="file://$PROJECT_DIR$/model/do_split.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3042">
-          <caret line="965" column="54" selection-start-line="965" selection-start-column="37" selection-end-line="965" selection-end-column="54" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1340">
+          <caret line="240" column="33" lean-forward="true" selection-start-line="240" selection-start-column="33" selection-end-line="240" selection-end-column="33" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_split.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="214" column="24" selection-start-line="214" selection-start-column="24" selection-end-line="214" selection-end-column="24" />
+        <state relative-caret-position="587">
+          <caret line="1044" column="48" selection-start-line="1044" selection-start-column="48" selection-end-line="1044" selection-end-column="48" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -1008,6 +1008,44 @@ def main(_):
                 num_written_lines += 1
         assert num_written_lines == num_actual_predict_examples
 
+        print('process after predict.')
+        labels = processor.get_labels()
+        index = 0
+        skipped = 0
+        with open(output_predict_file,'r') as read_output:
+            l1 = read_output.readlines()
+            with open(FLAGS.predict_filename, 'r') as read_input:
+                l2 = read_input.readlines()
+                with open(output_predict_file + ".out.tsv",'w') as write_output:
+                    while index < len(l1):
+                        line = []
+
+                        l1_tab = l1[index].strip().split('\t')
+                        l2_tab = l2[index + 1].strip().split('\t')
+                        line.append(l2_tab[8])
+                        line.append(l2_tab[9])
+                        if len(labels) is 3 and len(l1_tab) is 3:
+                            score = float(l1_tab[0])
+                            if score < 0.33:
+                                write_output.write('\t'.join(line))
+                            else:
+                                skipped += 1
+                        elif len(labels) is 2 and len(l1_tab) is 2:
+                            score = float(l1_tab[0])
+                            if score < 0.5:
+                                write_output.write('\t'.join(line))
+                            else:
+                                skipped += 1
+                        else:
+                            print('not implemented.')
+                            exit()
+
+                        index +=1
+
+        print('skipped', skipped, 'total', index)
+                    ## do something with labels
+                    ## write_output.write(l1[index])
+
 
 if __name__ == "__main__":
     flags.mark_flag_as_required("data_dir")
