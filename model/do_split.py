@@ -92,6 +92,10 @@ if __name__ == '__main__':
     parser.add_argument('--stagger', help='stagger input for P.O.S.-style training.', action='store_true')
     parser.add_argument('--eol', help='add eol token', action='store_true')
     parser.add_argument('--xml-file', help='sentences.xml file to use.')
+    parser.add_argument('--from-mnli', help='after mnli is done', action='store_true')
+    parser.add_argument('--to-mnli', help='format file for later use with mnli classifier.', action='store_true')
+    parser.add_argument('--from-mrpc', help='after mrpc is done', action='store_true')
+    parser.add_argument('--to-mrpc', help='format file for later use with mrpc classifier.', action='store_true')
 
     args = parser.parse_args()
     args = vars(args)
@@ -101,6 +105,8 @@ if __name__ == '__main__':
     arg_filename = 'RC_2017-11'
     arg_start = 0
     arg_length = -1
+
+    arg_end_filename = ".output.txt"
 
     arg_fours = False
     arg_triplets = False
@@ -113,6 +119,13 @@ if __name__ == '__main__':
     arg_stagger = False
     arg_eol = False
     arg_xml = False
+
+    arg_classifier = ""
+    arg_to_mnli = False
+    arg_from_mnli = False
+    arg_to_mrpc = False
+    arg_from_mrpc = False
+    arg_skip_num = 8
 
     arg_mode = hparams['train_name']
 
@@ -185,7 +198,41 @@ if __name__ == '__main__':
         xml_list, xml_freq = add_to_xml(str(args['xml_file']))
         #exit()
 
-    arg_destination = arg_filename + '.output.txt'
+    if args['to_mnli']:
+        arg_to_mnli = True
+        if arg_classifier != "":
+            print('Only one classifier function at a time!')
+            exit()
+        arg_classifier = "MNLI"
+        arg_skip_num = 8
+
+    if args['from_mnli']:
+        arg_from_mnli = True
+        if arg_classifier != "":
+            print('Only one classifier function at a time!')
+            exit()
+        arg_classifier = "MNLI"
+        arg_skip_num = 8
+
+    if args['to_mrpc']:
+        arg_to_mrpc = True
+        if arg_classifier != "":
+            print('Only one classifier function at a time!')
+            exit()
+        arg_classifier = "MRPC"
+
+    if args['from_mrpc']:
+        arg_from_mrpc = True
+        if arg_classifier != "":
+            print('Only one classifier function at a time!')
+            exit()
+        arg_classifier = "MRPC"
+
+    if arg_classifier != "":
+        arg_end_filename = ".output.tsv"
+
+    #########
+    arg_destination = arg_filename + arg_end_filename #'.output.txt'
 
     if not arg_processed:
         if arg_length <= 0:
@@ -203,11 +250,27 @@ if __name__ == '__main__':
                 num += 1
             z.close()
 
+
         with open(arg_destination,'w') as z:
             for line in lines:
-                z.write(line)
-                if not line.endswith('\n'):
-                    z.write('\n')
+                if arg_classifier != "MRPC" and arg_classifier != "MNLI":
+
+                    z.write(line)
+                    if not line.endswith('\n'):
+                        z.write('\n')
+
+                elif arg_to_mnli:
+                    line = line.split('\t')
+                    l1 = []
+                    for ii in range(arg_skip_num):
+                        l1.append(" ")
+                    l1.append(line[0])
+                    l1.append(line[1])
+                    l1.append(' ')
+                    l1.append('\n')
+                    l1 = '\t'.join(l1)
+                    z.write(l1)
+
             z.close()
     else:
         ''' do split processed file '''
@@ -266,7 +329,7 @@ if __name__ == '__main__':
                     if arg_eol and len(line[1]) > 1:
                         line[1] += ' ' + hparams['eol']
 
-                    if not arg_stagger:
+                    if not arg_stagger and arg_classifier != "MRPC" and arg_classifier != "MNLI":
 
                         src.write(line[0].lower())
                         save = line[0][:]
@@ -283,7 +346,9 @@ if __name__ == '__main__':
                         if not line[1].endswith('\n'):
                             tgt.write('\n')
 
-                    else:
+
+                        pass
+                    elif arg_stagger:
                         src_stagger = ''
                         tgt_stagger = ''
                         ques_stagger = ''

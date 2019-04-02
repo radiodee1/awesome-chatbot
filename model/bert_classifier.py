@@ -70,6 +70,8 @@ flags.DEFINE_string(
     "output_dir", hparams['save_dir'] + "/glue_saved/" + glue_name + '/',
     "The output directory where the model checkpoints will be written.")
 
+flags.DEFINE_string('predict_filename', 'test_matched.tsv', "Name of file to use if predict is run.")
+
 ## Other parameters
 
 flags.DEFINE_string(
@@ -288,8 +290,10 @@ class MnliProcessor(DataProcessor):
 
     def get_test_examples(self, data_dir):
         """See base class."""
+        filename = "test_matched.tsv"
+        filename = FLAGS.predict_filename.split('/')[-1]
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "test_matched.tsv")), "test")
+            self._read_tsv(os.path.join(data_dir, filename)), "test")
 
     def get_labels(self):
         """See base class."""
@@ -987,7 +991,7 @@ def main(_):
             is_training=False,
             drop_remainder=predict_drop_remainder)
 
-        result = estimator.predict(input_fn=predict_input_fn)
+        result = estimator.predict(input_fn=predict_input_fn) ### <--
 
         output_predict_file = os.path.join(FLAGS.output_dir, "test_results.tsv")
         with tf.gfile.GFile(output_predict_file, "w") as writer:
