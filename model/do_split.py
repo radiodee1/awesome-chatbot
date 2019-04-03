@@ -234,18 +234,19 @@ if __name__ == '__main__':
     #########
     arg_destination = arg_filename + arg_end_filename #'.output.txt'
 
-    if not arg_processed:
-        if arg_length <= 0:
+    if not arg_processed :
+        if arg_length <= 0 and arg_classifier == "":
             arg_length = 500
 
         ''' do split raw file '''
         lines = []
         with open(arg_filename,'r') as z:
             num = 0
+            print(arg_length,'len')
             for line in z:
-                if num >= arg_start and num < arg_start + arg_length:
+                if num >= arg_start and (num < arg_start + arg_length or arg_length == -1):
                     lines.append(line)
-                if num > arg_start + arg_length:
+                if num > arg_start + arg_length and ( arg_length is not -1 ):
                     break
                 num += 1
             z.close()
