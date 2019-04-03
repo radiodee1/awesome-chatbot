@@ -332,10 +332,15 @@ class MrpcProcessor(DataProcessor):
         return self._create_examples(
             self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
 
-    def get_test_examples(self, data_dir):
+    def get_test_examples(self, data_dir, flag_name=True):
         """See base class."""
+        filename = "test.tsv"
+        set_type = 'test'
+        if flag_name:
+            filename = FLAGS.predict_filename.split('/')[-1]
+            #set_type = 'predict'
         return self._create_examples(
-            self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
+            self._read_tsv(os.path.join(data_dir, filename)), set_type)
 
     def get_labels(self):
         """See base class."""
@@ -343,13 +348,21 @@ class MrpcProcessor(DataProcessor):
 
     def _create_examples(self, lines, set_type):
         """Creates examples for the training and dev sets."""
+        index_a = 3
+        index_b = 4
+        if set_type == 'predict' and FLAGS.big_output:
+            index_a = 8
+            index_b = 9
+
+        print(index_a, index_b, 'indexes', lines[1])
         examples = []
         for (i, line) in enumerate(lines):
             if i == 0:
                 continue
             guid = "%s-%s" % (set_type, i)
-            text_a = tokenization.convert_to_unicode(line[3])
-            text_b = tokenization.convert_to_unicode(line[4])
+
+            text_a = tokenization.convert_to_unicode(line[index_a])
+            text_b = tokenization.convert_to_unicode(line[index_b])
             if set_type == "test":
                 label = "0"
             else:
@@ -965,7 +978,10 @@ def main(_):
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if FLAGS.do_predict:
-        predict_examples = processor.get_test_examples(FLAGS.data_dir)
+        if FLAGS.task_name == "MRPC" and FLAGS.big_output:
+            predict_examples = processor.get_test_examples(FLAGS.data_dir, flag_name=True)
+        else:
+            predict_examples = processor.get_test_examples(FLAGS.data_dir)
         num_actual_predict_examples = len(predict_examples)
         if FLAGS.use_tpu:
             # TPU requires a fixed batch size for all batches, therefore the number
@@ -1016,6 +1032,11 @@ def main(_):
         labels = processor.get_labels()
         index = 0
         skipped = 0
+        l2_index_a = 8
+        l2_index_b = 9
+        if FLAGS.task_name == "MRPC":
+            l2_index_a = 0
+            l2_index_b = 1
         with open(output_predict_file,'r') as read_output:
             l1 = read_output.readlines()
             with open(FLAGS.predict_filename, 'r') as read_input:
@@ -1026,8 +1047,9 @@ def main(_):
 
                         l1_tab = l1[index].strip().split('\t')
                         l2_tab = l2[index + 1].strip().split('\t')
-                        line.append(l2_tab[8])
-                        line.append(l2_tab[9])
+                        #print(l1_tab, l2_tab,'tab')
+                        line.append(l2_tab[l2_index_a])
+                        line.append(l2_tab[l2_index_b])
                         if len(labels) is 3 and len(l1_tab) is 3:
                             score = float(l1_tab[0])
                             if score < 0.33:

@@ -260,6 +260,7 @@ if __name__ == '__main__':
                         z.write('\n')
 
                 elif arg_to_mnli:
+                    line = line.strip('\n')
                     line = line.split('\t')
                     l1 = []
                     for ii in range(arg_skip_num):
