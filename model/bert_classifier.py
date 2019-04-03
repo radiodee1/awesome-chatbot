@@ -1040,8 +1040,8 @@ def main(_):
         l2_index_a = 8
         l2_index_b = 9
         if FLAGS.task_name == "MRPC":
-            l2_index_a = 0
-            l2_index_b = 1
+            l2_index_a = 1
+            l2_index_b = 2
         with open(output_predict_file,'r') as read_output:
             l1 = read_output.readlines()
             with open(FLAGS.predict_filename, 'r') as read_input:
