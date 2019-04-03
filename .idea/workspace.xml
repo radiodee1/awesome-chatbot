@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/do_split.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,11 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="494">
-              <caret line="1049" column="25" selection-start-line="1049" selection-start-column="25" selection-end-line="1049" selection-end-column="25" />
+            <state relative-caret-position="656">
+              <caret line="1066" column="72" selection-start-line="1066" selection-start-column="72" selection-end-line="1066" selection-end-column="72" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -24,7 +24,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/do_split.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="206">
@@ -193,8 +193,8 @@
         <option value="$PROJECT_DIR$/do_make_bert_download.sh" />
         <option value="$PROJECT_DIR$/model/bert_tokenization.py" />
         <option value="$PROJECT_DIR$/do_make_zip_tf_glue_copy.sh" />
-        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/do_split.py" />
+        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
   </component>
@@ -669,20 +669,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="494">
-          <caret line="1049" column="25" selection-start-line="1049" selection-start-column="25" selection-end-line="1049" selection-end-column="25" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_split.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="206">
           <caret line="237" column="52" selection-start-line="237" selection-start-column="52" selection-end-line="237" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="656">
+          <caret line="1066" column="72" selection-start-line="1066" selection-start-column="72" selection-end-line="1066" selection-end-column="72" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -74,6 +74,7 @@ flags.DEFINE_string('predict_filename', 'test_matched.tsv', "Name of file to use
 
 flags.DEFINE_bool('big_output', True, "Include process for decoding predictions.")
 
+flags.DEFINE_bool('diagnostic', False, "Try diagnostic input.")
 ## Other parameters
 
 flags.DEFINE_string(
@@ -353,6 +354,10 @@ class MrpcProcessor(DataProcessor):
         if set_type == 'predict' and FLAGS.big_output:
             index_a = 8
             index_b = 9
+
+        if FLAGS.diagnostic:
+            index_a = 1
+            index_b = 2
 
         print(index_a, index_b, 'indexes', lines[1])
         examples = []
@@ -1053,13 +1058,13 @@ def main(_):
                         if len(labels) is 3 and len(l1_tab) is 3:
                             score = float(l1_tab[0])
                             if score < 0.33:
-                                write_output.write('\t'.join(line))
+                                write_output.write('\t'.join(line) + '\n')
                             else:
                                 skipped += 1
                         elif len(labels) is 2 and len(l1_tab) is 2:
                             score = float(l1_tab[0])
                             if score < 0.5:
-                                write_output.write('\t'.join(line))
+                                write_output.write('\t'.join(line) + '\n')
                             else:
                                 skipped += 1
                         else:
