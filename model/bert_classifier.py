@@ -983,10 +983,13 @@ def main(_):
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if FLAGS.do_predict:
+        '''
         if FLAGS.task_name == "MRPC" and FLAGS.big_output:
             predict_examples = processor.get_test_examples(FLAGS.data_dir, flag_name=True)
         else:
-            predict_examples = processor.get_test_examples(FLAGS.data_dir)
+        '''
+        predict_examples = processor.get_test_examples(FLAGS.data_dir)
+
         num_actual_predict_examples = len(predict_examples)
         if FLAGS.use_tpu:
             # TPU requires a fixed batch size for all batches, therefore the number
