@@ -1034,7 +1034,7 @@ def main(_):
                 num_written_lines += 1
         assert num_written_lines == num_actual_predict_examples
 
-    if FLAGS.big_output:
+    if FLAGS.big_output and FLAGS.do_predict:
 
         print('process after predict.')
         labels = processor.get_labels()
