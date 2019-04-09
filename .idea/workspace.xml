@@ -2,7 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/model/bert_keras_tf.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_transformer_link.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_transformer_link.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_server_client_sequence.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_server_client_sequence.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_server_start.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_server_start.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,7 +21,7 @@
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="180">
-              <caret line="1036" column="44" selection-start-line="1036" selection-start-column="44" selection-end-line="1036" selection-end-column="44" />
+              <caret line="879" column="32" selection-start-line="879" selection-start-column="32" selection-end-line="879" selection-end-column="32" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -24,23 +29,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/bert_classifier_glue_strip.py">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="32" column="40" selection-start-line="32" selection-start-column="40" selection-end-line="32" selection-end-column="40" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="381" column="25" selection-start-line="381" selection-start-column="25" selection-end-line="381" selection-end-column="25" />
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="486">
+              <caret line="27" column="18" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -48,7 +41,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_server_client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="738">
+            <state relative-caret-position="702">
               <caret line="41" column="62" selection-start-line="41" selection-start-column="62" selection-end-line="41" selection-end-column="62" />
               <folding>
                 <element signature="e#22#40#0" expanded="true" />
@@ -60,7 +53,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1144">
+            <state relative-caret-position="1116">
               <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
             </state>
           </provider>
@@ -69,11 +62,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_server_start.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="16" column="9" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
+            <state relative-caret-position="90">
+              <caret line="7" column="16" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
               <folding>
                 <element signature="e#23#32#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/bert_keras_tf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="432">
+              <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -94,18 +96,25 @@
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_squad_eval.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="559">
+            <state relative-caret-position="1278">
               <caret line="77" selection-start-line="77" selection-end-line="77" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/model/bert_server_client_sequence.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="558">
+              <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
+              <folding>
+                <element signature="e#22#40#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
         </entry>
       </file>
     </leaf>
@@ -119,7 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model_0_wra</find>
       <find>input_variable</find>
       <find>wrap_answer_module_simple</find>
       <find>model_5_ans</find>
@@ -149,6 +157,7 @@
       <find>big_output</find>
       <find>get_test_examples</find>
       <find>num_train_epochs</find>
+      <find>tokenization</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -157,8 +166,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_make_tab_file_from_srt.py" />
-        <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_single.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_beam.py" />
         <option value="$PROJECT_DIR$/do_plot.py" />
@@ -184,7 +191,6 @@
         <option value="$PROJECT_DIR$/transformer/problem.py" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_datagen.py" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_eval.py" />
-        <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_train.py" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_eval_nmt.py" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_export.py" />
@@ -196,7 +202,6 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/tens_2_tens_eval_interactive.py" />
         <option value="$PROJECT_DIR$/model/transformer/problem.py" />
-        <option value="$PROJECT_DIR$/model/bert_server_start.py" />
         <option value="$PROJECT_DIR$/model/bert_server_client.py" />
         <option value="$PROJECT_DIR$/model/bert_squad.py" />
         <option value="$PROJECT_DIR$/model/bert_squad_eval.py" />
@@ -207,7 +212,11 @@
         <option value="$PROJECT_DIR$/model/do_split.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier_glue_strip.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/model/bert_server_client_sequence.py" />
+        <option value="$PROJECT_DIR$/model/bert_server_start.py" />
+        <option value="$PROJECT_DIR$/model/bert_keras_tf.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
+        <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
       </list>
     </option>
   </component>
@@ -222,6 +231,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -243,34 +253,7 @@
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="bert_data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="bert_data" type="462c0819:PsiDirectoryNode" />
-              <item name="uncased_L-12_H-768_A-12" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
               <item name="glue_data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="glue_data" type="462c0819:PsiDirectoryNode" />
-              <item name="diagnostic" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="glue_data" type="462c0819:PsiDirectoryNode" />
-              <item name="MNLI" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
@@ -311,7 +294,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -393,13 +375,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/hparams.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1961" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/transformer/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/transformer/problem.py" />
     <entry file="file://$PROJECT_DIR$/model/tens_2_tens_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="216">
@@ -601,13 +576,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="21" selection-start-line="16" selection-start-column="21" selection-end-line="16" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/movie_srt_text.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -621,20 +589,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="1036" column="44" selection-start-line="1036" selection-start-column="44" selection-end-line="1036" selection-end-column="44" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/data/bert_data/uncased_L-12_H-768_A-12/vocab.txt">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier_glue_strip.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
           <caret line="32" column="40" selection-start-line="32" selection-start-column="40" selection-end-line="32" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_server_client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="702">
+          <caret line="41" column="62" selection-start-line="41" selection-start-column="62" selection-end-line="41" selection-end-column="62" />
+          <folding>
+            <element signature="e#22#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1116">
+          <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_server_start.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="7" column="16" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+          <folding>
+            <element signature="e#23#32#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -650,37 +638,44 @@
     <entry file="file://$PROJECT_DIR$/model/bert_optimization.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_server_start.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_squad_eval.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="16" column="9" selection-start-line="16" selection-start-column="9" selection-end-line="16" selection-end-column="9" />
-          <folding>
-            <element signature="e#23#32#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="1278">
+          <caret line="77" selection-start-line="77" selection-end-line="77" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_server_client.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_server_client_sequence.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="738">
-          <caret line="41" column="62" selection-start-line="41" selection-start-column="62" selection-end-line="41" selection-end-column="62" />
+        <state relative-caret-position="558">
+          <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
           <folding>
             <element signature="e#22#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_keras_tf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1144">
-          <caret line="76" column="96" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="96" />
+        <state relative-caret-position="432">
+          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_squad_eval.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="559">
-          <caret line="77" selection-start-line="77" selection-end-line="77" />
+        <state relative-caret-position="180">
+          <caret line="879" column="32" selection-start-line="879" selection-start-column="32" selection-end-line="879" selection-end-column="32" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="27" column="18" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="18" />
         </state>
       </provider>
     </entry>

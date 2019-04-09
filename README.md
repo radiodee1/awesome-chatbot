@@ -39,6 +39,11 @@ That is the line that must be added to `rc.local`. Also at this time I am experi
 This file does not exist in the github repository, so if you use the repository you must add it yourself.
 This is so that the `/etc/rc.local` file can be set up once and the automatic startup of the seq_2_seq model can be disabled on the raspberry pi at the project directory. 
 
+4/9/2019 - The `model` directory has turned into a sandbox of sorts for exploring different neural network implementations. 
+I am currently most interested in bert. 
+When I am done with this exploration 
+I'll spend some time cleaning up the `model` directory.
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.

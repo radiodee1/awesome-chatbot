@@ -48,7 +48,7 @@ flags = tf.flags
 FLAGS = flags.FLAGS
 
 bert_foldername = "uncased_L-12_H-768_A-12/"
-glue_name = "MNLI" # "MRPC" ## "MNLI"
+glue_name = "chat" # "MRPC" ## "MNLI"
 
 ## Required parameters
 flags.DEFINE_string(
@@ -417,6 +417,46 @@ class ColaProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
         return examples
 
+
+class ChatProcessor(DataProcessor):
+    """Processor for the CoLA data set (GLUE version)."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
+
+    def get_labels(self):
+        """See base class."""
+        return ["0", "1"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            # Only the test set has a header
+            if set_type == "test" and i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            if set_type == "test":
+                text_a = tokenization.convert_to_unicode(line[1])
+                label = "0"
+            else:
+                text_a = tokenization.convert_to_unicode(line[3])
+                label = tokenization.convert_to_unicode(line[1])
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
 
 def convert_single_example(ex_index, example, label_list, max_seq_length,
                            tokenizer):
@@ -834,6 +874,11 @@ def main(_):
     flags.DEFINE_string("output_dir", hparams['save_dir'] + "/glue_saved/" + glue_name + '/',
         "The output directory where the model checkpoints will be written.")
 
+    if not os.path.isdir(FLAGS.output_dir):
+        os.mkdir(FLAGS.output_dir)
+    if not os.path.isdir(FLAGS.data_dir):
+        os.mkdir(FLAGS.data_dir)
+
     delattr(flags.FLAGS, "data_dir")
     flags.DEFINE_string(
         "data_dir", hparams['data_dir'] + '/glue_data/' + glue_name + "/",
@@ -845,6 +890,7 @@ def main(_):
         "mnli": MnliProcessor,
         "mrpc": MrpcProcessor,
         "xnli": XnliProcessor,
+        "chat": ChatProcessor,
     }
 
     tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
