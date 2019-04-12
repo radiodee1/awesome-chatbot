@@ -42,6 +42,7 @@ import model.bert_optimization as optimization
 import model.bert_tokenization as tokenization
 import tensorflow as tf
 from model.settings import hparams
+import numpy as np
 
 flags = tf.flags
 
@@ -70,7 +71,7 @@ flags.DEFINE_string(
     "output_dir", hparams['save_dir'] + "/glue_saved/" + glue_name + '/',
     "The output directory where the model checkpoints will be written.")
 
-flags.DEFINE_string('predict_filename', 'test_matched.tsv', "Name of file to use if predict is run.")
+flags.DEFINE_string('predict_filename', 'train.tsv', "Name of file to use if predict is run.")
 
 flags.DEFINE_bool('big_output', True, "Include process for decoding predictions.")
 
@@ -467,17 +468,18 @@ class ChatProcessor(DataProcessor):
             elif set_type == "train" :
                 if num > split_train:
                     train = []
+                    text_a = tokenization.convert_to_unicode(line[0])
                     text_b = tokenization.convert_to_unicode(line[1])
 
                     for z in range(len(text_b)):
-                        text_a = tokenization.convert_to_unicode(line[0])
 
-                        txt = text_b[:z]
 
+                        txt = [i for i in text_b[:z]]
+                        txt = ' '.join(txt)
                         label = text_b[z]
                         #if set_type != 'train': label = ' '
-                        text_a = text_a + " " + txt
-                        train.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+                        #text_c = text_a + " " + txt
+                        train.append(InputExample(guid=guid, text_a=text_a, text_b=txt, label=label))
                     examples.extend(train)
 
             num += 1
@@ -1105,7 +1107,7 @@ def main(_):
                 num_written_lines += 1
         assert num_written_lines == num_actual_predict_examples
 
-    if FLAGS.big_output and FLAGS.do_predict:
+    if FLAGS.big_output and FLAGS.do_predict and FLAGS.task_name != "chat":
 
         print('process after predict.')
         labels = processor.get_labels()
@@ -1148,8 +1150,34 @@ def main(_):
                         index +=1
 
         print('skipped', skipped, 'total', index)
-                    ## do something with labels
-                    ## write_output.write(l1[index])
+
+
+    if FLAGS.big_output and FLAGS.do_predict and FLAGS.task_name == "chat":
+        print('process after predict.')
+        labels = processor.get_labels()
+        index = 0
+        skipped = 0
+        l2_index_a = 0
+        l2_index_b = 1
+        with open(output_predict_file,'r') as read_output:
+            l1 = read_output.readlines()
+            with open(hparams['data_dir'] + '/glue_data/' + FLAGS.task_name + '/'+ FLAGS.predict_filename, 'r') as read_input:
+                l2 = read_input.readlines()
+                with open(output_predict_file + ".out.tsv",'w') as write_output:
+                    while index < len(l1):
+                        line = []
+                        l1_tab = l1[index].strip().split('\t')
+                        l2_tab = l2[index + 1].strip().split('\t')
+                        # print(l1_tab, l2_tab,'tab')
+                        line.append(l2_tab[l2_index_a])
+                        line.append(l2_tab[l2_index_b])
+                        print(len(l1_tab), index, len(l1), l1_tab[0], end=' ')
+                        l1_float = [float(i) for i in l1_tab]
+                        z = np.argmax(l1_float)
+                        print(labels[z])
+                        write_output.write(labels[z] + '\n')
+                        #exit()
+                        index += 1
 
 
 if __name__ == "__main__":

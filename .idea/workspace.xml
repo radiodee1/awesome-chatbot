@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_transformer_link.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_transformer_link.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="504">
-              <caret line="470" selection-start-line="470" selection-end-line="470" />
+            <state relative-caret-position="-8434">
+              <caret line="589" column="43" selection-start-line="589" selection-start-column="4" selection-end-line="589" selection-end-column="43" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -26,8 +27,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/test_results.tsv">
-          <provider selected="true" editor-type-id="text-editor" />
+        <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="360">
+              <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -61,6 +66,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="558">
               <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+              <folding>
+                <element signature="e#22#45#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -113,7 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>input_variable</find>
       <find>wrap_answer_module_simple</find>
       <find>model_5_ans</find>
       <find>AnswerModule</find>
@@ -132,17 +139,18 @@
       <find>main</find>
       <find>do_predict</find>
       <find>PaddingInputExample</find>
-      <find>file_based_convert_examples_to_features</find>
       <find>convert_single_example</find>
       <find>InputFeatures</find>
       <find>line</find>
       <find>MnliProcessor</find>
       <find>format</find>
-      <find>predict_filename</find>
       <find>big_output</find>
       <find>get_test_examples</find>
       <find>num_train_epochs</find>
       <find>tokenization</find>
+      <find>predict_filename</find>
+      <find>get_dev_examples</find>
+      <find>file_based_convert_examples_to_features</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -199,14 +207,14 @@
         <option value="$PROJECT_DIR$/model/bert_server_client_sequence.py" />
         <option value="$PROJECT_DIR$/model/bert_server_start.py" />
         <option value="$PROJECT_DIR$/model/bert_keras_tf.py" />
-        <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
+        <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="540" />
+    <option name="x" value="539" />
     <option name="y" value="43" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -216,6 +224,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -305,7 +314,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -348,7 +356,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="540" y="43" width="1380" height="999" extended-state="0" />
+    <frame x="539" y="43" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -600,13 +608,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="486">
-          <caret line="27" column="18" selection-start-line="27" selection-start-column="18" selection-end-line="27" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_server_client.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="702">
@@ -616,6 +617,15 @@
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/bert_data/uncased_L-12_H-768_A-12/bert_config.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/test_results.tsv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/eval_results.txt">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -638,6 +648,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="558">
           <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+          <folding>
+            <element signature="e#22#45#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -670,19 +683,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/bert_data/uncased_L-12_H-768_A-12/bert_config.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/test_results.tsv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/eval_results.txt">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="504">
-          <caret line="470" selection-start-line="470" selection-end-line="470" />
+        <state relative-caret-position="-8434">
+          <caret line="589" column="43" selection-start-line="589" selection-start-column="4" selection-end-line="589" selection-end-column="43" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>
