@@ -446,7 +446,7 @@ class ChatProcessor(DataProcessor):
 
     def get_labels(self):
         """See base class."""
-        labels = [ i for i in " ;:-'\",.!?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/*$#)(@%&"]
+        labels = [ i for i in " ;:-'\",.!?abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-/*$#)("]
         #print(labels)
         return labels
 
@@ -454,7 +454,8 @@ class ChatProcessor(DataProcessor):
         """Creates examples for the training and dev sets."""
         examples = []
         num = 0
-
+        skip = 0
+        labels = self.get_labels()
         split_start = 0
         split_train = 1000 if len(lines) > 1000 else 0
         split_test = 500 if len(lines) > 500 else 0
@@ -469,8 +470,13 @@ class ChatProcessor(DataProcessor):
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
                     label = " "
-                    examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+                    if not self._skip_line(text_a, labels):
+                        examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+                    else:
+                        skip += 1
+
                 if num > split_test :
+                    print('skip', skip)
                     break
             elif set_type == "train" :
                 if num > split_train:
@@ -481,15 +487,30 @@ class ChatProcessor(DataProcessor):
                     for z in range(len(text_b)):
 
                         txt = [i for i in text_b[:z]]
-                        txt = text_a + ' '+ ' '.join(txt)
+                        txt = text_a + ' ' + ' '.join(txt)
                         label = text_b[z]
                         #if set_type != 'train': label = ' '
                         #text_c = text_a + " " + txt
-                        train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
+
+                        if not self._skip_line(txt, labels):
+                            train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
+                        else:
+                            skip += 1
+                            break
                     examples.extend(train)
 
             num += 1
+
+        print('skip:', skip, 'tot:', num)
         return examples
+
+    def _skip_line(self, line, labels):
+        skip = False
+        for i in line:
+            if i not in labels:
+                skip = True
+                print(i, line)
+        return skip
 
 def convert_single_example(ex_index, example, label_list, max_seq_length,
                            tokenizer):
@@ -573,7 +594,11 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     assert len(input_mask) == max_seq_length
     assert len(segment_ids) == max_seq_length
 
-    label_id = label_map[example.label]
+    try:
+        label_id = label_map[example.label]
+    except:
+        label_id = 0
+
     if ex_index < 5:
         tf.logging.info("*** Example ***")
         tf.logging.info("guid: %s" % (example.guid))
