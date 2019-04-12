@@ -1212,6 +1212,8 @@ def main(_):
 
     if FLAGS.big_output and FLAGS.do_infer and FLAGS.task_name == "chat":
         labels = processor.get_labels()
+        delattr(flags.FLAGS, "predict_batch_size")
+        flags.DEFINE_integer("predict_batch_size", 1, "change val for inference.")
         while True:
             index = 0
             token = ""
@@ -1219,7 +1221,7 @@ def main(_):
             while index < 100 and token != "." and token != "?":
                 #token = ""
                 sentence = sentence + " " + token
-
+                print(sentence)
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
 
@@ -1237,10 +1239,10 @@ def main(_):
                                                         FLAGS.max_seq_length, tokenizer)
                                                         #predict_file)
 
-                tf.logging.info("***** Running prediction*****")
-                tf.logging.info("  Num examples = %d (%d actual, %d padding)",
-                                len(predict_examples), num_actual_predict_examples,
-                                len(predict_examples) - num_actual_predict_examples)
+                #tf.logging.info("***** Running prediction*****")
+                #tf.logging.info("  Num examples = %d (%d actual, %d padding)",
+                #                len(predict_examples), num_actual_predict_examples,
+                #                len(predict_examples) - num_actual_predict_examples)
                 tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
 
                 predict_drop_remainder = True if FLAGS.use_tpu else False
@@ -1254,7 +1256,7 @@ def main(_):
                 result = estimator.predict(input_fn=predict_input_fn)  ### <--
 
                 num_written_lines = 0
-                tf.logging.info("***** Predict results *****")
+                #tf.logging.info("***** Predict results *****")
                 for (i, prediction) in enumerate(result):
                     probabilities = prediction["probabilities"]
                     if i >= num_actual_predict_examples:
@@ -1262,7 +1264,7 @@ def main(_):
                     output_line = [
                         float(class_probability)
                         for class_probability in probabilities]
-                    print(output_line)
+                    #print(output_line)
                     output = np.argmax(output_line)
                     num_written_lines += 1
                     token = labels[output]
