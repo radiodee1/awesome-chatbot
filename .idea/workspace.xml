@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_transformer_link.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_transformer_link.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-8434">
-              <caret line="589" column="43" selection-start-line="589" selection-start-column="4" selection-end-line="589" selection-end-column="43" />
+            <state relative-caret-position="188">
+              <caret line="448" column="115" selection-start-line="448" selection-start-column="115" selection-end-line="448" selection-end-column="115" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -121,9 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>wrap_answer_module_simple</find>
-      <find>model_5_ans</find>
-      <find>AnswerModule</find>
       <find>task_interactive</find>
       <find>_shorten</find>
       <find>beam</find>
@@ -132,25 +128,28 @@
       <find>_set_flags</find>
       <find>while</find>
       <find>eval_i</find>
-      <find>file_based_input_fn_builder</find>
       <find>eval_input_fn</find>
       <find>dataset</find>
       <find>training</find>
       <find>main</find>
       <find>do_predict</find>
       <find>PaddingInputExample</find>
-      <find>convert_single_example</find>
       <find>InputFeatures</find>
       <find>line</find>
       <find>MnliProcessor</find>
       <find>format</find>
       <find>big_output</find>
-      <find>get_test_examples</find>
       <find>num_train_epochs</find>
       <find>tokenization</find>
       <find>predict_filename</find>
       <find>get_dev_examples</find>
       <find>file_based_convert_examples_to_features</find>
+      <find>inputExample</find>
+      <find>file_based_input_fn_builder</find>
+      <find>input_fn_builder</find>
+      <find>convert_examples_to_features</find>
+      <find>get_test_examples</find>
+      <find>convert_single_example</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -208,8 +207,8 @@
         <option value="$PROJECT_DIR$/model/bert_server_start.py" />
         <option value="$PROJECT_DIR$/model/bert_keras_tf.py" />
         <option value="$PROJECT_DIR$/README.md" />
-        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
+        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
   </component>
@@ -359,7 +358,7 @@
     <frame x="539" y="43" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.20781136" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -377,6 +376,25 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -624,6 +642,23 @@
     <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/test_results.tsv">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="448" column="115" selection-start-line="448" selection-start-column="115" selection-end-line="448" selection-end-column="115" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="360">
+          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/eval_results.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -679,23 +714,6 @@
           <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
           <folding>
             <element signature="e#22#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-8434">
-          <caret line="589" column="43" selection-start-line="589" selection-start-column="4" selection-end-line="589" selection-end-column="43" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
           </folding>
         </state>
       </provider>
