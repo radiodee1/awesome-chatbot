@@ -11,6 +11,8 @@ START=$PWD
 GLUE_PATH=$PWD/data/glue_data/chat/
 DATA_TSV=train.tsv
 
+WORD_PATH=$PWD/data/glue_data/word/
+
 echo
 echo $SIMPLE_PATH
 echo $START
@@ -28,3 +30,9 @@ rm $GLUE_PATH/$DATA_TSV
 ln -s $START/$1 $GLUE_PATH/$DATA_TSV
 
 ls -hal $GLUE_PATH
+
+mkdir -p $WORD_PATH
+rm $WORD_PATH/$DATA_TSV
+ln -s $START/$1 $WORD_PATH/$DATA_TSV
+
+ls -hal $WORD_PATH

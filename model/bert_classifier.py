@@ -423,7 +423,7 @@ class ColaProcessor(DataProcessor):
 
 
 class ChatProcessor(DataProcessor):
-    """Processor for the CoLA data set (GLUE version)."""
+    """Processor for the chat spell data set (GLUE version)."""
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -507,6 +507,111 @@ class ChatProcessor(DataProcessor):
     def _skip_line(self, line, labels):
         skip = False
         for i in line:
+            if i not in labels:
+                skip = True
+                print(i, line)
+        return skip
+
+class WordsProcessor(DataProcessor):
+    """Processor for the words data set (GLUE version)."""
+
+    def __init__(self):
+        self.labels = None
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "dev")
+
+    def get_test_examples(self, data_dir, text_a=None, text_b=None):
+        """See base class."""
+        if text_a is None and text_b is None:
+            list = self._read_tsv(os.path.join(data_dir,'train.tsv'))
+        else:
+            list = [' '.join([text_a, text_b])]
+            print(list)
+        return self._create_examples(list, "test")
+
+    def get_labels(self):
+        """See base class."""
+        if self.labels is not None:
+            return self.labels
+        else:
+            path =  hparams['data_dir'] + '/bert_data/' + bert_foldername + '/vocab.txt'
+
+            self.labels = self._read_tsv(path)
+            self.labels = [i[0] for i in self.labels]
+        return self.labels
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        tokenizer = tokenization.FullTokenizer(
+            vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
+        examples = []
+        num = 0
+        skip = 0
+        labels = self.get_labels()
+        split_start = 0
+        split_train = 1000 if len(lines) > 1000 else 0
+        split_test = 500 if len(lines) > 500 else 0
+        if set_type == "dev":
+            split_start = split_test
+            split_test = split_test * 2
+
+        for (i, line) in enumerate(lines):
+
+            guid = i #num
+            if set_type != "train" :
+                if num >= split_start:
+                    text_a = tokenization.convert_to_unicode(line[0]).lower()
+                    text_a = tokenizer.tokenize(text_a)
+                    label = " "
+                    if True: #not self._skip_line(text_a, labels):
+                        examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+                    else:
+                        skip += 1
+
+                if num > split_test :
+                    print('skip', skip)
+                    break
+            elif set_type == "train" :
+                if num > split_train:
+                    train = []
+                    text_a = tokenization.convert_to_unicode(line[0]).lower()
+                    text_b = tokenization.convert_to_unicode(line[1]).lower()
+
+                    text_a = tokenizer.tokenize(text_a)
+                    text_b = tokenizer.tokenize(text_b)
+
+                    for z in range(len(text_b)):
+
+                        txt = [i for i in text_b[:z]]
+                        txt = ' '.join(text_a) + ' ' + ' '.join(txt)
+                        label = text_b[z]
+                        #if set_type != 'train': label = ' '
+                        #text_c = text_a + " " + txt
+                        #label = tokenization.convert_to_unicode(label)
+                        #print(label)
+                        if True: # or not self._skip_line(txt, labels):
+                            train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
+                        else:
+                            skip += 1
+                            break
+                    examples.extend(train)
+
+            num += 1
+
+        print('skip:', skip, 'tot:', num)
+        return examples
+
+    def _skip_line(self, line, labels):
+        skip = False
+        for i in line.split(' '):
             if i not in labels:
                 skip = True
                 print(i, line)
@@ -596,9 +701,10 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
 
     try:
         label_id = label_map[example.label]
+        #print(label_id, 'correct!')
     except:
         label_id = 0
-        print('skip value for label.')
+        print('skip value for label.', example.label)
 
     if ex_index < 5:
         tf.logging.info("*** Example ***")
@@ -950,6 +1056,7 @@ def main(_):
         "mrpc": MrpcProcessor,
         "xnli": XnliProcessor,
         "chat": ChatProcessor,
+        "word": WordsProcessor,
     }
 
     tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
@@ -1088,11 +1195,7 @@ def main(_):
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if FLAGS.do_predict:
-        '''
-        if FLAGS.task_name == "MRPC" and FLAGS.big_output:
-            predict_examples = processor.get_test_examples(FLAGS.data_dir, flag_name=True)
-        else:
-        '''
+
         predict_examples = processor.get_test_examples(FLAGS.data_dir)
 
         num_actual_predict_examples = len(predict_examples)
@@ -1139,7 +1242,7 @@ def main(_):
                 num_written_lines += 1
         assert num_written_lines == num_actual_predict_examples
 
-    if FLAGS.big_output and FLAGS.do_predict and FLAGS.task_name != "chat":
+    if FLAGS.big_output and FLAGS.do_predict and FLAGS.task_name not in ["chat", 'word']:
 
         print('process after predict.')
         labels = processor.get_labels()
@@ -1269,6 +1372,64 @@ def main(_):
                     num_written_lines += 1
                     token = labels[output]
 
+    if FLAGS.big_output and FLAGS.do_infer and FLAGS.task_name == "word":
+        labels = processor.get_labels()
+        delattr(flags.FLAGS, "predict_batch_size")
+        flags.DEFINE_integer("predict_batch_size", 1, "change val for inference.")
+        while True:
+            index = 0
+            token = ""
+            sentence = input('sentence: ')
+            while index < 100 and token != "." and token != "?":
+                #token = ""
+                sentence = sentence + " " + token
+                print(sentence)
+                index += 1
+                predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
+
+                num_actual_predict_examples = len(predict_examples)
+                if FLAGS.use_tpu:
+                    # TPU requires a fixed batch size for all batches, therefore the number
+                    # of examples must be a multiple of the batch size, or else examples
+                    # will get dropped. So we pad with fake examples which are ignored
+                    # later on.
+                    while len(predict_examples) % FLAGS.predict_batch_size != 0:
+                        predict_examples.append(PaddingInputExample())
+
+                #predict_file = os.path.join(FLAGS.output_dir, "predict.tf_record")
+                features = convert_examples_to_features(predict_examples, label_list,
+                                                        FLAGS.max_seq_length, tokenizer)
+                                                        #predict_file)
+
+                #tf.logging.info("***** Running prediction*****")
+                #tf.logging.info("  Num examples = %d (%d actual, %d padding)",
+                #                len(predict_examples), num_actual_predict_examples,
+                #                len(predict_examples) - num_actual_predict_examples)
+                tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
+
+                predict_drop_remainder = True if FLAGS.use_tpu else False
+                predict_input_fn = input_fn_builder(
+                    features=features,
+                    #input_file=predict_file,
+                    seq_length=FLAGS.max_seq_length,
+                    is_training=False,
+                    drop_remainder=predict_drop_remainder)
+
+                result = estimator.predict(input_fn=predict_input_fn)  ### <--
+
+                num_written_lines = 0
+                #tf.logging.info("***** Predict results *****")
+                for (i, prediction) in enumerate(result):
+                    probabilities = prediction["probabilities"]
+                    if i >= num_actual_predict_examples:
+                        break
+                    output_line = [
+                        float(class_probability)
+                        for class_probability in probabilities]
+                    #print(output_line)
+                    output = np.argmax(output_line)
+                    num_written_lines += 1
+                    token = labels[output]
 
 if __name__ == "__main__":
     flags.mark_flag_as_required("data_dir")

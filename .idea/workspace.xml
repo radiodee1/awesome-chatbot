@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_transformer_link.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_transformer_link.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,8 +17,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
-              <caret line="1215" column="80" selection-start-line="1215" selection-start-column="80" selection-end-line="1215" selection-end-column="80" />
+            <state relative-caret-position="278">
+              <caret line="571" column="54" selection-start-line="571" selection-start-column="54" selection-end-line="571" selection-end-column="54" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -25,10 +27,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_zip_tf_glue_copy.sh">
+        <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="144">
-              <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+            <state relative-caret-position="666">
+              <caret line="37" column="18" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -119,10 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_shorten</find>
-      <find>beam</find>
-      <find>arg_processed</find>
-      <find>usr_dir</find>
       <find>_set_flags</find>
       <find>while</find>
       <find>eval_i</find>
@@ -141,14 +139,18 @@
       <find>tokenization</find>
       <find>predict_filename</find>
       <find>get_dev_examples</find>
-      <find>file_based_convert_examples_to_features</find>
       <find>inputExample</find>
       <find>file_based_input_fn_builder</find>
       <find>input_fn_builder</find>
       <find>convert_examples_to_features</find>
       <find>get_test_examples</find>
-      <find>convert_single_example</find>
       <find>predict_batch_size</find>
+      <find>ChatProcessor</find>
+      <find>DataProcessor</find>
+      <find>__init__</find>
+      <find>InputExample</find>
+      <find>convert_single_example</find>
+      <find>file_based_convert_examples_to_features</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -222,7 +224,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -269,6 +270,13 @@
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="glue_data" type="462c0819:PsiDirectoryNode" />
+              <item name="word" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="model" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -308,10 +316,18 @@
               <item name="glue_saved" type="462c0819:PsiDirectoryNode" />
               <item name="MNLI" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="glue_saved" type="462c0819:PsiDirectoryNode" />
+              <item name="word" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -615,10 +631,10 @@
     <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/test_results.tsv">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+    <entry file="file://$PROJECT_DIR$/do_make_zip_tf_glue_copy.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="21" selection-start-line="20" selection-start-column="21" selection-end-line="20" selection-end-column="21" />
+        <state relative-caret-position="144">
+          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
         </state>
       </provider>
     </entry>
@@ -681,17 +697,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_zip_tf_glue_copy.sh">
+    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="8" column="19" selection-start-line="8" selection-start-column="19" selection-end-line="8" selection-end-column="19" />
+        <state relative-caret-position="666">
+          <caret line="37" column="18" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
-          <caret line="1215" column="80" selection-start-line="1215" selection-start-column="80" selection-end-line="1215" selection-end-column="80" />
+        <state relative-caret-position="278">
+          <caret line="571" column="54" selection-start-line="571" selection-start-column="54" selection-end-line="571" selection-end-column="54" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>
