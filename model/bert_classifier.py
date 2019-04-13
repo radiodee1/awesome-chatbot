@@ -607,7 +607,7 @@ class WordsProcessor(DataProcessor):
 
             num += 1
 
-        print('skip:', skip, 'tot:', num)
+        if set_type == 'train': print('skip:', skip, 'tot:', num)
         return examples
 
     def _skip_line(self, line, labels):
