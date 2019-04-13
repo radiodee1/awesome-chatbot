@@ -534,7 +534,7 @@ class WordsProcessor(DataProcessor):
             list = self._read_tsv(os.path.join(data_dir,'train.tsv'))
         else:
             list = [' '.join([text_a, text_b])]
-            print(list)
+            #print(list,'list')
         return self._create_examples(list, "test")
 
     def get_labels(self):
@@ -545,7 +545,7 @@ class WordsProcessor(DataProcessor):
             path =  hparams['data_dir'] + '/bert_data/' + bert_foldername + '/vocab.txt'
 
             self.labels = self._read_tsv(path)
-            self.labels = [i[0] for i in self.labels]
+            self.labels = [tokenization.convert_to_unicode(i[0].strip()) for i in self.labels]
         return self.labels
 
     def _create_examples(self, lines, set_type):
@@ -570,9 +570,10 @@ class WordsProcessor(DataProcessor):
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
                     text_a = tokenizer.tokenize(text_a)
+                    txt = ' '.join(text_a)
                     label = " "
                     if True: #not self._skip_line(text_a, labels):
-                        examples.append(InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+                        examples.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
                     else:
                         skip += 1
 
@@ -614,7 +615,7 @@ class WordsProcessor(DataProcessor):
         for i in line.split(' '):
             if i not in labels:
                 skip = True
-                print(i, line)
+                #print(i, line)
         return skip
 
 def convert_single_example(ex_index, example, label_list, max_seq_length,
@@ -632,6 +633,8 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     label_map = {}
     for (i, label) in enumerate(label_list):
         label_map[label] = i
+
+    #print(example.text_a, example.text_b,'ab')
 
     tokens_a = tokenizer.tokenize(example.text_a)
     tokens_b = None
@@ -1315,6 +1318,7 @@ def main(_):
 
     if FLAGS.big_output and FLAGS.do_infer and FLAGS.task_name == "chat":
         labels = processor.get_labels()
+        label_list = labels
         delattr(flags.FLAGS, "predict_batch_size")
         flags.DEFINE_integer("predict_batch_size", 1, "change val for inference.")
         while True:
@@ -1383,7 +1387,7 @@ def main(_):
             while index < 100 and token != "." and token != "?":
                 #token = ""
                 sentence = sentence + " " + token
-                print(sentence)
+                #print(sentence,'sent')
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
 
@@ -1395,6 +1399,7 @@ def main(_):
                     # later on.
                     while len(predict_examples) % FLAGS.predict_batch_size != 0:
                         predict_examples.append(PaddingInputExample())
+
 
                 #predict_file = os.path.join(FLAGS.output_dir, "predict.tf_record")
                 features = convert_examples_to_features(predict_examples, label_list,
@@ -1429,6 +1434,7 @@ def main(_):
                     #print(output_line)
                     output = np.argmax(output_line)
                     num_written_lines += 1
+                    #print(output,'out')
                     token = labels[output]
 
 if __name__ == "__main__":

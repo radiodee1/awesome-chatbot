@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="122" column="48" lean-forward="true" selection-start-line="122" selection-start-column="48" selection-end-line="122" selection-end-column="48" />
+            <state relative-caret-position="1502">
+              <caret line="617" column="17" selection-start-line="617" selection-start-column="17" selection-end-line="617" selection-end-column="17" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -114,10 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>_set_flags</find>
-      <find>while</find>
-      <find>eval_i</find>
-      <find>eval_input_fn</find>
       <find>dataset</find>
       <find>training</find>
       <find>main</find>
@@ -135,15 +132,19 @@
       <find>inputExample</find>
       <find>file_based_input_fn_builder</find>
       <find>input_fn_builder</find>
-      <find>convert_examples_to_features</find>
-      <find>get_test_examples</find>
       <find>predict_batch_size</find>
       <find>ChatProcessor</find>
       <find>DataProcessor</find>
       <find>__init__</find>
       <find>InputExample</find>
-      <find>convert_single_example</find>
       <find>file_based_convert_examples_to_features</find>
+      <find>label_list</find>
+      <find>get_labels</find>
+      <find>convert_examples_to_features</find>
+      <find>convert_single_example</find>
+      <find>_create_examples</find>
+      <find>get_test_examples</find>
+      <find>print</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -207,7 +208,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="539" />
+    <option name="x" value="538" />
     <option name="y" value="43" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -217,6 +218,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -320,7 +322,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -363,7 +364,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="539" y="43" width="1380" height="999" extended-state="0" />
+    <frame x="538" y="43" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -402,16 +403,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_cornell_movie.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="24" selection-start-line="24" selection-end-line="24" />
-          <folding>
-            <element signature="e#20#33#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tens_2_tens_eval_nmt.py" />
     <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553278722/saved_model.pbtxt" />
     <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553278722/variables/variables.index" />
@@ -553,11 +544,7 @@
     <entry file="file://$PROJECT_DIR$/data/bert_data/train-v1.1.json">
       <provider selected="true" editor-type-id="LargeFileEditor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/squad-json.txt">
-      <provider selected="true" editor-type-id="LargeFileEditor">
-        <state relative-caret-position="-324" />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/squad-json.txt" />
     <entry file="file://$PROJECT_DIR$/do_make_bert_squad_download.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -628,6 +615,19 @@
     <entry file="file://$PROJECT_DIR$/saved/glue_saved/chat/eval_results.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/saved/glue_saved/word/eval_results.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/bert_data/uncased_L-12_H-768_A-12/bert_config.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="666">
+          <caret line="37" column="18" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_squad.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1116">
@@ -684,23 +684,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="666">
-          <caret line="37" column="18" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/glue_saved/word/eval_results.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/bert_data/uncased_L-12_H-768_A-12/bert_config.json">
+    <entry file="file://$PROJECT_DIR$/saved/glue_saved/word/events.out.tfevents.1555185365.dave-Inspiron-5577">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="122" column="48" lean-forward="true" selection-start-line="122" selection-start-column="48" selection-end-line="122" selection-end-column="48" />
+        <state relative-caret-position="1502">
+          <caret line="617" column="17" selection-start-line="617" selection-start-column="17" selection-end-line="617" selection-end-column="17" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>
