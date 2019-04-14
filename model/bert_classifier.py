@@ -534,7 +534,7 @@ class WordsProcessor(DataProcessor):
             list = self._read_tsv(os.path.join(data_dir,'train.tsv'))
         else:
             list = [[text_a, text_b]]
-            print(list,'list')
+            #print(list,'list')
         return self._create_examples(list, "test")
 
     def get_labels(self):
@@ -565,16 +565,16 @@ class WordsProcessor(DataProcessor):
 
         for (i, line) in enumerate(lines):
 
-            guid = i 
+            guid = i
 
             if set_type != "train" :
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
-                    print(text_a, ',txta1')
+                    #print(text_a, ',txta1')
                     text_a = tokenizer.tokenize(text_a)
-                    print(text_a,',txta2')
+                    #print(text_a,',txta2')
                     txt = ' '.join(text_a)
-                    print(txt,',txt')
+                    #print(txt,',txt')
                     label = " "
                     if True: #not self._skip_line(text_a, labels):
                         examples.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
@@ -638,7 +638,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     for (i, label) in enumerate(label_list):
         label_map[label] = i
 
-    print(type(example.text_a), example.text_a, 'ta')
+    #print(type(example.text_a), example.text_a, 'ta')
     if not isinstance(example.text_a, list):
         tokens_a = tokenizer.tokenize(example.text_a)
     else:
@@ -1400,7 +1400,7 @@ def main(_):
             while index < 100 and token != "." and token != "?":
                 #token = ""
                 sentence = sentence + " " + token
-                print(sentence,',sent')
+                #print(sentence,',sent')
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
 

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="62">
-              <caret line="535" column="36" lean-forward="true" selection-start-line="535" selection-start-column="36" selection-end-line="535" selection-end-column="36" />
+            <state relative-caret-position="260">
+              <caret line="721" column="19" selection-start-line="721" selection-start-column="18" selection-end-line="721" selection-end-column="19" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -115,7 +114,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>do_predict</find>
       <find>PaddingInputExample</find>
       <find>InputFeatures</find>
       <find>line</find>
@@ -145,6 +143,7 @@
       <find>do_infer</find>
       <find>Example</find>
       <find>_read_tsv</find>
+      <find>5</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -626,8 +625,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="62">
-          <caret line="535" column="36" lean-forward="true" selection-start-line="535" selection-start-column="36" selection-end-line="535" selection-end-column="36" />
+        <state relative-caret-position="260">
+          <caret line="721" column="19" selection-start-line="721" selection-start-column="18" selection-end-line="721" selection-end-column="19" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>
