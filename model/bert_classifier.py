@@ -97,7 +97,7 @@ flags.DEFINE_bool("do_train", False, "Whether to run training.")
 
 flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
 
-flags.DEFINE_bool("do_infer", False, "Whether to run infer on the user input.")
+flags.DEFINE_bool("do_interactive", False, "Whether to run infer on the user input.")
 
 
 flags.DEFINE_bool(
@@ -533,8 +533,8 @@ class WordsProcessor(DataProcessor):
         if text_a is None and text_b is None:
             list = self._read_tsv(os.path.join(data_dir,'train.tsv'))
         else:
-            list = [' '.join([text_a, text_b])]
-            #print(list,'list')
+            list = [[text_a, text_b]]
+            print(list,'list')
         return self._create_examples(list, "test")
 
     def get_labels(self):
@@ -565,12 +565,16 @@ class WordsProcessor(DataProcessor):
 
         for (i, line) in enumerate(lines):
 
-            guid = i #num
+            guid = i 
+
             if set_type != "train" :
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
+                    print(text_a, ',txta1')
                     text_a = tokenizer.tokenize(text_a)
+                    print(text_a,',txta2')
                     txt = ' '.join(text_a)
+                    print(txt,',txt')
                     label = " "
                     if True: #not self._skip_line(text_a, labels):
                         examples.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
@@ -634,12 +638,18 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     for (i, label) in enumerate(label_list):
         label_map[label] = i
 
-    #print(example.text_a, example.text_b,'ab')
+    print(type(example.text_a), example.text_a, 'ta')
+    if not isinstance(example.text_a, list):
+        tokens_a = tokenizer.tokenize(example.text_a)
+    else:
+        tokens_a = example.text_a
 
-    tokens_a = tokenizer.tokenize(example.text_a)
     tokens_b = None
     if example.text_b:
-        tokens_b = tokenizer.tokenize(example.text_b)
+        if not isinstance(example.text_b, list):
+            tokens_b = tokenizer.tokenize(example.text_b)
+        else:
+            tokens_b = example.text_b
 
     if tokens_b:
         # Modifies `tokens_a` and `tokens_b` in place so that the total
@@ -710,6 +720,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
         print('skip value for label.', example.label)
 
     if ex_index < 5:
+        print('tokens:', tokens)
         tf.logging.info("*** Example ***")
         tf.logging.info("guid: %s" % (example.guid))
         tf.logging.info("tokens: %s" % " ".join(
@@ -1065,9 +1076,9 @@ def main(_):
     tokenization.validate_case_matches_checkpoint(FLAGS.do_lower_case,
                                                   FLAGS.init_checkpoint)
 
-    if not FLAGS.do_train and not FLAGS.do_eval and not FLAGS.do_predict and not FLAGS.do_infer:
+    if not FLAGS.do_train and not FLAGS.do_eval and not FLAGS.do_predict and not FLAGS.do_interactive:
         raise ValueError(
-            "At least one of `do_train`, `do_eval`, 'do_infer' or `do_predict' must be True.")
+            "At least one of `do_train`, `do_eval`, 'do_interactive' or `do_predict' must be True.")
 
     bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
 
@@ -1316,7 +1327,7 @@ def main(_):
                         #exit()
                         index += 1
 
-    if FLAGS.big_output and FLAGS.do_infer and FLAGS.task_name == "chat":
+    if FLAGS.big_output and FLAGS.do_interactive and FLAGS.task_name == "chat":
         labels = processor.get_labels()
         label_list = labels
         delattr(flags.FLAGS, "predict_batch_size")
@@ -1376,18 +1387,20 @@ def main(_):
                     num_written_lines += 1
                     token = labels[output]
 
-    if FLAGS.big_output and FLAGS.do_infer and FLAGS.task_name == "word":
+    if FLAGS.big_output and FLAGS.do_interactive and FLAGS.task_name == "word":
         labels = processor.get_labels()
         delattr(flags.FLAGS, "predict_batch_size")
         flags.DEFINE_integer("predict_batch_size", 1, "change val for inference.")
+        sentence = ""
         while True:
             index = 0
             token = ""
+            print('last:',sentence)
             sentence = input('sentence: ')
             while index < 100 and token != "." and token != "?":
                 #token = ""
                 sentence = sentence + " " + token
-                #print(sentence,'sent')
+                print(sentence,',sent')
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
 

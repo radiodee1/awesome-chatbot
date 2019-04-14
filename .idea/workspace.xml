@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1502">
-              <caret line="617" column="17" selection-start-line="617" selection-start-column="17" selection-end-line="617" selection-end-column="17" />
+            <state relative-caret-position="62">
+              <caret line="535" column="36" lean-forward="true" selection-start-line="535" selection-start-column="36" selection-end-line="535" selection-end-column="36" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -115,9 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>dataset</find>
-      <find>training</find>
-      <find>main</find>
       <find>do_predict</find>
       <find>PaddingInputExample</find>
       <find>InputFeatures</find>
@@ -145,6 +142,9 @@
       <find>_create_examples</find>
       <find>get_test_examples</find>
       <find>print</find>
+      <find>do_infer</find>
+      <find>Example</find>
+      <find>_read_tsv</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -218,7 +218,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -322,6 +321,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -621,6 +621,19 @@
     <entry file="file://$PROJECT_DIR$/data/bert_data/uncased_L-12_H-768_A-12/bert_config.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/saved/glue_saved/word/events.out.tfevents.1555185365.dave-Inspiron-5577">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="62">
+          <caret line="535" column="36" lean-forward="true" selection-start-line="535" selection-start-column="36" selection-end-line="535" selection-end-column="36" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_transformer_link.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="666">
@@ -680,19 +693,6 @@
           <caret line="33" column="25" selection-start-line="33" selection-start-column="25" selection-end-line="33" selection-end-column="25" />
           <folding>
             <element signature="e#22#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/glue_saved/word/events.out.tfevents.1555185365.dave-Inspiron-5577">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1502">
-          <caret line="617" column="17" selection-start-line="617" selection-start-column="17" selection-end-line="617" selection-end-column="17" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
           </folding>
         </state>
       </provider>
