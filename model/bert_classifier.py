@@ -571,7 +571,7 @@ class WordsProcessor(DataProcessor):
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
                     #print(text_a, ',txta1')
-                    text_a = tokenizer.tokenize(text_a)
+                    text_a = tokenizer.tokenize(text_a) #+ ['[MASK]']
                     #print(text_a,',txta2')
                     txt = ' '.join(text_a)
                     #print(txt,',txt')
@@ -593,12 +593,16 @@ class WordsProcessor(DataProcessor):
                     text_a = tokenizer.tokenize(text_a)
                     text_b = tokenizer.tokenize(text_b)
 
+                    if text_a[-1] not in ['.', '?', '!', '-', "'", '"']:
+                        text_a = text_a + ['.']
+                        #print(text_a)
+
                     for z in range(len(text_b)):
 
-                        txt = [i for i in text_b[:z]]
+                        txt = [i for i in text_b[:z]] #+ ['[MASK]']
                         txt = ' '.join(text_a) + ' ' + ' '.join(txt)
                         label = text_b[z]
-                        if z < len(text_b): label = text_b[z+1]
+                        if z + 1 < len(text_b): label = text_b[z+1]
                         #if set_type != 'train': label = ' '
                         #text_c = text_a + " " + txt
                         #label = tokenization.convert_to_unicode(label)
