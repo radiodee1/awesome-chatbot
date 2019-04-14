@@ -598,6 +598,7 @@ class WordsProcessor(DataProcessor):
                         txt = [i for i in text_b[:z]]
                         txt = ' '.join(text_a) + ' ' + ' '.join(txt)
                         label = text_b[z]
+                        if z < len(text_b): label = text_b[z+1]
                         #if set_type != 'train': label = ' '
                         #text_c = text_a + " " + txt
                         #label = tokenization.convert_to_unicode(label)
