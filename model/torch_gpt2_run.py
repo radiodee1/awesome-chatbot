@@ -106,7 +106,7 @@ def run_model():
                     text = enc.decode(out[i])
                     print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
                     print(text)
-                    
+
             print("=" * 80)
         if args.unconditional:
             generated = 0

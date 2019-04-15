@@ -152,6 +152,7 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
+flags.DEFINE_integer("start_example", 0, "starting example number.")
 
 class InputExample(object):
     """A single training/test example for simple sequence classification."""
@@ -556,12 +557,18 @@ class WordsProcessor(DataProcessor):
         num = 0
         skip = 0
         labels = self.get_labels()
+        start_example = FLAGS.start_example if len(lines) > FLAGS.start_example else 0
         split_start = 0
-        split_train = 1000 if len(lines) > 1000 else 0
-        split_test = 500 if len(lines) > 500 else 0
+        split_train = (1000 if len(lines) > 1000 else 0)
+        split_test = (500 if len(lines) > 500 else 0)
         if set_type == "dev":
             split_start = split_test
             split_test = split_test * 2
+        else:
+            split_start = split_start + start_example
+            split_test = split_test + start_example
+            split_train = split_train + start_example
+            print(start_example, 'start examples.')
 
         for (i, line) in enumerate(lines):
 
@@ -1456,9 +1463,11 @@ def main(_):
                     token = labels[output]
 
 if __name__ == "__main__":
+    '''
     flags.mark_flag_as_required("data_dir")
     flags.mark_flag_as_required("task_name")
     flags.mark_flag_as_required("vocab_file")
     flags.mark_flag_as_required("bert_config_file")
     flags.mark_flag_as_required("output_dir")
+    '''
     tf.app.run()
