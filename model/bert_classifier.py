@@ -566,10 +566,10 @@ class WordsProcessor(DataProcessor):
         if set_type == "dev":
             split_start = split_test
             split_test = split_test * 2
-        else:
-            split_start = split_start + start_example
-            split_test = split_test + start_example
-            split_train = split_train + start_example
+        elif start_example != 0:
+            split_start = start_example
+            split_test = start_example
+            split_train = start_example
             print(split_train, 'start examples.')
 
         for (i, line) in enumerate(lines):
