@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +27,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="451">
-              <caret line="587" column="29" lean-forward="true" selection-start-line="587" selection-start-column="29" selection-end-line="587" selection-end-column="29" />
+            <state relative-caret-position="257">
+              <caret line="1418" column="17" selection-start-line="1418" selection-start-column="17" selection-end-line="1418" selection-end-column="17" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -710,8 +709,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="587" column="29" lean-forward="true" selection-start-line="587" selection-start-column="29" selection-end-line="587" selection-end-column="29" />
+        <state relative-caret-position="257">
+          <caret line="1418" column="17" selection-start-line="1418" selection-start-column="17" selection-end-line="1418" selection-end-column="17" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>

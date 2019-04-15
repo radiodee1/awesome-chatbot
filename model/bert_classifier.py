@@ -585,7 +585,7 @@ class WordsProcessor(DataProcessor):
                     txt = ' '.join(text_a)
                     #print(txt,',txt')
                     label = " "
-                    if True: 
+                    if True:
                         examples.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
                     else:
                         skip += 1
@@ -1416,7 +1416,7 @@ def main(_):
             sentence = input('sentence: ')
             while index < 100 and token != "." and token != "?":
                 #token = ""
-                sentence = sentence + " " + token
+                #sentence = sentence + " " + token
                 #print(sentence,',sent')
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
@@ -1466,6 +1466,8 @@ def main(_):
                     num_written_lines += 1
                     #print(output,'out')
                     token = labels[output]
+                    sentence = sentence + " " + token
+
 
 if __name__ == "__main__":
     '''
