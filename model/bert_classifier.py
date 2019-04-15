@@ -557,6 +557,8 @@ class WordsProcessor(DataProcessor):
         num = 0
         skip = 0
         labels = self.get_labels()
+        len_b_txt = 1
+
         start_example = FLAGS.start_example if len(lines) > FLAGS.start_example else 0
         split_start = 0
         split_train = (1000 if len(lines) > 1000 else 0)
@@ -568,7 +570,7 @@ class WordsProcessor(DataProcessor):
             split_start = split_start + start_example
             split_test = split_test + start_example
             split_train = split_train + start_example
-            print(start_example, 'start examples.')
+            print(split_train, 'start examples.')
 
         for (i, line) in enumerate(lines):
 
@@ -583,7 +585,7 @@ class WordsProcessor(DataProcessor):
                     txt = ' '.join(text_a)
                     #print(txt,',txt')
                     label = " "
-                    if True: #not self._skip_line(text_a, labels):
+                    if True: 
                         examples.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
                     else:
                         skip += 1
@@ -605,7 +607,7 @@ class WordsProcessor(DataProcessor):
                         #print(text_a)
 
                     for z in range(len(text_b)):
-
+                        len_b_txt = 0
                         txt = [i for i in text_b[:z]] #+ ['[MASK]']
                         txt = ' '.join(text_a) + ' ' + ' '.join(txt)
                         label = text_b[z]
@@ -614,14 +616,17 @@ class WordsProcessor(DataProcessor):
                         #text_c = text_a + " " + txt
                         #label = tokenization.convert_to_unicode(label)
                         #print(label)
-                        if True: # or not self._skip_line(txt, labels):
+                        if label not in ['.', '?', '!', '-']:
                             train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
+                            len_b_txt += 1
                         else:
                             skip += 1
                             break
+                    #len_b_txt = len(text_b)
                     examples.extend(train)
 
-            num += 1
+            num += len_b_txt
+            #print(num)
 
         if set_type == 'train': print('skip:', skip, 'tot:', num)
         return examples
