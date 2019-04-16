@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_modeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_modeling.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,11 +24,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="569" column="25" lean-forward="true" selection-start-line="569" selection-start-column="25" selection-end-line="569" selection-end-column="25" />
+            <state relative-caret-position="-198">
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -78,10 +77,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_modeling.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="-6858">
               <folding>
                 <element signature="e#665#703#0" expanded="true" />
               </folding>
@@ -126,8 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>InputFeatures</find>
-      <find>line</find>
       <find>MnliProcessor</find>
       <find>format</find>
       <find>big_output</find>
@@ -156,6 +153,8 @@
       <find>_read_tsv</find>
       <find>5</find>
       <find>start_example</find>
+      <find>estimator</find>
+      <find>input_fn</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -164,7 +163,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/model/seq_2_seq_beam.py" />
         <option value="$PROJECT_DIR$/do_plot.py" />
         <option value="$PROJECT_DIR$/do_launch_game300.sh" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
@@ -215,6 +213,7 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
+        <option value="$PROJECT_DIR$/model/bert_modeling.py" />
       </list>
     </option>
   </component>
@@ -229,7 +228,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -333,6 +331,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -678,15 +677,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_modeling.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#665#703#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_optimization.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -709,10 +699,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="569" column="25" lean-forward="true" selection-start-line="569" selection-start-column="25" selection-end-line="569" selection-end-column="25" />
+        <state relative-caret-position="-198">
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_modeling.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-6858">
+          <folding>
+            <element signature="e#665#703#0" expanded="true" />
           </folding>
         </state>
       </provider>
