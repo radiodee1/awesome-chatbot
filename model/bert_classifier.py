@@ -48,6 +48,9 @@ flags = tf.flags
 
 FLAGS = flags.FLAGS
 
+model = None
+LAYERS = [-1,-2,-3,-4]
+
 bert_foldername = "uncased_L-12_H-768_A-12/"
 glue_name = "word" # "chat" # "MRPC" ## "MNLI"
 
@@ -196,12 +199,14 @@ class InputFeatures(object):
                  input_mask,
                  segment_ids,
                  label_id,
-                 is_real_example=True):
+                 is_real_example=True,
+                 unique_id=0):
         self.input_ids = input_ids
         self.input_mask = input_mask
         self.segment_ids = segment_ids
         self.label_id = label_id
         self.is_real_example = is_real_example
+        self.unique_id = unique_id
 
 
 class DataProcessor(object):
@@ -574,15 +579,18 @@ class WordsProcessor(DataProcessor):
 
         for (i, line) in enumerate(lines):
 
-            guid = i
+            guid = num #i
 
             if set_type != "train" :
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
                     #print(text_a, ',txta1')
-                    text_a = tokenizer.tokenize(text_a) #+ ['[MASK]']
-                    #print(text_a,',txta2')
-                    txt = ' '.join(text_a)
+                    if not FLAGS.do_interactive:
+                        text_a = tokenizer.tokenize(text_a)
+                        #print(text_a,',txta2')
+                        txt = ' '.join(text_a)
+                    else:
+                        txt = text_a
                     #print(txt,',txt')
                     label = " "
                     if True:
@@ -618,7 +626,7 @@ class WordsProcessor(DataProcessor):
                         #print(label)
                         if label not in ['.', '?', '!', '-']:
                             train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
-                            len_b_txt += 1
+                            num += 1
                         else:
                             skip += 1
                             break
@@ -649,7 +657,9 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
             input_mask=[0] * max_seq_length,
             segment_ids=[0] * max_seq_length,
             label_id=0,
-            is_real_example=False)
+            is_real_example=False,
+            unique_id=0
+        )
 
     label_map = {}
     for (i, label) in enumerate(label_list):
@@ -752,7 +762,9 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
         input_mask=input_mask,
         segment_ids=segment_ids,
         label_id=label_id,
-        is_real_example=True)
+        is_real_example=True,
+        unique_id=example.guid
+    )
     return feature
 
 
@@ -852,8 +864,10 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
 
 
 def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
-                 labels, num_labels, use_one_hot_embeddings):
+                 labels, num_labels, use_one_hot_embeddings, unique_ids):
     """Creates a classification model."""
+    global model
+
     model = modeling.BertModel(
         config=bert_config,
         is_training=is_training,
@@ -867,6 +881,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     #
     # If you want to use the token-level output, use model.get_sequence_output()
     # instead.
+    #output_layer = model.get_sequence_output() ## ??
     output_layer = model.get_pooled_output()
 
     hidden_size = output_layer.shape[-1].value
@@ -912,6 +927,8 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         input_mask = features["input_mask"]
         segment_ids = features["segment_ids"]
         label_ids = features["label_ids"]
+        unique_ids = features["unique_ids"]
+
         is_real_example = None
         if "is_real_example" in features:
             is_real_example = tf.cast(features["is_real_example"], dtype=tf.float32)
@@ -922,7 +939,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
 
         (total_loss, per_example_loss, logits, probabilities) = create_model(
             bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
-            num_labels, use_one_hot_embeddings)
+            num_labels, use_one_hot_embeddings, unique_ids)
 
         tvars = tf.trainable_variables()
         initialized_variable_names = {}
@@ -997,12 +1014,14 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
     all_input_mask = []
     all_segment_ids = []
     all_label_ids = []
+    all_unique_ids = []
 
     for feature in features:
         all_input_ids.append(feature.input_ids)
         all_input_mask.append(feature.input_mask)
         all_segment_ids.append(feature.segment_ids)
         all_label_ids.append(feature.label_id)
+        all_unique_ids.append(feature.unique_id)
 
     def input_fn(params):
         """The actual input function."""
@@ -1014,6 +1033,8 @@ def input_fn_builder(features, seq_length, is_training, drop_remainder):
         # not use Dataset.from_generator() because that uses tf.py_func which is
         # not TPU compatible. The right way to load data is with TFRecordReader.
         d = tf.data.Dataset.from_tensor_slices({
+            "unique_ids":
+                tf.constant(all_unique_ids, shape=[num_examples], dtype=tf.int32),
             "input_ids":
                 tf.constant(
                     all_input_ids, shape=[num_examples, seq_length],
@@ -1058,6 +1079,20 @@ def convert_examples_to_features(examples, label_list, max_seq_length,
 
         features.append(feature)
     return features
+
+def combine_tokens(tokens):
+    if not isinstance(tokens, list):
+        tokens = tokens.split(' ')
+    out_str = ''
+    for tok in tokens:
+        if tok.startswith('##'):
+            tok = tok[2:]
+        else:
+            out_str += " "
+        out_str += tok
+
+
+    return out_str.strip()
 
 
 def main(_):
@@ -1374,6 +1409,7 @@ def main(_):
                                                         FLAGS.max_seq_length, tokenizer)
                                                         #predict_file)
 
+
                 #tf.logging.info("***** Running prediction*****")
                 #tf.logging.info("  Num examples = %d (%d actual, %d padding)",
                 #                len(predict_examples), num_actual_predict_examples,
@@ -1414,10 +1450,10 @@ def main(_):
             token = ""
             print('last:',sentence)
             sentence = input('sentence: ')
-            while index < 100 and token != "." and token != "?":
-                #token = ""
-                #sentence = sentence + " " + token
-                #print(sentence,',sent')
+            #sentence = tokenizer.tokenize(sentence)
+            #sentence = ' '.join(sentence)
+            while index < 15 and token != "." and token != "?":
+
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
 
@@ -1436,16 +1472,17 @@ def main(_):
                                                         FLAGS.max_seq_length, tokenizer)
                                                         #predict_file)
 
-                #tf.logging.info("***** Running prediction*****")
-                #tf.logging.info("  Num examples = %d (%d actual, %d padding)",
-                #                len(predict_examples), num_actual_predict_examples,
-                #                len(predict_examples) - num_actual_predict_examples)
+                unique_id_to_feature = {}
+                for feature in features:
+                    unique_id_to_feature[feature.unique_id] = feature
+                layer_indexes = LAYERS
+                dim = 768
+
                 tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
 
                 predict_drop_remainder = True if FLAGS.use_tpu else False
                 predict_input_fn = input_fn_builder(
                     features=features,
-                    #input_file=predict_file,
                     seq_length=FLAGS.max_seq_length,
                     is_training=False,
                     drop_remainder=predict_drop_remainder)
@@ -1454,19 +1491,39 @@ def main(_):
 
                 num_written_lines = 0
                 #tf.logging.info("***** Predict results *****")
+
                 for (i, prediction) in enumerate(result):
                     probabilities = prediction["probabilities"]
+                    '''
+                    if False:
+                        unique_id = int(prediction["unique_id"])
+                        feature = unique_id_to_feature[unique_id]
+                        output = collections.OrderedDict()
+                        for (i, token) in enumerate(feature.tokens):
+                            layers = []
+                            for (j, layer_index) in enumerate(layer_indexes):
+                                layer_output = result["layer_output_%d" % j]
+                                layer_output_flat = np.array([x for x in layer_output[i:(i + 1)].flat])
+                                layers.append(layer_output_flat)
+                            output[token] = sum(layers)[:dim]
+                        print(output,'out')
+                    '''
                     if i >= num_actual_predict_examples:
                         break
-                    output_line = [
-                        float(class_probability)
-                        for class_probability in probabilities]
-                    #print(output_line)
+                    output_line = [ float(class_probability) for class_probability in probabilities]
                     output = np.argmax(output_line)
                     num_written_lines += 1
-                    #print(output,'out')
                     token = labels[output]
-                    sentence = sentence + " " + token
+                    sentence = sentence + " " + token 
+                    sentence = combine_tokens(sentence)
+                    '''
+                    if model is not None and False:
+                        model_list = model.get_all_encoder_layers()
+                        model_pooled = model.get_pooled_output()
+                        print(model_pooled,":list")
+                    '''
+                    break
+                #break
 
 
 if __name__ == "__main__":

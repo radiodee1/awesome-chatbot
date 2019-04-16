@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_modeling.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier_modeling.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_optimization.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier_optimization.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_squad.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_squad.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_tokenization.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier_tokenization.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,11 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="98">
-              <caret line="856" column="26" selection-start-line="856" selection-start-column="21" selection-end-line="856" selection-end-column="26" />
+            <state relative-caret-position="458">
+              <caret line="1516" column="54" lean-forward="true" selection-start-line="1516" selection-start-column="54" selection-end-line="1516" selection-end-column="54" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -86,7 +81,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1530">
+            <state relative-caret-position="-1584">
               <caret line="14" column="16" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="16" />
               <folding>
                 <element signature="e#665#703#0" expanded="true" />
@@ -95,7 +90,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier_optimization.py">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
@@ -132,25 +127,10 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tokenization</find>
-      <find>predict_filename</find>
-      <find>get_dev_examples</find>
-      <find>inputExample</find>
-      <find>file_based_input_fn_builder</find>
-      <find>input_fn_builder</find>
-      <find>predict_batch_size</find>
-      <find>ChatProcessor</find>
-      <find>DataProcessor</find>
-      <find>__init__</find>
-      <find>InputExample</find>
       <find>file_based_convert_examples_to_features</find>
       <find>label_list</find>
       <find>get_labels</find>
-      <find>convert_examples_to_features</find>
-      <find>convert_single_example</find>
       <find>_create_examples</find>
-      <find>get_test_examples</find>
-      <find>print</find>
       <find>do_infer</find>
       <find>Example</find>
       <find>_read_tsv</find>
@@ -159,9 +139,24 @@
       <find>estimator</find>
       <find>input_fn</find>
       <find>model</find>
-      <find>create_model</find>
       <find>bertm</find>
+      <find>model</find>
+      <find>convert_examples_to_features</find>
+      <find>convert_single_example</find>
+      <find>Inputex</find>
+      <find>InputFeatures</find>
+      <find>model_fn_builder</find>
+      <find>unique_id</find>
+      <find>create_model</find>
       <find>bert</find>
+      <find>get_test_examples</find>
+      <find>FullTokenizer</find>
+      <find>do_interactive</find>
+      <find>tokenize</find>
+      <find>sentence</find>
+      <find>print</find>
+      <find>tokens</find>
+      <find>tokens:</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -218,9 +213,9 @@
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run.py" />
         <option value="$PROJECT_DIR$/model/bert_modeling.py" />
-        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/bert_tokenization.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier_optimization.py" />
+        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
   </component>
@@ -684,16 +679,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="98">
-          <caret line="856" column="26" selection-start-line="856" selection-start-column="21" selection-end-line="856" selection-end-column="26" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier_tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
@@ -711,9 +696,12 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier_optimization.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1530">
+        <state relative-caret-position="-1584">
           <caret line="14" column="16" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="16" />
           <folding>
             <element signature="e#665#703#0" expanded="true" />
@@ -721,8 +709,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier_optimization.py">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="458">
+          <caret line="1516" column="54" lean-forward="true" selection-start-line="1516" selection-start-column="54" selection-end-line="1516" selection-end-column="54" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
     </entry>
   </component>
   <component name="masterDetails">
