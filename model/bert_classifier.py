@@ -37,9 +37,9 @@ import os
 import sys
 
 sys.path.append('..')
-import model.bert_modeling as modeling
-import model.bert_optimization as optimization
-import model.bert_tokenization as tokenization
+import model.bert_classifier_modeling as modeling
+import model.bert_classifier_optimization as optimization
+import model.bert_classifier_tokenization as tokenization
 import tensorflow as tf
 from model.settings import hparams
 import numpy as np

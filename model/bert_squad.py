@@ -42,9 +42,9 @@ import tensorflow as tf
 import sys
 sys.path.append('..')
 from model.settings import hparams
-import model.bert_modeling as modeling
-import model.bert_optimization as optimization
-import model.bert_tokenization as tokenization
+import model.bert_classifier_modeling as modeling
+import model.bert_classifier_optimization as optimization
+import model.bert_classifier_tokenization as tokenization
 
 flags = tf.flags
 
