@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,19 +15,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="902" column="38" selection-start-line="902" selection-start-column="38" selection-end-line="902" selection-end-column="38" />
+            <state relative-caret-position="404">
+              <caret line="911" column="5" selection-start-line="911" selection-start-column="5" selection-end-line="911" selection-end-column="5" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/report.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2652" />
           </provider>
         </entry>
       </file>
@@ -44,7 +39,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="252">
+            <state relative-caret-position="-2412">
               <caret line="14" column="16" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="16" />
               <folding>
                 <element signature="e#665#703#0" expanded="true" />
@@ -90,7 +85,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>label_list</find>
       <find>get_labels</find>
       <find>_create_examples</find>
       <find>do_infer</find>
@@ -105,7 +99,6 @@
       <find>Inputex</find>
       <find>InputFeatures</find>
       <find>unique_id</find>
-      <find>create_model</find>
       <find>bert</find>
       <find>get_test_examples</find>
       <find>FullTokenizer</find>
@@ -120,6 +113,8 @@
       <find>unique_id_to_feature</find>
       <find>model</find>
       <find>tf.fla</find>
+      <find>create_model</find>
+      <find>features</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -183,8 +178,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="534" />
-    <option name="y" value="45" />
+    <option name="x" value="533" />
+    <option name="y" value="46" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -339,7 +334,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="534" y="45" width="1380" height="999" extended-state="0" />
+    <frame x="533" y="46" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -631,16 +626,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="252">
-          <caret line="14" column="16" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="16" />
-          <folding>
-            <element signature="e#665#703#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/temp.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -690,10 +675,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2412">
+          <caret line="14" column="16" selection-start-line="14" selection-start-column="12" selection-end-line="14" selection-end-column="16" />
+          <folding>
+            <element signature="e#665#703#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="902" column="38" selection-start-line="902" selection-start-column="38" selection-end-line="902" selection-end-column="38" />
+        <state relative-caret-position="404">
+          <caret line="911" column="5" selection-start-line="911" selection-start-column="5" selection-end-line="911" selection-end-column="5" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>
