@@ -886,18 +886,28 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     #output_layer = model.get_sequence_output() ## ??
 
     i = 0
+    layers = []
     layer_indexes = LAYERS
     all_layers = model.get_all_encoder_layers()
     print(tf.executing_eagerly(),'eagerly')
+
     for (j, layer_index) in enumerate(layer_indexes):
         layer_output = all_layers[layer_index]
-        print( layer_output, ':layer-start')
-        layer_output_flat = np.array([x for x in layer_output[i:(i+1)]])
+
+        layer_output_flat = tf.map_fn(lambda x: x, layer_output)
+        h_val = layer_output_flat.shape[-1].value
+        layer_output_flat = tf.reshape(layer_output_flat, [-1, h_val])
         print(layer_output_flat,':flat')
 
-    output_layer = model.get_pooled_output()
+        layers.append(layer_output_flat)
+    output_layer = tf.concat(layers, 1)
+    print(output_layer,':out')
+
+    #output_layer = model.get_pooled_output()
 
     hidden_size = output_layer.shape[-1].value
+    output_layer = tf.reshape(output_layer, [-1, hidden_size])
+    print(output_layer,':out2')
 
     output_weights = tf.get_variable(
         "output_weights", [num_labels, hidden_size],
