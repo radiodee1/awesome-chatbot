@@ -586,17 +586,21 @@ class WordsProcessor(DataProcessor):
             if set_type != "train" :
                 if num >= split_start:
                     text_a = tokenization.convert_to_unicode(line[0]).lower()
-                    #print(text_a, ',txta1')
+
+                    text_b = tokenization.convert_to_unicode(line[1]).lower()
                     if not FLAGS.do_interactive:
                         text_a = tokenizer.tokenize(text_a)
-                        #print(text_a,',txta2')
+                        text_b = tokenizer.tokenize(text_b)
+
                         txt = ' '.join(text_a)
+                        txtb = ' '.join(text_b)
                     else:
                         txt = text_a
+                        txtb = text_b
                     #print(txt,',txt')
                     label = " "
                     if True:
-                        examples.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
+                        examples.append(InputExample(guid=guid, text_a=txt, text_b=txtb, label=label))
                     else:
                         skip += 1
 
@@ -618,8 +622,9 @@ class WordsProcessor(DataProcessor):
 
                     for z in range(len(text_b)):
                         len_b_txt = 0
-                        txt = [i for i in text_b[:z]] #+ ['[MASK]']
-                        txt = ' '.join(text_a) + ' ' + ' '.join(txt)
+                        #txt = [i for i in text_b[:z]] #+ ['[MASK]']
+                        txt = ' '.join(text_a) #+ ' ' + ' '.join(txt)
+                        txtb = ' '.join(text_b[:z])
                         label = text_b[z]
                         if z + 1 < len(text_b): label = text_b[z+1]
                         #if set_type != 'train': label = ' '
@@ -627,7 +632,7 @@ class WordsProcessor(DataProcessor):
                         #label = tokenization.convert_to_unicode(label)
                         #print(label)
                         if label not in ['.', '?', '!', '-',',']:
-                            train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
+                            train.append(InputExample(guid=guid, text_a=txt, text_b=txtb, label=label))
                             num += 1
                         else:
                             skip += 1
@@ -748,7 +753,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
         label_id = 0
         print('skip value for label.', example.label)
 
-    if ex_index < 5:
+    if ex_index < 15:
         print('tokens:', tokens)
         tf.logging.info("*** Example ***")
         tf.logging.info("guid: %s" % (example.guid))
@@ -1558,17 +1563,18 @@ def main(_):
         delattr(flags.FLAGS, "predict_batch_size")
         flags.DEFINE_integer("predict_batch_size", 1, "change val for inference.")
         sentence = ""
+        sentenceb = ""
         while True:
             index = 0
             token = ""
-            print('last:',sentence)
+            print('last:',sentence + " " + sentenceb)
             sentence = input('sentence: ')
             #sentence = tokenizer.tokenize(sentence)
             #sentence = ' '.join(sentence)
             while index < 15 and token not in ['.','?', '!', ',','-'] : #!= "." and token != "?":
 
                 index += 1
-                predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
+                predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b=sentenceb)
 
                 num_actual_predict_examples = len(predict_examples)
                 if FLAGS.use_tpu:
@@ -1638,8 +1644,8 @@ def main(_):
                     output = np.argmax(output_line)
                     num_written_lines += 1
                     token = labels[output]
-                    sentence = sentence + " " + token
-                    sentence = combine_tokens(sentence)
+                    sentenceb = sentenceb + " " + token
+                    sentenceb = combine_tokens(sentenceb)
                     '''
                     if model is not None and False:
                         model_list = model.get_all_encoder_layers()
