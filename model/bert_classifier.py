@@ -866,7 +866,7 @@ def _truncate_seq_pair(tokens_a, tokens_b, max_length):
 
 
 def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
-                 labels, num_labels, use_one_hot_embeddings, unique_ids):
+                 labels, num_labels, use_one_hot_embeddings, unique_ids=None):
     """Creates a classification model."""
     global model
 
@@ -1012,7 +1012,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         input_mask = features["input_mask"]
         segment_ids = features["segment_ids"]
         label_ids = features["label_ids"]
-        unique_ids = features["unique_ids"]
+        #unique_ids = features["unique_ids"]
 
         is_real_example = None
         if "is_real_example" in features:
@@ -1024,7 +1024,7 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
 
         (total_loss, per_example_loss, logits, probabilities) = create_model(
             bert_config, is_training, input_ids, input_mask, segment_ids, label_ids,
-            num_labels, use_one_hot_embeddings, unique_ids)
+            num_labels, use_one_hot_embeddings)
 
         tvars = tf.trainable_variables()
         initialized_variable_names = {}
