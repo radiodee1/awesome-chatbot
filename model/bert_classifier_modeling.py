@@ -225,8 +225,9 @@ class BertModel(object):
                 # We "pool" the model by simply taking the hidden state corresponding
                 # to the first token. We assume that this has been pre-trained
                 first_token_tensor = tf.squeeze(self.sequence_output[:, 0:1, :], axis=1)
+                last_token_tensor = tf.squeeze(self.sequence_output[:, -2:-1, :], axis=1)
                 self.pooled_output = tf.layers.dense(
-                    first_token_tensor,
+                    last_token_tensor,
                     config.hidden_size,
                     activation=tf.tanh,
                     kernel_initializer=create_initializer(config.initializer_range))
