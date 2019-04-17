@@ -624,7 +624,7 @@ class WordsProcessor(DataProcessor):
                         #text_c = text_a + " " + txt
                         #label = tokenization.convert_to_unicode(label)
                         #print(label)
-                        if label not in ['.', '?', '!', '-']:
+                        if label not in ['.', '?', '!', '-',',']:
                             train.append(InputExample(guid=guid, text_a=txt, text_b=None, label=label))
                             num += 1
                         else:
@@ -1452,7 +1452,7 @@ def main(_):
             sentence = input('sentence: ')
             #sentence = tokenizer.tokenize(sentence)
             #sentence = ' '.join(sentence)
-            while index < 15 and token != "." and token != "?":
+            while index < 15 and token not in ['.','?', '!', ',','-'] : #!= "." and token != "?":
 
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b="")
@@ -1514,7 +1514,7 @@ def main(_):
                     output = np.argmax(output_line)
                     num_written_lines += 1
                     token = labels[output]
-                    sentence = sentence + " " + token 
+                    sentence = sentence + " " + token
                     sentence = combine_tokens(sentence)
                     '''
                     if model is not None and False:
