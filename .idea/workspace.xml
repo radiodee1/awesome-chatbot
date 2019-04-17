@@ -16,22 +16,10 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="54">
-              <caret line="1454" column="67" selection-start-line="1454" selection-start-column="67" selection-end-line="1454" selection-end-column="67" />
+            <state relative-caret-position="320">
+              <caret line="47" selection-start-line="47" selection-end-line="47" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/bert_classifier_tokenization.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3492">
-              <caret line="202" column="78" selection-start-line="202" selection-start-column="78" selection-end-line="202" selection-end-column="78" />
-              <folding>
-                <element signature="e#644#682#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -92,6 +80,15 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/temp.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="23" selection-end-line="60" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier_optimization.py">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
@@ -137,16 +134,12 @@
       <find>_read_tsv</find>
       <find>5</find>
       <find>start_example</find>
-      <find>estimator</find>
       <find>input_fn</find>
-      <find>model</find>
       <find>bertm</find>
-      <find>model</find>
       <find>convert_examples_to_features</find>
       <find>convert_single_example</find>
       <find>Inputex</find>
       <find>InputFeatures</find>
-      <find>model_fn_builder</find>
       <find>unique_id</find>
       <find>create_model</find>
       <find>bert</find>
@@ -158,6 +151,10 @@
       <find>print</find>
       <find>tokens</find>
       <find>tokens:</find>
+      <find>model_fn_builder</find>
+      <find>estimator</find>
+      <find>unique_id_to_feature</find>
+      <find>model</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -166,7 +163,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/do_launch_game300.sh" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
         <option value="$PROJECT_DIR$/model/do_make_vocab.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_novocab.py" />
@@ -216,13 +212,14 @@
         <option value="$PROJECT_DIR$/model/bert_modeling.py" />
         <option value="$PROJECT_DIR$/model/bert_tokenization.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier_optimization.py" />
+        <option value="$PROJECT_DIR$/model/temp.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="535" />
-    <option name="y" value="44" />
+    <option name="x" value="534" />
+    <option name="y" value="45" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -231,7 +228,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -335,6 +331,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -377,7 +374,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="535" y="44" width="1380" height="999" extended-state="0" />
+    <frame x="534" y="45" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -416,7 +413,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553278722/saved_model.pbtxt" />
     <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553278722/variables/variables.index" />
     <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553278722/variables/variables.data-00000-of-00001" />
     <entry file="file://$PROJECT_DIR$/saved/t2t_trained_model/export/1553280447/saved_model.pbtxt" />
@@ -636,22 +632,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="54">
-          <caret line="1454" column="67" selection-start-line="1454" selection-start-column="67" selection-end-line="1454" selection-end-column="67" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier_tokenization.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3492">
           <caret line="202" column="78" selection-start-line="202" selection-start-column="78" selection-end-line="202" selection-end-column="78" />
           <folding>
             <element signature="e#644#682#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="320">
+          <caret line="47" selection-start-line="47" selection-end-line="47" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -697,6 +693,13 @@
           <folding>
             <element signature="e#665#703#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/temp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="23" selection-end-line="60" />
         </state>
       </provider>
     </entry>

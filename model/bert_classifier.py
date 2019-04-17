@@ -44,6 +44,8 @@ import tensorflow as tf
 from model.settings import hparams
 import numpy as np
 
+tf.enable_eager_execution()
+
 flags = tf.flags
 
 FLAGS = flags.FLAGS
@@ -882,6 +884,17 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     # If you want to use the token-level output, use model.get_sequence_output()
     # instead.
     #output_layer = model.get_sequence_output() ## ??
+
+    i = 0
+    layer_indexes = LAYERS
+    all_layers = model.get_all_encoder_layers()
+    print(tf.executing_eagerly(),'eagerly')
+    for (j, layer_index) in enumerate(layer_indexes):
+        layer_output = all_layers[layer_index]
+        print( layer_output, ':layer-start')
+        layer_output_flat = np.array([x for x in layer_output[i:(i+1)]])
+        print(layer_output_flat,':flat')
+
     output_layer = model.get_pooled_output()
 
     hidden_size = output_layer.shape[-1].value
@@ -910,6 +923,68 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
 
         return (loss, per_example_loss, logits, probabilities)
 
+'''
+def model_fn_builder_v2(bert_config, init_checkpoint, layer_indexes, use_tpu,
+                     use_one_hot_embeddings):
+    ##Returns `model_fn` closure for TPUEstimator.
+
+    def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
+        ##The `model_fn` for TPUEstimator.
+
+        unique_ids = features["unique_ids"]
+        input_ids = features["input_ids"]
+        input_mask = features["input_mask"]
+        input_type_ids = features["input_type_ids"]
+
+        model = modeling.BertModel(
+            config=bert_config,
+            is_training=False,
+            input_ids=input_ids,
+            input_mask=input_mask,
+            token_type_ids=input_type_ids,
+            use_one_hot_embeddings=use_one_hot_embeddings)
+
+        if mode != tf.estimator.ModeKeys.PREDICT:
+            raise ValueError("Only PREDICT modes are supported: %s" % (mode))
+
+        tvars = tf.trainable_variables()
+        scaffold_fn = None
+        (assignment_map,
+         initialized_variable_names) = modeling.get_assignment_map_from_checkpoint(
+            tvars, init_checkpoint)
+        if use_tpu:
+
+            def tpu_scaffold():
+                tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+                return tf.train.Scaffold()
+
+            scaffold_fn = tpu_scaffold
+        else:
+            tf.train.init_from_checkpoint(init_checkpoint, assignment_map)
+
+        tf.logging.info("**** Trainable Variables ****")
+        for var in tvars:
+            init_string = ""
+            if var.name in initialized_variable_names:
+                init_string = ", *INIT_FROM_CKPT*"
+            tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
+                            init_string)
+
+        all_layers = model.get_all_encoder_layers()
+
+        predictions = {
+            "unique_id": unique_ids,
+        }
+
+        for (i, layer_index) in enumerate(layer_indexes):
+            predictions["layer_output_%d" % i] = all_layers[layer_index]
+
+        output_spec = tf.contrib.tpu.TPUEstimatorSpec(
+            mode=mode, predictions=predictions, scaffold_fn=scaffold_fn)
+        return output_spec
+
+    return model_fn
+'''
 
 def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -1188,6 +1263,17 @@ def main(_):
         num_warmup_steps=num_warmup_steps,
         use_tpu=FLAGS.use_tpu,
         use_one_hot_embeddings=FLAGS.use_tpu)
+
+    layer_indexes = LAYERS
+    '''
+    model_fn = model_fn_builder_v2(
+        bert_config=bert_config,
+        init_checkpoint=FLAGS.init_checkpoint,
+        layer_indexes=layer_indexes,
+        use_tpu=FLAGS.use_tpu,
+        use_one_hot_embeddings=FLAGS.use_tpu
+    )
+    '''
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
     # or GPU.
@@ -1472,6 +1558,8 @@ def main(_):
                                                         FLAGS.max_seq_length, tokenizer)
                                                         #predict_file)
 
+
+
                 unique_id_to_feature = {}
                 for feature in features:
                     unique_id_to_feature[feature.unique_id] = feature
@@ -1487,7 +1575,7 @@ def main(_):
                     is_training=False,
                     drop_remainder=predict_drop_remainder)
 
-                result = estimator.predict(input_fn=predict_input_fn)  ### <--
+                result = estimator.predict(input_fn=predict_input_fn, yield_single_examples=True)  ### <--
 
                 num_written_lines = 0
                 #tf.logging.info("***** Predict results *****")
@@ -1495,6 +1583,15 @@ def main(_):
                 for (i, prediction) in enumerate(result):
                     probabilities = prediction["probabilities"]
                     '''
+                    print(prediction)
+                    layers = []
+                    all_layers = model.get_all_encoder_layers()
+                    for (j,layer_index) in enumerate(layer_indexes):
+                        layer_output = all_layers[layer_index]
+                        print(i, layer_output ,':layer')
+                        #layer_output_flat = np.array([x for x in layer_output[i:(i+1)].flat])
+                        #print(layer_output_flat,':flat')
+                    
                     if False:
                         unique_id = int(prediction["unique_id"])
                         feature = unique_id_to_feature[unique_id]
@@ -1522,6 +1619,7 @@ def main(_):
                         model_pooled = model.get_pooled_output()
                         print(model_pooled,":list")
                     '''
+
                     break
                 #break
 
