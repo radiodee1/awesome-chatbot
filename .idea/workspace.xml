@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game_voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_voice.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_game.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_game.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,44 +13,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
-              <caret line="732" selection-start-line="732" selection-end-line="732" />
+            <state relative-caret-position="91">
+              <caret line="892" column="5" selection-start-line="892" selection-start-column="5" selection-end-line="892" selection-end-column="5" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="378">
-              <caret line="21" column="26" selection-start-line="21" selection-start-column="26" selection-end-line="21" selection-end-column="26" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bot/game.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="59" selection-start-line="59" selection-end-line="59" />
-              <folding>
-                <element signature="e#20#85#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/bot/game_voice.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="216">
-              <caret line="15" column="71" selection-start-line="15" selection-start-column="71" selection-end-line="15" selection-end-column="71" />
             </state>
           </provider>
         </entry>
@@ -71,7 +40,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3888">
+            <state relative-caret-position="613">
               <caret line="227" column="74" selection-start-line="227" selection-start-column="74" selection-end-line="227" selection-end-column="74" />
               <folding>
                 <element signature="e#665#703#0" expanded="true" />
@@ -202,16 +171,16 @@
         <option value="$PROJECT_DIR$/model/temp.py" />
         <option value="$PROJECT_DIR$/model/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/model/settings.py" />
-        <option value="$PROJECT_DIR$/model/bert_classifier_modeling.py" />
-        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/do_launch_game.sh" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
+        <option value="$PROJECT_DIR$/model/bert_classifier_modeling.py" />
+        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="527" />
-    <option name="y" value="49" />
+    <option name="x" value="528" />
+    <option name="y" value="48" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -635,36 +604,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model/settings.py" />
     <entry file="file://$PROJECT_DIR$/model/model/bert_classifier.py" />
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
-          <caret line="732" selection-start-line="732" selection-end-line="732" />
-          <folding>
-            <element signature="e#1128#1166#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_keras_tf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="558">
-          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
-          <folding>
-            <element signature="e#22#45#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3888">
-          <caret line="227" column="74" selection-start-line="227" selection-start-column="74" selection-end-line="227" selection-end-column="74" />
-          <folding>
-            <element signature="e#665#703#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier_optimization.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -685,10 +624,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
+    <entry file="file://$PROJECT_DIR$/bot/game_voice.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="378">
-          <caret line="21" column="26" selection-start-line="21" selection-start-column="26" selection-end-line="21" selection-end-column="26" />
+        <state relative-caret-position="216">
+          <caret line="15" column="71" selection-start-line="15" selection-start-column="71" selection-end-line="15" selection-end-column="71" />
         </state>
       </provider>
     </entry>
@@ -702,10 +641,40 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bot/game_voice.py">
+    <entry file="file://$PROJECT_DIR$/model/bert_keras_tf.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="15" column="71" selection-start-line="15" selection-start-column="71" selection-end-line="15" selection-end-column="71" />
+        <state relative-caret-position="558">
+          <caret line="39" column="8" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="8" />
+          <folding>
+            <element signature="e#22#45#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="378">
+          <caret line="21" column="26" selection-start-line="21" selection-start-column="26" selection-end-line="21" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier_modeling.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="613">
+          <caret line="227" column="74" selection-start-line="227" selection-start-column="74" selection-end-line="227" selection-end-column="74" />
+          <folding>
+            <element signature="e#665#703#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="892" column="5" selection-start-line="892" selection-start-column="5" selection-end-line="892" selection-end-column="5" />
+          <folding>
+            <element signature="e#1128#1166#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

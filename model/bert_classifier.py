@@ -890,46 +890,26 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     # instead.
     #output_layer = model.get_sequence_output() ## ??
 
-    i = 0
+    #i = 0
     layers = []
     layer_indexes = LAYERS
     all_layers = model.get_all_encoder_layers()
-    print(tf.executing_eagerly(),'eagerly')
 
-    h_val = -1
-    o_val = -1
-
-    if False:
+    if True:
         for (j, layer_index) in enumerate(layer_indexes):
             layer_output = all_layers[layer_index]
 
             layer_output_flat = tf.map_fn(lambda x: x, layer_output)
-            h_val = layer_output_flat.shape[-1].value
-            o_val = layer_output_flat.shape[-2].value
-            m_val = layer_output_flat.shape[-3].value
-            print(layer_output_flat, ':not flat')
-            layer_output_flat = tf.reshape(layer_output_flat, [-1, h_val])
-            print(layer_output_flat,':flat')
-            #if j == 0: output_layer = tf.zeros_like(layer_output_flat)
+            layer_output_flat = tf.squeeze(layer_output_flat[:, -1:, :], axis=1) ## choose the last!!
             layers.append(layer_output_flat)
 
         output_layer = tf.concat(layers, 1)
-        #output_layer = tf.reshape(output_layer, [])
         print(output_layer,':out')
 
-    output_layer = model.get_pooled_output() ## <-- remove
+    else:
+        output_layer = model.get_pooled_output() ## <-- remove
 
     hidden_size = output_layer.shape[-1].value
-    old_size = output_layer.shape[-2].value
-
-    print(old_size, hidden_size, ':size')
-    #old_size = -1 if old_size is None else old_size
-
-    #output_layer = tf.reshape(output_layer, [-1, o_val, hidden_size])
-    print(output_layer,':out2')
-
-    #output_layer = tf.transpose(output_layer)
-    #print(output_layer, ":out3")
 
     output_weights = tf.get_variable(
         "output_weights", [num_labels, hidden_size],
