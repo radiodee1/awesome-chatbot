@@ -13,7 +13,7 @@ class VoiceOut:
         pass
 
     def speech_out(self,text=""):
-        if len(text) > 0:
+        if len(text) > 0 and text.split(' ')[0] not in ['.','!','?',',']:
             tts = gTTS(text=text, lang='en')
             path = os.path.join(self.dir_out,"temp_speech.mp3")
             tts.save(path)
