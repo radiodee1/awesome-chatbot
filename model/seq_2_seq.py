@@ -379,7 +379,7 @@ class Encoder(nn.Module):
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
-        method = 'general' #''dot' #'general'
+        method = 'concat' #''dot' #'general'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
@@ -395,13 +395,33 @@ class Attn(torch.nn.Module):
         return torch.sum(hidden * encoder_output, dim=2)
 
     def general_score(self, hidden, encoder_output):
+        print(hidden,'hid')
         energy = self.attn(encoder_output)
         return torch.sum(hidden * energy, dim=2)
 
     def concat_score(self, hidden, encoder_output):
+        #print(encoder_output,encoder_output.size(),'eo0')
+        #print(hidden.size(), 'hid 0')
         #print(encoder_output.size(),'eo')
-        energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
-        return torch.sum(self.v * energy, dim=2)
+        hidden = hidden.expand(encoder_output.size(0), -1, -1)
+        #print(hidden,hidden.size(),'hid')
+        #print(hidden.size(), encoder_output.size(), encoder_output,'eout')
+        cat = torch.cat((hidden, encoder_output), 2)
+        #print(cat, cat.size(), 'cat')
+        energy = self.attn(cat)
+        #print(energy, energy.size(), 'energy')
+        #energy = energy.tanh()
+        #print(energy, energy.size(),'energy2')
+        #product = hidden * energy #self.v * energy
+        #print(self.v,"v")
+        #print(product,product.size(), 'prod')
+        #sum = torch.sum(product, dim=(2))
+        #print(sum, sum.size(),'sum')
+        energy = torch.sum(energy, dim=2)
+        return energy
+
+        #energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
+        #return torch.sum(self.v * energy, dim=2)
 
     def forward(self, hidden, encoder_outputs):
         # Calculate the attention weights (energies) based on the given method
@@ -526,12 +546,14 @@ class Decoder(nn.Module):
 
         attn_weights = attn_weights.permute(0,1,2)
 
-        if index is not None and False:
+        if index is not None and index < hparams['tokens_per_sentence']: #and False:
             attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
         else:
             attn_weights = attn_weights.transpose(2, 0)
             encoder_out_small = encoder_out_x.transpose(1, 0)
+
+        if index >= hparams['tokens_per_sentence']: print('index:', index)
 
         context = attn_weights.bmm(encoder_out_small)
 
@@ -770,7 +792,7 @@ class WrapMemRNN: #(nn.Module):
 
             token = torch.LongTensor([token])
 
-            #print(decoder_hidden.size(),'dh-dec')
+            #print(encoder_output.size(), decoder_hidden.size(),'eo,dh-dec')
 
             for i in range(s):
 
@@ -783,7 +805,7 @@ class WrapMemRNN: #(nn.Module):
                 #teacher_out = []
                 for j in range(l):
 
-                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, i)
+                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
 
                     #token = torch.argmax(ans, dim=-1)
 
@@ -971,7 +993,7 @@ class NMT:
         self.do_load_once = True
         self.do_no_vocabulary = False
 
-        self.do_clip_grad_norm = False
+        self.do_clip_grad_norm = True
 
         self.printable = ''
 
@@ -2506,7 +2528,7 @@ class NMT:
             #print(ans.size(),'ans')
 
         if self.do_clip_grad_norm:
-            clip = 50.0 # float(hparams['units'] / 10.0)
+            clip = 30.0 # float(hparams['units'] / 10.0)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')
