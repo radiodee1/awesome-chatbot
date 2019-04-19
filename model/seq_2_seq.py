@@ -437,7 +437,11 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        return F.softmax(attn_energies, dim=0).unsqueeze(1)
+        out = F.softmax(attn_energies, dim=2)#.unsqueeze(1)
+        #print(out.size(), out, 'out')
+
+        out = out.unsqueeze(1)
+        return out #F.softmax(attn_energies, dim=2).unsqueeze(1)
 
 
 class Decoder(nn.Module):
@@ -546,14 +550,13 @@ class Decoder(nn.Module):
 
         attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out_x.transpose(1,0))
 
-        if True:
-            attn_weights = torch.squeeze(attn_weights,dim=1)
+        #if True:
+        attn_weights = torch.squeeze(attn_weights,dim=1)
             #print(attn_weights.size(),'attw-before.')
 
         attn_weights = attn_weights.permute(0,1,2)
 
         if index is not None and index < hparams['tokens_per_sentence']: #and False:
-            #print(attn_weights.size(),'before')
             attn_weights = attn_weights[:,index,:].unsqueeze(0).transpose(2,0)
             #print(attn_weights.size(),'after')
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
@@ -563,8 +566,8 @@ class Decoder(nn.Module):
 
         if index >= hparams['tokens_per_sentence']: print('index:', index)
 
-        if True:
-            encoder_out_small = encoder_out_small.transpose(2,0)
+        #if True:
+        encoder_out_small = encoder_out_small.transpose(2,0)
             #print(attn_weights.size(),encoder_out_small.size(),'attw')
 
         context = attn_weights.bmm(encoder_out_small)
