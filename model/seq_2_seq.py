@@ -437,7 +437,8 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        out = F.softmax(attn_energies, dim=2) #dim = 0 ??
+        #out = F.softmax(attn_energies, dim=2) #dim = 0 ??
+        out = attn_energies.tanh()
         #print(out.size(), out, 'out')
 
         out = out.unsqueeze(1)
@@ -558,7 +559,7 @@ class Decoder(nn.Module):
 
         if index is not None and index < hparams['tokens_per_sentence']: #and False:
             attn_weights = attn_weights[:,index,:].unsqueeze(0).transpose(2,0)
-            #print(attn_weights.size(),'after')
+            #print(attn_weights.size(), attn_weights[:15,:,:],'after')
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
         else:
             attn_weights = attn_weights.transpose(2, 0)
