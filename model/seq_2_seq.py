@@ -384,18 +384,18 @@ class Attn(torch.nn.Module):
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
             raise ValueError(self.method, "is not an appropriate attention method.")
-        self.hidden_size = hidden_size * 2
+        self.hidden_size = hidden_size #* 2
         if self.method == 'general':
             self.attn = torch.nn.Linear(self.hidden_size, self.hidden_size)
         elif self.method == 'concat':
-            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
+            self.attn = torch.nn.Linear(self.hidden_size *2, self.hidden_size)
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def dot_score(self, hidden, encoder_output):
         return torch.sum(hidden * encoder_output, dim=2)
 
     def general_score(self, hidden, encoder_output):
-        print(hidden,'hid')
+        #print(hidden.size(),'hid')
         energy = self.attn(encoder_output)
         return torch.sum(hidden * energy, dim=2)
 
@@ -403,9 +403,9 @@ class Attn(torch.nn.Module):
         #print(encoder_output,encoder_output.size(),'eo0')
         #print(hidden.size(), 'hid 0')
         #print(encoder_output.size(),'eo')
-        hidden = hidden.expand(encoder_output.size(0), -1, -1)
+        hidden = hidden.expand(-1, encoder_output.size(1), -1)
         #print(hidden,hidden.size(),'hid')
-        #print(hidden.size(), encoder_output.size(), encoder_output,'eout')
+        #print(hidden.size(), encoder_output.size(),'eout')
         cat = torch.cat((hidden, encoder_output), 2)
         #print(cat, cat.size(), 'cat')
         energy = self.attn(cat)
@@ -417,7 +417,7 @@ class Attn(torch.nn.Module):
         #print(product,product.size(), 'prod')
         #sum = torch.sum(product, dim=(2))
         #print(sum, sum.size(),'sum')
-        energy = torch.sum(energy, dim=2)
+        #energy = torch.sum(energy, dim=2)
         return energy
 
         #energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
@@ -534,7 +534,9 @@ class Decoder(nn.Module):
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
         hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
-
+        #print(hidden_small.size(), 'hidsm1')
+        hidden_small = torch.sum(hidden, dim=0)
+        #print(hidden_small.size(), 'hidsm2')
         #hidden_small = self.out_mod(hidden_small)
         #hidden_small = torch.tanh(hidden_small)
 
@@ -542,12 +544,18 @@ class Decoder(nn.Module):
 
         hidden_small = hidden_small.transpose(1,0)
 
-        attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
+        attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out_x.transpose(1,0))
+
+        if True:
+            attn_weights = torch.squeeze(attn_weights,dim=1)
+            #print(attn_weights.size(),'attw-before.')
 
         attn_weights = attn_weights.permute(0,1,2)
 
         if index is not None and index < hparams['tokens_per_sentence']: #and False:
-            attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
+            #print(attn_weights.size(),'before')
+            attn_weights = attn_weights[:,index,:].unsqueeze(0).transpose(2,0)
+            #print(attn_weights.size(),'after')
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
         else:
             attn_weights = attn_weights.transpose(2, 0)
@@ -555,11 +563,15 @@ class Decoder(nn.Module):
 
         if index >= hparams['tokens_per_sentence']: print('index:', index)
 
+        if True:
+            encoder_out_small = encoder_out_small.transpose(2,0)
+            #print(attn_weights.size(),encoder_out_small.size(),'attw')
+
         context = attn_weights.bmm(encoder_out_small)
 
         output_list = [
             rnn_output.permute(1, 0, 2),
-            context, #[:, :, :],
+            context.permute(2,1,0), #[:, :, :],
         ]
         #for i in output_list: print(i.size())
         #print('---')
