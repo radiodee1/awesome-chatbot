@@ -732,7 +732,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
         segment_ids.append(1) ## mask
         segment_ids.append(1)
 
-    input_ids = tokenizer.convert_tokens_to_ids(tokens) 
+    input_ids = tokenizer.convert_tokens_to_ids(tokens)
 
     # The mask has 1 for real tokens and 0 for padding tokens. Only real
     # tokens are attended to.
@@ -745,6 +745,10 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
         input_mask.append(0)
     while len(segment_ids) < max_seq_length:
         segment_ids.append(0)
+
+    input_ids = input_ids[:max_seq_length]
+    input_mask = input_mask[:max_seq_length]
+    segment_ids = segment_ids[:max_seq_length]
 
     assert len(input_ids) == max_seq_length
     assert len(input_mask) == max_seq_length
