@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/model/bert_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/bert_classifier.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="604">
-              <caret line="729" column="39" selection-start-line="729" selection-start-column="39" selection-end-line="729" selection-end-column="39" />
+            <state relative-caret-position="424">
+              <caret line="734" column="59" selection-start-line="734" selection-start-column="59" selection-end-line="734" selection-end-column="59" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
               </folding>
@@ -698,8 +700,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="604">
-          <caret line="729" column="39" selection-start-line="729" selection-start-column="39" selection-end-line="729" selection-end-column="39" />
+        <state relative-caret-position="424">
+          <caret line="734" column="59" selection-start-line="734" selection-start-column="59" selection-end-line="734" selection-end-column="59" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
           </folding>
