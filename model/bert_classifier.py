@@ -736,7 +736,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
 
     # The mask has 1 for real tokens and 0 for padding tokens. Only real
     # tokens are attended to.
-    input_mask = [1] * len(input_ids)
+    input_mask = [1] * (len(input_ids) + 1)
 
     # Zero-pad up to the sequence length.
     while len(input_ids) < max_seq_length:
