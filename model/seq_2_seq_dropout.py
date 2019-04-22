@@ -355,7 +355,7 @@ class Encoder(nn.Module):
             input_lengths = torch.as_tensor(input_lengths.cpu(), dtype=torch.int64)
 
         embedded = self.embed(source).transpose(1,0)
-
+        embedded = self.dropout_e(embedded)
         #print(embedded.size(),'emb-enc')
 
         if self.pack_and_pad:
