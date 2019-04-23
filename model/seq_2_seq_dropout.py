@@ -516,11 +516,11 @@ class Decoder(nn.Module):
 
         #print(output.size(),'out')
 
-        if output.size(-1) == 1:
-            embedded = self.embed(output)
+        #if output.size(-1) == 1:
+        embedded = self.embed(output)
 
-        if output.size(-1) == self.hidden_dim:
-            embedded = output
+        #if output.size(-1) == self.hidden_dim:
+        #    embedded = output
 
         # print(output, embedded)
         embedded = prune_tensor(embedded, 3)

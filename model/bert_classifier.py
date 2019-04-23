@@ -1552,7 +1552,7 @@ def main(_):
                     token = labels[output]
                     sentenceb = sentenceb + " " + token
                     sentenceb = combine_tokens(sentenceb)
-                    
+
                     break
                 #break
 
