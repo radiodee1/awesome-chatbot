@@ -631,7 +631,7 @@ class WordsProcessor(DataProcessor):
                         #text_c = text_a + " " + txt
                         #label = tokenization.convert_to_unicode(label)
                         #print(label)
-                        if label not in ['.', '?', '!', '-',',']:
+                        if label not in ['.', '?', '!', '-',',','"', "'"]:
                             train.append(InputExample(guid=guid, text_a=txt, text_b=txtb, label=label))
                             num += 1
                         else:
@@ -883,13 +883,14 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
     """Creates a classification model."""
     global model
 
-    model = modeling.BertModel(
-        config=bert_config,
-        is_training=is_training,
-        input_ids=input_ids,
-        input_mask=input_mask,
-        token_type_ids=segment_ids,
-        use_one_hot_embeddings=use_one_hot_embeddings)
+    if True:
+        model = modeling.BertModel(
+            config=bert_config,
+            is_training=is_training,
+            input_ids=input_ids,
+            input_mask=input_mask,
+            token_type_ids=segment_ids,
+            use_one_hot_embeddings=use_one_hot_embeddings)
 
     # In the demo, we are doing a simple classification task on the entire
     # segment.
@@ -1498,7 +1499,7 @@ def main(_):
             sentence = input('sentence: ')
             #sentence = tokenizer.tokenize(sentence)
             #sentence = ' '.join(sentence)
-            while index < 15 and token not in ['.','?', '!', ',','-'] : #!= "." and token != "?":
+            while index < 15 and token not in ['.','?', '!', ',','-',"'",'"'] :
 
                 index += 1
                 predict_examples = processor.get_test_examples(FLAGS.data_dir, text_a=sentence, text_b=sentenceb)
@@ -1542,29 +1543,7 @@ def main(_):
 
                 for (i, prediction) in enumerate(result):
                     probabilities = prediction["probabilities"]
-                    '''
-                    print(prediction)
-                    layers = []
-                    all_layers = model.get_all_encoder_layers()
-                    for (j,layer_index) in enumerate(layer_indexes):
-                        layer_output = all_layers[layer_index]
-                        print(i, layer_output ,':layer')
-                        #layer_output_flat = np.array([x for x in layer_output[i:(i+1)].flat])
-                        #print(layer_output_flat,':flat')
-                    
-                    if False:
-                        unique_id = int(prediction["unique_id"])
-                        feature = unique_id_to_feature[unique_id]
-                        output = collections.OrderedDict()
-                        for (i, token) in enumerate(feature.tokens):
-                            layers = []
-                            for (j, layer_index) in enumerate(layer_indexes):
-                                layer_output = result["layer_output_%d" % j]
-                                layer_output_flat = np.array([x for x in layer_output[i:(i + 1)].flat])
-                                layers.append(layer_output_flat)
-                            output[token] = sum(layers)[:dim]
-                        print(output,'out')
-                    '''
+
                     if i >= num_actual_predict_examples:
                         break
                     output_line = [ float(class_probability) for class_probability in probabilities]
@@ -1573,13 +1552,7 @@ def main(_):
                     token = labels[output]
                     sentenceb = sentenceb + " " + token
                     sentenceb = combine_tokens(sentenceb)
-                    '''
-                    if model is not None and False:
-                        model_list = model.get_all_encoder_layers()
-                        model_pooled = model.get_pooled_output()
-                        print(model_pooled,":list")
-                    '''
-
+                    
                     break
                 #break
 
