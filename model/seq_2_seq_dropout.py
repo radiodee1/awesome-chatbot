@@ -456,7 +456,7 @@ class Decoder(nn.Module):
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
-        batch_first = True #False #self.word_mode
+        batch_first = False #self.word_mode
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
