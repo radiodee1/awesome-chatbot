@@ -39,8 +39,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="237">
-              <caret line="547" column="21" lean-forward="true" selection-start-line="547" selection-start-column="21" selection-end-line="547" selection-end-column="21" />
+            <state relative-caret-position="260">
+              <caret line="2653" column="65" selection-start-line="2653" selection-start-column="56" selection-end-line="2653" selection-end-column="65" />
             </state>
           </provider>
         </entry>
@@ -693,8 +693,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="237">
-          <caret line="547" column="21" lean-forward="true" selection-start-line="547" selection-start-column="21" selection-end-line="547" selection-end-column="21" />
+        <state relative-caret-position="260">
+          <caret line="2653" column="65" selection-start-line="2653" selection-start-column="56" selection-end-line="2653" selection-end-column="65" />
         </state>
       </provider>
     </entry>

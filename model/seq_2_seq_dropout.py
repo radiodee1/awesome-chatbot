@@ -545,7 +545,7 @@ class Decoder(nn.Module):
 
         output_list = [
             rnn_output.permute(1, 0, 2),
-            context, 
+            context,
         ]
         #print('---')
         #for i in output_list: print(i.size())
