@@ -40,8 +40,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="993">
-              <caret line="574" column="8" lean-forward="true" selection-start-line="574" selection-start-column="8" selection-end-line="574" selection-end-column="8" />
+            <state relative-caret-position="309">
+              <caret line="458" column="28" selection-start-line="458" selection-start-column="28" selection-end-line="458" selection-end-column="28" />
             </state>
           </provider>
         </entry>
@@ -210,7 +210,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -314,6 +313,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -694,8 +694,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="993">
-          <caret line="574" column="8" lean-forward="true" selection-start-line="574" selection-start-column="8" selection-end-line="574" selection-end-column="8" />
+        <state relative-caret-position="309">
+          <caret line="458" column="28" selection-start-line="458" selection-start-column="28" selection-end-line="458" selection-end-column="28" />
         </state>
       </provider>
     </entry>

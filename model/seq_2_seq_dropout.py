@@ -456,7 +456,7 @@ class Decoder(nn.Module):
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
 
-        batch_first = False #self.word_mode
+        batch_first = True #False #self.word_mode
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
@@ -533,30 +533,12 @@ class Decoder(nn.Module):
 
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
-        hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
-
-        #hidden_small = self.out_mod(hidden_small)
-        #hidden_small = torch.tanh(hidden_small)
-
-        hidden_small = hidden_small.unsqueeze(0)
-
-        hidden_small = hidden_small.transpose(1,0)
-
-        #attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
-
         #print(encoder_out_x.size(), rnn_output.size(),'eo,rnn')
         attn_weights = self.attention_mod(rnn_output.transpose(1,0), encoder_out_x.transpose(1,0)) #.transpose(1,0))
 
         attn_weights = attn_weights.permute(0,1,2)
 
-        if index is not None and index < self.maxtokens and False:
-            attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
-            encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
-        else:
-            #attn_weights = attn_weights.transpose(2, 0)
-            encoder_out_small = encoder_out_x.transpose(1, 0)
-
-        if index >= hparams['tokens_per_sentence']: print('index:', index)
+        encoder_out_small = encoder_out_x.transpose(1, 0)
 
         #print(attn_weights.size(), encoder_out_small.size(),'att,small')
         context = attn_weights.bmm(encoder_out_small)
@@ -565,6 +547,7 @@ class Decoder(nn.Module):
             rnn_output.permute(1, 0, 2),
             context, #[:, :, :],
         ]
+        #print('---')
         #for i in output_list: print(i.size())
         #print('---')
 
