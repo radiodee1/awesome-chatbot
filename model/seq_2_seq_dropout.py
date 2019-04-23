@@ -384,7 +384,7 @@ class Attn(torch.nn.Module):
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
             raise ValueError(self.method, "is not an appropriate attention method.")
-        self.hidden_size = hidden_size * 2
+        self.hidden_size = hidden_size #* 2
         if self.method == 'general':
             self.attn = torch.nn.Linear(self.hidden_size, self.hidden_size)
         elif self.method == 'concat':
@@ -542,7 +542,10 @@ class Decoder(nn.Module):
 
         hidden_small = hidden_small.transpose(1,0)
 
-        attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
+        #attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
+
+        #print(encoder_out_x.size(), rnn_output.size(),'eo,rnn')
+        attn_weights = self.attention_mod(rnn_output.transpose(1,0), encoder_out_x.transpose(1,0)) #.transpose(1,0))
 
         attn_weights = attn_weights.permute(0,1,2)
 
@@ -550,11 +553,12 @@ class Decoder(nn.Module):
             attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
             encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
         else:
-            attn_weights = attn_weights.transpose(2, 0)
+            #attn_weights = attn_weights.transpose(2, 0)
             encoder_out_small = encoder_out_x.transpose(1, 0)
 
         if index >= hparams['tokens_per_sentence']: print('index:', index)
 
+        #print(attn_weights.size(), encoder_out_small.size(),'att,small')
         context = attn_weights.bmm(encoder_out_small)
 
         output_list = [
