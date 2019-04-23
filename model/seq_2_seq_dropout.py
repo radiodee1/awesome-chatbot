@@ -545,7 +545,7 @@ class Decoder(nn.Module):
 
         output_list = [
             rnn_output.permute(1, 0, 2),
-            context, #[:, :, :],
+            context, 
         ]
         #print('---')
         #for i in output_list: print(i.size())
@@ -561,11 +561,7 @@ class Decoder(nn.Module):
 
         out_voc = out_voc.permute(1,0,2)
 
-        #print(out_x,'ox')
-        #out_x = torch.softmax(out_x, dim=-1)
-        #out_x = torch.tanh(out_x)
-
-        decoder_hidden_x = hidden #.permute(1,0,2)
+        decoder_hidden_x = hidden
 
         return out_voc, decoder_hidden_x, out_x
 
