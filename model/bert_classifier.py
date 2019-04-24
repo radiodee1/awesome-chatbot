@@ -694,6 +694,8 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
         # Account for [CLS] and [SEP] with "- 2"
         if len(tokens_a) > max_seq_length - 2:
             tokens_a = tokens_a[0:(max_seq_length - 2)]
+        if FLAGS.task_name == "word":
+            tokens_b = []
 
     # The convention in BERT is:
     # (a) For sequence pairs:
@@ -723,7 +725,7 @@ def convert_single_example(ex_index, example, label_list, max_seq_length,
     tokens.append("[SEP]")
     segment_ids.append(0)
 
-    if tokens_b:
+    if tokens_b or FLAGS.task_name == "word":
         for token in tokens_b:
             tokens.append(token)
             segment_ids.append(1)
@@ -1213,6 +1215,7 @@ def main(_):
         num_train_steps = int(
             len(train_examples) / FLAGS.train_batch_size * FLAGS.num_train_epochs)
         num_warmup_steps = int(num_train_steps * FLAGS.warmup_proportion)
+        if num_train_steps == 0: num_train_steps = 1
 
     model_fn = model_fn_builder(
         bert_config=bert_config,
@@ -1224,16 +1227,7 @@ def main(_):
         use_tpu=FLAGS.use_tpu,
         use_one_hot_embeddings=FLAGS.use_tpu)
 
-    layer_indexes = LAYERS
-    '''
-    model_fn = model_fn_builder_v2(
-        bert_config=bert_config,
-        init_checkpoint=FLAGS.init_checkpoint,
-        layer_indexes=layer_indexes,
-        use_tpu=FLAGS.use_tpu,
-        use_one_hot_embeddings=FLAGS.use_tpu
-    )
-    '''
+
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
     # or GPU.
@@ -1455,11 +1449,6 @@ def main(_):
                                                         FLAGS.max_seq_length, tokenizer)
                                                         #predict_file)
 
-
-                #tf.logging.info("***** Running prediction*****")
-                #tf.logging.info("  Num examples = %d (%d actual, %d padding)",
-                #                len(predict_examples), num_actual_predict_examples,
-                #                len(predict_examples) - num_actual_predict_examples)
                 tf.logging.info("  Batch size = %d", FLAGS.predict_batch_size)
 
                 predict_drop_remainder = True if FLAGS.use_tpu else False
