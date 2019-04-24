@@ -13,13 +13,39 @@ from pytorch_pretrained_bert import GPT2Tokenizer, GPT2Model, GPT2LMHeadModel
 import logging
 logging.basicConfig(level=logging.INFO)
 
-class GPT2_small:
+class Lang:
+    def __init__(self, name, limit=None):
+        self.name = name
+        self.limit = limit
+        self.word2index = {}
+        self.word2count = {}
+        self.index2word = {}
+        self.n_words = 0  # Count SOS and EOS
+
+    def addSentence(self, sentence):
+        for word in sentence.split(' '):
+            self.addWord(word)
+
+    def addWord(self, word):
+        if self.limit is None or self.n_words < self.limit :
+            if word not in self.word2index:
+                self.word2index[word] = self.n_words
+                self.word2count[word] = 1
+                self.index2word[self.n_words] = word
+                self.n_words += 1
+            else:
+                self.word2count[word] += 1
+
+
+class NMT:
     def __init__(self):
 
         self.tokenizer = None
         self.model = None
         self.wordcount = 15
-        self.words_end = ['.', '?', '!']
+        self.words_end = ['.', '?', '!', '"', "'"]
+
+        self.output_lang = None
 
         self.past = None
 
@@ -31,30 +57,33 @@ class GPT2_small:
         self.model = GPT2LMHeadModel.from_pretrained('gpt2')
         self.model.eval()
 
+        print(self.tokenizer.__len__(),'max')
+        self.output_lang = Lang('lang')
+        for i in range(self.tokenizer.__len__()):
+            self.output_lang.addWord(self.tokenizer.decode([i]))
+
     def get_sentence(self, i):
         num = 0
         text_1 = i
         text_2 = ""
         self.past = None
-        decode_list = []
+        #decode_list = []
         while num < self.wordcount:
 
-            indexed_tokens_2 = self.tokenizer.encode(text_1 + " . " + text_2)
+            indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
             with torch.no_grad():
                 predictions_1, self.past = self.model(tokens_tensor_2, past=self.past)
 
             predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
-            decode_list.append(predicted_index)
             predicted_token = self.tokenizer.decode([predicted_index])
 
             print(text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
 
-            text_2 += predicted_token
+            text_2 += predicted_token #.strip()
 
             if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end:
-                # past = None
                 break
             num += 1
         print(text_2)
@@ -72,6 +101,6 @@ class GPT2_small:
 
 
 if __name__ == '__main__':
-    g = GPT2_small()
+    g = NMT()
     g.setup_for_interactive()
     g.loop()

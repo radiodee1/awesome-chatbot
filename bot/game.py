@@ -7,7 +7,8 @@ import os
 sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
 
-import model.seq_2_seq as model
+#import model.seq_2_seq as model
+import model.torch_gpt2_example as model
 import game_sr as sr
 import game_voice as v
 import model.tokenize_weak as tokenize_weak
