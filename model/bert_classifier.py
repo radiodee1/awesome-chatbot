@@ -1392,6 +1392,7 @@ def main(_):
 
         print('skipped', skipped, 'total', index)
 
+    '''
     if FLAGS.big_output and FLAGS.do_predict and FLAGS.task_name == "chat":
         print('process after predict.')
         labels = processor.get_labels()
@@ -1474,7 +1475,7 @@ def main(_):
                     output = np.argmax(output_line)
                     num_written_lines += 1
                     token = labels[output]
-
+    '''
     if FLAGS.big_output and FLAGS.do_interactive and FLAGS.task_name == "word":
         labels = processor.get_labels()
         delattr(flags.FLAGS, "predict_batch_size")
