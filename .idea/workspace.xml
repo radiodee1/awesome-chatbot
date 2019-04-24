@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -15,7 +15,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
+            <state relative-caret-position="16596">
               <caret line="929" column="11" selection-start-line="929" selection-start-column="11" selection-end-line="929" selection-end-column="11" />
               <folding>
                 <element signature="e#1128#1166#0" expanded="true" />
@@ -39,8 +39,17 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2653" column="65" selection-start-line="2653" selection-start-column="56" selection-end-line="2653" selection-end-column="65" />
+            <state relative-caret-position="7136">
+              <caret line="808" column="29" selection-start-line="808" selection-start-column="29" selection-end-line="808" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/settings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="651">
+              <caret line="49" column="17" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -106,9 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>bertm</find>
-      <find>convert_examples_to_features</find>
-      <find>convert_single_example</find>
       <find>Inputex</find>
       <find>InputFeatures</find>
       <find>unique_id</find>
@@ -136,6 +142,9 @@
       <find>model_fn_builder</find>
       <find>softm</find>
       <find>input_fn_builder</find>
+      <find>loss</find>
+      <find>criterion</find>
+      <find>teacher_forcing_ratio</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -358,7 +367,7 @@
     <frame x="533" y="47" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -457,13 +466,6 @@
           <folding>
             <element signature="e#1135#1144#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="775">
-          <caret line="49" column="17" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="17" />
         </state>
       </provider>
     </entry>
@@ -633,7 +635,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
+        <state relative-caret-position="16596">
           <caret line="929" column="11" selection-start-line="929" selection-start-column="11" selection-end-line="929" selection-end-column="11" />
           <folding>
             <element signature="e#1128#1166#0" expanded="true" />
@@ -691,10 +693,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="651">
+          <caret line="49" column="17" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2653" column="65" selection-start-line="2653" selection-start-column="56" selection-end-line="2653" selection-end-column="65" />
+        <state relative-caret-position="7136">
+          <caret line="808" column="29" selection-start-line="808" selection-start-column="29" selection-end-line="808" selection-end-column="29" />
         </state>
       </provider>
     </entry>
