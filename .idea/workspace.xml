@@ -3,10 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_keras_tf.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_squad.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/bert_squad_eval.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_example.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,18 +13,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
-              <caret line="108" selection-start-line="108" selection-end-line="108" />
-              <folding>
-                <element signature="e#24#39#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_server_client_sequence.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -108,7 +93,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -118,6 +103,18 @@
               <second_editor>
                 <markdownNavigatorState />
               </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/torch_gpt2_example.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="468">
+              <caret line="83" column="38" lean-forward="true" selection-start-line="83" selection-start-column="38" selection-end-line="83" selection-end-column="38" />
+              <folding>
+                <element signature="e#247#259#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -218,10 +215,10 @@
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt_run.py" />
         <option value="$PROJECT_DIR$/do_launch_gpt2.sh" />
-        <option value="$PROJECT_DIR$/model/torch_gpt2_example.py" />
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
         <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/model/torch_gpt2_example.py" />
       </list>
     </option>
   </component>
@@ -236,7 +233,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -340,6 +336,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -598,19 +595,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_example.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="738">
-          <caret line="45" column="44" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/report.txt" />
     <entry file="file://$PROJECT_DIR$/model/bert_squad.py" />
     <entry file="file://$PROJECT_DIR$/model/bert_squad_eval.py" />
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
+        <state relative-caret-position="1800">
           <caret line="108" selection-start-line="108" selection-end-line="108" />
           <folding>
             <element signature="e#24#39#0" expanded="true" />
@@ -691,6 +681,16 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_example.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="468">
+          <caret line="83" column="38" lean-forward="true" selection-start-line="83" selection-start-column="38" selection-end-line="83" selection-end-column="38" />
+          <folding>
+            <element signature="e#247#259#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
