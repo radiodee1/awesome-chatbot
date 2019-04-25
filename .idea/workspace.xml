@@ -3,7 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_example.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game_voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_voice.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,15 +14,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/bert_squad_eval.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1278">
-              <caret line="77" selection-start-line="77" selection-end-line="77" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/bert_server_client_sequence.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -58,10 +50,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_example.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="563">
+            <state relative-caret-position="738">
               <caret line="45" column="44" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
             </state>
           </provider>
@@ -105,11 +97,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bot/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
+            <state relative-caret-position="163">
+              <caret line="12" column="4" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
               <folding>
                 <element signature="e#20#85#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/bot/game_voice.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="324">
+              <caret line="21" column="39" selection-start-line="21" selection-start-column="39" selection-end-line="21" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -205,15 +206,15 @@
         <option value="$PROJECT_DIR$/model/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/model/settings.py" />
         <option value="$PROJECT_DIR$/do_launch_game.sh" />
-        <option value="$PROJECT_DIR$/bot/game_voice.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier_modeling.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt_run.py" />
         <option value="$PROJECT_DIR$/do_launch_gpt2.sh" />
-        <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_example.py" />
+        <option value="$PROJECT_DIR$/bot/game.py" />
+        <option value="$PROJECT_DIR$/bot/game_voice.py" />
       </list>
     </option>
   </component>
@@ -543,13 +544,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/model/settings.py" />
     <entry file="file://$PROJECT_DIR$/model/model/bert_classifier.py" />
-    <entry file="file://$PROJECT_DIR$/bot/game_voice.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="15" column="71" selection-start-line="15" selection-start-column="71" selection-end-line="15" selection-end-column="71" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="378">
@@ -667,6 +661,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_example.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="738">
+          <caret line="45" column="44" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/sub.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15354">
@@ -693,21 +697,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="9" column="1" selection-start-line="9" selection-start-column="1" selection-end-line="9" selection-end-column="1" />
+        <state relative-caret-position="163">
+          <caret line="12" column="4" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
           <folding>
             <element signature="e#20#85#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/sub.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_example.py">
+    <entry file="file://$PROJECT_DIR$/bot/game_voice.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="563">
-          <caret line="45" column="44" selection-start-line="45" selection-start-column="44" selection-end-line="45" selection-end-column="44" />
+        <state relative-caret-position="324">
+          <caret line="21" column="39" selection-start-line="21" selection-start-column="39" selection-end-line="21" selection-end-column="39" />
         </state>
       </provider>
     </entry>

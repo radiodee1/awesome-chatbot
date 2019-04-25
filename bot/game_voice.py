@@ -14,9 +14,13 @@ class VoiceOut:
 
     def speech_out(self,text=""):
         if len(text) > 0 and text.split(' ')[0] not in ['.','!','?',',']:
-            tts = gTTS(text=text, lang='en')
-            path = os.path.join(self.dir_out,"temp_speech.mp3")
-            tts.save(path)
+            try:
+                tts = gTTS(text=text, lang='en')
+                path = os.path.join(self.dir_out,"temp_speech.mp3")
+                tts.save(path)
+            except AssertionError:
+                print('assertion error.')
+                pass
             os.system("mpg321 " + path + " > /dev/null 2>&1 ")
         pass
 
