@@ -43,7 +43,7 @@ class NMT:
         self.tokenizer = None
         self.model = None
         self.wordcount = 15
-        self.words_end = ['.', '?', '!', '"', "'"]
+        self.words_end = ['.', '?', '!', '"']
 
         self.output_lang = None
 
@@ -79,9 +79,37 @@ class NMT:
             predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
             predicted_token = self.tokenizer.decode([predicted_index])
 
-            print(text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
+            print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
 
             text_2 += predicted_token #.strip()
+
+            if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end:
+                break
+            num += 1
+        print(text_2)
+        return text_2
+
+    def get_sentence_v2(self, i):
+        num = 0
+        text_1 = i
+        text_2 = ""
+        self.past = None
+        # decode_list = []
+        #while num < self.wordcount:
+
+        indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
+        tokens_tensor_2 = torch.tensor([indexed_tokens_2])
+
+        with torch.no_grad():
+            predictions_1, self.past = self.model(tokens_tensor_2, past=self.past)
+
+        while num < self.wordcount:
+            predicted_index = torch.argmax(predictions_1[0, num, :]).item()
+            predicted_token = self.tokenizer.decode([predicted_index])
+
+            print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
+
+            text_2 += predicted_token  # .strip()
 
             if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end:
                 break
