@@ -44,6 +44,12 @@ I am currently most interested in bert.
 When I am done with this exploration 
 I'll spend some time cleaning up the `model` directory.
 
+4/25/2019 - I found some pytorch code on a github site for 'gpt2' that seems to work for me. It doesn't do everything I want but it's a good start.
+This is the site: https://github.com/huggingface/pytorch-pretrained-BERT . The version of gpt2 that I'm using is the smaller released version.
+I believe the larger version is not available. In any case the model does respond with sentence type output when it is given the same.
+Previously I was trying to get a downloaded version of BERT to respond in sentences. That does not seem to work. 
+I guess next I'm hoping to fine tune the gpt2 code so that it works better if I can.
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
