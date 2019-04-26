@@ -16,7 +16,7 @@ import random
 import logging
 logging.basicConfig(level=logging.INFO)
 
-gpt2_dir = hparams['data_dir'] + '/' + 'gpt2' + '/'
+gpt2_dir = 'gpt2' #hparams['data_dir'] + '/' + 'gpt2' + '/'
 
 ## vocab.json merges.txt
 
