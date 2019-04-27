@@ -114,7 +114,7 @@ if __name__ == '__main__':
     arg_fours = False
     arg_triplets = False
     arg_pairs = False
-    arg_question = None
+    arg_question = ''
     arg_processed = False
     arg_zip = None #'train-files'
     arg_filelist = []
@@ -372,6 +372,8 @@ if __name__ == '__main__':
                             tgt_gpt = i
                             src.write(src_gpt + '\n')
                             tgt.write(tgt_gpt + '\n')
+                            if arg_triplets:
+                                ques.write(arg_question + '\n')
                             src_gpt = src_gpt + ' ' + i
 
 
