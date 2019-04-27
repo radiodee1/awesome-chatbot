@@ -211,8 +211,8 @@ class WrapMemRNN: #(nn.Module):
         self.cancel_attention = cancel_attention
         beam_width = 0 if hparams['beam'] is None else hparams['beam']
 
-        self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
-        self.embed.weight.requires_grad = not self.freeze_embedding
+        #self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
+        #self.embed.weight.requires_grad = not self.freeze_embedding
 
         # Load pre-trained model (weights)
         self.model = GPT2LMHeadModel.from_pretrained('gpt2')
@@ -260,10 +260,11 @@ class WrapMemRNN: #(nn.Module):
 
     def load_embedding(self, embedding, requires_grad=True):
         #embedding = np.transpose(embedding,(1,0))
-        e = torch.from_numpy(embedding)
-        #e = e.permute(1,0)
-        self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
-        self.embed.weight.requires_grad = requires_grad
+        #e = torch.from_numpy(embedding)
+
+        #self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
+        #self.embed.weight.requires_grad = requires_grad
+        pass
 
     def share_embedding(self):
         pass
@@ -276,28 +277,31 @@ class WrapMemRNN: #(nn.Module):
 
     def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
-        input_variable = input_variable.permute(1,0)
-        print(input_variable.size(),'in')
-
+        #input_variable = input_variable.permute(1,0)
+        #print(input_variable.size(),'in', target_variable.size(),'tv')
         ans, self.past = self.model(input_variable, past=self.past)
+        #ans = torch.argmax(ans[:,-1:,:], dim=2)
+        ans = ans[:,-1:, :]
         seq = None
-        print(len(ans), ans.size(),'ans', len(ans[0]) )
+        #print(len(ans), ans.size(),'ans', len(ans[0]) )
 
         return seq, None, ans, None
 
     def new_freeze_embedding(self, do_freeze=True):
-        self.embed.weight.requires_grad = not do_freeze
+        #self.embed.weight.requires_grad = not do_freeze
         #self.model_1_seq.embed.weight.requires_grad = not do_freeze
         #self.model_6_dec.embed.weight.requires_grad = not do_freeze
         #self.embed.weight.requires_grad = not do_freeze
-        if do_freeze: print('freeze embedding')
+        #if do_freeze: print('freeze embedding')
         pass
 
     def new_freeze_decoding(self, do_freeze=True):
+        '''
         for weight in self.model_6_dec.parameters():
             weight.requires_grad = not do_freeze
 
         if do_freeze: print('freeze decoding')
+        '''
         pass
 
     def new_freeze_encoding(self, do_freeze=True):
@@ -305,11 +309,12 @@ class WrapMemRNN: #(nn.Module):
         for weight in self.model_1_seq.parameters():
             weight.requires_grad = not do_freeze
         '''
-        if do_freeze: print('freeze encoding')
+        #if do_freeze: print('freeze encoding')
         pass
 
     def test_embedding(self, num=None):
-
+        pass
+        '''
         if num is None or True:
             num = torch.LongTensor([0]) #EOS_token  # magic number for testing = garden
         e = self.embed(num)
@@ -317,7 +322,7 @@ class WrapMemRNN: #(nn.Module):
         print(not self.embed.weight.requires_grad,': grad freeze')
         print(e.size(), 'test embedding')
         print(e[ 0, 0:10])  # print first ten values
-
+        '''
 
 
 
@@ -884,7 +889,7 @@ class NMT:
                 if call_from_script:
                     out = self._shorten(out, just_duplicates=True)
 
-                    return out #' '.join(out)
+                    return out
 
         except EOFError:
             print()
@@ -1210,6 +1215,7 @@ class NMT:
             #a = self.variableFromSentence(None, i[0])
             #b = self.variableFromSentence(None, i[1])
             #c = self.variableFromSentence(None, i[2])
+            token = self.tokenizer.encode(' ')[0]
 
             a = self.tokenizer.encode(i[0])
             b = self.tokenizer.encode(i[1])
@@ -1217,11 +1223,11 @@ class NMT:
 
             if True:
                 while len(a) < hparams['tokens_per_sentence']:
-                    a.append(0)
+                    a.append(token)
                 while len(b) < hparams['tokens_per_sentence']:
-                    b.append(0)
+                    b.append(token)
                 while len(c) < hparams['tokens_per_sentence']:
-                    c.append(0)
+                    c.append(token)
 
                 a = a[:hparams['tokens_per_sentence']]
                 b = b[:hparams['tokens_per_sentence']]
@@ -1823,6 +1829,7 @@ class NMT:
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
         #max_target_length = [hparams['tokens_per_sentence'] for _ in max_target_length]
         #question_variable = None
+        self.model_0_wra.past = None
 
         if criterion is not None : #or not self.do_test_not_train:
             wrapper_optimizer_1.zero_grad()
@@ -2028,7 +2035,7 @@ class NMT:
                 #self.model_0_wra.model_6_dec.train()
 
         if self.do_batch_process:
-            step = 1 # hparams['batch_size']
+            step = 1
             if self.start_epoch is 0: start = 0
 
         for iter in range(epoch_start, epoch_stop + 1, step):
@@ -2041,12 +2048,16 @@ class NMT:
                 #for i in group: print(i.size() if not isinstance(i,list) else ('->', i[0].size()), len(i))
                 #print('---')
 
+                group = group.transpose(1,0)
+                print(group.size(),'group')
+
                 input_variable = group[0]
                 question_variable = None #group[2]
                 target_variable = group[1]
-                length_variable = group[3]
-                mask_variable = group[4]
-                max_target_length_variable = group[5]
+
+                length_variable = None #group[3]
+                mask_variable = None #group[4]
+                max_target_length_variable = None #group[5]
 
                 target_variable = prune_tensor(target_variable, 3)
                 #print(input_variable)
@@ -2233,8 +2244,7 @@ class NMT:
 
             group = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk)
 
-
-            print(choice)
+            group = group.transpose(1,0)
             print('----')
             print(group.size(),'gr')
             #print('choice', choice)
@@ -2245,9 +2255,9 @@ class NMT:
         input_variable = group[0]
         ques_variable = None  # group[2]
         target_variable = group[1]
-        lengths = group[3]
-        mask = group[4]
-        max_target_length = group[5]
+        lengths = None #group[3]
+        mask = None #group[4]
+        max_target_length = None # group[5]
 
         #training_batches = self.batch2TrainData(self.output_lang, [choice])
         #input_variable, lengths, target_variable, mask, max_target_len = training_batches
@@ -2299,8 +2309,11 @@ class NMT:
         self.model_0_wra.model.eval()
         #self.model_0_wra.model_6_dec.eval()
 
+        print(input_variable.size(), 'ivsize', t_var.size())
         with torch.no_grad():
+            self.model_0_wra.past = None
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
+            ans = torch.argmax(ans, dim=2)
 
         if hparams['beam'] is None:
             outputs = [ans]
@@ -2309,9 +2322,10 @@ class NMT:
             outputs = prune_tensor(outputs, 4).transpose(0,2)
 
         #####################
-
-
-        if True:
+        print(outputs[0].size(), 'out')
+        decoded_words = self.tokenizer.decode([outputs[0].item()])
+        print(decoded_words)
+        if False:
             decoded_words = []
 
             for db in range(len(outputs)):
@@ -2647,7 +2661,7 @@ if __name__ == '__main__':
         if not n.do_interactive:
             n.update_result_file()
             n.save_checkpoint(interrupt=True)
-            raise
+            #raise
             #print( e.strerror)
         else:
             print(e)

@@ -121,4 +121,6 @@ class NMT:
 if __name__ == '__main__':
     g = NMT()
     g.setup_for_interactive()
+    #print(g.tokenizer.encode(' '))
+    #print(g.tokenizer.decode(g.tokenizer.encode(' ')))
     g.loop()
