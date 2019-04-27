@@ -78,6 +78,8 @@ def move_order(first, second):
     return first, second
 
 if __name__ == '__main__':
+    tokenizer = None
+
     parser = argparse.ArgumentParser(description='split raw reddit file.')
     parser.add_argument('--filename',help='name of file to split.')
     parser.add_argument('--start',help='optional starting line number.')
@@ -96,6 +98,7 @@ if __name__ == '__main__':
     parser.add_argument('--to-mnli', help='format file for later use with mnli classifier.', action='store_true')
     parser.add_argument('--from-mrpc', help='after mrpc is done', action='store_true')
     parser.add_argument('--to-mrpc', help='format file for later use with mrpc classifier.', action='store_true')
+    parser.add_argument('--to-gpt2', help='format file for later use with gpt2.', action='store_true')
 
     args = parser.parse_args()
     args = vars(args)
@@ -126,6 +129,8 @@ if __name__ == '__main__':
     arg_to_mrpc = False
     arg_from_mrpc = False
     arg_skip_num = 8
+
+    arg_gpt2 = False
 
     arg_mode = hparams['train_name']
 
@@ -227,6 +232,14 @@ if __name__ == '__main__':
             print('Only one classifier function at a time!')
             exit()
         arg_classifier = "MRPC"
+
+    if args['to_gpt2']:
+        arg_gpt2 = True
+        arg_processed = True
+        arg_pairs = True
+        from pytorch_pretrained_bert import GPT2Tokenizer
+        tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+
 
     if arg_classifier != "":
         arg_end_filename = ".output.tsv"
@@ -331,7 +344,7 @@ if __name__ == '__main__':
                     if arg_eol and len(line[1]) > 1:
                         line[1] += ' ' + hparams['eol']
 
-                    if not arg_stagger and arg_classifier != "MRPC" and arg_classifier != "MNLI":
+                    if not arg_stagger and arg_classifier != "MRPC" and arg_classifier != "MNLI" and not arg_gpt2:
 
                         src.write(line[0].lower())
                         save = line[0][:]
@@ -347,9 +360,21 @@ if __name__ == '__main__':
                         tgt.write(line[1].lower())
                         if not line[1].endswith('\n'):
                             tgt.write('\n')
-
-
                         pass
+
+                    elif arg_gpt2:
+                        #print('gpt2')
+                        src_gpt = line[0]
+                        tgt_gpt = ''
+                        tgt_gpt_list = tokenizer.encode(line[1]) # line[1].split(' ')
+                        for i in tgt_gpt_list:
+                            i = tokenizer.decode([i])
+                            tgt_gpt = i
+                            src.write(src_gpt + '\n')
+                            tgt.write(tgt_gpt + '\n')
+                            src_gpt = src_gpt + ' ' + i
+
+
                     elif arg_stagger:
                         src_stagger = ''
                         tgt_stagger = ''
@@ -422,10 +447,11 @@ if __name__ == '__main__':
                             hist.write(args_end_string + '\n')
                         pass
 
-                for i in xml_freq:
-                    if num % i == 0:
-                        insert_xml(num, src, tgt, ques)
-                        break
+                if not arg_stagger:
+                    for i in xml_freq:
+                        if num % i == 0:
+                            insert_xml(num, src, tgt, ques)
+                            break
 
                 if arg_length != 0 and num > arg_start + arg_length:
                     print('early stop')
