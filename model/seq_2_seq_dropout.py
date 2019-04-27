@@ -357,11 +357,13 @@ class Encoder(nn.Module):
         embedded = self.embed(source).transpose(1,0)
         embedded = self.dropout_e(embedded)
         #print(embedded.size(),'emb-enc')
+        #print(input_lengths.size(),'il')
 
         if self.pack_and_pad:
             if self.training: print('pack and pad')
             embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
+        #print(embedded.size(),'embed')
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         #print(encoder_out.size(), encoder_hidden.size(), 'eo,eh')

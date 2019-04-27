@@ -1203,6 +1203,7 @@ class NMT:
 
 
     def pairs_from_batch(self, pairs):
+        print(len(pairs), len(pairs[0]), len(pairs[0][0]),'pairs')
         out = []
         for i in pairs:
 
@@ -1290,6 +1291,7 @@ class NMT:
             #print(self._skipped)
 
             if pad_and_batch:
+                print('pairs2')
                 return self.pairs_from_batch(pairs2) #self.tokenizer.encode(pairs2) #self.pad_and_batch(pairs2)
 
             return (g1, g2, g3, length)
@@ -1297,6 +1299,7 @@ class NMT:
         else:
             group = pairs[start:start + size]
             if pad_and_batch:
+                print('group')
                 return self.pairs_from_batch(group) #self.tokenizer.encode(group) #self.pad_and_batch(group)
 
         for i in group:
@@ -1487,7 +1490,7 @@ class NMT:
 
                 self.model_0_wra.model.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 #self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
-
+                '''
                 if not self.do_load_embeddings:
                     self.model_0_wra.embed.load_state_dict(checkpoint[0]['embedding'])
 
@@ -1510,7 +1513,7 @@ class NMT:
                     self.model_0_wra.new_freeze_decoding()
                 else:
                     self.model_0_wra.new_freeze_decoding(do_freeze=False)
-
+                '''
                 if self.model_0_wra.opt_1 is not None:
                     #####
                     try:
@@ -1849,6 +1852,7 @@ class NMT:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     #mask = mask.transpose(1,0)
+                    print(ans.size(), target_variable.size(),'a,tv')
 
                     for i in range(ans.size(0)): #ans.size(0)
 
@@ -2219,18 +2223,20 @@ class NMT:
     def _show_sample(self, iter=0, epoch_start=0, epoch_stop=hparams['batch_size'], temp_batch_size=hparams['batch_size']):
         ###########################
         group = []
-        while len(group) < 4:
-
+        #flag = False
+        #while len(group) < 4 and not flag:
+        if True:
             if epoch_start + iter >= epoch_stop:
                 choice = random.choice(self.pairs)
             else:
                 choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
 
             group = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk)
-            '''
+
+
             print(choice)
             print('----')
-            '''
+            print(group.size(),'gr')
             #print('choice', choice)
             #print('group', group)
             #exit()
@@ -2280,7 +2286,8 @@ class NMT:
 
     def evaluate(self, encoder, decoder, sentence, question=None, target_variable=None, lengths=None, max_length=MAX_LENGTH):
 
-
+        #print('eval')
+        #exit()
         input_variable = sentence
         #question_variable = Variable(torch.LongTensor([UNK_token])) # [UNK_token]
         target_variable = prune_tensor(target_variable, 4).transpose(-1,0)
@@ -2636,10 +2643,12 @@ if __name__ == '__main__':
             words, _ = n.evaluate(None,None,choice)
             print(words)
 
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as e:
         if not n.do_interactive:
             n.update_result_file()
             n.save_checkpoint(interrupt=True)
+            raise
+            #print( e.strerror)
         else:
-            print()
+            print(e)
 

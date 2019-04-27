@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath('../model/'))
 if len(sys.argv) > 2:
     import model.seq_2_seq as model
 else:
-    import model.torch_gpt2_example as model
+    import model.torch_gpt2_zero_shot as model
 import game_sr as sr
 import game_voice as v
 import model.tokenize_weak as tokenize_weak
