@@ -277,6 +277,25 @@ class WrapMemRNN: #(nn.Module):
 
     def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
+        if length_variable is not None and input_variable.size(0) == length_variable.size(0):
+            out_lst = []
+            for i in range(input_variable.size(0) ):
+                self.past = None
+                len = length_variable[i] - 1
+                #print(input_variable[i].size(), input_variable.size(), input_variable[i,:len],len,length_variable,'iv,iv')
+                iv = input_variable[i,:len]
+                iv = prune_tensor(iv, 2)
+                #print(iv.size(),'ivsize')
+                ans, self.past = self.model(iv, self.past)
+                ans = ans[:,-1,:]
+                out_lst.append(ans)
+
+            out_ans = torch.cat(out_lst, dim=0)
+
+            #out_ans = out_ans.transpose(1,0)
+            #print(out_ans.size(), out_lst[0].size(),'ans,out')
+            #print(out_lst, len(out_lst), out_lst[0].size())
+            return None, None, out_ans, None
         #input_variable = input_variable.permute(1,0)
         #print(input_variable.size(),'in', target_variable.size(),'tv')
         ans, self.past = self.model(input_variable, past=self.past)
@@ -360,8 +379,9 @@ class NMT:
         global teacher_forcing_ratio, MAX_LENGTH
 
         self.model_0_wra = None
-        #self.opt_1 = None
+        self.past = None
         self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+        self.words_end = ['.', '?', '!', '"']
 
         self.embedding_matrix = None
         self.embedding_matrix_is_loaded = False
@@ -528,6 +548,8 @@ class NMT:
         self.args = parser.parse_args()
         self.args = vars(self.args)
         # print(self.args)
+
+        hparams['unk'] = ' '
 
         if self.args['printable'] is not None:
             self.printable = str(self.args['printable'])
@@ -716,94 +738,7 @@ class NMT:
         self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['babi_name'] + '.' + hparams['question_ending']
         pass
 
-    '''
-    def task_set_embedding_matrix(self):
-        print('stage: set_embedding_matrix')
-        if self.embedding_matrix is not None and self.embedding_matrix_is_loaded:
-            print('embedding already loaded.')
-            return
-            pass
-        glove_data = hparams['data_dir'] + hparams['embed_name']
-        from gensim.models.keyedvectors import KeyedVectors
-        import numpy as np
 
-        embed_size = int(hparams['embed_size'])
-
-        embeddings_index = {}
-        if not os.path.isfile(glove_data) :
-            self.embedding_matrix = None  # np.zeros((len(self.vocab_list),embed_size))
-            #self.trainable = True
-        else:
-            # load embedding
-            glove_model = KeyedVectors.load_word2vec_format(glove_data, binary=False)
-
-            f = open(glove_data)
-            for line in range(self.output_lang.n_words): #len(self.vocab_list)):
-                #if line == 0: continue
-                word = self.output_lang.index2word[line]
-                # print(word, line)
-                if word in glove_model.wv.vocab:
-                    #print('fill with values',line)
-                    values = glove_model.wv[word]
-                    value = np.asarray(values, dtype='float32')
-                    embeddings_index[word] = value
-                else:
-                    print('fill with random values',line, word)
-                    value = np.random.uniform(low=self.uniform_low, high=self.uniform_high, size=(embed_size,))
-                    # value = np.zeros((embed_size,))
-                    embeddings_index[word] = value
-            f.close()
-
-            self.embedding_matrix = np.zeros((self.output_lang.n_words, embed_size))
-            for i in range( self.output_lang.n_words ):#len(self.vocab_list)):
-                word = self.output_lang.index2word[i]
-                embedding_vector = embeddings_index.get(word)
-                if embedding_vector is not None:
-                    # words not found in embedding index will be all random.
-                    self.embedding_matrix[i] = embedding_vector[:embed_size]
-                else:
-                    print('also fill with random values',i,word)
-
-                    self.embedding_matrix[i] = np.random.uniform(high=self.uniform_high, low=self.uniform_low,
-                                                                 size=(embed_size,))
-                    # self.embedding_matrix[i] = np.zeros((embed_size,))
-        pass
-
-    def task_review_weights(self, pairs, stop_at_fail=False):
-        plot_losses = []
-        num = 0 # hparams['base_file_num']
-        for i in range(100):
-            local_filename = hparams['save_dir'] + hparams['base_filename'] + '.'+ str(num) + '.pth'
-            if os.path.isfile(local_filename):
-                ## load weights ##
-
-                print('==============================')
-                print(str(i)+'.')
-                print('here:',local_filename)
-                self.load_checkpoint(local_filename)
-                print('loss', self.best_loss)
-                plot_losses.append(self.best_loss)
-                print('tag', self.tag)
-                choice = random.choice(pairs)
-                print(choice[0])
-                out, _ =self.evaluate(None,None,choice[0])
-                print(out)
-            else:
-                plot_losses.append(self.best_loss)
-                if stop_at_fail: break
-            num = 10 * self.print_every * i
-        pass
-        if self.do_plot:
-            import matplotlib.pyplot as plt
-            import matplotlib.ticker as ticker
-
-            plt.figure()
-            fig, ax = plt.subplots()
-            loc = ticker.MultipleLocator(base=2)
-            ax.yaxis.set_major_locator(loc)
-            plt.plot(plot_losses)
-            plt.show()
-    '''
 
     def task_train_epochs(self,num=0):
         lr = hparams['learning_rate']
@@ -868,28 +803,44 @@ class NMT:
                     print(line)
                 elif l is not None:
                     line = l
-                pad = hparams['tokens_per_sentence']
-                add_eol = False
-                #print(line)
-                line_out = self.variableFromSentence(self.input_lang, line, pad=pad)
-                lengths = 0
-                for x in line_out:
-                    if x != 0: lengths +=1
 
-                lengths = [lengths]
-                ques_variable = None #
-                target_variable = self.variableFromSentence(self.output_lang, hparams['unk'], pad=pad)
-                target_variable = prune_tensor(target_variable, 4)
-                lengths = torch.tensor(lengths, dtype=torch.int64).cpu()
+                num = 0
+                text_1 = line
+                text_2 = ""
+                self.past = None
+                # decode_list = []
+                while num < hparams['tokens_per_sentence']:
 
-                out , _ = self.evaluate(None, None, line_out,question=ques_variable,target_variable=target_variable,lengths=lengths)
-                print(out)
-                print(self._shorten(out, just_duplicates=True))
+                    indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
+                    tokens_tensor_2 = torch.tensor([indexed_tokens_2])
+
+                    with torch.no_grad():
+                        predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+
+                    predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
+                    predicted_token = self.tokenizer.decode([predicted_index])
+
+                    # print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
+
+                    text_2 += predicted_token
+
+                    if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end:
+                        break
+                    num += 1
+
+                if text_2.strip().lower().endswith(text_1.strip().lower()):
+
+                    if random.random() > 0.5:
+                        text_2 = text_2[: - len(text_1)]
+                print(text_2)
+                #return text_2
+
 
                 if call_from_script:
-                    out = self._shorten(out, just_duplicates=True)
+                    out = self._shorten(text_2, just_duplicates=True)
 
                     return out
+
 
         except EOFError:
             print()
@@ -1208,8 +1159,9 @@ class NMT:
 
 
     def pairs_from_batch(self, pairs):
-        print(len(pairs), len(pairs[0]), len(pairs[0][0]),'pairs')
+        #print(len(pairs), len(pairs[0]), len(pairs[0][0]),'pairs')
         out = []
+        lengths = []
         for i in pairs:
 
             #a = self.variableFromSentence(None, i[0])
@@ -1220,6 +1172,8 @@ class NMT:
             a = self.tokenizer.encode(i[0])
             b = self.tokenizer.encode(i[1])
             c = self.tokenizer.encode(i[2])
+
+            d = len(a)
 
             if True:
                 while len(a) < hparams['tokens_per_sentence']:
@@ -1234,10 +1188,12 @@ class NMT:
                 c = c[:hparams['tokens_per_sentence']]
 
             out.append([a,b,c])
+            lengths.append(d)
             #print(a,b,c)
         #exit()
         out = torch.LongTensor(out)
-        return out
+        lengths = torch.LongTensor(lengths)
+        return out, lengths
 
     def variables_for_batch(self, pairs, size, start, skip_unk=False, pad_and_batch=True):
         e = self.epoch_length * self.this_epoch + self.epoch_length
@@ -1297,7 +1253,7 @@ class NMT:
             #print(self._skipped)
 
             if pad_and_batch:
-                print('pairs2')
+                #print('pairs2')
                 return self.pairs_from_batch(pairs2) #self.tokenizer.encode(pairs2) #self.pad_and_batch(pairs2)
 
             return (g1, g2, g3, length)
@@ -1305,7 +1261,7 @@ class NMT:
         else:
             group = pairs[start:start + size]
             if pad_and_batch:
-                print('group')
+                #print('group')
                 return self.pairs_from_batch(group) #self.tokenizer.encode(group) #self.pad_and_batch(group)
 
         for i in group:
@@ -1853,28 +1809,33 @@ class NMT:
 
                 #ans = ans.permute(1,0,2)
                 target_variable = target_variable.squeeze(0)
-                #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
+                #print(ans.size(), target_variable.size(),length_variable.size(),'a,tv,m')
 
-                if True:
-                    ans = ans.transpose(1,0)
-                    target_variable = target_variable.transpose(1,0)
+                if False:
+                    #ans = ans.transpose(1,0)
+                    #target_variable = target_variable.transpose(1,0)
                     #mask = mask.transpose(1,0)
-                    print(ans.size(), target_variable.size(),'a,tv')
+                    #print(ans.size(), target_variable.size(),'a,tv')
 
                     for i in range(ans.size(0)): #ans.size(0)
 
                         #print(max_target_length,'mtl-size')
                         z = min([ans[i].size(0),target_variable[i].size(0)]) #max(max_target_length) #[i]
                         #print(z, i,'z,i')
-                        a_var = ans[i][:z]
-                        t_var = target_variable[i][:z]
+                        a_var = ans[i]#[:z]
+                        t_var = target_variable[i]
                         #m_var = mask[i][:z]
 
                         if hparams['cuda']:
                             t_var = t_var.cuda()
                             #m_var = m_var.cuda()
 
-                        print(a_var.size(), t_var.size(),'atm')
+                        print(a_var.size(), t_var.size(),'at')
+                else:
+                    a_var = ans
+                    t_var = target_variable[:,-1]
+
+                if True:
 
                         try:
                             l = criterion(a_var, t_var)
@@ -2043,19 +2004,19 @@ class NMT:
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
                 skip_unk = self.do_skip_unk
-                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
+                group, lengths = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
 
                 #for i in group: print(i.size() if not isinstance(i,list) else ('->', i[0].size()), len(i))
                 #print('---')
 
                 group = group.transpose(1,0)
-                print(group.size(),'group')
+                #print(group.size(),'group')
 
                 input_variable = group[0]
                 question_variable = None #group[2]
                 target_variable = group[1]
 
-                length_variable = None #group[3]
+                length_variable = lengths #group[3]
                 mask_variable = None #group[4]
                 max_target_length_variable = None #group[5]
 
@@ -2242,11 +2203,11 @@ class NMT:
             else:
                 choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
 
-            group = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk)
+            group, length = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk)
 
             group = group.transpose(1,0)
-            print('----')
-            print(group.size(),'gr')
+            #print('----')
+            #print(group.size(),'gr')
             #print('choice', choice)
             #print('group', group)
             #exit()
@@ -2255,7 +2216,7 @@ class NMT:
         input_variable = group[0]
         ques_variable = None  # group[2]
         target_variable = group[1]
-        lengths = None #group[3]
+        lengths = length #group[3]
         mask = None #group[4]
         max_target_length = None # group[5]
 
@@ -2285,7 +2246,10 @@ class NMT:
             question = nums[0]
             target = None
         '''
-        words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
+        #words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
+        #print(self.tokenizer.decode(input_variable))
+
+        words = self.get_sentence(choice[0])
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
             print('ans:', words)
@@ -2322,47 +2286,9 @@ class NMT:
             outputs = prune_tensor(outputs, 4).transpose(0,2)
 
         #####################
-        print(outputs[0].size(), 'out')
+        #print(outputs[0].size(), 'out')
         decoded_words = self.tokenizer.decode([outputs[0].item()])
         print(decoded_words)
-        if False:
-            decoded_words = []
-
-            for db in range(len(outputs)):
-                for di in range(len(outputs[db])):
-                    output = outputs[db][di]
-
-                    output = output.permute(1, 0)
-                    #print(output,'out')
-
-                    if hparams['beam'] is None:
-                        ni = torch.argmax(output, dim=0)[0]
-                        #print(ni,'ni')
-                    else:
-                        ni = output[di]
-
-                    #print(ni, 'ni')
-                    if int(ni) == int(EOS_token):
-                        xxx = hparams['eol']
-                        decoded_words.append(xxx)
-                        print('eol found.')
-                        if not self.do_print_to_screen: break
-                    else:
-                        if di < 4:
-                            if int(ni) == 0 and False:
-                                print(ni, '<--', self.output_lang.word2index[hparams['unk']])
-                            if True:
-                                print(int(ni), self.output_lang.index2word[int(ni)])
-                        if di == 5 and len(outputs) > 5:
-                            print('...etc')
-                        ######################
-                        if int(ni) == 0 and False:
-                            print(ni, '<--')
-                        if int(ni) != UNK_token:
-                            decoded_words.append(self.output_lang.index2word[int(ni)])
-                        if int(ni) == UNK_token:
-                            decoded_words.append(' ')
-                            print('!!')
 
         return decoded_words, None #decoder_attentions[:di + 1]
 
