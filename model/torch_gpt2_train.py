@@ -793,8 +793,9 @@ class NMT:
         pass
 
     def task_interactive(self, l=None, call_from_script=False):
-
-        print('-------------------')
+        four_spaces = '    '
+        if not call_from_script:
+            print('-------------------')
         try:
             while True:
                 if not call_from_script:
@@ -814,25 +815,29 @@ class NMT:
                     indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
+                    tokens_tensor_2 = tokens_tensor_2[:,:63]
+
                     with torch.no_grad():
+                        #print(tokens_tensor_2, tokens_tensor_2.size(),'tokt2')
                         predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
 
                     predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
                     predicted_token = self.tokenizer.decode([predicted_index])
 
-                    # print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
+                    print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
 
                     text_2 += predicted_token
 
-                    if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end:
+                    if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end or text_2.endswith(four_spaces):
                         break
                     num += 1
 
                 if text_2.strip().lower().endswith(text_1.strip().lower()):
 
                     if random.random() > 0.5:
+                        print('clip')
                         text_2 = text_2[: - len(text_1)]
-                print(text_2)
+                print('raw:',text_2)
                 #return text_2
 
 
