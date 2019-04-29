@@ -17,7 +17,7 @@ unidecode
 matplotlib
 py-cpuinfo
 datetime
-pytorch-pretrained-bert
+pytorch-pretrained-bert ## actually for gpt2 !!
 
 ## t2t ##
 Tensor2Tensor
