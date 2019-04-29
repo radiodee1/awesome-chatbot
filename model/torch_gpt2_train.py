@@ -282,11 +282,18 @@ class WrapMemRNN: #(nn.Module):
             for i in range(input_variable.size(0) ):
                 self.past = None
                 len = length_variable[i] - 1
-                #print(input_variable[i].size(), input_variable.size(), input_variable[i,:len],len,length_variable,'iv,iv')
+
                 iv = input_variable[i,:len]
                 iv = prune_tensor(iv, 2)
+
                 #print(iv.size(),'ivsize')
-                ans, self.past = self.model(iv, self.past)
+                try:
+                    ans, self.past = self.model(iv, self.past)
+                except:
+                    iv = torch.LongTensor([[0]])
+                    ans, self.past = self.model(iv, self.past) ## space char?
+                    #self.past = None
+                    #print('bang char?')
                 ans = ans[:,-1,:]
                 out_lst.append(ans)
 
@@ -1727,6 +1734,7 @@ class NMT:
                 else:
                     loss = None
                     #ansx = Variable(ans.data.max(dim=2)[1])
+                    ans = prune_tensor(ans, 3)
                     ans = ans.permute(1,0,2)
 
             #self._test_embedding()
