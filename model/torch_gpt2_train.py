@@ -1726,7 +1726,7 @@ class NMT:
 
                 else:
                     loss = None
-                    ansx = Variable(ans.data.max(dim=2)[1])
+                    #ansx = Variable(ans.data.max(dim=2)[1])
                     ans = ans.permute(1,0,2)
 
             #self._test_embedding()
