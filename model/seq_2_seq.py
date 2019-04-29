@@ -3099,6 +3099,8 @@ class NMT:
             f.write('valid results:' + '\n')
             f.write(','.join(self.score_list))
             f.write('\n')
+            f.write(' '.join(sys.argv) + '\n')
+
             #f.write('\n')
         f.close()
         print('\nsee file:', basename, '\n')
