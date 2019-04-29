@@ -817,7 +817,7 @@ class NMT:
                         indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
                     except:
                         indexed_tokens_2 = [0]
-                        print('exception')
+                        print('exception.')
                         ## does this work?
 
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
@@ -831,6 +831,7 @@ class NMT:
                         predicted_token = self.tokenizer.decode([predicted_index])
                     except:
                         predicted_token = ' '
+                        print('index problem.')
 
                     print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
 
@@ -843,7 +844,7 @@ class NMT:
                 if text_2.strip().lower().endswith(text_1.strip().lower()):
 
                     if random.random() > 0.5:
-                        print('clip')
+                        print('clip.')
                         text_2 = text_2[: - len(text_1)]
                 print('raw:',text_2)
                 #return text_2
