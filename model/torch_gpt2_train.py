@@ -812,7 +812,14 @@ class NMT:
                 # decode_list = []
                 while num < hparams['tokens_per_sentence']:
 
-                    indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
+
+                    try:
+                        indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
+                    except:
+                        indexed_tokens_2 = [0]
+                        print('exception')
+                        ## does this work?
+
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
                     tokens_tensor_2 = tokens_tensor_2[:,:63]
