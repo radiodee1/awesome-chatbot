@@ -824,12 +824,13 @@ class NMT:
 
                     tokens_tensor_2 = tokens_tensor_2[:,:63]
 
-                    with torch.no_grad():
-                        #print(tokens_tensor_2, tokens_tensor_2.size(),'tokt2')
-                        predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
-
-                    predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
-                    predicted_token = self.tokenizer.decode([predicted_index])
+                    try:
+                        with torch.no_grad():
+                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+                        predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
+                        predicted_token = self.tokenizer.decode([predicted_index])
+                    except:
+                        predicted_token = ' '
 
                     print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
 
