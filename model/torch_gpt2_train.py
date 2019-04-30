@@ -1191,9 +1191,9 @@ class NMT:
             #c = self.variableFromSentence(None, i[2])
             token = self.tokenizer.encode(' ')[0]
 
-            i[0] = ' ' + i[0]
-            i[1] = ' ' + i[1]
-            i[2] = ' ' + i[2]
+            i[0] = ' ' + i[0] ## input
+            i[1] = ' ' + i[1] ## unused
+            #i[2] = ' ' + i[2] ## not good for predicted word !!
 
             a = self.tokenizer.encode(i[0])
             b = self.tokenizer.encode(i[1])

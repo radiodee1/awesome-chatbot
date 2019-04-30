@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/model/torch_gpt2_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_zero_shot.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_zero_shot.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -58,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="1195" column="28" selection-start-line="1195" selection-start-column="28" selection-end-line="1195" selection-end-column="28" />
+            <state relative-caret-position="162">
+              <caret line="1191" column="7" selection-start-line="1191" selection-start-column="7" selection-end-line="1191" selection-end-column="7" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -120,7 +119,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>output_lang</find>
       <find>readLangs</find>
       <find>vocab_lang</find>
       <find>pad_and_batch</find>
@@ -150,6 +148,7 @@
       <find>train_iters</find>
       <find>.model(</find>
       <find>get_sentence</find>
+      <find>chop_word_for_index</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -563,8 +562,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="1195" column="28" selection-start-line="1195" selection-start-column="28" selection-end-line="1195" selection-end-column="28" />
+        <state relative-caret-position="162">
+          <caret line="1191" column="7" selection-start-line="1191" selection-start-column="7" selection-end-line="1191" selection-end-column="7" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
