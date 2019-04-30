@@ -77,7 +77,7 @@ class NMT:
         #decode_list = []
         while num < self.wordcount:
 
-            indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
+            indexed_tokens_2 = self.tokenizer.encode(' ' + text_1 + " ? " + text_2)
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
             with torch.no_grad():

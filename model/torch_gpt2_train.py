@@ -821,7 +821,7 @@ class NMT:
 
 
                     try:
-                        indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2 )
+                        indexed_tokens_2 = self.tokenizer.encode(' ' + text_1 + " ? " + text_2 )
                     except:
                         indexed_tokens_2 = [0]
                         print('exception.')
@@ -1089,6 +1089,7 @@ class NMT:
 
         return self.input_lang, self.output_lang, self.pairs
 
+    '''
     def chop_word_for_index(self,lang, word):
         w = word
 
@@ -1123,7 +1124,7 @@ class NMT:
 
         l.extend([lang.word2index[hparams['eow']]  ]) #, lang.word2index[hparams['unk']]])
         return l
-
+    '''
 
     def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1, no_padding=False):
         if pad == -1:
@@ -1189,6 +1190,10 @@ class NMT:
             #b = self.variableFromSentence(None, i[1])
             #c = self.variableFromSentence(None, i[2])
             token = self.tokenizer.encode(' ')[0]
+
+            i[0] = ' ' + i[0]
+            i[1] = ' ' + i[1]
+            i[2] = ' ' + i[2]
 
             a = self.tokenizer.encode(i[0])
             b = self.tokenizer.encode(i[1])
