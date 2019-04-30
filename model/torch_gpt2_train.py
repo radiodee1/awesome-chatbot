@@ -821,7 +821,7 @@ class NMT:
 
 
                     try:
-                        indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2)
+                        indexed_tokens_2 = self.tokenizer.encode(text_1 + " ? " + text_2 )
                     except:
                         indexed_tokens_2 = [0]
                         print('exception.')
@@ -1194,7 +1194,7 @@ class NMT:
             b = self.tokenizer.encode(i[1])
             c = self.tokenizer.encode(i[2])
 
-            d = len(a)
+            d = len(a) #+ 1 ## single extra space!!
 
             if True:
                 while len(a) < hparams['tokens_per_sentence']:
@@ -2088,7 +2088,7 @@ class NMT:
         question = None
         if self.do_load_babi:
             #print('ques:', choice[1])
-            print('ref:', choice[2])
+            print('ref:', '[' + choice[2] + ']')
         else:
             print('tgt:', choice[1])
         '''

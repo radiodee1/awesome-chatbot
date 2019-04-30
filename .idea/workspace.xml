@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="188">
-              <caret line="285" selection-start-line="285" selection-end-line="285" />
+            <state relative-caret-position="-2494">
+              <caret line="1196" column="24" selection-start-line="1196" selection-start-column="24" selection-end-line="1196" selection-end-column="24" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -129,8 +129,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>opt_2</find>
-      <find>count_sentences</find>
       <find>output_lang</find>
       <find>readLangs</find>
       <find>vocab_lang</find>
@@ -159,6 +157,8 @@
       <find>_shorten</find>
       <find>_auto_stop</find>
       <find>train_iters</find>
+      <find>.model(</find>
+      <find>get_sentence</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -626,8 +626,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="188">
-          <caret line="285" selection-start-line="285" selection-end-line="285" />
+        <state relative-caret-position="-2494">
+          <caret line="1196" column="24" selection-start-line="1196" selection-start-column="24" selection-end-line="1196" selection-end-column="24" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
