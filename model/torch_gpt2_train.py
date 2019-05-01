@@ -1486,8 +1486,9 @@ class NMT:
                         if self.model_0_wra.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
-                        if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
-                        self.model_0_wra.opt_1 = self._make_optimizer(self.model_0_wra.model_1_seq)
+                        #if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
+                        self.model_0_wra.opt_1 = self._make_optimizer(self.model_0_wra.model)
+                '''
                 if self.model_0_wra.opt_2 is not None:
                     #####
                     try:
@@ -1498,6 +1499,7 @@ class NMT:
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
                         self.model_0_wra.opt_2 = self._make_optimizer(self.model_0_wra.model_6_dec, lm)
+                '''
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -1508,7 +1510,7 @@ class NMT:
     def _make_optimizer(self, module=None, lr=1.0):
         print('new optimizer', hparams['learning_rate'] * lr)
         if module is None:
-            module = self.model_0_wra
+            module = self.model_0_wra.model
         parameters = filter(lambda p: p.requires_grad, module.parameters())
         return optim.Adam(parameters, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
@@ -1655,69 +1657,33 @@ class NMT:
             loss = 0
             n_tot = 0
 
-            if True: #self.do_recurrent_output:
-                ##lz = len(target_variable[0])
+            if True:
 
-                #target_variable = Variable(torch.LongTensor(target_variable)) #torch.cat(target_variable, dim=0)
-
-                ansx = None #Variable(ans.data.max(dim=2)[1])
-
-                #ans = ans.float().permute(1,0,2).contiguous()
-
-                #ans = ans.permute(1,0,2)
                 target_variable = target_variable.squeeze(0)
-                #print(ans.size(), target_variable.size(),length_variable.size(),'a,tv,m')
 
-                if False:
-                    #ans = ans.transpose(1,0)
-                    #target_variable = target_variable.transpose(1,0)
-                    #mask = mask.transpose(1,0)
-                    #print(ans.size(), target_variable.size(),'a,tv')
 
-                    for i in range(ans.size(0)): #ans.size(0)
-
-                        #print(max_target_length,'mtl-size')
-                        z = min([ans[i].size(0),target_variable[i].size(0)]) #max(max_target_length) #[i]
-                        #print(z, i,'z,i')
-                        a_var = ans[i]#[:z]
-                        t_var = target_variable[i]
-                        #m_var = mask[i][:z]
-
-                        if hparams['cuda']:
-                            t_var = t_var.cuda()
-                            #m_var = m_var.cuda()
-
-                        print(a_var.size(), t_var.size(),'at')
-                else:
+                if True:
                     a_var = ans
                     t_var = target_variable[:,-1]
 
-                if True:
+                #if True:
 
-                        try:
-                            l = criterion(a_var, t_var)
-                            loss += l
-                            n_tot += t_var.size(0)
-                        except ValueError as e:
-                            print('skip for size...', z)
-                            print(e)
-                            print(a_var.size(), t_var.size(),'a,t')
-                            exit()
-                            pass
+                    try:
+                        l = criterion(a_var, t_var)
+                        loss += l
+                        n_tot += t_var.size(0)
+                    except ValueError as e:
+                        print('skip for size...', z)
+                        print(e)
+                        print(a_var.size(), t_var.size(),'a,t')
+                        exit()
+                        pass
                         #print(l, loss, n_tot, 'loss')
 
 
 
-            #ans = ans.permute(1,0)
-
-            #print(ans.size(), target_variable.size(),'criterion')
-
-            if not self.do_recurrent_output:
-                pass
-                #loss = criterion(ans, target_variable)
-
-            if not isinstance(loss, int):
-                loss.backward()
+            loss.backward()
+            print('backward')
             wrapper_optimizer_1.step()
             #wrapper_optimizer_2.step()
 
