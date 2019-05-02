@@ -1201,6 +1201,11 @@ class NMT:
 
             d = len(a) #+ 1 ## single extra space!!
 
+            e = token
+            for i in range(len(c)):
+                if c[i] != token: e = c[i]
+            c = [e]
+
             if True:
                 while len(a) < hparams['tokens_per_sentence']:
                     a.append(token)
@@ -1212,6 +1217,7 @@ class NMT:
                 a = a[:hparams['tokens_per_sentence']]
                 b = b[:hparams['tokens_per_sentence']]
                 c = c[:hparams['tokens_per_sentence']]
+                #print(c, 'c')
 
             out.append([a,b,c])
             lengths.append(d)
@@ -1659,7 +1665,7 @@ class NMT:
 
 
                 if True:
-                    #print(ans.size(), target_variable.size(),'atv')
+                    #print(ans.size(), target_variable,'atv')
 
                     a_var = ans
                     t_var = target_variable[:,0] ## -1
@@ -1836,7 +1842,7 @@ class NMT:
 
                 input_variable = group[0]
                 question_variable = None #group[2]
-                target_variable = group[1]
+                target_variable = group[2]
 
                 length_variable = lengths #group[3]
                 mask_variable = None #group[4]
@@ -2040,7 +2046,7 @@ class NMT:
 
         input_variable = group[0]
         ques_variable = None  # group[2]
-        target_variable = group[1]
+        target_variable = group[2]
         lengths = length #group[3]
         mask = None #group[4]
         max_target_length = None # group[5]
