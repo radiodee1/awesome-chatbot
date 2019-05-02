@@ -1512,6 +1512,11 @@ class NMT:
         if module is None:
             module = self.model_0_wra.model
         parameters = filter(lambda p: p.requires_grad, module.parameters())
+        if False:
+            print('===')
+            for p in module.parameters():
+                if p.requires_grad : print(p.size())
+            print('===')
         return optim.Adam(parameters, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
