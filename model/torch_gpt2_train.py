@@ -1207,7 +1207,7 @@ class NMT:
                 while len(b) < hparams['tokens_per_sentence']:
                     b.append(token)
                 while len(c) < hparams['tokens_per_sentence']:
-                    c.append(token)
+                    c.append(c[0])
 
                 a = a[:hparams['tokens_per_sentence']]
                 b = b[:hparams['tokens_per_sentence']]
@@ -1637,15 +1637,6 @@ class NMT:
 
     #######################################
 
-    def maskNLLLoss(self, inp, target, mask):
-        nTotal = mask.sum()
-
-        crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)).squeeze(1))
-        loss = crossEntropy.masked_select(mask).mean()
-        if hparams['cuda']:
-            loss = loss.cuda()
-        return loss, nTotal.item()
-
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
         #max_target_length = [hparams['tokens_per_sentence'] for _ in max_target_length]
         #question_variable = None
@@ -1668,8 +1659,10 @@ class NMT:
 
 
                 if True:
+                    #print(ans.size(), target_variable.size(),'atv')
+
                     a_var = ans
-                    t_var = target_variable[:,-1]
+                    t_var = target_variable[:,0] ## -1
 
                 #if True:
 
@@ -1906,6 +1899,8 @@ class NMT:
 
             if l is not None:
                 print_loss_total += float(l) #.clone())
+            else:
+                print('loss,', l)
 
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every

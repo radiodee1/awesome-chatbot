@@ -57,8 +57,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="422">
-              <caret line="1518" column="12" selection-start-line="1518" selection-start-column="12" selection-end-line="1518" selection-end-column="12" />
+            <state relative-caret-position="340">
+              <caret line="1208" column="61" selection-start-line="1208" selection-start-column="61" selection-end-line="1208" selection-end-column="61" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -119,10 +119,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variableFromSentence</find>
-      <find>indexesFromSentence</find>
-      <find>self.pairs</find>
-      <find>prepareData</find>
       <find>while</find>
       <find>try:</find>
       <find>pairs_from_batch</find>
@@ -149,6 +145,10 @@
       <find>training</find>
       <find>wrapper_optimizer_1</find>
       <find>_make_optimizer</find>
+      <find>model_0_wra.model</find>
+      <find>model_0_wra.model.</find>
+      <find>.model_0_wra.model.train</find>
+      <find>target_variable</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -581,8 +581,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="422">
-          <caret line="1518" column="12" selection-start-line="1518" selection-start-column="12" selection-end-line="1518" selection-end-column="12" />
+        <state relative-caret-position="340">
+          <caret line="1208" column="61" selection-start-line="1208" selection-start-column="61" selection-end-line="1208" selection-end-column="61" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
