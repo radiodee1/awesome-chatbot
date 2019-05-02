@@ -8,7 +8,7 @@ sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
 
 if len(sys.argv) > 2:
-    import model.seq_2_seq as model
+    import model.seq_2_seq_dropout as model
 else:
     import model.torch_gpt2_zero_shot as model
 import game_sr as sr
