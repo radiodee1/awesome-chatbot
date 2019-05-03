@@ -85,6 +85,8 @@ class NMT:
         while num < self.wordcount:
 
             indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + " ? " + text_2)
+            #indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_2 + " - " + text_1)
+
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
             with torch.no_grad():
@@ -101,7 +103,7 @@ class NMT:
                 break
             num += 1
 
-        if text_2.strip().lower().endswith(text_1.strip().lower()):
+        if text_2.strip().lower().endswith(text_1.strip().lower()) :
 
             if random.random() > 0.5:
                 text_2 = text_2[: - len(text_1)]
