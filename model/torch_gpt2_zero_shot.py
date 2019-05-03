@@ -92,9 +92,18 @@ class NMT:
             with torch.no_grad():
                 predictions_1, self.past = self.model(tokens_tensor_2, past=self.past)
 
-            predicted_index = torch.argmax(predictions_1[0, -1, :]).item()
+            index_spot = - 1
+            predicted_index = torch.argmax(predictions_1[0, index_spot, :], dim=-1).item()
             predicted_token = self.tokenizer.decode([predicted_index])
 
+            print(predictions_1.size(), 'predictions', index_spot)
+
+            if False:
+                for i in range(predictions_1.size(1)):
+                    p_index = torch.argmax(predictions_1[0, i, :], dim=-1).item()
+                    p_token = self.tokenizer.decode([p_index])
+                    print(p_token, end='')
+                print()
             #print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
 
             text_2 += predicted_token
