@@ -12,7 +12,7 @@ from model.settings import hparams
 import torch
 from pytorch_pretrained_bert import GPT2Tokenizer, GPT2Model, GPT2LMHeadModel
 import random
-# OPTIONAL: if you want to have more information on what's happening, activate the logger as follows
+
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -75,9 +75,16 @@ class NMT:
         text_2 = ""
         self.past = None
         #decode_list = []
+
+        if False:
+            word = self.random_word()
+        else:
+            word = ''
+        space_character = '' ## no space!!
+
         while num < self.wordcount:
 
-            indexed_tokens_2 = self.tokenizer.encode(' ' + text_1 + " ? " + text_2)
+            indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + " ? " + text_2)
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
             with torch.no_grad():
@@ -117,6 +124,14 @@ class NMT:
             print(text_1)
             self.get_sentence(text_1)
 
+
+    def random_word(self):
+        #word = self.tokenizer.decode([random.randint(0,self.tokenizer.__len__() -1)])
+        word = self.output_lang.index2word[random.randint(0, self.output_lang.n_words - 1)]
+        word = word.encode( "utf-8")
+        word = word.decode("utf-8").strip()
+        #print(word)
+        return word
 
 if __name__ == '__main__':
     g = NMT()
