@@ -279,6 +279,7 @@ class WrapMemRNN: #(nn.Module):
 
         if length_variable is not None and input_variable.size(0) == length_variable.size(0):
             out_lst = []
+            token_num = 0 ## -1 ??
             for i in range(input_variable.size(0) ):
                 self.past = None
                 len = length_variable[i] - 1
@@ -294,7 +295,7 @@ class WrapMemRNN: #(nn.Module):
                     ans, self.past = self.model(iv, self.past) ## space char?
                     #self.past = None
                     #print('bang char?')
-                ans = ans[:,-1,:]
+                ans = ans[:,token_num,:]
                 out_lst.append(ans)
 
             out_ans = torch.cat(out_lst, dim=0)
@@ -303,15 +304,7 @@ class WrapMemRNN: #(nn.Module):
             #print(out_ans.size(), out_lst[0].size(),'ans,out')
             #print(out_lst, len(out_lst), out_lst[0].size())
             return None, None, out_ans, None
-        #input_variable = input_variable.permute(1,0)
-        #print(input_variable.size(),'in', target_variable.size(),'tv')
-        ans, self.past = self.model(input_variable, past=self.past)
-        #ans = torch.argmax(ans[:,-1:,:], dim=2)
-        ans = ans[:,-1:, :]
-        seq = None
-        #print(len(ans), ans.size(),'ans', len(ans[0]) )
 
-        return seq, None, ans, None
 
     def new_freeze_embedding(self, do_freeze=True):
         #self.embed.weight.requires_grad = not do_freeze
