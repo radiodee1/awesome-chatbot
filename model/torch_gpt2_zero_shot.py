@@ -49,7 +49,7 @@ class NMT:
 
         self.tokenizer = None
         self.model = None
-        self.wordcount = 25
+        self.wordcount = 1
         self.words_end = ['.', '?', '!', '"']
 
         self.output_lang = None
@@ -80,46 +80,36 @@ class NMT:
             word = self.random_word()
         else:
             word = ''
-        space_character = '' ## no space!!
+        space_character = ' ' ## no space!!??
 
         while num < self.wordcount:
 
-            indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + " ? " + text_2)
-            #indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_2 + " - " + text_1)
+            indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ')
 
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
             with torch.no_grad():
                 predictions_1, self.past = self.model(tokens_tensor_2, past=self.past)
 
-            index_spot = - 1
-            predicted_index = torch.argmax(predictions_1[0, index_spot, :], dim=-1).item()
-            predicted_token = self.tokenizer.decode([predicted_index])
+            zlist = ''
+            xlist = ''
+            for i in range(predictions_1.size(1)):
+                ii = i #0 ## i
+                p_index = torch.argmax(predictions_1[0, ii, :], dim=-1).item()
+                p_token = self.tokenizer.decode([p_index])
+                zlist += '[' + str(p_index) + ']'
+                xlist += p_token
+            print()
+            xlist = xlist.strip()
+            xlist = xlist.replace(',','')
+            xlist = xlist.replace('.','')
+            print(zlist)
 
-            print(predictions_1.size(), 'predictions', index_spot)
+            print('out >',xlist)
 
-            if False:
-                for i in range(predictions_1.size(1)):
-                    p_index = torch.argmax(predictions_1[0, i, :], dim=-1).item()
-                    p_token = self.tokenizer.decode([p_index])
-                    print(p_token, end='')
-                print()
-            #print(num, text_1 + ' - ' + text_2.strip('\n'), '[', predicted_index, '-' + predicted_token + '-', ']')
-
-            text_2 += predicted_token
-
-            if predicted_token.strip() in self.words_end or predicted_token[0] in self.words_end:
-                break
             num += 1
 
-        if text_2.strip().lower().endswith(text_1.strip().lower()) :
-
-            if random.random() > 0.5:
-                text_2 = text_2[: - len(text_1)]
-        print(text_2)
-        return text_2
-
-
+            return xlist
 
     def loop(self):
 
