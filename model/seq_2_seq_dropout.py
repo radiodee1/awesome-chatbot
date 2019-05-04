@@ -2906,9 +2906,11 @@ class NMT:
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
 
         if hparams['beam'] is None:
-            outputs = [ans]
+            outputs = ans #[ans]
 
         else:
+            print('no beam!')
+            exit()
             outputs = prune_tensor(outputs, 4)#.transpose(0,2)
 
         #####################
@@ -2916,16 +2918,17 @@ class NMT:
 
         if True:
             decoded_words = []
+            #print(outputs[0].size())
 
             for db in range(len(outputs)):
                 for di in range(len(outputs[db])):
                     output = outputs[db][di]
 
                     #output = output.permute(1, 0)
-                    #print(output,'out')
+                    #print(output.size(),'out')
 
                     if hparams['beam'] is None:
-                        ni = torch.argmax(output, dim=0)[0]
+                        ni = torch.argmax(output, dim=-1).item()
                         #print(ni,'ni')
                     else:
                         ni = output[di]

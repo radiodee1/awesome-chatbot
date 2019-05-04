@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1070">
-              <caret line="535" column="9" selection-start-line="535" selection-start-column="9" selection-end-line="535" selection-end-column="9" />
+            <state relative-caret-position="206">
+              <caret line="2908" column="27" selection-start-line="2908" selection-start-column="27" selection-end-line="2908" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -129,7 +128,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>input_variable</find>
       <find>train</find>
       <find>model_0_wra</find>
       <find>_test_embedding</find>
@@ -159,6 +157,7 @@
       <find>transpose</find>
       <find>wrap_encoder_module</find>
       <find>print</find>
+      <find>!!</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -513,8 +512,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1070">
-          <caret line="535" column="9" selection-start-line="535" selection-start-column="9" selection-end-line="535" selection-end-column="9" />
+        <state relative-caret-position="206">
+          <caret line="2908" column="27" selection-start-line="2908" selection-start-column="27" selection-end-line="2908" selection-end-column="27" />
         </state>
       </provider>
     </entry>
