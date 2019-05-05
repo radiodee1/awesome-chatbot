@@ -794,7 +794,7 @@ class NMT:
 
     def task_interactive(self, l=None, call_from_script=False):
         four_spaces = '    '
-        token_num = 1
+        token_num = 10
         if not call_from_script:
             print('-------------------')
         try:
@@ -810,7 +810,7 @@ class NMT:
                 text_1 = line
                 text_2 = ""
                 zlist = ''
-                self.past = None
+                #self.past = None
                 # decode_list = []
 
                 if False:
@@ -819,19 +819,24 @@ class NMT:
                     word = ''
                 space_character = ' '  ## no space!!??
 
-                while num < hparams['tokens_per_sentence']:
-                    self.past = None
+                while num < 1: #hparams['tokens_per_sentence']:
+                    #self.past = None
                     indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ' + text_2)
 
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
-                    tokens_tensor_2 = tokens_tensor_2[:,:68]
+                    tokens_tensor_2 = tokens_tensor_2[:,:1024 -4]
 
                     print(tokens_tensor_2.size(),'tt2')
 
                     with torch.no_grad():
-                        predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+                        try:
+                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+                        except RuntimeError:
+                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2)
+                            print('runtime error.')
+                            self.past = None
 
-                    if False:
+                    if True:
                         token_num = predictions_1.size(1)
 
                     #zlist = ''
@@ -843,14 +848,16 @@ class NMT:
                         zlist += '[' + str(p_index) + ']'
                         xlist += p_token
 
+                    zlist += '|'
+                    '''
                     xlist = xlist.strip()
                     xlist = xlist.replace(',', '')
                     xlist = xlist.replace('.', '')
                     #print(zlist)
-
+                    '''
                     #print('out >', xlist)
                     text_2 += xlist + ' '
-                    if xlist.strip() in self.words_end or text_2.endswith(four_spaces):
+                    if xlist.strip() in self.words_end or text_2.endswith(four_spaces) or True:
                         break
 
                     num += 1
