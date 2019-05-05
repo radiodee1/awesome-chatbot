@@ -829,13 +829,14 @@ class NMT:
                     if not call_from_script: print(tokens_tensor_2.size(),'tt2')
 
                     with torch.no_grad():
-                        try:
-                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+                        #try:
+                        predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+                        '''
                         except RuntimeError:
                             predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2)
                             print('runtime error.')
                             self.past = None
-
+                        '''
                     if True:
                         token_num = predictions_1.size(1)
 
