@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_mask.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_mask.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -21,11 +21,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="2535" column="30" selection-start-line="2535" selection-start-column="30" selection-end-line="2535" selection-end-column="30" />
+            <state relative-caret-position="180">
+              <caret line="2468" column="41" lean-forward="true" selection-start-line="2468" selection-start-column="41" selection-end-line="2468" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -51,7 +51,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="486">
@@ -212,8 +212,8 @@
         <option value="$PROJECT_DIR$/do_launch_game.sh" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_zero_shot.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq_mask.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_train.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq_mask.py" />
       </list>
     </option>
   </component>
@@ -508,13 +508,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="2535" column="30" selection-start-line="2535" selection-start-column="30" selection-end-line="2535" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
@@ -522,6 +515,13 @@
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="2468" column="41" lean-forward="true" selection-start-line="2468" selection-start-column="41" selection-end-line="2468" selection-end-column="41" />
         </state>
       </provider>
     </entry>

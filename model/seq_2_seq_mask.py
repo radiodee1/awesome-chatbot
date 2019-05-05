@@ -2466,7 +2466,7 @@ class NMT:
                         a_var = ans[i][:z]
                         t_var = target_variable[:,:,i].squeeze(0)[:z]
                         #print(mask.size(),'mvar')
-                        m_var = mask[:,i]#[:z]
+                        m_var = mask[:,i][:z]
 
                         if hparams['cuda']:
                             t_var = t_var.cuda()
