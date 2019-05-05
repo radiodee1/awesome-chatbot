@@ -848,6 +848,9 @@ class WrapMemRNN: #(nn.Module):
 
             best_sequence = prune_tensor(best_sequence, 3)
 
+        #print(ans.size(), 'ans')
+        ans = F.softmax(ans, dim=-1)
+
         return ans, best_sequence
 
 

@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_mask.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_mask.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,8 +22,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="702">
-              <caret line="2532" column="41" selection-start-line="2532" selection-start-column="41" selection-end-line="2532" selection-end-column="41" />
+            <state relative-caret-position="-4104">
+              <caret line="582" column="8" selection-start-line="582" selection-start-column="8" selection-end-line="582" selection-end-column="8" />
             </state>
           </provider>
         </entry>
@@ -501,8 +499,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="702">
-          <caret line="2532" column="41" selection-start-line="2532" selection-start-column="41" selection-end-line="2532" selection-end-column="41" />
+        <state relative-caret-position="-4104">
+          <caret line="582" column="8" selection-start-line="582" selection-start-column="8" selection-end-line="582" selection-end-column="8" />
         </state>
       </provider>
     </entry>
