@@ -1395,6 +1395,8 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
+        if interrupt:
+            basename += '.interrupt'
         if self.do_load_babi or self.do_conserve_space or self.do_train_long or self.do_recurrent_output:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
