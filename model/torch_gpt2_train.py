@@ -809,6 +809,7 @@ class NMT:
                 num = 0
                 text_1 = line
                 text_2 = ""
+                zlist = ''
                 self.past = None
                 # decode_list = []
 
@@ -830,7 +831,7 @@ class NMT:
                     if False:
                         token_num = predictions_1.size(1)
 
-                    zlist = ''
+                    #zlist = ''
                     xlist = ''
                     for i in range(token_num):
                         ii = i  # 0 ## i
@@ -838,11 +839,11 @@ class NMT:
                         p_token = self.tokenizer.decode([p_index])
                         zlist += '[' + str(p_index) + ']'
                         xlist += p_token
-                    print()
+
                     xlist = xlist.strip()
                     xlist = xlist.replace(',', '')
                     xlist = xlist.replace('.', '')
-                    print(zlist)
+                    #print(zlist)
 
                     #print('out >', xlist)
                     text_2 += xlist + ' '
@@ -851,6 +852,7 @@ class NMT:
 
                     num += 1
 
+                print(zlist)
                 print('out >', text_2)
                 return text_2
 
@@ -2072,6 +2074,9 @@ class NMT:
         '''
         #words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         #print(self.tokenizer.decode(input_variable))
+
+        choice[0] = choice[0].encode("utf-8")
+        choice[0] = choice[0].decode('utf-8')
 
         words = self.get_sentence(choice[0])
         # print(choice)
