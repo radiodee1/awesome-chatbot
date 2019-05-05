@@ -798,7 +798,7 @@ class NMT:
         if not call_from_script:
             print('-------------------')
         try:
-            if True:
+            while True:
                 if not call_from_script:
                     line = input("> ")
                     line = tokenize_weak.format(line)
@@ -826,7 +826,7 @@ class NMT:
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
                     tokens_tensor_2 = tokens_tensor_2[:,:1024 -4]
 
-                    print(tokens_tensor_2.size(),'tt2')
+                    if not call_from_script: print(tokens_tensor_2.size(),'tt2')
 
                     with torch.no_grad():
                         try:
@@ -862,9 +862,11 @@ class NMT:
 
                     num += 1
 
-                print(zlist)
-                print('out >', text_2)
-                return text_2
+                if not call_from_script:
+                    print(zlist)
+                    print('out >', text_2)
+                else:
+                    return text_2
 
         except EOFError:
                 print()
