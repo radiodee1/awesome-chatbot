@@ -2533,7 +2533,10 @@ class NMT:
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')
 
-        return outputs, ans , loss.item()
+        if loss is not None: # isinstance(loss, int):
+            loss = loss.item()
+
+        return outputs, ans , loss
 
     #######################################
 

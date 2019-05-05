@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_mask.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_mask.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,7 +16,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-874">
+            <state relative-caret-position="44910">
               <caret line="2525" column="33" selection-start-line="2525" selection-start-column="16" selection-end-line="2525" selection-end-column="33" />
             </state>
           </provider>
@@ -22,8 +25,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4104">
-              <caret line="582" column="8" selection-start-line="582" selection-start-column="8" selection-end-line="582" selection-end-column="8" />
+            <state relative-caret-position="576">
+              <caret line="2535" column="30" selection-start-line="2535" selection-start-column="30" selection-end-line="2535" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -226,7 +229,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -248,6 +250,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -412,13 +415,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-874">
-          <caret line="2525" column="33" selection-start-line="2525" selection-start-column="16" selection-end-line="2525" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="55296">
@@ -426,6 +422,13 @@
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="44910">
+          <caret line="2525" column="33" selection-start-line="2525" selection-start-column="16" selection-end-line="2525" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -499,8 +502,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4104">
-          <caret line="582" column="8" selection-start-line="582" selection-start-column="8" selection-end-line="582" selection-end-column="8" />
+        <state relative-caret-position="576">
+          <caret line="2535" column="30" selection-start-line="2535" selection-start-column="30" selection-end-line="2535" selection-end-column="30" />
         </state>
       </provider>
     </entry>
