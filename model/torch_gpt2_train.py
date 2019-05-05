@@ -2078,7 +2078,6 @@ class NMT:
         choice[0] = choice[0].encode("ascii",'ignore')
         #print(choice[0])
         choice[0] = choice[0].decode('ascii','ignore')
-        #print(choice[0])
 
         words = self.get_sentence(choice[0])
         # print(choice)

@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/torch_gpt2_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -55,8 +54,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="360">
-              <caret line="2079" column="52" selection-start-line="2079" selection-start-column="52" selection-end-line="2079" selection-end-column="52" />
+            <state relative-caret-position="378">
+              <caret line="2080" selection-start-line="2080" selection-end-line="2080" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -518,8 +517,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="2079" column="52" selection-start-line="2079" selection-start-column="52" selection-end-line="2079" selection-end-column="52" />
+        <state relative-caret-position="378">
+          <caret line="2080" selection-start-line="2080" selection-end-line="2080" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
