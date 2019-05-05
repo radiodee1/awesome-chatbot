@@ -1557,7 +1557,7 @@ class NMT:
                 if x == ll:
                     pass
                 else:
-                    if x != hparams['eol'] and x != hparams['sol'] and x != hparams['eow']:
+                    if x != hparams['eol'] and x != hparams['sol'] and x != hparams['eow'] and x != ' ':
                         out.append(x)
                     if x == hparams['eow']:
                         #print('!!')
