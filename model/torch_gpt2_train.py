@@ -794,10 +794,11 @@ class NMT:
 
     def task_interactive(self, l=None, call_from_script=False):
         four_spaces = '    '
+        token_num = 1
         if not call_from_script:
             print('-------------------')
         try:
-            while True:
+            if True:
                 if not call_from_script:
                     line = input("> ")
                     line = tokenize_weak.format(line)
@@ -817,18 +818,21 @@ class NMT:
                     word = ''
                 space_character = ' '  ## no space!!??
 
-                while num < 1: #hparams['tokens_per_sentence']:
+                while num < hparams['tokens_per_sentence']:
 
-                    indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ')
+                    indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ' + text_2)
 
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
                     with torch.no_grad():
                         predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
 
+                    if False:
+                        token_num = predictions_1.size(1)
+
                     zlist = ''
                     xlist = ''
-                    for i in range(predictions_1.size(1)):
+                    for i in range(token_num):
                         ii = i  # 0 ## i
                         p_index = torch.argmax(predictions_1[0, ii, :], dim=-1).item()
                         p_token = self.tokenizer.decode([p_index])
@@ -840,11 +844,15 @@ class NMT:
                     xlist = xlist.replace('.', '')
                     print(zlist)
 
-                    print('out >', xlist)
+                    #print('out >', xlist)
+                    text_2 += xlist + ' '
+                    if xlist.strip() in self.words_end or text_2.endswith(four_spaces):
+                        break
 
                     num += 1
 
-                    if call_from_script: return xlist
+                print('out >', text_2)
+                return text_2
 
         except EOFError:
                 print()
