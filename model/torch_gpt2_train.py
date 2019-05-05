@@ -824,8 +824,8 @@ class NMT:
                     indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ' + text_2)
 
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
-                    tokens_tensor_2 = tokens_tensor_2[:,:768]
-                    
+                    tokens_tensor_2 = tokens_tensor_2[:,:760]
+
                     print(tokens_tensor_2.size(),'tt2')
 
                     with torch.no_grad():
