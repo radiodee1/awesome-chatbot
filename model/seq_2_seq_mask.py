@@ -2481,7 +2481,7 @@ class NMT:
                             print(a_var.size(), t_var.size(),'a,t')
                             exit()
                             pass
-                        #print(l, loss, n_tot, 'loss')
+                        #print(l,loss, n_tot, 'loss')
 
 
 
@@ -2530,7 +2530,7 @@ class NMT:
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')
 
-        return outputs, ans , loss
+        return outputs, ans , loss.item()
 
     #######################################
 
