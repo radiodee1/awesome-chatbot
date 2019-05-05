@@ -822,7 +822,8 @@ class NMT:
                 while num < hparams['tokens_per_sentence']:
 
                     indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ' + text_2)
-
+                    print(indexed_tokens_2.size(),'it2')
+                    
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
                     with torch.no_grad():
