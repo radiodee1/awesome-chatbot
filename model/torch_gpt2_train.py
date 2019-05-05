@@ -1577,7 +1577,7 @@ class NMT:
                     if x == hparams['eow']:
                         #print('!!')
                         out.append(' ')
-                if x != ' ':
+                if x.strip() != '':
                     ll = x
 
             if self.do_no_vocabulary:
