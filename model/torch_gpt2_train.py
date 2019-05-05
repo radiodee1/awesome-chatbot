@@ -2075,8 +2075,10 @@ class NMT:
         #words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         #print(self.tokenizer.decode(input_variable))
 
-        choice[0] = choice[0].encode("utf-8")
-        choice[0] = choice[0].decode('utf-8')
+        choice[0] = choice[0].encode("ascii",'ignore')
+        #print(choice[0])
+        choice[0] = choice[0].decode('ascii','ignore')
+        #print(choice[0])
 
         words = self.get_sentence(choice[0])
         # print(choice)
