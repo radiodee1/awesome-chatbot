@@ -820,7 +820,7 @@ class NMT:
                 space_character = ' '  ## no space!!??
 
                 while num < hparams['tokens_per_sentence']:
-
+                    self.past = None
                     indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ' + text_2)
 
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])

@@ -52,8 +52,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2085" column="21" selection-start-line="2085" selection-start-column="21" selection-end-line="2085" selection-end-column="21" />
+            <state relative-caret-position="-3220">
+              <caret line="1150" selection-start-line="1150" selection-end-line="1150" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -515,8 +515,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2085" column="21" selection-start-line="2085" selection-start-column="21" selection-end-line="2085" selection-end-column="21" />
+        <state relative-caret-position="-3220">
+          <caret line="1150" selection-start-line="1150" selection-end-line="1150" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
