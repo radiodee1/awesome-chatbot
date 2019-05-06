@@ -15,6 +15,7 @@ import random
 
 import logging
 logging.basicConfig(level=logging.INFO)
+import re
 
 gpt2_dir = 'gpt2' #hparams['data_dir'] + '/' + 'gpt2' + '/'
 
@@ -49,7 +50,7 @@ class NMT:
 
         self.tokenizer = None
         self.model = None
-        self.wordcount = 1
+        self.wordcount = 3 #1
         self.words_end = ['.', '?', '!', '"']
 
         self.output_lang = None
@@ -75,16 +76,16 @@ class NMT:
         text_2 = ""
         self.past = None
         #decode_list = []
-
+        a_word = '? '
         if False:
-            word = self.random_word()
+            q_word = self.random_word()
         else:
-            word = ''
+            q_word = ' '#'Q: '
         space_character = ' ' ## no space!!??
 
         while num < self.wordcount:
 
-            indexed_tokens_2 = self.tokenizer.encode(word + space_character + text_1 + ' ? ')
+            indexed_tokens_2 = self.tokenizer.encode(q_word + space_character + text_1 + a_word + text_2)
 
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
@@ -94,22 +95,34 @@ class NMT:
             zlist = ''
             xlist = ''
             for i in range(predictions_1.size(1)):
-                ii = i #0 ## i
+                ii = i
                 p_index = torch.argmax(predictions_1[0, ii, :], dim=-1).item()
                 p_token = self.tokenizer.decode([p_index])
                 zlist += '[' + str(p_index) + ']'
                 xlist += p_token
             print()
+
             xlist = xlist.strip()
-            xlist = xlist.replace(',','')
-            xlist = xlist.replace('.','')
+            #xlist = xlist.replace(',','')
+            #xlist = xlist.replace('.','')
+            #xlist = xlist.replace(':','')
+            xlist = re.sub('[\r\n,.:\-]', '', xlist)
+            print(xlist,'<re', num)
             print(zlist)
 
-            print('out >',xlist)
+            print('out >',text_2)
+
+            for x in xlist.split(' '):
+                print(x, '<x')
+                if len(x.strip()) > 0 and x.strip()[-1] in self.words_end:
+                    text_2 += x
+                    return text_2
+
+            text_2 += xlist + ' '
 
             num += 1
 
-            return xlist
+        return text_2
 
     def loop(self):
 
@@ -123,7 +136,8 @@ class NMT:
                 print('\nend of file.')
                 exit()
             print(text_1)
-            self.get_sentence(text_1)
+            z = self.get_sentence(text_1)
+            print('[output]',z)
 
 
     def random_word(self):

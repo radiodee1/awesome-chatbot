@@ -848,6 +848,9 @@ class WrapMemRNN: #(nn.Module):
 
             best_sequence = prune_tensor(best_sequence, 3)
 
+        #print(ans.size(), 'ans')
+        ans = F.softmax(ans, dim=-1)
+
         return ans, best_sequence
 
 
@@ -2012,6 +2015,8 @@ class NMT:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
         basename = hparams['save_dir'] + hparams['base_filename']
+        if interrupt:
+            basename += '.interrupt'
         if self.do_load_babi or self.do_conserve_space or self.do_train_long or self.do_recurrent_output:
             num = self.this_epoch * len(self.pairs) + num
             torch.save(state,basename+ '.best.pth')
@@ -2462,7 +2467,8 @@ class NMT:
                         #print(z, i,'z,i')
                         a_var = ans[i][:z]
                         t_var = target_variable[:,:,i].squeeze(0)[:z]
-                        #m_var = mask[i][:z]
+                        #print(mask.size(),'mvar')
+                        m_var = mask[:,i][:z]
 
                         if hparams['cuda']:
                             t_var = t_var.cuda()
@@ -2471,16 +2477,16 @@ class NMT:
                         #print(a_var.size(), t_var.size(),'atm')
 
                         try:
-                            l = criterion(a_var, t_var)
-                            loss += l
-                            n_tot += t_var.size(0)
+                            l = criterion(a_var, t_var, m_var)
+                            loss += l[0]
+                            n_tot += l[1] #t_var.size(0)
                         except ValueError as e:
                             print('skip for size...', z)
                             print(e)
                             print(a_var.size(), t_var.size(),'a,t')
                             exit()
                             pass
-                        #print(l, loss, n_tot, 'loss')
+                        #print(l,loss, n_tot, 'loss')
 
 
 
@@ -2494,6 +2500,7 @@ class NMT:
 
             if not isinstance(loss, int):
                 loss.backward()
+                print('backward')
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()
 
@@ -2524,10 +2531,13 @@ class NMT:
             #print(ans.size(),'ans')
 
         if self.do_clip_grad_norm:
-            clip = 30.0 # float(hparams['units'] / 10.0)
+            clip = float(hparams['units'] / 10.0)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
             #print('clip')
+
+        if loss is not None: # isinstance(loss, int):
+            loss = loss.item()
 
         return outputs, ans , loss
 
@@ -2590,9 +2600,9 @@ class NMT:
         weight = torch.ones(self.output_lang.n_words)
         weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
-        self.criterion = nn.CrossEntropyLoss(weight=weight, size_average=False)
+        #self.criterion = nn.CrossEntropyLoss(weight=weight, size_average=False)
 
-        #self.criterion = self.maskNLLLoss
+        self.criterion = self.maskNLLLoss
 
         if not self.do_test_not_train:
             criterion = self.criterion
