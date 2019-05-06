@@ -1,18 +1,21 @@
 #!/usr/bin/python3
 
 from __future__ import unicode_literals, print_function, division
-
+mode = 'zero' #'sequence' # 'gpt2' 'zero'
 import sys
 import os
 sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
 
-if len(sys.argv) > 2:
+if mode == 'sequence':
     import model.seq_2_seq_dropout as model
-else:
+elif mode == 'zero':
     import model.torch_gpt2_zero_shot as model
-import game_sr as sr
-import game_voice as v
+elif mode == 'qpt2':
+    import model.torch_gpt2_train as model
+
+import bot.game_sr as sr
+import bot.game_voice as v
 import model.tokenize_weak as tokenize_weak
 import model.settings as settings
 import argparse

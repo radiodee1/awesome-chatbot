@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_zero_shot.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_zero_shot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,15 +12,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/seq_2_seq_mask.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="35784">
-              <caret line="2018" column="35" selection-start-line="2018" selection-start-column="35" selection-end-line="2018" selection-end-column="35" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
@@ -97,8 +87,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bot/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="3" selection-start-line="3" selection-end-line="3" />
+            <state relative-caret-position="306">
+              <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -496,8 +486,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/bot/game.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        <state relative-caret-position="306">
+          <caret line="17" column="24" selection-start-line="17" selection-start-column="24" selection-end-line="17" selection-end-column="24" />
         </state>
       </provider>
     </entry>
