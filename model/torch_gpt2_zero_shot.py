@@ -87,10 +87,14 @@ class NMT:
 
             indexed_tokens_2 = self.tokenizer.encode(q_word + space_character + text_1 + a_word + text_2)
 
+            #enc_len = len(indexed_tokens_2)
+
             tokens_tensor_2 = torch.tensor([indexed_tokens_2])
 
             with torch.no_grad():
                 predictions_1, self.past = self.model(tokens_tensor_2, past=self.past)
+
+            #print(enc_len, predictions_1.size(1), 'sizes')
 
             zlist = ''
             xlist = ''

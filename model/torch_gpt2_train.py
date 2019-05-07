@@ -826,7 +826,8 @@ class NMT:
                     tokens_tensor_2 = torch.tensor([indexed_tokens_2])
                     tokens_tensor_2 = tokens_tensor_2[:,:1024 -4]
 
-                    if not call_from_script: print(tokens_tensor_2.size(),'tt2')
+                    #if not call_from_script:
+                    print(tokens_tensor_2.size(),'tt2')
 
                     with torch.no_grad():
                         #try:
