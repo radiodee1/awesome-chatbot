@@ -279,7 +279,7 @@ class WrapMemRNN: #(nn.Module):
 
         if length_variable is not None and input_variable.size(0) == length_variable.size(0):
             out_lst = []
-            token_num = 0 ## -1 ??
+            token_num = -1 #0 ## -1 ??
             for i in range(input_variable.size(0) ):
                 self.past = None
                 len = length_variable[i] - 1
