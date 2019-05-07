@@ -1,0 +1,3 @@
+[submodule "model/torch_gpt2"]
+	path = model/torch_gpt2
+	url = https://github.com/graykode/gpt-2-Pytorch.git
