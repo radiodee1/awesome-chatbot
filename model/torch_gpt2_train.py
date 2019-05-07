@@ -830,14 +830,15 @@ class NMT:
                     print(tokens_tensor_2.size(),'tt2')
 
                     with torch.no_grad():
-                        #try:
-                        predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
-                        '''
+                        try:
+                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
+
                         except RuntimeError:
-                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2)
+                            tokens_tensor_2 = torch.LongTensor([[0]])
+                            predictions_1, self.past = self.model_0_wra.model(tokens_tensor_2, past=self.past)
                             print('runtime error.')
-                            self.past = None
-                        '''
+                            #self.past = None
+
                     if True:
                         token_num = predictions_1.size(1)
 
