@@ -46,6 +46,7 @@ from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
 
+realpath = os.path.dirname(os.path.realpath(__file__))
 
 class Lang:
     def __init__(self, name, limit=None):
@@ -112,7 +113,7 @@ class NMT:
                 exit()
 
     def prepare_input(self, i):
-        i = 'q: "' + i + '"'
+        i = 'q: "' + i + '?"'
         return i
 
     def prepare_output(self, i):
@@ -139,7 +140,7 @@ class NMT:
         if True:
             out = []
             for ii in i.split(' '):
-                if ii not in out or ii.lower()  in ['the', 'that']:
+                if ii not in out or ii.lower() in ['the', 'that']:
                     out.append(ii)
                 else:
                     break
@@ -153,9 +154,9 @@ class NMT:
     #########################################
 
     def get_encoder(self):
-        with open('./torch_gpt2/GPT2/encoder.json', 'r') as f:
+        with open(realpath +'/./torch_gpt2/GPT2/encoder.json', 'r') as f:
             encoder = json.load(f)
-        with open('./torch_gpt2/GPT2/vocab.bpe', 'r', encoding="utf-8") as f:
+        with open(realpath + '/./torch_gpt2/GPT2/vocab.bpe', 'r', encoding="utf-8") as f:
             bpe_data = f.read()
         bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
         return Encoder(
@@ -165,13 +166,13 @@ class NMT:
 
     def get_args(self ):
         parser = argparse.ArgumentParser()
-        parser.add_argument("--text", type=str, required=True)
+        parser.add_argument("--text", type=str, required=False)
         parser.add_argument("--quiet", type=bool, default=False)
         parser.add_argument("--nsamples", type=int, default=1)
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
-        parser.add_argument("--length", type=int, default=-1)
-        parser.add_argument("--temperature", type=float, default=0.7)
+        parser.add_argument("--length", type=int, default=25)
+        parser.add_argument("--temperature", type=float, default=0.01)
         parser.add_argument("--top_k", type=int, default=40)
         self.args = parser.parse_args()
 
@@ -227,7 +228,7 @@ class NMT:
 
 
     def load_state_dict(self):
-        p = './torch_gpt2/gpt2-pytorch_model.bin'
+        p = realpath + '/./torch_gpt2/gpt2-pytorch_model.bin'
         if os.path.exists(p):
             self.state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
             #self.text_generator(state_dict)

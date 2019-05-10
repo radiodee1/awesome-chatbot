@@ -10,7 +10,8 @@ sys.path.append(os.path.abspath('../model/'))
 if mode == 'sequence':
     import model.seq_2_seq_dropout as model
 elif mode == 'zero':
-    import model.torch_gpt2_zero_shot as model
+    sys.path.append(os.path.abspath('../model/torch_gpt2/'))
+    import model.torch_gpt2_run as model
 elif mode == 'qpt2':
     import model.torch_gpt2_train as model
 
@@ -78,7 +79,7 @@ class Game:
         i = i.split(' ')
         out = []
         for ii in i:
-            if ii in self.model.output_lang.word2index:
+            if ii in self.model.output_lang.word2index or mode != 'sequence':
                 out.append(ii)
         return ' '.join(out)
 
