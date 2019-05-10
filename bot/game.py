@@ -2,10 +2,13 @@
 
 from __future__ import unicode_literals, print_function, division
 mode = 'zero' #'sequence' # 'gpt2' 'zero'
+
 import sys
 import os
 sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
+
+mode = str(os.environ['CHATBOT_MODE'])
 
 if mode == 'sequence':
     import model.seq_2_seq_dropout as model
