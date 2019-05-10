@@ -56,7 +56,9 @@ I've made his github repository a submodule of this project because I use the co
 This is still all without fine tuning anything. The people at OpenAI who created gpt2 call this sort of implementation 'zero-shot'. 
 This means that the model is used right off of the shelf with no fine tuning. This is very interesting. 
 I use this 'zero-shot' approach and it works well. At the same time I am finalizing the sequence-to-sequence model, so that I will have two examples for show. 
-One will be the best sequence-to-sequence model I have and the other will be the zero-shot gpt2 model.
+One will be the best sequence-to-sequence model I have and the other will be the zero-shot gpt2 model. In order to try this code,
+after cloning this github repository, run the script named `do_make_submodule_init.sh` .
+This will pull the submodule and put the gpt2 data in the right directory.
 
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
