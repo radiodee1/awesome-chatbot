@@ -117,20 +117,37 @@ class NMT:
 
     def prepare_output(self, i):
         char_end = ['?','!']
+        contains_junk = False
+        char_junk = [i for i in '{[]}@$%^&#']
         out = []
         for ii in i:
             if ii.strip() != "" or ii == ' ':
-                out.append(ii)
+                if ii not in ['*']:
+                    out.append(ii)
             elif len(out) > 1:
                 break
             if ii in char_end:
+                break
+            if ii in char_junk:
+                contains_junk = True
                 break
         i = ''.join(out)
 
         if i.lower().startswith('a:'): i = i[len('a:'):]
         if i.lower().startswith('a :'): i = i[len('a :'):]
 
+        if True:
+            out = []
+            for ii in i.split(' '):
+                if ii not in out or ii.lower()  in ['the', 'that']:
+                    out.append(ii)
+                else:
+                    break
+        i = ' '.join(out)
+
         i = re.sub('[:/;\"]','',i)
+        if contains_junk is True:
+            i = ''
         return i
 
     #########################################
