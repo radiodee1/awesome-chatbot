@@ -37,7 +37,7 @@ import random
 import argparse
 import numpy as np
 import json
-#import regex as re
+import re
 #from functools import lru_cache
 from GPT2.model import (GPT2LMHeadModel)
 from GPT2.utils import load_weight
@@ -86,9 +86,17 @@ class NMT:
         self.load_state_dict()
         self.load_model()
 
+        ## this is not used but is required for bot software...
+        self.output_lang = Lang('lang')
+        for i in range(len(self.enc.encoder.items())):
+            self.output_lang.addWord(self.enc.decode([i]))
+
     def get_sentence(self, i):
+        i = self.prepare_input(i)
         self.args.text = i
         text = self.text_generator()
+        text = self.prepare_output(text)
+        print(text,"<")
         return text
 
     def loop(self):
@@ -102,6 +110,30 @@ class NMT:
             except KeyboardInterrupt:
                 print()
                 exit()
+
+    def prepare_input(self, i):
+        i = 'q: "' + i + '"'
+        return i
+
+    def prepare_output(self, i):
+        char_end = ['?','!']
+        out = []
+        for ii in i:
+            if ii.strip() != "" or ii == ' ':
+                out.append(ii)
+            elif len(out) > 1:
+                break
+            if ii in char_end:
+                break
+        i = ''.join(out)
+
+        if i.lower().startswith('a:'): i = i[len('a:'):]
+        if i.lower().startswith('a :'): i = i[len('a :'):]
+
+        i = re.sub('[:/;\"]','',i)
+        return i
+
+    #########################################
 
     def get_encoder(self):
         with open('./torch_gpt2/GPT2/encoder.json', 'r') as f:
@@ -126,8 +158,6 @@ class NMT:
         parser.add_argument("--top_k", type=int, default=40)
         self.args = parser.parse_args()
 
-        ############################
-
     def load_model(self):
         if self.args.quiet is False:
             print(self.args)
@@ -150,7 +180,6 @@ class NMT:
         self.model.to(self.device)
         self.model.eval()
 
-        ################################
     def text_generator(self):
 
         if self.args.length == -1:
@@ -196,10 +225,5 @@ if __name__ == '__main__':
     n.setup_for_interactive()
     n.loop()
 
-    #n.get_args()
-    #n.load_state_dict()
-    #n.load_model()
-    #n.text_generator()
-    #print('exit.')
-    #exit()
+
 
