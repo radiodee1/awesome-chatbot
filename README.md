@@ -51,7 +51,7 @@ Previously I was trying to get a downloaded version of BERT to respond in senten
 I guess next I'm hoping to fine tune the gpt2 code so that it works better if I can.
 
 5/10/2019 - The code I was using on 4/25 did not work, but I found another repository at https://github.com/graykode/gpt-2-Pytorch that works. 
-In fact it works well enough that I've decided to use it in a full blown version of my chatbot. The code, in Pytorch, is great and the author deserves much thanks. 
+In fact it works well enough that I've decided to use it in a full blown version of my chatbot. The code, is in Pytorch and uses the 'huggingface' code from 4/25. 
 I've made his github repository a submodule of this project because I use the code like a library. 
 This is still all without fine tuning anything. The people at OpenAI who created gpt2 call this sort of implementation 'zero-shot'. 
 This means that the model is used right off of the shelf with no fine tuning. This is very interesting. 
@@ -86,6 +86,10 @@ Description of the individual setup scripts is included below.
   * http://arxiv.org/abs/1506.07285
 * This paper discusses using a sequence to sequence model ('seq2seq') to make a chatbot:
   * http://arxiv.org/abs/1506.05869v3
+* For GPT2 see the following links:
+  * https://github.com/graykode/gpt-2-Pytorch
+  * https://github.com/huggingface/pytorch-pretrained-BERT
+
 
 # GloVe and W2V Word Embeddings Download
 * This link brings you to a page where you can download W2V embeddings that google makes available. At the time of this writing this project does not use w2v embeddings, but uses GloVe instead.
