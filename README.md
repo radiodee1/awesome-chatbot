@@ -50,6 +50,14 @@ I believe the larger version is not available. In any case the model does respon
 Previously I was trying to get a downloaded version of BERT to respond in sentences. That does not seem to work. 
 I guess next I'm hoping to fine tune the gpt2 code so that it works better if I can.
 
+5/10/2019 - The code I was using on 4/25 did not work, but I found another repository at https://github.com/graykode/gpt-2-Pytorch that works. 
+In fact it works well enough that I've decided to use it in a full blown version of my chatbot. The code, in Pytorch, is great and the author deserves much thanks. 
+I've made his github repository a submodule of this project because I use the code like a library. 
+This is still all without fine tuning anything. The people at OpenAI who created gpt2 call this sort of implementation 'zero-shot'. 
+This means that the model is used right off of the shelf with no fine tuning. This is very interesting. 
+I use this 'zero-shot' approach and it works well. At the same time I am finalizing the sequence-to-sequence model, so that I will have two examples for show. 
+One will be the best sequence-to-sequence model I have and the other will be the zero-shot gpt2 model.
+
 # Organization
 The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
