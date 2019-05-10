@@ -46,80 +46,160 @@ from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
 
-def get_encoder():
-    with open('./torch_gpt2/GPT2/encoder.json', 'r') as f:
-        encoder = json.load(f)
-    with open('./torch_gpt2/GPT2/vocab.bpe', 'r', encoding="utf-8") as f:
-        bpe_data = f.read()
-    bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
-    return Encoder(
-        encoder=encoder,
-        bpe_merges=bpe_merges,
-    )
 
-def text_generator(state_dict):
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--text", type=str, required=True)
-    parser.add_argument("--quiet", type=bool, default=False)
-    parser.add_argument("--nsamples", type=int, default=1)
-    parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
-    parser.add_argument("--batch_size", type=int, default=-1)
-    parser.add_argument("--length", type=int, default=-1)
-    parser.add_argument("--temperature", type=float, default=0.7)
-    parser.add_argument("--top_k", type=int, default=40)
-    args = parser.parse_args()
+class Lang:
+    def __init__(self, name, limit=None):
+        self.name = name
+        self.limit = limit
+        self.word2index = {}
+        self.word2count = {}
+        self.index2word = {}
+        self.n_words = 0  # Count SOS and EOS
 
-    if args.quiet is False:
-        print(args)
+    def addSentence(self, sentence):
+        for word in sentence.split(' '):
+            self.addWord(word)
 
-    if args.batch_size == -1:
-        args.batch_size = 1
-    assert args.nsamples % args.batch_size == 0
+    def addWord(self, word):
+        if self.limit is None or self.n_words < self.limit :
+            if word not in self.word2index:
+                self.word2index[word] = self.n_words
+                self.word2count[word] = 1
+                self.index2word[self.n_words] = word
+                self.n_words += 1
+            else:
+                self.word2count[word] += 1
 
-    seed = random.randint(0, 2147483647)
-    np.random.seed(seed)
-    torch.random.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+class NMT:
+    def __init__(self):
+        self.args = None
+        self.state_dict = None
+        self.config = None
+        self.device = None
+        self.model = None
+        self.enc = None
 
-    # Load Model
-    enc = get_encoder()
-    config = GPT2Config()
-    model = GPT2LMHeadModel(config)
-    model = load_weight(model, state_dict)
-    model.to(device)
-    model.eval()
+        self.output_lang = None
 
-    if args.length == -1:
-        args.length = config.n_ctx // 2
-    elif args.length > config.n_ctx:
-        raise ValueError("Can't get samples longer than window size: %s" % config.n_ctx)
+    def setup_for_interactive(self):
+        self.get_args()
+        self.load_state_dict()
+        self.load_model()
 
-    print(args.text)
-    context_tokens = enc.encode(args.text)
+    def get_sentence(self, i):
+        self.args.text = i
+        text = self.text_generator()
+        return text
 
-    generated = 0
-    for _ in range(args.nsamples // args.batch_size):
-        out = sample_sequence(
-            model=model, length=args.length,
-            context=context_tokens  if not  args.unconditional else None,
-            start_token=enc.encoder['<|endoftext|>'] if args.unconditional else None,
-            batch_size=args.batch_size,
-            temperature=args.temperature, top_k=args.top_k, device=device
+    def loop(self):
+        while True:
+            try:
+                i = input("> ")
+                self.get_sentence(i)
+            except EOFError:
+                print()
+                exit()
+            except KeyboardInterrupt:
+                print()
+                exit()
+
+    def get_encoder(self):
+        with open('./torch_gpt2/GPT2/encoder.json', 'r') as f:
+            encoder = json.load(f)
+        with open('./torch_gpt2/GPT2/vocab.bpe', 'r', encoding="utf-8") as f:
+            bpe_data = f.read()
+        bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
+        return Encoder(
+            encoder=encoder,
+            bpe_merges=bpe_merges,
         )
-        out = out[:, len(context_tokens):].tolist()
-        for i in range(args.batch_size):
-            generated += 1
-            text = enc.decode(out[i])
-            if args.quiet is False:
-                print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
-            print(text)
+
+    def get_args(self ):
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--text", type=str, required=True)
+        parser.add_argument("--quiet", type=bool, default=False)
+        parser.add_argument("--nsamples", type=int, default=1)
+        parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
+        parser.add_argument("--batch_size", type=int, default=-1)
+        parser.add_argument("--length", type=int, default=-1)
+        parser.add_argument("--temperature", type=float, default=0.7)
+        parser.add_argument("--top_k", type=int, default=40)
+        self.args = parser.parse_args()
+
+        ############################
+
+    def load_model(self):
+        if self.args.quiet is False:
+            print(self.args)
+
+        if self.args.batch_size == -1:
+            self.args.batch_size = 1
+        assert self.args.nsamples % self.args.batch_size == 0
+
+        seed = random.randint(0, 2147483647)
+        np.random.seed(seed)
+        torch.random.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Load Model
+        self.enc = self.get_encoder()
+        self.config = GPT2Config()
+        self.model = GPT2LMHeadModel(self.config)
+        self.model = load_weight(self.model, self.state_dict)
+        self.model.to(self.device)
+        self.model.eval()
+
+        ################################
+    def text_generator(self):
+
+        if self.args.length == -1:
+            self.args.length = self.config.n_ctx // 2
+        elif self.args.length > self.config.n_ctx:
+            raise ValueError("Can't get samples longer than window size: %s" % self.config.n_ctx)
+
+        print(self.args.text)
+        context_tokens = self.enc.encode(self.args.text)
+
+        generated = 0
+        for _ in range(self.args.nsamples // self.args.batch_size):
+            out = sample_sequence(
+                model=self.model, length=self.args.length,
+                context=context_tokens  if not  self.args.unconditional else None,
+                start_token=self.enc.encoder['<|endoftext|>'] if self.args.unconditional else None,
+                batch_size=self.args.batch_size,
+                temperature=self.args.temperature, top_k=self.args.top_k, device=self.device
+            )
+            out = out[:, len(context_tokens):].tolist()
+            for i in range(self.args.batch_size):
+                generated += 1
+                text = self.enc.decode(out[i])
+                if self.args.quiet is False:
+                    print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
+                print(text)
+        return text
+
+
+    def load_state_dict(self):
+        p = './torch_gpt2/gpt2-pytorch_model.bin'
+        if os.path.exists(p):
+            self.state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
+            #self.text_generator(state_dict)
+        else:
+            print('Please download gpt2-pytorch_model.bin')
+            sys.exit()
+        return self.state_dict
 
 if __name__ == '__main__':
-    p = './torch_gpt2/gpt2-pytorch_model.bin'
-    if os.path.exists(p):
-        state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
-        text_generator(state_dict)
-    else:
-        print('Please download gpt2-pytorch_model.bin')
-        sys.exit()
+
+    n = NMT()
+    n.setup_for_interactive()
+    n.loop()
+
+    #n.get_args()
+    #n.load_state_dict()
+    #n.load_model()
+    #n.text_generator()
+    #print('exit.')
+    #exit()
+
