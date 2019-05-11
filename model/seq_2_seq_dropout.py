@@ -439,7 +439,8 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        return F.softmax(attn_energies, dim=0).unsqueeze(1)
+        #print(attn_energies,'attn-ener')
+        return F.softmax(attn_energies, dim=-1).unsqueeze(1)
 
 
 class Decoder(nn.Module):
@@ -547,6 +548,7 @@ class Decoder(nn.Module):
         encoder_out_small = encoder_out_x #.transpose(1, 0)
 
         #print(attn_weights.size(), encoder_out_small.size(),'att,small')
+
         context = attn_weights.bmm(encoder_out_small)
 
         output_list = [
@@ -782,7 +784,7 @@ class WrapMemRNN: #(nn.Module):
 
             token = torch.LongTensor([token])
 
-            #print(encoder_output.size(), decoder_hidden.size(),'eo,dh-dec')
+            #print(encoder_output.size(),'eo,dh-dec')
 
             for i in range(s):
 
@@ -796,7 +798,7 @@ class WrapMemRNN: #(nn.Module):
                 #teacher_out = []
                 for j in range(l):
 
-                    encoder_out_x = prune_tensor(encoder_output[j,i,:],3)
+                    encoder_out_x = prune_tensor(encoder_output[:,i,:],3)
                     #print(encoder_out_x.size(), 'eox-size')
 
                     ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--

@@ -82,7 +82,7 @@ class Game:
         i = i.split(' ')
         out = []
         for ii in i:
-            if ii in self.model.output_lang.word2index or mode != 'sequence':
+            if mode != "sequence" or ii in self.model.output_lang.word2index:
                 out.append(ii)
         return ' '.join(out)
 
