@@ -43,6 +43,8 @@ class Game:
         self.words_start += self.words_name
         self.count_max = 15
 
+        self.first_run = True
+
         self.blacklist = [
             #"i don't know",
             #"i do not know"
@@ -55,11 +57,13 @@ class Game:
         while True:
             i = self.sr.voice_detection()
             i = tokenize_weak.format(i)
-            if self.compare_sentence_to_list(i, self.words_start) and count <= 0:
+            if (self.compare_sentence_to_list(i, self.words_start) and count <= 0) or self.first_run:
                 count = self.count_max
-                self.voice.speech_out('yes')
                 print('starting')
-                i = ''
+                if not self.first_run:
+                    self.voice.speech_out('yes')
+                    i = ''
+                self.first_run = False
             if self.compare_sentence_to_list(i, self.words_stop):
                 count = 0
                 print('stopping')
