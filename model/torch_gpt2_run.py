@@ -144,6 +144,9 @@ class NMT:
                     out.append(ii)
                 else:
                     break
+
+                if (ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 2 and ii.count('.') is 1:
+                    break
         i = ' '.join(out)
 
         i = re.sub('[:/;\"]','',i)
