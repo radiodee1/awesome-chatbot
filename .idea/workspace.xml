@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="541">
-              <caret line="147" column="93" selection-start-line="147" selection-start-column="93" selection-end-line="147" selection-end-column="93" />
+              <caret line="147" column="116" selection-start-line="147" selection-start-column="116" selection-end-line="147" selection-end-column="116" />
             </state>
           </provider>
         </entry>
@@ -52,7 +52,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bot/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
+            <state relative-caret-position="1152">
               <caret line="64" selection-start-line="64" selection-end-line="64" />
             </state>
           </provider>
@@ -84,11 +84,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="9216">
-              <caret line="542" column="64" selection-start-line="542" selection-start-column="64" selection-end-line="542" selection-end-column="64" />
+            <state relative-caret-position="397">
+              <caret line="548" column="9" selection-start-line="548" selection-start-column="9" selection-end-line="548" selection-end-column="9" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -210,9 +210,9 @@
         <option value="$PROJECT_DIR$/do_launch_gpt2.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/do_launch_game.sh" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
       </list>
     </option>
   </component>
@@ -469,6 +469,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bot/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1152">
+          <caret line="64" selection-start-line="64" selection-end-line="64" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -491,16 +498,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9216">
-          <caret line="542" column="64" selection-start-line="542" selection-start-column="64" selection-end-line="542" selection-end-column="64" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2/GPT2_Pytorch.ipynb">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -514,17 +511,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bot/game.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="64" selection-start-line="64" selection-end-line="64" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="541">
-          <caret line="147" column="93" selection-start-line="147" selection-start-column="93" selection-end-line="147" selection-end-column="93" />
+          <caret line="147" column="116" selection-start-line="147" selection-start-column="116" selection-end-line="147" selection-end-column="116" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="397">
+          <caret line="548" column="9" selection-start-line="548" selection-start-column="9" selection-end-line="548" selection-end-column="9" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

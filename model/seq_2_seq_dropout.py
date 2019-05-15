@@ -541,11 +541,10 @@ class Decoder(nn.Module):
         #print(index,'index')
 
         #print(encoder_out_x.size(), rnn_output.size(),'eo,rnn')
-        attn_weights = self.attention_mod(rnn_output, encoder_out_x) #.transpose(1,0))
+        attn_weights = self.attention_mod(rnn_output, encoder_out_x)
 
-        #attn_weights = attn_weights.permute(0,1,2)
-
-        encoder_out_small = encoder_out_x #.transpose(1, 0)
+        attn_weights = attn_weights[:,:,index].unsqueeze(0)
+        encoder_out_small = encoder_out_x[:,index,:].unsqueeze(0)
 
         #print(attn_weights.size(), encoder_out_small.size(),'att,small')
 
@@ -567,7 +566,7 @@ class Decoder(nn.Module):
 
         out_voc = self.out_target_b(out_x)
 
-        #out_voc = out_voc.permute(1,0,2)
+        out_voc = F.softmax(out_voc, dim=-1)
 
         decoder_hidden_x = hidden
 
