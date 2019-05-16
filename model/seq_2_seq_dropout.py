@@ -399,7 +399,10 @@ class Attn(torch.nn.Module):
     def general_score(self, hidden, encoder_output):
         #print(hidden,'hid')
         energy = self.attn(encoder_output)
-        return torch.sum(hidden * energy, dim=2)
+        xx = hidden * energy
+        xx = xx.transpose(1,0)
+        #print(xx.size(),'xx')
+        return torch.sum(xx, dim=2)
 
     def concat_score(self, hidden, encoder_output):
         #print(encoder_output,encoder_output.size(),'eo0')
@@ -545,14 +548,15 @@ class Decoder(nn.Module):
 
         #attn_weights = attn_weights[:,:,index].unsqueeze(0)
         #encoder_out_small = encoder_out_x[:,index,:].unsqueeze(0)
+        encoder_out_small = encoder_out_x.transpose(1,0)
 
         #print(attn_weights.size(), encoder_out_small.size(),'att,small')
 
         context = attn_weights.bmm(encoder_out_small)
 
         output_list = [
-            rnn_output, #.permute(1, 0, 2),
-            context,
+            rnn_output,
+            context.transpose(1,0),
         ]
         #print('---')
         #for i in output_list: print(i.size())
@@ -716,7 +720,7 @@ class WrapMemRNN: #(nn.Module):
 
     def wrap_encoder_module(self, question_variable, length_variable):
 
-        if hparams['single']:
+        if hparams['single'] and False:
 
             output = []
             hid_lst = []
@@ -770,7 +774,7 @@ class WrapMemRNN: #(nn.Module):
 
         #target_variable = target_variable.permute(2,1,0)
 
-        if self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']:
+        if (self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']) and False:
 
             encoder_output = prune_tensor(encoder_output, 3)#.transpose(1, 0)
 
@@ -837,17 +841,74 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = torch.softmax(ans, dim=-1)
             #print(ans.size(), ans)
-        else:
+        elif True:
 
-            encoder_out_x = prune_tensor(encoder_output, 3) #.transpose(1, 0)
+            encoder_output = prune_tensor(encoder_output, 3)  # .transpose(1, 0)
 
-            decoder_hidden_x = prune_tensor(hidden, 3) #.transpose(1, 0)
+            # decoder_hidden = prune_tensor(hidden, 3)#.transpose(1, 0)
 
-            best_score, best_sequence = self.beam_helper(self.model_6_dec, encoder_out_x, decoder_hidden_x)
+            all_out = []
 
-            ans = None
+            l, s, hid = encoder_output.size()
+            token =  list(SOS_token for _ in range(s))
 
-            best_sequence = prune_tensor(best_sequence, 3)
+            token = torch.LongTensor([token])
+
+            # print(encoder_output.size(),'eo,dh-dec')
+
+            for i in range(1):  ## s
+
+                # encoder_out_x = prune_tensor(encoder_output[:,i,:], 3)
+                # decoder_hidden_x = decoder_hidden #.permute(1,0,2)
+                #print(hidden.size(), 'hid')
+                decoder_hidden_x = hidden #[:, i, :].unsqueeze(1)  # .permute(1,0,2)
+
+                sent_out = []
+
+                # teacher_out = []
+                for j in range(l):
+
+                    encoder_out_x = prune_tensor(encoder_output[:, :, :], 3)
+                    #print(encoder_output.size(),token.size(), 'eox-size,token')
+
+                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j)  ## <--
+
+                    # token = torch.argmax(ans, dim=-1)
+
+                    if not self.pass_no_token:
+                        ans = prune_tensor(ans, 2)
+                        iii, token = ans.topk(1)
+                        token = token.transpose(1,0)
+                        #print(iii.size(), token.size(),'iii,token')
+                    else:
+                        token = ans_small
+                        #print(ans_small.size(),'ans-sml')
+
+                    token = prune_tensor(token, 1)
+
+                    if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
+                        if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
+                            # print(target_variable.size(),'tv')
+                            token = target_variable[0, j, :]
+                            #print(token.size(),'tok')
+                            #if self.pass_no_token:
+                            #    token = self.model_6_dec.embed(token)
+                            # teacher_out.append(token)
+                            # print(token, 'tf')
+
+                    ans = prune_tensor(ans, 3)
+                    sent_out.append(ans)
+                    #print(ans.size(), 'ans')
+
+                # if True: print(teacher_out)
+                sent_out = torch.cat(sent_out, dim=0)
+                sent_out = prune_tensor(sent_out, 3)
+                all_out.append(sent_out)
+
+            ans = torch.cat(all_out, dim=0)
+            # ans = ans.permute(1,0,2)
+
+            best_sequence = None
 
         #print(ans.size(), 'ans')
         ans = F.softmax(ans, dim=-1)
