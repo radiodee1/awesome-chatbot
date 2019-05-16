@@ -879,7 +879,7 @@ class WrapMemRNN: #(nn.Module):
                         ans = prune_tensor(ans, 2)
                         iii, token = ans.topk(1)
                         token = token.transpose(1,0)
-                        #print(iii.size(), token.size(),'iii,token')
+                        #print(ans.size(), iii.size(), token.size(),'ans,iii,token')
                     else:
                         token = ans_small
                         #print(ans_small.size(),'ans-sml')
@@ -907,6 +907,7 @@ class WrapMemRNN: #(nn.Module):
 
             ans = torch.cat(all_out, dim=0)
             # ans = ans.permute(1,0,2)
+            #print(ans.size(),'ans')
 
             best_sequence = None
 
@@ -2522,14 +2523,14 @@ class NMT:
                     #target_variable = target_variable.transpose(1,0)
                     #mask = mask.transpose(1,0)
 
-                    for i in range(ans.size(0)): #ans.size(0)
+                    for i in range(ans.size(1)): #ans.size(0)
 
                         #print(target_variable[:,:,i].size(),'tv-size')
-                        z = min([ans[i].size(0),target_variable[:,:,i].size(1)]) #max(max_target_length) #[i]
+                        z = min([ans[:,i,:].size(0),target_variable[:,:,i].size(1)]) #max(max_target_length) #[i]
                         #print(z, i,'z,i')
-                        a_var = ans[i][:z]
+                        a_var = ans[:,i,:][:z,:]
                         t_var = target_variable[:,:,i].squeeze(0)[:z]
-                        #print(mask.size(),'mvar')
+                        #print(mask.size(),'mvar', a_var.size(), 'avar', t_var.size(),'tvar')
                         m_var = mask[:,i][:z]
 
                         if hparams['cuda']:
