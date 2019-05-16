@@ -140,7 +140,7 @@ class NMT:
         if True:
             out = []
             for ii in i.split(' '):
-                if ii not in out or ii.lower() in ['the', 'that']:
+                if ii not in out or ii.lower() in ['the', 'that'] or True: ## end with punctuation, not repeat!
                     out.append(ii)
                 else:
                     break

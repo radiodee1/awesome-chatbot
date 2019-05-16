@@ -543,8 +543,8 @@ class Decoder(nn.Module):
         #print(encoder_out_x.size(), rnn_output.size(),'eo,rnn')
         attn_weights = self.attention_mod(rnn_output, encoder_out_x)
 
-        attn_weights = attn_weights[:,:,index].unsqueeze(0)
-        encoder_out_small = encoder_out_x[:,index,:].unsqueeze(0)
+        #attn_weights = attn_weights[:,:,index].unsqueeze(0)
+        #encoder_out_small = encoder_out_x[:,index,:].unsqueeze(0)
 
         #print(attn_weights.size(), encoder_out_small.size(),'att,small')
 
