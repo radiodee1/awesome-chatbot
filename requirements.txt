@@ -17,16 +17,16 @@ unidecode
 matplotlib
 py-cpuinfo
 datetime
-pytorch-pretrained-bert ## actually for gpt2 !!
+#pytorch-pretrained-bert ## actually for gpt2 !!
 #python3-tk ## install this from linux distro, not pip3
 
 ## t2t ##
-Tensor2Tensor
-tensorflow-hub
+#Tensor2Tensor
+#tensorflow-hub
 
 ## bert ##
-bert-serving-server
-bert-serving-client
+#bert-serving-server
+#bert-serving-client
 numpy
 
 ## kaggle ##
