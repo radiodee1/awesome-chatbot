@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -33,16 +34,16 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bot/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
+            <state relative-caret-position="1152">
               <caret line="64" selection-start-line="64" selection-end-line="64" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/requirements.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="368">
+            <state relative-caret-position="504">
               <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
             </state>
           </provider>
@@ -74,11 +75,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45036">
-              <caret line="2532" column="25" selection-start-line="2532" selection-start-column="25" selection-end-line="2532" selection-end-column="25" />
+            <state relative-caret-position="415">
+              <caret line="2533" column="35" selection-start-line="2533" selection-start-column="35" selection-end-line="2533" selection-end-column="35" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -89,8 +90,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="16902">
-              <caret line="969" column="32" selection-start-line="969" selection-start-column="32" selection-end-line="969" selection-end-column="32" />
+            <state relative-caret-position="-4104">
+              <caret line="2221" column="44" selection-start-line="2221" selection-start-column="44" selection-end-line="2221" selection-end-column="44" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -213,8 +214,8 @@
         <option value="$PROJECT_DIR$/do_launch_game.sh" />
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
       </list>
     </option>
   </component>
@@ -461,6 +462,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/bot/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1152">
+          <caret line="64" selection-start-line="64" selection-end-line="64" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -483,26 +491,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45036">
-          <caret line="2532" column="25" selection-start-line="2532" selection-start-column="25" selection-end-line="2532" selection-end-column="25" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16902">
-          <caret line="969" column="32" selection-start-line="969" selection-start-column="32" selection-end-line="969" selection-end-column="32" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2/GPT2_Pytorch.ipynb">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -516,17 +504,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/bot/game.py">
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
-          <caret line="64" selection-start-line="64" selection-end-line="64" />
+        <state relative-caret-position="504">
+          <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements.txt">
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="368">
-          <caret line="28" column="1" selection-start-line="28" selection-start-column="1" selection-end-line="28" selection-end-column="1" />
+        <state relative-caret-position="-4104">
+          <caret line="2221" column="44" selection-start-line="2221" selection-start-column="44" selection-end-line="2221" selection-end-column="44" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="415">
+          <caret line="2533" column="35" selection-start-line="2533" selection-start-column="35" selection-end-line="2533" selection-end-column="35" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -2525,13 +2525,14 @@ class NMT:
 
                     for i in range(ans.size(0)): #ans.size(0)
 
-                        #print(target_variable[:,:,i].size(),'tv-size')
+                        #print(target_variable[:,:,i].size(),'tv-size', ans.size(), 'ans')
                         z = min([ans[i,:,:].size(0),target_variable[:,:,i].size(1)]) #max(max_target_length) #[i]
                         #print(z, i,'z,i')
                         a_var = ans[i,:,:][:z,:]
                         t_var = target_variable[:,:,i].squeeze(0)[:z]
-                        #print(mask.size(),'mvar', a_var.size(), 'avar', t_var.size(),'tvar')
                         m_var = mask[:,i][:z]
+                        #print(m_var.size(),'mvar', a_var.size(), 'avar', t_var.size(),'tvar')
+
 
                         if hparams['cuda']:
                             t_var = t_var.cuda()
