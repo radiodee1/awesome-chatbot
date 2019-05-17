@@ -400,7 +400,7 @@ class Attn(torch.nn.Module):
         #print(hidden,'hid')
         energy = self.attn(encoder_output)
         xx = hidden * energy
-        xx = xx.transpose(1,0)
+        #xx = xx.transpose(1,0)
         #print(xx.size(),'xx')
         return torch.sum(xx, dim=2)
 
@@ -548,7 +548,7 @@ class Decoder(nn.Module):
 
         #attn_weights = attn_weights[:,:,index].unsqueeze(0)
         #encoder_out_small = encoder_out_x[:,index,:].unsqueeze(0)
-        encoder_out_small = encoder_out_x.transpose(1,0)
+        encoder_out_small = encoder_out_x #.transpose(1,0)
 
         #print(attn_weights.size(), encoder_out_small.size(),'att,small')
 
@@ -556,7 +556,7 @@ class Decoder(nn.Module):
 
         output_list = [
             rnn_output,
-            context.transpose(1,0),
+            context, #.transpose(1,0),
         ]
         #print('---')
         #for i in output_list: print(i.size())
@@ -774,7 +774,7 @@ class WrapMemRNN: #(nn.Module):
 
         #target_variable = target_variable.permute(2,1,0)
 
-        if (self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']) and False:
+        if (self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']) :
 
             encoder_output = prune_tensor(encoder_output, 3)#.transpose(1, 0)
 
@@ -841,7 +841,7 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = torch.softmax(ans, dim=-1)
             #print(ans.size(), ans)
-        elif True:
+        elif False:
 
             encoder_output = prune_tensor(encoder_output, 3)  # .transpose(1, 0)
 
