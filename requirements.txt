@@ -12,13 +12,13 @@ h5py
 gtts
 google-api-python-client
 google-cloud-speech
-PyAudio ## install this from linux distro repository, not pip3
+#PyAudio ## install this from linux distro repository, not pip3
 unidecode
 matplotlib
 py-cpuinfo
 datetime
 pytorch-pretrained-bert ## actually for gpt2 !!
-python3-tk ## install this from linux distro, not pip3
+#python3-tk ## install this from linux distro, not pip3
 
 ## t2t ##
 Tensor2Tensor
@@ -46,4 +46,4 @@ kaggle
 ## see this url:
 ## https://www.tensorflow.org/tfx/serving/setup#installing_the_modelserver
 ## this python package is also required
-tensorflow-serving-api
+#tensorflow-serving-api
