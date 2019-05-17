@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -78,8 +77,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
-              <caret line="2521" column="40" selection-start-line="2521" selection-start-column="31" selection-end-line="2521" selection-end-column="40" />
+            <state relative-caret-position="530">
+              <caret line="2530" column="41" selection-start-line="2530" selection-start-column="41" selection-end-line="2530" selection-end-column="41" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -146,7 +145,6 @@
       <find>target_variable</find>
       <find>text_1</find>
       <find>permute</find>
-      <find>transpose</find>
       <find>wrap_encoder_module</find>
       <find>!!</find>
       <find>do_clip_grad_norm</find>
@@ -157,6 +155,7 @@
       <find>WrapMemRNN</find>
       <find>model_0_wra</find>
       <find>print(ans.size</find>
+      <find>transpose</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -523,8 +522,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="2521" column="40" selection-start-line="2521" selection-start-column="31" selection-end-line="2521" selection-end-column="40" />
+        <state relative-caret-position="530">
+          <caret line="2530" column="41" selection-start-line="2530" selection-start-column="41" selection-end-line="2530" selection-end-column="41" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>

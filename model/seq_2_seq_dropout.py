@@ -2516,19 +2516,19 @@ class NMT:
 
                 #ans = ans.permute(1,0,2)
                 #target_variable = target_variable.squeeze(0)
-                #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
+                #print(ans.size(), target_variable.size(), mask.size(),'a,tv,m')
 
                 if True:
                     #ans = ans.transpose(1,0)
                     #target_variable = target_variable.transpose(1,0)
                     #mask = mask.transpose(1,0)
 
-                    for i in range(ans.size(1)): #ans.size(0)
+                    for i in range(ans.size(0)): #ans.size(0)
 
                         #print(target_variable[:,:,i].size(),'tv-size')
-                        z = min([ans[:,i,:].size(0),target_variable[:,:,i].size(1)]) #max(max_target_length) #[i]
+                        z = min([ans[i,:,:].size(0),target_variable[:,:,i].size(1)]) #max(max_target_length) #[i]
                         #print(z, i,'z,i')
-                        a_var = ans[:,i,:][:z,:]
+                        a_var = ans[i,:,:][:z,:]
                         t_var = target_variable[:,:,i].squeeze(0)[:z]
                         #print(mask.size(),'mvar', a_var.size(), 'avar', t_var.size(),'tvar')
                         m_var = mask[:,i][:z]
