@@ -821,7 +821,7 @@ class WrapMemRNN: #(nn.Module):
                         a_var = ans[:z, :].squeeze(0)
                         t_var = target_variable.squeeze(0)[:z].transpose(1,0)
                         #m_var = mask[:, i][:z]
-                        #print(m_var.size(),'mvar', a_var.size(), 'avar', t_var.size(),'tvar')
+                        #print( a_var.size(), 'avar', t_var.size(),'tvar')
                         #mask_loss, nTotal = criterion(a_var, t_var[j], m_var)
                         mask_loss = criterion(a_var, t_var[j] ) #, m_var)
                         loss += mask_loss
@@ -2526,6 +2526,7 @@ class NMT:
             #outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
             n_tot = 0
+            loss_tot = 0
 
             ###
             out, hidden = self.model_0_wra.wrap_encoder_module(input_variable, length_variable)
@@ -2543,6 +2544,7 @@ class NMT:
                 tv_var = tv_var[:,:,i].unsqueeze(0)
                 #print(tv_var.size(),'tvvar')
                 ans, best_seq, loss = self.model_0_wra.wrap_decoder_module(o_var, h_var, tv_var, criterion, mask[:,i])
+                loss_tot += loss
 
                 '''
                 ans = ans.squeeze(0)
@@ -2580,7 +2582,7 @@ class NMT:
 
 
 
-            loss.backward()
+            loss_tot.backward()
             print('backward')
             #print(loss)
 
@@ -2602,14 +2604,14 @@ class NMT:
                                                       criterion)
 
 
-                loss = None
+                loss_tot = None
                 ansx = Variable(ans.data.max(dim=2)[1])
 
 
         if self.do_recurrent_output:
             ans = ansx #.permute(1,0)
-            
-        return outputs, ans , loss
+
+        return outputs, ans , loss_tot
 
     #######################################
 

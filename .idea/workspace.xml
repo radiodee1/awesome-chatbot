@@ -62,8 +62,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1502">
-              <caret line="2610" column="12" selection-start-line="2610" selection-start-column="12" selection-end-line="2610" selection-end-column="12" />
+            <state relative-caret-position="692">
+              <caret line="2613" column="38" selection-start-line="2613" selection-start-column="38" selection-end-line="2613" selection-end-column="38" />
             </state>
           </provider>
         </entry>
@@ -126,9 +126,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variables_for_batch</find>
-      <find>'unk</find>
-      <find>_shorten</find>
       <find>_auto_stop</find>
       <find>train_iters</find>
       <find>.model(</find>
@@ -156,6 +153,9 @@
       <find>transpose</find>
       <find>_show_sample</find>
       <find>do_clip_grad_norm</find>
+      <find>wrap_decoder_module</find>
+      <find>criterion</find>
+      <find>loss</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -554,8 +554,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1502">
-          <caret line="2610" column="12" selection-start-line="2610" selection-start-column="12" selection-end-line="2610" selection-end-column="12" />
+        <state relative-caret-position="692">
+          <caret line="2613" column="38" selection-start-line="2613" selection-start-column="38" selection-end-line="2613" selection-end-column="38" />
         </state>
       </provider>
     </entry>
