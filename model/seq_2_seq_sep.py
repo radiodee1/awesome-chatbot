@@ -2516,11 +2516,12 @@ class NMT:
         outputs = None
 
         if criterion is not None : #or not self.do_test_not_train:
-            wrapper_optimizer_1.zero_grad()
-            wrapper_optimizer_2.zero_grad()
 
             self.model_0_wra.model_1_seq.train()
             self.model_0_wra.model_6_dec.train()
+
+            wrapper_optimizer_1.zero_grad()
+            wrapper_optimizer_2.zero_grad()
 
             #outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
@@ -2529,6 +2530,8 @@ class NMT:
             ###
             out, hidden = self.model_0_wra.wrap_encoder_module(input_variable, length_variable)
             #print(out.size(), hidden.size(), target_variable.size(), 'o,h,t')
+
+            #print(wrapper_optimizer_1, wrapper_optimizer_2,'opt')
 
             ansx = Variable(out.data.max(dim=2)[1])
 
@@ -2602,20 +2605,10 @@ class NMT:
                 loss = None
                 ansx = Variable(ans.data.max(dim=2)[1])
 
-                #print(ans.size(),'ans')
-                    #ans = ans.permute(1,0,2)
-
-            #self._test_embedding()
 
         if self.do_recurrent_output:
             ans = ansx #.permute(1,0)
-            #print(ans.size(),'ans')
-
-
-
-        #if loss is not None: # isinstance(loss, int):
-        #    loss = loss.item()
-
+            
         return outputs, ans , loss
 
     #######################################
