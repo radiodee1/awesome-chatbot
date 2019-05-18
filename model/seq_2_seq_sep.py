@@ -570,7 +570,7 @@ class Decoder(nn.Module):
 
         out_voc = self.out_target_b(out_x)
 
-        out_voc = F.softmax(out_voc, dim=-1)
+        #out_voc = F.softmax(out_voc, dim=-1)
 
         decoder_hidden_x = hidden
 
@@ -659,7 +659,7 @@ class WrapMemRNN: #(nn.Module):
         return
 
 
-    def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
+    def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None, mask=None):
 
         #input_variable = input_variable.permute(1,0)
 
@@ -677,14 +677,14 @@ class WrapMemRNN: #(nn.Module):
             plot_vector(out)
             exit()
 
-        ans, seq = self.wrap_decoder_module(encoder_output, hidden, target_variable, criterion)
+        ans, seq, loss = self.wrap_decoder_module(encoder_output, hidden, target_variable, criterion, mask)
 
         if self.print_to_screen and True:
             print(ans.size(), seq,'ans,seq')
             plot_vector(ans[1][0])
             exit()
 
-        return seq, None, ans, None
+        return seq, None, ans, loss
 
     def new_freeze_embedding(self, do_freeze=True):
         self.embed.weight.requires_grad = not do_freeze
@@ -766,12 +766,14 @@ class WrapMemRNN: #(nn.Module):
 
         return out, hidden
 
-    def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion):
+    def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion, mask_in):
         hidden = encoder_hidden.contiguous()
 
-        hidden = hidden[self.n_layers:,:,:] + hidden[:self.n_layers,:,:]
+        hidden = hidden[:self.n_layers,:,:] #+ hidden[self.n_layers:,:,:]
         #print(hidden.size(), 'early hid')
 
+        mask_loss = None
+        loss = 0
         #target_variable = target_variable.permute(2,1,0)
 
         if (self.model_6_dec.training or encoder_output.size(1) != 1 or not hparams['beam']) :
@@ -781,7 +783,7 @@ class WrapMemRNN: #(nn.Module):
             #decoder_hidden = prune_tensor(hidden, 3)#.transpose(1, 0)
 
             all_out = []
-
+            #print(encoder_output.size(), mask_in.size(),'eo,mi')
             l, s, hid = encoder_output.size()
             token = SOS_token #list(SOS_token for _ in range(l))
 
@@ -797,6 +799,8 @@ class WrapMemRNN: #(nn.Module):
                 decoder_hidden_x = hidden[:,i,:].unsqueeze(1) #.permute(1,0,2)
 
                 sent_out = []
+                if mask_in is not None:
+                    l = mask_in.size(0)
 
                 #teacher_out = []
                 for j in range(l):
@@ -806,6 +810,21 @@ class WrapMemRNN: #(nn.Module):
 
                     ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
 
+                    #a_var = ans.squeeze(0)
+                    #t_var = target_variable.squeeze(0).transpose(1,0)
+                    m_var = mask_in #.transpose(1,0)
+
+                    #print(a_var.size(), t_var.size(), m_var.size(), 'a,tv,m')
+                    if criterion is not None:
+                        z = min([ans[:, :].size(0), target_variable[:, i].size(-1)])  # max(max_target_length) #[i]
+                        #print(z, i,'z,i')
+                        a_var = ans[:z, :].squeeze(0)
+                        t_var = target_variable.squeeze(0)[:z].transpose(1,0)
+                        #m_var = mask[:, i][:z]
+                        #print(m_var.size(),'mvar', a_var.size(), 'avar', t_var.size(),'tvar')
+                        #mask_loss, nTotal = criterion(a_var, t_var[j], m_var)
+                        mask_loss = criterion(a_var, t_var[j] ) #, m_var)
+                        loss += mask_loss
                     #token = torch.argmax(ans, dim=-1)
 
                     if not self.pass_no_token:
@@ -914,7 +933,7 @@ class WrapMemRNN: #(nn.Module):
         #print(ans.size(), 'ans')
         ans = F.softmax(ans, dim=-1)
 
-        return ans, best_sequence
+        return ans, best_sequence, loss #mask_loss
 
 
 
@@ -2508,7 +2527,7 @@ class NMT:
             n_tot = 0
 
             ###
-            out, hidden = self.model_0_wra.wrap_encoder_module( input_variable, length_variable)
+            out, hidden = self.model_0_wra.wrap_encoder_module(input_variable, length_variable)
             #print(out.size(), hidden.size(), target_variable.size(), 'o,h,t')
 
             ansx = Variable(out.data.max(dim=2)[1])
@@ -2520,8 +2539,9 @@ class NMT:
                 tv_var = prune_tensor(target_variable,3) #.unsqueeze(0)
                 tv_var = tv_var[:,:,i].unsqueeze(0)
                 #print(tv_var.size(),'tvvar')
-                ans, best_seq = self.model_0_wra.wrap_decoder_module(o_var, h_var, tv_var, criterion)
+                ans, best_seq, loss = self.model_0_wra.wrap_decoder_module(o_var, h_var, tv_var, criterion, mask[:,i])
 
+                '''
                 ans = ans.squeeze(0)
                 target_variable = target_variable.squeeze(0)
 
@@ -2540,35 +2560,35 @@ class NMT:
                     #m_var = m_var.cuda()
 
                 #print(a_var.size(), t_var.size(),'atm')
+                '''
+                if False:
+                    try:
+                        l = criterion(a_var, t_var, m_var)
+                        loss += l[0]
+                        n_tot += l[1] #t_var.size(0)
+                    except ValueError as e:
+                        print('skip for size...', z)
+                        print(e)
+                        print(a_var.size(), t_var.size(),'a,t')
+                        exit()
+                        pass
+                    #print(l,loss, n_tot, 'loss')
 
-                try:
-                    l = criterion(a_var, t_var, m_var)
-                    loss += l[0]
-                    n_tot += l[1] #t_var.size(0)
-                except ValueError as e:
-                    print('skip for size...', z)
-                    print(e)
-                    print(a_var.size(), t_var.size(),'a,t')
-                    exit()
-                    pass
-                #print(l,loss, n_tot, 'loss')
 
 
 
-            #ans = ans.permute(1,0)
+            loss.backward()
+            print('backward')
+            #print(loss)
 
-            #print(ans.size(), target_variable.size(),'criterion')
+            if self.do_clip_grad_norm:
+                clip = float(hparams['units'] / 10.0)
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                # print('clip')
 
-            if not self.do_recurrent_output:
-                pass
-                #loss = criterion(ans, target_variable)
-
-            if not isinstance(loss, int):
-                loss.backward()
-                print('backward')
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()
-
 
         else:
             #self.model_0_wra.eval()
@@ -2577,16 +2597,12 @@ class NMT:
                 self.model_0_wra.model_6_dec.eval()
                 outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                       criterion)
-                if outputs is not None and ans is None:
-                    return None, outputs, None
 
-                if not self.do_recurrent_output:
-                    loss = None
-                    #ans = ans.permute(1,0)
 
-                else:
-                    loss = None
-                    ansx = Variable(ans.data.max(dim=2)[1])
+                loss = None
+                ansx = Variable(ans.data.max(dim=2)[1])
+
+                #print(ans.size(),'ans')
                     #ans = ans.permute(1,0,2)
 
             #self._test_embedding()
@@ -2595,14 +2611,10 @@ class NMT:
             ans = ansx #.permute(1,0)
             #print(ans.size(),'ans')
 
-        if self.do_clip_grad_norm:
-            clip = float(hparams['units'] / 10.0)
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-            #print('clip')
 
-        if loss is not None: # isinstance(loss, int):
-            loss = loss.item()
+
+        #if loss is not None: # isinstance(loss, int):
+        #    loss = loss.item()
 
         return outputs, ans , loss
 
@@ -2662,12 +2674,12 @@ class NMT:
             wrapper_optimizer_2 = self._make_optimizer(self.model_0_wra.model_6_dec,lm)
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
-        weight = torch.ones(self.output_lang.n_words)
-        weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+        #weight = torch.ones(self.output_lang.n_words)
+        #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
-        #self.criterion = nn.CrossEntropyLoss(weight=weight, size_average=False)
+        self.criterion = nn.CrossEntropyLoss() #weight=weight, size_average=False)
 
-        self.criterion = self.maskNLLLoss
+        #self.criterion = self.maskNLLLoss
 
         if not self.do_test_not_train:
             criterion = self.criterion
@@ -2979,6 +2991,7 @@ class NMT:
 
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
+            #print(ans.size(),'ans-view')
 
         if hparams['beam'] is None:
             outputs = ans #[ans]
@@ -3000,7 +3013,7 @@ class NMT:
                     output = outputs[db][di]
 
                     #output = output.permute(1, 0)
-                    #print(output.size(),'out')
+                    #print(output,'out')
 
                     if hparams['beam'] is None:
                         ni = torch.argmax(output, dim=-1).item()

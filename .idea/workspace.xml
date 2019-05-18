@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_dropout.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_sep.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_sep.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,8 +51,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
-              <caret line="2529" column="25" selection-start-line="2529" selection-start-column="25" selection-end-line="2529" selection-end-column="25" />
+            <state relative-caret-position="111">
+              <caret line="2567" selection-start-line="2567" selection-end-line="2567" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -62,8 +63,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="2497" lean-forward="true" selection-start-line="2497" selection-end-line="2497" />
+            <state relative-caret-position="656">
+              <caret line="935" column="41" selection-start-line="935" selection-start-column="41" selection-end-line="935" selection-end-column="41" />
             </state>
           </provider>
         </entry>
@@ -126,7 +127,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>length_variable</find>
       <find>variables_for_batch</find>
       <find>'unk</find>
       <find>_shorten</find>
@@ -147,7 +147,6 @@
       <find>permute</find>
       <find>wrap_encoder_module</find>
       <find>!!</find>
-      <find>do_clip_grad_norm</find>
       <find>save_checkpoint</find>
       <find>get_sentence</find>
       <find>encoder_out_x</find>
@@ -156,6 +155,8 @@
       <find>model_0_wra</find>
       <find>print(ans.size</find>
       <find>transpose</find>
+      <find>_show_sample</find>
+      <find>do_clip_grad_norm</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -544,8 +545,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
-          <caret line="2529" column="25" selection-start-line="2529" selection-start-column="25" selection-end-line="2529" selection-end-column="25" />
+        <state relative-caret-position="111">
+          <caret line="2567" selection-start-line="2567" selection-end-line="2567" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
@@ -554,8 +555,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="2497" lean-forward="true" selection-start-line="2497" selection-end-line="2497" />
+        <state relative-caret-position="656">
+          <caret line="935" column="41" selection-start-line="935" selection-start-column="41" selection-end-line="935" selection-end-column="41" />
         </state>
       </provider>
     </entry>

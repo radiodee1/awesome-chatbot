@@ -2565,6 +2565,13 @@ class NMT:
             if not isinstance(loss, int):
                 loss.backward()
                 print('backward')
+
+                if self.do_clip_grad_norm:
+                    clip = float(hparams['units'] / 10.0)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                    # print('clip')
+
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()
 
@@ -2594,11 +2601,7 @@ class NMT:
             ans = ansx #.permute(1,0)
             #print(ans.size(),'ans')
 
-        if self.do_clip_grad_norm:
-            clip = float(hparams['units'] / 10.0)
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-            #print('clip')
+
 
         if loss is not None: # isinstance(loss, int):
             loss = loss.item()
