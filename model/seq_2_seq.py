@@ -2496,7 +2496,7 @@ class NMT:
                 pass
                 #loss = criterion(ans, target_variable)
 
-            if not isinstance(loss, int):
+            if not isinstance(loss, int) or True:
                 loss.backward()
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()

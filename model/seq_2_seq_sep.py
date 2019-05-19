@@ -783,7 +783,9 @@ class WrapMemRNN: #(nn.Module):
             #decoder_hidden = prune_tensor(hidden, 3)#.transpose(1, 0)
 
             all_out = []
+
             #print(encoder_output.size(), mask_in.size(),'eo,mi')
+
             l, s, hid = encoder_output.size()
             token = SOS_token #list(SOS_token for _ in range(l))
 
