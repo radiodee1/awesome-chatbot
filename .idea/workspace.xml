@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_sep.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_sep.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -64,8 +60,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4472">
-              <caret line="786" column="13" selection-start-line="786" selection-start-column="13" selection-end-line="786" selection-end-column="13" />
+            <state relative-caret-position="-3898">
+              <caret line="2306" column="44" selection-start-line="2306" selection-start-column="44" selection-end-line="2306" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -556,8 +552,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4472">
-          <caret line="786" column="13" selection-start-line="786" selection-start-column="13" selection-end-line="786" selection-end-column="13" />
+        <state relative-caret-position="-3898">
+          <caret line="2306" column="44" selection-start-line="2306" selection-start-column="44" selection-end-line="2306" selection-end-column="44" />
         </state>
       </provider>
     </entry>

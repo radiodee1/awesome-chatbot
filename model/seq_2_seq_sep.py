@@ -606,7 +606,7 @@ class WrapMemRNN: #(nn.Module):
         self.embed.weight.requires_grad = not self.freeze_embedding
 
         self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
-                                          2, dropout,embed=self.embed)
+                                          2, gru_dropout,embed=self.embed)
 
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
                                    cancel_attention=self.cancel_attention)
