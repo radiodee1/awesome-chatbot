@@ -11,7 +11,7 @@ sys.path.append(os.path.abspath('../model/'))
 mode = str(os.environ['CHATBOT_MODE'])
 
 if mode == 'sequence':
-    import model.seq_2_seq_dropout as model
+    import model.seq_2_seq as model
 elif mode == 'zero':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run as model
