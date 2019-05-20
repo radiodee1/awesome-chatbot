@@ -15,8 +15,10 @@ if mode == 'sequence':
 elif mode == 'zero':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run as model
-elif mode == 'qpt2':
-    import model.torch_gpt2_train as model
+
+elif mode == 'memory':
+    sys.path.append(os.path.abspath('../model/torch_gpt2/'))
+    import model.torch_gpt2_run_memory as model
 
 import bot.game_sr as sr
 import bot.game_voice as v

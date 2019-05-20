@@ -38,6 +38,7 @@ import argparse
 import numpy as np
 import json
 import re
+import datetime
 #from functools import lru_cache
 from GPT2.model import (GPT2LMHeadModel)
 from GPT2.utils import load_weight
@@ -81,6 +82,8 @@ class NMT:
         self.enc = None
 
         self.output_lang = None
+
+        self.common = ''
         self.previous_sentences = []
         self.gather_sentences = True
         self.recent_in = ''
@@ -95,9 +98,17 @@ class NMT:
         for i in range(len(self.enc.encoder.items())):
             self.output_lang.addWord(self.enc.decode([i]))
 
+        ## do this also with each input...
+        self.prepare_common()
+
+    def prepare_common(self):
+        now = datetime.datetime.now()
+        time = now.strftime("%H:%M")
+        date = now.strftime("%B %d, %Y")
+        self.common = 'My name is David. The time is ' + time + ' ' + date + '.'
+
     def get_sentence(self, i):
         if self.gather_sentences:
-            #s = [k.strip().strip('..')  for k in self.previous_sentences]
             s = []
             for k in self.previous_sentences:
                 k = k.strip().strip('..')
@@ -105,7 +116,8 @@ class NMT:
                 s.append(k)
             i = '\n\nQ: ' + i
             s.append(i)
-            i = ' '.join(s)
+            self.prepare_common()
+            i = self.common + "\n\n" + ' '.join(s)
             print('',"+" * 10, '\n', i, '\n','+' * 10)
         i = self.prepare_input(i)
 
@@ -133,7 +145,6 @@ class NMT:
             i = 'q: ' + i + '?'
         else:
             i = i + "?"
-
         return i
 
     def prepare_output(self, i):
@@ -170,7 +181,7 @@ class NMT:
                     break
         i = ' '.join(out)
 
-        i = re.sub('[:/;\"]','',i)
+        i = re.sub('[/;\"]','',i)
         if contains_junk is True:
             i = ''
 

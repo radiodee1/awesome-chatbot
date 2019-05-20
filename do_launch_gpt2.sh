@@ -14,7 +14,7 @@ echo "quit -- no 'launch' file present."
 exit
 
 fi
-export CHATBOT_MODE="zero"
+export CHATBOT_MODE="memory"
 
 cd bot
 python3.6 game.py ${TEST_5} # 2> /dev/null
