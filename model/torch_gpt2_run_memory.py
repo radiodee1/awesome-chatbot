@@ -87,6 +87,7 @@ class NMT:
         self.previous_sentences = []
         self.gather_sentences = True
         self.recent_in = ''
+        self.save_num = 10
 
     def setup_for_interactive(self):
         self.get_args()
@@ -103,12 +104,15 @@ class NMT:
 
     def prepare_common(self):
         now = datetime.datetime.now()
-        time = now.strftime("%H:%M")
+        time = now.strftime("%I:%M %p")
         date = now.strftime("%B %d, %Y")
-        self.common = 'My name is David. The time is ' + time + ' ' + date + '.'
+        name = 'Kay'
+        self.common = 'My name is ' + name + '. The time is ' + time + ' ' + date + '.'
 
     def get_sentence(self, i):
         if self.gather_sentences:
+            self.recent_in = i
+            self.previous_sentences = self.previous_sentences[-self.save_num:]
             s = []
             for k in self.previous_sentences:
                 k = k.strip().strip('..')
@@ -131,7 +135,7 @@ class NMT:
         while True:
             try:
                 i = input("> ")
-                self.recent_in = i
+                #self.recent_in = i
                 self.get_sentence(i)
             except EOFError:
                 print()
