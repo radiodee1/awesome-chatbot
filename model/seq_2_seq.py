@@ -187,6 +187,8 @@ def prune_tensor( input, size):
 
 ################# pytorch modules ###############
 
+## beam doesn't work!!
+
 class Beam:
 
     def __init__(self, beam_width):
