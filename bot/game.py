@@ -39,8 +39,8 @@ class Game:
         self.voice = v.VoiceOut()
         self.sr = sr.VoiceGoogleSR()
 
-        self.words_name = ['chatbot','mutter','robot','k']
-        self.words_start = ['start','talk','answer','reply','hello','hi']
+        self.words_name = ['chatbot','mutter','robot']
+        self.words_start = ['start','talk','answer','reply','hello','hi','okay']
         self.words_stop = ['stop','exit','quit','quiet','silence']
         self.words_start += self.words_name
         self.count_max = 15

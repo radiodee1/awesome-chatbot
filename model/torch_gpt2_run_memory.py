@@ -112,7 +112,8 @@ class NMT:
     def get_sentence(self, i):
         if self.gather_sentences:
             self.recent_in = i
-            self.previous_sentences = self.previous_sentences[-self.save_num:]
+            if self.save_num > -1:
+                self.previous_sentences = self.previous_sentences[-self.save_num:]
             s = []
             for k in self.previous_sentences:
                 k = k.strip().strip('..')
@@ -215,7 +216,7 @@ class NMT:
     def get_args(self ):
         parser = argparse.ArgumentParser()
         parser.add_argument("--text", type=str, required=False)
-        parser.add_argument("--quiet", type=bool, default=False)
+        parser.add_argument("--quiet", type=bool, default=True)
         parser.add_argument("--nsamples", type=int, default=1)
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
@@ -253,7 +254,7 @@ class NMT:
         elif self.args.length > self.config.n_ctx:
             raise ValueError("Can't get samples longer than window size: %s" % self.config.n_ctx)
 
-        print(self.args.text)
+        if self.args.quiet is False: print(self.args.text)
         context_tokens = self.enc.encode(self.args.text)
 
         generated = 0
@@ -271,7 +272,7 @@ class NMT:
                 text = self.enc.decode(out[i])
                 if self.args.quiet is False:
                     print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
-                print(text)
+                    print(text)
         return text
 
 
