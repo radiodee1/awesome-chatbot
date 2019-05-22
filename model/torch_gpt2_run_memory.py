@@ -103,11 +103,20 @@ class NMT:
         self.prepare_common()
 
     def prepare_common(self):
+        self.common = ''
         now = datetime.datetime.now()
         time = now.strftime("%I:%M %p")
         date = now.strftime("%B %d, %Y")
         name = 'Kay'
-        self.common = 'My name is ' + name + '. The time is ' + time + ' ' + date + '.'
+        profession = 'student'
+        location = 'New York'
+        key_phrase = 'I am able to search for things with google. '
+
+        self.common += 'My name is ' + name + '. '
+        self.common += 'The time is ' + time + ' ' + date + '. '
+        self.common += 'My job is ' + profession + '. '
+        self.common += "I am in " + location + '. '
+        #self.common += key_phrase
 
     def get_sentence(self, i):
         if self.gather_sentences:
@@ -136,7 +145,6 @@ class NMT:
         while True:
             try:
                 i = input("> ")
-                #self.recent_in = i
                 self.get_sentence(i)
             except EOFError:
                 print()
@@ -186,7 +194,7 @@ class NMT:
                     break
         i = ' '.join(out)
 
-        i = re.sub('[/;\"]','',i)
+        i = re.sub('[;\"]','',i)
         if contains_junk is True:
             i = ''
 
@@ -195,9 +203,11 @@ class NMT:
             if i.lower().startswith('q:'): i = i[len('q:'):]
             if i.lower().startswith('q :'): i = i[len('q :'):]
             i = re.sub('[?!]', ' ', i)
-            if i not in self.previous_sentences:
-                self.previous_sentences.append(self.recent_in + "?")
-                self.previous_sentences.append(i + ".")
+
+            if self.recent_in.strip() + '?' not in self.previous_sentences:
+                self.previous_sentences.append(self.recent_in.strip() + "?")
+            if i.strip() + '.' not in self.previous_sentences:
+                self.previous_sentences.append(i.strip() + ".")
         return i
 
     #########################################
