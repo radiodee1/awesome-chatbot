@@ -326,7 +326,9 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.bidirectional = True
-        self.embed = embed
+        #self.embed = embed
+        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+
         self.sum_encoder = True
         self.pack_and_pad = True
         if hparams['single']:
@@ -343,8 +345,9 @@ class Encoder(nn.Module):
 
 
     def load_embedding(self, embedding, requires_grad=True):
-        self.embed = embedding
-        self.embed.weight.requires_grad = requires_grad
+        #self.embed = embedding
+        #self.embed.weight.requires_grad = requires_grad
+        pass
 
     def forward(self, source, input_lengths, hidden=None):
         #source = prune_tensor(source, 3)
@@ -450,7 +453,9 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        #self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+
         self.attention_mod = Attn(hidden_dim)
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -486,8 +491,9 @@ class Decoder(nn.Module):
 
 
     def load_embedding(self, embedding, requires_grad=True):
-        self.embed = embedding
-        self.embed.weight.requires_grad = requires_grad
+        #self.embed = embedding
+        #self.embed.weight.requires_grad = requires_grad
+        pass
 
     def forward(self, encoder_out, decoder_hidden, last_word=None, index=None):
         return self.mode_batch(encoder_out, decoder_hidden, last_word, index)

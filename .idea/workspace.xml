@@ -3,8 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/seq_2_seq_sep.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/seq_2_seq_sep.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="10404">
-              <caret line="608" column="56" selection-start-line="608" selection-start-column="56" selection-end-line="608" selection-end-column="56" />
+            <state relative-caret-position="422">
+              <caret line="494" column="9" selection-start-line="494" selection-start-column="9" selection-end-line="494" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -35,8 +34,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq_width.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="32778">
-              <caret line="1851" column="12" selection-start-line="1851" selection-start-column="12" selection-end-line="1851" selection-end-column="12" />
+            <state relative-caret-position="16938">
+              <caret line="971" column="54" selection-start-line="971" selection-start-column="54" selection-end-line="971" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -44,8 +43,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2862">
-              <caret line="189" column="22" selection-start-line="189" selection-start-column="22" selection-end-line="189" selection-end-column="22" />
+            <state relative-caret-position="43272">
+              <caret line="2434" column="20" selection-start-line="2434" selection-start-column="11" selection-end-line="2434" selection-end-column="20" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -56,16 +55,16 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="548">
+            <state relative-caret-position="3906">
               <caret line="218" column="62" selection-start-line="218" selection-start-column="62" selection-end-line="218" selection-end-column="62" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/bot/game.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
+            <state relative-caret-position="756">
               <caret line="42" column="78" selection-start-line="42" selection-start-column="78" selection-end-line="42" selection-end-column="78" />
             </state>
           </provider>
@@ -117,12 +116,9 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>.model(</find>
       <find>chop_word_for_index</find>
       <find>ansx</find>
       <find>training</find>
-      <find>wrapper_optimizer_1</find>
-      <find>_make_optimizer</find>
       <find>model_0_wra.model</find>
       <find>model_0_wra.model.</find>
       <find>.model_0_wra.model.train</find>
@@ -143,10 +139,13 @@
       <find>_show_sample</find>
       <find>do_clip_grad_norm</find>
       <find>loss</find>
-      <find>criterion</find>
       <find>wrap_decoder_module</find>
       <find>mask</find>
       <find>recent_in</find>
+      <find>criterion</find>
+      <find>wrapper_optimizer_1</find>
+      <find>_make_optimizer</find>
+      <find>embed</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -200,12 +199,12 @@
         <option value="$PROJECT_DIR$/model/torch_gpt2_run.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
-        <option value="$PROJECT_DIR$/model/seq_2_seq_sep.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_zero_shot.py" />
         <option value="$PROJECT_DIR$/model/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/do_launch_gpt2.sh" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
         <option value="$PROJECT_DIR$/bot/game.py" />
+        <option value="$PROJECT_DIR$/model/seq_2_seq_sep.py" />
       </list>
     </option>
   </component>
@@ -221,7 +220,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -256,6 +254,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -452,8 +451,8 @@
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py" />
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10404">
-          <caret line="608" column="56" selection-start-line="608" selection-start-column="56" selection-end-line="608" selection-end-column="56" />
+        <state relative-caret-position="422">
+          <caret line="494" column="9" selection-start-line="494" selection-start-column="9" selection-end-line="494" selection-end-column="9" />
         </state>
       </provider>
     </entry>
@@ -466,18 +465,32 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_width.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="32778">
-          <caret line="1851" column="12" selection-start-line="1851" selection-start-column="12" selection-end-line="1851" selection-end-column="12" />
+        <state relative-caret-position="16938">
+          <caret line="971" column="54" selection-start-line="971" selection-start-column="54" selection-end-line="971" selection-end-column="54" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2862">
-          <caret line="189" column="22" selection-start-line="189" selection-start-column="22" selection-end-line="189" selection-end-column="22" />
+        <state relative-caret-position="43272">
+          <caret line="2434" column="20" selection-start-line="2434" selection-start-column="11" selection-end-line="2434" selection-end-column="20" />
           <folding>
             <element signature="e#21#86#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3906">
+          <caret line="218" column="62" selection-start-line="218" selection-start-column="62" selection-end-line="218" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/bot/game.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="756">
+          <caret line="42" column="78" selection-start-line="42" selection-start-column="78" selection-end-line="42" selection-end-column="78" />
         </state>
       </provider>
     </entry>
@@ -505,20 +518,6 @@
           <folding>
             <element signature="e#197#206#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="548">
-          <caret line="218" column="62" selection-start-line="218" selection-start-column="62" selection-end-line="218" selection-end-column="62" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bot/game.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="42" column="78" selection-start-line="42" selection-start-column="78" selection-end-line="42" selection-end-column="78" />
         </state>
       </provider>
     </entry>
