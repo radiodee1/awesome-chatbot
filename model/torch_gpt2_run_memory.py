@@ -110,13 +110,25 @@ class NMT:
         name = 'Kay'
         profession = 'student'
         location = 'New York'
-        key_phrase = 'I am able to search for things with google. '
+        key_action_string = 'play media.'.upper()
+        key_phrases = [
+            'Play music? ' + key_action_string,
+            'Play movies? ' + key_action_string,
+            'Play radio? ' + key_action_string,
+            'Play any song? ' + key_action_string,
+            'Play any video? ' + key_action_string,
+            'Play any movie? ' + key_action_string,
+            'Play a song? ' + key_action_string,
+            'Play a video? ' + key_action_string,
+            'Play a movie? ' + key_action_string,
+
+        ]## doesn't work
 
         self.common += 'My name is ' + name + '. '
         self.common += 'The time is ' + time + ' ' + date + '. '
-        self.common += 'My job is ' + profession + '. '
+        self.common += 'My job is as a ' + profession + '. '
         self.common += "I am in " + location + '. '
-        #self.common += key_phrase
+        self.common += ' '.join([i.lower() for i in key_phrases])
 
     def get_sentence(self, i):
         if self.gather_sentences:
@@ -194,7 +206,7 @@ class NMT:
                     break
         i = ' '.join(out)
 
-        i = re.sub('[;\"]','',i)
+        i = re.sub('[;]','',i)
         if contains_junk is True:
             i = ''
 
@@ -226,12 +238,12 @@ class NMT:
     def get_args(self ):
         parser = argparse.ArgumentParser()
         parser.add_argument("--text", type=str, required=False)
-        parser.add_argument("--quiet", type=bool, default=True)
+        parser.add_argument("--quiet", type=bool, default=False)
         parser.add_argument("--nsamples", type=int, default=1)
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
         parser.add_argument("--length", type=int, default=25)
-        parser.add_argument("--temperature", type=float, default=0.01)
+        parser.add_argument("--temperature", type=float, default=0.0001)
         parser.add_argument("--top_k", type=int, default=40)
         self.args = parser.parse_args()
 
