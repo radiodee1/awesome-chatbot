@@ -107,7 +107,7 @@ class NMT:
         now = datetime.datetime.now()
         time = now.strftime("%I:%M %p")
         date = now.strftime("%B %d, %Y")
-        name = 'Kay'
+        name = 'Jane'
         profession = 'student'
         location = 'New York'
         key_action_string = 'play media.'.upper()
