@@ -32,6 +32,7 @@ SOFTWARE.
 import os
 import sys
 sys.path.append('torch_gpt2')
+sys.path.append('..')
 import torch
 import random
 import argparse
@@ -46,6 +47,7 @@ from GPT2.config import GPT2Config
 from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
+from model.nmt_commands import Commands
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 
@@ -82,6 +84,7 @@ class NMT:
         self.enc = None
 
         self.output_lang = None
+        self.commands = None
 
         self.common = ''
         self.previous_sentences = []
@@ -93,6 +96,8 @@ class NMT:
         self.get_args()
         self.load_state_dict()
         self.load_model()
+
+        self.commands = Commands()
 
         ## this is not used but is required for bot software...
         self.output_lang = Lang('lang')
@@ -151,6 +156,25 @@ class NMT:
         text = self.text_generator()
         text = self.prepare_output(text)
         print(text,"<")
+
+        ## if you want to launch apps !!
+        if self.args.apps is True:
+            #print(text,'apps')
+            is_yes = False
+            is_command = self.commands.is_command(text)
+            if not is_command:
+                if re.sub('[.,?!]','', text).lower() == 'yes':
+                    is_command = self.commands.is_command(self.previous_sentences[-2])
+                    is_yes = True
+
+            if is_command:
+                if len(self.commands.strip_command(text)) > 0 and not is_yes:
+                    self.commands.do_command(text)
+                if len(self.commands.strip_command(text)) == 0 or is_yes:
+                    print(self.previous_sentences[-2])
+                    self.commands.do_command(self.previous_sentences[-2])
+                self.previous_sentences = []
+            pass
         return text
 
     def loop(self):
@@ -245,6 +269,7 @@ class NMT:
         parser.add_argument("--length", type=int, default=25)
         parser.add_argument("--temperature", type=float, default=0.0001)
         parser.add_argument("--top_k", type=int, default=40)
+        parser.add_argument("--apps", type=bool, required=False, default=False)
         self.args = parser.parse_args()
 
     def load_model(self):
