@@ -133,7 +133,8 @@ class NMT:
         self.common += 'The time is ' + time + ' ' + date + '. '
         self.common += 'My job is as a ' + profession + '. '
         self.common += "I am in " + location + '. '
-        self.common += ' '.join([i.lower() for i in key_phrases])
+        if self.args.apps:
+            self.common += ' '.join([i.lower() for i in key_phrases])
 
     def get_sentence(self, i):
         if self.gather_sentences:
@@ -160,21 +161,10 @@ class NMT:
         ## if you want to launch apps !!
         if self.args.apps is True:
             #print(text,'apps')
-            is_yes = False
-            is_command = self.commands.is_command(text)
-            if not is_command:
-                if re.sub('[.,?!]','', text).lower() == 'yes':
-                    is_command = self.commands.is_command(self.previous_sentences[-2])
-                    is_yes = True
 
-            if is_command:
-                if len(self.commands.strip_command(text)) > 0 and not is_yes:
-                    self.commands.do_command(text)
-                if len(self.commands.strip_command(text)) == 0 or is_yes:
-                    print(self.previous_sentences[-2])
-                    self.commands.do_command(self.previous_sentences[-2])
+            if self.commands.is_command(self.previous_sentences[-2]):
+                self.commands.do_command(self.previous_sentences[-2])
                 self.previous_sentences = []
-            pass
         return text
 
     def loop(self):
@@ -190,6 +180,8 @@ class NMT:
                 exit()
 
     def prepare_input(self, i):
+        self.random_seed()
+
         if not self.gather_sentences:
             i = 'q: ' + i + '?'
         else:
@@ -218,17 +210,34 @@ class NMT:
         if i.lower().startswith('a:'): i = i[len('a:'):]
         if i.lower().startswith('a :'): i = i[len('a :'):]
 
-        if True:
+        start = i[:]
+        num = 0
+        default = ''
+        while num < 5:
+
+            i = start[:]
             out = []
             for ii in i.split(' '):
-                if ii not in out or ii.lower() in ['the', 'that'] or True: ## end with punctuation, not repeat!
-                    out.append(ii)
-                else:
-                    break
+
+                out.append(ii)
 
                 if (ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
                     break
-        i = ' '.join(out)
+            i = ' '.join(out)
+
+            if num == 0: default = i
+
+            if (i.strip() + '.' not in self.previous_sentences or len(start) <= 1) and len(i.strip()) > 0:
+                if not self.args.quiet: print('take first:', i.strip())
+                break
+            else:
+                if i.strip() == '':
+                    i = ' '
+                if not self.args.quiet: print('take next:', '-'+i.strip()+'-')
+                start = start[len(i):]
+            num += 1
+
+        if i.strip() == '': i = default
 
         i = re.sub('[;]','',i)
         if contains_junk is True:
@@ -248,6 +257,13 @@ class NMT:
 
     #########################################
 
+    def random_seed(self):
+        seed = random.randint(0, 2147483647)
+        np.random.seed(seed)
+        torch.random.manual_seed(seed)
+        torch.cuda.manual_seed(seed)
+        pass
+
     def get_encoder(self):
         with open(realpath +'/./torch_gpt2/GPT2/encoder.json', 'r') as f:
             encoder = json.load(f)
@@ -262,7 +278,7 @@ class NMT:
     def get_args(self ):
         parser = argparse.ArgumentParser()
         parser.add_argument("--text", type=str, required=False)
-        parser.add_argument("--quiet", type=bool, default=False)
+        parser.add_argument("--quiet", type=bool, default=True)
         parser.add_argument("--nsamples", type=int, default=1)
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
