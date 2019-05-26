@@ -92,6 +92,15 @@ class NMT:
         self.recent_in = ''
         self.save_num = 10
 
+        self.q_string = ['Q: ']
+        self.a_string = ['A: ']
+
+        self.name = 'Jane'
+
+        if True:
+            self.q_string = ['You: ', 'Q: ', 'Q :']
+            self.a_string = ['Me: ', 'A: ', 'A :', self.name+':']
+
     def setup_for_interactive(self):
         self.get_args()
         self.load_state_dict()
@@ -112,7 +121,7 @@ class NMT:
         now = datetime.datetime.now()
         time = now.strftime("%I:%M %p")
         date = now.strftime("%B %d, %Y")
-        name = 'Jane'
+        name = self.name
         profession = 'student'
         location = 'New York'
         key_action_string = 'play media.'.upper()
@@ -129,10 +138,10 @@ class NMT:
 
         ]## doesn't work
 
-        self.common += 'My name is ' + name + '. '
-        self.common += 'The time is ' + time + ' ' + date + '. '
-        self.common += 'My job is as a ' + profession + '. '
-        self.common += "I am in " + location + '. '
+        self.common += self.a_string[0] + 'My name is ' + name + '.\n '
+        self.common += self.a_string[0] + 'The time is ' + time + ' ' + date + '.\n '
+        self.common += self.a_string[0] + 'My job is as a ' + profession + '.\n '
+        self.common += self.a_string[0] + "I am in " + location + '. \n'
         if self.args.apps:
             self.common += ' '.join([i.lower() for i in key_phrases])
 
@@ -144,9 +153,13 @@ class NMT:
             s = []
             for k in self.previous_sentences:
                 k = k.strip().strip('..')
-                if not k.endswith('?'): k = k + '.'
+                if not k.endswith('?'):
+                    k = k + '.\n'
+                else:
+                    k = k + '\n'
+                    pass
                 s.append(k)
-            i = '\n\nQ: ' + i
+            i = '\n\n' + self.q_string[0] + i
             s.append(i)
             self.prepare_common()
             i = self.common + "\n\n" + ' '.join(s)
@@ -183,7 +196,7 @@ class NMT:
         self.random_seed()
 
         if not self.gather_sentences:
-            i = 'q: ' + i + '?'
+            i = self.q_string[0] + i + '?'
         else:
             i = i + "?"
         return i
@@ -207,8 +220,11 @@ class NMT:
         i = ''.join(out)
 
         i = i.strip()
-        if i.lower().startswith('a:'): i = i[len('a:'):]
-        if i.lower().startswith('a :'): i = i[len('a :'):]
+
+        for z in self.a_string:
+            z = z.lower()
+            if i.lower().startswith(z): i = i[len(z):]
+        #if i.lower().startswith('a :'): i = i[len('a :'):]
 
         start = i[:]
         num = 0
@@ -245,8 +261,10 @@ class NMT:
 
         if self.gather_sentences:
             i = i.strip()
-            if i.lower().startswith('q:'): i = i[len('q:'):]
-            if i.lower().startswith('q :'): i = i[len('q :'):]
+            for z in self.q_string:
+                z = z.lower()
+                if i.lower().startswith(z): i = i[len(z):]
+            #if i.lower().startswith('q :'): i = i[len('q :'):]
             i = re.sub('[?!]', ' ', i)
 
             if self.recent_in.strip() + '?' not in self.previous_sentences:
