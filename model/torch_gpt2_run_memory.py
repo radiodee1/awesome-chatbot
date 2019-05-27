@@ -98,8 +98,8 @@ class NMT:
         self.name = 'Jane'
 
         if True:
-            self.q_string = ['You: ', 'Q: ', 'Q :']
-            self.a_string = ['Me: ', 'A: ', 'A :', self.name+':']
+            self.q_string = [ 'Q: ', 'Q :']
+            self.a_string = [ 'A: ', 'A :', self.name+':']
 
     def setup_for_interactive(self):
         self.get_args()
@@ -118,13 +118,16 @@ class NMT:
 
     def prepare_common(self):
         self.common = ''
+        a_chars = self.a_string[0]
+        q_chars = self.q_string[0]
+
         now = datetime.datetime.now()
         time = now.strftime("%I:%M %p")
         date = now.strftime("%B %d, %Y")
         name = self.name
         profession = 'student'
         location = 'New York'
-        key_action_string = 'play media.'.upper()
+        key_action_string = '\n ' + a_chars + 'play media.\n'
         key_phrases = [
             'Play music? ' + key_action_string,
             'Play movies? ' + key_action_string,
@@ -136,16 +139,20 @@ class NMT:
             'Play a video? ' + key_action_string,
             'Play a movie? ' + key_action_string,
 
-        ]## doesn't work
+        ]## doesn't work??
 
+        #self.common += self.a_string[0] + 'I am ' + self.a_string[0] + '. \n '
         self.common += self.a_string[0] + 'My name is ' + name + '.\n '
         self.common += self.a_string[0] + 'The time is ' + time + ' ' + date + '.\n '
         self.common += self.a_string[0] + 'My job is as a ' + profession + '.\n '
         self.common += self.a_string[0] + "I am in " + location + '. \n'
         if self.args.apps:
-            self.common += ' '.join([i.lower() for i in key_phrases])
+            self.common += ' '.join([q_chars + i for i in key_phrases])
 
     def get_sentence(self, i):
+        a_chars = '' # self.a_string[0]
+        q_chars = '' #self.q_string[0]
+
         if self.gather_sentences:
             self.recent_in = i
             if self.save_num > -1:
@@ -154,9 +161,9 @@ class NMT:
             for k in self.previous_sentences:
                 k = k.strip().strip('..')
                 if not k.endswith('?'):
-                    k = k + '.\n'
+                    k = a_chars + k + '.\n'
                 else:
-                    k = k + '\n'
+                    k = q_chars + k + '\n'
                     pass
                 s.append(k)
             i = '\n\n' + self.q_string[0] + i
@@ -168,6 +175,9 @@ class NMT:
 
         self.args.text = i
         text = self.text_generator()
+
+        if not self.args.quiet or True: print(text)
+
         text = self.prepare_output(text)
         print(text,"<")
 
