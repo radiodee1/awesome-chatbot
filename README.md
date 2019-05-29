@@ -63,14 +63,15 @@ This will pull the submodule and put the gpt2 data in the right directory.
 5/29/2019 - I have tried to re-organize the project folders somewhat.
 
 # Organization
-The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw` and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
+The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw`, `babi`, `seq_2_seq`, and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
 * `model` This folder holds the python code for the project. Though some of the setup scripts are also written in python, this folder holds the special python code that maintains the keras model. This model is the framework for the neural network that is at the center of this project. There are also two setup scripts in this folder.
 * `bot` This folder is the home of programs that are meant to help the chatbot run. This includes speech-to-text code and speech-recognition code. Ultimately this directory will be the home of a loop of code that monitors audio input from a microphone and decides what to do with it.
 * `raw` This folder holds the raw downloads that are manipulated by the setup scripts. These include the GloVe vectors and the Reddit Comments download.
 * `saved` This folder holds the saved values from the training process.
 * `graph` This folder holds some json files that the author wants to save for later graphs for comparison with other data.
-
+* `babi` This is for babi question answering.
+* `seq_2_seq` This is for a rnn based sequence to sequence model.
 
 Description of the individual setup scripts is included below.
 # Suggested Reading - Acknowledgements
