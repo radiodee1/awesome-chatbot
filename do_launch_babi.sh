@@ -1,5 +1,5 @@
 
-cd model
+cd babi
 
 echo $@
 

@@ -5,7 +5,7 @@ It should be noted that the code in this repository uses a batch size of 1, esse
 #### Setup for `small` and `small_tr`:
 1. move to the root directory of the repository.
 2. `./do_make_glove_download.sh` Execute this in the root folder of the project repository.
-3. `cd model`
+3. `cd babi`
 4. `./do_make_train_test_from_babi.py all en`
 5. `./do_make_vocab.py --babi --load-embed-size=100`
 6. `./do_make_train_test_from_babi.py 1 en-10k` NOTE: replace '1' with current test.
@@ -17,7 +17,7 @@ Here we are interested in creating the same conditions as above but with a large
 
 1. move to the root directory of the repository.
 2. `./do_make_glove_download.sh`
-3. `cd model`
+3. `cd babi`
 4. `./do_make_train_test_from_babi.py all en`
 5. `./do_make_vocab.py --babi --all-glove --load-embed-size=100`
 6. `./do_make_train_test_from_babi.py 1 en-10k` NOTE: replace '1' with current test.
