@@ -7,23 +7,29 @@ import sys
 import os
 sys.path.append('..')
 sys.path.append(os.path.abspath('../model/'))
+sys.path.append(os.path.abspath('../seq_2_seq/'))
 
 mode = str(os.environ['CHATBOT_MODE'])
 
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq as model
+    import seq_2_seq.tokenize_weak as tokenize_weak
+
 elif mode == 'zero':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run as model
+    import model.tokenize_weak as tokenize_weak
+
 
 elif mode == 'memory':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run_memory as model
+    import model.tokenize_weak as tokenize_weak
 
 import bot.game_sr as sr
 import bot.game_voice as v
-import model.tokenize_weak as tokenize_weak
+#import model.tokenize_weak as tokenize_weak
 import model.settings as settings
 import argparse
 import time
