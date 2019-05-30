@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -12,24 +13,6 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_db_tab_from_cornell_movie.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-162" />
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <folding>
-                <element signature="e#21#86#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq_dropout.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -88,12 +71,36 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/torch_gpt2/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor />
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/seq_2_seq/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor />
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="126">
-                <caret line="67" column="51" selection-start-line="67" selection-start-column="51" selection-end-line="67" selection-end-column="51" />
+              <first_editor relative-caret-position="144">
+                <caret line="68" column="137" selection-start-line="68" selection-start-column="137" selection-end-line="68" selection-end-column="137" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -336,8 +343,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_eval_interactive.py" />
-    <entry file="file://$PROJECT_DIR$/model/tens_2_tens_nmt.py" />
     <entry file="file://$PROJECT_DIR$/model/torch_gpt_run.py" />
     <entry file="file://$PROJECT_DIR$/model/bert_classifier.py" />
     <entry file="file://$PROJECT_DIR$/model/report.txt" />
@@ -399,24 +404,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45666">
-          <caret line="2567" selection-start-line="2567" selection-end-line="2567" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py" />
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38880">
-          <caret line="2190" column="46" selection-start-line="2190" selection-start-column="28" selection-end-line="2190" selection-end-column="46" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py" />
     <entry file="file://$PROJECT_DIR$/model/settings.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="882">
@@ -424,23 +414,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_width.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="16938">
-          <caret line="971" column="54" selection-start-line="971" selection-start-column="54" selection-end-line="971" selection-end-column="54" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="43272">
-          <caret line="2434" column="20" selection-start-line="2434" selection-start-column="11" selection-end-line="2434" selection-end-column="20" />
-          <folding>
-            <element signature="e#21#86#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_width.py" />
+    <entry file="file://$PROJECT_DIR$/model/seq_2_seq.py" />
     <entry file="file://$PROJECT_DIR$/model/nmt_commands.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="162">
@@ -517,20 +492,10 @@
         <state relative-caret-position="-157" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/do_split.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="116" column="20" selection-start-line="116" selection-start-column="20" selection-end-line="116" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
+    <entry file="file://$PROJECT_DIR$/model/do_split.py" />
     <entry file="file://$PROJECT_DIR$/do_make_db_tab_from_cornell_movie.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-162" />
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -582,6 +547,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="144">
+            <caret line="68" column="137" selection-start-line="68" selection-start-column="137" selection-end-line="68" selection-end-column="137" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/babi/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -594,12 +571,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/README.md">
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="126">
-            <caret line="67" column="51" selection-start-line="67" selection-start-column="51" selection-end-line="67" selection-end-column="51" />
-          </first_editor>
+          <first_editor />
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor />
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
