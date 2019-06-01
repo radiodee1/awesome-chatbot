@@ -58,8 +58,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/nmt_commands.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
-              <caret line="129" column="16" selection-start-line="129" selection-start-column="16" selection-end-line="129" selection-end-column="16" />
+            <state relative-caret-position="738">
+              <caret line="167" column="69" selection-start-line="167" selection-start-column="69" selection-end-line="167" selection-end-column="69" />
               <folding>
                 <element signature="e#20#29#0" expanded="true" />
               </folding>
@@ -587,8 +587,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/nmt_commands.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="129" column="16" selection-start-line="129" selection-start-column="16" selection-end-line="129" selection-end-column="16" />
+        <state relative-caret-position="738">
+          <caret line="167" column="69" selection-start-line="167" selection-start-column="69" selection-end-line="167" selection-end-column="69" />
           <folding>
             <element signature="e#20#29#0" expanded="true" />
           </folding>

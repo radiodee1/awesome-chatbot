@@ -165,7 +165,7 @@ class Commands:
 if __name__ == '__main__':
     c = Commands()
     command1 = 'play media'
-    command2 = 'play music like video music like a movie of the allman brothers band youtube.'
+    command2 = 'play music like video music like a movie of the music band youtube.'
     c.print_to_screen = True
     z = c.is_command(command1)
     for x in range(2):
