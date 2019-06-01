@@ -9,7 +9,7 @@ class Commands:
         self.erase_history = False
         self.use_async = False
         self.print_to_screen = False
-        #self.enable_choose_command = False
+
         self.url_search = 'https://www.google.com/search?q='
         self.url_youtube = 'https://www.youtube.com/results?search_query='
         self.launch_google_chrome = 'google-chrome --app='
@@ -147,6 +147,7 @@ class Commands:
         return erase
 
     def launch_sync(self,i):
+        ## if the program doesn't exist, this command will fail but chatbot will continue.
         os.system(i)
         pass
 
