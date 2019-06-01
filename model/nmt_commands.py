@@ -15,6 +15,10 @@ class Commands:
         self.launch_google_chrome = 'google-chrome --app='
         #self.launch_firefox = 'firefox --search '
         self.launch_rhythmbox = 'rhythmbox '
+        self.launch_mail = 'thunderbird'
+        self.launch_office = 'libreoffice'
+        self.launch_file = 'nautilus'
+        self.launch_terminal = 'gnome-terminal'
 
         self.text_commands = {
             'play': 'any',
@@ -25,14 +29,30 @@ class Commands:
             'video': 'video',
             'movie': 'video',
             'music': 'music',
-            'youtube': 'video'
+            'youtube': 'video',
+            'mail': 'mail',
+            'letter':'mail',
+            'letters':'mail',
+            'email': 'mail',
+            'emails':'mail',
+            'thunderbird':'mail',
+            'office': 'office',
+            'libreoffice': 'office',
+            'file':'file',
+            'files': 'file',
+            'directory': 'file',
+            'directories': 'file',
+            'terminal': 'terminal'
         }
 
         self.command_dict = {
             'search': self.launch_google_chrome + self.url_search,
             'video': self.launch_google_chrome + self.url_youtube,
             'music': self.launch_rhythmbox,
-
+            'mail': self.launch_mail,
+            'office': self.launch_office,
+            'file': self.launch_file,
+            'terminal': self.launch_terminal
         }
         self.command_string = ''
 
@@ -102,7 +122,7 @@ class Commands:
             if self.command_string == '' and any is True:
                 self.command_string = self.command_dict['search']
 
-        if self.command_string != self.command_dict['music']:
+        if self.command_string == self.command_dict['video'] or self.command_string == self.command_dict['search'] :
             self.command_string += '+'.join(i)
         return output
 
