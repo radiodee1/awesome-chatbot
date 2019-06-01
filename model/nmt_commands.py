@@ -13,7 +13,7 @@ class Commands:
         self.url_search = 'https://www.google.com/search?q='
         self.url_youtube = 'https://www.youtube.com/results?search_query='
         self.launch_google_chrome = 'google-chrome --app='
-        #self.launch_firefox = 'firefox --search '
+        self.launch_firefox = 'firefox --search '
         self.launch_rhythmbox = 'rhythmbox '
         self.launch_mail = 'thunderbird'
         self.launch_office = 'libreoffice'
@@ -42,7 +42,8 @@ class Commands:
             'files': 'file',
             'directory': 'file',
             'directories': 'file',
-            'terminal': 'terminal'
+            'terminal': 'terminal',
+            'firefox': 'firefox'
         }
 
         self.command_dict = {
@@ -52,7 +53,8 @@ class Commands:
             'mail': self.launch_mail,
             'office': self.launch_office,
             'file': self.launch_file,
-            'terminal': self.launch_terminal
+            'terminal': self.launch_terminal,
+            'firefox': self.launch_firefox
         }
         self.command_string = ''
 
@@ -122,7 +124,11 @@ class Commands:
             if self.command_string == '' and any is True:
                 self.command_string = self.command_dict['search']
 
-        if self.command_string == self.command_dict['video'] or self.command_string == self.command_dict['search'] :
+        if (
+                self.command_string == self.command_dict['video'] or
+                self.command_string == self.command_dict['search'] or
+                self.command_string == self.command_dict['firefox']
+        ):
             self.command_string += '+'.join(i)
         return output
 
