@@ -25,7 +25,7 @@ import memory_saving_gradients
 from settings import hparams as hp
 
 CHECKPOINT_DIR = 'checkpoint'
-SAMPLE_DIR = 'samples'
+SAMPLE_DIR = hp['save_dir'] + '/' + 'tf_gpt2_samples/'
 
 model_name = hp['data_dir'] + '/' + 'tf_gpt2_data/'
 checkpoint_dir = hp['save_dir'] + '/' + 'tf_gpt2_saved/'
