@@ -365,16 +365,23 @@ if __name__ == '__main__':
                     elif arg_gpt2:
                         #print('gpt2')
                         src_gpt = line[0]
-                        tgt_gpt = ''
-                        tgt_gpt_list = tokenizer.encode(line[1]) # line[1].split(' ')
-                        for i in tgt_gpt_list:
-                            i = tokenizer.decode([i])
-                            tgt_gpt = i
-                            src.write(src_gpt + '\n')
-                            tgt.write(tgt_gpt + '\n')
-                            if arg_triplets:
-                                ques.write(arg_question + '\n')
-                            src_gpt = src_gpt + ' ' + i
+                        tgt_gpt = line[1]
+                        src.write('Q: ' + src_gpt + '\n')
+                        src.write('A: ' + tgt_gpt + '\n')
+                        tgt.write('Q: ' + src_gpt + '\n')
+                        tgt.write('A: ' + tgt_gpt + '\n')
+                        if False:
+                            src_gpt = line[0]
+                            tgt_gpt = ''
+                            tgt_gpt_list = tokenizer.encode(line[1]) # line[1].split(' ')
+                            for i in tgt_gpt_list:
+                                i = tokenizer.decode([i])
+                                tgt_gpt = i
+                                src.write(src_gpt + '\n')
+                                tgt.write(tgt_gpt + '\n')
+                                if arg_triplets:
+                                    ques.write(arg_question + '\n')
+                                src_gpt = src_gpt + ' ' + i
 
 
                     elif arg_stagger:
