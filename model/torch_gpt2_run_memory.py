@@ -118,7 +118,7 @@ class NMT:
 
     def prepare_common(self):
         self.common = ''
-        a_chars = self.a_string[0]
+        a_chars = '' #self.a_string[0]
         q_chars = self.q_string[0]
 
         now = datetime.datetime.now()
@@ -142,16 +142,16 @@ class NMT:
         ]## doesn't work??
 
         #self.common += self.a_string[0] + 'I am ' + self.a_string[0] + '. \n '
-        self.common += self.a_string[0] + 'My name is ' + name + '.\n '
-        self.common += self.a_string[0] + 'The time is ' + time + ' ' + date + '.\n '
-        self.common += self.a_string[0] + 'My job is as a ' + profession + '.\n '
-        self.common += self.a_string[0] + "I am in " + location + '. \n'
-        if self.args.apps:
-            self.common += ' '.join([q_chars + i for i in key_phrases])
+        self.common += a_chars + 'My name is ' + name + '.\n '
+        self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
+        self.common += a_chars + 'My job is as a ' + profession + '.\n '
+        self.common += a_chars + "I am in " + location + '. \n'
+        if self.args.apps and False:
+            self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
 
     def get_sentence(self, i):
         a_chars = '' # self.a_string[0]
-        q_chars = '' #self.q_string[0]
+        q_chars = '' # self.q_string[0]
 
         if self.gather_sentences:
             self.recent_in = i
@@ -166,7 +166,7 @@ class NMT:
                     k = q_chars + k + '\n'
                     pass
                 s.append(k)
-            i = '\n\n' + self.q_string[0] + i
+            i = '\n\n' + self.q_string[0] + i.capitalize()
             s.append(i)
             self.prepare_common()
             i = self.common + "\n\n" + ' '.join(s)
@@ -183,10 +183,8 @@ class NMT:
 
         ## if you want to launch apps !!
         if self.args.apps is True:
-            #print(text,'apps')
-
-            if self.commands.is_command(self.previous_sentences[-2]):
-                self.commands.do_command(self.previous_sentences[-2])
+            if self.commands.is_command(self.recent_in): # self.previous_sentences[-2]):
+                self.commands.do_command(self.recent_in) # self.previous_sentences[-2])
                 self.previous_sentences = []
         return text
 
@@ -205,7 +203,7 @@ class NMT:
     def prepare_input(self, i):
         self.random_seed()
 
-        if not self.gather_sentences:
+        if not self.gather_sentences or True:
             i = self.q_string[0] + i + '?'
         else:
             i = i + "?"
@@ -234,7 +232,6 @@ class NMT:
         for z in self.a_string:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
-        #if i.lower().startswith('a :'): i = i[len('a :'):]
 
         start = i[:]
         num = 0
@@ -274,11 +271,11 @@ class NMT:
             for z in self.q_string:
                 z = z.lower()
                 if i.lower().startswith(z): i = i[len(z):]
-            #if i.lower().startswith('q :'): i = i[len('q :'):]
+
             i = re.sub('[?!]', ' ', i)
 
-            if self.recent_in.strip() + '?' not in self.previous_sentences:
-                self.previous_sentences.append(self.recent_in.strip() + "?")
+            #if self.recent_in.strip() + '?' not in self.previous_sentences:
+            #    self.previous_sentences.append(self.recent_in.strip() + "?")
             if i.strip() + '.' not in self.previous_sentences:
                 self.previous_sentences.append(i.strip() + ".")
         return i
@@ -314,6 +311,7 @@ class NMT:
         parser.add_argument("--temperature", type=float, default=0.0001)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
+        parser.add_argument("--source_file", type=str, required=False, default='torch_gpt2/gpt2-pytorch_model.bin')
         self.args = parser.parse_args()
 
     def load_model(self):
@@ -368,7 +366,7 @@ class NMT:
 
 
     def load_state_dict(self):
-        p = realpath + '/./torch_gpt2/gpt2-pytorch_model.bin'
+        p = realpath + '/' + self.args.source_file #'./torch_gpt2/gpt2-pytorch_model.bin'
         if os.path.exists(p):
             self.state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
             #self.text_generator(state_dict)

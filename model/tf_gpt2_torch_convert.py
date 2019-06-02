@@ -18,4 +18,4 @@ print(GPT2_DIR)
 
 os.system("pytorch_pretrained_bert convert_gpt2_checkpoint " + GPT2_DIR + " " +PYTORCH_DUMP_OUTPUT)
 
-print (sys.argv[0] + " input_model_name output_model_directory")
+print (sys.argv[0] + " <input_model_name> <output_model_directory>")
