@@ -15,7 +15,7 @@ if len(sys.argv) != 2:
 model = sys.argv[1]
 
 subdir = os.path.join('models', model)
-subdir2 = os.path.join(hparams['save_dir'], 'tf_gpt2_saved')
+subdir2 = os.path.join(hparams['data_dir'], 'tf_gpt2_data')
 
 if not os.path.exists(subdir2):
     os.makedirs(subdir2)
