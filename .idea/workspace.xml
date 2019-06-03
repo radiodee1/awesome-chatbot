@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq_2_seq/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/do_split.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -48,7 +48,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="296">
@@ -78,13 +78,13 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="270">
-              <caret line="371" column="28" selection-start-line="371" selection-start-column="28" selection-end-line="371" selection-end-column="28" />
+            <state relative-caret-position="306">
+              <caret line="367" column="58" selection-start-line="367" selection-start-column="58" selection-end-line="367" selection-end-column="58" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="152">
@@ -111,7 +111,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/encoder.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="671">
+            <state relative-caret-position="2034">
               <caret line="116" column="5" selection-start-line="107" selection-end-line="116" selection-end-column="5" />
             </state>
           </provider>
@@ -211,12 +211,12 @@
         <option value="$PROJECT_DIR$/model/tf_gpt2_download_model.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_train.py" />
         <option value="$PROJECT_DIR$/model/README.md" />
-        <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
         <option value="$PROJECT_DIR$/model/do_split_run.sh" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_torch_convert.sh" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
+        <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
       </list>
     </option>
   </component>
@@ -575,38 +575,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train_run.sh">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/encoder.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="671">
-          <caret line="116" column="5" selection-start-line="107" selection-end-line="116" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train_run.sh" />
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2/gpt-2-samples/conditional.txt">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="152">
-          <caret line="27" column="53" selection-start-line="27" selection-start-column="53" selection-end-line="27" selection-end-column="53" />
-          <folding>
-            <element signature="e#92#107#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
@@ -627,13 +598,6 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="371" column="28" selection-start-line="371" selection-start-column="28" selection-end-line="371" selection-end-column="28" />
         </state>
       </provider>
     </entry>
@@ -658,10 +622,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor />
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/encoder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2034">
+          <caret line="116" column="5" selection-start-line="107" selection-end-line="116" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="296">
           <caret line="168" column="58" selection-start-line="168" selection-start-column="58" selection-end-line="168" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="367" column="58" selection-start-line="367" selection-start-column="58" selection-end-line="367" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="27" column="53" selection-start-line="27" selection-start-column="53" selection-end-line="27" selection-end-column="53" />
+          <folding>
+            <element signature="e#92#107#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

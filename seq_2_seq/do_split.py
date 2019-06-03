@@ -363,13 +363,13 @@ if __name__ == '__main__':
                         pass
 
                     elif arg_gpt2:
-                        #print('gpt2')
-                        src_gpt = line[0]
-                        tgt_gpt = line[1]
-                        src.write('Q: ' + src_gpt + '\n')
-                        src.write('A: ' + tgt_gpt + '\n')
-                        tgt.write('Q: ' + src_gpt + '\n')
-                        tgt.write('A: ' + tgt_gpt + '\n')
+                        if num % 2 == 0:
+                            src_gpt = line[0].capitalize()
+                            tgt_gpt = line[1].capitalize()
+                            src.write('Q: ' + src_gpt + '\n')
+                            src.write('A: ' + tgt_gpt + '\n')
+                            tgt.write('Q: ' + src_gpt + '\n')
+                            tgt.write('A: ' + tgt_gpt + '\n')
                         if False:
                             src_gpt = line[0]
                             tgt_gpt = ''
@@ -462,7 +462,11 @@ if __name__ == '__main__':
                             insert_xml(num, src, tgt, ques)
                             break
 
-                if arg_length != 0 and num > arg_start + arg_length:
+                if arg_length != 0 and num > arg_start + arg_length and not arg_gpt2:
+                    print('early stop')
+                    break
+
+                if arg_length != 0 and num // 2 > arg_start + arg_length and arg_gpt2:
                     print('early stop')
                     break
 
