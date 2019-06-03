@@ -10,7 +10,8 @@ Alternately you can use reddit dumps using `./do_make_reddit_download.sh` .
 For convenience the script `./model/do_split_run.sh` appears in this folder. You may have
 to move the ouput of the `do_split.py` file into the `./data` folder.
 
-* Make sure you have run the `./do_make_submodule_init.sh` script in the root directory.
+* Make sure you have run the `./do_make_submodule_init.sh` script in the root directory. Make sure you
+have looked at the `requirements.txt` folder and you have installed all the `pip3` packages you might need.
 
 * Move to the `model` subfolder.
 
