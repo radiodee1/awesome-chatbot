@@ -5,7 +5,6 @@
 * Download the movie dialog corpus with the script `./do_make_db_tab_from_cornell_movie.sh` . This will be the basis for your training corpus. 
 Alternately you can use reddit dumps using `./do_make_reddit_download.sh` .
 
-
 * Use `./seq_2_seq/do_split.py` for generating training data for training gpt2.
 For convenience the script `./model/do_split_run.sh` appears in this folder. You may have
 to move the ouput of the `do_split.py` file into the `./data` folder.
@@ -17,6 +16,9 @@ have looked at the `requirements.txt` folder and you have installed all the `pip
 
 * See that a checkpoint exists at `../data/tf_gpt2_data/` . You need this tensorflow checkpoint if you are going to do fine-tuning. You can 
 get this checkpoint also by running `./model/tf_gpt2_download_model.py` .
+
+* At this point you should be able to run the `./model/torch_pgt2_run_memory.py` file
+and test basic chatbot functionality.
 
 * Train the checkpoints further with `./model/tf_gpt2_train.py ` . This
 will put a new set of trained checkpoints at `../saved/tf_gpt2_saved/` . 
