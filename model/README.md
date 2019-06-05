@@ -9,6 +9,14 @@ Alternately you can use reddit dumps using `./do_make_reddit_download.sh` .
 For convenience the script `./model/do_split_run.sh` appears in this folder. You may have
 to move the ouput of the `do_split.py` file into the `./data` folder.
 
+```
+$ ./do_split_run.sh --filename ../../rc-movie.txt --to-gpt2 --length=500 --mode=train 
+$ cd ../..
+$ mv train.* awesome-chatbot/data/.
+$ cd awesome-chatbot/model
+```
+
+
 * Make sure you have run the `./do_make_submodule_init.sh` script in the root directory. Make sure you
 have looked at the `requirements.txt` folder and you have installed all the `pip3` packages you might need.
 
@@ -22,6 +30,11 @@ and test basic chatbot functionality.
 
 * Train the checkpoints further with `./model/tf_gpt2_train.py ` . This
 will put a new set of trained checkpoints at `../saved/tf_gpt2_saved/` . 
+
+```
+$ ./tf_gpt2_train.py --dataset ../data/train.from --learning_rate=0.00001 --sample_length=25 --run_name=run2 --stop_after=500
+```
+
 
 * Convert the newly trained checkpoints to a pytorch file using `./tf_gpt2_torch_convert.py`. 
 
