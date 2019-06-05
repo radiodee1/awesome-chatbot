@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/model/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,21 +16,12 @@
         <entry file="file://$PROJECT_DIR$/model/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="612">
-                <caret line="34" column="125" selection-start-line="34" selection-start-column="125" selection-end-line="34" selection-end-column="125" />
+              <first_editor relative-caret-position="484">
+                <caret line="29" selection-start-line="29" selection-end-line="29" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
               </second_editor>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3006">
-              <caret line="168" column="58" selection-start-line="168" selection-start-column="58" selection-end-line="168" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -270,6 +259,11 @@
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="raw" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="saved" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -379,7 +373,6 @@
     </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/seq_2_seq_dropout.py" />
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_train.py" />
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_sep.py" />
     <entry file="file://$PROJECT_DIR$/model/seq_2_seq_width.py" />
@@ -679,11 +672,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/raw/RC_2017-11">
+      <provider selected="true" editor-type-id="LargeFileEditor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="612">
-            <caret line="34" column="125" selection-start-line="34" selection-start-column="125" selection-end-line="34" selection-end-column="125" />
+          <first_editor relative-caret-position="484">
+            <caret line="29" selection-start-line="29" selection-end-line="29" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />

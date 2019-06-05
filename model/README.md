@@ -28,6 +28,11 @@ get this checkpoint also by running `./model/tf_gpt2_download_model.py` .
 * At this point you should be able to run the `./model/torch_pgt2_run_memory.py` file
 and test basic chatbot functionality.
 
+```
+$ ./torch_gpt2_run_memory.py 
+```
+
+
 * Train the checkpoints further with `./model/tf_gpt2_train.py ` . This
 will put a new set of trained checkpoints at `../saved/tf_gpt2_saved/` . 
 
@@ -38,7 +43,14 @@ $ ./tf_gpt2_train.py --dataset ../data/train.from --learning_rate=0.00001 --samp
 
 * Convert the newly trained checkpoints to a pytorch file using `./tf_gpt2_torch_convert.py`. 
 
+```
+$ ./tf_gpt2_torch_convert.py ../saved/tf_gpt2_saved/run2/model-30.data-00000-of-00001 ../saved/
+```
+
 * Run the `./torch_gpt2_run_memory.py` script and point the script at the new
 converted pytorch file. Use the `--source_file` option to do this. You should see
 a change in behaviour that reflects the training that you did.
 
+```
+$ ./torch_gpt2_run_memory.py --source_file ../saved/pytorch_model.bin 
+```
