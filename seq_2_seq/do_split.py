@@ -466,7 +466,7 @@ if __name__ == '__main__':
                     print('early stop')
                     break
 
-                if arg_length != 0 and num // 2 > arg_start + arg_length and arg_gpt2:
+                if arg_length != 0 and num  > arg_start + arg_length and arg_gpt2:
                     print('early stop')
                     break
 
