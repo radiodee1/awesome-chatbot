@@ -138,10 +138,17 @@ try:
 
         while cur_length == limit and (count_recorded < approximate_length + limit or approximate_length == 0):
 
-            df = pd.read_sql("SELECT * FROM parent_reply WHERE unix > {} and parent NOT NULL and score > 0 ORDER BY unix ASC LIMIT {}".format(last_unix,limit),connection)
+            if args['to_gpt2'] is True:
+                df = pd.read_sql("SELECT * FROM parent_reply WHERE  parent NOT NULL ORDER BY unix ASC LIMIT {}".format(limit),connection)
+            else:
+                df = pd.read_sql("SELECT * FROM parent_reply WHERE unix > {} and parent NOT NULL and score > 0 ORDER BY unix ASC LIMIT {}".format(last_unix,limit),connection)
 
             try:
-                last_unix = df.tail(1)['unix'].values[0]
+                print(df['unix'].values)
+                last_unix =df.tail(1)['unix'].values[0]
+                print(last_unix)
+                last_unix = df['unix'].values[0]
+
             except:
                 print('error')
 

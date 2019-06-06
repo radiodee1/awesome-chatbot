@@ -10,7 +10,7 @@ For convenience the script `./model/do_split_run.sh` appears in this folder. You
 to move the ouput of the `do_split.py` file into the `./data` folder.
 
 ```
-$ ./do_split_run.sh --filename ../../rc-movie.txt --to-gpt2 --length=500 --mode=train 
+$ ./do_split_run.sh --filename ../../rc-movie.txt --to-gpt2 --length=500 --mode=train.big --zip=chat_gpt2_movie
 $ cd ../..
 $ mv train.* awesome-chatbot/data/.
 $ cd awesome-chatbot/model

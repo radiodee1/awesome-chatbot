@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 import sys
 import itertools
+import argparse
 
 timeframe = 'raw/RC_2015-02'
 dbname = 'input'
@@ -16,6 +17,8 @@ replace_some_comments = False
 add_simple_question = False
 newlinechar = ' '
 #newlinechar = ' newlinechar '
+
+transaction_number = 1000
 
 connection = sqlite3.connect('{}.db'.format(dbname))
 c = connection.cursor()
@@ -29,8 +32,9 @@ def format_data(data):
 
 def transaction_bldr(sql):
     global sql_transaction
+    global transaction_number
     sql_transaction.append(sql)
-    if len(sql_transaction) > 1000:
+    if len(sql_transaction) > transaction_number:
         c.execute('BEGIN TRANSACTION')
         for s in sql_transaction:
             try:
@@ -106,7 +110,7 @@ def find_existing_score(pid):
     
 if __name__ == '__main__':
 
-
+    '''
     print(sys.argv)
 
     if len(sys.argv) > 1:
@@ -120,12 +124,39 @@ if __name__ == '__main__':
     paired_rows = 0
     xx = 16
 
+    
     if len(sys.argv) > 2:
         row_counter = int(sys.argv[2])
         start = row_counter
         print(start)
         print('this second arg is typically an integer val with five zeros.')
+    '''
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('infile',metavar='FILE',help='reddit input file.', type=str)
+    parser.add_argument('--start-row', metavar='ROW', help='starting row number.', type=int, required=False, default=0)
+    parser.add_argument('--transaction-limit', metavar='LIMIT', help='limit for transaction processing', type=int, required=False, default=1000)
+    args = parser.parse_args()
+
+    print(args)
+    print('NOTE:')
+    print('for small output dataset, prune input reddit file with "do_split.py" and then use this script for database.')
+
+    if args.infile is not None:
+        timeframe = str(args.infile)
+
+    create_table()
+    row_counter = 0
+    start = 0
+    paired_rows = 0
+    xx = 16
+
+    if args.start_row is not None:
+        row_counter = int(args.start_row)
+        start = row_counter
+
+    if args.transaction_limit is not None:
+        transaction_number = args.transaction_limit
 
     with open('{}'.format(timeframe), buffering=1000) as f:
         #for row in f:
@@ -181,4 +212,5 @@ if __name__ == '__main__':
                             
             if row_counter % 100000 == 0:
                 print('Total Rows Read: {}, Paired Rows: {}, Time: {}'.format(row_counter, paired_rows, str(datetime.now())))
-                
+
+            print(row_counter, paired_rows)
