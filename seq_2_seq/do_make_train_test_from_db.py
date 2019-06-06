@@ -33,6 +33,7 @@ parser.add_argument('--test-on-screen', help='test on screen', action='store_tru
 parser.add_argument('--subdevide', help='subdevide into batches', action='store_true')
 parser.add_argument('--only-one',help='record only one phrase for each question/answer.', action='store_true')
 parser.add_argument('--length', help='number of examples to process')
+parser.add_argument('--to-gpt2', help='no special tokens (eol, sol), etc.', action='store_true')
 args = parser.parse_args()
 args = vars(args)
 print(args)
@@ -65,6 +66,10 @@ if args['autoencode'] is True:
 if args['length'] is not None:
     approximate_length = int(args['length'])
 if args['only_one'] is not False: do_only_one_phrase = True
+
+if args['to_gpt2'] is True:
+    hparams['sol'] = ''
+    hparams['eol'] = ''
 
 batch_size = 64 #32 # 64 #256
 steps_per_stats = 100

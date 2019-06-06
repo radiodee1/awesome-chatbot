@@ -363,25 +363,14 @@ if __name__ == '__main__':
                         pass
 
                     elif arg_gpt2:
-                        if num % 2 == 0:
+                        if num % 2 == 0 :
                             src_gpt = line[0].capitalize()
                             tgt_gpt = line[1].capitalize()
-                            src.write('Q: ' + src_gpt + '\n')
+                            src.write('Q: ' + src_gpt + '\t')
                             src.write('A: ' + tgt_gpt + '\n')
-                            tgt.write('Q: ' + src_gpt + '\n')
+                            tgt.write('Q: ' + src_gpt + '\t')
                             tgt.write('A: ' + tgt_gpt + '\n')
-                        if False:
-                            src_gpt = line[0]
-                            tgt_gpt = ''
-                            tgt_gpt_list = tokenizer.encode(line[1]) # line[1].split(' ')
-                            for i in tgt_gpt_list:
-                                i = tokenizer.decode([i])
-                                tgt_gpt = i
-                                src.write(src_gpt + '\n')
-                                tgt.write(tgt_gpt + '\n')
-                                if arg_triplets:
-                                    ques.write(arg_question + '\n')
-                                src_gpt = src_gpt + ' ' + i
+
 
 
                     elif arg_stagger:
@@ -456,7 +445,7 @@ if __name__ == '__main__':
                             hist.write(args_end_string + '\n')
                         pass
 
-                if not arg_stagger:
+                if not arg_stagger and not arg_gpt2:
                     for i in xml_freq:
                         if num % i == 0:
                             insert_xml(num, src, tgt, ques)
@@ -466,8 +455,8 @@ if __name__ == '__main__':
                     print('early stop')
                     break
 
-                if arg_length != 0 and num  > arg_start + arg_length and arg_gpt2:
-                    print('early stop')
+                if arg_length != 0 and (num - arg_start) / 2 > arg_start + arg_length and arg_gpt2:
+                    print('early stop -- gpt2' , num)
                     break
 
                 num += 1
