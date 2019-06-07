@@ -169,7 +169,7 @@ class NMT:
             i = '\n\n' + self.q_string[0] + i.capitalize()
             s.append(i)
             self.prepare_common()
-            i = self.common + "\n\n" + ' '.join(s)
+            i = self.common + "\n\n" + ' ' +  ' '.join(s)
             print('',"+" * 10, '\n', i, '\n','+' * 10)
         i = self.prepare_input(i)
 
