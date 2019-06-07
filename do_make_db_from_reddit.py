@@ -136,6 +136,7 @@ if __name__ == '__main__':
     parser.add_argument('infile',metavar='FILE',help='reddit input file.', type=str)
     parser.add_argument('--start-row', metavar='ROW', help='starting row number.', type=int, required=False, default=0)
     parser.add_argument('--transaction-limit', metavar='LIMIT', help='limit for transaction processing', type=int, required=False, default=1000)
+    parser.add_argument('--length', metavar='LENGTH', help='number of pairs.',type=int, required=False, default=-1)
     args = parser.parse_args()
 
     print(args)
@@ -150,6 +151,7 @@ if __name__ == '__main__':
     start = 0
     paired_rows = 0
     xx = 16
+    row_total = -1
 
     if args.start_row is not None:
         row_counter = int(args.start_row)
@@ -157,6 +159,11 @@ if __name__ == '__main__':
 
     if args.transaction_limit is not None:
         transaction_number = args.transaction_limit
+
+    if args.length is not -1:
+        row_total = args.length
+        if args.length < transaction_number:
+            transaction_number = args.length
 
     with open('{}'.format(timeframe), buffering=1000) as f:
         #for row in f:
@@ -214,3 +221,6 @@ if __name__ == '__main__':
                 print('Total Rows Read: {}, Paired Rows: {}, Time: {}'.format(row_counter, paired_rows, str(datetime.now())))
 
             print(row_counter, paired_rows)
+
+            if row_total != -1 and paired_rows >= row_total:
+                break

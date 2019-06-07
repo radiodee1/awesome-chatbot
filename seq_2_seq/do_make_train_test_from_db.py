@@ -47,6 +47,7 @@ to_lower = False
 test_on_screen = False
 subdevide_into_batches = False
 do_babi = False
+do_gpt2 = False
 do_autoencode = False
 do_autoencode_context = False
 do_autoencode_question = False
@@ -70,6 +71,7 @@ if args['only_one'] is not False: do_only_one_phrase = True
 if args['to_gpt2'] is True:
     hparams['sol'] = ''
     hparams['eol'] = ''
+    do_gpt2 = True
 
 batch_size = 64 #32 # 64 #256
 steps_per_stats = 100
@@ -169,7 +171,54 @@ try:
                 print('skipping.')
                 break
 
-            if do_autoencode and do_babi and (count_recorded < approximate_length + limit or approximate_length == 0):
+            if do_gpt2 and (count_recorded < approximate_length + limit or approximate_length == 0):
+                tmp = ''
+                for i in range(len(content_parent)):
+
+                    tmp = format(content_parent[i])
+                    tmp += '\t ' + format(content_comment[i])
+                    #tmp = format(tmp , split_phrases=True, add_eol_only=True, only_one_phrase=do_only_one_phrase)
+
+                    tmpz = tmp.split('.')
+
+                    ## get last sentence ##
+                    #if len(tmpz) > 1: tmpz = tmpz[-2]
+                    #else: tmpz = ''
+
+                    z_len_1 = len(content_parent[i].split(' '))
+                    z_len_2 = len(content_comment[i].split(' '))
+
+
+                    if not test_done or (len(tmp) > 0 and z_len_1 > 0 and z_len_2 > 0 and
+                            (count_recorded < approximate_length + limit or approximate_length == 0)):
+
+                        if True:
+                            #tmp = tmpz # simplify autoencode situation
+                            if tmp.strip() == '':
+                                tmp = random.choice(choices)
+                                print('empty string found.')
+
+                        #if do_autoencode_context:
+
+                        src_list.append(tmp)
+                        #else: src_list.append('')
+
+                        #if do_autoencode_question:
+                        ques_list.append(tmp)
+                        #else: ques_list.append('')
+
+                        tgt_list.append(tmp)
+                        count_recorded += 1
+                    elif count_recorded >= approximate_length + limit and approximate_length != 0:
+                        print('last recorded.')
+                        break
+                    else:
+                        skip_num += 1
+                        print('skip one here!', skip_num)
+
+
+                pass
+            elif do_autoencode and do_babi and (count_recorded < approximate_length + limit or approximate_length == 0):
                 tmp = ''
                 assert do_autoencode_context is not do_autoencode_question
 
@@ -229,7 +278,17 @@ try:
                         print('last recorded.')
                         break
 
-            if not test_done and (count_recorded < approximate_length + limit or approximate_length == 0):
+            ## record values ##
+
+            if do_gpt2:
+                split = 0 #len(src_list)
+
+                with open('../raw/' + 'chat' + '_' + 'reddit_tab.txt', mode, encoding='utf8') as f:
+                    for content in src_list[split:]:  # df['parent'].values:
+                        #content = format(content) ## this removes tab chars!!
+                        f.write(str(content) + '\n')
+
+            elif not test_done and (count_recorded < approximate_length + limit or approximate_length == 0):
 
                 split = int(len(src_list) * 0.5)
 
@@ -327,7 +386,7 @@ except KeyboardInterrupt:
     pass
 finally:
 
-    if not test_on_screen:
+    if not test_on_screen  and not do_gpt2:
         s = 'mv ../raw/train* ../raw/test* ../raw/valid* ../data/.'
         print(s)
         os.system(s)
