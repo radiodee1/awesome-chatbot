@@ -1,4 +1,4 @@
-# Dataset Preperation and GPT2 Training
+# Movie Dataset Preperation and GPT2 Training
 
 * move to the root of the `awesome-chatbot` project.
 

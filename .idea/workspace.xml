@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/model/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/raw/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/raw/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,12 +14,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/raw/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="432">
-                <caret line="24" selection-start-line="24" selection-end-line="24" />
+              <first_editor relative-caret-position="1294">
+                <caret line="73" selection-start-line="73" selection-end-line="73" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -31,8 +32,8 @@
         <entry file="file://$PROJECT_DIR$/model/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="54">
-                <caret line="12" column="111" selection-start-line="12" selection-start-column="111" selection-end-line="12" selection-end-column="111" />
+              <first_editor relative-caret-position="666">
+                <caret line="55" column="3" lean-forward="true" selection-start-line="35" selection-end-line="55" selection-end-column="3" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -41,11 +42,14 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1414">
-              <caret line="157" column="28" selection-start-line="157" selection-start-column="20" selection-end-line="157" selection-end-column="28" />
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/seq_2_seq/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor />
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
             </state>
           </provider>
         </entry>
@@ -65,7 +69,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
+            <state relative-caret-position="3924">
               <caret line="224" column="35" selection-start-line="224" selection-start-column="35" selection-end-line="224" selection-end-column="35" />
               <folding>
                 <element signature="e#20#34#0" expanded="true" />
@@ -77,7 +81,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4248">
+            <state relative-caret-position="2773">
               <caret line="241" column="35" selection-start-line="241" selection-start-column="35" selection-end-line="241" selection-end-column="35" />
               <folding>
                 <element signature="e#26#41#0" expanded="true" />
@@ -139,7 +143,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>recent_in</find>
       <find>criterion</find>
       <find>wrapper_optimizer_1</find>
       <find>_make_optimizer</find>
@@ -169,6 +172,7 @@
       <find>sql_insert_replace_comment</find>
       <find>transaction_limit</find>
       <find>use_text_file</find>
+      <find>save_num</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -218,15 +222,15 @@
         <option value="$PROJECT_DIR$/model/tf_gpt2_download_model.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_train.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_torch_convert.sh" />
-        <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
         <option value="$PROJECT_DIR$/do_make_submodule_init.sh" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" />
         <option value="$PROJECT_DIR$/requirements.txt" />
         <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
         <option value="$PROJECT_DIR$/model/do_split_run.sh" />
-        <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/do_make_db_from_reddit.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py" />
+        <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
+        <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/raw/README.md" />
       </list>
     </option>
@@ -243,7 +247,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -298,6 +301,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -443,16 +447,6 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/seq_2_seq/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/babi/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
@@ -624,6 +618,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3060">
+          <caret line="171" column="43" selection-start-line="171" selection-start-column="43" selection-end-line="171" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_db_tab_from_cornell_movie.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1566">
@@ -634,12 +635,12 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
+    <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4248">
-          <caret line="241" column="35" selection-start-line="241" selection-start-column="35" selection-end-line="241" selection-end-column="35" />
+        <state relative-caret-position="3924">
+          <caret line="224" column="35" selection-start-line="224" selection-start-column="35" selection-end-line="224" selection-end-column="35" />
           <folding>
-            <element signature="e#26#41#0" expanded="true" />
+            <element signature="e#20#34#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -678,22 +679,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
-          <caret line="224" column="35" selection-start-line="224" selection-start-column="35" selection-end-line="224" selection-end-column="35" />
+        <state relative-caret-position="2773">
+          <caret line="241" column="35" selection-start-line="241" selection-start-column="35" selection-end-line="241" selection-end-column="35" />
           <folding>
-            <element signature="e#20#34#0" expanded="true" />
+            <element signature="e#26#41#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/raw/README.md">
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="432">
-            <caret line="24" selection-start-line="24" selection-end-line="24" />
-          </first_editor>
+          <first_editor />
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
@@ -703,8 +702,8 @@
     <entry file="file://$PROJECT_DIR$/model/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="54">
-            <caret line="12" column="111" selection-start-line="12" selection-start-column="111" selection-end-line="12" selection-end-column="111" />
+          <first_editor relative-caret-position="666">
+            <caret line="55" column="3" lean-forward="true" selection-start-line="35" selection-end-line="55" selection-end-column="3" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />
@@ -712,10 +711,15 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1414">
-          <caret line="157" column="28" selection-start-line="157" selection-start-column="20" selection-end-line="157" selection-end-column="28" />
+    <entry file="file://$PROJECT_DIR$/raw/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="1294">
+            <caret line="73" selection-start-line="73" selection-end-line="73" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
         </state>
       </provider>
     </entry>
