@@ -27,6 +27,17 @@ xml_list = []
 xml_freq = []
 root = None
 
+pronouns = [
+    'name',
+    'names',
+    #'my',
+    #'your',
+    #'his',
+    #'her',
+    #'their',
+
+]
+
 def add_to_xml(file):
     tree = ET.parse(file)
     root = tree.getroot()
@@ -77,6 +88,13 @@ def move_order(first, second):
         first = mid[:]
     return first, second
 
+def sentence_contains(sentence, words):
+    test = False
+    list_in = sentence.split()
+    for i in list_in:
+        if i.lower() in words: test = True
+    return test
+
 if __name__ == '__main__':
     tokenizer = None
 
@@ -99,6 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--from-mrpc', help='after mrpc is done', action='store_true')
     parser.add_argument('--to-mrpc', help='format file for later use with mrpc classifier.', action='store_true')
     parser.add_argument('--to-gpt2', help='format file for later use with gpt2.', action='store_true')
+    parser.add_argument('--filter-possessive', help='filter only possessive sentences for gpt2.', action='store_true')
 
     args = parser.parse_args()
     args = vars(args)
@@ -131,6 +150,8 @@ if __name__ == '__main__':
     arg_skip_num = 8
 
     arg_gpt2 = False
+    arg_filter_gpt2 = False
+    filter_num = 0
 
     arg_mode = hparams['train_name']
 
@@ -233,7 +254,7 @@ if __name__ == '__main__':
             exit()
         arg_classifier = "MRPC"
 
-    if args['to_gpt2']:
+    if args['to_gpt2'] or args['filter_possessive']:
         arg_gpt2 = True
         arg_processed = True
         arg_pairs = True
@@ -241,6 +262,8 @@ if __name__ == '__main__':
         tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
         arg_length = arg_length * 2
 
+    if args['filter_possessive']:
+        arg_filter_gpt2 = True
 
     if arg_classifier != "":
         arg_end_filename = ".output.tsv"
@@ -364,14 +387,19 @@ if __name__ == '__main__':
                         pass
 
                     elif arg_gpt2:
-                        if num % 2 == 0 :
-                            src_gpt = line[0].capitalize()
-                            tgt_gpt = line[1].capitalize()
-                            src.write('Q: ' + src_gpt + '\t')
-                            src.write('A: ' + tgt_gpt + '\n')
-                            tgt.write('Q: ' + src_gpt + '\t')
-                            tgt.write('A: ' + tgt_gpt + '\n')
-
+                        if num % 2 == 0 or arg_filter_gpt2:
+                            if (not arg_filter_gpt2 or
+                                    sentence_contains(line[0], pronouns) or
+                                    sentence_contains(line[1], pronouns)):
+                                src_gpt = line[0].capitalize()
+                                tgt_gpt = line[1].capitalize()
+                                src.write('Q: ' + src_gpt + '\t')
+                                src.write('A: ' + tgt_gpt + '\n')
+                                tgt.write('Q: ' + src_gpt + '\t')
+                                tgt.write('A: ' + tgt_gpt + '\n')
+                                if arg_filter_gpt2:
+                                    filter_num += 1
+                                    print(filter_num, num)
 
 
                     elif arg_stagger:
@@ -456,8 +484,12 @@ if __name__ == '__main__':
                     print('early stop')
                     break
 
-                if arg_length != 0 and (num - arg_start) > arg_start + arg_length and arg_gpt2:
+                if arg_length != 0 and (num - arg_start) > arg_start + arg_length and arg_gpt2 and not arg_filter_gpt2:
                     print('early stop -- gpt2' , num)
+                    break
+
+                if arg_length != 0 and (filter_num - arg_start) > arg_start + arg_length and arg_gpt2 and arg_filter_gpt2:
+                    print('early stop -- gpt2 filter' , filter_num)
                     break
 
                 num += 1

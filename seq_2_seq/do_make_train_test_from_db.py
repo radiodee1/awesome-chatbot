@@ -134,6 +134,7 @@ try:
         last_unix = 0
         cur_length = limit
         counter = 0
+        counter_occur = 0
         test_done = False
         pull_num = 0
         mode = 'w'
@@ -146,10 +147,10 @@ try:
                 df = pd.read_sql("SELECT * FROM parent_reply WHERE unix > {} and parent NOT NULL and score > 0 ORDER BY unix ASC LIMIT {}".format(last_unix,limit),connection)
 
             try:
-                print(df['unix'].values)
+                #print(df['unix'].values)
                 last_unix =df.tail(1)['unix'].values[0]
-                print(last_unix)
-                last_unix = df['unix'].values[0]
+                #print(last_unix)
+                #last_unix = df['unix'].values[0]
 
             except:
                 print('error')
@@ -198,7 +199,10 @@ try:
                                 tmp = random.choice(choices)
                                 print('empty string found.')
 
-                        #if do_autoencode_context:
+                        l_list = tmp.split()
+                        if 'name' in l_list:
+                            counter_occur += 1
+                            #print(tmp)
 
                         src_list.append(tmp)
                         #else: src_list.append('')
@@ -288,6 +292,8 @@ try:
                         #content = format(content) ## this removes tab chars!!
                         f.write(str(content) + '\n')
 
+                mode = 'a'
+
             elif not test_done and (count_recorded < approximate_length + limit or approximate_length == 0):
 
                 split = int(len(src_list) * 0.5)
@@ -374,12 +380,16 @@ try:
                                 f.write(str(content) + '\n')
                         pass
 
-                mode = 'a'
+                if not do_gpt2: mode = 'a'
 
             counter += 1
             if counter > 3 and test_on_screen: exit()
             if counter % limit == 0 or True:
-                print(counter * limit, limit, counter, 'rows/iters completed so far')
+                print(counter * limit, limit, counter, 'rows/iters completed so far', end=' ')
+                if do_gpt2:
+                    print('-' ,counter_occur, '"name" mentioned')
+                else:
+                    print()
 
 except KeyboardInterrupt:
     print()
