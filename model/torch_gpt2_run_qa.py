@@ -98,8 +98,8 @@ class NMT:
         self.name = 'Jane'
 
         if True:
-            self.q_string = [ 'Q: ', 'Q :']
-            self.a_string = [ 'A: ', 'A :', self.name+':']
+            self.q_string = [ 'Q: ', 'Q :', 'Question: ', 'Question :']
+            self.a_string = [ 'A: ', 'A :', self.name+':', 'Answer: ', 'Answer :']
 
     def setup_for_interactive(self):
         self.get_args()
@@ -118,8 +118,8 @@ class NMT:
 
     def prepare_common(self):
         self.common = ''
-        a_chars = '' #self.a_string[0]
-        q_chars = self.q_string[0]
+        a_chars = '\n' # self.a_string[0]
+        q_chars = '\n' # self.q_string[0]
 
         now = datetime.datetime.now()
         time = now.strftime("%I:%M %p")
@@ -142,17 +142,16 @@ class NMT:
         ]## doesn't work??
 
         #self.common += self.a_string[0] + 'I am ' + self.a_string[0] + '. \n '
-        self.common += a_chars + 'My name is ' + name + '.\n '
-        self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
-        self.common += a_chars + 'My job is as a ' + profession + '.\n '
-        self.common += a_chars + "I am in " + location + '. \n'
-        #self.common += a_chars + "'Hello' is a good salutation. \n"
+        self.common += q_chars + 'What is your name?\t' + a_chars + 'My name is ' + name + '.\n '
+        self.common += q_chars + 'What time is it?\t' + a_chars + 'The time is ' + time + ' ' + date + '.\n '
+        self.common += q_chars + 'What is your job?\t' + a_chars + 'My job is as a ' + profession + '.\n '
+        self.common += q_chars + 'Where are you?\t' + a_chars + "I am in " + location + '. \n'
         if self.args.apps and False:
             self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
 
     def get_sentence(self, i):
-        a_chars = '' # self.a_string[0]
-        q_chars = '' # self.q_string[0]
+        a_chars = '\n' #self.a_string[0]
+        q_chars = '\n' #self.q_string[0]
 
         if self.gather_sentences:
             self.recent_in = i
@@ -162,12 +161,13 @@ class NMT:
             for k in self.previous_sentences:
                 k = k.strip().strip('..')
                 if not k.endswith('?'):
-                    k = a_chars + k + '.\n'
+                    k =  k + '.\n\n'
                 else:
                     k = q_chars + k + '\n'
                     pass
                 s.append(k)
-            i = '\n\n' + self.q_string[0] + i.capitalize() # + '\n' + self.a_string[0]
+            i = '\n\n' + ' '+ i.capitalize()
+            i += '\n' + ' '
             s.append(i)
             self.prepare_common()
             i = self.common + "\n\n" + ' ' +  ' '.join(s)
@@ -184,8 +184,8 @@ class NMT:
 
         ## if you want to launch apps !!
         if self.args.apps is True:
-            if self.commands.is_command(self.recent_in): # self.previous_sentences[-2]):
-                self.commands.do_command(self.recent_in) # self.previous_sentences[-2])
+            if self.commands.is_command(self.recent_in): #
+                self.commands.do_command(self.recent_in) #
                 self.previous_sentences = []
         return text
 
@@ -204,13 +204,16 @@ class NMT:
     def prepare_input(self, i):
         self.random_seed()
 
-        if not self.gather_sentences or True:
+        if not self.gather_sentences and False:
             i = self.q_string[0] + i + '?'
         else:
             i = i + "?"
-        return i
+        return ' ' + i
 
     def prepare_output(self, i):
+        q_chars = '\n\n'
+        a_chars = '\n '
+
         char_end = ['?','!']
         contains_junk = False
         char_junk = [i for i in '{[]}@$%^&#']
@@ -277,8 +280,9 @@ class NMT:
 
             #if self.recent_in.strip() + '?' not in self.previous_sentences:
             #    self.previous_sentences.append(self.recent_in.strip() + "?")
-            if i.strip() + '.' not in self.previous_sentences:
-                self.previous_sentences.append(i.strip() + ".")
+            mem = q_chars + self.recent_in.strip().capitalize() + '?\t'+ a_chars+ i.strip().capitalize() + '.\n'
+            if mem not in self.previous_sentences:
+                self.previous_sentences.append(mem)
         return i
 
     #########################################
