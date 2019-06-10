@@ -90,7 +90,10 @@ class NMT:
         self.previous_sentences = []
         self.gather_sentences = True
         self.recent_in = ''
+        self.recent_text = ''
         self.save_num = 10
+        self.save_on_failure = True
+        self.use_common = True
 
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
@@ -98,8 +101,8 @@ class NMT:
         self.name = 'Jane'
 
         if True:
-            self.q_string = [ 'Q: ', 'Q :']
-            self.a_string = [ 'A: ', 'A :', self.name+':']
+            self.q_string = [ 'Q: ', 'Q :', 'Q.']
+            self.a_string = [ 'A: ', 'A :', self.name+':', 'A.']
 
     def setup_for_interactive(self):
         self.get_args()
@@ -146,7 +149,6 @@ class NMT:
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
         self.common += a_chars + "I am in " + location + '. \n'
-        #self.common += a_chars + "'Hello' is a good salutation. \n"
         if self.args.apps and False:
             self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
 
@@ -154,7 +156,7 @@ class NMT:
         a_chars = '' # self.a_string[0]
         q_chars = '' # self.q_string[0]
 
-        if self.gather_sentences:
+        if self.use_common:
             self.recent_in = i
             if self.save_num > -1:
                 self.previous_sentences = self.previous_sentences[-self.save_num:]
@@ -176,6 +178,7 @@ class NMT:
 
         self.args.text = i
         text = self.text_generator()
+        self.recent_text = text
 
         if not self.args.quiet or True: print(text)
 
@@ -275,10 +278,13 @@ class NMT:
 
             i = re.sub('[?!]', ' ', i)
 
-            #if self.recent_in.strip() + '?' not in self.previous_sentences:
-            #    self.previous_sentences.append(self.recent_in.strip() + "?")
-            if i.strip() + '.' not in self.previous_sentences:
-                self.previous_sentences.append(i.strip() + ".")
+            if self.recent_in.strip() + '?' not in self.previous_sentences:
+                self.previous_sentences.append(self.recent_in.strip() + "?")
+            #if i.strip() + '.' not in self.previous_sentences:
+            #    self.previous_sentences.append(i.strip() + ".")
+            elif self.save_on_failure:
+                self.recent_text = re.sub('[\n]',' ', self.recent_text)
+                self.previous_sentences.append(self.recent_text + '\n')
         return i
 
     #########################################

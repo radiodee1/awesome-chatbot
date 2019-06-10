@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -40,7 +39,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_qa.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
+            <state relative-caret-position="3024">
               <caret line="169" column="27" selection-start-line="169" selection-start-column="27" selection-end-line="169" selection-end-column="27" />
             </state>
           </provider>
@@ -49,8 +48,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="116">
-              <caret line="148" column="9" selection-start-line="148" selection-start-column="9" selection-end-line="148" selection-end-column="9" />
+            <state relative-caret-position="638">
+              <caret line="283" column="13" selection-start-line="283" selection-start-column="13" selection-end-line="283" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -132,7 +131,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>enable_choose_command</find>
       <find>q_string</find>
       <find>tokenize_weak</find>
       <find>train_main</find>
@@ -162,6 +160,7 @@
       <find>arg_length</find>
       <find>do_gpt2</find>
       <find>a_chars</find>
+      <find>gather_sentences</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -661,6 +660,13 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_qa.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3024">
+          <caret line="169" column="27" selection-start-line="169" selection-start-column="27" selection-end-line="169" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3528">
@@ -715,17 +721,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_qa.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
-          <caret line="169" column="27" selection-start-line="169" selection-start-column="27" selection-end-line="169" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="116">
-          <caret line="148" column="9" selection-start-line="148" selection-start-column="9" selection-end-line="148" selection-end-column="9" />
+        <state relative-caret-position="638">
+          <caret line="283" column="13" selection-start-line="283" selection-start-column="13" selection-end-line="283" selection-end-column="13" />
         </state>
       </provider>
     </entry>
