@@ -92,7 +92,7 @@ class NMT:
         self.recent_in = ''
         self.recent_text = ''
         self.save_num = 10
-        self.save_on_failure = True
+        self.save_on_failure = False
         self.use_common = True
 
         self.q_string = ['Q: ']
