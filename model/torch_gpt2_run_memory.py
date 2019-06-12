@@ -50,6 +50,7 @@ from GPT2.encoder import Encoder
 from model.nmt_commands import Commands
 
 realpath = os.path.dirname(os.path.realpath(__file__))
+endoftext = '<|endoftext|>'
 
 class Lang:
     def __init__(self, name, limit=None):
@@ -92,7 +93,7 @@ class NMT:
         self.recent_in = ''
         self.recent_text = ''
         self.save_num = 10
-        self.save_on_failure = False
+        self.save_on_failure = True
         self.use_common = True
 
         self.q_string = ['Q: ']
@@ -161,7 +162,7 @@ class NMT:
             if self.save_num > -1:
                 self.previous_sentences = self.previous_sentences[-self.save_num:]
             s = []
-            for k in self.previous_sentences:
+            for k in self.previous_sentences :
                 k = k.strip().strip('..')
                 if not k.endswith('?'):
                     k = a_chars + k + '.\n'
@@ -169,7 +170,8 @@ class NMT:
                     k = q_chars + k + '\n'
                     pass
                 s.append(k)
-            i = '\n\n' + self.q_string[0] + i.capitalize() # + '\n' + self.a_string[0]
+            
+            i =  '\n\n' + self.q_string[0] + i.capitalize()  # + '\n' + endoftext
             s.append(i)
             self.prepare_common()
             i = self.common + "\n\n" + ' ' +  ' '.join(s)
@@ -183,6 +185,7 @@ class NMT:
         if not self.args.quiet or True: print(text)
 
         text = self.prepare_output(text)
+        text = re.sub(endoftext, '', text)
         print(text,"<")
 
         ## if you want to launch apps !!
@@ -207,7 +210,7 @@ class NMT:
     def prepare_input(self, i):
         self.random_seed()
 
-        if not self.gather_sentences or True:
+        if True:
             i = self.q_string[0] + i + '?'
         else:
             i = i + "?"
@@ -284,6 +287,9 @@ class NMT:
             #    self.previous_sentences.append(i.strip() + ".")
             elif self.save_on_failure:
                 self.recent_text = re.sub('[\n]',' ', self.recent_text)
+                l = self.a_string + self.q_string
+                for k in l:
+                    self.recent_text = re.sub(k, '', self.recent_text)
                 self.previous_sentences.append(self.recent_text + '\n')
         return i
 
