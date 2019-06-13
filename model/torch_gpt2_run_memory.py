@@ -93,7 +93,7 @@ class NMT:
         self.recent_in = ''
         self.recent_text = ''
         self.save_num = 10
-        self.save_on_failure = True
+        self.save_on_failure = False
         self.use_common = True
 
         self.q_string = ['Q: ']
@@ -281,15 +281,16 @@ class NMT:
 
             i = re.sub('[?!]', ' ', i)
 
-            if self.recent_in.strip() + '?' not in self.previous_sentences:
-                self.previous_sentences.append(self.recent_in.strip() + "?")
+            #if self.recent_in.strip() + '?' not in self.previous_sentences or True:
 
-            elif self.save_on_failure:
-                self.recent_text = re.sub('[\n]',' ', self.recent_text)
-                l = self.a_string + self.q_string
-                for k in l:
-                    self.recent_text = re.sub(k, '', self.recent_text)
-                self.previous_sentences.append(self.recent_text + '\n')
+            self.previous_sentences.append(self.recent_in.strip() + "? " + i)
+
+            #elif self.save_on_failure:
+            #    self.recent_text = re.sub('[\n]',' ', self.recent_text)
+            #    l = self.a_string + self.q_string + ['Q.', 'A.']
+            #    for k in l:
+            #        self.recent_text = re.sub(k, '', self.recent_text)
+            #    self.previous_sentences.append(self.recent_in.strip() + '?' + self.recent_text + '\n')
         return i
 
     #########################################

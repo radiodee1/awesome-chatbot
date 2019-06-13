@@ -40,8 +40,20 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
           <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="620">
+              <caret line="292" column="13" selection-start-line="292" selection-start-column="13" selection-end-line="292" selection-end-column="13" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
+          <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="260">
-              <caret line="286" column="37" selection-start-line="286" selection-start-column="22" selection-end-line="286" selection-end-column="37" />
+              <caret line="102" column="30" selection-start-line="102" selection-start-column="23" selection-end-line="102" selection-end-column="30" />
+              <folding>
+                <element signature="e#92#107#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -123,7 +135,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>tokenize_weak</find>
       <find>train_main</find>
       <find>hp</find>
       <find>get_encoder</find>
@@ -152,6 +163,7 @@
       <find>do_gpt2</find>
       <find>a_chars</find>
       <find>gather_sentences</find>
+      <find>context</find>
       <find>save_on_failure</find>
     </findStrings>
   </component>
@@ -227,6 +239,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -274,7 +287,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -547,16 +559,6 @@
     <entry file="file://$PROJECT_DIR$/do_make_unpack_text.sh">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="50" column="79" selection-start-line="50" selection-start-column="75" selection-end-line="50" selection-end-column="79" />
-          <folding>
-            <element signature="e#92#107#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
@@ -688,10 +690,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
-          <caret line="286" column="37" selection-start-line="286" selection-start-column="22" selection-end-line="286" selection-end-column="37" />
+          <caret line="102" column="30" selection-start-line="102" selection-start-column="23" selection-end-line="102" selection-end-column="30" />
+          <folding>
+            <element signature="e#92#107#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="620">
+          <caret line="292" column="13" selection-start-line="292" selection-start-column="13" selection-end-line="292" selection-end-column="13" />
         </state>
       </provider>
     </entry>
