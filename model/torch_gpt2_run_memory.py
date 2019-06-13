@@ -170,11 +170,11 @@ class NMT:
                     k = q_chars + k + '\n'
                     pass
                 s.append(k)
-            
+
             i =  '\n\n' + self.q_string[0] + i.capitalize()  # + '\n' + endoftext
             s.append(i)
             self.prepare_common()
-            i = self.common + "\n\n" + ' ' +  ' '.join(s)
+            i = self.common + "\n" + "\n" + ' ' +  ' '.join(s)
             print('',"+" * 10, '\n', i, '\n','+' * 10)
         i = self.prepare_input(i)
 
@@ -283,8 +283,7 @@ class NMT:
 
             if self.recent_in.strip() + '?' not in self.previous_sentences:
                 self.previous_sentences.append(self.recent_in.strip() + "?")
-            #if i.strip() + '.' not in self.previous_sentences:
-            #    self.previous_sentences.append(i.strip() + ".")
+
             elif self.save_on_failure:
                 self.recent_text = re.sub('[\n]',' ', self.recent_text)
                 l = self.a_string + self.q_string
