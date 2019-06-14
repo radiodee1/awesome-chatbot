@@ -190,9 +190,9 @@ class NMT:
 
         ## if you want to launch apps !!
         if self.args.apps is True:
-            if self.commands.is_command(self.recent_in): # self.previous_sentences[-2]):
-                self.commands.do_command(self.recent_in) # self.previous_sentences[-2])
-                self.previous_sentences = []
+            if self.commands.is_command(self.recent_in):
+                self.commands.do_command(self.recent_in)
+                #self.previous_sentences = []
         return text
 
     def loop(self):
