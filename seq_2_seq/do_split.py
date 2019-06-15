@@ -328,7 +328,7 @@ if __name__ == '__main__':
         z_ques.close()
         z_tgt.close()
 
-    exit()
+        exit()
 
     if not arg_processed :
         if arg_length <= 0 and arg_classifier == "":
