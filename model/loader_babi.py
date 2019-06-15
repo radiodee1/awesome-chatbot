@@ -2,7 +2,7 @@
 from __future__ import unicode_literals, print_function, division
 
 import sys
-#sys.path.append('..')
+sys.path.append('..')
 from io import open
 import unicodedata
 import string
@@ -23,6 +23,7 @@ import json
 import cpuinfo
 from settings import hparams
 import tokenize_weak
+from model.torch_gpt2_run_memory import NMT as gpt2
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
 import numpy as np
@@ -135,594 +136,10 @@ hparams['layers'] = 1
 hparams['pytorch_embed_size'] = hparams['units']
 #hparams['dropout'] = 0.3
 
+hparams['split_sentences'] = False
+
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-################# pytorch modules ###############
-
-class CustomGRU(nn.Module):
-    def __init__(self, input_size, hidden_size):
-        super(CustomGRU, self).__init__()
-        self.hidden_size = hidden_size
-        self.Wr = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.Wr.state_dict()['weight'])
-        self.Ur = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.Ur.state_dict()['weight'])
-        self.W = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.W.state_dict()['weight'])
-        self.U = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.U.state_dict()['weight'])
-
-        self.Wz = nn.Linear(input_size, hidden_size)
-        init.xavier_normal_(self.Wz.state_dict()['weight'])
-        self.Uz = nn.Linear(hidden_size, hidden_size)
-        init.xavier_normal_(self.Uz.state_dict()['weight'])
-
-    def forward(self, fact, C, g=None):
-
-
-        r = F.sigmoid(self.Wr(fact) + self.Ur(C))
-        h_tilda = F.tanh(self.W(fact) + r * self.U(C))
-
-        if g is None:
-            z = F.sigmoid(self.Wz( fact) + self.Uz( C) )
-            zz = z * C + (1 - z) * h_tilda
-        else:
-            zz = g * h_tilda + (1-g) * C
-            #print(zz.size(),'zz')
-        #zz = z * C + (1 - z) * h_tilda
-        return zz, zz
-
-class EpisodicAttn(nn.Module):
-
-    def __init__(self,  hidden_size, a_list_size=4, dropout=0.3):
-        super(EpisodicAttn, self).__init__()
-
-        self.hidden_size = hidden_size
-        self.a_list_size = a_list_size
-        self.batch_size = hparams['batch_size']
-        self.c_list_z = None
-
-        self.out_a = nn.Linear( a_list_size * hidden_size,hidden_size,bias=True)
-        init.xavier_normal_(self.out_a.state_dict()['weight'])
-
-        self.out_b = nn.Linear( hidden_size, 1, bias=True)
-        init.xavier_normal_(self.out_b.state_dict()['weight'])
-
-        self.dropout = nn.Dropout(dropout)
-
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        #print('reset')
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
-            #print('here...')
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-    def forward(self,concat_list):
-
-        ''' attention list '''
-        self.c_list_z = concat_list
-
-        self.c_list_z = self.dropout(self.c_list_z)
-        l_1 = self.out_a(self.c_list_z)
-
-
-        l_1 = F.tanh(l_1) ## <---- this line? used to be tanh !!
-
-        l_2 = self.out_b( l_1)
-
-        self.G = l_2 #* F.softmax(l_2, dim=1)
-
-        return self.G
-
-
-class MemRNN(nn.Module):
-    def __init__(self, hidden_size, dropout=0.3):
-        super(MemRNN, self).__init__()
-        self.hidden_size = hidden_size
-        self.dropout1 = nn.Dropout(dropout) # this is just for if 'nn.GRU' is used!!
-        #self.gru = nn.GRU(hidden_size, hidden_size,dropout=0, num_layers=1, batch_first=False,bidirectional=False)
-        self.gru = CustomGRU(hidden_size,hidden_size)
-        self.reset_parameters()
-
-    def reset_parameters(self):
-        #print('reset')
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
-            #print('here...')
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-    def prune_tensor(self, input, size):
-        if len(input.size()) < size:
-            input = input.unsqueeze(0)
-        if len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
-
-    def forward(self, input, hidden=None, g=None):
-
-        output, hidden_out = self.gru(input, hidden, g)
-
-        return output, hidden_out
-
-class Encoder(nn.Module):
-    def __init__(self, source_vocab_size, embed_dim, hidden_dim,
-                 n_layers, dropout=0.3, bidirectional=False, embedding=None, position=False, sum_bidirectional=True, batch_first=False):
-        super(Encoder, self).__init__()
-        self.hidden_dim = hidden_dim
-        self.n_layers = n_layers
-        self.bidirectional = bidirectional
-        self.position = position
-        self.sum_bidirectional = sum_bidirectional
-        self.embed = None
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=bidirectional, batch_first=batch_first)
-
-        self.dropout = nn.Dropout(dropout)
-        self.reset_parameters()
-
-        if embedding is not None:
-            self.embed = embedding
-            print('embedding encoder')
-
-    def reset_parameters(self):
-        #print('reset')
-        stdv = 1.0 / math.sqrt(self.hidden_dim)
-        for weight in self.parameters():
-            #print('here...')
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-    def load_embedding(self, embedding):
-        self.embed = embedding
-
-    def test_embedding(self, num=None):
-        if num is None:
-            num = 55 # magic number for testing
-        e = self.embed(num)
-        print(e.size(), 'test embedding')
-        print(e[0,0,0:10]) # print first ten values
-
-    def sum_output(self, output):
-        if self.bidirectional and self.sum_bidirectional:
-            e1 = output[0, :, :self.hidden_dim]
-            e2 = output[0, :, self.hidden_dim:]
-            output = e1 + e2  #
-            output = output.unsqueeze(0)
-        return output
-
-    def position_encoding(self, embedded_sentence, permute_sentence=False):
-        if permute_sentence: embedded_sentence = embedded_sentence.permute(1,0,2) ## <<-- switch focus of fusion from sentence to word
-
-        _, slen, elen = embedded_sentence.size()
-
-        slen2 = slen
-        elen2 = elen
-        if slen == 1: slen2 += 0.01
-        if elen == 1: elen2 += 0.01
-
-        l = [[(1 - s / (slen2 - 1)) - (e / (elen2 - 1)) * (1 - 2 * s / (slen2 - 1)) for e in range(elen)] for s in
-             range(slen)]
-        l = torch.FloatTensor(l)
-        l = l.unsqueeze(0)  # for #batch
-        #print(l.size(),"l", l)
-        l = l.expand_as(embedded_sentence)
-        if hparams['cuda'] is True: l = l.cuda()
-        weighted = embedded_sentence * Variable(l)
-
-        return weighted
-
-    def list_encoding(self, lst, hidden, permute_sentence=False):
-        l = []
-
-        for i in lst:
-            #print(i)
-            embedded = self.embed(i)
-            #print(embedded.size(),'list')
-            l.append(embedded.permute(1,0,2))
-        embedded = torch.cat(l, dim=0) # dim=0
-
-        if len(l) == 1: permute_sentence=True
-
-        embedded = self.position_encoding(embedded, permute_sentence=permute_sentence)
-        #print(embedded.size(),'emb1')
-        embedded = torch.sum(embedded, dim=1)
-        #print(embedded.size(),'emb2')
-        embedded = embedded.unsqueeze(0)
-        embedded = self.dropout(embedded)
-
-        hidden = None # Variable(torch.zeros(zz, slen, elen))
-        encoder_out, encoder_hidden = self.gru(embedded, hidden)
-
-        #print(encoder_out.size(), 'e-out')
-
-        encoder_out = self.sum_output(encoder_out)
-
-        #print(encoder_out.size(),'list')
-        return encoder_out, encoder_hidden
-
-    def forward(self, source, hidden=None):
-
-        if self.position:
-            if isinstance(source, list):
-                return self.list_encoding(source, hidden)
-            else:
-                #print(source.size(),'src')
-                return self.list_encoding([source], hidden, permute_sentence=True)
-
-        embedded = self.embed(source)
-
-
-        embedded = self.dropout(embedded)
-
-
-        encoder_out, encoder_hidden = self.gru( embedded, hidden)
-
-
-        encoder_out = self.sum_output(encoder_out)
-
-        return encoder_out, encoder_hidden
-
-class AnswerModule(nn.Module):
-    def __init__(self, vocab_size, hidden_size, dropout=0.3):
-        super(AnswerModule, self).__init__()
-        self.hidden_size = hidden_size
-        self.vocab_size = vocab_size
-        self.batch_size = hparams['batch_size']
-
-        self.out_a = nn.Linear(hidden_size * 2 , vocab_size, bias=True)
-        init.xavier_normal_(self.out_a.state_dict()['weight'])
-
-        #self.out_b = nn.Linear(vocab_size, vocab_size,bias=True)
-        #init.xavier_normal_(self.out_b.state_dict()['weight'])
-
-        self.dropout = nn.Dropout(dropout)
-
-    def reset_parameters(self):
-
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
-
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-    def forward(self, mem, question_h):
-
-        #question_h = question_h.unsqueeze(0)
-        mem = mem.permute(1,0,2)
-        question_h = question_h.permute(1,0,2)
-        #print(question_h.size(), mem.size(), 'q,m')
-
-        mem = torch.cat([mem, question_h], dim=2)
-
-        mem = self.dropout(mem)
-        mem = mem.squeeze(0)#.permute(1,0)#.squeeze(0)
-
-        out = self.out_a(mem)
-
-        return out.permute(1,0)
-
-#################### Wrapper ####################
-
-class WrapMemRNN(nn.Module):
-    def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
-                 freeze_embedding=False, embedding=None, print_to_screen=False):
-        super(WrapMemRNN, self).__init__()
-        self.hidden_size = hidden_size
-        self.n_layers = n_layers
-        self.do_babi = do_babi
-        self.print_to_screen = print_to_screen
-        self.bad_token_lst = bad_token_lst
-        self.embedding = embedding
-        self.freeze_embedding = freeze_embedding
-        self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
-        position = hparams['split_sentences']
-        gru_dropout = dropout * 0.0 #0.5
-
-        self.embed = nn.Embedding(vocab_size,hidden_size,padding_idx=1)
-
-        self.model_1_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=dropout,
-                                   embedding=self.embed, bidirectional=True, position=position,
-                                   batch_first=True)
-        self.model_2_enc = Encoder(vocab_size, embed_dim, hidden_size, n_layers, dropout=gru_dropout,
-                                   embedding=self.embed, bidirectional=False, position=False, sum_bidirectional=False,
-                                   batch_first=True)
-
-        self.model_3_mem = MemRNN(hidden_size, dropout=dropout)
-        self.model_4_att = EpisodicAttn(hidden_size, dropout=gru_dropout)
-        self.model_5_ans = AnswerModule(vocab_size, hidden_size,dropout=dropout)
-
-        self.next_mem = nn.Linear(hidden_size * 3, hidden_size)
-        #init.xavier_normal_(self.next_mem.state_dict()['weight'])
-
-        self.input_var = None  # for input
-        #self.q_var = None  # for question
-        self.answer_var = None  # for answer
-        #self.q_q = None  # extra question
-        self.q_q_last = None # question
-        self.inp_c = None  # extra input
-        self.inp_c_seq = None
-        self.all_mem = None
-        self.last_mem = None  # output of mem unit
-        self.prediction = None  # final single word prediction
-        self.memory_hops = hparams['babi_memory_hops']
-        #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
-
-        self.reset_parameters()
-
-        if self.embedding is not None:
-            self.load_embedding(self.embedding)
-        self.share_embedding()
-
-        if self.freeze_embedding or self.embedding is not None:
-            self.new_freeze_embedding()
-        #self.criterion = nn.CrossEntropyLoss()
-
-        pass
-
-    def load_embedding(self, embedding):
-        #embedding = np.transpose(embedding,(1,0))
-        e = torch.from_numpy(embedding)
-        #e = e.permute(1,0)
-        self.embed.weight.data.copy_(e) #torch.from_numpy(embedding))
-
-    def share_embedding(self):
-        self.model_1_enc.load_embedding(self.embed)
-        self.model_2_enc.load_embedding(self.embed)
-
-    def reset_parameters(self):
-        stdv = 1.0 / math.sqrt(self.hidden_size)
-        for weight in self.parameters():
-
-            weight.data.uniform_(-stdv, stdv)
-            if len(weight.size()) > 1:
-                init.xavier_normal_(weight)
-
-        init.uniform_(self.embed.state_dict()['weight'], a=-(3**0.5), b=3**0.5)
-        init.xavier_normal_(self.next_mem.state_dict()['weight'])
-
-    def forward(self, input_variable, question_variable, target_variable, criterion=None):
-
-        self.new_input_module(input_variable, question_variable)
-        self.new_episodic_module()
-        outputs,  ans = self.new_answer_module_simple()
-
-        return outputs, None, ans, None
-
-    def new_freeze_embedding(self, do_freeze=True):
-        self.embed.weight.requires_grad = not do_freeze
-        self.model_1_enc.embed.weight.requires_grad = not do_freeze # False
-        self.model_2_enc.embed.weight.requires_grad = not do_freeze # False
-        print('freeze embedding')
-        pass
-
-    def test_embedding(self, num=None):
-        #print('encoder 1:')
-        #self.model_1_enc.test_embedding(num)
-        #print('encoder 2:')
-        #self.model_2_enc.test_embedding(num)
-
-        if num is None:
-            num = 55  # magic number for testing = garden
-        e = self.embed(num)
-        print('encoder 0:')
-        print(e.size(), 'test embedding')
-        print(e[0, 0, 0:10])  # print first ten values
-
-    def new_input_module(self, input_variable, question_variable):
-
-        prev_h1 = []
-
-        for ii in input_variable:
-
-            ii = self.prune_tensor(ii, 2)
-            #print(ii, 'ii')
-            out1, hidden1 = self.model_1_enc(ii, None)
-            #out1 = F.tanh(out1)
-            prev_h1.append(out1)
-
-
-        self.inp_c_seq = prev_h1
-        self.inp_c = prev_h1[-1]
-
-        #prev_h2 = [None]
-        prev_h3 = []
-
-        for ii in question_variable:
-            ii = self.prune_tensor(ii, 2)
-
-            out2, hidden2 = self.model_2_enc(ii, None) #, prev_h2[-1])
-
-            #prev_h2.append(out2)
-            prev_h3.append(hidden2)
-
-        #self.q_q = prev_h2[1:] # hidden2[:,-1,:]
-        self.q_q_last = prev_h3
-        #for i in self.q_q_last: print(i.size())
-        #exit()
-        return
-
-
-    def new_episodic_module(self):
-        if True:
-
-            mem_list = []
-
-            sequences = self.inp_c_seq
-
-            for i in range(len(sequences)):
-
-                z = self.q_q_last[i].clone()
-                m_list = [z]
-
-                #zz = self.prune_tensor(z.clone(), 3)
-                zz = Variable(torch.zeros(1,1,self.hidden_size))
-
-                index = 0
-                for iter in range(self.memory_hops):
-
-                    x = self.new_attention_step(sequences[i], None, m_list[iter + index], self.q_q_last[i])
-
-                    if self.print_to_screen and self.training:
-                        print(x.permute(1,0,2),'x -- after', len(x), sequences[i].size())
-                        print(self.prune_tensor(self.q_q_last[i], 3) ) # == self.prune_tensor(self.q_q[i][:,-1,:], 3))
-                        #exit()
-
-                    e, _ = self.new_episode_small_step(sequences[i], x, zz, m_list[-1], self.q_q_last[i])
-
-                    out = self.prune_tensor(e, 3)
-
-                    m_list.append(out)
-
-                mem_list.append(m_list[self.memory_hops])
-
-            mm_list = torch.cat(mem_list, dim=0)
-
-            self.last_mem = mm_list
-
-            if self.print_to_screen: print(self.last_mem,'lm')
-
-        return None
-
-    def new_episode_small_step(self, ct, g, prev_h, prev_mem=None, question=None):
-
-        assert len(ct.size()) == 3
-        bat, sen, emb = ct.size()
-
-        #print(sen,'sen')
-
-        last = [prev_h]
-
-        #ep = []
-        for iii in range(sen):
-
-            #index = 0 #- 1
-            c = ct[0,iii,:].unsqueeze(0)
-
-            ggg = g[iii,0,0]
-
-            out, gru = self.model_3_mem(self.prune_tensor(c, 3), self.prune_tensor(last[iii], 3), ggg)
-
-            last.append(gru) # gru <<--- this is supposed to be the hidden value
-
-        #q_index = question.size()[1] - 1
-
-        concat = [
-            self.prune_tensor(prev_mem, 1),
-            self.prune_tensor(out, 1),
-            self.prune_tensor(question,1)#[0, q_index, :], 1)
-        ]
-        #print(question.size(),sen,'ques')
-        #for i in concat: print(i.size())
-        #exit()
-        concat = torch.cat(concat, dim=0)
-        #print(concat.size(),'con')
-        h = self.next_mem(concat)
-
-        h = F.relu(h)
-
-        return h, gru # h, gru
-
-
-
-    def new_attention_step(self, ct, prev_g, mem, q_q):
-
-        q_q = self.prune_tensor(q_q,3)
-        mem = self.prune_tensor(mem,3)
-
-        assert len(ct.size()) == 3
-        bat, sen, emb = ct.size()
-
-        #print(q_q.size(), sen,'len q')
-
-        att = []
-        for iii in range(sen):
-            c = ct[0,iii,:]
-            c = self.prune_tensor(c, 3)
-
-            qq = self.prune_tensor(q_q, 3)
-
-            #qq_single = qq[:,-1, self.hidden_size:]
-
-            #qq = qq[:,-1,:].unsqueeze(0)
-
-            concat_list = [
-                #c,
-                #mem,
-                #qq,
-                (c * qq),
-                (c * mem),
-                torch.abs(c - qq) ,
-                torch.abs(c - mem)
-            ]
-            #for ii in concat_list: print(ii.size())
-            #for ii in concat_list: print(ii)
-            #exit()
-
-            concat_list = torch.cat(concat_list, dim=2)
-
-            att.append(concat_list)
-
-        att = torch.cat(att, dim=0)
-
-        z = self.model_4_att(att)
-        #print(z.size())
-
-        z = F.softmax(z, dim=0)
-
-        return z
-
-    def prune_tensor(self, input, size):
-        if isinstance(input, list): return input
-        if input is None: return input
-        while len(input.size()) < size:
-            input = input.unsqueeze(0)
-        while len(input.size()) > size:
-            input = input.squeeze(0)
-        return input
-
-    def new_answer_module_simple(self):
-        #outputs
-
-        ## if not all questions are the same size ##
-        #q = [i[:,-1,:] for i in self.q_q]
-        #for i in q: print(i.size())
-        q = self.q_q_last
-
-        q_q = torch.cat(q, dim=0)
-        q_q = self.prune_tensor(q_q, 3)
-
-        #print(self.last_mem.size(), q_q.size(),'qq')
-
-        mem = self.prune_tensor(self.last_mem, 3)
-
-        ansx = self.model_5_ans(mem, q_q)
-
-        #print(ansx.size() , ansx,'ansx')
-        if self.print_to_screen and False:
-            print(ansx, 'ansx printed')
-            print(ansx.size(), 'ansx')
-            vocab, sen = ansx.size()
-            aa = torch.argmax(ansx, dim=0)
-            print(aa.size(),'aa')
-            for i in range(sen):
-                zz = aa[i]
-                z = ansx[:, i]
-                a = torch.argmax(z, dim=0)
-                print(a.item(), zz.item())
-            print('----')
-        #ans = torch.argmax(ansx,dim=1)#[0]
-
-
-        return [None], ansx
-
-        pass
 
 ######################## end pytorch modules ####################
 
@@ -787,6 +204,7 @@ class NMT:
         self.time_str = ''
         self.time_elapsed_num = 0
         self.time_elapsed_str = ''
+        self.gpt_source_file = ''
 
         ''' used by auto-stop function '''
         self.epochs_since_adjustment = 0
@@ -867,6 +285,7 @@ class NMT:
         parser.add_argument('--decay', help='weight decay.')
         parser.add_argument('--hops', help='babi memory hops.')
         parser.add_argument('--no-sample', help='Print no sample text on the screen.', action='store_true')
+        parser.add_argument('--source_file', help='pass file path to gpt2 class.')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -936,6 +355,10 @@ class NMT:
         if self.args['decay'] is not None: hparams['weight_decay'] = float(self.args['decay'])
         if self.args['hops'] is not None: hparams['babi_memory_hops'] = int(self.args['hops'])
         if self.args['no_sample'] is True: self.do_sample_on_screen = False
+        if self.args['source_file'] is not None:
+            self.gpt_source_file = str(self.args['source_file'])
+            pass
+
         if self.printable == '': self.printable = hparams['base_filename']
         if hparams['cuda']: torch.set_default_tensor_type('torch.cuda.FloatTensor')
 
@@ -1262,6 +685,8 @@ class NMT:
 
 
     def indexesFromSentence(self,lang, sentence):
+        return sentence
+        ###################
         s = sentence.split(' ')
         sent = []
         for word in s:
@@ -1299,15 +724,17 @@ class NMT:
             g = self.variablesFromPair(i)
             #print(g[0])
             if not hparams['split_sentences']:
-                g1.append(g[0].squeeze(1))
+                g1.append(g[0])
             else:
                 g1.append(g[0])
-            g2.append(g[1].squeeze(1))
-            g3.append(g[2].squeeze(1))
+            g2.append(g[1])
+            g3.append(g[2])
 
         return (g1, g2, g3)
 
     def variableFromSentence(self,lang, sentence, add_eol=False):
+        return sentence
+        ########################
         indexes = self.indexesFromSentence(lang, sentence)
         if add_eol: indexes.append(EOS_token)
         result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
@@ -1362,10 +789,10 @@ class NMT:
                     'epoch':0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_0_wra.state_dict(),
+                    'state_dict': '', #self.model_0_wra.state_dict(),
                     'best_prec1': None,
-                    'optimizer': self.opt_1.state_dict(),
-                    'best_loss': self.best_loss,
+                    'optimizer': '' , #self.opt_1.state_dict(),
+                    'best_loss': '', #self.best_loss,
                     'long_term_loss' : self.long_term_loss,
                     'tag': self.tag,
                     'score': self.score
@@ -1377,7 +804,7 @@ class NMT:
                     'epoch': 0,
                     'start': self.start,
                     'arch': None,
-                    'state_dict': self.model_0_wra.state_dict(),
+                    'state_dict': '', #self.model_0_wra.state_dict(),
                     'best_prec1': None,
                     'optimizer': None , # self.opt_1.state_dict(),
                     'best_loss': self.best_loss,
@@ -1419,11 +846,12 @@ class NMT:
             os.system('cp ' + update + ' ' + basename + '.best.pth')
 
     def load_checkpoint(self, filename=None):
+        disable_load = True
         if self.first_load:
             self.first_load = False
             basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth'
             if filename is not None: basename = filename
-            if os.path.isfile(basename):
+            if os.path.isfile(basename) and not disable_load:
                 print("loading checkpoint '{}'".format(basename))
                 checkpoint = torch.load(basename)
                 #print(checkpoint)
@@ -1487,6 +915,7 @@ class NMT:
                 print("no checkpoint found at '"+ basename + "'")
 
     def _make_optimizer(self):
+        if self.do_test_not_train: return None
         print('new optimizer', hparams['learning_rate'])
         parameters = filter(lambda p: p.requires_grad, self.model_0_wra.parameters())
         return optim.Adam(parameters, lr=hparams['learning_rate'],weight_decay=hparams['weight_decay'])
@@ -1703,6 +1132,11 @@ class NMT:
             #self.model_0_wra.model_4_att.dropout.p = p
             self.model_0_wra.model_5_ans.dropout.p = p
 
+    def _first_sentence(self, input):
+        if len(input.split('.') ) > 1:
+            return input.split('.')[0] + ' .'
+        else:
+            return input
 
     #######################################
 
@@ -1711,9 +1145,14 @@ class NMT:
         if criterion is not None:
             wrapper_optimizer.zero_grad()
             self.model_0_wra.train()
-            outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                  criterion)
 
+            print('no training right now.')
+            exit()
+
+            #outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+
+            ans = self.model_0_wra.get_sentence(input_variable[0] + '\n ' + question_variable[0])
+            ans = self._first_sentence(ans)
             if self.do_batch_process:
                 target_variable = torch.cat(target_variable,dim=0)
                 ans = ans.permute(1,0)
@@ -1735,11 +1174,14 @@ class NMT:
         else:
             #self.model_0_wra.eval()
             with torch.no_grad():
-                self.model_0_wra.eval()
-                outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable,
-                                                      criterion)
+                #self.model_0_wra.eval()
+                #outputs, _, ans, _ = self.model_0_wra(input_variable, question_variable, target_variable, criterion)
+                outputs = None
+                print(input_variable, question_variable)
+                ans = self.model_0_wra.get_sentence(input_variable[0] + '\n ' + question_variable[0])
+                ans = self._first_sentence(ans)
                 loss = None
-                ans = ans.permute(1,0)
+                #ans = ans.permute(1,0)
 
             #self._test_embedding()
 
@@ -1791,9 +1233,10 @@ class NMT:
 
             #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
-            for param_group in self.opt_1.param_groups:
-                print(param_group['lr'], 'lr')
-            print(self.output_lang.n_words, 'num words')
+            if not self.do_test_not_train:
+                for param_group in self.opt_1.param_groups:
+                    print(param_group['lr'], 'lr')
+                print(self.output_lang.n_words, 'num words')
 
         print(self.train_fr,'loaded file')
 
@@ -1801,8 +1244,8 @@ class NMT:
 
         if self.do_load_babi:
             if self.do_test_not_train:
-                self.model_0_wra.eval()
-
+                #self.model_0_wra.eval()
+                pass
             else:
                 self.model_0_wra.train()
 
@@ -1846,15 +1289,16 @@ class NMT:
                                             None, None, criterion)
             num_count += 1
 
-            if self.do_load_babi:
+            if self.do_load_babi: # and False:
+                print(ans)
+                #for i in range(len(target_variable)):
+                o_val = ans.split()[-2] # torch.argmax(ans[i], dim=0).item() #[0]
+                t_val = target_variable[0] #[i].item()
 
-                for i in range(len(target_variable)):
-                    o_val = torch.argmax(ans[i], dim=0).item() #[0]
-                    t_val = target_variable[i].item()
-
-                    if int(o_val) == int(t_val):
-                        num_right += 1
-                        num_right_small += 1
+                print(o_val, t_val)
+                if o_val == t_val:
+                    num_right += 1
+                    num_right_small += 1
 
                 if self.do_batch_process: num_tot += temp_batch_size
                 else: num_tot += 1
@@ -1989,7 +1433,7 @@ class NMT:
             question_variable = question
             if not self.do_load_babi: sos_token = question_variable
 
-        if True:
+        if False:
             if hparams['split_sentences'] is not True:
                 input_variable = [input_variable.squeeze(0).squeeze(0).permute(1, 0).squeeze(0)]
             else:
@@ -2000,40 +1444,45 @@ class NMT:
 
         #print(question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0).size(),'iv')
 
-        self.model_0_wra.eval()
+        #self.model_0_wra.eval()
         with torch.no_grad():
-            outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
-
+            #outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
+            ans = self.model_0_wra.get_sentence(input_variable[0] + '\n ' + question_variable[0])
                 #[input_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
                 #                                   [question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
                 #                                   [sos_token.squeeze(0).squeeze(0).squeeze(0)],
                 #                                   None)
-
+            ans = self._first_sentence(ans)
         outputs = [ans]
         #####################
 
         decoded_words = []
-        for di in range(len(outputs)):
 
-            output = outputs[di] #.permute(1,0)
+        if False:
+            for di in range(len(outputs)):
 
-            output = output.permute(1,0)#torch.cat(output, dim=0)
+                output = outputs[di] #.permute(1,0)
 
-            ni = torch.argmax(output, dim=1)[0] # = next_words[0][0]
+                output = output.permute(1,0)#torch.cat(output, dim=0)
 
-            if int(ni) == int(EOS_token):
-                xxx = hparams['eol']
-                decoded_words.append(xxx)
-                print('eol found.')
-                if True: break
-            else:
-                if di < 4:
-                    print(int(ni), self.output_lang.index2word[int(ni)])
-                if di == 5 and len(outputs) > 5:
-                    print('...etc')
-                decoded_words.append(self.output_lang.index2word[int(ni)])
+                ni = torch.argmax(output, dim=1)[0] # = next_words[0][0]
 
+                if int(ni) == int(EOS_token):
+                    xxx = hparams['eol']
+                    decoded_words.append(xxx)
+                    print('eol found.')
+                    if True: break
+                else:
+                    if di < 4:
+                        print(int(ni), self.output_lang.index2word[int(ni)])
+                    if di == 5 and len(outputs) > 5:
+                        print('...etc')
+                    decoded_words.append(self.output_lang.index2word[int(ni)])
 
+        if len(outputs[0].split(' ')) > 1:
+            decoded_words.append(outputs[0].split(' ')[-2])
+        else:
+            decoded_words.append('')
         return decoded_words, None #decoder_attentions[:di + 1]
 
 
@@ -2063,11 +1512,22 @@ class NMT:
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-
+        '''
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size,layers,
                                       dropout=dropout,do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen)
+        '''
+        sys.argv = sys.argv[:1]
+        if self.gpt_source_file != '':
+            sys.argv += ['--source_file']
+            sys.argv += [self.gpt_source_file]
+        self.model_0_wra = gpt2()
+        self.model_0_wra.setup_for_interactive()
+        self.model_0_wra.save_on_failure = False
+        self.model_0_wra.gather_sentences = False
+        self.model_0_wra.use_common = False
+
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2086,11 +1546,22 @@ class NMT:
         layers = hparams['layers']
         dropout = hparams['dropout']
         pytorch_embed_size = hparams['pytorch_embed_size']
-
+        '''
         self.model_0_wra = WrapMemRNN(self.input_lang.n_words, pytorch_embed_size, self.hidden_size, layers,
                                       dropout=dropout, do_babi=self.do_load_babi,
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen)
+        '''
+        sys.argv = sys.argv[:1]
+        if self.gpt_source_file != '':
+            sys.argv += ['--source_file']
+            sys.argv += [self.gpt_source_file]
+        self.model_0_wra = gpt2()
+        self.model_0_wra.setup_for_interactive()
+        self.model_0_wra.save_on_failure = False
+        self.model_0_wra.gather_sentences = False
+        self.model_0_wra.use_common = False
+
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -2177,11 +1648,22 @@ if __name__ == '__main__':
         if False:
             for i in word_lst: token_list.append(n.output_lang.word2index[i])
 
+        '''
         n.model_0_wra = WrapMemRNN(n.vocab_lang.n_words, pytorch_embed_size, n.hidden_size,layers,
                                    dropout=dropout, do_babi=n.do_load_babi, bad_token_lst=token_list,
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen)
-
+        '''
+        sys.argv = sys.argv[:1]
+        print(sys.argv)
+        if n.gpt_source_file != '':
+            sys.argv += ['--source_file']
+            sys.argv += [n.gpt_source_file]
+        n.model_0_wra = gpt2()
+        n.model_0_wra.setup_for_interactive()
+        n.model_0_wra.save_on_failure = False
+        n.model_0_wra.gather_sentences = False
+        n.model_0_wra.use_common = False
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
         #exit()
