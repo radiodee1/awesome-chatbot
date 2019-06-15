@@ -4,6 +4,7 @@
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/loader_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/loader_babi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq_2_seq/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/do_split.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,21 +15,9 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3924">
-              <caret line="224" column="35" selection-start-line="224" selection-start-column="35" selection-end-line="224" selection-end-column="35" />
-              <folding>
-                <element signature="e#20#34#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1756">
+            <state relative-caret-position="3474">
               <caret line="194" column="17" selection-start-line="194" selection-start-column="17" selection-end-line="194" selection-end-column="17" />
             </state>
           </provider>
@@ -46,11 +35,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/loader_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
-              <caret line="142" selection-start-line="142" selection-end-line="142" />
+            <state relative-caret-position="314">
+              <caret line="1296" column="38" selection-start-line="1296" selection-start-column="38" selection-end-line="1296" selection-end-column="38" />
               <folding>
                 <element signature="e#21#86#0" expanded="true" />
               </folding>
@@ -61,7 +50,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3528">
+            <state relative-caret-position="1531">
               <caret line="204" column="29" selection-start-line="204" selection-start-column="29" selection-end-line="204" selection-end-column="29" />
               <folding>
                 <element signature="e#21#35#0" expanded="true" />
@@ -71,10 +60,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-121">
+              <caret line="194" column="4" selection-start-line="194" selection-start-column="4" selection-end-line="194" selection-end-column="4" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6912">
-              <caret line="389" selection-start-line="389" selection-end-line="389" />
+            <state relative-caret-position="439">
+              <caret line="311" column="50" selection-start-line="311" selection-start-column="50" selection-end-line="311" selection-end-column="50" />
               <folding>
                 <element signature="e#26#41#0" expanded="true" />
               </folding>
@@ -135,7 +133,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>sql_insert_complete</find>
       <find>last_unix</find>
       <find>to_gpt2</find>
       <find>format</find>
@@ -161,10 +158,11 @@
       <find>variableFromSentence</find>
       <find>split_sentences</find>
       <find>indexesFromSentence</find>
-      <find>model_0_wra</find>
       <find>get_sentence</find>
       <find>_first_sentence</find>
       <find>WrapMemRNN</find>
+      <find>model_0_wra</find>
+      <find>ques</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -220,15 +218,15 @@
         <option value="$PROJECT_DIR$/model/README.md" />
         <option value="$PROJECT_DIR$/raw/README.md" />
         <option value="$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py" />
-        <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_qa.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
         <option value="$PROJECT_DIR$/model/loader_babi.py" />
+        <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="536" />
+    <option name="x" value="537" />
     <option name="y" value="37" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -239,7 +237,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -287,6 +284,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -330,7 +328,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="536" y="37" width="1380" height="999" extended-state="0" />
+    <frame x="537" y="37" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -364,11 +362,6 @@
             <element signature="e#197#206#0" expanded="true" />
           </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4405" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_make_movie_download.sh">
@@ -633,32 +626,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3474">
+          <caret line="194" column="17" selection-start-line="194" selection-start-column="17" selection-end-line="194" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1692">
           <caret line="102" column="30" selection-start-line="102" selection-start-column="23" selection-end-line="102" selection-end-column="30" />
           <folding>
             <element signature="e#92#107#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3528">
-          <caret line="204" column="29" selection-start-line="204" selection-start-column="29" selection-end-line="204" selection-end-column="29" />
-          <folding>
-            <element signature="e#21#35#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6912">
-          <caret line="389" selection-start-line="389" selection-end-line="389" />
-          <folding>
-            <element signature="e#26#41#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -697,19 +677,39 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+    <entry file="file://$PROJECT_DIR$/model/loader_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1756">
-          <caret line="194" column="17" selection-start-line="194" selection-start-column="17" selection-end-line="194" selection-end-column="17" />
+        <state relative-caret-position="314">
+          <caret line="1296" column="38" selection-start-line="1296" selection-start-column="38" selection-end-line="1296" selection-end-column="38" />
+          <folding>
+            <element signature="e#21#86#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/loader_babi.py">
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
-          <caret line="142" selection-start-line="142" selection-end-line="142" />
+        <state relative-caret-position="1531">
+          <caret line="204" column="29" selection-start-line="204" selection-start-column="29" selection-end-line="204" selection-end-column="29" />
           <folding>
-            <element signature="e#21#86#0" expanded="true" />
+            <element signature="e#21#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-121">
+          <caret line="194" column="4" selection-start-line="194" selection-start-column="4" selection-end-line="194" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/do_split.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="439">
+          <caret line="311" column="50" selection-start-line="311" selection-start-column="50" selection-end-line="311" selection-end-column="50" />
+          <folding>
+            <element signature="e#26#41#0" expanded="true" />
           </folding>
         </state>
       </provider>

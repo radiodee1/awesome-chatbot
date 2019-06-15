@@ -1290,12 +1290,16 @@ class NMT:
             num_count += 1
 
             if self.do_load_babi: # and False:
-                print(ans)
-                #for i in range(len(target_variable)):
-                o_val = ans.split()[-2] # torch.argmax(ans[i], dim=0).item() #[0]
+                print(ans.split(), '< ans')
+                if len(ans.split()) > 2:
+                    o_val = ans.split()[-2]
+                elif len(ans.split()) > 1:
+                    o_val = ans.split()[-1]
+                else:
+                    o_val = ''
                 t_val = target_variable[0] #[i].item()
 
-                print(o_val, t_val)
+                print('o:',o_val,'t:', t_val)
                 if o_val == t_val:
                     num_right += 1
                     num_right_small += 1
@@ -1448,10 +1452,7 @@ class NMT:
         with torch.no_grad():
             #outputs, _, ans , _ = self.model_0_wra( input_variable, question_variable, sos_token, None)
             ans = self.model_0_wra.get_sentence(input_variable[0] + '\n ' + question_variable[0])
-                #[input_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
-                #                                   [question_variable.squeeze(0).squeeze(0).permute(1,0).squeeze(0)],
-                #                                   [sos_token.squeeze(0).squeeze(0).squeeze(0)],
-                #                                   None)
+
             ans = self._first_sentence(ans)
         outputs = [ans]
         #####################

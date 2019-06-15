@@ -106,7 +106,7 @@ if __name__ == '__main__':
     parser.add_argument('--triplets',help='record triplets', action='store_true')
     parser.add_argument('--pairs', help='record pairs', action='store_true')
     parser.add_argument('--dummy-question', help='record single dummy question')
-    parser.add_argument('--mode', help='"test", "train", or "valid" - "test.big" and "test.babi" allowed (default = "train")')
+    parser.add_argument('--mode', help='"test", "train", or "valid" - "test.big" allowed (default = "train")')
     parser.add_argument('--zip-file', help='name of zip file to archive to')
     parser.add_argument('--autoencode', help='setup files for autoencode operation. Set as percentage.')
     parser.add_argument('--stagger', help='stagger input for P.O.S.-style training.', action='store_true')
@@ -117,6 +117,7 @@ if __name__ == '__main__':
     parser.add_argument('--from-mrpc', help='after mrpc is done', action='store_true')
     parser.add_argument('--to-mrpc', help='format file for later use with mrpc classifier.', action='store_true')
     parser.add_argument('--to-gpt2', help='format file for later use with gpt2.', action='store_true')
+    parser.add_argument('--babi-for-gpt2', help='train gpt2 for training with babi synthetic data set.', action='store_true')
     parser.add_argument('--filter-possessive', help='filter only possessive sentences for gpt2.', action='store_true')
 
     args = parser.parse_args()
@@ -149,6 +150,7 @@ if __name__ == '__main__':
     arg_from_mrpc = False
     arg_skip_num = 8
 
+    arg_babi_for_gpt2 = False
     arg_gpt2 = False
     arg_filter_gpt2 = False
     filter_num = 0
@@ -195,10 +197,10 @@ if __name__ == '__main__':
         arg_mode = str(args['mode'])
         arg_processed = True
         if arg_mode != 'train' and arg_mode != 'test' and arg_mode != 'valid':
-            if arg_mode != 'train.babi' and arg_mode != 'test.babi' and arg_mode != 'valid.babi':
-                if arg_mode != 'train.big' and arg_mode != 'test.big' and arg_mode != 'valid.big':
-                    print('bad mode')
-                    exit()
+            #if arg_mode != 'train.babi' and arg_mode != 'test.babi' and arg_mode != 'valid.babi':
+            if arg_mode != 'train.big' and arg_mode != 'test.big' and arg_mode != 'valid.big':
+                print('bad mode')
+                exit()
 
     if args['zip_file'] is not None:
         arg_zip = str(args['zip_file'])
@@ -265,11 +267,68 @@ if __name__ == '__main__':
     if args['filter_possessive']:
         arg_filter_gpt2 = True
 
+    if args['babi_for_gpt2']:
+        arg_babi_for_gpt2 = True
+
     if arg_classifier != "":
         arg_end_filename = ".output.tsv"
 
     #########
     arg_destination = arg_filename + arg_end_filename #'.output.txt'
+
+    if arg_babi_for_gpt2:
+
+        mode_b = 'babi' #arg_mode.split('.')[-1]
+        filename_l = arg_filename.split('/')[-1].split('.')[0]
+        if mode_b != 'babi':
+            print('bad mode - input must be "babi", output must be "big"')
+            exit()
+
+        url = arg_destination.split('/')
+        url = '/'.join(url[0:-1])
+        print(url, filename_l, mode_b)
+        print(url + '/' + filename_l + '.' + mode_b + '.from')
+
+        z_src = open(url + '/' + filename_l + '.' + mode_b + '.from' ,'r')
+        z_ques = open(url+ '/' + filename_l + '.' + mode_b + '.ques', 'r')
+        z_tgt = open(url + '/' + filename_l + '.' + mode_b + '.to'  , 'r')
+        file_z_src = z_src.readlines()
+        file_z_ques = z_ques.readlines()
+        file_z_tgt = z_tgt.readlines()
+        print('open ques/tgt files')
+
+        arg_destination_context = url + '/' + arg_mode + '.' + hparams['src_ending']
+        arg_destination_target = url + '/' + arg_mode + '.' + hparams['tgt_ending']
+        arg_destination_question = url + '/' + arg_mode + '.' + hparams['question_ending']
+
+        src = open(arg_destination_context, 'w')
+        ques = open(arg_destination_question, 'w')
+        tgt = open(arg_destination_target, 'w')
+
+        for i in range(len(file_z_src)):
+            print(i)
+
+            src_gpt = file_z_src[i].strip() + ' '
+            ques_gpt = file_z_ques[i].strip() + '? '
+            tgt_gpt = 'the ' + file_z_tgt[i].strip() + ' .'
+            src.write(src_gpt + ' ')
+            src.write(ques_gpt + ' ')
+            src.write(' ' + tgt_gpt + '\n')
+
+            ques.write(src_gpt + ' ')
+            ques.write(ques_gpt + ' ')
+            ques.write(' ' + tgt_gpt + '\n')
+
+            tgt.write(src_gpt + ' ')
+            tgt.write(ques_gpt + ' ')
+            tgt.write(' ' + tgt_gpt + '\n')
+
+        src.close()
+        z_src.close()
+        z_ques.close()
+        z_tgt.close()
+
+    exit()
 
     if not arg_processed :
         if arg_length <= 0 and arg_classifier == "":
@@ -330,6 +389,7 @@ if __name__ == '__main__':
 
         with open(arg_filename, 'r') as z:
             num = 0
+
             src = open(arg_destination_context, 'w')
             tgt = open(arg_destination_target, 'w')
             arg_filelist.append(arg_destination_context.split('/')[-1])
@@ -400,6 +460,7 @@ if __name__ == '__main__':
                                 if arg_filter_gpt2:
                                     filter_num += 1
                                     print(filter_num, num)
+
 
 
                     elif arg_stagger:
