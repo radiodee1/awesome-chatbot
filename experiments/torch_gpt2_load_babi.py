@@ -689,24 +689,7 @@ class NMT:
     def indexesFromSentence(self,lang, sentence):
         return sentence
         ###################
-        s = sentence.split(' ')
-        sent = []
-        for word in s:
-            if word in lang.word2index:
-                if word == hparams['eol']: word = EOS_token
-                elif word == hparams['sol']: word = SOS_token
-                else: word = lang.word2index[word]
-                sent.append(word)
-            elif not self.do_hide_unk:
-                sent.append(lang.word2index[hparams['unk']])
-        if len(sent) >= MAX_LENGTH and not self.do_load_babi:
-            sent = sent[:MAX_LENGTH]
-            sent[-1] = EOS_token
-        if self.do_load_babi and False:
-            sent.append(EOS_token)
-            #print(sent,'<<<<')
-        if len(sent) == 0: sent.append(0)
-        return sent
+
 
         #return [lang.word2index[word] for word in sentence.split(' ')]
 
@@ -737,14 +720,7 @@ class NMT:
     def variableFromSentence(self,lang, sentence, add_eol=False):
         return sentence
         ########################
-        indexes = self.indexesFromSentence(lang, sentence)
-        if add_eol: indexes.append(EOS_token)
-        result = Variable(torch.LongTensor(indexes).unsqueeze(1))#.view(-1, 1))
-        #print(result.size(),'r')
-        if hparams['cuda']:
-            return result.cuda()
-        else:
-            return result
+        
 
     def variablesFromPair(self,pair):
         if hparams['split_sentences'] :
