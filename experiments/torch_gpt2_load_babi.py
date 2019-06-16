@@ -3,6 +3,8 @@ from __future__ import unicode_literals, print_function, division
 
 import sys
 sys.path.append('..')
+sys.path.append('../model/')
+sys.path.append('../model/torch_gpt2/')
 from io import open
 import unicodedata
 import string
@@ -21,8 +23,8 @@ import math
 import argparse
 import json
 import cpuinfo
-from settings import hparams
-import tokenize_weak
+from model.settings import hparams
+import model.tokenize_weak
 from model.torch_gpt2_run_memory import NMT as gpt2
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
