@@ -720,7 +720,7 @@ class NMT:
     def variableFromSentence(self,lang, sentence, add_eol=False):
         return sentence
         ########################
-        
+
 
     def variablesFromPair(self,pair):
         if hparams['split_sentences'] :
