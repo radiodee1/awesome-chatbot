@@ -53,7 +53,7 @@ parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=1023,
 parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Generate this many samples')
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 
-parser.add_argument('--val_dataset', metavar='PATH', type=str, default=None, help='Dataset for validation loss, defaults to --dataset.')
+parser.add_argument('--val_dataset', metavar='PATH', type=str, default='../data/valid.from', help='Dataset for validation loss, defaults to --dataset.')
 parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=2, help='Batch size for validation.')
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=40, help='Number of batches for validation.')
 parser.add_argument('--val_every', metavar='STEPS', type=int, default=0, help='Calculate validation loss every STEPS steps.')
@@ -171,8 +171,22 @@ def main():
         data_sampler = Sampler(chunks)
         if args.val_every > 0:
             val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
+            n = args.val_dataset.split('/')
+            base = '.'.join( n[-1].split('.')[:-1])
+            path = '/'.join(n[:-1]) + '/'
+            #print(n,'n', path, 'p', base, 'base')
+            from_name = base + '.from'
+            to_name = base + '.to'
+            ques_name = base + '.ques'
+            #print(path + from_name,'name from')
+            val_chunks_from = load_dataset(enc, path + from_name, args.combine) if args.val_dataset else chunks
+            val_chunks_ques = load_dataset(enc, path + ques_name, args.combine) if args.val_dataset else chunks
+            val_chunks_to =   load_dataset(enc, path + to_name,   args.combine) if args.val_dataset else chunks
+            print(len(val_chunks_from[0]), len(val_chunks_ques[0]), len(val_chunks_to[0]))
+            print(enc.decode(val_chunks_to[0][:15]))
+            exit()
         print('dataset has', data_sampler.total_size, 'tokens')
-        #print(data_sampler.sample(2))
+        print(len(chunks[0]),enc.decode(data_sampler.sample(25)))
         print('Training...')
 
         if args.val_every > 0:
