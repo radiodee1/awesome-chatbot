@@ -13,7 +13,8 @@ import tqdm
 from tensorflow.core.protobuf import rewriter_config_pb2
 import sys
 
-sys.path.append('tf_gpt2/src/')
+sys.path.append('../model/tf_gpt2/src/')
+sys.path.append('../model/')
 
 import model, sample, encoder
 from encoder import Encoder
