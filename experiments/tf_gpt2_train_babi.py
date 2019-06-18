@@ -172,6 +172,7 @@ def main():
         if args.val_every > 0:
             val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
         print('dataset has', data_sampler.total_size, 'tokens')
+        #print(data_sampler.sample(2))
         print('Training...')
 
         if args.val_every > 0:
