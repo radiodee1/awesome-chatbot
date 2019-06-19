@@ -77,6 +77,15 @@ def get_encoder(model_name):
         bpe_merges=bpe_merges,
     )
 
+def name_parts(name):
+    n = name.split('/')
+    base = '.'.join(n[-1].split('.')[:-1])
+    path = '/'.join(n[:-1]) + '/'
+    # print(n,'n', path, 'p', base, 'base')
+    from_name = base + '.from'
+    to_name = base + '.to'
+    ques_name = base + '.ques'
+    return path + from_name, path + ques_name, path + to_name
 
 def main():
     args = parser.parse_args()
@@ -171,17 +180,12 @@ def main():
         data_sampler = Sampler(chunks)
         if args.val_every > 0:
             val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
-            n = args.val_dataset.split('/')
-            base = '.'.join( n[-1].split('.')[:-1])
-            path = '/'.join(n[:-1]) + '/'
-            #print(n,'n', path, 'p', base, 'base')
-            from_name = base + '.from'
-            to_name = base + '.to'
-            ques_name = base + '.ques'
-            #print(path + from_name,'name from')
-            val_chunks_from = load_dataset(enc, path + from_name, args.combine) if args.val_dataset else chunks
-            val_chunks_ques = load_dataset(enc, path + ques_name, args.combine) if args.val_dataset else chunks
-            val_chunks_to =   load_dataset(enc, path + to_name,   args.combine) if args.val_dataset else chunks
+
+            from_name, ques_name, to_name = name_parts(args.val_dataset)
+
+            val_chunks_from = load_dataset(enc, from_name, args.combine) if args.val_dataset else chunks
+            val_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
+            val_chunks_to =   load_dataset(enc, to_name,   args.combine) if args.val_dataset else chunks
             print(len(val_chunks_from[0]), len(val_chunks_ques[0]), len(val_chunks_to[0]))
             print(enc.decode(val_chunks_to[0][:15]))
             exit()
