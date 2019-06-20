@@ -54,8 +54,8 @@ parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Gene
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 
 parser.add_argument('--val_dataset', metavar='PATH', type=str, default='../data/valid.from', help='Dataset for validation loss, defaults to --dataset.')
-parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=2, help='Batch size for validation.')
-parser.add_argument('--val_batch_count', metavar='N', type=int, default=40, help='Number of batches for validation.')
+parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=40, help='Batch size for validation.')
+parser.add_argument('--val_batch_count', metavar='N', type=int, default=-1, help='Number of batches for validation.')
 parser.add_argument('--val_every', metavar='STEPS', type=int, default=0, help='Calculate validation loss every STEPS steps.')
 parser.add_argument('--stop_after', metavar='STOP', type=int, default=None, help='Stop after training counter reaches STOP')
 
@@ -86,6 +86,24 @@ def name_parts(name):
     to_name = base + '.to'
     ques_name = base + '.ques'
     return path + from_name, path + ques_name, path + to_name
+
+class SamplerVal(object):
+
+    def __init__(self, chunks, encoder=None, char='\n'):
+        char = encoder.encode(char)
+        chunks = chunks[0]
+        l = []
+        self.chunks = []
+        for i in chunks:
+            l.append(i)
+            if i == char[0]:
+                self.chunks.append(l)
+                l = []
+        self.total_size = len(self.chunks)
+
+
+    def get(self, index):
+        return self.chunks[index]
 
 def main():
     args = parser.parse_args()
@@ -186,20 +204,27 @@ def main():
             val_chunks_from = load_dataset(enc, from_name, args.combine) if args.val_dataset else chunks
             val_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
             val_chunks_to =   load_dataset(enc, to_name,   args.combine) if args.val_dataset else chunks
-            print(len(val_chunks_from[0]), len(val_chunks_ques[0]), len(val_chunks_to[0]))
-            print(enc.decode(val_chunks_to[0][:15]))
-            exit()
+
         print('dataset has', data_sampler.total_size, 'tokens')
-        print(len(chunks[0]),enc.decode(data_sampler.sample(25)))
         print('Training...')
 
         if args.val_every > 0:
-            # Sample from validation set once with fixed seed to make
-            # it deterministic during training as well as across runs.
-            val_data_sampler = Sampler(val_chunks, seed=1)
-            val_batches = [[val_data_sampler.sample(1024) for _ in range(args.val_batch_size)]
-                           for _ in range(args.val_batch_count)]
 
+            val_data_sampler_from = SamplerVal(val_chunks_from, enc)
+            val_data_sampler_ques = SamplerVal(val_chunks_ques, enc)
+            val_data_sampler_to = SamplerVal(val_chunks_to, enc)
+
+            if args.val_batch_count == -1:
+                args.val_batch_count = val_data_sampler_from.total_size
+
+            val_batches = []
+            for i in range(args.val_batch_count):
+                v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + val_data_sampler_to.get(i)
+                v = v[:args.val_batch_size]
+                val_batches.append(v)
+                pass
+            val_batches = np.reshape(val_batches, [args.val_batch_count, 1])
+        #exit()
         counter = 1
         counter_path = os.path.join(CHECKPOINT_DIR, args.run_name, 'counter')
         if os.path.exists(counter_path):
@@ -247,7 +272,9 @@ def main():
             print('Calculating validation loss...')
             losses = []
             for batch in tqdm.tqdm(val_batches):
-                losses.append(sess.run(val_loss, feed_dict={val_context: batch}))
+                v = sess.run(val_loss, feed_dict={val_context: batch})
+                print(v,'v')
+                losses.append(v)
             v_val_loss = np.mean(losses)
             v_summary = sess.run(val_loss_summary, feed_dict={val_loss: v_val_loss})
             summary_log.add_summary(v_summary, counter)
