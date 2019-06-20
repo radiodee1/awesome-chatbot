@@ -25,6 +25,8 @@ import memory_saving_gradients
 
 from settings import hparams as hp
 
+HIDDEN_SIZE = 1024 -1
+
 CHECKPOINT_DIR = 'checkpoint'
 SAMPLE_DIR = hp['save_dir'] + '/' + 'tf_gpt2_samples/'
 
@@ -95,12 +97,12 @@ class SamplerVal(object):
         l = []
         self.chunks = []
         for i in chunks:
+
             l.append(i)
             if i == char[0]:
                 self.chunks.append(l)
                 l = []
         self.total_size = len(self.chunks)
-
 
     def get(self, index):
         return self.chunks[index]
@@ -131,13 +133,22 @@ def main():
                 labels=context[:, 1:], logits=output['logits'][:, :-1]))
 
         if args.val_every > 0:
-            val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
-            val_output = model.model(hparams=hparams, X=val_context)
-            val_loss = tf.reduce_mean(
-                tf.nn.sparse_softmax_cross_entropy_with_logits(
-                    labels=val_context[:, 1:], logits=val_output['logits'][:, :-1]))
-            val_loss_summary = tf.summary.scalar('val_loss', val_loss)
+            #val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
+            val_context = tf.placeholder(tf.int32, [1, args.sample_length ])
 
+            #val_output = model.model(hparams=hparams, X=val_context)
+            #val_loss = tf.reduce_mean(
+            #    tf.nn.sparse_softmax_cross_entropy_with_logits(
+            #        labels=val_context[:, 1:], logits=val_output['logits'][:, :-1]))
+            #val_loss_summary = tf.summary.scalar('val_loss', val_loss)
+
+            tf_sample_val = sample.sample_sequence(
+                hparams=hparams,
+                length=args.sample_length,
+                context=val_context,
+                batch_size=args.batch_size,
+                temperature=0.001,
+                top_k=0)
 
         tf_sample = sample.sample_sequence(
             hparams=hparams,
@@ -197,7 +208,7 @@ def main():
         chunks = load_dataset(enc, args.dataset, args.combine)
         data_sampler = Sampler(chunks)
         if args.val_every > 0:
-            val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
+            #val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
 
             from_name, ques_name, to_name = name_parts(args.val_dataset)
 
@@ -220,10 +231,10 @@ def main():
             val_batches = []
             for i in range(args.val_batch_count):
                 v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + val_data_sampler_to.get(i)
-                v = v[:args.val_batch_size]
+                v += [enc.encode(' ')[0] for _ in range(args.sample_length - len(v) )]
                 val_batches.append(v)
                 pass
-            val_batches = np.reshape(val_batches, [args.val_batch_count, 1])
+            print(val_batches[0], 'len', len(val_batches[0]))
         #exit()
         counter = 1
         counter_path = os.path.join(CHECKPOINT_DIR, args.run_name, 'counter')
@@ -289,6 +300,28 @@ def main():
         def sample_batch():
             return [data_sampler.sample(1024) for _ in range(args.batch_size)]
 
+        def validation_by_sample():
+            print('Generating validation...')
+
+            #context_tokens = data_sampler.sample(1)
+            all_text = []
+            index = 0
+            while index < args.sample_num:
+                print(index, len(val_batches[index]))
+                print(np.reshape(val_batches[index], [1,-1]))
+                out = sess.run(
+                    tf_sample_val,
+                    feed_dict={val_context: np.reshape( val_batches[index], [1, -1 ] )})
+
+                for i in range(min(args.sample_num - index, args.batch_size)):
+                    text = enc.decode(out[i])
+                    text = '======== Validate {} ========\n{}\n'.format(
+                        index + 1, text)
+                    all_text.append(text)
+                    index += 1
+            print(text)
+
+            pass
 
         avg_loss = (0.0, 0.0)
         start_time = time.time()
@@ -300,7 +333,7 @@ def main():
                 if counter % args.sample_every == 0:
                     generate_samples()
                 if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
-                    validation()
+                    validation_by_sample()
 
                 if args.accumulate_gradients > 1:
                     sess.run(opt_reset)

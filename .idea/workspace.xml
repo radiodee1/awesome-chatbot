@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,20 +12,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1440">
-              <caret line="82" selection-start-line="82" selection-end-line="82" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="584">
-              <caret line="225" column="74" selection-start-line="225" selection-start-column="74" selection-end-line="225" selection-end-column="74" />
+            <state relative-caret-position="386">
+              <caret line="150" column="23" selection-start-line="150" selection-start-column="23" selection-end-line="150" selection-end-column="23" />
             </state>
           </provider>
         </entry>
@@ -34,8 +24,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/load_dataset.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1404">
-              <caret line="82" column="73" selection-start-line="57" selection-end-line="82" selection-end-column="73" />
+            <state relative-caret-position="810">
+              <caret line="54" column="13" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -44,13 +34,21 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
+        <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/sample.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3528">
-              <caret line="204" column="29" selection-start-line="204" selection-start-column="29" selection-end-line="204" selection-end-column="29" />
+            <state relative-caret-position="-395">
               <folding>
-                <element signature="e#21#35#0" expanded="true" />
+                <element signature="e#0#23#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-2135">
+              <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -129,14 +127,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>embed</find>
-      <find>filter_num</find>
-      <find>mode</find>
-      <find>arg_length</find>
-      <find>do_gpt2</find>
-      <find>a_chars</find>
-      <find>gather_sentences</find>
-      <find>context</find>
       <find>save_on_failure</find>
       <find>previous_sentences</find>
       <find>NMT</find>
@@ -153,12 +143,20 @@
       <find>model_0_wra</find>
       <find>ques</find>
       <find>##</find>
-      <find>sample_length</find>
-      <find>val_context</find>
       <find>val_batch_count</find>
       <find>val_batch_size</find>
       <find>val_batches</find>
       <find>add_summary</find>
+      <find>validation</find>
+      <find>tf_sample</find>
+      <find>batch_size</find>
+      <find>val_context</find>
+      <find>HIDDEN_SIZE</find>
+      <find>hparams</find>
+      <find>context</find>
+      <find>tf_sample_val</find>
+      <find>sample_batch</find>
+      <find>sample_length</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -222,7 +220,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="537" />
+    <option name="x" value="536" />
     <option name="y" value="37" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -233,7 +231,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -299,6 +296,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -342,10 +340,10 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="537" y="37" width="1380" height="999" extended-state="0" />
+    <frame x="536" y="37" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -365,14 +363,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/raw/cornell movie-dialogs corpus/movie_lines.txt">
-      <provider selected="true" editor-type-id="LargeFileEditor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_pos.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-157" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/do_make_train_test_from_db.py" />
     <entry file="file://$PROJECT_DIR$/model/do_split.py" />
     <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq_dropout.py">
@@ -649,16 +639,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/load_dataset.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1404">
-          <caret line="82" column="73" selection-start-line="57" selection-end-line="82" selection-end-column="73" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3528">
@@ -720,10 +700,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/load_dataset.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="810">
+          <caret line="54" column="13" selection-start-line="54" selection-start-column="13" selection-end-line="54" selection-end-column="13" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2135">
+          <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/sample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-395">
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="584">
-          <caret line="225" column="74" selection-start-line="225" selection-start-column="74" selection-end-line="225" selection-end-column="74" />
+        <state relative-caret-position="386">
+          <caret line="150" column="23" selection-start-line="150" selection-start-column="23" selection-end-line="150" selection-end-column="23" />
         </state>
       </provider>
     </entry>
