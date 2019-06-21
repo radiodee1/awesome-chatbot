@@ -102,8 +102,11 @@ class SamplerVal(object):
         l = []
         self.chunks = []
         for i in chunks:
-
-            l.append(i)
+            if i != char[0]:
+                l.append(i)
+            else:
+                l.append(encoder.encode(' ')[0])
+                #l.append(encoder.encode('.')[0])
             if i == char[0]:
                 self.chunks.append(l)
                 l = []
@@ -134,12 +137,14 @@ def main():
     if args.val_every > 0:
 
         # val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
-        val_context = tf.placeholder(np.int32, [1, None])
+        val_context = tf.placeholder(np.int32, [ 1, None])
+
         val_output = model.model(hparams=hparams, X=val_context)
         val_loss = tf.reduce_mean(
             tf.nn.sparse_softmax_cross_entropy_with_logits(
                 labels=val_context[:, 1:], logits=val_output['logits'][:, :-1]))
         val_loss_summary = tf.summary.scalar('val_loss', val_loss)
+
 
         tf_sample_val = sample.sample_sequence(
             hparams=hparams,
@@ -236,14 +241,11 @@ def main():
 
             val_batches = []
             for i in range(args.val_batch_count):
-                v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + val_data_sampler_to.get(i)
-                v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+                v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + enc.encode('. ') + val_data_sampler_to.get(i)
+                #v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
                 val_batches.append(v)
                 pass
-            #print(val_batches[0][:15], 'val_batches')
-            #z = enc.decode(val_batches[0])
-            #val_batches = [enc.encode(z)]
-            #print(val_batches[0][:15], 'len') #, len(val_batches[0]))
+
         #exit()
         counter = 1
         counter_path = os.path.join(CHECKPOINT_DIR, args.run_name, 'counter')
@@ -311,22 +313,22 @@ def main():
                         time=time.time() - start_time,
                         loss=v_val_loss))
             generated = 0
-            for _ in range(args.sample_num // args.batch_size):
-                #val_batches = tf.cast(val_batches[generated], tf.int32)
-                val_batches_in = val_batches[generated]
-                context_tokens = np.reshape(val_batches_in, [1, -1])
-                #context_tokens[0,0] = 0
-                #context_tokens = context_tokens.astype('int32')
-                sess.run(tf_sample, feed_dict={context: context_tokens})
+            for _ in range(len(val_batches)):
 
-                print(context_tokens.shape, sess)
-                out = sess.run(tf_sample_val, feed_dict={context: context_tokens})
+                val_batches_in = val_batches[generated]
+                context_tokens = np.reshape(val_batches_in, [ 1, -1])
+
+                #context_tokens = context_tokens.astype('int32')
+
+                #sess.run(tf_sample, feed_dict={context: context_tokens})
+
+                #print(context_tokens.shape, context_tokens)
+                out = sess.run(tf_sample_val, feed_dict={val_context: context_tokens})
                 #out = sess.run(tf_sample_val, feed_dict={
                 #    context: [context_tokens for _ in range(args.batch_size)]
                 #})[:, len(context_tokens):]
                 generated += 1
-                #for i in range(1):
-                #generated += 1
+
                 text = enc.decode(out[0])
                 print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
                 print(text)
@@ -339,7 +341,7 @@ def main():
 
         try:
             while counter != args.stop_after:
-                model_summary()
+                #model_summary()
 
                 if counter % args.save_every == 0:
                     save()
