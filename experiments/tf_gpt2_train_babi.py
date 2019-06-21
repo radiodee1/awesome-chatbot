@@ -24,13 +24,14 @@ from accumulate import AccumulatingOptimizer
 import memory_saving_gradients
 
 from settings import hparams as hp
+import tensorflow.contrib.slim as slim
 
 HIDDEN_SIZE = 1024 -1
 
 CHECKPOINT_DIR = 'checkpoint'
 SAMPLE_DIR = hp['save_dir'] + '/' + 'tf_gpt2_samples/'
 
-model_name = hp['data_dir'] + '/' + 'tf_gpt2_data/'
+model_name =  hp['data_dir'] + '/' + 'tf_gpt2_data/'
 checkpoint_dir = hp['save_dir'] + '/' + 'tf_gpt2_saved/'
 CHECKPOINT_DIR = checkpoint_dir
 
@@ -51,7 +52,7 @@ parser.add_argument('--only_train_transformer_layers', default=False, action='st
 parser.add_argument('--restore_from', type=str, default='latest', help='Either "latest", "fresh", or a path to a checkpoint file')
 parser.add_argument('--run_name', type=str, default='run1', help='Run id. Name of subdirectory in checkpoint/ and samples/')
 parser.add_argument('--sample_every', metavar='N', type=int, default=100, help='Generate samples every N steps')
-parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=1023, help='Sample this many tokens')
+parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=25, help='Sample this many tokens')
 parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Generate this many samples')
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 
@@ -89,6 +90,10 @@ def name_parts(name):
     ques_name = base + '.ques'
     return path + from_name, path + ques_name, path + to_name
 
+def model_summary():
+    model_vars = tf.trainable_variables()
+    slim.model_analyzer.analyze_vars(model_vars, print_info=True)
+
 class SamplerVal(object):
 
     def __init__(self, chunks, encoder=None, char='\n'):
@@ -125,30 +130,31 @@ def main():
     config = tf.ConfigProto()
     config.gpu_options.allow_growth = True
     config.graph_options.rewrite_options.layout_optimizer = rewriter_config_pb2.RewriterConfig.OFF
+
+    if args.val_every > 0:
+
+        # val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
+        val_context = tf.placeholder(np.int32, [1, None])
+        val_output = model.model(hparams=hparams, X=val_context)
+        val_loss = tf.reduce_mean(
+            tf.nn.sparse_softmax_cross_entropy_with_logits(
+                labels=val_context[:, 1:], logits=val_output['logits'][:, :-1]))
+        val_loss_summary = tf.summary.scalar('val_loss', val_loss)
+
+        tf_sample_val = sample.sample_sequence(
+            hparams=hparams,
+            length=1, #args.sample_length,
+            context=val_context,
+            batch_size=1, #args.batch_size,
+            temperature=0.001,
+            top_k=1)
+
     with tf.Session(config=config) as sess:
         context = tf.placeholder(tf.int32, [args.batch_size, None])
         output = model.model(hparams=hparams, X=context)
         loss = tf.reduce_mean(
             tf.nn.sparse_softmax_cross_entropy_with_logits(
                 labels=context[:, 1:], logits=output['logits'][:, :-1]))
-
-        if args.val_every > 0:
-            #val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
-            val_context = tf.placeholder(tf.int32, [1, args.sample_length ])
-
-            #val_output = model.model(hparams=hparams, X=val_context)
-            #val_loss = tf.reduce_mean(
-            #    tf.nn.sparse_softmax_cross_entropy_with_logits(
-            #        labels=val_context[:, 1:], logits=val_output['logits'][:, :-1]))
-            #val_loss_summary = tf.summary.scalar('val_loss', val_loss)
-
-            tf_sample_val = sample.sample_sequence(
-                hparams=hparams,
-                length=args.sample_length,
-                context=val_context,
-                batch_size=args.batch_size,
-                temperature=0.001,
-                top_k=0)
 
         tf_sample = sample.sample_sequence(
             hparams=hparams,
@@ -231,10 +237,13 @@ def main():
             val_batches = []
             for i in range(args.val_batch_count):
                 v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + val_data_sampler_to.get(i)
-                v += [enc.encode(' ')[0] for _ in range(args.sample_length - len(v) )]
+                v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
                 val_batches.append(v)
                 pass
-            print(val_batches[0], 'len', len(val_batches[0]))
+            #print(val_batches[0][:15], 'val_batches')
+            #z = enc.decode(val_batches[0])
+            #val_batches = [enc.encode(z)]
+            #print(val_batches[0][:15], 'len') #, len(val_batches[0]))
         #exit()
         counter = 1
         counter_path = os.path.join(CHECKPOINT_DIR, args.run_name, 'counter')
@@ -279,47 +288,49 @@ def main():
                                  'samples-{}').format(counter), 'w') as fp:
                 fp.write('\n'.join(all_text))
 
-        def validation():
-            print('Calculating validation loss...')
-            losses = []
-            for batch in tqdm.tqdm(val_batches):
-                v = sess.run(val_loss, feed_dict={val_context: batch})
-                print(v,'v')
-                losses.append(v)
-            v_val_loss = np.mean(losses)
-            v_summary = sess.run(val_loss_summary, feed_dict={val_loss: v_val_loss})
-            summary_log.add_summary(v_summary, counter)
-            summary_log.flush()
-            print(
-                '[{counter} | {time:2.2f}] validation loss = {loss:2.2f}'
-                .format(
-                    counter=counter,
-                    time=time.time() - start_time,
-                    loss=v_val_loss))
-
         def sample_batch():
             return [data_sampler.sample(1024) for _ in range(args.batch_size)]
 
         def validation_by_sample():
             print('Generating validation...')
+            if False:
+                losses = []
+                for batch in tqdm.tqdm(val_batches):
+                    batch = np.reshape(batch, [1,-1])
+                    v = sess.run(val_loss, feed_dict={val_context: batch})
+                    #print(v, 'v')
+                    losses.append(v)
+                v_val_loss = np.mean(losses)
+                v_summary = sess.run(val_loss_summary, feed_dict={val_loss: v_val_loss})
+                summary_log.add_summary(v_summary, counter)
+                summary_log.flush()
+                print(
+                    '[{counter} | {time:2.2f}] validation loss = {loss:2.2f}'
+                        .format(
+                        counter=counter,
+                        time=time.time() - start_time,
+                        loss=v_val_loss))
+            generated = 0
+            for _ in range(args.sample_num // args.batch_size):
+                #val_batches = tf.cast(val_batches[generated], tf.int32)
+                val_batches_in = val_batches[generated]
+                context_tokens = np.reshape(val_batches_in, [1, -1])
+                #context_tokens[0,0] = 0
+                #context_tokens = context_tokens.astype('int32')
+                sess.run(tf_sample, feed_dict={context: context_tokens})
 
-            #context_tokens = data_sampler.sample(1)
-            all_text = []
-            index = 0
-            while index < args.sample_num:
-                print(index, len(val_batches[index]))
-                print(np.reshape(val_batches[index], [1,-1]))
-                out = sess.run(
-                    tf_sample_val,
-                    feed_dict={val_context: np.reshape( val_batches[index], [1, -1 ] )})
-
-                for i in range(min(args.sample_num - index, args.batch_size)):
-                    text = enc.decode(out[i])
-                    text = '======== Validate {} ========\n{}\n'.format(
-                        index + 1, text)
-                    all_text.append(text)
-                    index += 1
-            print(text)
+                print(context_tokens.shape, sess)
+                out = sess.run(tf_sample_val, feed_dict={context: context_tokens})
+                #out = sess.run(tf_sample_val, feed_dict={
+                #    context: [context_tokens for _ in range(args.batch_size)]
+                #})[:, len(context_tokens):]
+                generated += 1
+                #for i in range(1):
+                #generated += 1
+                text = enc.decode(out[0])
+                print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
+                print(text)
+            print("=" * 80)
 
             pass
 
@@ -328,10 +339,13 @@ def main():
 
         try:
             while counter != args.stop_after:
+                model_summary()
+
                 if counter % args.save_every == 0:
                     save()
                 if counter % args.sample_every == 0:
-                    generate_samples()
+                    #generate_samples()
+                    pass
                 if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
                     validation_by_sample()
 
