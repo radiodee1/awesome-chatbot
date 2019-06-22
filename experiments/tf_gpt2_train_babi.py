@@ -325,7 +325,8 @@ def main():
                 fp.write('\n'.join(all_text))
 
         def sample_batch():
-            #print(data_sampler[counter],'batch')
+            #print(enc.encode('<|endoftext|>'), 'eot')
+            #print(data_sampler.sample(1024))
             return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
 
         def validation_by_sample():
@@ -375,6 +376,12 @@ def main():
                 if text.strip().endswith('<|endoftext|>'):
                     text = text.strip()[: - len('<|endoftext|>')]
 
+                t_vals = text.split(' ')
+                if '<' in t_vals[-1] or '>' in t_vals[-1]:
+                    t_vals = t_vals[:-1]
+
+                text = ' '.join(t_vals)
+
                 if compare.strip().endswith('.'):
                     compare = compare.strip()[:-1]
 
@@ -396,6 +403,7 @@ def main():
 
         avg_loss = (0.0, 0.0)
         start_time = time.time()
+        count_success = 0
 
         try:
             while counter != args.stop_after:
@@ -430,7 +438,11 @@ def main():
                 if acc is 100:
                     save()
                     print('validation accuracy 100', time.time() - start_time)
-                    exit()
+                    count_success += 1
+                    if count_success >= 2:
+                        exit()
+                else:
+                    count_success = 0
 
                 print(
                     '[{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
