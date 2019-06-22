@@ -236,7 +236,7 @@ def main():
                     trn_data_sampler_from.get(i) +
                     trn_data_sampler_ques.get(i) +
                     enc.encode('. ')  +
-                    trn_data_sampler_to.get(i) +
+                    trn_data_sampler_to.get(i)  +
                     enc.encode('<|endoftext|>')
             )
             # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
@@ -363,7 +363,9 @@ def main():
                     #print(out[0][-1])
                     context_tokens = out
 
-                compare = enc.decode(val_data_sampler_to.get(generated))
+                compare = enc.decode(val_data_sampler_to.get(generated)) # + ' <|endoftext|>'
+                compare = ' '.join(compare.split(' '))
+
                 generated += 1
 
                 text = enc.decode(out[0])
@@ -371,15 +373,22 @@ def main():
                 if text.strip().endswith('.'): ## remove trailing period
                     text = text.strip()[:-1]
 
+                if text.strip().endswith('<|endoftext|>'):
+                    text = text.strip()[: - len('<|endoftext|>')]
+
                 if compare.strip().endswith('.'):
                     compare = compare.strip()[:-1]
+
+                if compare.strip().endswith('<|endoftext|>'):
+                    compare = compare.strip()[: - len('<|endoftext|>')]
 
                 notification = ''
                 if text.strip().lower().endswith(compare.strip().lower()):
                     acc_total += 1
                     notification = 'SCORE!! '
+                    len_bar = 40 - len(notification)
 
-                print(notification + "=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
+                print(notification + "=" * len_bar + " SAMPLE " + str(generated) + " " + "=" * len_bar + notification)
                 print(text)
             print("=" * 80)
             return acc_total
