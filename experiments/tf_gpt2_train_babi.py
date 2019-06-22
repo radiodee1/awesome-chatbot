@@ -218,8 +218,31 @@ def main():
         saver.restore(sess, ckpt)
 
         print('Loading dataset...')
-        chunks = load_dataset(enc, args.dataset, args.combine)
-        data_sampler = Sampler(chunks)
+        from_name, ques_name, to_name = name_parts( args.dataset ) #'../data/train.from')
+
+        trn_chunks_from = load_dataset(enc, from_name, args.combine) if args.val_dataset else chunks
+        trn_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
+        trn_chunks_to = load_dataset(enc, to_name, args.combine) if args.val_dataset else chunks
+
+        trn_data_sampler_from = SamplerVal(trn_chunks_from, enc)
+        trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc)
+        trn_data_sampler_to = SamplerVal(trn_chunks_to, enc)
+
+        data_sampler = []
+        for i in range(trn_data_sampler_from.total_size):
+            v = (
+                    trn_data_sampler_from.get(i) +
+                    trn_data_sampler_ques.get(i) +
+                    enc.encode('. ')  +
+                    trn_data_sampler_to.get(i)
+            )
+            # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+            data_sampler.append(v)
+            pass
+
+        #chunks = load_dataset(enc, args.dataset, args.combine)
+        #data_sampler = Sampler(chunks)
+
         if args.val_every > 0:
             #val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
 
@@ -229,7 +252,7 @@ def main():
             val_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
             val_chunks_to =   load_dataset(enc, to_name,   args.combine) if args.val_dataset else chunks
 
-        print('dataset has', data_sampler.total_size, 'tokens')
+        print('dataset has', len(data_sampler), 'tokens')
         print('Training...')
 
         if args.val_every > 0:
@@ -243,7 +266,12 @@ def main():
 
             val_batches = []
             for i in range(args.val_batch_count):
-                v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + enc.encode('. ') #+ val_data_sampler_to.get(i)
+                v = (
+                        val_data_sampler_from.get(i) +
+                        val_data_sampler_ques.get(i) +
+                        enc.encode('. ')
+                ) #+ val_data_sampler_to.get(i)
+
                 #v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
                 val_batches.append(v)
                 pass
@@ -293,10 +321,12 @@ def main():
                 fp.write('\n'.join(all_text))
 
         def sample_batch():
-            return [data_sampler.sample(1024) for _ in range(args.batch_size)]
+            #print(data_sampler[counter],'batch')
+            return [data_sampler[counter] for _ in range(args.batch_size)]
 
         def validation_by_sample():
             print('Generating validation...')
+            global acc_total
             if False:
                 losses = []
                 for batch in tqdm.tqdm(val_batches):
@@ -336,13 +366,17 @@ def main():
                 if text.strip().endswith('.'): ## remove trailing period
                     text = text.strip()[:-1]
 
+                if compare.strip().endswith('.'):
+                    compare = compare.strip()[:-1]
+
                 if text.strip().lower().endswith(compare.strip().lower()):
                     acc_total += 1
+                    print('SCORE!!')
 
                 print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
                 print(text)
             print("=" * 80)
-
+            return acc_total
             pass
 
         avg_loss = (0.0, 0.0)
@@ -358,7 +392,7 @@ def main():
                     #generate_samples()
                     pass
                 if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
-                    validation_by_sample()
+                    acc_total = validation_by_sample()
 
                 if args.accumulate_gradients > 1:
                     sess.run(opt_reset)
@@ -383,7 +417,8 @@ def main():
                         counter=counter,
                         time=time.time() - start_time,
                         loss=v_loss,
-                        avg=avg_loss[0] / avg_loss[1]), acc)
+                        avg=avg_loss[0] / avg_loss[1]), 'acc='+str(acc), end=' ')
+                print('total=' + str(acc_total))
 
                 counter += 1
         except KeyboardInterrupt:
