@@ -415,6 +415,7 @@ def main():
 
                 if acc is 100:
                     save()
+                    print('validation accuracy 100', time.time() - start_time)
                     exit()
 
                 print(
