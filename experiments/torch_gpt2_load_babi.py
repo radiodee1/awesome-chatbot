@@ -1268,17 +1268,23 @@ class NMT:
             num_count += 1
 
             if self.do_load_babi: # and False:
-                print(ans.split(), '< ans')
-                if len(ans.split()) > 2:
-                    o_val = ans.split()[-2]
-                elif len(ans.split()) > 1:
-                    o_val = ans.split()[-1]
-                else:
-                    o_val = ''
+                if ans.strip().endswith('.'):
+                    ans = ans.strip()[:-1]
+
+                ans = ' '.join(ans.split(' '))
+
                 t_val = target_variable[0] #[i].item()
 
+                if t_val.strip().endswith('.'):
+                    t_val = t_val.strip()[-1]
+
+                t_val = ' '.join(t_val.split(' '))
+                o_val = ans[- len(t_val):]
+
                 print('o:',o_val,'t:', t_val)
-                if o_val == t_val:
+                
+                if ans.strip().lower().endswith(t_val.strip().lower()):
+                    #if o_val == t_val:
                     num_right += 1
                     num_right_small += 1
 

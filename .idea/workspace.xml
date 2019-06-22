@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,8 +15,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="206">
-              <caret line="220" column="65" selection-start-line="220" selection-start-column="65" selection-end-line="220" selection-end-column="65" />
+            <state relative-caret-position="170">
+              <caret line="41" column="74" selection-start-line="41" selection-start-column="74" selection-end-line="41" selection-end-column="74" />
             </state>
           </provider>
         </entry>
@@ -22,8 +24,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2926">
-              <caret line="82" selection-start-line="82" selection-end-line="82" />
+            <state relative-caret-position="486">
+              <caret line="1284" column="16" selection-start-line="1284" selection-start-column="16" selection-end-line="1284" selection-end-column="16" />
             </state>
           </provider>
         </entry>
@@ -182,8 +184,8 @@
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
         <option value="$PROJECT_DIR$/model/loader_babi.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
-        <option value="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" />
         <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
+        <option value="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" />
       </list>
     </option>
   </component>
@@ -668,13 +670,6 @@
     <entry file="file://$PROJECT_DIR$/data/tf_gpt2_data/encoder.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="206">
-          <caret line="220" column="65" selection-start-line="220" selection-start-column="65" selection-end-line="220" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2/encode.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -719,10 +714,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="41" column="74" selection-start-line="41" selection-start-column="74" selection-end-line="41" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2926">
-          <caret line="82" selection-start-line="82" selection-end-line="82" />
+        <state relative-caret-position="486">
+          <caret line="1284" column="16" selection-start-line="1284" selection-start-column="16" selection-end-line="1284" selection-end-column="16" />
         </state>
       </provider>
     </entry>
