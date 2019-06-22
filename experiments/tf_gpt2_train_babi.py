@@ -59,7 +59,7 @@ parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='W
 parser.add_argument('--val_dataset', metavar='PATH', type=str, default='../data/valid.from', help='Dataset for validation loss, defaults to --dataset.')
 parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=40, help='Batch size for validation.')
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=-1, help='Number of batches for validation.')
-parser.add_argument('--val_every', metavar='STEPS', type=int, default=0, help='Calculate validation loss every STEPS steps.')
+parser.add_argument('--val_every', metavar='STEPS', type=int, default=100, help='Calculate validation loss every STEPS steps.')
 parser.add_argument('--stop_after', metavar='STOP', type=int, default=None, help='Stop after training counter reaches STOP')
 
 
@@ -134,6 +134,8 @@ def main():
     config.gpu_options.allow_growth = True
     config.graph_options.rewrite_options.layout_optimizer = rewriter_config_pb2.RewriterConfig.OFF
 
+    acc_total = 0
+
     if args.val_every > 0:
 
         # val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
@@ -151,7 +153,7 @@ def main():
             length=1, #args.sample_length,
             context=val_context,
             batch_size=1, #args.batch_size,
-            temperature=0.001,
+            temperature=10.001,
             top_k=1)
 
     with tf.Session(config=config) as sess:
@@ -241,7 +243,7 @@ def main():
 
             val_batches = []
             for i in range(args.val_batch_count):
-                v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + enc.encode('. ') + val_data_sampler_to.get(i)
+                v = val_data_sampler_from.get(i) + val_data_sampler_ques.get(i) + enc.encode('. ') #+ val_data_sampler_to.get(i)
                 #v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
                 val_batches.append(v)
                 pass
@@ -312,24 +314,31 @@ def main():
                         counter=counter,
                         time=time.time() - start_time,
                         loss=v_val_loss))
+            acc_total = 0
             generated = 0
             for _ in range(len(val_batches)):
 
                 val_batches_in = val_batches[generated]
                 context_tokens = np.reshape(val_batches_in, [ 1, -1])
 
-                #context_tokens = context_tokens.astype('int32')
+                #print(context_tokens, 'ct1')
+                for x in range(10):
 
-                #sess.run(tf_sample, feed_dict={context: context_tokens})
+                    out = sess.run(tf_sample_val, feed_dict={val_context: context_tokens})
+                    #print(out[0][-1])
+                    context_tokens = out
 
-                #print(context_tokens.shape, context_tokens)
-                out = sess.run(tf_sample_val, feed_dict={val_context: context_tokens})
-                #out = sess.run(tf_sample_val, feed_dict={
-                #    context: [context_tokens for _ in range(args.batch_size)]
-                #})[:, len(context_tokens):]
+                compare = enc.decode(val_data_sampler_to.get(generated))
                 generated += 1
 
                 text = enc.decode(out[0])
+
+                if text.strip().endswith('.'): ## remove trailing period
+                    text = text.strip()[:-1]
+
+                if text.strip().lower().endswith(compare.strip().lower()):
+                    acc_total += 1
+
                 print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
                 print(text)
             print("=" * 80)
@@ -367,13 +376,14 @@ def main():
                 avg_loss = (avg_loss[0] * 0.99 + v_loss,
                             avg_loss[1] * 0.99 + 1.0)
 
+                acc = acc_total / len(val_batches) * 100
                 print(
                     '[{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
                     .format(
                         counter=counter,
                         time=time.time() - start_time,
                         loss=v_loss,
-                        avg=avg_loss[0] / avg_loss[1]))
+                        avg=avg_loss[0] / avg_loss[1]), acc)
 
                 counter += 1
         except KeyboardInterrupt:

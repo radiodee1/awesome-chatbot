@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="373">
-              <caret line="139" column="56" selection-start-line="139" selection-start-column="56" selection-end-line="139" selection-end-column="56" />
+            <state relative-caret-position="2384">
+              <caret line="335" selection-start-line="335" selection-end-line="335" />
             </state>
           </provider>
         </entry>
@@ -89,7 +89,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>variablesFromPair</find>
       <find>variableFromSentence</find>
       <find>split_sentences</find>
       <find>indexesFromSentence</find>
@@ -99,7 +98,6 @@
       <find>model_0_wra</find>
       <find>ques</find>
       <find>##</find>
-      <find>val_batch_count</find>
       <find>val_batch_size</find>
       <find>add_summary</find>
       <find>validation</find>
@@ -107,7 +105,6 @@
       <find>batch_size</find>
       <find>hparams</find>
       <find>context</find>
-      <find>val_batches</find>
       <find>sample_batch</find>
       <find>val_context</find>
       <find>sess</find>
@@ -119,6 +116,9 @@
       <find>tf_sample_val</find>
       <find>sample_num</find>
       <find>HIDDEN_SIZE</find>
+      <find>acc_total</find>
+      <find>val_batch_count</find>
+      <find>val_batches</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -182,7 +182,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="535" />
+    <option name="x" value="534" />
     <option name="y" value="38" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -319,7 +319,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="535" y="38" width="1380" height="999" extended-state="0" />
+    <frame x="534" y="38" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -656,6 +656,23 @@
     <entry file="file://$PROJECT_DIR$/data/tf_gpt2_data/encoder.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2384">
+          <caret line="335" selection-start-line="335" selection-end-line="335" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/encode.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2_download_model.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="288">
@@ -687,23 +704,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1854">
           <caret line="106" selection-start-line="106" selection-end-line="106" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/encode.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="139" column="56" selection-start-line="139" selection-start-column="56" selection-end-line="139" selection-end-column="56" />
         </state>
       </provider>
     </entry>
