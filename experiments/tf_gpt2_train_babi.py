@@ -369,11 +369,12 @@ def main():
                 if compare.strip().endswith('.'):
                     compare = compare.strip()[:-1]
 
+                notification = ''
                 if text.strip().lower().endswith(compare.strip().lower()):
                     acc_total += 1
-                    print('SCORE!!')
+                    notification = 'SCORE!! '
 
-                print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
+                print(notification + "=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
                 print(text)
             print("=" * 80)
             return acc_total
@@ -411,6 +412,11 @@ def main():
                             avg_loss[1] * 0.99 + 1.0)
 
                 acc = acc_total / len(val_batches) * 100
+
+                if acc is 100:
+                    save()
+                    exit()
+
                 print(
                     '[{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
                     .format(

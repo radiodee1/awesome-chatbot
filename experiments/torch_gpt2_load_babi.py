@@ -1282,7 +1282,7 @@ class NMT:
                 o_val = ans[- len(t_val):]
 
                 print('o:',o_val,'t:', t_val)
-                
+
                 if ans.strip().lower().endswith(t_val.strip().lower()):
                     #if o_val == t_val:
                     num_right += 1

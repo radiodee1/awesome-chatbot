@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -12,20 +13,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
-              <caret line="41" column="74" selection-start-line="41" selection-start-column="74" selection-end-line="41" selection-end-column="74" />
+            <state relative-caret-position="465">
+              <caret line="374" column="44" selection-start-line="374" selection-start-column="44" selection-end-line="374" selection-end-column="44" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="486">
-              <caret line="1284" column="16" selection-start-line="1284" selection-start-column="16" selection-end-line="1284" selection-end-column="16" />
+              <caret line="1284" selection-start-line="1284" selection-end-line="1284" />
             </state>
           </provider>
         </entry>
@@ -184,8 +185,8 @@
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
         <option value="$PROJECT_DIR$/model/loader_babi.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
-        <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
         <option value="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" />
+        <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
       </list>
     </option>
   </component>
@@ -714,17 +715,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="41" column="74" selection-start-line="41" selection-start-column="74" selection-end-line="41" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
-          <caret line="1284" column="16" selection-start-line="1284" selection-start-column="16" selection-end-line="1284" selection-end-column="16" />
+          <caret line="1284" selection-start-line="1284" selection-end-line="1284" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="374" column="44" selection-start-line="374" selection-start-column="44" selection-end-line="374" selection-end-column="44" />
         </state>
       </provider>
     </entry>
