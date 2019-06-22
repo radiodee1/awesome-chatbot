@@ -59,7 +59,7 @@ parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='W
 parser.add_argument('--val_dataset', metavar='PATH', type=str, default='../data/valid.from', help='Dataset for validation loss, defaults to --dataset.')
 parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=40, help='Batch size for validation.')
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=-1, help='Number of batches for validation.')
-parser.add_argument('--val_every', metavar='STEPS', type=int, default=100, help='Calculate validation loss every STEPS steps.')
+parser.add_argument('--val_every', metavar='STEPS', type=int, default=500, help='Calculate validation loss every STEPS steps.')
 parser.add_argument('--stop_after', metavar='STOP', type=int, default=None, help='Stop after training counter reaches STOP')
 
 
@@ -217,13 +217,13 @@ def main():
         print('Loading checkpoint', ckpt)
         saver.restore(sess, ckpt)
 
-        print('Loading dataset...')
+        print('Loading train dataset...')
         from_name, ques_name, to_name = name_parts( args.dataset ) #'../data/train.from')
 
         trn_chunks_from = load_dataset(enc, from_name, args.combine) if args.val_dataset else chunks
         trn_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
         trn_chunks_to = load_dataset(enc, to_name, args.combine) if args.val_dataset else chunks
-        print(trn_chunks_from[0].shape,'trn')
+
 
         skip_delimeter = True
         trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, skip_delimeter=skip_delimeter)
@@ -243,12 +243,11 @@ def main():
             data_sampler.append(v)
             pass
 
-        print(np.array(data_sampler).shape)
         #chunks = load_dataset(enc, args.dataset, args.combine)
         data_sampler = Sampler([np.array(data_sampler)])
-        print(data_sampler.total_size)
 
         if args.val_every > 0:
+            print('Loading validation dataset...')
             #val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
 
             from_name, ques_name, to_name = name_parts(args.val_dataset)
@@ -383,6 +382,7 @@ def main():
                     compare = compare.strip()[: - len('<|endoftext|>')]
 
                 notification = ''
+                len_bar = 40
                 if text.strip().lower().endswith(compare.strip().lower()):
                     acc_total += 1
                     notification = 'SCORE!! '
