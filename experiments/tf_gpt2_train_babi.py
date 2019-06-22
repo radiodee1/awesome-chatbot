@@ -96,13 +96,13 @@ def model_summary():
 
 class SamplerVal(object):
 
-    def __init__(self, chunks, encoder=None, char='\n'):
+    def __init__(self, chunks, encoder=None, char='\n', skip_delimeter=True):
         char = encoder.encode(char)
         chunks = chunks[0]
         l = []
         self.chunks = []
         for i in chunks:
-            if i != char[0]:
+            if i != char[0] or not skip_delimeter:
                 l.append(i)
             else:
                 l.append(encoder.encode(' ')[0])
@@ -223,10 +223,12 @@ def main():
         trn_chunks_from = load_dataset(enc, from_name, args.combine) if args.val_dataset else chunks
         trn_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
         trn_chunks_to = load_dataset(enc, to_name, args.combine) if args.val_dataset else chunks
+        print(trn_chunks_from[0].shape,'trn')
 
-        trn_data_sampler_from = SamplerVal(trn_chunks_from, enc)
-        trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc)
-        trn_data_sampler_to = SamplerVal(trn_chunks_to, enc)
+        skip_delimeter = True
+        trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, skip_delimeter=skip_delimeter)
+        trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc, skip_delimeter=skip_delimeter)
+        trn_data_sampler_to = SamplerVal(trn_chunks_to, enc, skip_delimeter=skip_delimeter)
 
         data_sampler = []
         for i in range(trn_data_sampler_from.total_size):
@@ -234,14 +236,17 @@ def main():
                     trn_data_sampler_from.get(i) +
                     trn_data_sampler_ques.get(i) +
                     enc.encode('. ')  +
-                    trn_data_sampler_to.get(i)
+                    trn_data_sampler_to.get(i) +
+                    enc.encode('<|endoftext|>')
             )
             # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
             data_sampler.append(v)
             pass
 
+        print(np.array(data_sampler).shape)
         #chunks = load_dataset(enc, args.dataset, args.combine)
-        #data_sampler = Sampler(chunks)
+        data_sampler = Sampler([np.array(data_sampler)])
+        print(data_sampler.total_size)
 
         if args.val_every > 0:
             #val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
@@ -252,7 +257,7 @@ def main():
             val_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
             val_chunks_to =   load_dataset(enc, to_name,   args.combine) if args.val_dataset else chunks
 
-        print('dataset has', len(data_sampler), 'tokens')
+        print('dataset has', data_sampler.total_size, 'tokens')
         print('Training...')
 
         if args.val_every > 0:
@@ -322,7 +327,7 @@ def main():
 
         def sample_batch():
             #print(data_sampler[counter],'batch')
-            return [data_sampler[counter] for _ in range(args.batch_size)]
+            return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
 
         def validation_by_sample():
             print('Generating validation...')
