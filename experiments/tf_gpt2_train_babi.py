@@ -25,6 +25,8 @@ import memory_saving_gradients
 
 from settings import hparams as hp
 import tensorflow.contrib.slim as slim
+import datetime
+import json
 
 HIDDEN_SIZE = 1024 -1
 
@@ -135,6 +137,8 @@ def main():
     config.graph_options.rewrite_options.layout_optimizer = rewriter_config_pb2.RewriterConfig.OFF
 
     acc_total = 0
+    acc_over_time = []
+    loss_avg_over_time = []
 
     if args.val_every > 0:
 
@@ -289,6 +293,27 @@ def main():
             with open(counter_path, 'r') as fp:
                 counter = int(fp.read()) + 1
 
+        txt_file_path = os.path.join(CHECKPOINT_DIR, args.run_name, args.run_name + '.summary.txt')
+
+        def save_summary():
+            txt = ''
+
+            if not os.path.exists(txt_file_path):
+                a = vars(args)
+                txt += 'Summary for ' + args.run_name + '\n'
+                txt += str(datetime.datetime.now()) + '\n\n'
+                txt += json.dumps(a) + '\n'
+                txt += '-----\n'
+                pass
+            txt += str(datetime.datetime.now()) + '\n'
+            txt += 'acc: ' + ', '.join([str(i) for i in acc_over_time]) + '\n'
+            txt += 'loss: ' + ', '.join([str(i) for i in loss_avg_over_time]) + '\n'
+            txt += 'counter: ' + str(counter) + '\n'
+            txt += '-----\n'
+            print(txt)
+            with open(txt_file_path, 'a') as f:
+                f.write(txt + '\n')
+
         def save():
             maketree(os.path.join(CHECKPOINT_DIR, args.run_name))
             print(
@@ -301,6 +326,7 @@ def main():
                 global_step=counter)
             with open(counter_path, 'w') as fp:
                 fp.write(str(counter) + '\n')
+            save_summary()
 
         def generate_samples():
             print('Generating samples...')
@@ -404,6 +430,7 @@ def main():
         avg_loss = (0.0, 0.0)
         start_time = time.time()
         count_success = 0
+        acc = 0.0
 
         try:
             while counter != args.stop_after:
@@ -416,6 +443,10 @@ def main():
                     pass
                 if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
                     acc_total = validation_by_sample()
+                    acc = acc_total / len(val_batches) * 100
+
+                    acc_over_time.append(acc)
+                    loss_avg_over_time.append(avg_loss[0] / avg_loss[1])
 
                 if args.accumulate_gradients > 1:
                     sess.run(opt_reset)
@@ -433,9 +464,7 @@ def main():
                 avg_loss = (avg_loss[0] * 0.99 + v_loss,
                             avg_loss[1] * 0.99 + 1.0)
 
-                acc = acc_total / len(val_batches) * 100
-
-                if acc is 100:
+                if float(acc) is 100.0:
                     save()
                     print('validation accuracy 100', time.time() - start_time)
                     count_success += 1
