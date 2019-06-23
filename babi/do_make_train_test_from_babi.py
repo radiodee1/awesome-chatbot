@@ -214,6 +214,10 @@ if __name__ == '__main__':
     if args['eol'] is True:
         flag_eol = True
 
+    if flag_eol is False:
+        hparams['eol'] = ''
+        hparams['sol'] = ''
+
     mode = 'w'
 
     for id in id_lst:
