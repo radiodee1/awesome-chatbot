@@ -430,6 +430,7 @@ def main():
         avg_loss = (0.0, 0.0)
         start_time = time.time()
         count_success = 0
+        count_success_with_skips = 0
         acc = 0.0
 
         try:
@@ -446,7 +447,10 @@ def main():
                     acc = acc_total / len(val_batches) * 100
 
                     acc_over_time.append(acc)
-                    loss_avg_over_time.append(avg_loss[0] / avg_loss[1])
+                    if avg_loss[1] > 0.0:
+                        loss_avg_over_time.append(avg_loss[0] / avg_loss[1])
+                    else:
+                        loss_avg_over_time.append(0)
 
                 if args.accumulate_gradients > 1:
                     sess.run(opt_reset)
@@ -468,7 +472,8 @@ def main():
                     save()
                     print('validation accuracy 100', time.time() - start_time)
                     count_success += 1
-                    if count_success >= 2:
+                    count_success_with_skips += 1
+                    if count_success >= 2 or count_success_with_skips >= 4:
                         exit()
                 else:
                     count_success = 0
