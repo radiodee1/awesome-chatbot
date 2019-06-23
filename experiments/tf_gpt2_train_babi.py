@@ -34,6 +34,8 @@ CHECKPOINT_DIR = 'checkpoint'
 SAMPLE_DIR = hp['save_dir'] + '/' + 'tf_gpt2_samples/'
 
 model_name =  hp['data_dir'] + '/' + 'tf_gpt2_data/'
+data_dir = hp['data_dir'] + '/'
+
 checkpoint_dir = hp['save_dir'] + '/' + 'tf_gpt2_saved/'
 CHECKPOINT_DIR = checkpoint_dir
 
@@ -41,12 +43,12 @@ parser = argparse.ArgumentParser(
     description='Fine-tune GPT-2 on your custom dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('--dataset', metavar='PATH', type=str, required=True, default='../data/train.from', help='Input file, directory, or glob pattern (utf-8 text, or preencoded .npz files).')
+parser.add_argument('--dataset', metavar='PATH', type=str, required=False, default=data_dir + 'train.from', help='Input file, directory, or glob pattern (utf-8 text, or preencoded .npz files).')
 parser.add_argument('--model_name', metavar='MODEL', type=str, default='117M', help='Pretrained model name')
 parser.add_argument('--combine', metavar='CHARS', type=int, default=50000, help='Concatenate input files with <|endoftext|> separator into chunks of this minimum size')
 
 parser.add_argument('--batch_size', metavar='SIZE', type=int, default=1, help='Batch size')
-parser.add_argument('--learning_rate', metavar='LR', type=float, default=0.0001, help='Learning rate for Adam')
+parser.add_argument('--learning_rate', metavar='LR', type=float, default=1e-5, help='Learning rate for Adam')
 parser.add_argument('--accumulate_gradients', metavar='N', type=int, default=1, help='Accumulate gradients across N minibatches.')
 parser.add_argument('--memory_saving_gradients', default=False, action='store_true', help='Use gradient checkpointing to reduce vram usage.')
 parser.add_argument('--only_train_transformer_layers', default=False, action='store_true', help='Restrict training to the transformer blocks.')
@@ -58,7 +60,7 @@ parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=25, h
 parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Generate this many samples')
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 
-parser.add_argument('--val_dataset', metavar='PATH', type=str, default='../data/valid.from', help='Dataset for validation loss, defaults to --dataset.')
+parser.add_argument('--val_dataset', metavar='PATH', type=str, default=data_dir + 'valid.from', help='Dataset for validation loss, defaults to --dataset.')
 parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=40, help='Batch size for validation.')
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=-1, help='Number of batches for validation.')
 parser.add_argument('--val_every', metavar='STEPS', type=int, default=500, help='Calculate validation loss every STEPS steps.')
@@ -326,7 +328,7 @@ def main():
                 global_step=counter)
             with open(counter_path, 'w') as fp:
                 fp.write(str(counter) + '\n')
-            save_summary()
+            #save_summary()
 
         def generate_samples():
             print('Generating samples...')
@@ -418,7 +420,7 @@ def main():
                 len_bar = 40
                 if text.strip().lower().endswith(compare.strip().lower()):
                     acc_total += 1
-                    notification = 'SCORE!! '
+                    notification = 'vv CORRECT vv'
                     len_bar = 40 - len(notification)
 
                 print(notification + "=" * len_bar + " SAMPLE " + str(generated) + " " + "=" * len_bar + notification)
@@ -470,10 +472,12 @@ def main():
 
                 if float(acc) is 100.0:
                     save()
+
                     print('validation accuracy 100', time.time() - start_time)
                     count_success += 1
                     count_success_with_skips += 1
                     if count_success >= 2 or count_success_with_skips >= 4:
+                        save_summary()
                         exit()
                 else:
                     count_success = 0
@@ -492,6 +496,7 @@ def main():
             print('interrupted')
         finally:
             save()
+            save_summary()
 
 
 if __name__ == '__main__':
