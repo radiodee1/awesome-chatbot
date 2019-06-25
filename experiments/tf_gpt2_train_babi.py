@@ -301,7 +301,7 @@ def main():
 
         def save_summary():
             txt = ''
-
+            fmt = '{valid:2.2f}'
             if not os.path.exists(txt_file_path):
                 a = vars(args)
                 txt += 'Summary for ' + args.run_name + '\n'
@@ -310,8 +310,9 @@ def main():
                 txt += '-----\n'
                 pass
             txt += str(datetime.datetime.now()) + '\n'
-            txt += 'acc: ' + ', '.join([str(i) for i in acc_over_time]) + '\n'
-            txt += 'loss: ' + ', '.join([str(i) for i in loss_avg_over_time]) + '\n'
+
+            txt += 'acc: ' + ', '.join([fmt.format(valid=i) for i in acc_over_time]) + '\n'
+            txt += 'loss: ' + ', '.join([fmt.format(valid=i) for i in loss_avg_over_time]) + '\n'
             txt += 'counter: ' + str(counter) + '\n'
             txt += '-----\n'
             print(txt)
