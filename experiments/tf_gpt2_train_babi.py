@@ -358,7 +358,7 @@ def main():
             if word is None:
                 word = 'progress'
 
-            if avg_loss[1] == 0.0: return 
+            if avg_loss[1] == 0.0: return
             print(
                 word +
                 ' [{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
@@ -483,7 +483,8 @@ def main():
                     # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
                     val_batches.append(v)
 
-                validation_by_sample()
+                acc_total = validation_by_sample()
+                print(acc_total)
                 exit()
 
             while counter != args.stop_after:
