@@ -144,6 +144,7 @@ def main():
     acc_over_time = []
     loss_avg_over_time = []
 
+
     if args.val_every > 0:
 
         # val_context = tf.placeholder(tf.int32, [args.val_batch_size, None])
@@ -355,10 +356,16 @@ def main():
                                  'samples-{}').format(counter), 'w') as fp:
                 fp.write('\n'.join(all_text))
 
-        def print_status(word=None):
+        def print_status(word=None, acc_total_in=0, size=0):
+
+            acc_out = 0
+            acc_total = 0
             if word is None:
                 word = 'progress'
-
+            if acc_total_in != 0 and size != 0:
+                acc_out = acc_total_in / size * 100
+                acc_total = size
+                pass
             if avg_loss[1] == 0.0: return
             print(
                 word +
@@ -367,8 +374,12 @@ def main():
                     counter=counter,
                     time=time.time() - start_time,
                     loss=v_loss,
-                    avg=avg_loss[0] / avg_loss[1]), 'acc=' + str(acc), end=' ')
-            print('total=' + str(acc_total))
+                    avg=avg_loss[0] / avg_loss[1]), 'acc=' + str(acc_out), end=' ')
+            print('total=' + str(acc_total) , end=' ')
+            if len(acc_over_time) > 0:
+                print('last-acc=' + str(acc_over_time[-1]) )
+            else:
+                print()
             pass
 
         def sample_batch():
@@ -444,7 +455,7 @@ def main():
 
                 print(notification + "=" * len_bar + " SAMPLE " + str(generated) + " " + "=" * len_bar + notification)
                 print(text)
-                print_status('old values')
+                print_status('old values', acc_total_in=acc_total, size=generated)
             print("=" * 80)
             return acc_total
             pass
@@ -536,7 +547,7 @@ def main():
                 else:
                     count_success = 0
 
-                print_status()
+                print_status(acc_total_in=acc_total,size=len(val_batches))
 
                 counter += 1
         except KeyboardInterrupt:
