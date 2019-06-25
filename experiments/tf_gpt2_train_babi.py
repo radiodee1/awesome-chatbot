@@ -65,7 +65,8 @@ parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=40, he
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=-1, help='Number of batches for validation.')
 parser.add_argument('--val_every', metavar='STEPS', type=int, default=500, help='Calculate validation loss every STEPS steps.')
 parser.add_argument('--stop_after', metavar='STOP', type=int, default=None, help='Stop after training counter reaches STOP')
-
+parser.add_argument('--val_with_loss', action='store_true', help='perform loss calculation during validation.')
+parser.add_argument('--test', action='store_true', help='do only test set!')
 
 def maketree(path):
     try:
@@ -352,6 +353,20 @@ def main():
                                  'samples-{}').format(counter), 'w') as fp:
                 fp.write('\n'.join(all_text))
 
+        def print_status(word=None):
+            if word is None:
+                word = 'progress'
+            print(
+                word +
+                ' [{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
+                    .format(
+                    counter=counter,
+                    time=time.time() - start_time,
+                    loss=v_loss,
+                    avg=avg_loss[0] / avg_loss[1]), 'acc=' + str(acc), end=' ')
+            print('total=' + str(acc_total))
+            pass
+
         def sample_batch():
             #print(enc.encode('<|endoftext|>'), 'eot')
             #print(data_sampler.sample(1024))
@@ -360,7 +375,7 @@ def main():
         def validation_by_sample():
             print('Generating validation...')
             global acc_total
-            if False:
+            if args.val_with_loss:
                 losses = []
                 for batch in tqdm.tqdm(val_batches):
                     batch = np.reshape(batch, [1,-1])
@@ -425,6 +440,7 @@ def main():
 
                 print(notification + "=" * len_bar + " SAMPLE " + str(generated) + " " + "=" * len_bar + notification)
                 print(text)
+                print_status('old values')
             print("=" * 80)
             return acc_total
             pass
@@ -436,6 +452,9 @@ def main():
         acc = 0.0
 
         try:
+            if args.test:
+                exit()
+                
             while counter != args.stop_after:
                 #model_summary()
 
@@ -482,14 +501,7 @@ def main():
                 else:
                     count_success = 0
 
-                print(
-                    '[{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
-                    .format(
-                        counter=counter,
-                        time=time.time() - start_time,
-                        loss=v_loss,
-                        avg=avg_loss[0] / avg_loss[1]), 'acc='+str(acc), end=' ')
-                print('total=' + str(acc_total))
+                print_status()
 
                 counter += 1
         except KeyboardInterrupt:
