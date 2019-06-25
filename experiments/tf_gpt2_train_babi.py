@@ -27,6 +27,7 @@ from settings import hparams as hp
 import tensorflow.contrib.slim as slim
 import datetime
 import json
+import re
 
 HIDDEN_SIZE = 1024 -1
 
@@ -356,6 +357,8 @@ def main():
         def print_status(word=None):
             if word is None:
                 word = 'progress'
+
+            if avg_loss[1] == 0.0: return 
             print(
                 word +
                 ' [{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
@@ -453,8 +456,36 @@ def main():
 
         try:
             if args.test:
+                v_loss = 0.0
+                dataset = re.sub('train','test', args.dataset)
+                print(dataset)
+                from_name, ques_name, to_name = name_parts(dataset)
+
+                test_chunks_from = load_dataset(enc, from_name, args.combine)
+                test_chunks_ques = load_dataset(enc, ques_name, args.combine)
+                test_chunks_to = load_dataset(enc, to_name, args.combine)
+
+                val_data_sampler_from = SamplerVal(test_chunks_from, enc)
+                val_data_sampler_ques = SamplerVal(test_chunks_ques, enc)
+                val_data_sampler_to = SamplerVal(test_chunks_to, enc)
+
+                if args.val_batch_count == -1:
+                    args.val_batch_count = val_data_sampler_from.total_size
+
+                val_batches = []
+                for i in range(args.val_batch_count):
+                    v = (
+                            val_data_sampler_from.get(i) +
+                            val_data_sampler_ques.get(i) +
+                            enc.encode('. ')
+                    )  # + val_data_sampler_to.get(i)
+
+                    # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+                    val_batches.append(v)
+
+                validation_by_sample()
                 exit()
-                
+
             while counter != args.stop_after:
                 #model_summary()
 
