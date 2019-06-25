@@ -484,7 +484,9 @@ def main():
                     val_batches.append(v)
 
                 acc_total = validation_by_sample()
-                print(acc_total)
+                acc = acc_total / len(val_batches) * 100
+
+                print(acc, 'test accuracy')
                 exit()
 
             while counter != args.stop_after:
