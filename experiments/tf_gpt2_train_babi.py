@@ -300,22 +300,25 @@ def main():
 
         txt_file_path = os.path.join(CHECKPOINT_DIR, args.run_name, args.run_name + '.summary.txt')
 
-        def save_summary():
-            txt = ''
-            fmt = '{valid:2.2f}'
-            if not os.path.exists(txt_file_path):
-                a = vars(args)
-                txt += 'Summary for ' + args.run_name + '\n'
-                txt += str(datetime.datetime.now()) + '\n\n'
-                txt += json.dumps(a) + '\n'
-                txt += '-----\n'
-                pass
-            txt += str(datetime.datetime.now()) + '\n'
+        def save_summary(message=None):
+            if message is None:
+                txt = ''
+                fmt = '{valid:2.2f}'
+                if not os.path.exists(txt_file_path):
+                    a = vars(args)
+                    txt += 'Summary for ' + args.run_name + '\n'
+                    txt += str(datetime.datetime.now()) + '\n\n'
+                    txt += json.dumps(a) + '\n'
+                    txt += '-----\n'
+                    pass
+                txt += str(datetime.datetime.now()) + '\n'
 
-            txt += 'acc: ' + ', '.join([fmt.format(valid=i) for i in acc_over_time]) + '\n'
-            txt += 'loss: ' + ', '.join([fmt.format(valid=i) for i in loss_avg_over_time]) + '\n'
-            txt += 'counter: ' + str(counter) + '\n'
-            txt += '-----\n'
+                txt += 'acc: ' + ', '.join([fmt.format(valid=i) for i in acc_over_time]) + '\n'
+                txt += 'loss: ' + ', '.join([fmt.format(valid=i) for i in loss_avg_over_time]) + '\n'
+                txt += 'counter: ' + str(counter) + '\n'
+                txt += '-----\n'
+            else:
+                txt = message
             print(txt)
             with open(txt_file_path, 'a') as f:
                 f.write(txt + '\n')
@@ -332,7 +335,7 @@ def main():
                 global_step=counter)
             with open(counter_path, 'w') as fp:
                 fp.write(str(counter) + '\n')
-            #save_summary()
+
 
         def generate_samples():
             print('Generating samples...')
@@ -499,6 +502,7 @@ def main():
                 acc = acc_total / len(val_batches) * 100
 
                 print(acc, 'test accuracy')
+                save_summary('Accuracy with test set ' + acc + '\n')
                 exit()
 
             while counter != args.stop_after:
