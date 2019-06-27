@@ -502,7 +502,7 @@ def main():
                 acc = acc_total / len(val_batches) * 100
 
                 print(acc, 'test accuracy')
-                save_summary('Accuracy with test set ' + acc + '\n')
+                save_summary('Accuracy with test set ' + str(acc) + '\n')
                 exit()
 
             while counter != args.stop_after:
