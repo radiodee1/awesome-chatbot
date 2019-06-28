@@ -359,17 +359,23 @@ def main():
                                  'samples-{}').format(counter), 'w') as fp:
                 fp.write('\n'.join(all_text))
 
-        def print_status(word=None, acc_total_in=0, size=0):
-
+        def print_status(word=None, acc_total_in=0, size=0, v_loss_in=0.0):
+            v_loss = v_loss_in
             acc_out = 0
             acc_total = 0
+            loss_out = 0.0
             if word is None:
                 word = 'progress'
             if acc_total_in != 0 and size != 0:
                 acc_out = acc_total_in / size * 100
                 acc_total = size
                 pass
-            if avg_loss[1] == 0.0: return
+            if avg_loss[1] == 0.0:
+                loss_out = 0.0
+                v_loss = 0.0
+                pass
+            else:
+                loss_out = avg_loss[0] / avg_loss[1]
             print(
                 word +
                 ' [{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
@@ -377,7 +383,7 @@ def main():
                     counter=counter,
                     time=time.time() - start_time,
                     loss=v_loss,
-                    avg=avg_loss[0] / avg_loss[1]), 'acc=' + str(acc_out), end=' ')
+                    avg=loss_out ), 'acc=' + str(acc_out), end=' ')
             print('total=' + str(acc_total) , end=' ')
             if len(acc_over_time) > 0:
                 print('last-acc=' + str(acc_over_time[-1]) )
@@ -551,7 +557,7 @@ def main():
                 else:
                     count_success = 0
 
-                print_status(acc_total_in=acc_total,size=len(val_batches))
+                print_status(acc_total_in=acc_total,size=len(val_batches), v_loss_in=v_loss)
 
                 counter += 1
         except KeyboardInterrupt:
