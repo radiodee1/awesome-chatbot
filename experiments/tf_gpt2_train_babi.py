@@ -336,7 +336,7 @@ def main():
             with open(counter_path, 'w') as fp:
                 fp.write(str(counter) + '\n')
 
-
+        '''
         def generate_samples():
             print('Generating samples...')
             context_tokens = data_sampler.sample(1)
@@ -358,6 +358,7 @@ def main():
                     os.path.join(SAMPLE_DIR, args.run_name,
                                  'samples-{}').format(counter), 'w') as fp:
                 fp.write('\n'.join(all_text))
+        '''
 
         def print_status(word=None, acc_total_in=0, size=0, v_loss_in=0.0):
             v_loss = v_loss_in
