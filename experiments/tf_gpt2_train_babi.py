@@ -539,7 +539,7 @@ def main():
                 avg_loss = (avg_loss[0] * 0.99 + v_loss,
                             avg_loss[1] * 0.99 + 1.0)
 
-                if float(acc) is 100.0:
+                if float(acc) == 100.0:
                     save()
 
                     print('validation accuracy 100', time.time() - start_time)
