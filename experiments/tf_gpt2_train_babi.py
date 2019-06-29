@@ -54,6 +54,8 @@ parser.add_argument('--accumulate_gradients', metavar='N', type=int, default=1, 
 parser.add_argument('--memory_saving_gradients', default=False, action='store_true', help='Use gradient checkpointing to reduce vram usage.')
 parser.add_argument('--only_train_transformer_layers', default=False, action='store_true', help='Restrict training to the transformer blocks.')
 
+parser.add_argument('--train_special', action='store_true', help='test special training routine for babi stories')
+
 parser.add_argument('--restore_from', type=str, default='latest', help='Either "latest", "fresh", or a path to a checkpoint file')
 parser.add_argument('--run_name', type=str, default='run1', help='Run id. Name of subdirectory in checkpoint/ and samples/')
 parser.add_argument('--sample_every', metavar='N', type=int, default=100, help='Generate samples every N steps')
@@ -253,7 +255,8 @@ def main():
             pass
 
         #chunks = load_dataset(enc, args.dataset, args.combine)
-        data_sampler = Sampler([np.array(data_sampler)])
+        if not args.train_special:
+            data_sampler = Sampler([np.array(data_sampler)])
 
         if args.val_every > 0:
             print('Loading validation dataset...')
@@ -265,7 +268,8 @@ def main():
             val_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
             val_chunks_to =   load_dataset(enc, to_name,   args.combine) if args.val_dataset else chunks
 
-        print('dataset has', data_sampler.total_size, 'tokens')
+        if not args.train_special:
+            print('dataset has', data_sampler.total_size, 'tokens')
         print('Training...')
 
         if args.val_every > 0:
@@ -392,10 +396,14 @@ def main():
                 print()
             pass
 
-        def sample_batch():
+        def sample_batch(counter=0):
             #print(enc.encode('<|endoftext|>'), 'eot')
             #print(data_sampler.sample(1024))
-            return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
+            if not args.train_special:
+                return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
+            else:
+                #print('train special')
+                return [data_sampler[counter] for _ in range(args.batch_size)]
 
         def validation_by_sample():
             print('Generating validation...')
@@ -530,16 +538,17 @@ def main():
                     else:
                         loss_avg_over_time.append(0)
 
+                counter_in = counter % len(val_batches)
                 if args.accumulate_gradients > 1:
                     sess.run(opt_reset)
                     for _ in range(args.accumulate_gradients):
                         sess.run(
-                            opt_compute, feed_dict={context: sample_batch()})
+                            opt_compute, feed_dict={context: sample_batch(counter_in)})
                     (v_loss, v_summary) = sess.run((opt_apply, summary_loss))
                 else:
                     (_, v_loss, v_summary) = sess.run(
                         (opt_apply, loss, summary_loss),
-                        feed_dict={context: sample_batch()})
+                        feed_dict={context: sample_batch(counter_in)})
 
                 summary_log.add_summary(v_summary, counter)
 
