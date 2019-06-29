@@ -405,7 +405,13 @@ def main():
             else:
                 r = random.randint(0,4)
                 print('train special', r)
-                return [data_sampler[counter][:-r] for _ in range(args.batch_size)]
+                z = [
+                    data_sampler[counter][:-r] + [
+                        enc.encode(' ')[0] for _ in range(1024 - (len(data_sampler[counter]) - r) )
+                    ] for _ in range(args.batch_size)
+                ]
+                #print(z)
+                return z
 
         def validation_by_sample():
             print('Generating validation...')
