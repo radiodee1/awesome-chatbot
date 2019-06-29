@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2582">
-              <caret line="399" column="24" selection-start-line="399" selection-start-column="12" selection-end-line="399" selection-end-column="24" />
+            <state relative-caret-position="278">
+              <caret line="378" column="55" selection-start-line="378" selection-start-column="55" selection-end-line="378" selection-end-column="55" />
             </state>
           </provider>
         </entry>
@@ -135,7 +135,6 @@
       <find>sample_num</find>
       <find>HIDDEN_SIZE</find>
       <find>val_batch_count</find>
-      <find>val_batches</find>
       <find>acc_total</find>
       <find>data_sampler</find>
       <find>endoftext</find>
@@ -145,6 +144,7 @@
       <find>save_summary</find>
       <find>print_status</find>
       <find>sample_batch</find>
+      <find>val_batches</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -650,8 +650,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2582">
-          <caret line="399" column="24" selection-start-line="399" selection-start-column="12" selection-end-line="399" selection-end-column="24" />
+        <state relative-caret-position="278">
+          <caret line="378" column="55" selection-start-line="378" selection-start-column="55" selection-end-line="378" selection-end-column="55" />
         </state>
       </provider>
     </entry>

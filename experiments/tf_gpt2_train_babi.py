@@ -376,7 +376,7 @@ def main():
                 acc_out = acc_total_in / size * 100
                 acc_total = size
                 pass
-            if avg_loss[1] == 0.0:
+            if avg_loss[1] == 0.0 or avg_loss[0] == 0.0:
                 loss_out = 0.0
                 v_loss = 0.0
                 pass
