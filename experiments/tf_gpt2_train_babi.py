@@ -28,6 +28,7 @@ import tensorflow.contrib.slim as slim
 import datetime
 import json
 import re
+import random
 
 HIDDEN_SIZE = 1024 -1
 
@@ -247,8 +248,8 @@ def main():
                     trn_data_sampler_from.get(i) +
                     trn_data_sampler_ques.get(i) +
                     enc.encode('. ')  +
-                    trn_data_sampler_to.get(i)  +
-                    enc.encode('<|endoftext|>')
+                    trn_data_sampler_to.get(i) # +
+                    #enc.encode('<|endoftext|>')
             )
             # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
             data_sampler.append(v)
@@ -402,8 +403,9 @@ def main():
             if not args.train_special:
                 return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
             else:
-                #print('train special')
-                return [data_sampler[counter] for _ in range(args.batch_size)]
+                r = random.randint(0,4)
+                print('train special', r)
+                return [data_sampler[counter][:-r] for _ in range(args.batch_size)]
 
         def validation_by_sample():
             print('Generating validation...')
