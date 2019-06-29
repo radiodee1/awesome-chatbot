@@ -360,7 +360,7 @@ def main():
                 fp.write('\n'.join(all_text))
         '''
 
-        def print_status(word=None, acc_total_in=0, size=0, v_loss_in=0.0):
+        def print_status(word=None, acc_total_in=0, size=0, v_loss_in=0.0, shorten=False):
             v_loss = v_loss_in
             acc_out = 0
             acc_total = 0
@@ -386,7 +386,7 @@ def main():
                     loss=v_loss,
                     avg=loss_out ), 'acc=' + str(acc_out), end=' ')
             print('total=' + str(acc_total) , end=' ')
-            if len(acc_over_time) > 0:
+            if len(acc_over_time) > 0 and not shorten:
                 print('last-acc=' + str(acc_over_time[-1]) )
             else:
                 print()
@@ -558,7 +558,7 @@ def main():
                 else:
                     count_success = 0
 
-                print_status(acc_total_in=acc_total,size=len(val_batches), v_loss_in=v_loss)
+                print_status(acc_total_in=acc_total,size=len(val_batches), v_loss_in=v_loss, shorten=True)
 
                 counter += 1
         except KeyboardInterrupt:
