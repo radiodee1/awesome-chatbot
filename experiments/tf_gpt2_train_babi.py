@@ -514,9 +514,9 @@ def main():
                     t_vals = t_vals[:-1]
                     num += 1
 
-                print(t_vals)
+                #print(t_vals)
                 t_vals = [ i  for i in t_vals if i != '']
-                print(t_vals)
+                #print(t_vals)
 
                 text = ' '.join(t_vals)
 
