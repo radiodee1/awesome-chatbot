@@ -388,7 +388,7 @@ def main():
                 loss_out = 0.0
                 v_loss = 0.0
                 pass
-            elif not np.isnan(avg_loss[0]): # and not np.isnan(avg_loss[1]):
+            elif not np.isnan(avg_loss[0]) or True: # and not np.isnan(avg_loss[1]):
                 loss_out = avg_loss[0] / avg_loss[1]
             print(
                 word +
@@ -423,12 +423,17 @@ def main():
                         pad = HIDDEN_SIZE - (len(data_sampler[counter]) - r)
                     else:
                         pad = 0
-                    z = [
-                        [
-                            enc.encode(' ')[0] for _ in range(pad)
-                        ] + data_sampler[counter][:-r]
-                        for _ in range(args.batch_size)
-                    ]
+
+                    if randomize:
+                        z = [
+                            [
+                                enc.encode(' ')[0] for _ in range(pad)
+                            ] + data_sampler[counter][:-r]
+                            for _ in range(args.batch_size)
+                        ]
+
+                    if not randomize:
+                        z = [data_sampler[counter]]
                     #print(enc.decode(z[0]))
                     num += 1
                     if num == 5:
