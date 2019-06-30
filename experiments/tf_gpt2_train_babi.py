@@ -405,7 +405,7 @@ def main():
                 print()
             pass
 
-        def sample_batch(counter=0):
+        def sample_batch(counter=0, randomize=False, pad_start=False):
             #print(enc.encode('<|endoftext|>'), 'eot')
             #print(data_sampler.sample(1024))
             if not args.train_special:
@@ -414,10 +414,15 @@ def main():
                 num = 0
                 z = []
                 while (len(z) > HIDDEN_SIZE or len(z) == 0) and num <= 5:
-                    r = random.randint(1,4)
+                    if randomize:
+                        r = random.randint(1,4)
+                    else:
+                        r = 0
                     #print('train special', r)
-                    pad = HIDDEN_SIZE - (len(data_sampler[counter]) - r)
-                    pad = 0
+                    if pad_start:
+                        pad = HIDDEN_SIZE - (len(data_sampler[counter]) - r)
+                    else:
+                        pad = 0
                     z = [
                         [
                             enc.encode(' ')[0] for _ in range(pad)
