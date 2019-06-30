@@ -13,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="492" column="40" selection-start-line="492" selection-start-column="40" selection-end-line="492" selection-end-column="40" />
+            <state relative-caret-position="5174">
+              <caret line="452" column="55" selection-start-line="452" selection-start-column="55" selection-end-line="452" selection-end-column="55" />
             </state>
           </provider>
         </entry>
@@ -207,7 +207,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="533" />
-    <option name="y" value="38" />
+    <option name="y" value="39" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
   </component>
@@ -648,8 +648,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="492" column="40" selection-start-line="492" selection-start-column="40" selection-end-line="492" selection-end-column="40" />
+        <state relative-caret-position="5174">
+          <caret line="452" column="55" selection-start-line="452" selection-start-column="55" selection-end-line="452" selection-end-column="55" />
         </state>
       </provider>
     </entry>

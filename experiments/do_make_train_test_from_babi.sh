@@ -2,5 +2,5 @@
 
 cd ../babi/
 
-do_make_train_test_from_babi.py $@
+./do_make_train_test_from_babi.py $@
 
