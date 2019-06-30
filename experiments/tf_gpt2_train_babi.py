@@ -302,7 +302,7 @@ def main():
                 val_batches.append(v)
                 pass
 
-        print('dataset has', len(val_batches), 'tokens')
+        print('val dataset has', len(val_batches), 'tokens')
         counter = 1
         counter_path = os.path.join(CHECKPOINT_DIR, args.run_name, 'counter')
         if os.path.exists(counter_path):
