@@ -15,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="620">
-              <caret line="421" column="29" selection-start-line="421" selection-start-column="29" selection-end-line="421" selection-end-column="29" />
+            <state relative-caret-position="386">
+              <caret line="492" column="39" selection-start-line="492" selection-start-column="39" selection-end-line="492" selection-end-column="39" />
             </state>
           </provider>
         </entry>
@@ -208,7 +208,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="534" />
+    <option name="x" value="533" />
     <option name="y" value="38" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -315,7 +315,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="534" y="38" width="1380" height="999" extended-state="0" />
+    <frame x="533" y="38" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.20781136" />
@@ -650,8 +650,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="421" column="29" selection-start-line="421" selection-start-column="29" selection-end-line="421" selection-end-column="29" />
+        <state relative-caret-position="386">
+          <caret line="492" column="39" selection-start-line="492" selection-start-column="39" selection-end-line="492" selection-end-column="39" />
         </state>
       </provider>
     </entry>

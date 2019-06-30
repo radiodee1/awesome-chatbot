@@ -408,9 +408,11 @@ def main():
                 while (len(z) > 1024 or len(z) == 0) and num <= 5:
                     r = random.randint(0,4)
                     print('train special', r)
+                    pad = 1024 - (len(data_sampler[counter]) - r)
+                    pad = 0
                     z = [
                         [
-                            enc.encode(' ')[0] for _ in range(1024 - (len(data_sampler[counter]) - r) )
+                            enc.encode(' ')[0] for _ in range(pad)
                         ] + data_sampler[counter][:-r]
                         for _ in range(args.batch_size)
                     ]
@@ -449,6 +451,9 @@ def main():
 
                 val_batches_in = val_batches[generated]
                 context_tokens = np.reshape(val_batches_in, [ 1, -1])
+                #print(val_batches_in)
+                text_in = enc.decode(val_batches_in)
+                #print(text_in)
 
                 #print(context_tokens, 'ct1')
                 for x in range(10):
@@ -465,6 +470,16 @@ def main():
 
                 text = enc.decode(out[0])
 
+                text_returned = ''
+                text_original = ''
+                if text.startswith(text_in):
+                    text_returned = text[len(text_in):]
+                    print('-',text_returned,'-')
+
+                if args.train_special:
+                    text_original = text
+                    text = text_returned
+
                 if text.strip().endswith('.'): ## remove trailing period
                     text = text.strip()[:-1]
 
@@ -474,6 +489,10 @@ def main():
                 t_vals = text.split(' ')
                 if '<' in t_vals[-1] or '>' in t_vals[-1]:
                     t_vals = t_vals[:-1]
+                if t_vals[-1] == '':
+                    t_vals = t_vals[:-1]
+
+                print(t_vals)
 
                 text = ' '.join(t_vals)
 
@@ -491,7 +510,10 @@ def main():
                     len_bar = 40 - len(notification)
 
                 print(notification + "=" * len_bar + " SAMPLE " + str(generated) + " " + "=" * len_bar + notification)
-                print(text)
+                if args.train_special:
+                    print(text_original)
+                else:
+                    print(text)
                 print_status('old values', acc_total_in=acc_total, size=generated)
             print("=" * 80)
             return acc_total
