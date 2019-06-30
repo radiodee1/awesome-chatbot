@@ -274,6 +274,8 @@ def main():
 
         if not args.train_special:
             print('dataset has', data_sampler.total_size, 'tokens')
+        else:
+            print('dataset has', len(data_sampler), 'tokens')
         print('Training...')
 
         if args.val_every > 0:
@@ -300,7 +302,7 @@ def main():
                 val_batches.append(v)
                 pass
 
-        #exit()
+        print('dataset has', len(val_batches), 'tokens')
         counter = 1
         counter_path = os.path.join(CHECKPOINT_DIR, args.run_name, 'counter')
         if os.path.exists(counter_path):
