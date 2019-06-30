@@ -450,6 +450,7 @@ def main():
             for _ in range(len(val_batches)):
 
                 val_batches_in = val_batches[generated]
+                val_batches_in = val_batches_in[: 1024]
                 context_tokens = np.reshape(val_batches_in, [ 1, -1])
                 #print(val_batches_in)
                 text_in = enc.decode(val_batches_in)
@@ -489,8 +490,11 @@ def main():
                 t_vals = text.split(' ')
                 if '<' in t_vals[-1] or '>' in t_vals[-1]:
                     t_vals = t_vals[:-1]
-                if t_vals[-1] == '':
+
+                num = 0
+                while t_vals[-1] == '' and num < 10:
                     t_vals = t_vals[:-1]
+                    num += 1
 
                 text = ' '.join(t_vals)
 
