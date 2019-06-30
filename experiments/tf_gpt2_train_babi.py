@@ -252,6 +252,8 @@ def main():
                     #enc.encode('<|endoftext|>')
             )
             # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+            if len(v) > HIDDEN_SIZE:
+                continue
             v = v[: HIDDEN_SIZE - 1]
             data_sampler.append(v)
             pass
@@ -292,6 +294,8 @@ def main():
                 ) #+ val_data_sampler_to.get(i)
 
                 #v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+                if len(v) > HIDDEN_SIZE:
+                    continue
                 v = v[:HIDDEN_SIZE]
                 val_batches.append(v)
                 pass
@@ -403,14 +407,14 @@ def main():
             #print(enc.encode('<|endoftext|>'), 'eot')
             #print(data_sampler.sample(1024))
             if not args.train_special:
-                return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
+                return [data_sampler.sample(HIDDEN_SIZE)[0] for _ in range(args.batch_size)]
             else:
                 num = 0
                 z = []
                 while (len(z) > HIDDEN_SIZE or len(z) == 0) and num <= 5:
                     r = random.randint(0,4)
                     #print('train special', r)
-                    pad = 1024 - (len(data_sampler[counter]) - r)
+                    pad = HIDDEN_SIZE - (len(data_sampler[counter]) - r)
                     pad = 0
                     z = [
                         [
