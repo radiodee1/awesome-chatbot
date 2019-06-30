@@ -273,9 +273,9 @@ def main():
             val_chunks_to =   load_dataset(enc, to_name,   args.combine) if args.val_dataset else chunks
 
         if not args.train_special:
-            print('dataset has', data_sampler.total_size, 'tokens')
+            print('train dataset has', data_sampler.total_size, 'tokens')
         else:
-            print('dataset has', len(data_sampler), 'tokens')
+            print('train dataset has', len(data_sampler), 'tokens')
         print('Training...')
 
         if args.val_every > 0:
@@ -388,7 +388,7 @@ def main():
                 loss_out = 0.0
                 v_loss = 0.0
                 pass
-            else:
+            elif not np.isnan(avg_loss[0]): # and not np.isnan(avg_loss[1]):
                 loss_out = avg_loss[0] / avg_loss[1]
             print(
                 word +
@@ -579,7 +579,7 @@ def main():
                 if counter % args.sample_every == 0:
                     #generate_samples()
                     pass
-                if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
+                if args.val_every > 0 and (counter % args.val_every == 0): # or counter == 1):
                     acc_total = validation_by_sample()
                     acc = acc_total / len(val_batches) * 100
 
@@ -603,8 +603,11 @@ def main():
 
                 summary_log.add_summary(v_summary, counter)
 
-                avg_loss = (avg_loss[0] * 0.99 + v_loss,
-                            avg_loss[1] * 0.99 + 1.0)
+                if True:
+                    if not np.isnan(avg_loss[0]) and not np.isnan(avg_loss[1]):
+
+                        avg_loss = (avg_loss[0] * 0.99 + v_loss,
+                                    avg_loss[1] * 0.99 + 1.0)
 
                 if float(acc) == 100.0:
                     save()
