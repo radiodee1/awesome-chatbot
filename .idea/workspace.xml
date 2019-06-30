@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="458">
-              <caret line="413" column="17" selection-start-line="413" selection-start-column="17" selection-end-line="413" selection-end-column="17" />
+            <state relative-caret-position="620">
+              <caret line="421" column="29" selection-start-line="421" selection-start-column="29" selection-end-line="421" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -116,7 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>ques</find>
       <find>##</find>
       <find>val_batch_size</find>
       <find>add_summary</find>
@@ -146,6 +144,7 @@
       <find>print_status</find>
       <find>sample_batch</find>
       <find>val_batches</find>
+      <find>1024</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -651,8 +650,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="413" column="17" selection-start-line="413" selection-start-column="17" selection-end-line="413" selection-end-column="17" />
+        <state relative-caret-position="620">
+          <caret line="421" column="29" selection-start-line="421" selection-start-column="29" selection-end-line="421" selection-end-column="29" />
         </state>
       </provider>
     </entry>

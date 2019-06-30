@@ -403,15 +403,24 @@ def main():
             if not args.train_special:
                 return [data_sampler.sample(1024)[0] for _ in range(args.batch_size)]
             else:
-                r = random.randint(0,4)
-                print('train special', r)
-                z = [
-                    [
-                        enc.encode(' ')[0] for _ in range(1024 - (len(data_sampler[counter]) - r) )
-                    ] + data_sampler[counter][:-r]
-                    for _ in range(args.batch_size)
-                ]
-                #print(enc.decode(z[0]))
+                num = 0
+                z = []
+                while (len(z) > 1024 or len(z) == 0) and num <= 5:
+                    r = random.randint(0,4)
+                    print('train special', r)
+                    z = [
+                        [
+                            enc.encode(' ')[0] for _ in range(1024 - (len(data_sampler[counter]) - r) )
+                        ] + data_sampler[counter][:-r]
+                        for _ in range(args.batch_size)
+                    ]
+                    #print(enc.decode(z[0]))
+                    num += 1
+                    if num == 5:
+                        z = z[len(z) - 1024:]
+                        print('cannot get sample_batch')
+                        break
+
                 return z
 
         def validation_by_sample():
@@ -445,7 +454,8 @@ def main():
                 for x in range(10):
 
                     out = sess.run(tf_sample_val, feed_dict={val_context: context_tokens})
-                    #print(out[0][-1])
+                    #print(out[0][-x:])
+                    #print(enc.decode(out[0][-x:]))
                     context_tokens = out
 
                 compare = enc.decode(val_data_sampler_to.get(generated)) # + ' <|endoftext|>'
