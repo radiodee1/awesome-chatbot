@@ -474,7 +474,7 @@ def main():
                 text_original = ''
                 if text.startswith(text_in):
                     text_returned = text[len(text_in):]
-                    print('-',text_returned,'-')
+                    #print('-',text_returned,'-')
 
                 if args.train_special:
                     text_original = text
@@ -491,8 +491,6 @@ def main():
                     t_vals = t_vals[:-1]
                 if t_vals[-1] == '':
                     t_vals = t_vals[:-1]
-
-                print(t_vals)
 
                 text = ' '.join(t_vals)
 
