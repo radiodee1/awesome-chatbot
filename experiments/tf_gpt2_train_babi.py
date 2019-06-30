@@ -528,6 +528,10 @@ def main():
                     acc_total += 1
                     notification = 'vv CORRECT vv'
                     len_bar = 40 - len(notification)
+                elif text_returned.strip().lower().startswith(compare.strip().lower()):
+                    acc_total += 1
+                    notification = 'vv CORRECT_INITIAL vv'
+                    len_bar = 40 - len(notification)
 
                 print(notification + "=" * len_bar + " SAMPLE " + str(generated) + " " + "=" * len_bar + notification)
                 if args.train_special:
