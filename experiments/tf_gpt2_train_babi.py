@@ -414,7 +414,7 @@ def main():
                 num = 0
                 z = []
                 while (len(z) > HIDDEN_SIZE or len(z) == 0) and num <= 5:
-                    r = random.randint(0,4)
+                    r = random.randint(1,4)
                     #print('train special', r)
                     pad = HIDDEN_SIZE - (len(data_sampler[counter]) - r)
                     pad = 0
