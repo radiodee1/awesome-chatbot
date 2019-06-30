@@ -407,9 +407,9 @@ def main():
             else:
                 num = 0
                 z = []
-                while (len(z) > 1024 or len(z) == 0) and num <= 5:
+                while (len(z) > HIDDEN_SIZE or len(z) == 0) and num <= 5:
                     r = random.randint(0,4)
-                    print('train special', r)
+                    #print('train special', r)
                     pad = 1024 - (len(data_sampler[counter]) - r)
                     pad = 0
                     z = [
@@ -421,7 +421,7 @@ def main():
                     #print(enc.decode(z[0]))
                     num += 1
                     if num == 5:
-                        z = z[len(z) - 1024:]
+                        z = z[len(z) - HIDDEN_SIZE:]
                         print('cannot get sample_batch')
                         break
 
