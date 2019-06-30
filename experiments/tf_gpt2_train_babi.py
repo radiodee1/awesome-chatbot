@@ -406,11 +406,12 @@ def main():
                 r = random.randint(0,4)
                 print('train special', r)
                 z = [
-                    data_sampler[counter][:-r] + [
+                    [
                         enc.encode(' ')[0] for _ in range(1024 - (len(data_sampler[counter]) - r) )
-                    ] for _ in range(args.batch_size)
+                    ] + data_sampler[counter][:-r]
+                    for _ in range(args.batch_size)
                 ]
-                #print(z)
+                #print(enc.decode(z[0]))
                 return z
 
         def validation_by_sample():
