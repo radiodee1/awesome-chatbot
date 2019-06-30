@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -13,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5174">
-              <caret line="452" column="55" selection-start-line="452" selection-start-column="55" selection-end-line="452" selection-end-column="55" />
+            <state relative-caret-position="-2494">
+              <caret line="32" column="19" lean-forward="true" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -22,8 +24,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="108">
-              <caret line="6" selection-start-line="6" selection-end-line="6" />
+            <state relative-caret-position="72">
+              <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
             </state>
           </provider>
         </entry>
@@ -113,8 +115,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>##</find>
-      <find>val_batch_size</find>
       <find>add_summary</find>
       <find>validation</find>
       <find>tf_sample</find>
@@ -130,7 +130,6 @@
       <find>int32</find>
       <find>tf_sample_val</find>
       <find>sample_num</find>
-      <find>HIDDEN_SIZE</find>
       <find>val_batch_count</find>
       <find>acc_total</find>
       <find>data_sampler</find>
@@ -143,6 +142,9 @@
       <find>sample_batch</find>
       <find>val_batches</find>
       <find>1024</find>
+      <find>output</find>
+      <find>placeholder</find>
+      <find>HIDDEN_SIZE</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -313,7 +315,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="533" y="38" width="1380" height="999" extended-state="0" />
+    <frame x="533" y="39" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.20781136" />
@@ -646,20 +648,6 @@
     <entry file="file://$PROJECT_DIR$/data/train.to">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5174">
-          <caret line="452" column="55" selection-start-line="452" selection-start-column="55" selection-end-line="452" selection-end-column="55" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3816">
@@ -715,6 +703,20 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1854">
           <caret line="106" selection-start-line="106" selection-end-line="106" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="72">
+          <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2494">
+          <caret line="32" column="19" lean-forward="true" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
         </state>
       </provider>
     </entry>

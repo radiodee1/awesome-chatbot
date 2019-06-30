@@ -30,7 +30,7 @@ import json
 import re
 import random
 
-HIDDEN_SIZE = 1024 -1
+HIDDEN_SIZE = 1024
 
 CHECKPOINT_DIR = 'checkpoint'
 SAMPLE_DIR = hp['save_dir'] + '/' + 'tf_gpt2_samples/'
@@ -252,6 +252,7 @@ def main():
                     #enc.encode('<|endoftext|>')
             )
             # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+            v = v[: HIDDEN_SIZE - 1]
             data_sampler.append(v)
             pass
 
@@ -291,6 +292,7 @@ def main():
                 ) #+ val_data_sampler_to.get(i)
 
                 #v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
+                v = v[:HIDDEN_SIZE]
                 val_batches.append(v)
                 pass
 
