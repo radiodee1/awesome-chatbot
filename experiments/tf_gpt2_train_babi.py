@@ -391,7 +391,7 @@ def main():
             elif not np.isnan(avg_loss[0]) or True: # and not np.isnan(avg_loss[1]):
                 loss_out = avg_loss[0] / avg_loss[1]
             print(
-                word +
+                word + ' [' + args.run_name + ']' +
                 ' [{counter} | {time:2.2f}] loss={loss:2.2f} avg={avg:2.2f}'
                     .format(
                     counter=counter,
