@@ -627,17 +627,18 @@ def main():
                     avg_loss = (avg_loss[0] * 0.99 + v_loss,
                                 avg_loss[1] * 0.99 + 1.0)
 
-                if float(acc) == 100.0 and counter % args.val_every == 1:
-                    save()
+                if counter % args.val_every == 1:
+                    if float(acc) == 100.0 :
+                        save()
 
-                    print('validation accuracy 100', time.time() - start_time)
-                    count_success += 1
-                    count_success_with_skips += 1
-                    if count_success >= 2 or count_success_with_skips >= 4:
-                        save_summary()
-                        exit()
-                elif counter % args.val_every == 1:
-                    count_success = 0
+                        print('validation accuracy 100', time.time() - start_time)
+                        count_success += 1
+                        count_success_with_skips += 1
+                        if count_success >= 2 or count_success_with_skips >= 4:
+                            save_summary()
+                            exit()
+                    else:
+                        count_success = 0
 
                 print_status(acc_total_in=acc_total,size=len(val_batches), v_loss_in=v_loss, shorten=True)
 
