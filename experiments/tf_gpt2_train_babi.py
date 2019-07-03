@@ -621,13 +621,13 @@ def main():
 
                 summary_log.add_summary(v_summary, counter)
 
-                if True:
-                    if not np.isnan(avg_loss[0]) and not np.isnan(avg_loss[1]):
+                #if True:
+                if not np.isnan(avg_loss[0]) and not np.isnan(avg_loss[1]):
 
-                        avg_loss = (avg_loss[0] * 0.99 + v_loss,
-                                    avg_loss[1] * 0.99 + 1.0)
+                    avg_loss = (avg_loss[0] * 0.99 + v_loss,
+                                avg_loss[1] * 0.99 + 1.0)
 
-                if float(acc) == 100.0:
+                if float(acc) == 100.0 and counter % args.val_every == 1:
                     save()
 
                     print('validation accuracy 100', time.time() - start_time)

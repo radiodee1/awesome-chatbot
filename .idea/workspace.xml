@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/babi/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/babi/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,16 +13,16 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="777">
-              <caret line="393" column="48" selection-start-line="393" selection-start-column="48" selection-end-line="393" selection-end-column="48" />
+            <state relative-caret-position="379">
+              <caret line="623" column="17" selection-start-line="623" selection-start-column="17" selection-end-line="623" selection-end-column="17" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/babi/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -207,8 +208,8 @@
         <option value="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" />
         <option value="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh" />
-        <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
         <option value="$PROJECT_DIR$/babi/README.md" />
+        <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
       </list>
     </option>
   </component>
@@ -641,13 +642,6 @@
     <entry file="file://$PROJECT_DIR$/data/train.to">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="777">
-          <caret line="393" column="48" selection-start-line="393" selection-start-column="48" selection-end-line="393" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="72">
@@ -722,6 +716,13 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="379">
+          <caret line="623" column="17" selection-start-line="623" selection-start-column="17" selection-end-line="623" selection-end-column="17" />
         </state>
       </provider>
     </entry>
