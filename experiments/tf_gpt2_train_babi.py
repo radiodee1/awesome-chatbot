@@ -636,7 +636,7 @@ def main():
                     if count_success >= 2 or count_success_with_skips >= 4:
                         save_summary()
                         exit()
-                else:
+                elif counter % args.val_every == 1:
                     count_success = 0
 
                 print_status(acc_total_in=acc_total,size=len(val_batches), v_loss_in=v_loss, shorten=True)
