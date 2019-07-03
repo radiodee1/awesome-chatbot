@@ -17,7 +17,7 @@ The table is included here:
 
  |   | baseline_dmn | dmn_plus | small | small_tr | GPT2 |
 |-|:-:|:-:|-|-|-|
- | QA1: Single Supporting Fact | 100 | 100 | 100/100 | 100/100 | 100/100 |
+ | QA1: Single Supporting Fact | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA2: Two Supporting Facts | 98.2 | 99.7 | 0 | 0 | 0 |
  | QA3: Three Supporting Facts | 95.2 | 98.9 | 17.20/18.60 | 0 | 0 |
  | QA4: Two Argument Relations | 100 | 100 | 100/100 | 100/100 | 0 |
