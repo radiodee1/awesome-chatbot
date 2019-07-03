@@ -11,11 +11,11 @@ The babi data set is downloaded in the form of 20 categories. There is the basic
 * `dmn_plus` Results from the DMN+ paper. [See here.](https://arxiv.org/abs/1603.01417)
 * `small` Here the embedding weights only contain words that are in the babi corpus. The embeddings will not be trainable. The word vectors would come from the glove download. There are 158 words used in the babi corpus, and with three special tokens ('sol', 'eol', and 'unk') there are 161 vocabulary words. This would be the classic configuration for the babi test.
 * `small_tr` This would be the same small set of embeddings, but not using embedding vectors from the glove download. Embeddings are not pre-trained and are trained by the pytorch model.
-* `lrg_tr` This column reflects testing done with 100 hidden units and a large set of trainable embeddings. The words in the vocabulary would include those not specific to the question answering task.
+* `GPT2` This column reflects testing done with the GPT2 architecture. These results are collected using the `tf_gpt2_train_babi.py` script in the `experements` folder. 
 
 The table is included here:
 
- |   | baseline_dmn | dmn_plus | small | small_tr | lrg_tr |
+ |   | baseline_dmn | dmn_plus | small | small_tr | GPT2 |
 |-|:-:|:-:|-|-|-|
  | QA1: Single Supporting Fact | 100 | 100 | 100/100 | 100/100 | 100/100 |
  | QA2: Two Supporting Facts | 98.2 | 99.7 | 0 | 0 | 0 |
@@ -35,7 +35,7 @@ The table is included here:
  | QA16: Basic Induction | 99.4 | 54.7 | 48.20/50.60 | 52.60/58.40 | 0 |
  | QA17: Positional Reasoning + | 59.6 | 95.8 | 59.20/57.00 | 58.00/59.40 | 0 |
  | QA18: Size Reasoning + | 95.3 | 97.9 | 91.60/89.40 | 91.60/89.40 | 0 |
- | QA19: Path Finding ** | 34.5 | 100 | xx/xx | xx/xx | 0 |
+ | QA19: Path Finding ** | 34.5 | 100 | xx/xx | xx/xx | 97.3 |
  | QA20: Agent's Motivation | 100 | 100 | 100/100 | 100/100 | 0 |
  | Average | 93.605 | 0 | 0 | 0 | 0 |
 

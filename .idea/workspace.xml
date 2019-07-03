@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/babi/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/babi/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,20 +12,25 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1512">
+            <state relative-caret-position="777">
               <caret line="393" column="48" selection-start-line="393" selection-start-column="48" selection-end-line="393" selection-end-column="48" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="4" column="2" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/babi/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="91">
+                <caret line="13" column="163" selection-start-line="13" selection-start-column="163" selection-end-line="13" selection-end-column="163" />
+              </first_editor>
+              <second_editor>
+                <markdownNavigatorState />
+              </second_editor>
             </state>
           </provider>
         </entry>
@@ -184,7 +188,6 @@
         <option value="$PROJECT_DIR$/do_launch_babi.sh" />
         <option value="$PROJECT_DIR$/README.md" />
         <option value="$PROJECT_DIR$/bot/game.py" />
-        <option value="$PROJECT_DIR$/babi/README.md" />
         <option value="$PROJECT_DIR$/model/nmt_commands.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_download_model.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_train.py" />
@@ -205,6 +208,7 @@
         <option value="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh" />
         <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
+        <option value="$PROJECT_DIR$/babi/README.md" />
       </list>
     </option>
   </component>
@@ -220,7 +224,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -273,6 +276,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -319,7 +323,7 @@
     <frame x="533" y="39" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.20781136" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -337,22 +341,29 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32912844" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
+      <window_info anchor="bottom" id="Terminal" order="9" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/seq_2_seq/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/babi/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="1080">
-            <caret line="60" column="34" selection-start-line="60" selection-start-column="34" selection-end-line="60" selection-end-column="34" />
-          </first_editor>
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/do_launch_game.sh">
       <provider selected="true" editor-type-id="text-editor">
@@ -632,7 +643,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1512">
+        <state relative-caret-position="777">
           <caret line="393" column="48" selection-start-line="393" selection-start-column="48" selection-end-line="393" selection-end-column="48" />
         </state>
       </provider>
@@ -699,6 +710,18 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1854">
           <caret line="106" selection-start-line="106" selection-end-line="106" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="91">
+            <caret line="13" column="163" selection-start-line="13" selection-start-column="163" selection-end-line="13" selection-end-column="163" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
         </state>
       </provider>
     </entry>
