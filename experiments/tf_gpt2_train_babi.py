@@ -329,6 +329,7 @@ def main():
                 txt += 'acc: ' + ', '.join([fmt.format(valid=i) for i in acc_over_time]) + '\n'
                 txt += 'loss: ' + ', '.join([fmt.format(valid=i) for i in loss_avg_over_time]) + '\n'
                 txt += 'counter: ' + str(counter) + '\n'
+                txt += 'time: ' + str(time.time() - start_time ) + '\n'
                 txt += '-----\n'
             else:
                 txt = message
@@ -629,13 +630,14 @@ def main():
 
                 if counter % args.val_every == 1:
                     if float(acc) == 100.0 :
-                        save()
+                        #save()
 
                         print('validation accuracy 100', time.time() - start_time)
                         count_success += 1
                         count_success_with_skips += 1
                         if count_success >= 2 or count_success_with_skips >= 4:
-                            save_summary()
+                            #save_summary()
+
                             exit()
                     else:
                         count_success = 0
@@ -648,6 +650,7 @@ def main():
         finally:
             save()
             save_summary()
+            print('save weights/summary and exit.')
 
 
 if __name__ == '__main__':
