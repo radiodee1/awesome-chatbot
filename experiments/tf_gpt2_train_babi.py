@@ -329,7 +329,7 @@ def main():
                 txt += 'acc: ' + ', '.join([fmt.format(valid=i) for i in acc_over_time]) + '\n'
                 txt += 'loss: ' + ', '.join([fmt.format(valid=i) for i in loss_avg_over_time]) + '\n'
                 txt += 'counter: ' + str(counter) + '\n'
-                txt += 'time: ' + str(time.time() - start_time ) + '\n'
+                txt += 'time elapsed: ' + str(time.time() - start_time ) + '\n'
                 txt += '-----\n'
             else:
                 txt = message
