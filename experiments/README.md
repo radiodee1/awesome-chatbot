@@ -23,7 +23,7 @@ pick the output file's name.
 make sure that the babi test set is the one that the symbolic
 links in the 'data' folder points to.
 
-So, first you train and test the tensorflow model. To do this you must first
+First you train and test the tensorflow model. To do this you must first
 set up the babi training files. Then you can
 convert the model to the pytorch model, and then for confirmation
 you can run the test set on the pytorch model to see if it
