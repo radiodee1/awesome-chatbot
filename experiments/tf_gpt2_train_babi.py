@@ -339,6 +339,9 @@ def main():
                 f.write(txt + '\n')
 
         def save():
+            if args.test:
+                return 
+
             maketree(os.path.join(CHECKPOINT_DIR, args.run_name))
             print(
                 'Saving',
