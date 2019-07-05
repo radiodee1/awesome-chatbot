@@ -581,7 +581,7 @@ def main():
                     )  # + val_data_sampler_to.get(i)
 
                     # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
-                    if len(v) > HIDDEN_SIZE:
+                    if len(v) >= HIDDEN_SIZE:
                         continue
                     val_batches.append(v)
 
