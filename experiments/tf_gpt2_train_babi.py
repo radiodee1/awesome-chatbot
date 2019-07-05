@@ -31,6 +31,7 @@ import re
 import random
 
 HIDDEN_SIZE = 1024
+GENERATE_SIZE = 10
 
 CHECKPOINT_DIR = 'checkpoint'
 SAMPLE_DIR = hp['save_dir'] + '/' + 'tf_gpt2_samples/'
@@ -252,7 +253,7 @@ def main():
                     #enc.encode('<|endoftext|>')
             )
             # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
-            if len(v) >= HIDDEN_SIZE:
+            if len(v) >= HIDDEN_SIZE - GENERATE_SIZE:
                 continue
             v = v[: HIDDEN_SIZE - 1]
             data_sampler.append(v)
@@ -296,7 +297,7 @@ def main():
                 ) #+ val_data_sampler_to.get(i)
 
                 #v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
-                if len(v) >= HIDDEN_SIZE:
+                if len(v) >= HIDDEN_SIZE - GENERATE_SIZE:
                     continue
                 v = v[:HIDDEN_SIZE]
                 val_batches.append(v)
@@ -476,7 +477,7 @@ def main():
                 #print(text_in)
 
                 #print(context_tokens, 'ct1')
-                for x in range(10):
+                for x in range(GENERATE_SIZE):
 
                     out = sess.run(tf_sample_val, feed_dict={val_context: context_tokens})
                     #print(out[0][-x:])
@@ -581,7 +582,7 @@ def main():
                     )  # + val_data_sampler_to.get(i)
 
                     # v += [enc.encode(' ')[0] for _ in range(HIDDEN_SIZE - len(v) )]
-                    if len(v) >= HIDDEN_SIZE:
+                    if len(v) >= HIDDEN_SIZE - GENERATE_SIZE:
                         continue
                     val_batches.append(v)
 
