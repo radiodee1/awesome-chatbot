@@ -16,7 +16,7 @@ The babi data set is downloaded in the form of 20 categories. There is the basic
 The table is included here:
 
  |   | baseline_dmn | dmn_plus | small | small_tr | GPT2 |
-|-|:-:|:-:|-|-|-|
+|-|:-:|:-:|:-:|:-:|:-:|
  | QA1: Single Supporting Fact | 100 | 100 | 100/100 | 100/100 | 100 |
  | QA2: Two Supporting Facts | 98.2 | 99.7 | 0 | 0 | 96.0 |
  | QA3: Three Supporting Facts | 95.2 | 98.9 | 17.20/18.60 | 0 | 38.18 |
