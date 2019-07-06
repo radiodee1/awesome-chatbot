@@ -45,8 +45,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-709">
-              <caret line="584" column="60" selection-start-line="584" selection-start-column="60" selection-end-line="584" selection-end-column="60" />
+            <state relative-caret-position="260">
+              <caret line="341" column="24" selection-start-line="341" selection-start-column="20" selection-end-line="341" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -118,7 +118,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>hparams</find>
       <find>context</find>
       <find>val_context</find>
       <find>sess</find>
@@ -146,8 +145,9 @@
       <find>start_time</find>
       <find>save_summary</find>
       <find>best_accuracy_dict</find>
-      <find>test</find>
       <find>HIDDEN_SIZE</find>
+      <find>save</find>
+      <find>test</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -222,6 +222,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -274,7 +275,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -701,8 +701,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-709">
-          <caret line="584" column="60" selection-start-line="584" selection-start-column="60" selection-end-line="584" selection-end-column="60" />
+        <state relative-caret-position="260">
+          <caret line="341" column="24" selection-start-line="341" selection-start-column="20" selection-end-line="341" selection-end-column="24" />
         </state>
       </provider>
     </entry>

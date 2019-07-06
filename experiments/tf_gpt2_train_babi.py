@@ -340,7 +340,7 @@ def main():
 
         def save():
             if args.test:
-                return 
+                return
 
             maketree(os.path.join(CHECKPOINT_DIR, args.run_name))
             print(
