@@ -21,7 +21,7 @@ The table is included here:
  | QA2: Two Supporting Facts | 98.2 | 99.7 | 0 | 0 | 96.0 |
  | QA3: Three Supporting Facts | 95.2 | 98.9 | 17.20/18.60 | 0 | 38.18 |
  | QA4: Two Argument Relations | 100 | 100 | 100/100 | 100/100 | 100 |
- | QA5: Three Argument Relations | 99.3 | 99.5 | 99.40/99.80 | 99.60/99.80 | 0 |
+ | QA5: Three Argument Relations | 99.3 | 99.5 | 99.40/99.80 | 99.60/99.80 | 97.8 |
  | QA6: Yes/No Questions + | 100 | 100 | 100/100 | 100/100 | 0 |
  | QA7: Counting | 96.9 | 97.6 | 97.80/97.40 | 98.80/98.60 | 0 |
  | QA8: Lists/Sets | 96.5 | 100 | 99.40/100 | 100/100 | 0 |
