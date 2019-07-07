@@ -41,8 +41,8 @@
         <entry file="file://$PROJECT_DIR$/babi/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="414">
-                <caret line="23" column="81" selection-start-line="23" selection-start-column="81" selection-end-line="23" selection-end-column="81" />
+              <first_editor relative-caret-position="432">
+                <caret line="24" column="65" selection-start-line="24" selection-start-column="65" selection-end-line="24" selection-end-column="65" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -697,8 +697,8 @@
     <entry file="file://$PROJECT_DIR$/babi/README.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="414">
-            <caret line="23" column="81" selection-start-line="23" selection-start-column="81" selection-end-line="23" selection-end-column="81" />
+          <first_editor relative-caret-position="432">
+            <caret line="24" column="65" selection-start-line="24" selection-start-column="65" selection-end-line="24" selection-end-column="65" />
           </first_editor>
           <second_editor>
             <markdownNavigatorState />
