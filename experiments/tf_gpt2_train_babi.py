@@ -42,6 +42,9 @@ data_dir = hp['data_dir'] + '/'
 checkpoint_dir = hp['save_dir'] + '/' + 'tf_gpt2_saved/'
 CHECKPOINT_DIR = checkpoint_dir
 
+best_accuracy_dict = {}
+best_loss_dict = {}
+
 parser = argparse.ArgumentParser(
     description='Fine-tune GPT-2 on your custom dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -147,7 +150,6 @@ def main():
     acc_total = 0
     acc_over_time = []
     loss_avg_over_time = []
-
 
     if args.val_every > 0:
 
@@ -552,6 +554,41 @@ def main():
             return acc_total
             pass
 
+        def update_json_file():
+            basename = os.path.join(CHECKPOINT_DIR, args.run_name, args.run_name + '.acc.json')
+            basename_loss = os.path.join(CHECKPOINT_DIR, args.run_name, args.run_name + '.loss.json')
+
+            #print(basename)
+            maketree(os.path.join(CHECKPOINT_DIR, args.run_name))
+
+            if len(best_accuracy_dict) > 0:
+                with open(basename, 'w') as z:
+                    z.write(json.dumps(best_accuracy_dict))
+                    z.write('\n')
+                z.close()
+            if len(best_loss_dict) > 0:
+                with open(basename_loss, 'w') as z:
+                    z.write(json.dumps(best_loss_dict))
+                    z.write('\n')
+                z.close()
+
+        def read_json_file():
+            global best_accuracy_dict, best_loss_dict
+            basename = os.path.join(CHECKPOINT_DIR, args.run_name, args.run_name + '.acc.json')
+            basename_loss = os.path.join(CHECKPOINT_DIR, args.run_name, args.run_name + '.loss.json')
+
+            if os.path.isfile(basename):
+                with open(basename) as z:
+                    json_data = json.load(z)
+                best_accuracy_dict = json_data
+
+            if os.path.isfile(basename_loss):
+                with open(basename_loss) as z:
+                    json_data = json.load(z)
+                best_loss_dict = json_data
+
+
+
         avg_loss = (0.0, 0.0)
         start_time = time.time()
         count_success = 0
@@ -596,6 +633,8 @@ def main():
                 save_summary('Accuracy with test set ' + str(acc) + '\n')
                 exit()
 
+            read_json_file()
+
             while counter != args.stop_after:
                 #model_summary()
 
@@ -609,10 +648,15 @@ def main():
                     acc = acc_total / len(val_batches) * 100
 
                     acc_over_time.append(acc)
+                    best_accuracy_dict[counter] = acc
+
                     if avg_loss[1] > 0.0:
                         loss_avg_over_time.append(avg_loss[0] / avg_loss[1])
                     else:
                         loss_avg_over_time.append(0)
+
+                    best_loss_dict[counter] = loss_avg_over_time[-1]
+                    update_json_file()
 
                 counter_in = counter % len(val_batches)
                 if args.accumulate_gradients > 1:

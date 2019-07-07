@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/babi/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/babi/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -13,33 +14,33 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/babi/babi.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36630">
-              <caret line="2061" column="101" selection-start-line="2061" selection-start-column="101" selection-end-line="2061" selection-end-column="101" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/babi/babi_rec.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="37584">
+            <state relative-caret-position="368">
               <caret line="2114" column="39" selection-start-line="2114" selection-start-column="21" selection-end-line="2114" selection-end-column="39" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5994">
-              <caret line="341" column="24" selection-start-line="341" selection-start-column="20" selection-end-line="341" selection-end-column="24" />
+            <state relative-caret-position="-640">
+              <caret line="587" column="44" selection-start-line="587" selection-start-column="44" selection-end-line="587" selection-end-column="44" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/babi/babi_pos.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="720">
+              <caret line="3393" column="36" selection-start-line="3373" selection-start-column="4" selection-end-line="3393" selection-end-column="36" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/babi/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
@@ -120,10 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>context</find>
-      <find>val_context</find>
-      <find>sess</find>
-      <find>sample_length</find>
       <find>val_loss</find>
       <find>wte</find>
       <find>get_encoder</find>
@@ -146,10 +143,14 @@
       <find>avg_loss</find>
       <find>start_time</find>
       <find>save_summary</find>
-      <find>best_accuracy_dict</find>
       <find>HIDDEN_SIZE</find>
       <find>save</find>
       <find>test</find>
+      <find>counter</find>
+      <find>update_json_file</find>
+      <find>CHECKPOINT_DIR</find>
+      <find>best_accuracy_dict</find>
+      <find>read_json_file</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -207,8 +208,8 @@
         <option value="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh" />
         <option value="$PROJECT_DIR$/experiments/README.md" />
-        <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
         <option value="$PROJECT_DIR$/babi/README.md" />
+        <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
       </list>
     </option>
   </component>
@@ -224,7 +225,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -277,6 +277,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -343,16 +344,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/nmt_commands.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3006">
-          <caret line="167" column="69" selection-start-line="167" selection-start-column="69" selection-end-line="167" selection-end-column="69" />
-          <folding>
-            <element signature="e#20#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2484">
@@ -638,20 +629,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/babi/babi_rec.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="37584">
-          <caret line="2114" column="39" selection-start-line="2114" selection-start-column="21" selection-end-line="2114" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5994">
-          <caret line="341" column="24" selection-start-line="341" selection-start-column="20" selection-end-line="341" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -705,6 +682,27 @@
           <second_editor>
             <markdownNavigatorState />
           </second_editor>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/babi_pos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="720">
+          <caret line="3393" column="36" selection-start-line="3373" selection-start-column="4" selection-end-line="3393" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/babi_rec.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="368">
+          <caret line="2114" column="39" selection-start-line="2114" selection-start-column="21" selection-end-line="2114" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-640">
+          <caret line="587" column="44" selection-start-line="587" selection-start-column="44" selection-end-line="587" selection-end-column="44" />
         </state>
       </provider>
     </entry>
