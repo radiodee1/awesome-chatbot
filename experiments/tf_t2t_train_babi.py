@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--train', action='store_true', help='start train method.')
 parser.add_argument('--test', action='store_true', help='start test method.')
 parser.add_argument('--task', help='task to start with.', default='1')
+parser.add_argument('--prep', action='store_true', help='do data prep step.')
 args = parser.parse_args()
 
 train_not_test = True
@@ -41,13 +42,13 @@ maketree(hp['save_dir'] + '/t2t_train/babi/')
 
 trainer_args = [
     sys.argv[0],
-    #'--generate_data' ,
+    '--generate_data' ,
     '--data_dir=' + hp['data_dir'] + '/t2t_data/',
     '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/babi/',
     '--problem=babi_qa_concat_task' + task + '_10k' ,
-    '--model=babi_transformer',
-    '--hparams_set=universal_transformer_tiny',
+    '--model=transformer',
+    '--hparams_set=transformer_base',
     #'--train_steps=1000',
     #'--eval_steps=500',
     #'trainer args'
@@ -57,13 +58,19 @@ decoder_args = [
     sys.argv[0],
     #'--generate_data' ,
     '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
+    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/babi/',
     '--problem=babi_qa_concat_task' + task + '_10k' ,
-    #'--model=shake_shake' ,
-    '--hparams_set=transformer_small',
+    '--model=transformer' ,
+    '--hparams_set=transformer_base',
     #'--train_steps=1000',
     '--eval_steps=500',
     #'decoder args'
+]
+
+prepare_args = [
+    sys.argv[0],
+
 ]
 
 def main(argv):

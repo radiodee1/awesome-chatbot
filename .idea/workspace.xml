@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/babi/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/babi/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,7 +16,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="260">
+            <state relative-caret-position="1260">
               <caret line="78" column="12" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="12" />
             </state>
           </provider>
@@ -26,8 +25,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="37" column="41" selection-start-line="37" selection-start-column="41" selection-end-line="37" selection-end-column="41" />
+            <state relative-caret-position="451">
+              <caret line="64" column="35" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
               </folding>
@@ -211,7 +210,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -233,12 +231,6 @@
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="data" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="data" type="462c0819:PsiDirectoryNode" />
-              <item name="t2t_data" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
@@ -268,18 +260,13 @@
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
-              <item name="saved" type="462c0819:PsiDirectoryNode" />
-              <item name="t2t_train" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
-              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="seq_2_seq" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -646,6 +633,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/data/t2t_data/raw.txt" />
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="78" column="12" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/settings.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -690,23 +688,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/babi/settings.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/t2t_data/raw.txt">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="260">
-          <caret line="78" column="12" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="37" column="41" selection-start-line="37" selection-start-column="41" selection-end-line="37" selection-end-column="41" />
+        <state relative-caret-position="451">
+          <caret line="64" column="35" selection-start-line="64" selection-start-column="35" selection-end-line="64" selection-end-column="35" />
           <folding>
             <element signature="e#24#62#0" expanded="true" />
           </folding>
