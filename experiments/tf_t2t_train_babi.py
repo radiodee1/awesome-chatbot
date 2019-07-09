@@ -23,11 +23,18 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--train', action='store_true', help='start train method.')
 parser.add_argument('--test', action='store_true', help='start test method.')
 parser.add_argument('--task', help='task to start with.', default='1')
-parser.add_argument('--prep', action='store_true', help='do data prep step.')
+parser.add_argument('--increment', default=500, type=int, help='default increment for trainer.')
+parser.add_argument('--limit', default=10000, type=int, help='default limit for trainer.')
 args = parser.parse_args()
 
 train_not_test = True
 task = str(int(args.task))
+increment = str(int(args.increment))
+limit = int(args.limit)
+
+counter_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
+counter_path = counter_dir + '/counter'
+counter = 0
 
 def maketree(path):
     try:
@@ -39,6 +46,7 @@ maketree(hp['data_dir'] + '/t2t_data/')
 maketree(hp['data_dir'] + '/t2t_data/tmp/')
 
 maketree(hp['save_dir'] + '/t2t_train/babi/')
+maketree(counter_dir)
 
 trainer_args = [
     sys.argv[0],
@@ -49,10 +57,12 @@ trainer_args = [
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer',
     '--hparams_set=transformer_base',
-    '--train_steps=1000',
+    #'--train_steps=' + increment,
     #'--eval_steps=500',
     #'trainer args'
 ]
+
+train_steps_arg = '--train_steps='
 
 decoder_args = [
     sys.argv[0],
@@ -66,31 +76,57 @@ decoder_args = [
     #'--train_steps=1000',
     '--eval_steps=5',
     '--decode_to_file=' + hp['save_dir'] + '/t2t_train/babi/' + 'decode_file',
-    '--score_file=' + hp['data_dir'] + '/t2t_train/babi/' + 'test_file',
+    #'--score_file=' + hp['data_dir'] + '/t2t_train/babi/' + 'test_file',
     #'decoder args'
 ]
 
-prepare_args = [
-    sys.argv[0],
 
-]
 
 def main(argv):
+    global counter
     print(argv)
     if train_not_test:
-        t2t_trainer.main(argv)
+        while counter < limit:
+            t2t_trainer.main(argv)
+
+            counter += args.increment
+            print('=' * 50, counter, limit, '=' * 50)
+            try:
+                with open(counter_path, 'w') as z:
+                    z.write(str(counter))
+                    print('write counter...', counter)
+            except:
+                print('no counter write...', counter)
+                pass
     else:
         t2t_decoder.main(argv)
     pass
 
 if __name__ == "__main__":
+
     print(sys.argv)
     if args.train:
+        if os.path.isfile(counter_path):
+            try:
+                with open(counter_path, 'r') as z:
+                    counter = int(z.read())
+                    print(counter_path, counter)
+            except:
+                print('no counter read...', counter)
+                counter = 0
+        else:
+            print('counter not a dir')
         train_not_test = True
-        sys.argv = trainer_args
+        sys.argv = trainer_args + [train_steps_arg + str(counter + args.increment)]
+
+        tf.logging.set_verbosity(tf.logging.INFO)
+
+        tf.app.run()
+
     elif args.test:
         train_not_test = False
         sys.argv = decoder_args
-    print('print:', sys.argv)
-    tf.logging.set_verbosity(tf.logging.INFO)
-    tf.app.run()
+        print('print:', sys.argv)
+        tf.logging.set_verbosity(tf.logging.INFO)
+        tf.app.run()
+

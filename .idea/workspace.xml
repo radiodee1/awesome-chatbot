@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -10,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="468">
-              <caret line="68" column="71" selection-start-line="68" selection-start-column="71" selection-end-line="68" selection-end-column="71" />
+            <state relative-caret-position="619">
+              <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
               </folding>
@@ -22,28 +25,18 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/counter">
           <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/babi/README.md">
-          <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-            <state split_layout="SPLIT">
-              <first_editor relative-caret-position="468">
-                <caret line="26" column="60" selection-start-line="26" selection-start-column="60" selection-end-line="26" selection-end-column="60" />
-              </first_editor>
-              <second_editor>
-                <markdownNavigatorState />
-              </second_editor>
+        <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="49" selection-start-line="2" selection-start-column="49" selection-end-line="2" selection-end-column="49" />
             </state>
           </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/babi/settings.py">
-          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -113,8 +106,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>wte</find>
-      <find>get_encoder</find>
       <find>int32</find>
       <find>tf_sample_val</find>
       <find>sample_num</find>
@@ -143,6 +134,8 @@
       <find>read_json_file</find>
       <find>best_accuracy_dict</find>
       <find>maketree</find>
+      <find>prep</find>
+      <find>limit</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -151,7 +144,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/model/bert_keras_tf.py" />
         <option value="$PROJECT_DIR$/do_make_transformer_link.sh" />
         <option value="$PROJECT_DIR$/model/bert_modeling.py" />
         <option value="$PROJECT_DIR$/model/bert_tokenization.py" />
@@ -200,8 +192,9 @@
         <option value="$PROJECT_DIR$/experiments/README.md" />
         <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_babi.py" />
-        <option value="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" />
         <option value="$PROJECT_DIR$/babi/README.md" />
+        <option value="$PROJECT_DIR$/experiments/do_launch_tensorboard.sh" />
+        <option value="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" />
       </list>
     </option>
   </component>
@@ -243,6 +236,19 @@
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_data" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="data" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_data" type="462c0819:PsiDirectoryNode" />
+              <item name="tmp" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="experiments" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -264,6 +270,40 @@
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
               <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
               <item name="saved" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_train" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_train" type="462c0819:PsiDirectoryNode" />
+              <item name="babi" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="t2t_train" type="462c0819:PsiDirectoryNode" />
+              <item name="babi" type="462c0819:PsiDirectoryNode" />
+              <item name="eval" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="tf_gpt2_saved" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
+              <item name="awesome-chatbot" type="462c0819:PsiDirectoryNode" />
+              <item name="saved" type="462c0819:PsiDirectoryNode" />
+              <item name="tf_gpt2_saved" type="462c0819:PsiDirectoryNode" />
+              <item name="babi_19c" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="awesome-chatbot" type="b2602c69:ProjectViewProjectNode" />
@@ -351,17 +391,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2/GPT2/model.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/settings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="882">
-          <caret line="49" column="17" selection-start-line="49" selection-start-column="17" selection-end-line="49" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train_run.sh" />
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2/gpt-2-samples/conditional.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -630,6 +659,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/babi/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="468">
+            <caret line="26" column="60" selection-start-line="26" selection-start-column="60" selection-end-line="26" selection-end-column="60" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/babi/settings.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -677,30 +718,31 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/babi/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="468">
-            <caret line="26" column="60" selection-start-line="26" selection-start-column="60" selection-end-line="26" selection-end-column="60" />
-          </first_editor>
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
+    <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="49" selection-start-line="2" selection-start-column="49" selection-end-line="2" selection-end-column="49" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/saved/tf_gpt2_saved/babi_19c/counter">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/counter">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/eval/events.out.tfevents.1562690104.dave-Inspiron-5577">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="468">
-          <caret line="68" column="71" selection-start-line="68" selection-start-column="71" selection-end-line="68" selection-end-column="71" />
+        <state relative-caret-position="619">
+          <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
           <folding>
             <element signature="e#24#62#0" expanded="true" />
           </folding>
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
   </component>
   <component name="masterDetails">
