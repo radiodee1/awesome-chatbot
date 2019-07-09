@@ -49,7 +49,7 @@ trainer_args = [
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer',
     '--hparams_set=transformer_base',
-    #'--train_steps=1000',
+    '--train_steps=1000',
     #'--eval_steps=500',
     #'trainer args'
 ]
@@ -64,7 +64,8 @@ decoder_args = [
     '--model=transformer' ,
     '--hparams_set=transformer_base',
     #'--train_steps=1000',
-    '--eval_steps=500',
+    '--eval_steps=5',
+    #'--score_file=tmp',
     #'decoder args'
 ]
 
