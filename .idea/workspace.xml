@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,8 +15,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="619">
-              <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
+            <state relative-caret-position="253">
+              <caret line="92" column="65" selection-start-line="92" selection-start-column="65" selection-end-line="92" selection-end-column="65" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
               </folding>
@@ -199,7 +198,7 @@
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="532" />
+    <option name="x" value="531" />
     <option name="y" value="39" />
     <option name="width" value="1380" />
     <option name="height" value="999" />
@@ -357,7 +356,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="532" y="39" width="1380" height="999" extended-state="0" />
+    <frame x="531" y="39" width="1380" height="999" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
@@ -674,6 +673,32 @@
     <entry file="file://$PROJECT_DIR$/babi/settings.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/saved/tf_gpt2_saved/babi_19c/counter">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/eval/events.out.tfevents.1562690104.dave-Inspiron-5577">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="253">
+          <caret line="92" column="65" selection-start-line="92" selection-start-column="65" selection-end-line="92" selection-end-column="65" />
+          <folding>
+            <element signature="e#24#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/counter">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="36">
+          <caret line="2" column="49" selection-start-line="2" selection-start-column="49" selection-end-line="2" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_rename_train_valid_test.sh">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -715,32 +740,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1854">
           <caret line="106" selection-start-line="106" selection-end-line="106" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="36">
-          <caret line="2" column="49" selection-start-line="2" selection-start-column="49" selection-end-line="2" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/tf_gpt2_saved/babi_19c/counter">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/counter">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/eval/events.out.tfevents.1562690104.dave-Inspiron-5577">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="619">
-          <caret line="78" column="5" selection-start-line="78" selection-start-column="5" selection-end-line="78" selection-end-column="5" />
-          <folding>
-            <element signature="e#24#62#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>

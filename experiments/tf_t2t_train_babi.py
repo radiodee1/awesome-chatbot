@@ -23,7 +23,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--train', action='store_true', help='start train method.')
 parser.add_argument('--test', action='store_true', help='start test method.')
 parser.add_argument('--task', help='task to start with.', default='1')
-parser.add_argument('--increment', default=500, type=int, help='default increment for trainer.')
+parser.add_argument('--increment', default=50, type=int, help='default increment for trainer.')
 parser.add_argument('--limit', default=10000, type=int, help='default limit for trainer.')
 args = parser.parse_args()
 
@@ -58,7 +58,7 @@ trainer_args = [
     '--model=transformer',
     '--hparams_set=transformer_base',
     #'--train_steps=' + increment,
-    #'--eval_steps=500',
+    '--eval_steps=5',
     #'trainer args'
 ]
 
@@ -84,9 +84,15 @@ decoder_args = [
 
 def main(argv):
     global counter
-    print(argv)
+
+    print(argv, '\n','=' * 20)
     if train_not_test:
         while counter < limit:
+
+            tf.flags.FLAGS.set_default('train_steps', counter + args.increment)
+            tf.flags.FLAGS.train_steps = counter + args.increment
+            print('flag:', tf.flags.FLAGS.get_flag_value('train_steps', 5), str(counter + args.increment))
+
             t2t_trainer.main(argv)
 
             counter += args.increment
