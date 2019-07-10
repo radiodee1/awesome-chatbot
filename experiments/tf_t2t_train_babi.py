@@ -80,7 +80,7 @@ decoder_args = [
     '--hparams_set=transformer_base',
     #'--train_steps=1000',
     '--eval_steps=500',
-    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + 'decode_file',
+    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + 'decode_file.txt',
     '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
     #'decoder args'
 ]
