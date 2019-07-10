@@ -8,14 +8,13 @@ from tensor2tensor.bin import t2t_trainer
 from tensor2tensor.bin import t2t_decoder
 import sys
 
-#sys.path.append('../model/')
 sys.path.append('..')
 
 import tensorflow as tf
 import argparse
 from model.settings import hparams as hp
 import os
-import json
+#import json
 
 parser = argparse.ArgumentParser(
     description='Fine-tune tensor-2-tensor on your babi dataset.',
@@ -62,9 +61,7 @@ trainer_args = [
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer',
     '--hparams_set=transformer_base',
-    #'--train_steps=' + increment,
     '--eval_steps=5',
-    #'trainer args'
 ]
 
 train_steps_arg = '--train_steps='
@@ -78,11 +75,11 @@ decoder_args = [
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer' ,
     '--hparams_set=transformer_base',
-    #'--train_steps=1000',
+
     '--eval_steps=500',
     '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + 'decode_file.txt',
     '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
-    #'decoder args'
+
 ]
 
 
@@ -102,15 +99,7 @@ def main(argv):
 
             counter += args.increment
             print('=' * 50, counter, limit, '=' * 50)
-            '''
-            try:
-                with open(counter_path, 'w') as z:
-                    z.write(str(counter))
-                    print('write counter...', counter)
-            except:
-                print('no counter write...', counter)
-                pass
-            '''
+
     else:
         t2t_decoder.main(argv)
     pass
@@ -119,18 +108,7 @@ if __name__ == "__main__":
 
     print(sys.argv)
     if args.train:
-        '''
-        if os.path.isfile(counter_path):
-            try:
-                with open(counter_path, 'r') as z:
-                    counter = int(z.read())
-                    print(counter_path, counter)
-            except:
-                print('no counter read...', counter)
-                counter = 0
-        else:
-            print('counter not a dir')
-        '''
+
         if os.path.isfile(checkpoint_path):
             try:
                 with open(checkpoint_path,'r') as z:
