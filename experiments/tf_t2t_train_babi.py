@@ -15,6 +15,7 @@ import tensorflow as tf
 import argparse
 from model.settings import hparams as hp
 import os
+import json
 
 parser = argparse.ArgumentParser(
     description='Fine-tune tensor-2-tensor on your babi dataset.',
@@ -35,6 +36,10 @@ limit = int(args.limit)
 counter_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
 counter_path = counter_dir + '/counter'
 counter = 0
+
+checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
+checkpoint_path = checkpoint_dir + '/checkpoint'
+
 
 def maketree(path):
     try:
@@ -97,6 +102,7 @@ def main(argv):
 
             counter += args.increment
             print('=' * 50, counter, limit, '=' * 50)
+            '''
             try:
                 with open(counter_path, 'w') as z:
                     z.write(str(counter))
@@ -104,6 +110,7 @@ def main(argv):
             except:
                 print('no counter write...', counter)
                 pass
+            '''
     else:
         t2t_decoder.main(argv)
     pass
@@ -112,6 +119,7 @@ if __name__ == "__main__":
 
     print(sys.argv)
     if args.train:
+        '''
         if os.path.isfile(counter_path):
             try:
                 with open(counter_path, 'r') as z:
@@ -122,6 +130,27 @@ if __name__ == "__main__":
                 counter = 0
         else:
             print('counter not a dir')
+        '''
+        if os.path.isfile(checkpoint_path):
+            try:
+                with open(checkpoint_path,'r') as z:
+                    z = z.readline()
+                    print(z)
+                    z = z.split('\n')[0]
+                    z = z.strip()
+                    z = z.split(':')
+                    z = z[-1]
+                    z = z.strip()
+                    z = z.strip('"')
+                    z = z.split('-')
+                    z = z[-1]
+                    z = int(z)
+                    print(z)
+                    counter = z
+                    pass
+            except :
+                print('could not load counter from checkpoint.')
+                pass
         train_not_test = True
         sys.argv = trainer_args + [train_steps_arg + str(counter + args.increment)]
 
