@@ -79,9 +79,9 @@ decoder_args = [
     '--model=transformer' ,
     '--hparams_set=transformer_base',
     #'--train_steps=1000',
-    '--eval_steps=5',
-    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/babi/' + 'decode_file',
-    #'--score_file=' + hp['data_dir'] + '/t2t_train/babi/' + 'test_file',
+    '--eval_steps=500',
+    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + 'decode_file',
+    '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
     #'decoder args'
 ]
 

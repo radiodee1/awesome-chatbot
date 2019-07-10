@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -13,11 +13,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="595">
-              <caret line="151" column="62" selection-start-line="151" selection-start-column="62" selection-end-line="151" selection-end-column="62" />
+            <state relative-caret-position="667">
+              <caret line="83" column="49" selection-start-line="83" selection-start-column="49" selection-end-line="83" selection-end-column="49" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
               </folding>
@@ -26,10 +26,19 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+        <entry file="file://$PROJECT_DIR$/babi/tokenize_weak.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-8380">
-              <caret line="78" column="12" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="12" />
+            <state relative-caret-position="1573">
+              <caret line="97" column="50" selection-start-line="97" selection-start-column="45" selection-end-line="97" selection-end-column="50" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="224">
+              <caret line="122" column="37" selection-start-line="122" selection-start-column="37" selection-end-line="122" selection-end-column="37" />
             </state>
           </provider>
         </entry>
@@ -110,8 +119,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>int32</find>
-      <find>tf_sample_val</find>
       <find>sample_num</find>
       <find>val_batch_count</find>
       <find>acc_total</find>
@@ -140,6 +147,8 @@
       <find>maketree</find>
       <find>prep</find>
       <find>limit</find>
+      <find>lower</find>
+      <find>format</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -191,7 +200,6 @@
         <option value="$PROJECT_DIR$/model/loader_babi.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/do_split.py" />
         <option value="$PROJECT_DIR$/experiments/torch_gpt2_load_babi.py" />
-        <option value="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" />
         <option value="$PROJECT_DIR$/experiments/do_make_train_test_from_babi.sh" />
         <option value="$PROJECT_DIR$/experiments/README.md" />
         <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
@@ -199,6 +207,7 @@
         <option value="$PROJECT_DIR$/babi/README.md" />
         <option value="$PROJECT_DIR$/experiments/do_launch_tensorboard.sh" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" />
+        <option value="$PROJECT_DIR$/babi/do_make_train_test_from_babi.py" />
       </list>
     </option>
   </component>
@@ -382,16 +391,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor />
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/raw/RC_2017-11">
       <provider selected="true" editor-type-id="LargeFileEditor" />
     </entry>
@@ -589,13 +588,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3816">
-          <caret line="216" column="25" selection-start-line="216" selection-start-column="25" selection-end-line="216" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2/encode.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -664,6 +656,16 @@
     <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/counter">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/checkpoint">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1260">
+          <caret line="78" column="12" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/do_launch_tensorboard.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -715,23 +717,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
+    <entry file="file://$PROJECT_DIR$/babi/tokenize_weak.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-8380">
-          <caret line="78" column="12" selection-start-line="78" selection-start-column="4" selection-end-line="78" selection-end-column="12" />
+        <state relative-caret-position="1573">
+          <caret line="97" column="50" selection-start-line="97" selection-start-column="45" selection-end-line="97" selection-end-column="50" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/saved/t2t_train/babi/checkpoint">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="595">
-          <caret line="151" column="62" selection-start-line="151" selection-start-column="62" selection-end-line="151" selection-end-column="62" />
+        <state relative-caret-position="667">
+          <caret line="83" column="49" selection-start-line="83" selection-start-column="49" selection-end-line="83" selection-end-column="49" />
           <folding>
             <element signature="e#24#62#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/do_make_train_test_from_babi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="122" column="37" selection-start-line="122" selection-start-column="37" selection-end-line="122" selection-end-column="37" />
         </state>
       </provider>
     </entry>

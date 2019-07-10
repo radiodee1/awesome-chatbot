@@ -38,6 +38,7 @@ directions = {
     'e': 'east'
 }
 
+make_lower = True
 
 def format(s, split_phrases=False, add_sol_eol=False, add_eol_only=False, only_one_phrase=False):
     z = tokenize_weak.format(s)
@@ -90,12 +91,19 @@ def init_babi(fname, add_eol=False, replace_directions=False):
         line = line.replace('.', ' . ')
         line = line[line.find(' ') + 1:]
         if line.find('?') == -1:
-            task["C"] += line.lower()
+            if make_lower:
+                task["C"] += line.lower()
+            else:
+                task["C"] += line
         else:
             idx = line.find('?')
             tmp = line[idx + 1:].split('\t')
-            task["Q"] = line[:idx].lower()
-            task["A"] = tmp[1].strip().lower()
+            if make_lower:
+                task["Q"] = line[:idx].lower()
+                task["A"] = tmp[1].strip().lower()
+            else:
+                task["Q"] = line[:idx]
+                task["A"] = tmp[1].strip()
 
             if len(task["A"].split(',')) > 1 or add_eol:
                 task["A"] = " ".join(task["A"].split(',')) + ' ' + hparams['eol']
@@ -112,7 +120,7 @@ def init_babi(fname, add_eol=False, replace_directions=False):
                 if add_eol and False:
                     task["A"] = task["A"] + ' . '
 
-            if add_eol:
+            if add_eol and make_lower:
                 #print('---')
                 task["C"] = format(task["C"],split_phrases=True, add_eol_only=add_eol)
                 task["Q"] = format(task["Q"],split_phrases=True, add_eol_only=add_eol)
@@ -178,6 +186,13 @@ def get_babi_raw(id, test_id, sub_folder='en', add_eol=False, replace_directions
         os.path.join(os.path.dirname(os.path.realpath(__file__)), '../raw/tasks_1-20_v1-2/%s/%s_test.txt' % (sub_folder, babi_test_name)), add_eol=add_eol, replace_directions=replace_directions)
     return babi_train_raw, babi_test_raw
 
+def make_tab_file_list(in_list):
+    out_list = []
+    for i in range(len(in_list)):
+        out_list.append( in_list[i]['C'] + ' ' + in_list[i]['Q'] + ' . \t' + in_list[i]['A'] )
+        pass
+    return out_list
+
 if __name__ == '__main__':
     print('do make train and test')
 
@@ -192,6 +207,7 @@ if __name__ == '__main__':
     parser.add_argument('folder', help='either "en-10k" or "en"')
     parser.add_argument('--eol', help='add eol to sentences', action='store_true')
     parser.add_argument('--replace-directions', help='replace directions with whole word.', action='store_true')
+    parser.add_argument('--tab-file', action='store_true', help='make tab delimited file.')
     args = parser.parse_args()
     args = vars(args)
     print(args)
@@ -200,6 +216,7 @@ if __name__ == '__main__':
     id = '1'
     sub_folder = 'en'
     flag_eol = False
+    flag_tab_file = False
 
     if len(sys.argv) > 1:
         #id = sys.argv[1]
@@ -217,6 +234,10 @@ if __name__ == '__main__':
     if flag_eol is False:
         hparams['eol'] = ''
         hparams['sol'] = ''
+
+    if args['tab_file'] is True:
+        flag_tab_file = True
+        make_lower = False
 
     mode = 'w'
 
@@ -236,57 +257,79 @@ if __name__ == '__main__':
         split = len(test) * 0.5 #/ 2
         print(split,'split')
 
-        with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, mode) as z:
-            for i in range(len(train)):
-                z.write(train[i]['C'] + '\n')
-                pass
+        if flag_tab_file:
+            print('ignore size of id_lst... use only first!!')
+            train_tab = make_tab_file_list(train)
+            test_tab =  make_tab_file_list(test)
 
-        with open(data_dir + train_name +'.'+ babi_name + '.' + tgt_ending, mode) as z:
-            for i in range(len(train)):
-                z.write(train[i]['A'] + '\n')
-                pass
 
-        with open(data_dir + train_name +'.'+ babi_name + '.' + question_ending, mode) as z:
-            for i in range(len(train)):
-                z.write(train[i]['Q'] + '\n')
-                pass
+            with open(data_dir + '/t2t_data/' +  'test_tab.txt' , mode) as z:
+                for i in range(len(test_tab)):
+                    if i < split:
+                        z.write(test_tab[i] + '\n')
+                    pass
+            with open(data_dir + '/t2t_data/' +  'train_tab.txt' , mode) as z:
+                for i in range(len(train_tab)):
+                    z.write(train_tab[i] + '\n')
 
-        ######################
-        with open(data_dir + test_name + '.' + babi_name + '.' + src_ending, mode) as z:
-            for i in range(len(test)):
-                if i < split:
-                    z.write(test[i]['C'] + '\n')
-                pass
+            with open(data_dir + '/t2t_data/' +  'valid_tab.txt' , mode) as z:
+                for i in range(len(test_tab)):
+                    if i >= split:
+                        z.write(test_tab[i] + '\n')
 
-        with open(data_dir + test_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
-            for i in range(len(test)):
-                if i < split:
-                    z.write(test[i]['A'] + '\n')
-                pass
+        if not flag_tab_file:
 
-        with open(data_dir + test_name + '.' + babi_name + '.' + question_ending, mode) as z:
-            for i in range(len(test)):
-                if i < split:
-                    z.write(test[i]['Q'] + '\n')
-                pass
+            with open(data_dir + train_name +'.'+ babi_name + '.' + src_ending, mode) as z:
+                for i in range(len(train)):
+                    z.write(train[i]['C'] + '\n')
+                    pass
 
-        ######################
-        with open(data_dir + valid_name + '.' + babi_name + '.' + src_ending, mode) as z:
-            for i in range(len(test)):
-                if i >= split:
-                    z.write(test[i]['C'] + '\n')
-                pass
+            with open(data_dir + train_name +'.'+ babi_name + '.' + tgt_ending, mode) as z:
+                for i in range(len(train)):
+                    z.write(train[i]['A'] + '\n')
+                    pass
 
-        with open(data_dir + valid_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
-            for i in range(len(test)):
-                if i >= split:
-                    z.write(test[i]['A'] + '\n')
-                pass
+            with open(data_dir + train_name +'.'+ babi_name + '.' + question_ending, mode) as z:
+                for i in range(len(train)):
+                    z.write(train[i]['Q'] + '\n')
+                    pass
 
-        with open(data_dir + valid_name + '.' + babi_name + '.' + question_ending, mode) as z:
-            for i in range(len(test)):
-                if i >= split:
-                    z.write(test[i]['Q'] + '\n')
-                pass
+            ######################
+            with open(data_dir + test_name + '.' + babi_name + '.' + src_ending, mode) as z:
+                for i in range(len(test)):
+                    if i < split:
+                        z.write(test[i]['C'] + '\n')
+                    pass
+
+            with open(data_dir + test_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
+                for i in range(len(test)):
+                    if i < split:
+                        z.write(test[i]['A'] + '\n')
+                    pass
+
+            with open(data_dir + test_name + '.' + babi_name + '.' + question_ending, mode) as z:
+                for i in range(len(test)):
+                    if i < split:
+                        z.write(test[i]['Q'] + '\n')
+                    pass
+
+            ######################
+            with open(data_dir + valid_name + '.' + babi_name + '.' + src_ending, mode) as z:
+                for i in range(len(test)):
+                    if i >= split:
+                        z.write(test[i]['C'] + '\n')
+                    pass
+
+            with open(data_dir + valid_name + '.' + babi_name + '.' + tgt_ending, mode) as z:
+                for i in range(len(test)):
+                    if i >= split:
+                        z.write(test[i]['A'] + '\n')
+                    pass
+
+            with open(data_dir + valid_name + '.' + babi_name + '.' + question_ending, mode) as z:
+                for i in range(len(test)):
+                    if i >= split:
+                        z.write(test[i]['Q'] + '\n')
+                    pass
 
         if len(id_lst) > 1: mode = 'a'
