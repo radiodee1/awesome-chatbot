@@ -549,6 +549,8 @@ def main():
                     print(text_original)
                 else:
                     print(text)
+                if notification == '':
+                    print('[', compare,']')
                 print_status('old values', acc_total_in=acc_total, size=generated)
             print("=" * 80)
             return acc_total
