@@ -23,8 +23,9 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--train', action='store_true', help='start train method.')
 parser.add_argument('--test', action='store_true', help='start test method.')
 parser.add_argument('--task', help='task to start with.', default='1')
-parser.add_argument('--increment', default=50, type=int, help='default increment for trainer.')
+parser.add_argument('--increment', default=5000, type=int, help='default increment for trainer.')
 parser.add_argument('--limit', default=10000, type=int, help='default limit for trainer.')
+parser.add_argument('--no-limit', action='store_true', help='loop unconditionally through trainer.')
 args = parser.parse_args()
 
 train_not_test = True
@@ -61,7 +62,9 @@ trainer_args = [
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer',
     '--hparams_set=transformer_base',
-    '--eval_steps=5',
+    '--eval_steps=350',
+    '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'eval_tab.txt',
+
 ]
 
 train_steps_arg = '--train_steps='
@@ -89,7 +92,7 @@ def main(argv):
 
     print(argv, '\n','=' * 20)
     if train_not_test:
-        while counter < limit:
+        while counter < limit or args.no_limit:
 
             tf.flags.FLAGS.set_default('train_steps', counter + args.increment)
             tf.flags.FLAGS.train_steps = counter + args.increment
