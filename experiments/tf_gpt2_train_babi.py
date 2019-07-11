@@ -550,7 +550,7 @@ def main():
                 else:
                     print(text)
                 if notification == '':
-                    print('[', compare,']')
+                    print('[', compare.strip().lower() ,']')
                 print_status('old values', acc_total_in=acc_total, size=generated)
             print("=" * 80)
             return acc_total
