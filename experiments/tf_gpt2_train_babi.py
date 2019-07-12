@@ -130,6 +130,14 @@ class SamplerVal(object):
 
 def main():
     args = parser.parse_args()
+
+    try:
+        logdir = os.path.join(CHECKPOINT_DIR, args.run_name)
+        with open('logdir.txt', 'w') as z:
+            z.write(logdir)
+    except:
+        pass
+
     enc = get_encoder(model_name)
     hparams = model.default_hparams()
     with open(os.path.join(model_name, 'hparams.json')) as f:
