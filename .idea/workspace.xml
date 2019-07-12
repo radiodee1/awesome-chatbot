@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -16,7 +13,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="939">
+            <state relative-caret-position="954">
               <caret line="53" column="56" selection-start-line="53" selection-start-column="56" selection-end-line="53" selection-end-column="56" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
@@ -37,11 +34,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="594">
-              <caret line="102" column="30" selection-start-line="102" selection-start-column="23" selection-end-line="102" selection-end-column="30" />
+            <state relative-caret-position="260">
+              <caret line="238" column="23" selection-start-line="238" selection-start-column="12" selection-end-line="238" selection-end-column="23" />
               <folding>
                 <element signature="e#92#107#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="800">
+              <caret line="194" column="17" selection-start-line="194" selection-start-column="17" selection-end-line="194" selection-end-column="17" />
             </state>
           </provider>
         </entry>
@@ -54,17 +60,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="140" selection-start-line="140" selection-end-line="140" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/model/tf_gpt2/src/model.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
+            <state relative-caret-position="188">
+              <caret line="138" column="12" lean-forward="true" selection-start-line="133" selection-start-column="4" selection-end-line="138" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -122,7 +119,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>val_batch_count</find>
       <find>acc_total</find>
       <find>data_sampler</find>
       <find>endoftext</find>
@@ -143,7 +139,6 @@
       <find>test</find>
       <find>counter</find>
       <find>update_json_file</find>
-      <find>CHECKPOINT_DIR</find>
       <find>read_json_file</find>
       <find>best_accuracy_dict</find>
       <find>prep</find>
@@ -152,6 +147,8 @@
       <find>format</find>
       <find>t2t_train</find>
       <find>maketree</find>
+      <find>CHECKPOINT_DIR</find>
+      <find>summary_log</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -188,7 +185,6 @@
         <option value="$PROJECT_DIR$/bot/game.py" />
         <option value="$PROJECT_DIR$/model/nmt_commands.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_download_model.py" />
-        <option value="$PROJECT_DIR$/model/tf_gpt2_train.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_torch_convert.sh" />
         <option value="$PROJECT_DIR$/do_make_submodule_init.sh" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" />
@@ -211,6 +207,7 @@
         <option value="$PROJECT_DIR$/experiments/do_launch_tensorboard.sh" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" />
         <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
+        <option value="$PROJECT_DIR$/model/tf_gpt2_train.py" />
       </list>
     </option>
   </component>
@@ -325,13 +322,14 @@
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/." />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/model" />
       <recent name="$PROJECT_DIR$/babi" />
       <recent name="$PROJECT_DIR$/saved" />
       <recent name="$PROJECT_DIR$/raw/srt_zip" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="RunDashboard">
@@ -361,6 +359,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="531" y="39" width="1380" height="999" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.20781136" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -480,13 +479,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/model/loader_babi.py" />
-    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3474">
-          <caret line="194" column="17" selection-start-line="194" selection-start-column="17" selection-end-line="194" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3528">
@@ -693,14 +685,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="140" selection-start-line="140" selection-end-line="140" />
+        <state relative-caret-position="188">
+          <caret line="138" column="12" lean-forward="true" selection-start-line="133" selection-start-column="4" selection-end-line="138" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_babi.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="939">
+        <state relative-caret-position="954">
           <caret line="53" column="56" selection-start-line="53" selection-start-column="56" selection-end-line="53" selection-end-column="56" />
           <folding>
             <element signature="e#24#62#0" expanded="true" />
@@ -717,11 +709,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/tf_gpt2_train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="594">
-          <caret line="102" column="30" selection-start-line="102" selection-start-column="23" selection-end-line="102" selection-end-column="30" />
+        <state relative-caret-position="260">
+          <caret line="238" column="23" selection-start-line="238" selection-start-column="12" selection-end-line="238" selection-end-column="23" />
           <folding>
             <element signature="e#92#107#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="800">
+          <caret line="194" column="17" selection-start-line="194" selection-start-column="17" selection-end-line="194" selection-end-column="17" />
         </state>
       </provider>
     </entry>
