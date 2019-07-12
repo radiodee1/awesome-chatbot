@@ -9,4 +9,4 @@ if [[ -f logdir.txt ]] ; then
     echo "use logdir.txt"
 fi
 
-tensorboard --logdir $DIR1 --host localhost --port 2222
+tensorboard --logdir $DIR1 --port 2222
