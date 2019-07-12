@@ -26,6 +26,7 @@ parser.add_argument('--task', help='task to start with.', default='1')
 parser.add_argument('--increment', default=5000, type=int, help='default increment for trainer.')
 parser.add_argument('--limit', default=10000, type=int, help='default limit for trainer.')
 parser.add_argument('--no-limit', action='store_true', help='loop unconditionally through trainer.')
+parser.add_argument('--name', default='babi', help='run filename.')
 args = parser.parse_args()
 
 train_not_test = True
@@ -50,7 +51,7 @@ def maketree(path):
 maketree(hp['data_dir'] + '/t2t_data/')
 maketree(hp['data_dir'] + '/t2t_data/tmp/')
 
-maketree(hp['save_dir'] + '/t2t_train/babi/')
+maketree(hp['save_dir'] + '/t2t_train/' + args.name + '/')
 maketree(counter_dir)
 
 trainer_args = [
@@ -58,7 +59,7 @@ trainer_args = [
     '--generate_data' ,
     '--data_dir=' + hp['data_dir'] + '/t2t_data/',
     '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/babi/',
+    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer',
     '--hparams_set=transformer_base',
@@ -74,13 +75,13 @@ decoder_args = [
     #'--generate_data' ,
     '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
     '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/babi/',
+    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     '--problem=babi_qa_concat_task' + task + '_10k' ,
     '--model=transformer' ,
     '--hparams_set=transformer_base',
 
     '--eval_steps=500',
-    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + 'decode_file.txt',
+    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
     '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
 
 ]
@@ -110,6 +111,12 @@ def main(argv):
 if __name__ == "__main__":
 
     print(sys.argv)
+    try:
+        with open('logdir.txt', 'w') as z:
+            z.write(hp['save_dir'] + '/t2t_train/' + args.name + '/')
+    except:
+        print('could not write logdir.txt!!')
+
     if args.train:
 
         if os.path.isfile(checkpoint_path):
