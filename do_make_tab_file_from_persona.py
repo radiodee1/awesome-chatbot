@@ -30,6 +30,3 @@ with open(personachat_tab_file,'w') as z:
     dataset2 = tokenize(dataset, z)
 
 print('---')
-print(len(dataset2), 'len')
-
-print(dataset2)
