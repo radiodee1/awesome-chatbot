@@ -34,11 +34,11 @@ task = str(int(args.task))
 increment = str(int(args.increment))
 limit = int(args.limit)
 
-counter_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
+counter_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 counter_path = counter_dir + '/counter'
 counter = 0
 
-checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
+checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
 

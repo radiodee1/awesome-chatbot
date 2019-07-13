@@ -35,11 +35,11 @@ increment = str(int(args.increment))
 limit = int(args.limit)
 problem = 'chat_line_problem'
 
-counter_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
+counter_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 counter_path = counter_dir + '/counter'
 counter = 0
 
-checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', 'babi')
+checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
 
@@ -79,7 +79,7 @@ decoder_args = [
     '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
-    '--problem='+ problem
+    '--problem='+ problem,
     '--model=transformer' ,
     '--hparams_set=transformer_base',
 
