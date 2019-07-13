@@ -43,7 +43,7 @@ class ChatLineProblem(text_problems.Text2TextProblem):
     def generate_samples(self, data_dir, tmp_dir, dataset_split):
         raw_file = '../../' + hp['data_dir'] + '/raw.txt'
         if not os.path.isfile(raw_file):
-            exit('cannot find file...')
+            exit('cannot find file... ' + raw_file)
         with open(raw_file, 'r') as rawfp:
             prev_line = ''
             for curr_line in rawfp:
