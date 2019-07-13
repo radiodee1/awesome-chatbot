@@ -64,7 +64,7 @@ trainer_args = [
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem=' + problem,
     '--model=transformer',
-    '--hparams_set=transformer_base',
+    '--hparams_set=transformer_chat',
     '--eval_steps=350',
     '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'eval_tab.txt',
     '--t2t_usr_dir=./chat/trainer',
@@ -81,7 +81,7 @@ decoder_args = [
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem='+ problem,
     '--model=transformer' ,
-    '--hparams_set=transformer_base',
+    '--hparams_set=transformer_chat',
 
     '--eval_steps=100',
     #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
