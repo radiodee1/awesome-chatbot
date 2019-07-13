@@ -83,9 +83,9 @@ decoder_args = [
     '--model=transformer' ,
     '--hparams_set=transformer_base',
 
-    '--eval_steps=500',
-    '--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
-    '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
+    '--eval_steps=100',
+    #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
+    #'--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
     '--t2t_usr_dir=./chat/trainer',
 
 ]
