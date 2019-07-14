@@ -87,6 +87,7 @@ decoder_args = [
     #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
     #'--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
     '--t2t_usr_dir=./chat/trainer',
+    '--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
 
