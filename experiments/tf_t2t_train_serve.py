@@ -34,8 +34,8 @@ parser.add_argument('--name', default='chat', help='run filename.') # default = 
 args = parser.parse_args()
 
 if not args.query:
-    from tensor2tensor.bin import t2t_trainer
-    from tensor2tensor.bin import t2t_decoder
+    #from tensor2tensor.bin import t2t_trainer
+    #from tensor2tensor.bin import t2t_decoder
     pass
 else:
     from tensor2tensor.serving import query as t2t_query
@@ -66,24 +66,6 @@ maketree(hp['data_dir'] + '/t2t_data/tmp/')
 maketree(hp['save_dir'] + '/t2t_train/' + args.name + '/')
 maketree(counter_dir)
 
-trainer_args = [
-    sys.argv[0],
-    '--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/',
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
-    #'--problem=babi_qa_concat_task' + task + '_10k' ,
-    '--problem=' + problem,
-    '--model=transformer',
-    '--hparams_set=transformer_chat',
-    '--eval_steps=350',
-    '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'eval_tab.txt',
-    '--t2t_usr_dir=./chat/trainer',
-]
-
-train_steps_arg = '--train_steps='
-
-decoder_args = []
 
 export_args = [
     #sys.argv[0],
@@ -107,21 +89,18 @@ export_args = [
 
 query_args = [
     sys.argv[0],
-    #'--generate_data' ,
+    '--port=9000' ,
     '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
-    #'--problem=babi_qa_concat_task' + task + '_10k' ,
-    '--problem='+ problem,
-    '--model=transformer' ,
+    #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
+    '--problem=' + problem ,
+    '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/',
+    '--model_name=' + 'chat',
     '--hparams_set=transformer_chat',
-    '--server=localhost:9000',
+    '--server=localhost',
     '--servable_name=chat',
-    '--eval_steps=100',
-    #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
-    #'--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
-    '--t2t_usr_dir=./chat/trainer',
-    '--decode_hparams=beam_size=4,alpha=0.6',
+    #'--eval_steps=100',
+    '--t2t_usr_dir=./chat/trainer/',
+    #'--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
 
@@ -137,81 +116,23 @@ def main(argv):
 
     print(argv, '\n','=' * 20)
     if args.query:
-        os.system('tensorflow_model_server --port=9000 --model_name=chat ' + # '--servable_name=chat ' +
-                  '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name + '/export/ '
-                  )
-        exit()
+
+        print(argv)
+
         t2t_query.main(argv)
         exit()
-    '''
-    if train_not_test:
-        while counter < limit or args.no_limit:
 
-            tf.flags.FLAGS.set_default('train_steps', counter + args.increment)
-            tf.flags.FLAGS.train_steps = counter + args.increment
-            print('flag:', tf.flags.FLAGS.get_flag_value('train_steps', 5), str(counter + args.increment))
-
-            t2t_trainer.main(argv)
-
-            counter += args.increment
-            print('=' * 50, counter, limit, '=' * 50)
-
-    else:
-        t2t_decoder.main(argv)
-    pass
-    '''
 
 if __name__ == "__main__":
 
     print(sys.argv)
-    '''
-    try:
-        with open('logdir.txt', 'w') as z:
-            z.write(hp['save_dir'] + '/t2t_train/' + args.name + '/')
-    except:
-        print('could not write logdir.txt!!')
 
-    if args.train:
-
-        if os.path.isfile(checkpoint_path):
-            try:
-                with open(checkpoint_path,'r') as z:
-                    z = z.readline()
-                    print(z)
-                    z = z.split('\n')[0]
-                    z = z.strip()
-                    z = z.split(':')
-                    z = z[-1]
-                    z = z.strip()
-                    z = z.strip('"')
-                    z = z.split('-')
-                    z = z[-1]
-                    z = int(z)
-                    print(z)
-                    counter = z
-                    pass
-            except :
-                print('could not load counter from checkpoint.')
-                pass
-        train_not_test = True
-        sys.argv = trainer_args + [train_steps_arg + str(counter + args.increment)]
-
-        tf.logging.set_verbosity(tf.logging.INFO)
-
-        tf.app.run()
-
-    elif args.test:
-        train_not_test = False
-        sys.argv = decoder_args
-        print('print:', sys.argv)
-        tf.logging.set_verbosity(tf.logging.INFO)
-        tf.app.run()
-    '''
     if args.query:
         sys.argv = query_args
         print('print:', sys.argv)
         tf.logging.set_verbosity(tf.logging.INFO)
         tf.app.run()
+        #main(sys.argv)
     elif args.export:
         #sys.argv = export_args
         print('print:', sys.argv)
