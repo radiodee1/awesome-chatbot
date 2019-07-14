@@ -22,8 +22,8 @@ parser = argparse.ArgumentParser(
     description='Fine-tune tensor-2-tensor on your babi dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('--train', action='store_true', help='start train method.')
-parser.add_argument('--test', action='store_true', help='start test method.')
+#parser.add_argument('--train', action='store_true', help='start train method.')
+#parser.add_argument('--test', action='store_true', help='start test method.')
 parser.add_argument('--query', action='store_true', help='start query operation.')
 parser.add_argument('--export', action='store_true', help='start export operation.')
 parser.add_argument('--task', help='task to start with.', default='1')
@@ -143,7 +143,7 @@ def main(argv):
         exit()
         t2t_query.main(argv)
         exit()
-
+    '''
     if train_not_test:
         while counter < limit or args.no_limit:
 
@@ -159,10 +159,12 @@ def main(argv):
     else:
         t2t_decoder.main(argv)
     pass
+    '''
 
 if __name__ == "__main__":
 
     print(sys.argv)
+    '''
     try:
         with open('logdir.txt', 'w') as z:
             z.write(hp['save_dir'] + '/t2t_train/' + args.name + '/')
@@ -204,8 +206,8 @@ if __name__ == "__main__":
         print('print:', sys.argv)
         tf.logging.set_verbosity(tf.logging.INFO)
         tf.app.run()
-
-    elif args.query:
+    '''
+    if args.query:
         sys.argv = query_args
         print('print:', sys.argv)
         tf.logging.set_verbosity(tf.logging.INFO)
