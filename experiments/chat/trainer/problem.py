@@ -9,6 +9,7 @@ from tensor2tensor.data_generators import generator_utils
 import sys
 
 sys.path.append('../../..')
+sys.path.append('..')
 from model.settings import hparams as hp
 
 

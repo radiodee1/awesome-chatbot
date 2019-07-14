@@ -9,6 +9,7 @@ from __future__ import print_function
 import sys
 
 sys.path.append('..')
+sys.path.append('../model/')
 
 import tensorflow as tf
 import argparse
@@ -24,6 +25,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--train', action='store_true', help='start train method.')
 parser.add_argument('--test', action='store_true', help='start test method.')
 parser.add_argument('--query', action='store_true', help='start query operation.')
+parser.add_argument('--export', action='store_true', help='start export operation.')
 parser.add_argument('--task', help='task to start with.', default='1')
 parser.add_argument('--increment', default=5000, type=int, help='default increment for trainer.')
 parser.add_argument('--limit', default=10000, type=int, help='default limit for trainer.')
@@ -81,22 +83,25 @@ trainer_args = [
 
 train_steps_arg = '--train_steps='
 
-decoder_args = [
-    sys.argv[0],
+decoder_args = []
+
+export_args = [
+    #sys.argv[0],
     #'--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
+    '--data_dir=' + hp['data_dir'] + '/t2t_data/'  ,
+    #'--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem='+ problem,
     '--model=transformer' ,
     '--hparams_set=transformer_chat',
-
-    '--eval_steps=100',
+    #'--name=model',
+    #'--model_name=model'
+    #'--eval_steps=100',
     #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
     #'--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
     '--t2t_usr_dir=./chat/trainer',
-    '--decode_hparams=beam_size=4,alpha=0.6',
+    #'--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
 
@@ -110,7 +115,7 @@ query_args = [
     '--problem='+ problem,
     '--model=transformer' ,
     '--hparams_set=transformer_chat',
-    '--server=localhost',
+    '--server=localhost:9000',
     '--servable_name=chat',
     '--eval_steps=100',
     #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
@@ -125,8 +130,17 @@ query_args = [
 def main(argv):
     global counter
 
+    if args.export:
+        print(export_args)
+        os.system('t2t-exporter ' + ' '.join(export_args))
+        exit()
+
     print(argv, '\n','=' * 20)
     if args.query:
+        os.system('tensorflow_model_server --port=9000 --model_name=chat ' + # '--servable_name=chat ' +
+                  '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name + '/export/ '
+                  )
+        exit()
         t2t_query.main(argv)
         exit()
 
@@ -196,3 +210,9 @@ if __name__ == "__main__":
         print('print:', sys.argv)
         tf.logging.set_verbosity(tf.logging.INFO)
         tf.app.run()
+    elif args.export:
+        #sys.argv = export_args
+        print('print:', sys.argv)
+        #tf.logging.set_verbosity(tf.logging.INFO)
+        main(args)
+        #tf.app.run()
