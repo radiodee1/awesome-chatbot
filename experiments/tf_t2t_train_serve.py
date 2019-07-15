@@ -45,6 +45,7 @@ task = str(int(args.task))
 increment = str(int(args.increment))
 limit = int(args.limit)
 problem = 'chat_line_problem'
+port = '9002'
 
 counter_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 counter_path = counter_dir + '/counter'
@@ -89,14 +90,14 @@ export_args = [
 
 query_args = [
     sys.argv[0],
-    '--port=9000' ,
+    '--port=' + port ,
     '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
     #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     '--problem=' + problem ,
-    '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/',
+    '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/' , #'chosen/',
     '--model_name=' + 'chat',
     '--hparams_set=transformer_chat',
-    '--server=localhost',
+    '--server=localhost:' + port,
     '--servable_name=chat',
     #'--eval_steps=100',
     '--t2t_usr_dir=./chat/trainer/',
