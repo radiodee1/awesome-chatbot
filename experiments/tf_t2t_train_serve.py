@@ -19,7 +19,7 @@ import os
 #from tensor2tensor.serving import query as t2t_query
 
 parser = argparse.ArgumentParser(
-    description='Fine-tune tensor-2-tensor on your babi dataset.',
+    description='Fine-tune tensor-2-tensor on your chat dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 #parser.add_argument('--train', action='store_true', help='start train method.')
