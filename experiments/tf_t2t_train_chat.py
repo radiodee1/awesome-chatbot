@@ -31,12 +31,10 @@ parser.add_argument('--no-limit', action='store_true', help='loop unconditionall
 parser.add_argument('--name', default='chat', help='run filename.') # default = 'babi' <-- ??
 args = parser.parse_args()
 
-if not args.query:
+if True:
     from tensor2tensor.bin import t2t_trainer
     from tensor2tensor.bin import t2t_decoder
     pass
-else:
-    from tensor2tensor.serving import query as t2t_query
 
 train_not_test = True
 task = str(int(args.task))
