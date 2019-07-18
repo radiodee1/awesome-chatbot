@@ -15,7 +15,7 @@ import tensorflow as tf
 import argparse
 from model.settings import hparams as hp
 import os
-#import json
+import subprocess
 #from tensor2tensor.serving import query as t2t_query
 
 parser = argparse.ArgumentParser(
@@ -46,6 +46,7 @@ increment = str(int(args.increment))
 limit = int(args.limit)
 problem = 'chat_line_problem'
 port = '9002'
+p = None
 
 counter_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 counter_path = counter_dir + '/counter'
@@ -105,10 +106,28 @@ query_args = [
 
 ]
 
+server_args = [
+    'tensorflow_model_server',
+    '--port=' + port ,
+    #'--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
+    #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
+    '--problem=' + problem ,
+    '--model_base_path='  + os.getcwd() + '/' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/' , #'chosen/',
+    '--model_name=' + 'chat',
+    '--hparams_set=transformer_chat',
+    '--server=localhost:' + port,
+    '--servable_name=chat',
+    #'--eval_steps=100',
+    '--t2t_usr_dir=./chat/trainer/',
+    #'--decode_hparams=beam_size=4,alpha=0.6',
+
+]
+
 
 
 def main(argv):
     global counter
+    global p
 
     if args.export:
         print(export_args)
@@ -116,12 +135,17 @@ def main(argv):
         exit()
 
     print(argv, '\n','=' * 20)
+
     if args.query:
+        try:
+            p = subprocess.Popen(server_args)
+            print(argv)
+            #exit()
 
-        print(argv)
-
-        t2t_query.main(argv)
-        exit()
+            t2t_query.main(argv)
+            exit()
+        except:
+            p.terminate()
 
 
 if __name__ == "__main__":
