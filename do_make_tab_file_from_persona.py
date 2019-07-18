@@ -19,7 +19,7 @@ def tokenize(obj, handle, space=' '):
 
     if isinstance(obj, str):
         if print_to_screen: print(space, len(space), obj)
-        l = len(re.sub('don','', obj))
+        l = len(re.sub(' don','', obj))
         if (not (obj.startswith('__') or obj.endswith('__'))) and (not filter_dont or l == len(obj)):
             handle.write(obj + '\n')
         else:
