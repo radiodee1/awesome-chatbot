@@ -70,22 +70,14 @@ maketree(counter_dir)
 
 
 export_args = [
-    #sys.argv[0],
-    #'--generate_data' ,
+
     '--data_dir=' + hp['data_dir'] + '/t2t_data/'  ,
-    #'--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
-    #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem='+ problem,
     '--model=transformer' ,
     '--hparams_set=transformer_chat',
-    #'--name=model',
-    #'--model_name=model'
-    #'--eval_steps=100',
-    #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
-    #'--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
+
     '--t2t_usr_dir=./chat/trainer',
-    #'--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
 
@@ -100,9 +92,7 @@ query_args = [
     '--hparams_set=transformer_chat',
     '--server=localhost:' + port,
     '--servable_name=chat',
-    #'--eval_steps=100',
     '--t2t_usr_dir=./chat/trainer/',
-    #'--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
 
@@ -117,13 +107,9 @@ server_args = [
     '--hparams_set=transformer_chat',
     '--server=localhost:' + port,
     '--servable_name=chat',
-    #'--eval_steps=100',
     '--t2t_usr_dir=./chat/trainer/',
-    #'--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
-
-
 
 def main(argv):
     global counter
