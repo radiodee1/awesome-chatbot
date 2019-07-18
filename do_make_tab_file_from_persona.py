@@ -41,7 +41,7 @@ def tokenize(obj, handle, space=' ', label='str:', write=False, recent_label='')
     if print_to_screen or True:
         return list(tokenize(o, handle, space + ' ', label='list:', write=(not collect_history or write), recent_label=recent_label) for o in obj + [end_of_list])
 
-    
+
 with open(personachat_tab_file,'w') as z:
 
     dataset2 = tokenize(dataset, z)
