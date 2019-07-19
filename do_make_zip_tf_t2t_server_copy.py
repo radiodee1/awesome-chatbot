@@ -9,11 +9,15 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
 
-parser.add_argument('--basename', help='start zip operation on this and other files.')
+parser.add_argument('--basename', nargs='*', help='start zip operation on this and other files.')
 parser.add_argument('--latest', action='store_true', help='choose latest checkpoint.')
 parser.add_argument('--name', default='chat', help='run filename.')
 parser.add_argument('--no-vocab', action='store_true', help='skip storing vocab files.')
 args = parser.parse_args()
+
+if args.basename is not None :
+    args.basename = args.basename[0]
+    print(args.basename)
 
 if args.basename == None and not args.latest:
     exit('what files to save??!!')
@@ -25,12 +29,37 @@ else:
     path = 'saved/t2t_train/' + args.name + '/'
 
 if args.basename is not None:
+
     basename = args.basename.strip().split('/')[-1]
     basename = basename.strip().split('.')[0:-1]
     basename = '.'.join(basename)
     print(basename)
     if not basename.startswith('model'):
-        exit('bad model name')
+        args.name += '_exported'
+        print(args.name)
+        path_export = args.basename.strip().split('/')
+        #exit('bad model name')
+        if os.path.isdir('/'.join(path_export)):
+            basename = '/'.join(path_export)
+            if not basename.endswith('/'):
+                basename = basename + '/'
+            basename = basename.strip().split('/')[-2]
+
+        print(basename)
+        if basename.startswith('saved_model') or basename.startswith('variables') or basename.isdigit():
+            print('server?')
+            while (path_export[-1] != 'variables' and
+                   not path_export[-1].startswith('saved') and
+                   not path_export[-1].strip('/').isdigit()) and len(path_export) > 2:
+                path_export = path_export[:-1]
+            if not path_export[-1].isdigit():
+                path_export = path_export[:-1]
+
+            #print('server vars', path_export)
+            path_export = '/'.join(path_export)
+            print(path_export)
+            os.system('zip -r t2t_' + args.name + ' ' + path_export + '*')
+            os.system('mv t2t_' + args.name + '.zip  ./..')
 
 vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
 
@@ -41,6 +70,7 @@ print(path)
 
 if os.path.isfile(path + '/' + 'checkpoint'):
     with open(path + '/' + 'checkpoint', 'r') as z:
+        args.name += '_checkpoint'
         path_latest = z.readline()
         path_latest = path_latest.strip().split(' ')[-1]
         path_latest = path_latest.strip('"')
