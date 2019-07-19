@@ -35,6 +35,7 @@ if args.basename is not None:
     basename = '.'.join(basename)
     print(basename)
     if not basename.startswith('model'):
+        name = args.name
         args.name += '_exported'
         print(args.name)
         path_export = args.basename.strip().split('/')
@@ -59,25 +60,36 @@ if args.basename is not None:
             path_export = '/'.join(path_export)
             print(path_export)
             os.system('zip -r t2t_' + args.name + ' ' + path_export + '*')
-            os.system('mv t2t_' + args.name + '.zip  ./..')
+            #os.system('mv t2t_' + args.name + '.zip  ./..')
+            #name = args.name
+            vocabname = 'data/t2t_data/' + name + '/' + 'vocab.' + '*'
 
-vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
+            if not args.no_vocab:
+                os.system('zip t2t_' + args.name + ' ' + vocabname)
 
-if not args.no_vocab:
-    os.system('zip t2t_' + args.name + ' ' + vocabname)
+            os.system('mv t2t_' + args.name + '.zip' + ' ..')
+            exit()
 
 print(path)
+name = args.name
 
 if os.path.isfile(path + '/' + 'checkpoint'):
     with open(path + '/' + 'checkpoint', 'r') as z:
-        args.name += '_checkpoint'
+        name = args.name + '_checkpoint'
         path_latest = z.readline()
         path_latest = path_latest.strip().split(' ')[-1]
         path_latest = path_latest.strip('"')
         path_latest = path + '/' + path_latest
         print(path_latest)
 
-        os.system('zip t2t_' + args.name + ' ' + path_latest + '*')
-        os.system('zip t2t_' + args.name + ' ' + path + '/*txt' + ' ' + path + '/*.json')
+        os.system('zip t2t_' + name + ' ' + path_latest + '*')
+        os.system('zip t2t_' + name + ' ' + path + '/*txt' + ' ' + path + '/*.json')
 
-        os.system('mv t2t_' + args.name + '.zip' +  ' ..')
+
+
+        vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
+
+        if not args.no_vocab:
+            os.system('zip t2t_' + name + ' ' + vocabname)
+
+        os.system('mv t2t_' + name + '.zip' +  ' ..')
