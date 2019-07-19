@@ -2,14 +2,26 @@
 
 import json
 import re
+import argparse
 
 personachat_file = './raw/personachat_self_original.json'
 personachat_tab_file = './data/raw.txt'
+data_dir = './data/'
 end_of_list = '<-- end'
 
-filter_dont = True
-print_to_screen = False
+parser = argparse.ArgumentParser(
+    description='Manipulate the persona dataset.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument('--filter_negative', action='store_true', help='filter out words like *dont*')
+parser.add_argument('--print', action='store_true', help='print to screen')
+parser.add_argument('--separate', action='store_true',  help='make separate to/from files')
+args = parser.parse_args()
+
+filter_dont = args.filter_negative
+print_to_screen = args.print
 collect_history = True
+multiple_files = args.separate
 
 with open(personachat_file, "r", encoding="utf-8") as f:
     dataset = json.loads(f.read())
@@ -47,3 +59,35 @@ with open(personachat_tab_file,'w') as z:
     dataset2 = tokenize(dataset, z)
 
 print('---')
+
+if multiple_files:
+    with open(personachat_tab_file, 'r') as z:
+        zz = z.readlines()
+        tr_fr = open(data_dir + 'train.big.from', 'w')
+        tr_to = open(data_dir + 'train.big.to', 'w')
+        for i in range(len(zz)):
+            if i < len(zz) - 1:
+                tr_fr.write(zz[i])
+                tr_to.write(zz[i+1])
+        tr_fr.close()
+        tr_to.close()
+
+        val_fr = open(data_dir + 'valid.big.from', 'w')
+        val_to = open(data_dir + 'valid.big.to', 'w')
+        val_num = int(len(zz) // 20)
+        for i in range(len(zz) - val_num * 2 , len(zz) - val_num):
+            if i < len(zz) - 1:
+                val_fr.write(zz[i])
+                val_to.write(zz[i+1])
+        val_fr.close()
+        val_to.close()
+
+        test_fr = open(data_dir + 'test.big.from','w')
+        test_to = open(data_dir + 'test.big.to','w')
+        for i in range(len(zz) - val_num, len(zz)):
+            if i < len(zz) - 1:
+                test_fr.write(zz[i])
+                test_to.write(zz[i+1])
+        test_fr.close()
+        test_to.close()
+    pass

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_tab_file_from_persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tab_file_from_persona.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,18 +25,9 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="296">
-              <caret line="1911" selection-start-line="1911" selection-end-line="1911" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="648">
+            <state relative-caret-position="1188">
               <caret line="1920" column="58" selection-start-line="1920" selection-start-column="58" selection-end-line="1920" selection-end-column="58" />
             </state>
           </provider>
@@ -45,10 +36,22 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_serve.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="65" column="58" selection-start-line="65" selection-start-column="58" selection-end-line="65" selection-end-column="58" />
+            <state relative-caret-position="127">
+              <caret line="22" column="59" lean-forward="true" selection-start-line="20" selection-end-line="22" selection-end-column="59" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/do_make_tab_file_from_persona.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1638">
+              <caret line="91" column="23" selection-start-line="91" selection-start-column="23" selection-end-line="91" selection-end-column="23" />
+              <folding>
+                <element signature="e#20#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -201,11 +204,11 @@
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_babi.py" />
         <option value="$PROJECT_DIR$/experiments/chat/trainer/problem.py" />
         <option value="$PROJECT_DIR$/do_make_zip_tf_t2t_server_copy.py" />
-        <option value="$PROJECT_DIR$/do_make_tab_file_from_persona.py" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_serve.py" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_chat.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py" />
+        <option value="$PROJECT_DIR$/do_make_tab_file_from_persona.py" />
       </list>
     </option>
   </component>
@@ -607,16 +610,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/do_make_tab_file_from_persona.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="756">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
-          <folding>
-            <element signature="e#20#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/do_make_zip_pytorch_copy.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -657,16 +650,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_serve.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="65" column="58" selection-start-line="65" selection-start-column="58" selection-end-line="65" selection-end-column="58" />
-          <folding>
-            <element signature="e#24#62#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_chat.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="144">
@@ -686,8 +669,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="648">
+        <state relative-caret-position="1188">
           <caret line="1920" column="58" selection-start-line="1920" selection-start-column="58" selection-end-line="1920" selection-end-column="58" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_serve.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="127">
+          <caret line="22" column="59" lean-forward="true" selection-start-line="20" selection-end-line="22" selection-end-column="59" />
+          <folding>
+            <element signature="e#24#62#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/do_make_tab_file_from_persona.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1638">
+          <caret line="91" column="23" selection-start-line="91" selection-start-column="23" selection-end-line="91" selection-end-column="23" />
+          <folding>
+            <element signature="e#20#31#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
