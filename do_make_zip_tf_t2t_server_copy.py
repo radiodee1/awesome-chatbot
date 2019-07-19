@@ -4,10 +4,15 @@ import os
 import argparse
 import sys
 
+print('''
+usage: use bash completion with the basename option. If you denote a checkpoint file, the
+program will save that checkpoint. If you denote an export file, the program will try to
+save all files associated with that export.
+''')
+
 parser = argparse.ArgumentParser(
     description='zip tensor-2-tensor on your chat dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
 
 parser.add_argument('--basename', nargs='*', help='start zip operation on this and other files.')
 parser.add_argument('--latest', action='store_true', help='choose latest checkpoint.')
