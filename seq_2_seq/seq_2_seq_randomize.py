@@ -1860,7 +1860,7 @@ class NMT:
 
         group = []
 
-        if skip_unk:
+        if skip_unk and not randomize:
             num = 0
             pairs2 = []
             self._skipped = 0
@@ -1912,11 +1912,13 @@ class NMT:
         elif randomize:
             c_list = []
             num = 0
+            candidate = random.choice(pairs)
             while num < size and candidate not in c_list:
                 candidate = random.choice(pairs)
                 if candidate not in c_list or len(pairs) < size * 2:
                     c_list.append(candidate)
                     num += 1
+                    print('???',len(pairs), len(self.pairs))
             return self.pad_and_batch(c_list)
 
         for i in group:

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,11 +24,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1358">
-              <caret line="1913" column="19" selection-start-line="1913" selection-start-column="19" selection-end-line="1913" selection-end-column="19" />
+            <state relative-caret-position="296">
+              <caret line="1911" selection-start-line="1911" selection-end-line="1911" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="648">
+              <caret line="1920" column="58" selection-start-line="1920" selection-start-column="58" selection-end-line="1920" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -40,18 +49,6 @@
               <caret line="65" column="58" selection-start-line="65" selection-start-column="58" selection-end-line="65" selection-end-column="58" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_tab_file_from_persona.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="756">
-              <caret line="43" selection-start-line="43" selection-end-line="43" />
-              <folding>
-                <element signature="e#20#31#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -158,7 +155,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt_run.py" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_example.py" />
@@ -209,6 +205,7 @@
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_serve.py" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_chat.py" />
         <option value="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" />
+        <option value="$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py" />
       </list>
     </option>
   </component>
@@ -351,7 +348,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model/loader_babi.py" />
     <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3528">
@@ -683,8 +679,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1358">
-          <caret line="1913" column="19" selection-start-line="1913" selection-start-column="19" selection-end-line="1913" selection-end-column="19" />
+        <state relative-caret-position="296">
+          <caret line="1911" selection-start-line="1911" selection-end-line="1911" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq_randomize.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="648">
+          <caret line="1920" column="58" selection-start-line="1920" selection-start-column="58" selection-end-line="1920" selection-end-column="58" />
         </state>
       </provider>
     </entry>
