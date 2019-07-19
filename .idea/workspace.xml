@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/do_make_tab_file_from_persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tab_file_from_persona.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +35,7 @@
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_serve.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="127">
-              <caret line="22" column="59" lean-forward="true" selection-start-line="20" selection-end-line="22" selection-end-column="59" />
+              <caret line="22" column="59" selection-start-line="20" selection-end-line="22" selection-end-column="59" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
               </folding>
@@ -677,7 +675,7 @@
     <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_serve.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="127">
-          <caret line="22" column="59" lean-forward="true" selection-start-line="20" selection-end-line="22" selection-end-column="59" />
+          <caret line="22" column="59" selection-start-line="20" selection-end-line="22" selection-end-column="59" />
           <folding>
             <element signature="e#24#62#0" expanded="true" />
           </folding>

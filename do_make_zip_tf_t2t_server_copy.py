@@ -32,7 +32,7 @@ if args.basename is not None:
     if not basename.startswith('model'):
         exit('bad model name')
 
-vocabname = 'data/t2t_data/' + 'vocab.' + '*'
+vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
 
 if not args.no_vocab:
     os.system('zip t2t_' + args.name + ' ' + vocabname)
