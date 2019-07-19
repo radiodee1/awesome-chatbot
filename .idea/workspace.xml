@@ -2,9 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/tf_t2t_train_chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_chat.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/tf_t2t_train_serve.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/tf_t2t_train_serve.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,7 +12,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_chat.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="144">
@@ -26,6 +24,15 @@
           </provider>
         </entry>
       </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1358">
+              <caret line="1913" column="19" selection-start-line="1913" selection-start-column="19" selection-end-line="1913" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/experiments/tf_t2t_train_serve.py">
           <provider selected="true" editor-type-id="text-editor">
@@ -33,18 +40,6 @@
               <caret line="65" column="58" selection-start-line="65" selection-start-column="58" selection-end-line="65" selection-end-column="58" />
               <folding>
                 <element signature="e#24#62#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/do_make_zip_tf_t2t_server_copy.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="900">
-              <caret line="52" column="26" selection-start-line="52" selection-start-column="26" selection-end-line="52" selection-end-column="26" />
-              <folding>
-                <element signature="e#20#29#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -125,8 +120,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>endoftext</find>
-      <find>counter_path</find>
       <find>..</find>
       <find>acc_over_time</find>
       <find>print_status</find>
@@ -155,6 +148,8 @@
       <find>save</find>
       <find>poetry</find>
       <find>checkpoint_dir</find>
+      <find>variables_for_batch</find>
+      <find>pairs</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -163,7 +158,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/model/bert_classifier_modeling.py" />
         <option value="$PROJECT_DIR$/model/bert_classifier.py" />
         <option value="$PROJECT_DIR$/model/torch_gpt_run.py" />
         <option value="$PROJECT_DIR$/bot/game_voice.py" />
@@ -214,6 +208,7 @@
         <option value="$PROJECT_DIR$/do_make_tab_file_from_persona.py" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_serve.py" />
         <option value="$PROJECT_DIR$/experiments/tf_t2t_train_chat.py" />
+        <option value="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" />
       </list>
     </option>
   </component>
@@ -356,16 +351,6 @@
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/do_make_db_from_reddit.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3924">
-          <caret line="224" column="35" selection-start-line="224" selection-start-column="35" selection-end-line="224" selection-end-column="35" />
-          <folding>
-            <element signature="e#20#34#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model/loader_babi.py" />
     <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -693,6 +678,13 @@
           <folding>
             <element signature="e#24#62#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/seq_2_seq/seq_2_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1358">
+          <caret line="1913" column="19" selection-start-line="1913" selection-start-column="19" selection-end-line="1913" selection-end-column="19" />
         </state>
       </provider>
     </entry>
