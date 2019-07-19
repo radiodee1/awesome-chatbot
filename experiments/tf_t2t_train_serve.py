@@ -62,8 +62,8 @@ def maketree(path):
     except:
         pass
 
-maketree(hp['data_dir'] + '/t2t_data/')
-maketree(hp['data_dir'] + '/t2t_data/tmp/')
+maketree(hp['data_dir'] + '/t2t_data/' + args.name + '/')
+maketree(hp['data_dir'] + '/t2t_data/' + args.name + '/' + 'tmp/')
 
 maketree(hp['save_dir'] + '/t2t_train/' + args.name + '/')
 maketree(counter_dir)
@@ -71,7 +71,7 @@ maketree(counter_dir)
 
 export_args = [
 
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/'  ,
+    '--data_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/' ,
     '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     '--problem='+ problem,
     '--model=transformer' ,
@@ -84,7 +84,7 @@ export_args = [
 query_args = [
     sys.argv[0],
     '--port=' + port ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
+    '--data_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/',
     #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     '--problem=' + problem ,
     '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/' , #'chosen/',

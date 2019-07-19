@@ -56,8 +56,8 @@ def maketree(path):
     except:
         pass
 
-maketree(hp['data_dir'] + '/t2t_data/')
-maketree(hp['data_dir'] + '/t2t_data/tmp/')
+maketree(hp['data_dir'] + '/t2t_data/' + args.name + '/')
+maketree(hp['data_dir'] + '/t2t_data/' + args.name + '/' + 'tmp/')
 
 maketree(hp['save_dir'] + '/t2t_train/' + args.name + '/')
 maketree(counter_dir)
@@ -65,8 +65,8 @@ maketree(counter_dir)
 trainer_args = [
     sys.argv[0],
     '--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/',
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
+    '--data_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/',
+    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/' + 'tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem=' + problem,
@@ -82,8 +82,8 @@ train_steps_arg = '--train_steps='
 decoder_args = [
     sys.argv[0],
     #'--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
+    '--data_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/' ,
+    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/'+ 'tmp/',
     '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem='+ problem,
@@ -97,27 +97,7 @@ decoder_args = [
     '--decode_hparams=beam_size=4,alpha=0.6',
 
 ]
-'''
-query_args = [
-    sys.argv[0],
-    #'--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
-    #'--problem=babi_qa_concat_task' + task + '_10k' ,
-    '--problem='+ problem,
-    '--model=transformer' ,
-    '--hparams_set=transformer_chat',
-    '--server=localhost',
-    '--servable_name=chat',
-    '--eval_steps=100',
-    #'--decode_to_file=' + hp['save_dir'] + '/t2t_train/' + args.name + '/' + 'decode_file.txt',
-    #'--score_file=' + hp['data_dir'] + '/t2t_data/' + 'test_tab.txt',
-    '--t2t_usr_dir=./chat/trainer',
-    '--decode_hparams=beam_size=4,alpha=0.6',
 
-]
-'''
 
 
 def main(argv):
