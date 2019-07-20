@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/transformer/tf_t2t_train_run.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer/tf_t2t_train_run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -25,8 +24,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
-              <caret line="73" column="4" lean-forward="true" selection-start-line="73" selection-start-column="4" selection-end-line="73" selection-end-column="4" />
+            <state relative-caret-position="-637">
+              <caret line="60" column="42" selection-start-line="60" selection-start-column="42" selection-end-line="60" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -41,7 +40,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1242" />
+            <state relative-caret-position="-1583" />
           </provider>
         </entry>
       </file>
@@ -667,13 +666,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1242" />
+        <state relative-caret-position="-1583" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
-          <caret line="73" column="4" lean-forward="true" selection-start-line="73" selection-start-column="4" selection-end-line="73" selection-end-column="4" />
+        <state relative-caret-position="-637">
+          <caret line="60" column="42" selection-start-line="60" selection-start-column="42" selection-end-line="60" selection-end-column="42" />
         </state>
       </provider>
     </entry>

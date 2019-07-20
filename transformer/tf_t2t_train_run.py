@@ -72,15 +72,16 @@ flags.DEFINE_string('inputs_once', None , 'input.')
 server_args = [
     'tensorflow_model_server',
     '--port=' + port,
+    '--rest_api_port=' + port,
     #'--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
     #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
-    '--problem=' + problem,
+    #'--problem=' + problem,
     '--model_base_path=' + os.getcwd() + '/' + hp['save_dir'] + '/t2t_train/' + args.name + '/export/',  # 'chosen/',
     '--model_name=' + 'chat',
-    '--hparams_set=transformer_chat',
-    '--server=localhost:' + port,
-    '--servable_name=chat',
-    '--t2t_usr_dir=./chat/trainer/',
+    #'--hparams_set=transformer_chat',
+    #'--server=localhost:' + port,
+    #'--servable_name=chat',
+    #'--t2t_usr_dir=./chat/trainer/',
 
 ]
 
@@ -117,7 +118,7 @@ def make_request_fn():
     return request_fn
 
 
-def main_setup():
+def main_setup( _ ):
     #try:
     global request_fn
     global problem_hp
@@ -157,10 +158,11 @@ class NMT:
     def setup_for_interactive(self):
         try:
             print(server_args, '<---')
-            self.p = subprocess.Popen(server_args, shell=True)
+            self.p = subprocess.Popen(server_args, shell=False)
             print(self.p)
+            tf.logging.set_verbosity(tf.logging.INFO)
 
-            main_setup()
+            main_setup(None)
             #tf.app.run(main_setup)
             #setup()
             # main(sys.argv)
