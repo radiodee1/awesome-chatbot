@@ -27,6 +27,11 @@ elif mode == 'memory':
     import model.torch_gpt2_run_memory as model
     import model.tokenize_weak as tokenize_weak
 
+elif mode == 'transformer':
+    sys.path.append(os.path.abspath('../model/torch_gpt2/'))
+    import model.torch_gpt2_run_memory as model
+    import model.tokenize_weak as tokenize_weak
+
 import bot.game_sr as sr
 import bot.game_voice as v
 #import model.tokenize_weak as tokenize_weak
