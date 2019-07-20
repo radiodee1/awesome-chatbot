@@ -43,7 +43,8 @@ train_not_test = True
 #increment = str(int(args.increment))
 #limit = int(args.limit)
 problem = 'chat_line_problem'
-port = '9002'
+port = '8500'
+port_rest = '8502'
 p = None
 request_fn = None
 problem_hp = None
@@ -56,15 +57,15 @@ checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
 flags.DEFINE_boolean('cloud_mlengine_model_name', False, 'skip ml engine!')
-flags.DEFINE_string('server', 'localhost' , 'server location.')
+flags.DEFINE_string('server', 'localhost:'+port , 'server location.')
 flags.DEFINE_string('servable_name', 'chat' , 'servable name.')
 flags.DEFINE_string('t2t_usr_dir', './chat/trainer/' , 'usr dir name.')
 flags.DEFINE_string('problem', problem , 'problem name.')
-flags.DEFINE_string('data_dir', hp['data_dir'] + '/t2t_data/' + args.name + '/' , 'data dir name.')
-flags.DEFINE_string('model_base_path', hp['save_dir'] + '/t2t_train/' + args.name + '/export/' , 'data dir name.')
+flags.DEFINE_string('data_dir', os.getcwd() + '/' +hp['data_dir'] + 't2t_data/' + args.name + '/' , 'data dir name.')
+flags.DEFINE_string('model_base_path', hp['save_dir'] + 't2t_train/' + args.name + '/export/' , 'data dir name.')
 flags.DEFINE_string('model_name', 'chat' , 'model name.')
-flags.DEFINE_string('port',  port, 'server location.')
-
+flags.DEFINE_integer('port', int( port), 'server location.')
+#flags.DEFINE_integer('rest_api_port', int( port_rest), 'server location.')
 flags.DEFINE_integer('timeout_secs', 100, 'timeout secs.')
 flags.DEFINE_string('inputs_once', None , 'input.')
 
@@ -72,14 +73,15 @@ flags.DEFINE_string('inputs_once', None , 'input.')
 server_args = [
     'tensorflow_model_server',
     '--port=' + port,
-    '--rest_api_port=' + port,
+    #'--rest_api_port=' + port_rest,
     #'--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
     #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     #'--problem=' + problem,
-    '--model_base_path=' + os.getcwd() + '/' + hp['save_dir'] + '/t2t_train/' + args.name + '/export/',  # 'chosen/',
+    #'--path=' + os.getcwd() + '/' + hp['save_dir'] + '/t2t_train/' + args.name + '/export/',
+    '--model_base_path=' + os.getcwd() + '/' + hp['save_dir'] + 't2t_train/' + args.name + '/export/',  # 'chosen/',
     '--model_name=' + 'chat',
     #'--hparams_set=transformer_chat',
-    #'--server=localhost:' + port,
+    #'--server=localhost' ,
     #'--servable_name=chat',
     #'--t2t_usr_dir=./chat/trainer/',
 
@@ -134,6 +136,7 @@ def main_setup( _ ):
     problem_hp.get_hparams(hparams)
     request_fn = make_request_fn()
 
+
     #except KeyboardInterrupt:
     #    pass
     #finally:
@@ -156,29 +159,31 @@ class NMT:
         self.p = None
 
     def setup_for_interactive(self):
-        try:
-            print(server_args, '<---')
-            self.p = subprocess.Popen(server_args, shell=False)
-            print(self.p)
-            tf.logging.set_verbosity(tf.logging.INFO)
+        print(server_args, '<---')
+        self.p = subprocess.Popen(server_args, shell=False)
+        print(self.p)
+        tf.logging.set_verbosity(tf.logging.INFO)
 
-            main_setup(None)
-            #tf.app.run(main_setup)
-            #setup()
-            # main(sys.argv)
-        except KeyboardInterrupt:
-            pass
-        finally:
-            self.p.terminate()
+        main_setup(None)
+        #tf.app.run(main_setup)
+        #setup()
+        # main(sys.argv)
+        print(FLAGS.server,'<---')
+
 
     def get_sentence(self, i):
-        return predict_once(i)
+        try:
+            return predict_once(i)
+        except:
+            self.p.terminate()
 
     def loop(self):
+
         while True:
             try:
                 i = input("> ")
-                self.get_sentence(i)
+                z = self.get_sentence(i)
+                print(z)
             except EOFError:
                 print()
                 exit()
@@ -186,7 +191,24 @@ class NMT:
                 print()
                 exit()
 
+
 if __name__ == '__main__':
-    g = NMT()
-    g.setup_for_interactive()
-    g.loop()
+    '''
+    try:
+        p = subprocess.Popen(server_args)
+        main_setup(None)
+        while True:
+            z = predict_once(input("> "))
+            print(z)
+    except:
+        p.terminate()
+
+    exit()
+    '''
+    try:
+        g = NMT()
+        g.setup_for_interactive()
+        g.loop()
+    except:
+        pass
+    
