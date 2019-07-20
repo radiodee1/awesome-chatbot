@@ -3,6 +3,7 @@
 import os
 import argparse
 import sys
+import subprocess
 
 print('''
 usage: use bash completion with the basename option. If you denote a checkpoint file, the
@@ -41,7 +42,7 @@ if args.basename is not None:
     print(basename)
     if not basename.startswith('model'):
         name = args.name
-        args.name += '.exported'
+        args.name += '.exported.zip'
         print(args.name)
         path_export = args.basename.strip().split('/')
         #exit('bad model name')
@@ -64,15 +65,15 @@ if args.basename is not None:
             #print('server vars', path_export)
             path_export = '/'.join(path_export)
             print(path_export)
-            os.system('zip -r t2t_' + args.name + ' ' + path_export + '*')
+            subprocess.call('zip -r t2t_' + args.name + ' ' + path_export + '*', shell=True)
             #os.system('mv t2t_' + args.name + '.zip  ./..')
             #name = args.name
             vocabname = 'data/t2t_data/' + name + '/' + 'vocab.' + '*'
 
             if not args.no_vocab:
-                os.system('zip -r t2t_' + args.name + ' ' + vocabname)
+                subprocess.call('zip -r t2t_' + args.name + ' ' + vocabname, shell=True)
 
-            os.system('mv t2t_' + args.name + '.zip' + ' ..')
+            subprocess.call('mv t2t_' + args.name  + ' ..', shell=True)
             exit()
 
 print(path)
@@ -80,21 +81,21 @@ name = args.name
 
 if os.path.isfile(path + '/' + 'checkpoint'):
     with open(path + '/' + 'checkpoint', 'r') as z:
-        name = args.name + '.checkpoint'
+        name = args.name + '.checkpoint.zip'
         path_latest = z.readline()
         path_latest = path_latest.strip().split(' ')[-1]
         path_latest = path_latest.strip('"')
         path_latest = path + '/' + path_latest
         print(path_latest)
 
-        os.system('zip -r t2t_' + name + ' ' + path_latest + '*')
-        os.system('zip -r t2t_' + name + ' ' + path + '/*txt' + ' ' + path + '/*.json')
+        subprocess.call('zip -r t2t_' + name + ' ' + path_latest + '*', shell=True)
+        subprocess.call('zip -r t2t_' + name + ' ' + path + '/*txt' + ' ' + path + '/*.json', shell=True)
 
 
 
         vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
 
         if not args.no_vocab:
-            os.system('zip -r t2t_' + name + ' ' + vocabname)
+            subprocess.call('zip -r t2t_' + name + ' ' + vocabname, shell=True)
 
-        os.system('mv t2t_' + name + '.zip' +  ' ..')
+        subprocess.call('mv t2t_' + name  +  ' ..', shell=True)
