@@ -70,7 +70,7 @@ if args.basename is not None:
             vocabname = 'data/t2t_data/' + name + '/' + 'vocab.' + '*'
 
             if not args.no_vocab:
-                os.system('zip t2t_' + args.name + ' ' + vocabname)
+                os.system('zip -r t2t_' + args.name + ' ' + vocabname)
 
             os.system('mv t2t_' + args.name + '.zip' + ' ..')
             exit()
@@ -87,14 +87,14 @@ if os.path.isfile(path + '/' + 'checkpoint'):
         path_latest = path + '/' + path_latest
         print(path_latest)
 
-        os.system('zip t2t_' + name + ' ' + path_latest + '*')
-        os.system('zip t2t_' + name + ' ' + path + '/*txt' + ' ' + path + '/*.json')
+        os.system('zip -r t2t_' + name + ' ' + path_latest + '*')
+        os.system('zip -r t2t_' + name + ' ' + path + '/*txt' + ' ' + path + '/*.json')
 
 
 
         vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
 
         if not args.no_vocab:
-            os.system('zip t2t_' + name + ' ' + vocabname)
+            os.system('zip -r t2t_' + name + ' ' + vocabname)
 
         os.system('mv t2t_' + name + '.zip' +  ' ..')
