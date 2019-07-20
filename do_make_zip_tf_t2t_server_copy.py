@@ -41,7 +41,7 @@ if args.basename is not None:
     print(basename)
     if not basename.startswith('model'):
         name = args.name
-        args.name += '_exported'
+        args.name += '.exported'
         print(args.name)
         path_export = args.basename.strip().split('/')
         #exit('bad model name')
@@ -80,7 +80,7 @@ name = args.name
 
 if os.path.isfile(path + '/' + 'checkpoint'):
     with open(path + '/' + 'checkpoint', 'r') as z:
-        name = args.name + '_checkpoint'
+        name = args.name + '.checkpoint'
         path_latest = z.readline()
         path_latest = path_latest.strip().split(' ')[-1]
         path_latest = path_latest.strip('"')
