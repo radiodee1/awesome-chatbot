@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transformer/tf_t2t_train_run.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer/tf_t2t_train_run.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,8 +25,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_run.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="689">
-              <caret line="213" column="4" selection-start-line="213" selection-start-column="4" selection-end-line="213" selection-end-column="4" />
+            <state relative-caret-position="-35">
+              <caret line="159" column="19" selection-start-line="159" selection-start-column="19" selection-end-line="159" selection-end-column="19" />
             </state>
           </provider>
         </entry>
@@ -37,9 +38,7 @@
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1435" />
-          </provider>
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -612,17 +611,13 @@
     <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_chat.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/torch_gpt2_run_memory.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3528">
           <caret line="197" column="19" selection-start-line="197" selection-start-column="19" selection-end-line="197" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/do_launch_transformer.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="324">
-          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -660,15 +655,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
+    <entry file="file://$PROJECT_DIR$/do_launch_transformer.sh">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1435" />
+        <state relative-caret-position="324">
+          <caret line="18" column="32" selection-start-line="18" selection-start-column="32" selection-end-line="18" selection-end-column="32" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_run.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="689">
-          <caret line="213" column="4" selection-start-line="213" selection-start-column="4" selection-end-line="213" selection-end-column="4" />
+        <state relative-caret-position="-35">
+          <caret line="159" column="19" selection-start-line="159" selection-start-column="19" selection-end-line="159" selection-end-column="19" />
         </state>
       </provider>
     </entry>

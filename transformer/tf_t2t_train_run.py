@@ -120,13 +120,11 @@ def make_request_fn():
     return request_fn
 
 
-def main_setup( _ ):
+def main_setup():
     #try:
     global request_fn
     global problem_hp
-    #p = subprocess.Popen(server_args,shell=True)
 
-    #tf.logging.set_verbosity(tf.logging.INFO)
     validate_flags()
     usr_dir.import_usr_dir(FLAGS.t2t_usr_dir)
     problem_hp = registry.problem(FLAGS.problem)
@@ -137,11 +135,6 @@ def main_setup( _ ):
     request_fn = make_request_fn()
 
 
-    #except KeyboardInterrupt:
-    #    pass
-    #finally:
-        #p.terminate()
-    #    pass
 
 def predict_once(inputs):
     global request_fn
@@ -159,16 +152,13 @@ class NMT:
         self.p = None
 
     def setup_for_interactive(self):
-        print(server_args, '<---')
+        #print(server_args, '<---')
         self.p = subprocess.Popen(server_args, shell=False)
-        print(self.p)
+        #print(self.p)
         tf.logging.set_verbosity(tf.logging.INFO)
 
-        main_setup(None)
-        #tf.app.run(main_setup)
-        #setup()
-        # main(sys.argv)
-        print(FLAGS.server,'<---')
+        main_setup()
+
 
 
     def get_sentence(self, i):
@@ -211,4 +201,3 @@ if __name__ == '__main__':
         g.loop()
     except:
         pass
-    
