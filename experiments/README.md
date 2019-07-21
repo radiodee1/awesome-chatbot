@@ -28,3 +28,9 @@ set up the babi training files. Then you can
 convert the model to the pytorch model, and then for confirmation
 you can run the test set on the pytorch model to see if it
 matches the test results on the tensorflow background.
+
+## Transformer
+There is also a file in this folder named `tf_t2t_train_babi.py`. This file
+runs the tensor2tensor code that works with the babi set. The file
+just runs the executable that ends up on the system when you install the google
+tensor2tensor repository using `pip3`. 
