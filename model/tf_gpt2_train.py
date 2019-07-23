@@ -31,6 +31,9 @@ model_name = hp['data_dir'] + '/' + 'tf_gpt2_data/'
 checkpoint_dir = hp['save_dir'] + '/' + 'tf_gpt2_saved/'
 CHECKPOINT_DIR = checkpoint_dir
 
+HIDDEN_SIZE = 1024
+GENERATE_SIZE = 10
+
 parser = argparse.ArgumentParser(
     description='Fine-tune GPT-2 on your custom dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -40,10 +43,12 @@ parser.add_argument('--model_name', metavar='MODEL', type=str, default='117M', h
 parser.add_argument('--combine', metavar='CHARS', type=int, default=50000, help='Concatenate input files with <|endoftext|> separator into chunks of this minimum size')
 
 parser.add_argument('--batch_size', metavar='SIZE', type=int, default=1, help='Batch size')
-parser.add_argument('--learning_rate', metavar='LR', type=float, default=0.0001, help='Learning rate for Adam')
+parser.add_argument('--learning_rate', metavar='LR', type=float, default=0.000001, help='Learning rate for Adam')
 parser.add_argument('--accumulate_gradients', metavar='N', type=int, default=1, help='Accumulate gradients across N minibatches.')
 parser.add_argument('--memory_saving_gradients', default=False, action='store_true', help='Use gradient checkpointing to reduce vram usage.')
 parser.add_argument('--only_train_transformer_layers', default=False, action='store_true', help='Restrict training to the transformer blocks.')
+
+parser.add_argument('--train_special', action='store_true', help='test special training routine for babi stories')
 
 parser.add_argument('--restore_from', type=str, default='latest', help='Either "latest", "fresh", or a path to a checkpoint file')
 parser.add_argument('--run_name', type=str, default='run1', help='Run id. Name of subdirectory in checkpoint/ and samples/')
@@ -56,7 +61,38 @@ parser.add_argument('--val_dataset', metavar='PATH', type=str, default=None, hel
 parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=2, help='Batch size for validation.')
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=40, help='Number of batches for validation.')
 parser.add_argument('--val_every', metavar='STEPS', type=int, default=0, help='Calculate validation loss every STEPS steps.')
-parser.add_argument('--stop_after', metavar='STOP', type=int, default=None, help='Stop after training counter reaches STOP')
+parser.add_argument('--stop_after', metavar='STOP', type=int, default=100, help='Stop after training counter reaches STOP')
+
+class SamplerVal(object):
+
+    def __init__(self, chunks, encoder=None, char='\n', skip_delimeter=True):
+        char = encoder.encode(char)
+        chunks = chunks[0]
+        l = []
+        self.chunks = []
+        for i in chunks:
+            if i != char[0] or not skip_delimeter:
+                l.append(i)
+            else:
+                l.append(encoder.encode(' ')[0])
+                #l.append(encoder.encode('.')[0])
+            if i == char[0]:
+                self.chunks.append(l)
+                l = []
+        self.total_size = len(self.chunks)
+
+    def get(self, index):
+        return self.chunks[index]
+
+def name_parts(name):
+    n = name.split('/')
+    base = '.'.join(n[-1].split('.')[:-1])
+    path = '/'.join(n[:-1]) + '/'
+    # print(n,'n', path, 'p', base, 'base')
+    from_name = base + '.from'
+    to_name = base + '.to'
+    ques_name = base + '.ques'
+    return path + from_name, path + ques_name, path + to_name
 
 
 def maketree(path):
@@ -173,8 +209,46 @@ def main():
 
         print('Loading dataset...')
         chunks = load_dataset(enc, args.dataset, args.combine)
-        data_sampler = Sampler(chunks)
-        if args.val_every > 0:
+        #data_sampler = Sampler(chunks)
+        print('Loading train dataset...')
+        from_name, ques_name, to_name = name_parts(args.dataset)
+
+        trn_chunks_from = load_dataset(enc, from_name, args.combine) if args.dataset else chunks
+        #trn_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.dataset else chunks
+        trn_chunks_to = load_dataset(enc, to_name, args.combine) if args.dataset else chunks
+
+        skip_delimeter = True
+        trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, skip_delimeter=skip_delimeter)
+        #trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc, skip_delimeter=skip_delimeter)
+        trn_data_sampler_to = SamplerVal(trn_chunks_to, enc, skip_delimeter=skip_delimeter)
+
+        len_v = 0
+        data_sampler = []
+        for i in range(trn_data_sampler_from.total_size):
+            v = (
+                    enc.encode('\nQ: ') +
+                    trn_data_sampler_from.get(i) +
+                    enc.encode('. \nA: ') +
+                    trn_data_sampler_to.get(i)   +
+                    enc.encode('. ')
+            )
+
+            v = v[: HIDDEN_SIZE - 1]
+            len_v += len(v)
+            data_sampler.extend(v) ## append(v)
+            pass
+
+        if len_v < HIDDEN_SIZE:
+            mult = HIDDEN_SIZE // len_v + 1
+            for i in range(mult):
+                x = data_sampler[:]
+                data_sampler.extend(x)
+            data_sampler = Sampler([np.array(data_sampler)] )
+
+        #if not args.train_special and len_v >= HIDDEN_SIZE:
+        #    data_sampler = Sampler([np.array(data_sampler)])
+
+        if args.val_every > 0 and False:
             val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
         print('dataset has', data_sampler.total_size, 'tokens')
         print('Training...')
@@ -246,7 +320,9 @@ def main():
                     loss=v_val_loss))
 
         def sample_batch():
-            return [data_sampler.sample(1024) for _ in range(args.batch_size)]
+            z = [data_sampler.sample(1024) for _ in range(args.batch_size)]
+            #print(enc.decode(z[0]))
+            return z
 
 
         avg_loss = (0.0, 0.0)

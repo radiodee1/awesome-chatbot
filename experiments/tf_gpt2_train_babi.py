@@ -247,7 +247,6 @@ def main():
         trn_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.val_dataset else chunks
         trn_chunks_to = load_dataset(enc, to_name, args.combine) if args.val_dataset else chunks
 
-
         skip_delimeter = True
         trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, skip_delimeter=skip_delimeter)
         trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc, skip_delimeter=skip_delimeter)
