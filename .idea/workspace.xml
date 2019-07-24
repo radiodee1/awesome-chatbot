@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/tf_gpt2_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/tf_gpt2_train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/babi/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/babi/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/transformer/tf_t2t_train_serve.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer/tf_t2t_train_serve.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,11 +25,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="468">
-              <caret line="32" column="68" lean-forward="true" selection-start-line="32" selection-start-column="68" selection-end-line="32" selection-end-column="68" />
+              <caret line="32" column="67" lean-forward="true" selection-start-line="32" selection-start-column="67" selection-end-line="32" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -44,12 +43,12 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/babi/README.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="630">
-                <caret line="35" column="80" selection-start-line="35" selection-start-column="80" selection-end-line="35" selection-end-column="80" />
+              <first_editor relative-caret-position="648">
+                <caret line="36" column="74" selection-start-line="36" selection-start-column="74" selection-end-line="36" selection-end-column="74" />
               </first_editor>
               <second_editor>
                 <markdownNavigatorState />
@@ -208,10 +207,10 @@
         <option value="$PROJECT_DIR$/experiments/README.md" />
         <option value="$PROJECT_DIR$/transformer/README.md" />
         <option value="$PROJECT_DIR$/do_make_text_file_from_aiml.py" />
-        <option value="$PROJECT_DIR$/babi/README.md" />
         <option value="$PROJECT_DIR$/experiments/tf_gpt2_train_babi.py" />
         <option value="$PROJECT_DIR$/model/tf_gpt2_train.py" />
         <option value="$PROJECT_DIR$/transformer/tf_t2t_train_serve.py" />
+        <option value="$PROJECT_DIR$/babi/README.md" />
       </list>
     </option>
   </component>
@@ -597,18 +596,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/babi/README.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="630">
-            <caret line="35" column="80" selection-start-line="35" selection-start-column="80" selection-end-line="35" selection-end-column="80" />
-          </first_editor>
-          <second_editor>
-            <markdownNavigatorState />
-          </second_editor>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -654,7 +641,19 @@
     <entry file="file://$PROJECT_DIR$/transformer/tf_t2t_train_serve.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="468">
-          <caret line="32" column="68" lean-forward="true" selection-start-line="32" selection-start-column="68" selection-end-line="32" selection-end-column="68" />
+          <caret line="32" column="67" lean-forward="true" selection-start-line="32" selection-start-column="67" selection-end-line="32" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/babi/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;MarkdownPreviewEditor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="648">
+            <caret line="36" column="74" selection-start-line="36" selection-start-column="74" selection-end-line="36" selection-end-column="74" />
+          </first_editor>
+          <second_editor>
+            <markdownNavigatorState />
+          </second_editor>
         </state>
       </provider>
     </entry>
