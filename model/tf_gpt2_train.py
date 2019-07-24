@@ -207,15 +207,15 @@ def main():
         print('Loading checkpoint', ckpt)
         saver.restore(sess, ckpt)
 
-        print('Loading dataset...')
-        chunks = load_dataset(enc, args.dataset, args.combine)
+        #print('Loading dataset...')
+        #chunks = load_dataset(enc, args.dataset, args.combine)
         #data_sampler = Sampler(chunks)
         print('Loading train dataset...')
         from_name, ques_name, to_name = name_parts(args.dataset)
 
-        trn_chunks_from = load_dataset(enc, from_name, args.combine) if args.dataset else chunks
+        trn_chunks_from = load_dataset(enc, from_name, args.combine) #if args.dataset else chunks
         #trn_chunks_ques = load_dataset(enc, ques_name, args.combine) if args.dataset else chunks
-        trn_chunks_to = load_dataset(enc, to_name, args.combine) if args.dataset else chunks
+        trn_chunks_to = load_dataset(enc, to_name, args.combine) #if args.dataset else chunks
 
         skip_delimeter = True
         trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, skip_delimeter=skip_delimeter)
