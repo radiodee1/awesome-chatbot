@@ -89,7 +89,7 @@ class NMT:
 
         self.common = ''
         self.previous_sentences = []
-        self.gather_sentences = True
+        self.gather_sentences = False
         self.recent_in = ''
         self.recent_text = ''
         self.save_num = 10
