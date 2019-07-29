@@ -20,6 +20,28 @@ class Commands:
         self.print_to_screen = True
         self.erase_history = True
         self.use_async = False
+        self.sep_list = ['chrome', 'firefox']
+
+        self.url_search = 'https://www.google.com/search?q='
+        self.url_youtube = 'https://www.youtube.com/results?search_query='
+        self.launch_google_chrome = 'google-chrome --app='
+        self.launch_firefox = 'firefox --search '
+        self.launch_rhythmbox = 'rhythmbox '
+        self.launch_mail = 'thunderbird'
+        self.launch_office = 'libreoffice'
+        self.launch_file = 'nautilus'
+        self.launch_terminal = 'gnome-terminal'
+
+        self.command_dict = {
+            'search': self.launch_google_chrome + self.url_search,
+            'video': self.launch_google_chrome + self.url_youtube,
+            'music': self.launch_rhythmbox,
+            'mail': self.launch_mail,
+            'office': self.launch_office,
+            'file': self.launch_file,
+            'terminal': self.launch_terminal,
+            'firefox': self.launch_firefox
+        }
 
         self.setup_for_aiml()
 
@@ -80,6 +102,12 @@ class Commands:
 
         if self.print_to_screen: print(self.text_commands)
 
+        for k in range(len(self.text_template)):
+            kk = self.text_template[k].strip().split()
+            if len(kk) == 1 and kk[0] in self.command_dict:
+                self.text_template[k] = self.command_dict[self.text_template[k][0]]
+
+        if self.print_to_screen: print(self.text_template, '<<<')
 
     def re(self,i):
         return re.sub('[.?!:;,]','', i)
@@ -107,12 +135,27 @@ class Commands:
     def decide_commmand(self, i):
         self.command_string = ''
 
+        ## if pattern matches exactly ##
         for j in range(len(self.text_pattern)):
             if i.lower().strip().startswith(self.text_pattern[j].lower().strip()):
-                self.command_string = self.text_template[j] + i[len(self.text_pattern[j]):]
+                self.command_string = self.text_template[j]
+                ## decide how to end command ##
+                ii = self.text_template[j]
+                tp = i[len(self.text_pattern[j]):]
+                tp = tp.strip().split(' ')
+                separator = ' '
+                space = ' '
+                for zz in self.sep_list:
+                    print(zz)
+                    if zz in ii :
+                        separator = '+'
+                        space = ''
+                        print(zz,separator)
+                self.command_string += space + separator.join(tp)
 
-        if self.print_to_screen: print(self.command_string)
+        if self.print_to_screen: print(self.command_string,'<--')
 
+        ## match by occurance of special words ##
         if self.command_string == '' and self.is_command(i):
             i = self.strip_command(i)
             if self.print_to_screen: print(i)
@@ -132,6 +175,24 @@ class Commands:
 
             if self.print_to_screen: print(chosen, commands)
 
+            highest = 0
+            highest_index = 0
+            for j in commands:
+                if int(commands[j]) > highest:
+                    highest = commands[j]
+                    highest_index = j
+
+            ## decide how to end commend ##
+            separator = ' '
+            space = ' '
+            for zz in self.sep_list:
+                if zz in self.text_template[highest_index] : #len(re.sub('[' + zz + ']', "", self.text_template[highest_index])) != len(self.text_template[highest_index]):
+                    separator = '+'
+                    space = ''
+                    #print(separator)
+            self.command_string = self.text_template[highest_index].strip() + space + separator.join(i)
+
+            if self.print_to_screen: print(self.command_string,'<==')
         pass
 
     def do_command(self, i):
@@ -169,10 +230,12 @@ if __name__ == '__main__':
 
     command1 = 'movies http://youtube'
     command2 = 'play music like video music like a movie of the music band youtube.'
-    command3 = 'turn around the light on'
+    command3 = 'turn around the light on movie movie movie movie'
+    command4 = 'find allman brothers band'
     c.print_to_screen = True
     z = c.decide_commmand(command1)
     z = c.decide_commmand(command3)
+    z = c.decide_commmand(command4)
     exit()
     for x in range(2):
         if len(c.strip_command(command1)) > 0:

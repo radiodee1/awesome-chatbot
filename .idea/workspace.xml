@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/data/hello.aiml" beforeDir="false" afterPath="$PROJECT_DIR$/data/hello.aiml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/nmt_aiml_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/nmt_aiml_commands.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,8 +39,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model/nmt_commands.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1386">
-              <caret line="4" column="9" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
+            <state relative-caret-position="594">
+              <caret line="57" column="9" lean-forward="true" selection-start-line="48" selection-start-column="8" selection-end-line="57" selection-end-column="9" />
               <folding>
                 <element signature="e#20#29#0" expanded="true" />
               </folding>
@@ -45,20 +48,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model/nmt_aiml_commands.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-64">
-              <caret line="131" selection-start-line="131" selection-end-line="131" />
+            <state relative-caret-position="666">
+              <caret line="107" column="81" selection-start-line="107" selection-start-column="81" selection-end-line="107" selection-end-column="81" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/data/hello.aiml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="530">
-              <caret line="62" column="41" selection-start-line="62" selection-start-column="41" selection-end-line="62" selection-end-column="41" />
+            <state relative-caret-position="1314">
+              <caret line="73" column="15" selection-start-line="73" selection-start-column="15" selection-end-line="73" selection-end-column="15" />
             </state>
           </provider>
         </entry>
@@ -173,8 +176,8 @@
         <option value="$PROJECT_DIR$/transformer/tf_t2t_train_serve.py" />
         <option value="$PROJECT_DIR$/babi/README.md" />
         <option value="$PROJECT_DIR$/model/torch_gpt2_run_memory.py" />
-        <option value="$PROJECT_DIR$/model/nmt_aiml_commands.py" />
         <option value="$PROJECT_DIR$/data/hello.aiml" />
+        <option value="$PROJECT_DIR$/model/nmt_aiml_commands.py" />
       </list>
     </option>
   </component>
@@ -190,7 +193,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -260,6 +262,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -615,10 +618,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/data/hello.aiml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1314">
+          <caret line="73" column="15" selection-start-line="73" selection-start-column="15" selection-end-line="73" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/model/nmt_commands.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1386">
-          <caret line="4" column="9" selection-start-line="4" selection-start-column="9" selection-end-line="4" selection-end-column="9" />
+        <state relative-caret-position="594">
+          <caret line="57" column="9" lean-forward="true" selection-start-line="48" selection-start-column="8" selection-end-line="57" selection-end-column="9" />
           <folding>
             <element signature="e#20#29#0" expanded="true" />
           </folding>
@@ -627,15 +637,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/model/nmt_aiml_commands.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-64">
-          <caret line="131" selection-start-line="131" selection-end-line="131" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/hello.aiml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="62" column="41" selection-start-line="62" selection-start-column="41" selection-end-line="62" selection-end-column="41" />
+        <state relative-caret-position="666">
+          <caret line="107" column="81" selection-start-line="107" selection-start-column="81" selection-end-line="107" selection-end-column="81" />
         </state>
       </provider>
     </entry>

@@ -67,7 +67,14 @@
       </template>
       
    </category>
-   
+   <category>
+      <pattern> find</pattern>
+
+      <template>
+         chrome
+      </template>
+
+   </category>
    
 </aiml>
 
