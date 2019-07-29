@@ -1,0 +1,73 @@
+
+<aiml version = "1.0.1" encoding = "UTF-8">
+   <category>
+      <pattern> music </pattern>
+      
+      <template>
+         play music
+      </template>
+      
+   </category>
+   <category>
+      <pattern> movies </pattern>
+      
+      <template>
+         play movies
+      </template>
+      
+   </category>
+   <category>
+      <pattern> radio </pattern>
+      
+      <template>
+         play radio
+      </template>
+      
+   </category>
+   
+   <category>
+      <pattern> song </pattern>
+      
+      <template>
+         play any song
+      </template>
+      
+   </category>
+   <category>
+      <pattern> video </pattern>
+      
+      <template>
+         play any video
+      </template>
+      
+   </category>
+   <category>
+      <pattern> movie </pattern>
+      
+      <template>
+         play any movie
+      </template>
+      
+   </category>
+
+   <category>
+      <pattern> turn on the light </pattern>
+      
+      <template>
+         turn on the light
+      </template>
+      
+   </category>
+   
+   <category>
+      <pattern> turn the light over under</pattern>
+      
+      <template>
+         turn off the light
+      </template>
+      
+   </category>
+   
+   
+</aiml>
+
