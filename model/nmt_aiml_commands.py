@@ -19,7 +19,7 @@ class Commands:
         self.command_string = ''
         self.text_commands = []
         self.p = None
-        self.print_to_screen = True
+        self.print_to_screen = False
         self.erase_history = True
         self.use_async = False
         self.sep_list = ['chrome', 'firefox']
@@ -107,7 +107,6 @@ class Commands:
         for k in range(len(self.text_template)):
             kk = self.text_template[k].strip().split()
             if len(kk) == 1 and kk[0] in self.command_dict:
-                print(kk[0])
                 self.text_template[k] = self.command_dict[self.text_template[k]]
 
         if self.print_to_screen: print(self.text_template, '<<<')
@@ -149,11 +148,11 @@ class Commands:
                 separator = ' '
                 space = ' '
                 for zz in self.sep_list:
-                    print(zz)
+                    if self.print_to_screen: print(zz)
                     if zz in ii :
                         separator = '+'
                         space = ''
-                        print(zz,separator)
+                        if self.print_to_screen: print(zz,separator)
                 self.command_string += space + separator.join(tp)
 
         if self.print_to_screen: print(self.command_string,'<--')
@@ -189,7 +188,7 @@ class Commands:
             separator = ' '
             space = ' '
             for zz in self.sep_list:
-                if zz in self.text_template[highest_index] : #len(re.sub('[' + zz + ']', "", self.text_template[highest_index])) != len(self.text_template[highest_index]):
+                if zz in self.text_template[highest_index] :
                     separator = '+'
                     space = ''
                     #print(separator)
@@ -206,7 +205,7 @@ class Commands:
 
         self.decide_commmand(i)
 
-        if self.print_to_screen: print(self.command_string)
+        if self.print_to_screen or True: print(self.command_string)
 
         if not self.use_async:
             self.launch_sync(self.command_string)
