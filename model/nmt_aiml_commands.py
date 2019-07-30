@@ -184,15 +184,19 @@ class Commands:
                     highest = commands[j]
                     highest_index = j
 
-            ## decide how to end commend ##
+            ## decide how to end command ##
             separator = ' '
             space = ' '
+            add_txt = False
             for zz in self.sep_list:
                 if zz in self.text_template[highest_index] :
                     separator = '+'
                     space = ''
+                    add_txt = True
                     #print(separator)
-            self.command_string = self.text_template[highest_index].strip() + space + separator.join(i)
+            self.command_string = self.text_template[highest_index].strip() #+ space + separator.join(i)
+            if add_txt:
+                self.command_string += space + separator.join(i)
 
             if self.print_to_screen: print(self.command_string,'<==')
         pass

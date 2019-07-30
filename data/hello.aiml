@@ -1,5 +1,14 @@
 
 <aiml version = "1.0.1" encoding = "UTF-8">
+    <!-- This file is not standard aiml!! The pattern tag is the utterance of the
+     user of the program, while the template tag is for the program to execute when
+     the utterance is detected.
+
+     There are also some keywords that can replace the usual template tag contents.
+     Look in the nmt_aiml_commands.py file for these shortcut token words. Add
+     text to this file carefully.
+     -->
+
    <category>
       <pattern> music </pattern>
       

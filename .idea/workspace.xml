@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hello.aiml" beforeDir="false" afterPath="$PROJECT_DIR$/data/hello.aiml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/nmt_aiml_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/nmt_aiml_commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run.py" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,40 +19,6 @@
         <option value="Python Script" />
       </list>
     </option>
-  </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>test</find>
-      <find>counter</find>
-      <find>update_json_file</find>
-      <find>read_json_file</find>
-      <find>best_accuracy_dict</find>
-      <find>prep</find>
-      <find>limit</find>
-      <find>lower</find>
-      <find>format</find>
-      <find>t2t_train</find>
-      <find>maketree</find>
-      <find>CHECKPOINT_DIR</find>
-      <find>summary_log</find>
-      <find>save</find>
-      <find>poetry</find>
-      <find>checkpoint_dir</find>
-      <find>variables_for_batch</find>
-      <find>pairs</find>
-      <find>query</find>
-      <find>data_dir</find>
-      <find>name_parts</find>
-      <find>model_name</find>
-      <find>run_name</find>
-      <find>commands</find>
-      <find>get</find>
-      <find>data_sampler</find>
-      <find>only_train_transformer_layers</find>
-      <find>gather_sentences</find>
-      <find>words</find>
-      <find>strip_command</find>
-    </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
