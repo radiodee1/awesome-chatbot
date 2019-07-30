@@ -4,7 +4,7 @@
       <pattern> music </pattern>
       
       <template>
-         play music
+         music
       </template>
       
    </category>
@@ -12,7 +12,7 @@
       <pattern> movies </pattern>
       
       <template>
-         play movies
+         video
       </template>
       
    </category>
@@ -20,7 +20,7 @@
       <pattern> radio </pattern>
       
       <template>
-         play radio
+         music
       </template>
       
    </category>
@@ -29,7 +29,7 @@
       <pattern> song </pattern>
       
       <template>
-         play any song
+         music
       </template>
       
    </category>
@@ -37,7 +37,7 @@
       <pattern> video </pattern>
       
       <template>
-         play any video
+         video
       </template>
       
    </category>
@@ -45,33 +45,26 @@
       <pattern> movie </pattern>
       
       <template>
-         play any movie
+         video
       </template>
       
    </category>
 
    <category>
-      <pattern> turn on the light </pattern>
+      <pattern> flip the light switch </pattern>
       
       <template>
-         turn on the light
+         echo "turn on the light"
       </template>
       
    </category>
    
-   <category>
-      <pattern> turn the light over under</pattern>
-      
-      <template>
-         turn off the light
-      </template>
-      
-   </category>
+
    <category>
       <pattern> find</pattern>
 
       <template>
-         chrome
+         search
       </template>
 
    </category>

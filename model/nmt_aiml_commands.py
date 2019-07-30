@@ -5,8 +5,10 @@ import sys
 from subprocess import Popen
 import re
 import xml.etree.ElementTree as ET
+sys.path.append('..')
+from model.settings import hparams as hp
 
-aiml_txt = '../data/hello.aiml'
+aiml_txt = hp['data_dir'] + '/hello.aiml'
 
 class Commands:
     def __init__(self):
@@ -105,7 +107,8 @@ class Commands:
         for k in range(len(self.text_template)):
             kk = self.text_template[k].strip().split()
             if len(kk) == 1 and kk[0] in self.command_dict:
-                self.text_template[k] = self.command_dict[self.text_template[k][0]]
+                print(kk[0])
+                self.text_template[k] = self.command_dict[self.text_template[k]]
 
         if self.print_to_screen: print(self.text_template, '<<<')
 

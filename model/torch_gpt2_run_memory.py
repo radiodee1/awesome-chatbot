@@ -47,7 +47,7 @@ from GPT2.config import GPT2Config
 from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
-from model.nmt_commands import Commands
+from model.nmt_aiml_commands import Commands
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
