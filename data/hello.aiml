@@ -7,6 +7,9 @@
      There are also some keywords that can replace the usual template tag contents.
      Look in the nmt_aiml_commands.py file for these shortcut token words. Add
      text to this file carefully.
+
+     Also wild cards in the patterns are not allowed, and so are more complex pattern
+     arrangements. There is no 'that'.
      -->
 
    <category>
