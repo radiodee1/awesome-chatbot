@@ -15,6 +15,7 @@ from model.settings import hparams as hp
 
 tf.summary.FileWriterCache.clear()  # ensure filewriter cache is clear for TensorBoard events file
 
+load_sep_files = True
 
 @registry.register_problem
 class ChatLineProblem(text_problems.Text2TextProblem):
@@ -43,21 +44,42 @@ class ChatLineProblem(text_problems.Text2TextProblem):
 
     def generate_samples(self, data_dir, tmp_dir, dataset_split):
         raw_file =  hp['data_dir'] + '/raw.txt'
-        if not os.path.isfile(raw_file):
-            #os.system('ls -l')
-            exit('cannot find file... ' + raw_file)
-        with open(raw_file, 'r') as rawfp:
-            prev_line = ''
-            for curr_line in rawfp:
-                curr_line = curr_line.strip()
-                # poems break at empty lines, so this ensures we train only
-                # on lines of the same poem
+        file_fr = hp['data_dir'] + '/train.from'
+        file_to = hp['data_dir'] + '/train.to'
+
+        if not load_sep_files:
+            if not os.path.isfile(raw_file):
+                #os.system('ls -l')
+                exit('cannot find file... ' + raw_file)
+            with open(raw_file, 'r') as rawfp:
+                prev_line = ''
+                for curr_line in rawfp:
+                    curr_line = curr_line.strip()
+                    # poems break at empty lines, so this ensures we train only
+                    # on lines of the same poem
+                    if len(prev_line) > 0 and len(curr_line) > 0:
+                        yield {
+                            "inputs": prev_line,
+                            "targets": curr_line
+                        }
+                    prev_line = curr_line
+        else:
+            if (not os.path.isfile(file_fr)) or (not os.path.isfile(file_to)):
+                exit('cannot find files...' + file_fr + ' or ' + file_to)
+            raw_file_fr = open(file_fr, 'r')
+            raw_file_to = open(file_to, 'r')
+            read_file_fr = raw_file_fr.readlines()
+            read_file_to = raw_file_to.readlines()
+            for i in range(len(read_file_fr)):
+                prev_line = read_file_fr[i].strip()
+                curr_line = read_file_to[i].strip()
                 if len(prev_line) > 0 and len(curr_line) > 0:
                     yield {
                         "inputs": prev_line,
                         "targets": curr_line
                     }
-                prev_line = curr_line
+            raw_file_fr.close()
+            raw_file_to.close()
 
             # Smaller than the typical translate model, and with more regularization
 
