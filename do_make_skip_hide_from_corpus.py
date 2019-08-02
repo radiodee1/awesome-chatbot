@@ -29,6 +29,8 @@ print(args)
 skip_list = args.skip.split(',')
 hide_list = args.hide.split(',')
 
+dir_start = os.path.dirname(os.path.realpath(__file__))
+
 def skip_hide(filename, skip_list, hide_list):
     dir = filename.split('/')[:-1]
     dir = '/'.join(dir) + '/'
@@ -86,23 +88,26 @@ def skip_hide(filename, skip_list, hide_list):
             os.system('rm ' + name_from + ' ' + name_to)
             os.system('mv ' + name_from_tmp + ' ' + name_from)
             os.system('mv ' + name_to_tmp + ' ' + name_to)
-            if args.zip is not None:
-                if not args.zip.endswith('.zip'):
-                    args.zip += '.zip'
-                os.chdir(dir)
-                print(name_from[len(dir):], name_to[len(dir):])
-                os.system('zip ' + args.zip + ' ' + name_from[len(dir):] + ' ' + name_to[len(dir):])
+
         else:
             print('no change! NO ZIP')
             os.system('rm ' + name_from_tmp + ' ' + name_to_tmp)
     print(name_from, name_to, name_from_tmp, name_to_tmp)
+    if args.zip is not None:
+        if not args.zip.endswith('.zip'):
+            args.zip += '.zip'
+        os.chdir(dir)
+        print(name_from[len(dir):], name_to[len(dir):])
+        os.system('zip ' + args.zip + ' ' + name_from[len(dir):] + ' ' + name_to[len(dir):])
+        os.chdir(dir_start)
     pass
 
 if __name__ == '__main__':
+    print('----')
     skip_hide(args.filename, skip_list, hide_list)
     filename = args.filename.replace('train', 'test')
-    print(filename,'test')
+    print(filename,'test ----')
     skip_hide(filename, skip_list, hide_list)
     filename = args.filename.replace('train', 'valid')
-    print(filename, 'valid')
+    print(filename, 'valid ----')
     skip_hide(filename, skip_list, hide_list)
