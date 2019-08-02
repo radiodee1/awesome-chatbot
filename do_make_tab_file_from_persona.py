@@ -16,7 +16,7 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument('--filter_negative', action='store_true', help='filter out words like *dont*')
 parser.add_argument('--print', action='store_true', help='print to screen')
-parser.add_argument('--separate', action='store_true',  help='make separate to/from files')
+parser.add_argument('--separate', action='store_true', default=True, help='make separate to/from files')
 parser.add_argument('--zip', help='name for optional zip file.')
 args = parser.parse_args()
 
@@ -32,10 +32,11 @@ if args.zip is not None:
 with open(personachat_file, "r", encoding="utf-8") as f:
     dataset = json.loads(f.read())
 
+last_obj = ''
 
 # Tokenize and encode the dataset using our loaded GPT tokenizer
 def tokenize(obj, handle, space=' ', label='str:', write=False, recent_label=''):
-
+    global last_obj
     if write and print_to_screen and False:
         print('n == history')
     if isinstance(obj, str):
@@ -47,7 +48,9 @@ def tokenize(obj, handle, space=' ', label='str:', write=False, recent_label='')
 
         if (not (obj.startswith('__') or obj.endswith('__'))) and (not filter_dont or l == len(obj)):
             if (recent_label == 'history' or not collect_history) and obj != end_of_list:
-                handle.write(obj + '\n')
+                if obj != last_obj:
+                    handle.write(obj + '\n')
+                    last_obj = obj
         else:
             if print_to_screen: print(space, 'SILENCE tag')
         return obj

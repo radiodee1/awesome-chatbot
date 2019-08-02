@@ -14,12 +14,13 @@ the list of all sentences.
 ''')
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--filename', default='./data/train.big.from', help='name of input file.')
+parser.add_argument('--filename', default='./data/train.big.from', help='name of input file. (DEFAULT: ./data/train.big.from)')
 #parser.add_argument('--train', action='store_true', help='operate on train set.')
 #parser.add_argument('--test', action='store_true', help='operate on test set.')
 #parser.add_argument('--valid', action='store_true', help='operate on validation set.')
 parser.add_argument('--skip', default='don,no', help='comma separated list of words to skip.')
 parser.add_argument('--hide', default='sol,eol,unk', help='comma separated list of words to hide.')
+parser.add_argument('--zip', help='name of optional zip file for archive.')
 
 args = parser.parse_args()
 
@@ -39,6 +40,8 @@ def skip_hide(filename, skip_list, hide_list):
     name_to = dir + basename + '.to'
     name_from_tmp = name_from + '.tmp'
     name_to_tmp = name_to + '.tmp'
+
+    print(basename)
 
     if os.path.isfile(name_from) and os.path.isfile(name_to):
         tmp_count = 0
@@ -83,11 +86,23 @@ def skip_hide(filename, skip_list, hide_list):
             os.system('rm ' + name_from + ' ' + name_to)
             os.system('mv ' + name_from_tmp + ' ' + name_from)
             os.system('mv ' + name_to_tmp + ' ' + name_to)
+            if args.zip is not None:
+                if not args.zip.endswith('.zip'):
+                    args.zip += '.zip'
+                os.chdir(dir)
+                print(name_from[len(dir):], name_to[len(dir):])
+                os.system('zip ' + args.zip + ' ' + name_from[len(dir):] + ' ' + name_to[len(dir):])
         else:
-            print('no change!')
+            print('no change! NO ZIP')
             os.system('rm ' + name_from_tmp + ' ' + name_to_tmp)
     print(name_from, name_to, name_from_tmp, name_to_tmp)
     pass
 
 if __name__ == '__main__':
     skip_hide(args.filename, skip_list, hide_list)
+    filename = args.filename.replace('train', 'test')
+    print(filename,'test')
+    skip_hide(filename, skip_list, hide_list)
+    filename = args.filename.replace('train', 'valid')
+    print(filename, 'valid')
+    skip_hide(filename, skip_list, hide_list)
