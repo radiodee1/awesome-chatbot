@@ -15,9 +15,6 @@ the list of all sentences.
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--filename', default='./data/train.big.from', help='name of input file. (DEFAULT: ./data/train.big.from)')
-#parser.add_argument('--train', action='store_true', help='operate on train set.')
-#parser.add_argument('--test', action='store_true', help='operate on test set.')
-#parser.add_argument('--valid', action='store_true', help='operate on validation set.')
 parser.add_argument('--skip', default='don,no', help='comma separated list of words to skip.')
 parser.add_argument('--hide', default='sol,eol,unk', help='comma separated list of words to hide.')
 parser.add_argument('--zip', help='name of optional zip file for archive.')
