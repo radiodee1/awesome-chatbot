@@ -22,7 +22,7 @@ class Commands:
         self.print_to_screen = False
         self.erase_history = True
         self.use_async = False
-        self.sep_list = ['chrome', 'firefox']
+        self.sep_list = ['google-chrome', 'firefox']
 
         self.url_search = 'https://www.google.com/search?q='
         self.url_youtube = 'https://www.youtube.com/results?search_query='
@@ -104,11 +104,6 @@ class Commands:
 
         if self.print_to_screen: print(self.text_commands)
 
-        for k in range(len(self.text_template)):
-            kk = self.text_template[k].strip().split()
-            if len(kk) == 1 and kk[0] in self.command_dict:
-                self.text_template[k] = self.command_dict[self.text_template[k]]
-
         if self.print_to_screen: print(self.text_template, '<<<')
 
     def re(self,i):
@@ -141,19 +136,28 @@ class Commands:
         for j in range(len(self.text_pattern)):
             if i.lower().strip().startswith(self.text_pattern[j].lower().strip()):
                 self.command_string = self.text_template[j]
+                if self.text_template[j].strip() in self.command_dict:
+                    self.command_string = self.command_dict[self.text_template[j]]
+                    #print(self.command_string,'cs')
+                else:
+                    self.command_string = self.text_template[j]
                 ## decide how to end command ##
-                ii = self.text_template[j]
+                ii = self.command_string
                 tp = i[len(self.text_pattern[j]):]
                 tp = tp.strip().split(' ')
                 separator = ' '
                 space = ' '
+                add_txt = False
                 for zz in self.sep_list:
-                    if self.print_to_screen: print(zz)
+                    if self.print_to_screen: print(zz, ii, 'zz,ii')
                     if zz in ii :
                         separator = '+'
                         space = ''
+                        add_txt = True
                         if self.print_to_screen: print(zz,separator)
-                self.command_string += space + separator.join(tp)
+
+                if add_txt:
+                    self.command_string += space + separator.join(tp)
 
         if self.print_to_screen: print(self.command_string,'<--')
 
@@ -185,18 +189,24 @@ class Commands:
                     highest_index = j
 
             ## decide how to end command ##
+            if self.text_template[highest_index].strip() in self.command_dict:
+                self.command_string = self.command_dict[self.text_template[highest_index].strip()]
+            else:
+                self.command_string = self.text_template[highest_index]
             separator = ' '
             space = ' '
             add_txt = False
             for zz in self.sep_list:
-                if zz in self.text_template[highest_index] :
+                #print(zz, 'zz')
+                if zz in self.command_string:
                     separator = '+'
                     space = ''
                     add_txt = True
-                    #print(separator)
-            self.command_string = self.text_template[highest_index].strip() #+ space + separator.join(i)
+                    #print(zz,'zz')
+            #self.command_string = self.text_template[highest_index].strip()
             if add_txt:
                 self.command_string += space + separator.join(i)
+                if self.print_to_screen: print(i, 'i')
 
             if self.print_to_screen: print(self.command_string,'<==')
         pass
@@ -234,24 +244,17 @@ if __name__ == '__main__':
     c = Commands()
 
 
-    command1 = 'movies http://youtube'
+    command1 = 'movies allman brothers band'
     command2 = 'play music like video music like a movie of the music band youtube.'
-    command3 = 'turn around the light on movie movie movie movie'
+    command3 = 'hello there'
     command4 = 'find allman brothers band'
     c.print_to_screen = True
+    c.setup_for_aiml() ## this gets executed twice
+    print('command 1')
     z = c.decide_commmand(command1)
+    print('command 3')
     z = c.decide_commmand(command3)
+    print('command 4')
     z = c.decide_commmand(command4)
+
     exit()
-    for x in range(2):
-        if len(c.strip_command(command1)) > 0:
-            #command = c.strip_command(command)
-            print(command1, x, 'here1')
-            c.do_command(command1)
-            exit()
-        elif x is 1:
-            #command = c.strip_command(command)
-            print(command2, x, 'here2')
-            c.do_command(command2)
-            print('use previous command also.')
-            pass
