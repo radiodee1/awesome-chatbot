@@ -9,6 +9,8 @@ print('''
 usage: use bash completion with the basename option. If you denote a checkpoint file, the
 program will save that checkpoint. If you denote an export file, the program will try to
 save all files associated with that export.
+
+The 'name' option is used for the name of the output file.
 ''')
 
 parser = argparse.ArgumentParser(
