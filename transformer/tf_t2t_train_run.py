@@ -16,6 +16,8 @@ import argparse
 from model.settings import hparams as hp
 import os
 import subprocess
+import tensorflow as tf
+
 #from tensor2tensor import problems as problems_lib  # pylint: disable=unused-import
 
 #from tensor2tensor.serving import make_request_fn, validate_flags
@@ -24,7 +26,6 @@ from tensor2tensor.serving import serving_utils
 from tensor2tensor.utils import hparam
 from tensor2tensor.utils import registry
 from tensor2tensor.utils import usr_dir
-import tensorflow as tf
 
 flags = tf.flags
 FLAGS = flags.FLAGS
@@ -56,19 +57,25 @@ counter = 0
 checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
+server = 'localhost:'
+servable_name = 'chat'
+data_dir = os.getcwd() + '/' + hp['data_dir'] + 't2t_data/' + args.name + '/'
+t2t_usr_dir = './chat/trainer/'
+
 flags.DEFINE_boolean('cloud_mlengine_model_name', False, 'skip ml engine!')
-flags.DEFINE_string('server', 'localhost:'+port , 'server location.')
+flags.DEFINE_string('server', '0.0.0.0' , 'server location.')
 flags.DEFINE_string('servable_name', 'chat' , 'servable name.')
-flags.DEFINE_string('t2t_usr_dir', './chat/trainer/' , 'usr dir name.')
+flags.DEFINE_string('t2t_usr_dir', t2t_usr_dir, 'usr dir name.')
 flags.DEFINE_string('problem', problem , 'problem name.')
-flags.DEFINE_string('data_dir', os.getcwd() + '/' +hp['data_dir'] + 't2t_data/' + args.name + '/' , 'data dir name.')
+flags.DEFINE_string('data_dir', data_dir , 'data dir name.')
 flags.DEFINE_string('model_base_path', hp['save_dir'] + 't2t_train/' + args.name + '/export/' , 'data dir name.')
 flags.DEFINE_string('model_name', 'chat' , 'model name.')
 flags.DEFINE_integer('port', int( port), 'server location.')
 #flags.DEFINE_integer('rest_api_port', int( port_rest), 'server location.')
 flags.DEFINE_integer('timeout_secs', 100, 'timeout secs.')
-flags.DEFINE_string('inputs_once', None , 'input.')
+flags.DEFINE_string('inputs_once',None , 'input.')
 
+#FLAGS = flags.FLAGS
 
 server_args = [
     'tensorflow_model_server',
@@ -81,7 +88,7 @@ server_args = [
     '--model_base_path=' + os.getcwd() + '/' + hp['save_dir'] + 't2t_train/' + args.name + '/export/',  # 'chosen/',
     '--model_name=' + 'chat',
     #'--hparams_set=transformer_chat',
-    #'--server=localhost' ,
+    '--server=localhost:' + port ,
     #'--servable_name=chat',
     #'--t2t_usr_dir=./chat/trainer/',
 
@@ -93,30 +100,19 @@ def maketree(path):
     except:
         pass
 
-
 def validate_flags():
-    """Validates flags are set to acceptable values."""
-    if FLAGS.cloud_mlengine_model_name:
-        assert not FLAGS.server
-        assert not FLAGS.servable_name
-    else:
-        assert FLAGS.server
-        assert FLAGS.servable_name
-
+    assert server
+    assert servable_name
 
 def make_request_fn():
     """Returns a request function."""
-    if FLAGS.cloud_mlengine_model_name:
-        request_fn = serving_utils.make_cloud_mlengine_request_fn(
-            credentials=GoogleCredentials.get_application_default(),
-            model_name=FLAGS.cloud_mlengine_model_name,
-            version=FLAGS.cloud_mlengine_model_version)
-    else:
-
+    if True:
         request_fn = serving_utils.make_grpc_request_fn(
-            servable_name=FLAGS.servable_name,
-            server=FLAGS.server,
-            timeout_secs=FLAGS.timeout_secs)
+            servable_name=servable_name,
+            server=server + port,
+            timeout_secs=100)
+
+    #print(request_fn,'<-6')
     return request_fn
 
 
@@ -125,12 +121,10 @@ def main_setup():
     global request_fn
     global problem_hp
 
-    validate_flags()
-    usr_dir.import_usr_dir(FLAGS.t2t_usr_dir)
-    problem_hp = registry.problem(FLAGS.problem)
-    #print(FLAGS.data_dir, '<---')
+    usr_dir.import_usr_dir(t2t_usr_dir)
+    problem_hp = registry.problem(problem)
     hparams = hparam.HParams(
-        data_dir=os.path.expanduser(FLAGS.data_dir))
+        data_dir=os.path.expanduser(data_dir))
     problem_hp.get_hparams(hparams)
     request_fn = make_request_fn()
 
@@ -139,6 +133,7 @@ def main_setup():
 def predict_once(inputs):
     global request_fn
     global problem_hp
+    #print(problem_hp, request_fn, 'request')
     outputs = serving_utils.predict([inputs], problem_hp, request_fn)
     outputs, = outputs
     output, score = outputs
@@ -150,51 +145,36 @@ class NMT:
     def __init__(self):
         self.name = ''
         self.p = None
+        #print('start <')
 
     def setup_for_interactive(self):
         #print(server_args, '<---')
-        self.p = subprocess.Popen(server_args, shell=False)
+
+        #self.p = subprocess.Popen(server_args, shell=False)
         #print(self.p)
         tf.logging.set_verbosity(tf.logging.INFO)
 
         main_setup()
 
-
-
     def get_sentence(self, i):
         try:
             return predict_once(i)
         except:
-            self.p.terminate()
+            pass
+            print('terminate')
+            #self.p.terminate()
 
     def loop(self):
 
         while True:
-            try:
-                i = input("> ")
-                z = self.get_sentence(i)
-                print(z)
-            except EOFError:
-                print()
-                exit()
-            except KeyboardInterrupt:
-                print()
-                exit()
+            #try:
+            i = input("> ")
+            z = self.get_sentence(i)
+            print(z)
 
 
 if __name__ == '__main__':
-    '''
-    try:
-        p = subprocess.Popen(server_args)
-        main_setup(None)
-        while True:
-            z = predict_once(input("> "))
-            print(z)
-    except:
-        p.terminate()
 
-    exit()
-    '''
     try:
         g = NMT()
         g.setup_for_interactive()
