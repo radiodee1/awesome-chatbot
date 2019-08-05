@@ -158,7 +158,10 @@ class NMT:
 
     def get_sentence(self, i):
         try:
-            return predict_once(i)
+            z = predict_once(i)
+            if '.' in z:
+                z = z.split('.')[0] ## take first sentence
+            return z
         except:
             pass
             print('terminate')
