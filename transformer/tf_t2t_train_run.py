@@ -34,7 +34,7 @@ parser = argparse.ArgumentParser(
     description='Run NMT for chat program.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('--name', default='chat_01', help='run filename.')  # default = 'babi' <-- ??
+parser.add_argument('--name', default='chat_10', help='run filename.')  # default = 'chat_10' <-- ??
 args = parser.parse_args()
 
 print('args:',args)
