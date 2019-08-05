@@ -150,7 +150,7 @@ class NMT:
     def setup_for_interactive(self):
         #print(server_args, '<---')
 
-        #self.p = subprocess.Popen(server_args, shell=False)
+        self.p = subprocess.Popen(server_args, shell=False)
         #print(self.p)
         tf.logging.set_verbosity(tf.logging.INFO)
 
@@ -162,16 +162,17 @@ class NMT:
         except:
             pass
             print('terminate')
-            #self.p.terminate()
+            self.p.terminate()
 
     def loop(self):
 
         while True:
-            #try:
-            i = input("> ")
-            z = self.get_sentence(i)
-            print(z)
-
+            try:
+                i = input("> ")
+                z = self.get_sentence(i)
+                print(z)
+            except:
+                self.p.terminate()
 
 if __name__ == '__main__':
 
