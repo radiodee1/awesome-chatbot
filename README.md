@@ -62,8 +62,23 @@ This will pull the submodule and put the gpt2 data in the right directory.
 
 5/29/2019 - I have tried to re-organize the project folders somewhat.
 
+8/5/2019 - I have added a 'transformer' model which I train from the 'persona' sentence
+corpus. It is located in the 'transformer' folder. The model is trained from scratch so
+there is no *transfer-learning* going on. The model works for a laptop. Now I should try
+to see if I can port the code over to the Raspberry Pi. I do believe that the memory
+footprint of the model is small enough for the Raspberry Pi but there are some libraries
+that the model requires that need to be ported to the Pi and at this writing I don't know
+if that is possible.
+
 # Organization
-The folders and files in the project are organized in the following manor. The root directory of the project is called `awesome-chatbot`. In that folder are sub folders named `data`,  `model`, `raw`, `babi`, `seq_2_seq`, and `saved`. There are several script files in the main folder along side the folders mentioned above. These scripts all have names that start with the word `do_` . This is so that when the files are listed by the computer the scripts will all appear together. Below is a folder by folder breakdown of the project.
+The folders and files in the project are organized in the following manor. 
+The root directory of the project is called `awesome-chatbot`. 
+In that folder are sub folders named `data`,  `model`, `raw`, `babi`, `seq_2_seq`, `transformer`, and `saved`. 
+There are several script files in the main folder along side the folders mentioned above. 
+These scripts all have names that start with the word `do_` . 
+This is so that when the files are listed by the computer the scripts will all appear together. 
+Below is a folder by folder breakdown of the project.
+
 * `data` This folder holds the training data that the model uses during the `fit` and `predict` operations. The contents of this folder are generally processed to some degree by the project scripts. This pre-processing is described below. This folder also holds the `vocab` files that the program uses for training and inference. The modified word embeddings are also located here.
 * `model` This folder holds the python code for the project. 
 Though some of the setup scripts are also written in python, this folder holds the special python code that maintains the chatbot model. There are also some setup scripts in this folder.
@@ -73,6 +88,7 @@ Though some of the setup scripts are also written in python, this folder holds t
 * `graph` This folder holds some json files that the author wants to save for later graphs for comparison with other data.
 * `babi` This is for babi question answering.
 * `seq_2_seq` This is for a rnn based sequence to sequence model.
+* `transformer` This is for the 'transformer' based chat bot model.  
 
 Description of the individual setup scripts is included below.
 # Suggested Reading - Acknowledgements
