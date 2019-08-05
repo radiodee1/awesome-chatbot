@@ -64,8 +64,8 @@ This will pull the submodule and put the gpt2 data in the right directory.
 
 8/5/2019 - I have added a 'transformer' model which I train from the 'persona' sentence
 corpus. It is located in the 'transformer' folder. The model is trained from scratch so
-there is no *transfer-learning* going on. The model works for a laptop. Now I should try
-to see if I can port the code over to the Raspberry Pi. I do believe that the memory
+there is no *transfer-learning* going on. The model works on a laptop. Now I should try
+to see if I can port the code over to the Raspberry Pi. I do believe, at this writing, that the memory
 footprint of the model is small enough for the Raspberry Pi but there are some libraries
 that the model requires that need to be ported to the Pi and at this writing I don't know
 if that is possible.
