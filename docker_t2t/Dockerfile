@@ -1,6 +1,23 @@
-ARG ARCH=arm64v8
+#ARG ARCH=arm64v8
 
-FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
+FROM emacski/tensorflow-serving:latest-arm32v7
+
+#FROM python:3.7-alpine
+#FROM ubuntu
+#WORKDIR /code
+#ENV FLASK_APP app.py
+#ENV FLASK_RUN_HOST 0.0.0.0
+
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["hello docker!"]
+#ENTRYPOINT ["echo"]
+
+CMD ["ls", "/usr/bin/tensorflow*"]
+#RUN ls
+#RUN echo -----
+#FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
 # install arm toolchain dependencies
 
 #COPY tensorflow_serving/tools/docker/install_arm_toolchain.sh /install_arm_toolchain.sh
@@ -8,15 +25,11 @@ FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-
 # overwrite existing sources
 # adds config groupings with default options for arm32v7 and arm64v8
 
-RUN ls .
-RUN echo "-----"
 # Install TF Serving binary
 #COPY --from=build /tensorflow-serving/bazel-bin/tensorflow_serving/model_servers/tensorflow_model_server /usr/bin/tensorflow_model_server
 # Expose ports
 # gRPC
-EXPOSE 8500
-# REST
-EXPOSE 8501
+
 # Set where models should be stored in the container
 #ENV MODEL_BASE_PATH=/models
 #RUN mkdir -p ${MODEL_BASE_PATH}
