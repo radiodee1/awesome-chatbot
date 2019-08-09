@@ -15,7 +15,7 @@ COPY requirements.txt requirements.txt
 #RUN pip install -r requirements.txt
 COPY . .
 CMD ["hello docker!"]
-ENTRYPOINT ["echo", ${LS}]
+ENTRYPOINT ["echo", "${LS}"]
 
 CMD ls ${LS}
 RUN ls ${LS}
