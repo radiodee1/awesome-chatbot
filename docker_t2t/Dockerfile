@@ -4,13 +4,18 @@
 FROM emacski/tensorflow-serving:latest-arm32v7
 
 ARG LS=/usr/bin/*
+ARG EXPORT=saved/t2t_train/chat_10/export/*
 
+COPY ../${EXPORT} ${EXPORT}
 COPY . .
 CMD ["echo","hello docker!"]
 ENTRYPOINT ["echo", "${LS}"]
 
 
 RUN ls ${LS}
+RUN echo -----
+RUN ls
+
 #RUN echo -----
 #FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
 # install arm toolchain dependencies
