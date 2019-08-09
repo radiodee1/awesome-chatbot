@@ -1,23 +1,15 @@
-#ARG ARCH=arm64v8
+
 #ARG LS
 
-#FROM emacski/tensorflow-serving:latest-arm64v8
 FROM emacski/tensorflow-serving:latest-arm32v7
 
 ARG LS=/usr/bin/*
-#FROM python:3.7-alpine
-#FROM ubuntu
-#WORKDIR /code
-#ENV FLASK_APP app.py
-#ENV FLASK_RUN_HOST 0.0.0.0
 
-COPY requirements.txt requirements.txt
-#RUN pip install -r requirements.txt
 COPY . .
 CMD ["echo","hello docker!"]
 ENTRYPOINT ["echo", "${LS}"]
 
-#CMD ["ls", "${LS}"]
+
 RUN ls ${LS}
 #RUN echo -----
 #FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
