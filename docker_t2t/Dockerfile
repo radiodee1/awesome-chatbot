@@ -16,8 +16,8 @@ COPY . .
 CMD ["hello docker!"]
 ENTRYPOINT ["echo"]
 
-CMD ls $LS
-RUN ls usr
+CMD ls ${LS}
+RUN ls ${LS}
 #RUN echo -----
 #FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
 # install arm toolchain dependencies
