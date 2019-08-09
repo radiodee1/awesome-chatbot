@@ -1,5 +1,5 @@
 #ARG ARCH=arm64v8
-ARG LS="."
+ARG LS
 
 #FROM emacski/tensorflow-serving:latest-arm64v8
 FROM emacski/tensorflow-serving:latest-arm32v7
