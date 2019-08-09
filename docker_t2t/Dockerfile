@@ -1,4 +1,5 @@
 #ARG ARCH=arm64v8
+ARG LS="."
 
 #FROM emacski/tensorflow-serving:latest-arm64v8
 FROM emacski/tensorflow-serving:latest-arm32v7
@@ -13,10 +14,10 @@ COPY requirements.txt requirements.txt
 #RUN pip install -r requirements.txt
 COPY . .
 CMD ["hello docker!"]
-#ENTRYPOINT ["echo"]
+ENTRYPOINT ["echo"]
 
-CMD ["ls", "/usr/bin/tensorflow*"]
-#RUN ls
+CMD ["ls", "."]
+RUN ls $LS
 #RUN echo -----
 #FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
 # install arm toolchain dependencies
