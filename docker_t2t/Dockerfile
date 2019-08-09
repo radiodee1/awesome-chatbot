@@ -14,10 +14,10 @@ ARG LS
 COPY requirements.txt requirements.txt
 #RUN pip install -r requirements.txt
 COPY . .
-CMD ["hello docker!"]
+CMD ["echo","hello docker!"]
 ENTRYPOINT ["echo", "${LS}"]
 
-CMD ls ${LS}
+CMD ["ls", "${LS}"]
 RUN ls ${LS}
 #RUN echo -----
 #FROM emacski/tensorflow-serving:latest-arm32v7 #tensorflow/serving:$TFS_VERSION-devel as devel
