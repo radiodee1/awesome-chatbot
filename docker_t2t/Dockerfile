@@ -1,9 +1,10 @@
 #ARG ARCH=arm64v8
-ARG LS
+#ARG LS
 
 #FROM emacski/tensorflow-serving:latest-arm64v8
 FROM emacski/tensorflow-serving:latest-arm32v7
 
+ARG LS
 #FROM python:3.7-alpine
 #FROM ubuntu
 #WORKDIR /code
@@ -14,7 +15,7 @@ COPY requirements.txt requirements.txt
 #RUN pip install -r requirements.txt
 COPY . .
 CMD ["hello docker!"]
-ENTRYPOINT ["echo"]
+ENTRYPOINT ["echo", ${LS}]
 
 CMD ls ${LS}
 RUN ls ${LS}
