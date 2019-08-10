@@ -30,7 +30,7 @@ parser.add_argument('--task', help='task to start with.', default='1')
 parser.add_argument('--increment', default=5000, type=int, help='default increment for trainer.')
 parser.add_argument('--limit', default=10000, type=int, help='default limit for trainer.')
 parser.add_argument('--no-limit', action='store_true', help='loop unconditionally through trainer.')
-parser.add_argument('--name', default='chat', help='run filename.')
+parser.add_argument('--name', default='chat_10', help='run filename.')
 args = parser.parse_args()
 
 if not args.query:
