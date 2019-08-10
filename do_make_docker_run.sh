@@ -2,4 +2,4 @@
 
 cd docker_t2t
 
-docker run -t testapp:latest 
+docker run -t testapp:latest

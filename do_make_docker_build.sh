@@ -2,7 +2,10 @@
 
 echo $1
 
-cd docker_t2t
+ROOT=$PWD
+echo $ROOT
 
-docker build -t testapp:latest . --build-arg EXPORT=$1
+cd $1
+
+docker build -t testapp:latest -f $ROOT/docker_t2t/Dockerfile --build-arg EXPORT=$1 .
 

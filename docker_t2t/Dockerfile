@@ -3,10 +3,10 @@
 
 FROM emacski/tensorflow-serving:latest-arm32v7
 
-ARG LS=/usr/bin/*
+ARG LS=*
 ARG EXPORT=saved/t2t_train/chat_10/export/*
 
-COPY ../${EXPORT} ${EXPORT}
+#COPY ${EXPORT} ${EXPORT}
 COPY . .
 CMD ["echo","hello docker!"]
 ENTRYPOINT ["echo", "${LS}"]
