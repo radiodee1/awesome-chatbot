@@ -17,6 +17,8 @@ import os
 #import json
 #from tensor2tensor.serving import query as t2t_query
 
+name = 'chat_10'
+
 parser = argparse.ArgumentParser(
     description='Fine-tune tensor-2-tensor on your chat dataset.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -28,7 +30,7 @@ parser.add_argument('--task', help='task to start with.', default='1')
 parser.add_argument('--increment', default=200000, type=int, help='default increment for trainer.')
 parser.add_argument('--limit', default=200000, type=int, help='default limit for trainer.')
 parser.add_argument('--no-limit', action='store_true', help='loop unconditionally through trainer.')
-parser.add_argument('--name', default='chat', help='run filename.') # default = 'babi' <-- ??
+parser.add_argument('--name', default=name, help='run filename.')
 args = parser.parse_args()
 
 if True:

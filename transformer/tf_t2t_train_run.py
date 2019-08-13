@@ -30,11 +30,13 @@ from tensor2tensor.utils import usr_dir
 flags = tf.flags
 FLAGS = flags.FLAGS
 
+name = 'chat_10'
+
 parser = argparse.ArgumentParser(
     description='Run NMT for chat program.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('--name', default='chat_10', help='run filename.')  # default = 'chat_10' <-- ??
+parser.add_argument('--name', default=name, help='run filename.')  # default = 'chat_10' <-- ??
 args = parser.parse_args()
 
 print('args:',args)
@@ -69,7 +71,7 @@ flags.DEFINE_string('t2t_usr_dir', t2t_usr_dir, 'usr dir name.')
 flags.DEFINE_string('problem', problem , 'problem name.')
 flags.DEFINE_string('data_dir', data_dir , 'data dir name.')
 flags.DEFINE_string('model_base_path', hp['save_dir'] + 't2t_train/' + args.name + '/export/' , 'data dir name.')
-flags.DEFINE_string('model_name', 'chat' , 'model name.')
+flags.DEFINE_string('model_name', args.name , 'model name.')
 flags.DEFINE_integer('port', int( port), 'server location.')
 #flags.DEFINE_integer('rest_api_port', int( port_rest), 'server location.')
 flags.DEFINE_integer('timeout_secs', 100, 'timeout secs.')
@@ -86,7 +88,7 @@ server_args = [
     #'--problem=' + problem,
     #'--path=' + os.getcwd() + '/' + hp['save_dir'] + '/t2t_train/' + args.name + '/export/',
     '--model_base_path=' + os.getcwd() + '/' + hp['save_dir'] + 't2t_train/' + args.name + '/export/',  # 'chosen/',
-    '--model_name=' + 'chat',
+    '--model_name=' + args.name ,
     #'--hparams_set=transformer_chat',
     '--server=localhost:' + port ,
     #'--servable_name=chat',
