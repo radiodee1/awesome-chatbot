@@ -90,10 +90,10 @@ query_args = [
     #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
     '--problem=' + problem ,
     '--model_base_path=' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/' , #'chosen/',
-    '--model_name=' + name ,
+    '--model_name=' + args.name ,
     '--hparams_set=transformer_chat',
     '--server=localhost:' + port,
-    '--servable_name=chat',
+    '--servable_name=' + args.name,
     '--t2t_usr_dir=./chat/trainer/',
 
 ]
@@ -103,12 +103,12 @@ server_args = [
     '--port=' + port ,
     #'--data_dir=' + hp['data_dir'] + '/t2t_data/' ,
     #'--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
-    '--problem=' + problem ,
+    #'--problem=' + problem ,
     '--model_base_path='  + os.getcwd() + '/' + hp['save_dir'] + '/t2t_train/' + args.name +'/export/' , #'chosen/',
-    '--model_name=' + name ,
-    '--hparams_set=transformer_chat',
+    '--model_name=' + args.name ,
+    #'--hparams_set=transformer_chat',
     '--server=localhost:' + port,
-    '--servable_name=chat',
+    '--servable_name=' + args.name,
     '--t2t_usr_dir=./chat/trainer/',
 
 ]
@@ -130,6 +130,9 @@ def main(argv):
 
             if os.path.isfile('/usr/bin/' + tf) or os.path.isfile('/usr/local/bin/' + tf):
                 p = subprocess.Popen(server_args)
+            else:
+                print('no binary')
+                exit()
             print(argv)
             #exit()
 
