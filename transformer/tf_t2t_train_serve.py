@@ -124,7 +124,10 @@ def main(argv):
 
     if args.query:
         try:
-            p = subprocess.Popen(server_args)
+            tf = server_args[0]
+
+            if os.path.isfile('/usr/bin/' + tf) or os.path.isfile('/usr/local/bin/' + tf):
+                p = subprocess.Popen(server_args)
             print(argv)
             #exit()
 
