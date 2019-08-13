@@ -45,7 +45,7 @@ task = str(int(args.task))
 increment = str(int(args.increment))
 limit = int(args.limit)
 problem = 'chat_line_problem'
-port = '8501'
+port = '8500'
 p = None
 
 counter_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
