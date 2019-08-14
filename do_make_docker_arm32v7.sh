@@ -2,7 +2,7 @@
 
 docker pull emacski/tensorflow-serving:1.14.0-arm32v7
 
-TESTDATA="$(pwd)/saved/t2t_train/"
+TESTDATA="$(pwd)/saved/t2t_train"
 MODEL_NAME="chat_10"
 EXPORT_NUM="1564940385"
 
