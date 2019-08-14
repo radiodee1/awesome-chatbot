@@ -14,6 +14,6 @@ docker run -t --rm -p 8500:8500 \
     -v $TESTDATA \
     -e MODEL_NAME=$MODEL_NAME -e MODEL_BASE_PATH="" \
     --entrypoint tensorflow_model_server emacski/tensorflow-serving:1.14.0-arm32v7 \
-    --port=8500 --model_name=${MODEL_NAME} --model_base_path=. \
+    --port=8500 --model_name=${MODEL_NAME} --model_base_path=/ \
     #emacski/tensorflow-serving:1.14.0-arm32v7  # &
 
