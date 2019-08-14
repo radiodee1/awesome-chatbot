@@ -10,6 +10,10 @@ cp  -R --parent $TESTDATA/$MODEL_NAME/export/$EXPORT_NUM/* $TESTDATA/.
 
 ls -hal $TESTDATA/$MODEL_NAME
 
+docker run -v $TESTDATA --entrypoint ls emacski/tensorflow-serving:1.14.0-arm32v7 -hal
+
+exit
+
 docker run -t --rm -p 8500:8500 \
     -v $TESTDATA \
     -e MODEL_NAME=$MODEL_NAME -e MODEL_BASE_PATH="" \
