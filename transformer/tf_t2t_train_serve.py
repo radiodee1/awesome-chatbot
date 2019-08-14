@@ -132,7 +132,7 @@ def main(argv):
                 p = subprocess.Popen(server_args)
             else:
                 print('no binary')
-                exit()
+                #exit()
             print(argv)
             #exit()
 
