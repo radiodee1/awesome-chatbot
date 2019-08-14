@@ -6,7 +6,7 @@ TESTDATA="$(pwd)/saved/t2t_train/"
 MODEL_NAME="chat_10"
 EXPORT_NUM="1564940385"
 
-cp  -R --parent $TESTDATA/$MODEL_NAME/export/$EXPORT_NUM/* $TESTDATA/$MODEL_NAME/$MODEL_NAME/.
+cp  -R --parent $TESTDATA/$MODEL_NAME/export/$EXPORT_NUM/* $TESTDATA/$MODEL_NAME/.
 
 ls -hal $TESTDATA/$MODEL_NAME
 
