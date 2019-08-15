@@ -60,7 +60,7 @@ checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
 server = 'localhost:'
-servable_name = 'chat_10'
+servable_name = name # 'chat_10'
 data_dir = os.getcwd() + '/' + hp['data_dir'] + 't2t_data/' + args.name + '/'
 t2t_usr_dir = './chat/trainer/'
 
