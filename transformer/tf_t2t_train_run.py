@@ -65,7 +65,7 @@ data_dir = os.getcwd() + '/' + hp['data_dir'] + 't2t_data/' + args.name + '/'
 t2t_usr_dir = './chat/trainer/'
 
 flags.DEFINE_boolean('cloud_mlengine_model_name', False, 'skip ml engine!')
-flags.DEFINE_string('server', '0.0.0.0' , 'server location.')
+flags.DEFINE_string('server', 'localhost' , 'server location.')
 flags.DEFINE_string('servable_name', 'chat' , 'servable name.')
 flags.DEFINE_string('t2t_usr_dir', t2t_usr_dir, 'usr dir name.')
 flags.DEFINE_string('problem', problem , 'problem name.')
