@@ -151,9 +151,9 @@ class NMT:
 
     def setup_for_interactive(self):
         #print(server_args, '<---')
-        tf = server_args[0]
+        tff = server_args[0]
 
-        if os.path.isfile('/usr/bin/' + tf) or os.path.isfile('/usr/local/bin/' + tf):
+        if os.path.isfile('/usr/bin/' + tff) or os.path.isfile('/usr/local/bin/' + tff):
             self.p = subprocess.Popen(server_args, shell=False)
         #print(self.p)
         tf.logging.set_verbosity(tf.logging.INFO)
