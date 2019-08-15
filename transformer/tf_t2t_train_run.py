@@ -60,13 +60,13 @@ checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
 server = 'localhost:'
-servable_name = 'chat'
+servable_name = 'chat_10'
 data_dir = os.getcwd() + '/' + hp['data_dir'] + 't2t_data/' + args.name + '/'
 t2t_usr_dir = './chat/trainer/'
 
 flags.DEFINE_boolean('cloud_mlengine_model_name', False, 'skip ml engine!')
 flags.DEFINE_string('server', 'localhost' , 'server location.')
-flags.DEFINE_string('servable_name', 'chat' , 'servable name.')
+flags.DEFINE_string('servable_name', servable_name , 'servable name.')
 flags.DEFINE_string('t2t_usr_dir', t2t_usr_dir, 'usr dir name.')
 flags.DEFINE_string('problem', problem , 'problem name.')
 flags.DEFINE_string('data_dir', data_dir , 'data dir name.')
