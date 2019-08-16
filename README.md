@@ -68,13 +68,22 @@ This will pull the submodule and put the gpt2 data in the right directory.
 
 5/29/2019 - I have tried to re-organize the project folders somewhat.
 
-8/5/2019 - I have added a 'transformer' model which I train from the 'persona' sentence
+7/5/2019 - I have added a 'transformer' model which I train from the 'persona' sentence
 corpus. It is located in the 'transformer' folder. The model is trained from scratch so
 there is no *transfer-learning* going on. The model works on a laptop. Now I should try
 to see if I can port the code over to the Raspberry Pi. I do believe, at this writing, that the memory
 footprint of the model is small enough for the Raspberry Pi but there are some libraries
 that the model requires that need to be ported to the Pi and at this writing I don't know
 if that is possible.
+
+8/16/2019 - For the transformer model, I wrote a script that will run the model on a Raspberry Pi. 
+It uses a version of the package 'tensorflow_model_server'. 
+The version I use for the 'armhf' platform is from the following web site: https://github.com/emacski/tensorflow-serving-arm . 
+The transformer model is set up to launch automatically when the pi is plugged in. 
+It takes about two minutes to boot up. 
+After that it answers some basic questions that a chatbot might be expected to answer. 
+It is not as versatile as the GPT2 based model. 
+The GPT2 model will not fit on a Raspberry Pi, but the tensorflow transformer model will.
 
 # Organization
 The folders and files in the project are organized in the following manor. 
