@@ -17,6 +17,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--filename', default='./data/train.big.from', help='name of input file. (DEFAULT: ./data/train.big.from)')
 parser.add_argument('--skip', default='don,no', help='comma separated list of words to skip.')
 parser.add_argument('--hide', default='sol,eol,unk', help='comma separated list of words to hide.')
+parser.add_argument('--babi-pad', action='store_true', help='pad "*.ques" file with "*.from" contents.')
 parser.add_argument('--zip', help='name of optional zip file for archive.')
 
 args = parser.parse_args()
@@ -90,12 +91,20 @@ def skip_hide(filename, skip_list, hide_list):
             print('no change! NO ZIP')
             os.system('rm ' + name_from_tmp + ' ' + name_to_tmp)
     print(name_from, name_to, name_from_tmp, name_to_tmp)
+
+    if args.babi_pad:
+        name_ques = name_from.replace('.from', '.ques')
+        if name_from != name_ques:
+            os.system('cp ' + name_from + ' ' + name_ques)
+
     if args.zip is not None:
         if not args.zip.endswith('.zip'):
             args.zip += '.zip'
         os.chdir(dir)
         print(name_from[len(dir):], name_to[len(dir):])
         os.system('zip ' + args.zip + ' ' + name_from[len(dir):] + ' ' + name_to[len(dir):])
+        if args.babi_pad:
+            os.system('zip ' + args.zip + ' ' + name_from[len(dir):].replace('.from', '.ques'))
         os.chdir(dir_start)
     pass
 
