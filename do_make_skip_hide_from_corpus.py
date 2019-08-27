@@ -19,6 +19,7 @@ parser.add_argument('--skip', default='don,no', help='comma separated list of wo
 parser.add_argument('--hide', default='sol,eol,unk', help='comma separated list of words to hide.')
 parser.add_argument('--babi-pad', action='store_true', help='pad "*.ques" file with "*.from" contents.')
 parser.add_argument('--zip', help='name of optional zip file for archive.')
+parser.add_argument('--eol', help='add eol.', action='store_true')
 
 args = parser.parse_args()
 
@@ -42,6 +43,7 @@ def skip_hide(filename, skip_list, hide_list):
     name_to_tmp = name_to + '.tmp'
 
     print(basename)
+    replacement = False
 
     if os.path.isfile(name_from) and os.path.isfile(name_to):
         tmp_count = 0
@@ -58,10 +60,19 @@ def skip_hide(filename, skip_list, hide_list):
                 do_write = True
                 tmp_sentence_from = list_from[i]
                 tmp_sentence_to = list_to[i]
+                if args.eol:
+                    tmp_sentence_from += ' eol'
+                    tmp_sentence_to += ' eol'
+                    replacement = True
                 for j in hide_list:
+                    tmp_len_from = len(tmp_sentence_from)
+                    tmp_len_to = len(tmp_sentence_to)
+
                     tmp_sentence_from = tmp_sentence_from.replace(j ,'')
                     tmp_sentence_to = tmp_sentence_to.replace(j, '')
 
+                    if tmp_len_from != len(tmp_sentence_from) or tmp_len_to != len(tmp_sentence_to):
+                        replacement = True
                 for j in skip_list:
                     if len(tmp_sentence_from) != len(tmp_sentence_from.replace(j,'')):
                         do_write = False
@@ -71,6 +82,7 @@ def skip_hide(filename, skip_list, hide_list):
                     file_from_tmp.write(tmp_sentence_from)
                     file_to_tmp.write(tmp_sentence_to)
                     tmp_count +=1
+                    replacement = True
 
             print('filesize before:\t', name_from, count)
             print('filesize after: \t', name_from_tmp, tmp_count)
@@ -81,7 +93,7 @@ def skip_hide(filename, skip_list, hide_list):
         file_to.close()
         file_from_tmp.close()
         file_to_tmp.close()
-        if tmp_count > 0 and count > tmp_count:
+        if (tmp_count > 0 and count > tmp_count) or replacement:
             print('replace original with modified.')
             os.system('rm ' + name_from + ' ' + name_to)
             os.system('mv ' + name_from_tmp + ' ' + name_from)
