@@ -78,6 +78,9 @@ if __name__ == '__main__':
     for i in range(len(arg_list)):
         ii = i % len(arg_plot_color)
         label_out = arg_glob_list[i].split('/')[-1]
+        if label_out.endswith('.json'):
+            label_out = label_out[: - len('.json')]
+            pass
         color_patch = mpatches.Patch(color=arg_plot_color[ii], label=label_out)
         handles.append(color_patch)
 
