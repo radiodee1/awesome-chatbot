@@ -61,8 +61,8 @@ def skip_hide(filename, skip_list, hide_list):
                 tmp_sentence_from = list_from[i]
                 tmp_sentence_to = list_to[i]
                 if args.eol:
-                    tmp_sentence_from += ' eol'
-                    tmp_sentence_to += ' eol'
+                    tmp_sentence_from = tmp_sentence_from + ' eol'
+                    tmp_sentence_to = tmp_sentence_to + ' eol'
                     replacement = True
                 for j in hide_list:
                     tmp_len_from = len(tmp_sentence_from)
