@@ -468,6 +468,7 @@ class Decoder(nn.Module):
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
         self.out_concat_b = nn.Linear(hidden_dim * 2, hidden_dim)
+        self.project_a = nn.Linear(hidden_dim, target_vocab_size)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -575,6 +576,8 @@ class Decoder(nn.Module):
         out_voc = self.out_target_b(out_x)
 
         out_voc = out_voc.permute(1,0,2)
+
+        out_voc = None
 
         #print(out_x,'ox')
         #out_x = torch.softmax(out_x, dim=-1)
@@ -794,6 +797,7 @@ class WrapMemRNN: #(nn.Module):
 
             token = torch.LongTensor([token])
 
+            print(token)
             #print(encoder_output.size(), decoder_hidden.size(),'eo,dh-dec')
 
             for i in range(s):
@@ -807,25 +811,14 @@ class WrapMemRNN: #(nn.Module):
                 #teacher_out = []
                 for j in range(l):
 
-                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
+                    _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
 
                     #token = torch.argmax(ans, dim=-1)
 
-                    if not self.pass_no_token:
-                        ans = prune_tensor(ans, 1)
-                        _, token = ans.topk(1)
-                    else:
-                        token = ans_small
+                    token = ans_small
+                    ans = self.model_6_dec.project_a(ans_small)
 
                     token = prune_tensor(token, 1)
-
-                    if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
-                        if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
-                            token = target_variable[i,j,:]
-                            if self.pass_no_token:
-                                token = self.model_6_dec.embed(token)
-                            #teacher_out.append(token)
-                            #print(token, 'tf')
 
                     ans = prune_tensor(ans, 2)
                     sent_out.append(ans)
