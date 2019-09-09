@@ -85,6 +85,17 @@ After that it answers some basic questions that a chatbot might be expected to a
 It is not as versatile as the GPT2 based model. 
 The GPT2 model will not fit on a Raspberry Pi, but the tensorflow transformer model will.
 
+9/9/2019 - I have this goal of running the gpt2 chatbot model on some kind of small board computer. 
+I had been considering buying an O-droid. 
+Conveniently the raspberry pi 4 was released with a 4 GB memory option. 
+I ordered one and installed the pytorch part of the model on it. 
+To do this I had to compile pytorch for armv7 specifically for python 3.7. I did this. 
+The only thing not tested at this time is speech-to-text and text-to-speech. 
+Interestingly the speech libraries work already on the raspberry pi 3B. 
+Compiling pytorch was not trivial and took several tries. 
+Also interestingly each reply from the chatbot takes ten to fifteen seconds. 
+I have yet to determine if this makes the deployed model unusable.
+
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
