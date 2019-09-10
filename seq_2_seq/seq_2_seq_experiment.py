@@ -573,9 +573,9 @@ class Decoder(nn.Module):
 
         out_x = torch.tanh(out_x) ## <<-- use or not use?
 
-        out_voc = self.out_target_b(out_x)
+        #out_voc = self.out_target_b(out_x)
 
-        out_voc = out_voc.permute(1,0,2)
+        #out_voc = out_voc.permute(1,0,2)
 
         out_voc = None
 
@@ -797,7 +797,6 @@ class WrapMemRNN: #(nn.Module):
 
             token = torch.LongTensor([token])
 
-            print(token)
             #print(encoder_output.size(), decoder_hidden.size(),'eo,dh-dec')
 
             for i in range(s):
@@ -816,7 +815,9 @@ class WrapMemRNN: #(nn.Module):
                     #token = torch.argmax(ans, dim=-1)
 
                     token = ans_small
+
                     ans = self.model_6_dec.project_a(ans_small)
+                    ans = torch.tanh(ans)
 
                     token = prune_tensor(token, 1)
 
