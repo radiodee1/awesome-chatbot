@@ -2426,6 +2426,8 @@ class NMT:
         #max_target_length = [hparams['tokens_per_sentence'] for _ in max_target_length]
         #question_variable = None
 
+        experiment_val = False
+
         if criterion is not None : #or not self.do_test_not_train:
             wrapper_optimizer_1.zero_grad()
             wrapper_optimizer_2.zero_grad()
@@ -2451,7 +2453,7 @@ class NMT:
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    ans = ans.transpose(1,0)
+                    if experiment_val: ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     #mask = mask.transpose(1,0)
 
@@ -2463,7 +2465,7 @@ class NMT:
                         a_var = ans[i][:z]
                         t_var = target_variable[i][:z]
                         #m_var = mask[i][:z]
-
+                        #print(ans.size(), target_variable.size(),z,'ans,tv')
                         if hparams['cuda']:
                             t_var = t_var.cuda()
                             #m_var = m_var.cuda()
