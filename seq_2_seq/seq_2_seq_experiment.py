@@ -817,7 +817,8 @@ class WrapMemRNN: #(nn.Module):
                     token = ans_small
 
                     ans = self.model_6_dec.project_a(ans_small)
-                    ans = torch.tanh(ans)
+                    #ans = torch.tanh(ans)
+                    ans = F.softmax(ans)
 
                     token = prune_tensor(token, 1)
 
@@ -2426,7 +2427,7 @@ class NMT:
         #max_target_length = [hparams['tokens_per_sentence'] for _ in max_target_length]
         #question_variable = None
 
-        experiment_val = False
+        #experiment_val = False
 
         if criterion is not None : #or not self.do_test_not_train:
             wrapper_optimizer_1.zero_grad()
@@ -2453,7 +2454,7 @@ class NMT:
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    if experiment_val: ans = ans.transpose(1,0)
+                    ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     #mask = mask.transpose(1,0)
 
