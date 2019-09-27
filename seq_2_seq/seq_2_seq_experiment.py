@@ -2462,10 +2462,14 @@ class NMT:
 
                         #print(max_target_length,'mtl-size')
                         z = min([ans[i].size(0),target_variable[i].size(0)]) #max(max_target_length) #[i]
-                        #print(z, i,'z,i')
+
                         a_var = ans[i][:z]
                         t_var = target_variable[i][:z]
                         #m_var = mask[i][:z]
+
+                        #a_var = torch.argmax(a_var, dim=0)[0]
+
+                        #print(torch.argmax(a_var, dim=0))
                         #print(ans.size(), target_variable.size(),z,'ans,tv')
                         if hparams['cuda']:
                             t_var = t_var.cuda()
