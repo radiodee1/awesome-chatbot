@@ -818,7 +818,7 @@ class WrapMemRNN: #(nn.Module):
 
                     ans = self.model_6_dec.project_a(ans_small)
                     #ans = torch.tanh(ans)
-                    ans = F.softmax(ans)
+                    #ans = F.softmax(ans)
 
                     token = prune_tensor(token, 1)
 
