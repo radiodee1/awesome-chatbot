@@ -86,6 +86,7 @@ class Game:
             i = self.check_sentence(i)
             if len(i) > 0:
                 if count > 0 :
+                    if mode == 'signal': self.voice.beep_out()
                     out = self.model.get_sentence(i)
 
                     blacklisted = False
