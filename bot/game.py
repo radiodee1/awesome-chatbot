@@ -23,7 +23,7 @@ elif mode == 'zero':
     import model.tokenize_weak as tokenize_weak
 
 
-elif mode == 'memory':
+elif mode == 'memory' or mode == 'signal':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run_memory as model
     import model.tokenize_weak as tokenize_weak
