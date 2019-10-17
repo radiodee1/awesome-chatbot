@@ -52,6 +52,30 @@ from model.nmt_aiml_commands import Commands
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
 
+article = '''
+The Allman Brothers Band was an American rock band formed in Jacksonville, Florida in 1969[2] by brothers Duane Allman (founder, slide guitar and lead guitar) and Gregg Allman (vocals, keyboards, songwriting), as well as Dickey Betts (lead guitar, vocals, songwriting), Berry Oakley (bass guitar), Butch Trucks (drums), and Jai Johanny "Jaimoe" Johanson (drums). 
+The band incorporated elements of blues, jazz, and country music, and their live shows featured jam band-style improvisation and instrumentals.
+
+The group's first two studio releases, The Allman Brothers Band (1969) and Idlewild South (1970) (both released by Capricorn Records), stalled commercially, but their 1971 live release, At Fillmore East, represented an artistic and commercial breakthrough. 
+The album features extended renderings of their songs "In Memory of Elizabeth Reed" and "Whipping Post", and is considered among the best live albums ever made.
+
+Group leader Duane Allman was killed in a motorcycle accident later that year – on October 29, 1971, and the band dedicated Eat a Peach (1972) to his memory, a dual studio/live album that cemented the band's popularity and featured Gregg Allman's "Melissa" and Dickey Betts's "Blue Sky". 
+Following the motorcycling death of bassist Berry Oakley exactly one year and 13 days later on November 11, 1972, the group recruited keyboardist Chuck Leavell and bassist Lamar Williams for 1973's Brothers and Sisters. 
+This album included Betts's hit single "Ramblin' Man". 
+These tunes went on to become classic rock radio staples, and placed the group at the forefront of 1970s rock music. 
+Internal turmoil overtook them soon after; the group dissolved in 1976, reformed briefly at the end of the decade with additional personnel changes, and dissolved again in 1982.
+
+The band reformed once more in 1989, releasing a string of new albums and touring heavily. 
+A series of personnel changes in the late 1990s was capped by the departure of Betts. 
+The group found stability during the 2000s with bassist Oteil Burbridge and guitarists Warren Haynes and Derek Trucks (the nephew of their original drummer) and became renowned for their month-long string of shows at New York City's Beacon Theatre each spring. 
+The band retired for good in October 2014 after their final show at the Beacon Theatre.
+
+Butch Trucks committed suicide on January 24, 2017, in West Palm Beach, Florida, at the age of 69. 
+Gregg Allman died from complications arising from liver cancer on May 27, 2017, at his home in Savannah, Georgia, also at the age of 69. 
+The band has been awarded seven gold and four platinum albums,[3] and was inducted into the Rock and Roll Hall of Fame in 1995. 
+Rolling Stone ranked them 52nd on their list of the 100 Greatest Artists of All Time in 2004.[4]
+'''
+
 class Lang:
     def __init__(self, name, limit=None):
         self.name = name
@@ -150,8 +174,9 @@ class NMT:
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
         self.common += a_chars + "I am in " + location + '. \n'
-        if self.args.apps and False:
-            self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
+        if self.args.apps or True:
+            #self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
+            self.common += ' \n' + article
 
     def get_sentence(self, i):
         a_chars = '' # self.a_string[0]
