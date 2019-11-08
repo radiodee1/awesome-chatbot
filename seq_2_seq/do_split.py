@@ -110,6 +110,7 @@ if __name__ == '__main__':
     parser.add_argument('--zip-file', help='name of zip file to archive to')
     parser.add_argument('--autoencode', help='setup files for autoencode operation. Set as percentage.')
     parser.add_argument('--stagger', help='stagger input for P.O.S.-style training.', action='store_true')
+    parser.add_argument('--stagger-predict-word', help='stagger but predict only one word.', action='store_true')
     parser.add_argument('--eol', help='add eol token', action='store_true')
     parser.add_argument('--xml-file', help='sentences.xml file to use.')
     parser.add_argument('--from-mnli', help='after mnli is done', action='store_true')
@@ -208,7 +209,7 @@ if __name__ == '__main__':
     if args['autoencode'] is not None:
         arg_autoencode = float(args['autoencode'])
 
-    if args['stagger'] == True:
+    if args['stagger'] == True or args['stagger_predict_word'] == True:
         arg_stagger = True
 
     if args['eol'] == True:
@@ -479,6 +480,9 @@ if __name__ == '__main__':
                         for i in range(len(save_lst)):
 
                             word = save_lst[i]
+                            next_word = ''
+                            if len(save_lst) > i+1 and args['stagger_predict_word']:
+                                next_word = save_lst[i + 1]
 
                             if i < len(tgt_lst):
                                 ii = i
@@ -514,6 +518,7 @@ if __name__ == '__main__':
                             tgt_stagger = tgt_lst[ii]
                             if eol_flag: tgt_stagger = hparams['unk']
                             if auto_flag: tgt_stagger = word
+                            if args['stagger_predict_word'] == True: tgt_stagger = next_word
                             tgt.write(tgt_stagger.lower())
                             if tgt_stagger == hparams['eol']:
                                 eol_flag = True
