@@ -11,6 +11,7 @@ sys.path.append(os.path.abspath('../seq_2_seq/'))
 sys.path.append(os.path.abspath('../transformer/'))
 
 mode = str(os.environ['CHATBOT_MODE'])
+do_not_end = True
 
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
@@ -96,7 +97,7 @@ class Game:
                             blacklisted = True
                     if not blacklisted:
                         self.voice.speech_out(out)
-            count -= 1
+            if not do_not_end: count -= 1
             if count <= 0 :
                 print('quiet')
 
