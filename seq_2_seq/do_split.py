@@ -473,8 +473,9 @@ if __name__ == '__main__':
                         save_lst = save.split(' ')
                         tgt_lst = line[1].split(' ')
 
-                        while len(save_lst) <= len(tgt_lst):
-                            save_lst.append(hparams['unk'])
+                        if not args['stagger_predict_word']:
+                            while len(save_lst) <= len(tgt_lst):
+                                save_lst.append(hparams['unk'])
 
                         eol_flag = False
                         for i in range(len(save_lst)):
