@@ -173,7 +173,7 @@ class NMT:
                     z = z[0] ## take first word
                 else:
                     z = ' '
-                if z == hp['eol']: return ans
+                if z == hp['eol'] or '.' in z: return ans
                 zz = zz + z + ' '
                 ans = ans + z + ' '
             print(zz ,'< input')
