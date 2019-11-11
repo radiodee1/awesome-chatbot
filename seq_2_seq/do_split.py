@@ -469,9 +469,15 @@ if __name__ == '__main__':
                         tgt_stagger = ''
                         ques_stagger = ''
                         hist_stagger = ''
+                        src_stagger_x = ''
                         save = line[0][:]
                         save_lst = save.split(' ')
                         tgt_lst = line[1].split(' ')
+
+                        if args['stagger_predict_word']:
+                            save = line[1][:]
+                            save_lst = save.split(' ')
+                            src_stagger_x = line[0][:]
 
                         if not args['stagger_predict_word']:
                             while len(save_lst) <= len(tgt_lst):
@@ -502,7 +508,10 @@ if __name__ == '__main__':
                                 hist_stagger = ''
 
                             src_stagger = stop_repeats(src_stagger)
-                            src.write(src_stagger.lower())
+                            if not args['stagger_predict_word']:
+                                src.write(src_stagger.lower())
+                            else:
+                                src.write(src_stagger_x.lower() + ' ' + src_stagger.lower())
                             save = src_stagger
                             if not src_stagger.endswith('\n'):
                                 src.write('\n')
