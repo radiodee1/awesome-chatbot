@@ -78,7 +78,7 @@ if args.basename is not None:
             subprocess.call('mv t2t_' + args.name  + ' ..', shell=True)
             exit()
 
-print(path)
+print(path,'path')
 name = args.name
 
 if os.path.isfile(path + '/' + 'checkpoint'):
@@ -88,14 +88,15 @@ if os.path.isfile(path + '/' + 'checkpoint'):
         path_latest = path_latest.strip().split(' ')[-1]
         path_latest = path_latest.strip('"')
         path_latest = path + '/' + path_latest
-        print(path_latest)
+        print(path_latest, 'latest')
 
         subprocess.call('zip -r t2t_' + name + ' ' + path_latest + '*', shell=True)
         subprocess.call('zip -r t2t_' + name + ' ' + path + '/*txt' + ' ' + path + '/*.json', shell=True)
+        subprocess.call('zip -r t2t_' + name + ' ' + path + '/checkpoint', shell=True)
 
+        #path_data = path.replace('saved', 'data',1)
 
-
-        vocabname = 'data/t2t_data/' + args.name + '/' + 'vocab.' + '*'
+        vocabname = 'data/t2t_data/' + args.name.split('.')[0] + '/' + 'vocab.' + '*'
 
         if not args.no_vocab:
             subprocess.call('zip -r t2t_' + name + ' ' + vocabname, shell=True)
