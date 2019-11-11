@@ -190,7 +190,7 @@ class NMT:
                 i = input("> ")
                 z = self.get_sentence(i)
                 print(z)
-            except:
+            except KeyboardInterrupt:
                 self.p.terminate()
 
 if __name__ == '__main__':
