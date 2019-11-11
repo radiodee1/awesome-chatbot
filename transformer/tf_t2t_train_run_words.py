@@ -178,7 +178,7 @@ class NMT:
                 ans = ans + z + ' '
             print(zz ,'< input')
             return ans
-        except:
+        except KeyboardInterrupt:
             pass
             print('terminate')
             self.p.terminate()
