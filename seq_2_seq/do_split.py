@@ -511,7 +511,9 @@ if __name__ == '__main__':
                             if not args['stagger_predict_word']:
                                 src.write(src_stagger.lower())
                             else:
-                                src.write(src_stagger_x.lower() + ' ' + src_stagger.lower())
+                                src_stagger.replace('.', '')
+                                src_stagger_x.replace('.', '')
+                                src.write(src_stagger_x.lower() + ' . ' + src_stagger.lower())
                             save = src_stagger
                             if not src_stagger.endswith('\n'):
                                 src.write('\n')
