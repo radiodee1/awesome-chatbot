@@ -513,6 +513,7 @@ if __name__ == '__main__':
                             else:
                                 src_stagger = src_stagger.replace('.', '')
                                 src_stagger_x = src_stagger_x.replace('.', '')
+                                src_stagger_x = src_stagger_x.replace(',', '')
                                 src.write(src_stagger_x.lower() + ' ' + src_stagger.lower())
                             save = src_stagger
                             if not src_stagger.endswith('\n'):
