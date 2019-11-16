@@ -534,7 +534,7 @@ if __name__ == '__main__':
                             if eol_flag: tgt_stagger = hparams['unk']
                             if auto_flag: tgt_stagger = word
                             if args['stagger_predict_word'] == True:
-                                if next_word.endswith('.'):
+                                if next_word.endswith('.') or '.' in next_word or ',' in next_word:
                                     next_word = ' '
                                 tgt_stagger = next_word
                             tgt.write(tgt_stagger.lower())
