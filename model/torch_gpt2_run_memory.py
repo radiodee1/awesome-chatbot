@@ -303,9 +303,13 @@ class NMT:
         pass
 
     def get_encoder(self):
-        with open(realpath +'/./torch_gpt2/GPT2/encoder.json', 'r') as f:
+        print(self.args.source_file)
+        source_path = self.args.source_file.split('/')[:-1]
+        source_path = '/'.join(source_path) + '/'
+        print(source_path)
+        with open(realpath + '/' + source_path + '/encoder.json', 'r') as f:
             encoder = json.load(f)
-        with open(realpath + '/./torch_gpt2/GPT2/vocab.bpe', 'r', encoding="utf-8") as f:
+        with open(realpath + '/' + source_path + '/vocab.bpe', 'r', encoding="utf-8") as f:
             bpe_data = f.read()
         bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
         return Encoder(
@@ -324,7 +328,7 @@ class NMT:
         parser.add_argument("--temperature", type=float, default=0.0001)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
-        parser.add_argument("--source_file", type=str, required=False, default='torch_gpt2/gpt2-pytorch_model.bin')
+        parser.add_argument("--source_file", type=str, required=False, default='torch_gpt2/GPT2/gpt2-pytorch_model.bin')
         self.args = parser.parse_args()
 
     def load_model(self):
