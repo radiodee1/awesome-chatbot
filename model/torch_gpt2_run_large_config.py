@@ -326,8 +326,23 @@ class NMT:
         print(source_path)
         if os.path.isfile(realpath + '/' + source_path + '/config.json'):
             with open(realpath + '/' + source_path + '/config.json', 'r') as f:
-                self.hp_config = json.load(f)
-        print(self.hp_config)
+                hp_config = json.load(f)
+                print(hp_config)
+                self.config = GPT2Config(
+                    vocab_size_or_config_json_file=hp_config['vocab_size'],
+                    n_embd=hp_config['n_embd'],
+                    n_layer=hp_config['n_layer'],
+                    n_head=hp_config['n_head'],
+                    # intermediate_size=self.intermediate_size,
+                    # hidden_act=self.hidden_act,
+                    # hidden_dropout_prob=self.hidden_dropout_prob,
+                    # attention_probs_dropout_prob=self.attention_probs_dropout_prob,
+                    n_positions=hp_config['n_positions'],
+                    n_ctx=hp_config['n_ctx']
+                    # type_vocab_size=self.type_vocab_size,
+                    # initializer_range=self.initializer_range
+                )
+        print(self.config)
 
     def get_args(self ):
         parser = argparse.ArgumentParser()
@@ -361,7 +376,7 @@ class NMT:
 
         # Load Model
         self.enc = self.get_encoder()
-        self.config = GPT2Config()
+        if self.config is None: self.config = GPT2Config()
         self.model = GPT2LMHeadModel(self.config)
         self.model = load_weight(self.model, self.state_dict)
         self.model.to(self.device)
