@@ -148,6 +148,7 @@ class NMT:
         ]## doesn't work??
 
         #self.common += self.a_string[0] + 'I am ' + self.a_string[0] + '. \n '
+        self.common += a_chars + 'Hello' + '.\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
@@ -324,6 +325,10 @@ class NMT:
         source_path = self.args.source_file.split('/')[:-1]
         source_path = '/'.join(source_path) + '/'
         print(source_path)
+        if '774M' in source_path :
+            print('774M', 'model specific configs')
+            #self.use_common = False
+            self.args.temperature = 1e-10
         if os.path.isfile(realpath + '/' + source_path + '/config.json'):
             with open(realpath + '/' + source_path + '/config.json', 'r') as f:
                 hp_config = json.load(f)
