@@ -333,6 +333,7 @@ class NMT:
             print('774M', 'model specific configs')
             #self.use_common = False
             self.args.temperature = 1e-10
+            self.args.top_k = 100
         if os.path.isfile(realpath + '/' + source_path + '/config.json'):
             with open(realpath + '/' + source_path + '/config.json', 'r') as f:
                 hp_config = json.load(f)
