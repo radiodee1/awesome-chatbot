@@ -243,6 +243,10 @@ class NMT:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
 
+        for z in self.q_string:
+            z = z.lower()
+            if i.lower().startswith(z): i = i[len(z):]
+
         start = i[:]
         num = 0
         default = ''
