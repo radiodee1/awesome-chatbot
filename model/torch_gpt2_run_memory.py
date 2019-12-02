@@ -148,7 +148,7 @@ class NMT:
         ]## doesn't work??
 
         #self.common += self.a_string[0] + 'I am ' + self.a_string[0] + '. \n '
-        self.common += a_chars + 'Hello' + '.\n '
+        self.common += a_chars + 'A: Hello' + '.\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
