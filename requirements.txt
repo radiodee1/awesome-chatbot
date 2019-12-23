@@ -37,6 +37,7 @@ kaggle
 ## https://github.com/Kaggle/kaggle-api
 
 ## pytorch ##
+torchtext
 ## go to the pytorch web site to download the latest version of pytorch ##
 
 ## text-to-speech ##
