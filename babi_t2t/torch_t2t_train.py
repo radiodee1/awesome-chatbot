@@ -68,6 +68,7 @@ class TransformerModel(nn.Module):
         self.encoder = nn.Embedding(ntoken, ninp)
         self.ninp = ninp
         self.decoder = nn.Linear(ninp, ntoken)
+        #self.softmax = nn.Softmax(dim=2)
 
         self.init_weights()
 
@@ -92,6 +93,8 @@ class TransformerModel(nn.Module):
         src = self.pos_encoder(src)
         output = self.transformer_encoder(src, self.src_mask)
         output = self.decoder(output)
+        #output = self.softmax(output)
+        #output = torch.argmax(output, dim=-1) ## -3
         return output
 
 
@@ -162,8 +165,8 @@ TEXT = torchtext.data.Field(tokenize=get_tokenizer("basic_english"),
                             init_token='<sos>',
                             eos_token='<eos>',
                             lower=True)
-train_txt, val_txt, test_txt = torchtext.datasets.WikiText2.splits(TEXT)
-TEXT.build_vocab(train_txt)
+#train_txt, val_txt, test_txt = torchtext.datasets.WikiText2.splits(TEXT)
+#TEXT.build_vocab(train_txt)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 task = 1 #9
@@ -178,16 +181,19 @@ def find_and_parse_story(data, period=False):
             for j in i:
                 out.append(j)
             if period: out.append('.')
+        #print(out)
         data.examples[ii].story = out
     return data
 
 
 babi_train_txt = find_and_parse_story(babi_train_txt, period=True)
-babi_val_txt = find_and_parse_story(babi_val_txt)
-babi_test_txt = find_and_parse_story(babi_test_txt)
+babi_val_txt = find_and_parse_story(babi_val_txt, period=True)
+babi_test_txt = find_and_parse_story(babi_test_txt, period=True)
+
+TEXT.build_vocab(babi_train_txt)
 
 
-def batchify_babi(data, bsz, separate_ques=True, size=200):
+def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, print_to_screen=False):
     new_data = []
     target_data = []
     for ii in range(len(data.examples)):
@@ -200,7 +206,7 @@ def batchify_babi(data, bsz, separate_ques=True, size=200):
             new_data.append(z.story)
             target_data.append([z.answer])
         pass
-
+    if print_to_screen: print(new_data,'nd')
     if not separate_ques:
         new_data = TEXT.numericalize([new_data])
         target_data = TEXT.numericalize(target_data)
@@ -216,19 +222,22 @@ def batchify_babi(data, bsz, separate_ques=True, size=200):
     else:
         m = max(len(x) for x in new_data)
         n = max(len(x[0]) for x in target_data)
-        m = max(m, size)
-        n = max(n, size)
-        #print(len(new_data), len(target_data), m, n,'nd,m,n')
-        padded_data = torch.zeros(m, dtype=torch.long)
+        m = max(m, size_src)
+        n = max(n, size_tgt)
+        #print(new_data, len(target_data), m, n,'nd,m,n')
+        padded_data = torch.zeros(1, m, dtype=torch.long)
         padded_target = torch.zeros(1, n, dtype=torch.long)
         new_n_data = torch.zeros( len(new_data), m, dtype=torch.long)
         target_n_data = torch.zeros( len(target_data), n, dtype=torch.long)
 
         for jj in range(len(new_data)):
             ## do source ##
-            z = TEXT.numericalize(new_data[jj][0])
+            #print(new_data[jj])
+            z = TEXT.numericalize([new_data[jj]])
+            if z.size(0) > 1:
+                z = z.t()
             p = padded_data[:]
-            p[:len(new_data[jj][0])] = z
+            p[0, :z.size(1)] = z
             new_n_data[jj, :] = p
             ## do target ##
             y = TEXT.numericalize(target_data[jj])
@@ -260,9 +269,10 @@ val_data = batchify(val_txt, eval_batch_size)
 test_data = batchify(test_txt, eval_batch_size)
 '''
 
-babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size)
-babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size)
-babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size)
+size_tgt = 40000
+babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt)
+babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt)
+babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt)
 
 ######################################################################
 # Functions to generate input and target sequence
@@ -284,10 +294,11 @@ babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size)
 # ``N`` is along dimension 1.
 #
 
-def get_batch_babi(source, target, i):
+def get_batch_babi(source, target, i, print_to_screen=False):
     #seq_len = min(bptt, len(source) - 1 - i)
     data = source[i] #:i + seq_len]
     target = target[i].view(-1)
+    if print_to_screen: print(data, target, i, 'dti')
     return data, target
 
 bptt = 35
@@ -297,7 +308,28 @@ def get_batch(source, i):
     target = source[i+1:i+1+seq_len].view(-1)
     return data, target
 
+tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 1)
 
+def show_strings(source):
+    for i in source:
+        if i != 0:
+            print(TEXT.vocab.itos[i], end=' | ')
+    print()
+
+show_strings(tt1)
+
+def show_tensor_vals(source):
+    zero = 0
+    for i in range(source.size(0)):
+        for ii in range(len(source[i])):
+            z = source[i][ii]
+            if not z is 0:
+                print(z, end='|')
+                print(TEXT.vocab.itos[z], end='|')
+            else:
+                z += 1
+        pass
+    print('\n',zero, 'zeros')
 ######################################################################
 # Initiate an instance
 # --------------------
@@ -337,7 +369,7 @@ model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(devi
 #
 
 criterion = nn.CrossEntropyLoss()
-lr = 5.0 # learning rate
+lr = 0.01 #5.0 # learning rate
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.95)
 
@@ -351,7 +383,17 @@ def train():
         data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i)
         optimizer.zero_grad()
         output = model(data)
-        loss = criterion(output.view(-1, ntokens), targets)
+        print(output.size(), targets.size(), 'out,tgt')
+
+        predictions = output #.view(-1)
+        prediction_text = torch.argmax(predictions[0,0,:])
+        print(prediction_text, TEXT.vocab.itos[prediction_text.item()], 'pt')
+
+        #output = prediction_text
+        #show_tensor_vals(output)
+        loss = criterion(output.view(-1, ntokens), targets) ### <---
+
+        #loss = criterion(output, targets)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step()
