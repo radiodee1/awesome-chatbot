@@ -212,7 +212,9 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         z.story.extend('.')
         if not separate_ques:
             new_data.extend(z.story)
-            target_data.append(z.answer)
+            target_data = new_data[:]
+            target_data.extend(z.answer)
+            #target_data = target_data[len(z.answer):]
         else:
             new_data.append(z.story)
             target_data.append([z.answer])
@@ -220,11 +222,13 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
     if print_to_screen: print(new_data,'nd')
     if not separate_ques:
         new_data = TEXT.numericalize([new_data])
-        target_data = TEXT.numericalize(target_data)
+        target_data = TEXT.numericalize([target_data])
 
-        nbatch = new_data.size(0) // bsz
+        nbatch_s = new_data.size(0) // bsz
+        nbatch_t = target_data.size(0) // bsz
         # Trim off any extra elements that wouldn't cleanly fit (remainders).
-        new_data = new_data.narrow(0, 0, nbatch * bsz)
+        new_data = new_data.narrow(0, 0, nbatch_s * bsz)
+        target_data = target_data.narrow(0, 0, nbatch_t * bsz)
         #target_data = target_data.narrow(0, 0, nbatch * bsz)
 
         # Evenly divide the data across the bsz batches.
@@ -235,6 +239,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         n = max(len(x[0]) for x in target_data)
         m = max(m, size_src)
         n = max(n, size_tgt)
+        n = m
         #print(new_data, len(target_data), m, n,'nd,m,n')
         padded_data = torch.zeros(1, m, dtype=torch.long)
         padded_target = torch.zeros(1, n, dtype=torch.long)
@@ -252,7 +257,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             new_n_data[jj, :] = p
             ## do target ##
             y = TEXT.numericalize(target_data[jj])
-            if y.size(0) > 2:
+            if y.size(0) > 1:
                 y = y.t()
             q = padded_target[:]
             q[0,:len(y[0])] = y
@@ -280,10 +285,11 @@ val_data = batchify(val_txt, eval_batch_size)
 test_data = batchify(test_txt, eval_batch_size)
 '''
 
-size_tgt = 40000
-babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt)
-babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt)
-babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt)
+size_tgt = 24 #40000
+size_src = -1
+babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src, separate_ques=False)
+babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=False)
+babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=False)
 
 ######################################################################
 # Functions to generate input and target sequence
@@ -305,27 +311,31 @@ babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt
 # ``N`` is along dimension 1.
 #
 
-def get_batch_babi(source, target, i, print_to_screen=False):
-    #seq_len = min(bptt, len(source) - 1 - i)
-    data = source[i] #:i + seq_len]
-    target = target[i].view(-1)
+bptt = 35
+def get_batch_babi(source, target, i, print_to_screen=False, bptt=35):
+    seq_len = min(bptt, len(source) - 1 - i)
+    data = source[i:i + seq_len]
+    target = target[i:i + seq_len].view(-1)
     if print_to_screen: print(data, target, i, 'dti')
     return data, target
 
-bptt = 35
+#bptt = 35
 def get_batch(source, i):
     seq_len = min(bptt, len(source) - 1 - i)
     data = source[i:i+seq_len]
     target = source[i+1:i+1+seq_len].view(-1)
     return data, target
 
-tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 1)
+tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 1, bptt=1)
 
 def show_strings(source):
+    if len(source.size()) > 1:
+        source = source.squeeze(0)
     for i in source:
         if i != 0:
             print(TEXT.vocab.itos[i], end=' | ')
     print()
+
 
 show_strings(tt1)
 
@@ -403,18 +413,20 @@ def train():
     ntokens = len(TEXT.vocab.stoi)
     for batch, i in enumerate(range(0, babi_train_txt.size(0) - 1, bptt)):
         data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i)
+        bsz = data.size(0)
         optimizer.zero_grad()
         output = model(data)
 
-        predictions = output
-        prediction_text = torch.argmax(predictions[-1,0,:])
-        #targets_text = torch.argmax(targets,dim=-1)
+        #predictions = output
+        prediction_text = torch.argmax(output[-1,-1,:])
+
         if not ten_k or i % 100 == 0:
-            print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
+            print(TEXT.vocab.itos[prediction_text.view(-1)[-1].item()], TEXT.vocab.itos[targets.view(-1)[-1].item()], 'pt,tgt')
+            pass
 
-        #print(predictions[0,0,:].size(), targets, targets.size(), targets[0].item() ,'p,tt')
+        print( output.size(), targets.size(), targets[0].item(), 'p,tt')
 
-        loss = criterion(predictions[-1,0,:].view(1,-1), targets[0].unsqueeze(0))
+        loss = criterion(output.view( -1, ntokens), targets) #.view(-1)) ### <---
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
@@ -444,10 +456,11 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             data, targets = get_batch_babi(data_source, data_tgt, i)
             output = eval_model(data)
             output_flat = output.view(-1, ntokens)
+            #targets = targets.view(-1)
             total_loss += len(data) * criterion(output_flat, targets).item()
 
-            prediction_text = torch.argmax(output[0,0,:]).item()
-            targets_text = targets[0].item()
+            prediction_text = torch.argmax(output[-1,-1,:]).item()
+            targets_text = targets[-1].item()
             if prediction_text == targets_text:
                 acc += 1
     if show_accuracy:
