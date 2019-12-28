@@ -422,9 +422,7 @@ def train():
 
         if not ten_k or i % 100 == 0:
             print(TEXT.vocab.itos[prediction_text.view(-1)[-1].item()], TEXT.vocab.itos[targets.view(-1)[-1].item()], 'pt,tgt')
-            pass
-
-        print( output.size(), targets.size(), targets[0].item(), 'p,tt')
+            print( output.size(), targets.size(), targets[0].item(), 'p,tt')
 
         loss = criterion(output.view( -1, ntokens), targets) #.view(-1)) ### <---
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
