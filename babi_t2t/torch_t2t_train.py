@@ -407,14 +407,14 @@ def train():
         output = model(data)
 
         predictions = output
-        prediction_text = torch.argmax(predictions[0,-1,:])
+        prediction_text = torch.argmax(predictions[-1,0,:])
         #targets_text = torch.argmax(targets,dim=-1)
         if not ten_k or i % 100 == 0:
             print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
 
         #print(predictions[0,0,:].size(), targets, targets.size(), targets[0].item() ,'p,tt')
 
-        loss = criterion(predictions[0,-1,:].view(1,-1), targets[0].unsqueeze(0))
+        loss = criterion(predictions[-1,0,:].view(1,-1), targets[0].unsqueeze(0))
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
