@@ -169,8 +169,9 @@ TEXT = torchtext.data.Field(tokenize=get_tokenizer("basic_english"),
 #TEXT.build_vocab(train_txt)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+ten_k = False
 task = 1 #9
-babi_train_txt, babi_val_txt, babi_test_txt = torchtext.datasets.BABI20.splits(TEXT,  root='../raw/', tenK=False, task=task)
+babi_train_txt, babi_val_txt, babi_test_txt = torchtext.datasets.BABI20.splits(TEXT,  root='../raw/', tenK=ten_k, task=task)
 
 def find_and_parse_story(data, period=False):
     for ii in range(len(data.examples)):
@@ -397,7 +398,8 @@ def train():
 
         predictions = output
         prediction_text = torch.argmax(predictions[0,0,:])
-        print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
+        if not ten_k:
+            print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
 
         loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
