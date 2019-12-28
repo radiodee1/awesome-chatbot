@@ -381,7 +381,7 @@ model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(devi
 #
 
 criterion = nn.CrossEntropyLoss()
-lr = 5.0 # learning rate
+lr = 1.0 #5.0 # learning rate
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.95)
 
