@@ -381,7 +381,7 @@ model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(devi
 #
 
 criterion = nn.CrossEntropyLoss()
-lr = 0.01 #5.0 # learning rate
+lr = 5.0 # learning rate
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.95)
 
@@ -398,10 +398,14 @@ def train():
 
         predictions = output
         prediction_text = torch.argmax(predictions[0,0,:])
+        #targets_text = torch.argmax(targets,dim=-1)
         if not ten_k:
             print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
 
-        loss = criterion(output.view(-1, ntokens), targets) ### <---
+        #print(predictions[0,0,:].size(), targets, targets.size(), targets[0].item() ,'p,tt')
+
+        loss = criterion(predictions[0,0,:].view(1,-1), targets[0].unsqueeze(0))
+        #loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step()
