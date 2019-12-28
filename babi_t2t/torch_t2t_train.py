@@ -192,13 +192,13 @@ babi_test_txt = find_and_parse_story(babi_test_txt, period=True)
 
 TEXT.build_vocab(babi_train_txt)
 
-
 def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, print_to_screen=False):
     new_data = []
     target_data = []
     for ii in range(len(data.examples)):
         z = data.examples[ii]
         z.story.extend(z.query)
+        z.story.extend('.')
         if not separate_ques:
             new_data.extend(z.story)
             target_data.append(z.answer)
@@ -330,6 +330,17 @@ def show_tensor_vals(source):
                 z += 1
         pass
     print('\n',zero, 'zeros')
+
+def target_to_onehot(target):
+    out = []
+    for i in range(len(TEXT.vocab.itos)):
+        if i == target.item():
+            out.append(1)
+        else:
+            out.append(0)
+    out = torch.LongTensor(out)
+    return out
+
 ######################################################################
 # Initiate an instance
 # --------------------
@@ -383,17 +394,12 @@ def train():
         data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i)
         optimizer.zero_grad()
         output = model(data)
-        print(output.size(), targets.size(), 'out,tgt')
 
-        predictions = output #.view(-1)
+        predictions = output
         prediction_text = torch.argmax(predictions[0,0,:])
-        print(prediction_text, TEXT.vocab.itos[prediction_text.item()], 'pt')
+        print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
 
-        #output = prediction_text
-        #show_tensor_vals(output)
         loss = criterion(output.view(-1, ntokens), targets) ### <---
-
-        #loss = criterion(output, targets)
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
         optimizer.step()
@@ -412,16 +418,24 @@ def train():
             total_loss = 0
             start_time = time.time()
 
-def evaluate(eval_model, data_source, data_tgt):
+def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
     eval_model.eval() # Turn on the evaluation mode
     total_loss = 0.
     ntokens = len(TEXT.vocab.stoi)
+    acc = 0
     with torch.no_grad():
         for i in range(0, data_source.size(0) - 1, bptt):
             data, targets = get_batch_babi(data_source, data_tgt, i)
             output = eval_model(data)
             output_flat = output.view(-1, ntokens)
             total_loss += len(data) * criterion(output_flat, targets).item()
+
+            prediction_text = torch.argmax(output[0,0,:]).item()
+            targets_text = targets[0].item()
+            if prediction_text == targets_text:
+                acc += 1
+    if show_accuracy:
+        print('acc:', acc / len(data_source))
     return total_loss / (len(data_source) - 1)
 
 ######################################################################
@@ -445,6 +459,8 @@ for epoch in range(1, epochs + 1):
     if val_loss < best_val_loss:
         best_val_loss = val_loss
         best_model = model
+
+    evaluate(model, babi_test_txt, babi_test_tgt, show_accuracy=True)
 
     scheduler.step()
 
