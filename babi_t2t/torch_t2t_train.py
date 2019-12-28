@@ -443,7 +443,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
 # we've seen so far. Adjust the learning rate after each epoch.
 
 best_val_loss = float("inf")
-epochs = 3 # The number of epochs
+epochs = 30 # The number of epochs
 best_model = None
 
 for epoch in range(1, epochs + 1):
