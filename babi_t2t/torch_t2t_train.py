@@ -52,6 +52,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import argparse
 #import pprint
 #pp = pprint.PrettyPrinter(indent=4)
 
@@ -158,6 +159,15 @@ class PositionalEncoding(nn.Module):
 # efficient batch processing.
 #
 
+parser = argparse.ArgumentParser(
+    description='Fine-tune a Transformer.',
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
+parser.add_argument('--task', default=1, help='use specific question-set/task')
+parser.add_argument('--lr', default=1.0, help='learning rate')
+parser.add_argument('--epochs', default=30, help='number of epochs')
+args = parser.parse_args()
+
 import torchtext
 
 from torchtext.data.utils import get_tokenizer
@@ -169,8 +179,8 @@ TEXT = torchtext.data.Field(tokenize=get_tokenizer("basic_english"),
 #TEXT.build_vocab(train_txt)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-ten_k = False
-task = 1 #9
+ten_k = args.tenk
+task = args.task #1 #9
 babi_train_txt, babi_val_txt, babi_test_txt = torchtext.datasets.BABI20.splits(TEXT,  root='../raw/', tenK=ten_k, task=task)
 
 def find_and_parse_story(data, period=False):
@@ -381,7 +391,7 @@ model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(devi
 #
 
 criterion = nn.CrossEntropyLoss()
-lr = 1.0 #5.0 # learning rate
+lr = args.lr # 1.0 #5.0 # learning rate
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.95)
 
@@ -397,14 +407,14 @@ def train():
         output = model(data)
 
         predictions = output
-        prediction_text = torch.argmax(predictions[0,0,:])
+        prediction_text = torch.argmax(predictions[0,-1,:])
         #targets_text = torch.argmax(targets,dim=-1)
-        if not ten_k:
+        if not ten_k or i % 100 == 0:
             print( TEXT.vocab.itos[prediction_text.item()], TEXT.vocab.itos[targets[0].item()], 'pt,tgt')
 
         #print(predictions[0,0,:].size(), targets, targets.size(), targets[0].item() ,'p,tt')
 
-        loss = criterion(predictions[0,0,:].view(1,-1), targets[0].unsqueeze(0))
+        loss = criterion(predictions[0,-1,:].view(1,-1), targets[0].unsqueeze(0))
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
@@ -449,7 +459,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
 # we've seen so far. Adjust the learning rate after each epoch.
 
 best_val_loss = float("inf")
-epochs = 30 # The number of epochs
+epochs = args.epochs # 30 # The number of epochs
 best_model = None
 
 for epoch in range(1, epochs + 1):
