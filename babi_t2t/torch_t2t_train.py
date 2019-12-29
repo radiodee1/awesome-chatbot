@@ -468,7 +468,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             #targets = targets.view(-1)
             total_loss += len(data) * criterion(output_flat, targets).item()
 
-            prediction_text = torch.argmax(output.transpose(0,1)[-1,-1,:]).item()
+            prediction_text = torch.argmax(output_flat[-1,:]).item() # .transpose(0,1)[-1,-1,:]).item()
             targets_text = targets[-1].item()
             if prediction_text == targets_text:
                 acc += 1
