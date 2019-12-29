@@ -218,7 +218,8 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             target_data_tmp.extend(z.answer)
             target_data_tmp.append('<eos>')
             #print(z.answer, len(z.answer))
-            #target_data_tmp = target_data_tmp[1:len(z.story) + 1]
+            ll = 2
+            target_data_tmp = target_data_tmp[ll :len(z.story) + ll]
             #print(z.story,'\n',target_data_tmp)
             target_data.extend(target_data_tmp)
         else:
@@ -240,12 +241,12 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         #target_n_data = target_data
         bsz = n
         nbatch_s = new_data.size(0) // bsz
-        #nbatch_t = target_data.size(0) // bsz
-        nbatch_t = nbatch_s
+        nbatch_t = target_data.size(0) // bsz
+        nbatch = min(nbatch_s, nbatch_t)
         #print(nbatch_s, nbatch_t, len(new_data), len(target_data))
         # Trim off any extra elements that wouldn't cleanly fit (remainders).
-        new_data = new_data.narrow(0, 0, nbatch_s * bsz)
-        target_data = target_data.narrow(0, 0, nbatch_t * bsz)
+        new_data = new_data.narrow(0, 0, nbatch * bsz)
+        target_data = target_data.narrow(0, 0, nbatch * bsz)
         ###target_data = target_data.narrow(0, 0, nbatch * bsz)
         #print(new_data.size(), target_data.size())
 
@@ -357,6 +358,7 @@ print(tt1.size(), tt2.size(),'t,t')
 show_strings(tt1.t()[0])
 print()
 show_strings(tt2.t()[0])
+exit()
 '''
 
 def show_tensor_vals(source):
@@ -435,7 +437,7 @@ def train():
             print(TEXT.vocab.itos[prediction_text[-1].item()], TEXT.vocab.itos[targets[-1].item()], 'pt,tgt')
             print( output.size(), targets.size(), targets[0].item(),prediction_text[-1].item(), 'p,tt')
 
-        loss = criterion(output.view( -1, ntokens), targets) #.view(-1)) ### <---
+        loss = criterion(output.view( -1, ntokens), targets) ### <---
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
         torch.nn.utils.clip_grad_norm_(model.parameters(), 0.5)
