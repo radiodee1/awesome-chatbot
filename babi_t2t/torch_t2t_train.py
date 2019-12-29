@@ -191,9 +191,11 @@ def find_and_parse_story(data, period=False):
             i = i.split(' ')
             for j in i:
                 out.append(j)
-            if period: out.append('.')
+            if period:
+                out.append('.')
         #print(out)
         data.examples[ii].story = out
+        data.examples[ii].query.append('?')
     return data
 
 
@@ -347,19 +349,19 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
-'''
-tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
+if False:
+    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
 
-print(tt1,'\n',tt2)
-print(tt1.size(), tt2.size(),'t,t')
-#show_strings(babi_train_txt[0])
-#show_strings(babi_train_tgt[0])
+    print(tt1,'\n',tt2)
+    print(tt1.size(), tt2.size(),'t,t')
+    #show_strings(babi_train_txt[0])
+    #show_strings(babi_train_tgt[0])
 
-show_strings(tt1.t()[0])
-print()
-show_strings(tt2.t()[0])
-exit()
-'''
+    show_strings(tt1.t()[0])
+    print()
+    show_strings(tt2.t()[0])
+    exit()
+
 
 def show_tensor_vals(source):
     zero = 0
