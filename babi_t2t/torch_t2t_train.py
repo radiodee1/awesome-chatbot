@@ -238,7 +238,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         bsz = n
         nbatch_s = new_data.size(0) // bsz
         nbatch_t = target_data.size(0) // bsz
-        print(nbatch_s, nbatch_t, len(new_data), len(target_data))
+        #print(nbatch_s, nbatch_t, len(new_data), len(target_data))
         # Trim off any extra elements that wouldn't cleanly fit (remainders).
         new_data = new_data.narrow(0, 0, nbatch_s * bsz)
         target_data = target_data.narrow(0, 0, nbatch_t * bsz)
