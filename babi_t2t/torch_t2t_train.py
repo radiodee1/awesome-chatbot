@@ -434,7 +434,11 @@ def train():
         prediction_text = torch.argmax(output.view(-1,ntokens), dim=1)
 
         if not ten_k or i % 100 == 0:
-            print(TEXT.vocab.itos[prediction_text[-1].item()], TEXT.vocab.itos[targets[-1].item()], 'pt,tgt')
+            print(
+                TEXT.vocab.itos[prediction_text[-3].item()],
+                TEXT.vocab.itos[prediction_text[-2].item()],
+                TEXT.vocab.itos[prediction_text[-1].item()],
+                '['+TEXT.vocab.itos[targets[-1].item()]+']')
             print( output.size(), targets.size(), targets[0].item(),prediction_text[-1].item(), 'p,tt')
 
         loss = criterion(output.view( -1, ntokens), targets) ### <---
@@ -471,8 +475,9 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             total_loss += len(data) * criterion(output_flat, targets).item()
 
             prediction_text = torch.argmax(output_flat[-1,:],dim=-1).item() 
+            prediction_text2 = torch.argmax(output_flat[-2,:],dim=-1).item()
             targets_text = targets[-1].item()
-            if prediction_text == targets_text:
+            if prediction_text == targets_text or prediction_text2 == targets_text:
                 acc += 1
     if show_accuracy:
         print('acc:', acc / len(data_source) * 100.00)
