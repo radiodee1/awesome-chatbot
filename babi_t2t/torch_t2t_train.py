@@ -166,6 +166,7 @@ parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
 parser.add_argument('--task', default=1, help='use specific question-set/task')
 parser.add_argument('--lr', default=0.1, help='learning rate', type=float)
 parser.add_argument('--epochs', default=30, help='number of epochs', type=int)
+parser.add_argument('--no_scheduler', action='store_false',help='cancel learning rate decay')
 args = parser.parse_args()
 
 import torchtext
@@ -517,7 +518,7 @@ for epoch in range(1, epochs + 1):
 
     evaluate(model, babi_test_txt, babi_test_tgt, show_accuracy=True)
 
-    scheduler.step()
+    if not args.no_scheduler: scheduler.step()
 
 
 ######################################################################
