@@ -474,11 +474,19 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             #targets = targets.view(-1)
             total_loss += len(data) * criterion(output_flat, targets).item()
 
-            prediction_text = torch.argmax(output_flat[-1,:],dim=-1).item() 
-            prediction_text2 = torch.argmax(output_flat[-2,:],dim=-1).item()
+            #prediction_text = torch.argmax(output_flat[-1,:],dim=-1).item()
+            #prediction_text2 = torch.argmax(output_flat[-2,:],dim=-1).item()
             targets_text = targets[-1].item()
-            if prediction_text == targets_text or prediction_text2 == targets_text:
-                acc += 1
+            #if prediction_text == targets_text or prediction_text2 == targets_text:
+            #    acc += 1
+
+            for ii in range(1, 10): #output_flat.size(0)):
+                text = torch.argmax(output_flat[- ii, :], dim=-1).item()
+                if text == targets_text:
+                    acc += 1
+                    break
+                #print(ii,'|', text, TEXT.vocab.itos[text], end='|')
+            #print()
     if show_accuracy:
         print('acc:', acc / len(data_source) * 100.00)
     return total_loss / (len(data_source) - 1)
