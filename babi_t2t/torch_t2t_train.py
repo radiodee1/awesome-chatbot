@@ -164,7 +164,7 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
 parser.add_argument('--task', default=1, help='use specific question-set/task')
-parser.add_argument('--lr', default=1.0, help='learning rate')
+parser.add_argument('--lr', default=0.1, help='learning rate')
 parser.add_argument('--epochs', default=30, help='number of epochs')
 args = parser.parse_args()
 
@@ -210,36 +210,46 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         z = data.examples[ii]
         z.story.extend(z.query)
         z.story.extend('.')
+        target_data_tmp = []
         if not separate_ques:
             new_data.extend(z.story)
-            target_data = new_data[:]
-            target_data.extend(z.answer)
-            #target_data = target_data[len(z.answer):]
+            target_data_tmp.extend(z.story) #new_data[:]
+            target_data_tmp.extend(z.answer)
+            #print(z.answer, len(z.answer))
+            target_data_tmp = target_data_tmp[1:len(z.story) + 1]
+            #print(z.story,'\n',target_data_tmp)
+            target_data.extend(target_data_tmp)
         else:
             new_data.append(z.story)
             target_data.append([z.answer])
         pass
     if print_to_screen: print(new_data,'nd')
+    m = max(len(x) for x in new_data)
+    n = max(len(x[0]) for x in target_data)
+    m = max(m, size_src)
+    n = max(n, size_tgt)
+    n = m
     if not separate_ques:
+        #print(new_data)
         new_data = TEXT.numericalize([new_data])
         target_data = TEXT.numericalize([target_data])
-
+        #new_n_data = new_data
+        #target_n_data = target_data
+        bsz = n
         nbatch_s = new_data.size(0) // bsz
         nbatch_t = target_data.size(0) // bsz
+        print(nbatch_s, nbatch_t, len(new_data), len(target_data))
         # Trim off any extra elements that wouldn't cleanly fit (remainders).
         new_data = new_data.narrow(0, 0, nbatch_s * bsz)
         target_data = target_data.narrow(0, 0, nbatch_t * bsz)
-        #target_data = target_data.narrow(0, 0, nbatch * bsz)
+        ###target_data = target_data.narrow(0, 0, nbatch * bsz)
 
         # Evenly divide the data across the bsz batches.
         new_n_data = new_data.view(bsz, -1).t().contiguous()
         target_n_data = target_data.view(bsz, -1).t().contiguous()
+
     else:
-        m = max(len(x) for x in new_data)
-        n = max(len(x[0]) for x in target_data)
-        m = max(m, size_src)
-        n = max(n, size_tgt)
-        n = m
+
         #print(new_data, len(target_data), m, n,'nd,m,n')
         padded_data = torch.zeros(1, m, dtype=torch.long)
         padded_target = torch.zeros(1, n, dtype=torch.long)
@@ -278,12 +288,6 @@ def batchify(data, bsz):
 
 batch_size = 20
 eval_batch_size = 10
-
-'''
-train_data = batchify(train_txt, batch_size)
-val_data = batchify(val_txt, eval_batch_size)
-test_data = batchify(test_txt, eval_batch_size)
-'''
 
 size_tgt = 24 #40000
 size_src = -1
@@ -326,7 +330,7 @@ def get_batch(source, i):
     target = source[i+1:i+1+seq_len].view(-1)
     return data, target
 
-tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 1, bptt=1)
+tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 1)
 
 def show_strings(source):
     if len(source.size()) > 1:
@@ -336,8 +340,13 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
+#print(tt1,'\n',tt2)
+#show_strings(babi_train_txt[0])
+#show_strings(babi_train_tgt[0])
 
-show_strings(tt1)
+show_strings(tt1[0])
+#show_strings(tt2)
+#exit()
 
 def show_tensor_vals(source):
     zero = 0
@@ -352,15 +361,6 @@ def show_tensor_vals(source):
         pass
     print('\n',zero, 'zeros')
 
-def target_to_onehot(target):
-    out = []
-    for i in range(len(TEXT.vocab.itos)):
-        if i == target.item():
-            out.append(1)
-        else:
-            out.append(0)
-    out = torch.LongTensor(out)
-    return out
 
 ######################################################################
 # Initiate an instance
@@ -462,7 +462,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             if prediction_text == targets_text:
                 acc += 1
     if show_accuracy:
-        print('acc:', acc / len(data_source))
+        print('acc:', acc / len(data_source) * 100.00)
     return total_loss / (len(data_source) - 1)
 
 ######################################################################
