@@ -165,7 +165,7 @@ parser = argparse.ArgumentParser(
 parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
 parser.add_argument('--task', default=1, help='use specific question-set/task')
 parser.add_argument('--lr', default=0.1, help='learning rate', type=float)
-parser.add_argument('--epochs', default=30, help='number of epochs')
+parser.add_argument('--epochs', default=30, help='number of epochs', type=int)
 args = parser.parse_args()
 
 import torchtext
@@ -213,10 +213,12 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         target_data_tmp = []
         if not separate_ques:
             new_data.extend(z.story)
+            new_data.append('<eos>')
             target_data_tmp.extend(z.story) #new_data[:]
             target_data_tmp.extend(z.answer)
+            target_data_tmp.append('<eos>')
             #print(z.answer, len(z.answer))
-            target_data_tmp = target_data_tmp[1:len(z.story) + 1]
+            #target_data_tmp = target_data_tmp[1:len(z.story) + 1]
             #print(z.story,'\n',target_data_tmp)
             target_data.extend(target_data_tmp)
         else:
@@ -227,22 +229,25 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
     m = max(len(x) for x in new_data)
     n = max(len(x[0]) for x in target_data)
     m = max(m, size_src)
-    n = max(n, size_tgt)
+    #n = max(n, size_tgt)
     n = m
     if not separate_ques:
-        #print(new_data)
+
         new_data = TEXT.numericalize([new_data])
         target_data = TEXT.numericalize([target_data])
+
         #new_n_data = new_data
         #target_n_data = target_data
         bsz = n
         nbatch_s = new_data.size(0) // bsz
-        nbatch_t = target_data.size(0) // bsz
+        #nbatch_t = target_data.size(0) // bsz
+        nbatch_t = nbatch_s
         #print(nbatch_s, nbatch_t, len(new_data), len(target_data))
         # Trim off any extra elements that wouldn't cleanly fit (remainders).
         new_data = new_data.narrow(0, 0, nbatch_s * bsz)
         target_data = target_data.narrow(0, 0, nbatch_t * bsz)
         ###target_data = target_data.narrow(0, 0, nbatch * bsz)
+        #print(new_data.size(), target_data.size())
 
         # Evenly divide the data across the bsz batches.
         new_n_data = new_data.view(bsz, -1).t().contiguous()
@@ -316,10 +321,12 @@ babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt
 #
 
 bptt = 35
-def get_batch_babi(source, target, i, print_to_screen=False, bptt=35):
+def get_batch_babi(source, target, i, print_to_screen=False, bptt=35, flatten_target=True):
     seq_len = min(bptt, len(source) - 1 - i)
     data = source[i:i + seq_len]
-    target = target[i:i + seq_len].view(-1)
+    target = target[i:i + seq_len]
+    if flatten_target:
+        target = target.view(-1)
     if print_to_screen: print(data, target, i, 'dti')
     return data, target
 
@@ -330,7 +337,6 @@ def get_batch(source, i):
     target = source[i+1:i+1+seq_len].view(-1)
     return data, target
 
-tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 1)
 
 def show_strings(source):
     if len(source.size()) > 1:
@@ -340,13 +346,18 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
-#print(tt1,'\n',tt2)
+'''
+tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
+
+print(tt1,'\n',tt2)
+print(tt1.size(), tt2.size(),'t,t')
 #show_strings(babi_train_txt[0])
 #show_strings(babi_train_tgt[0])
 
-show_strings(tt1[0])
-#show_strings(tt2)
-#exit()
+show_strings(tt1.t()[0])
+print()
+show_strings(tt2.t()[0])
+'''
 
 def show_tensor_vals(source):
     zero = 0
@@ -457,7 +468,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             #targets = targets.view(-1)
             total_loss += len(data) * criterion(output_flat, targets).item()
 
-            prediction_text = torch.argmax(output[-1,-1,:]).item()
+            prediction_text = torch.argmax(output.transpose(0,1)[-1,-1,:]).item()
             targets_text = targets[-1].item()
             if prediction_text == targets_text:
                 acc += 1
