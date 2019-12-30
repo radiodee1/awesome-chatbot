@@ -211,13 +211,13 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
     target_data = []
     for ii in range(len(data.examples)):
         z = data.examples[ii]
-        z.story.extend(z.query)
-        z.story.extend('.')
         target_data_tmp = []
         if not separate_ques:
+            z.story.extend(z.query)
+            z.story.extend('.')
             new_data.extend(z.story)
             new_data.append('<eos>')
-            target_data_tmp.extend(z.story) #new_data[:]
+            target_data_tmp.extend(z.story)
             target_data_tmp.extend(z.answer)
             target_data_tmp.append('<eos>')
             #print(z.answer, len(z.answer))
@@ -226,6 +226,9 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             #print(z.story,'\n',target_data_tmp)
             target_data.extend(target_data_tmp)
         else:
+            z.story.extend(z.query)
+            z.story.extend([ '<eos>'])
+            #z.story.extend('.')
             new_data.append(z.story)
             target_data.append([z.answer])
         pass
@@ -259,7 +262,6 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
 
     else:
 
-        #print(new_data, len(target_data), m, n,'nd,m,n')
         padded_data = torch.zeros(1, m, dtype=torch.long)
         padded_target = torch.zeros(1, n, dtype=torch.long)
         new_n_data = torch.zeros( len(new_data), m, dtype=torch.long)
@@ -267,7 +269,6 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
 
         for jj in range(len(new_data)):
             ## do source ##
-            #print(new_data[jj])
             z = TEXT.numericalize([new_data[jj]])
             if z.size(0) > 1:
                 z = z.t()
@@ -281,6 +282,9 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             q = padded_target[:]
             q[0,:len(y[0])] = y
             target_n_data[jj, :] = q
+
+        new_n_data = new_n_data.t().contiguous()
+        target_n_data = target_n_data.t().contiguous()
 
     return new_n_data.to(device), target_n_data.to(device)
 
@@ -300,9 +304,9 @@ eval_batch_size = 10
 
 size_tgt = 24 #40000
 size_src = -1
-babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src, separate_ques=False)
-babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=False)
-babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=False)
+babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src, separate_ques=True)
+babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
+babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
 
 ######################################################################
 # Functions to generate input and target sequence
@@ -351,7 +355,7 @@ def show_strings(source):
     print()
 
 if False:
-    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
+    tt1, tt2 = get_batch_babi(babi_val_txt, babi_val_tgt, 0, flatten_target=False)
 
     print(tt1,'\n',tt2)
     print(tt1.size(), tt2.size(),'t,t')
@@ -421,6 +425,8 @@ lr = args.lr # 1.0 #5.0 # learning rate
 optimizer = torch.optim.SGD(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 1.0, gamma=0.95)
 
+label = 'val'
+
 import time
 def train():
     model.train() # Turn on the train mode
@@ -436,7 +442,7 @@ def train():
         #predictions = output
         prediction_text = torch.argmax(output.view(-1,ntokens), dim=1)
 
-        if not ten_k or i % 100 == 0:
+        if (not ten_k or i % 100 == 0) and True:
             print(
                 TEXT.vocab.itos[prediction_text[-3].item()],
                 TEXT.vocab.itos[prediction_text[-2].item()],
@@ -469,27 +475,38 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
     total_loss = 0.
     ntokens = len(TEXT.vocab.stoi)
     acc = 0
+    saved_dim = -1
+    out_dim = -1
+    #bptt = 1
     with torch.no_grad():
         for i in range(0, data_source.size(0) - 1, bptt):
             data, targets = get_batch_babi(data_source, data_tgt, i)
             output = eval_model(data)
             output_flat = output.view(-1, ntokens)
-            #targets = targets.view(-1)
+            output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
+            output_argmax = torch.argmax(output_flat_t, dim=-1)
+
             total_loss += len(data) * criterion(output_flat, targets).item()
 
-            #prediction_text = torch.argmax(output_flat[-1,:],dim=-1).item()
-            #prediction_text2 = torch.argmax(output_flat[-2,:],dim=-1).item()
             targets_text = targets[-1].item()
-            #if prediction_text == targets_text or prediction_text2 == targets_text:
-            #    acc += 1
+            if False:
+                print(targets.size(), torch.argmax(output_flat_t, dim=-1)[:20], 'tt,out', label)
+                print(TEXT.vocab.itos[output_argmax[0].item()], 'itos', output_argmax[0].item(),'sd', saved_dim,i)
 
-            for ii in range(1, 10): #output_flat.size(0)):
-                text = torch.argmax(output_flat[- ii, :], dim=-1).item()
-                if text == targets_text:
-                    acc += 1
-                    break
-                #print(ii,'|', text, TEXT.vocab.itos[text], end='|')
-            #print()
+            out_dim = output.size(0)
+
+            if saved_dim == -1 or saved_dim == out_dim:
+                saved_dim = out_dim
+                print(out_dim, 'dim ', end='|')
+                for ii in range(0, 10): #output_flat.size(0)):
+                    text = torch.argmax(output_flat_t, dim=-1)[ii].item()
+                    if text != 0:
+                        print(TEXT.vocab.itos[text], end='|')
+                    if text == targets_text and text != 0:
+                        acc += 1
+                        print(TEXT.vocab.itos[text],'score acc')
+                        break
+                print()
     if show_accuracy:
         print('acc:', acc / len(data_source) * 100.00)
     return total_loss / (len(data_source) - 1)
@@ -505,6 +522,7 @@ best_model = None
 for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
+    label = 'val'
     val_loss = evaluate(model, babi_val_txt, babi_val_tgt)
     print('-' * 89)
     print('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} | '
@@ -516,6 +534,7 @@ for epoch in range(1, epochs + 1):
         best_val_loss = val_loss
         best_model = model
 
+    label = 'tst'
     evaluate(model, babi_test_txt, babi_test_tgt, show_accuracy=True)
 
     if not args.no_scheduler: scheduler.step()
