@@ -477,7 +477,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
     acc = 0
     saved_dim = -1
     out_dim = -1
-    #bptt = 1
+    bptt = 1
     with torch.no_grad():
         for i in range(0, data_source.size(0) - 1, bptt):
             data, targets = get_batch_babi(data_source, data_tgt, i)
