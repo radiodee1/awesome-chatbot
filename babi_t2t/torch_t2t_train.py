@@ -497,7 +497,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
 
             if saved_dim == -1 or saved_dim == out_dim:
                 saved_dim = out_dim
-                print(out_dim, 'dim ', end='|')
+                if i == 0: print(out_dim, 'dim ', end='|')
                 for ii in range(0, 10): #output_flat.size(0)):
                     text = torch.argmax(output_flat_t, dim=-1)[ii].item()
                     if text != 0:
@@ -506,7 +506,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
                         acc += 1
                         print(TEXT.vocab.itos[text],'score acc')
                         break
-                print()
+                if i == 0: print()
     if show_accuracy:
         print('acc:', acc / len(data_source) * 100.00)
     return total_loss / (len(data_source) - 1)
