@@ -355,7 +355,7 @@ def show_strings(source):
     print()
 
 if False:
-    tt1, tt2 = get_batch_babi(babi_val_txt, babi_val_tgt, 0, flatten_target=False)
+    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
 
     print(tt1,'\n',tt2)
     print(tt1.size(), tt2.size(),'t,t')
@@ -448,7 +448,7 @@ def train():
                 TEXT.vocab.itos[prediction_text[-2].item()],
                 TEXT.vocab.itos[prediction_text[-1].item()],
                 '['+TEXT.vocab.itos[targets[-1].item()]+']')
-            print( output.size(), targets.size(), targets[0].item(),prediction_text[-1].item(), 'p,tt')
+            print(output.size(), targets.size(), targets[0].item(),prediction_text[-1].item(), 'p,tt')
 
         loss = criterion(output.view( -1, ntokens), targets) ### <---
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
@@ -483,7 +483,9 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
             data, targets = get_batch_babi(data_source, data_tgt, i)
             output = eval_model(data)
             output_flat = output.view(-1, ntokens)
-            output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
+            output_flat_t = output.contiguous().view(-1, ntokens)
+            #output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
+
             output_argmax = torch.argmax(output_flat_t, dim=-1)
 
             total_loss += len(data) * criterion(output_flat, targets).item()
