@@ -447,13 +447,14 @@ def train():
         #predictions = output
         prediction_text = torch.argmax(output.view(-1,ntokens), dim=1)
 
+        index = 0
         if (not ten_k or i % 100 == 0) and True:
             print(
-                TEXT.vocab.itos[prediction_text[-3].item()],
-                TEXT.vocab.itos[prediction_text[-2].item()],
-                TEXT.vocab.itos[prediction_text[-1].item()],
-                '['+TEXT.vocab.itos[targets[-1].item()]+']')
-            print(output.size(), targets.size(), targets[0].item(),prediction_text[-1].item(), 'p,tt')
+                TEXT.vocab.itos[prediction_text[index].item()],
+                TEXT.vocab.itos[prediction_text[index + 1].item()],
+                TEXT.vocab.itos[prediction_text[index + 2].item()],
+                '['+TEXT.vocab.itos[targets[index].item()]+']')
+            print(output.size(), targets.size(), targets[0].item(),prediction_text[index].item(), 'p,tt')
 
         loss = criterion(output.view( -1, ntokens), targets) ### <---
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
@@ -504,7 +505,7 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
 
             if saved_dim == -1 or saved_dim == out_dim:
                 saved_dim = out_dim
-                if i == 0: print(out_dim, 'dim ', end='|')
+                if i == 0: print(bptt, out_dim, 'dim ', end='|')
                 for ii in range(0, 10): #output_flat.size(0)):
                     text = torch.argmax(output_flat_t, dim=-1)[ii].item()
                     if text != 0:
