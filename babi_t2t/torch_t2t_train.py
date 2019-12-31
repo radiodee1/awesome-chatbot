@@ -308,7 +308,7 @@ eval_batch_size = 10
 
 size_tgt = 24 #40000
 size_src = -1
-babi_train_txt, babi_train_tgt, m_train = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src,print_to_screen=True, separate_ques=True)
+babi_train_txt, babi_train_tgt, m_train = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src,print_to_screen=False, separate_ques=True)
 babi_val_txt, babi_val_tgt, m_val = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
 babi_test_txt, babi_test_tgt, m_test = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
 
@@ -529,7 +529,7 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
                 if i == 0: print()
     if show_accuracy:
         acc_tot = acc / len(data_source) * 100.0
-        print('acc:', acc_tot, 'lr', scheduler.get_lr()[0])
+        print('acc:', acc_tot, 'lr', scheduler.get_lr()[0], label)
     return total_loss / (len(data_source) - 1), acc_tot
 
 ######################################################################
