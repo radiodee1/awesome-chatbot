@@ -163,7 +163,7 @@ parser = argparse.ArgumentParser(
     description='Fine-tune a Transformer.',
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
-parser.add_argument('--task', default=1, help='use specific question-set/task')
+parser.add_argument('--task', default=1, help='use specific question-set/task', type=int)
 parser.add_argument('--lr', default=0.1, help='learning rate', type=float)
 parser.add_argument('--epochs', default=30, help='number of epochs', type=int)
 parser.add_argument('--no_scheduler', action='store_false',help='cancel learning rate decay')
@@ -227,10 +227,14 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             target_data.extend(target_data_tmp)
         else:
             z.story.extend(z.query)
-            #z.story.extend([ '<eos>'])
+            z.story.extend([ '<eos>'])
             #z.story.extend('.')
             new_data.append(z.story)
-            target_data.append([z.answer])
+            target_data_tmp.extend(z.answer)
+            target_data_tmp.append('<eos>')
+            target_data.append(target_data_tmp)
+            print(target_data)
+
         pass
     if print_to_screen: print(len(new_data[0]),'nd')
     m = max([len(x) for x in new_data])
@@ -277,7 +281,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             p[0, :len(z[0])] = z
             new_n_data[jj, :] = p
             ## do target ##
-            y = TEXT.numericalize(target_data[jj])
+            y = TEXT.numericalize([target_data[jj]])
             if y.size(0) > 1:
                 y = y.t()
             q = torch.zeros(1, n, dtype=torch.long) #padded_target[:]
@@ -356,7 +360,7 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
-if False:
+if True:
     tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
 
     print(tt1,'\n',tt2)
