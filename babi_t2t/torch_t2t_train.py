@@ -233,7 +233,6 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             target_data_tmp.extend(z.answer)
             target_data_tmp.append('<eos>')
             target_data.append(target_data_tmp)
-            print(target_data)
 
         pass
     if print_to_screen: print(len(new_data[0]),'nd')
@@ -360,7 +359,7 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
-if True:
+if False:
     tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
 
     print(tt1,'\n',tt2)
