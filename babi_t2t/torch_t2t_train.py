@@ -290,7 +290,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
         new_n_data = new_n_data.t().contiguous()
         target_n_data = target_n_data.t().contiguous()
 
-    return new_n_data.to(device), target_n_data.to(device)
+    return new_n_data.to(device), target_n_data.to(device), m
 
 
 def batchify(data, bsz):
@@ -308,9 +308,9 @@ eval_batch_size = 10
 
 size_tgt = 24 #40000
 size_src = -1
-babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src,print_to_screen=True, separate_ques=True)
-babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
-babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
+babi_train_txt, babi_train_tgt, m_train = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src,print_to_screen=True, separate_ques=True)
+babi_val_txt, babi_val_tgt, m_val = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
+babi_test_txt, babi_test_tgt, m_test = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
 
 ######################################################################
 # Functions to generate input and target sequence
@@ -335,9 +335,11 @@ babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt
 bptt = 35
 def get_batch_babi(source, target, i, print_to_screen=False, bptt=35, flatten_target=True):
     #seq_len = min(bptt, len(source) - 1 - i)
-    seq_len = len(source[0])
-    data = source[i:i + seq_len]
-    target = target[i:i + seq_len]
+    seq_len = bptt #len(source[0])
+    #seq_len = min(bptt, len(source) )
+
+    data = source[:,i:i + seq_len]
+    target = target[:,i:i + seq_len]
     if flatten_target:
         target = target.view(-1)
     if print_to_screen: print(data, target, i, 'dti')
@@ -360,7 +362,7 @@ def show_strings(source):
     print()
 
 if False:
-    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, flatten_target=False)
+    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, bptt=m_train,flatten_target=False)
 
     print(tt1,'\n',tt2)
     print(tt1.size(), tt2.size(),'t,t')
@@ -441,24 +443,31 @@ def train():
     total_loss = 0.
     start_time = time.time()
     ntokens = len(TEXT.vocab.stoi)
+    bptt = 1
     for batch, i in enumerate(range(0, babi_train_txt.size(0) - 1, bptt)):
-        data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i)
+        data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i,bptt=m_train, flatten_target=False)
         bsz = data.size(0)
         optimizer.zero_grad()
         output = model(data)
 
-        #predictions = output
+        print(targets.size(),'t')
+        targets_t = targets.t()
+        print(targets_t.size(), targets.size())
         prediction_text = torch.argmax(output.view(-1,ntokens), dim=1)
 
         index = 0
         if (not ten_k or i % 100 == 0) and True:
             print(
+                'i',
+                i,
+                bptt,
                 TEXT.vocab.itos[prediction_text[index].item()],
                 TEXT.vocab.itos[prediction_text[index + 1].item()],
                 TEXT.vocab.itos[prediction_text[index + 2].item()],
-                '['+TEXT.vocab.itos[targets[index].item()]+']')
-            print(output.size(), targets.size(), targets[0].item(),prediction_text[index].item(), 'p,tt')
+                '['+TEXT.vocab.itos[targets_t[index,0].item()]+']')
+            print(prediction_text.size(), targets_t.size(), targets_t[0,0].item(),prediction_text[index].item(), 'p,tt')
 
+        targets = targets.contiguous().view(-1)
         loss = criterion(output.view( -1, ntokens), targets) ### <---
         #loss = criterion(output.view(-1, ntokens), targets) ### <---
         loss.backward()
@@ -479,7 +488,7 @@ def train():
             total_loss = 0
             start_time = time.time()
 
-def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
+def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
     eval_model.eval() # Turn on the evaluation mode
     total_loss = 0.
     ntokens = len(TEXT.vocab.stoi)
@@ -489,17 +498,18 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
     bptt = 1
     with torch.no_grad():
         for i in range(0, data_source.size(0) - 1, bptt):
-            data, targets = get_batch_babi(data_source, data_tgt, i)
+            data, targets = get_batch_babi(data_source, data_tgt, i,bptt=m_data, flatten_target=False)
             output = eval_model(data)
             output_flat = output.view(-1, ntokens)
             output_flat_t = output.contiguous().view(-1, ntokens)
             #output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
 
             output_argmax = torch.argmax(output_flat_t, dim=-1)
-
+            targets_t = targets.t()
+            targets = targets.contiguous().view(-1)
             total_loss += len(data) * criterion(output_flat, targets).item()
 
-            targets_text = targets[-1].item()
+            targets_text = targets_t
             if False:
                 print(targets.size(), torch.argmax(output_flat_t, dim=-1)[:20], 'tt,out', label)
                 print(TEXT.vocab.itos[output_argmax[0].item()], 'itos', output_argmax[0].item(),'sd', saved_dim,i)
@@ -512,10 +522,11 @@ def evaluate(eval_model, data_source, data_tgt, show_accuracy=False):
                 for ii in range(0, 10): #output_flat.size(0)):
                     text = torch.argmax(output_flat_t, dim=-1)[ii].item()
                     if text != 0:
-                        print(TEXT.vocab.itos[text], end='|')
-                    if text == targets_text and text != 0:
+                        #print(TEXT.vocab.itos[text], end='|')
+                        pass
+                    if text == targets_text[ii,0].item() and text != 0:
                         acc += 1
-                        print(TEXT.vocab.itos[text],'score acc')
+                        #print(TEXT.vocab.itos[text],'score acc')
                         break
                 if i == 0: print()
     if show_accuracy:
@@ -534,7 +545,7 @@ for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
     label = 'val'
-    val_loss = evaluate(model, babi_val_txt, babi_val_tgt)
+    val_loss = evaluate(model, babi_val_txt, babi_val_tgt, m_data=m_val)
     print('-' * 89)
     print('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} | '
           'valid ppl {:8.2f}'.format(epoch, (time.time() - epoch_start_time),
@@ -546,7 +557,7 @@ for epoch in range(1, epochs + 1):
         best_model = model
 
     label = 'tst'
-    evaluate(model, babi_test_txt, babi_test_tgt, show_accuracy=True)
+    evaluate(model, babi_test_txt, babi_test_tgt,m_data=m_test, show_accuracy=True)
 
     if not args.no_scheduler: scheduler.step()
 
