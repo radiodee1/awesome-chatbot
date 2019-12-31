@@ -211,7 +211,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
     target_data = []
     for ii in range(len(data.examples)):
         z = data.examples[ii]
-        target_data_tmp = []
+        target_data_tmp = ['<sos>']
         if not separate_ques:
             z.story.extend(z.query)
             z.story.extend('.')
@@ -226,6 +226,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             #print(z.story,'\n',target_data_tmp)
             target_data.extend(target_data_tmp)
         else:
+            z.story.insert(0, '<sos>')
             z.story.extend(z.query)
             z.story.extend([ '<eos>'])
             #z.story.extend('.')
@@ -494,6 +495,7 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
     ntokens = len(TEXT.vocab.stoi)
     acc = 0
     acc_tot = 0
+    acc_count = 0
     saved_dim = -1
     out_dim = -1
     bptt = 1
@@ -525,6 +527,7 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
                         text = torch.argmax(output_flat_t, dim=-1)[ii].item()
                         if text != 0:
                             #print(TEXT.vocab.itos[text], end='|')
+                            acc_count += 1
                             pass
                         else:
                             break
@@ -534,7 +537,7 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
                             #break
                 if i == 0 and pr_to_screen: print()
     if show_accuracy:
-        acc_tot = acc / len(data_source) * 100.0
+        acc_tot = acc / acc_count * 100.0
         print('acc:', acc_tot, 'lr', scheduler.get_lr()[0], label)
     return total_loss / (len(data_source) - 1), acc_tot
 
@@ -550,11 +553,11 @@ for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
     label = 'val'
-    val_loss, acc = evaluate(model, babi_val_txt, babi_val_tgt, m_data=m_val, show_accuracy=True)
+    val_loss, acc_val = evaluate(model, babi_val_txt, babi_val_tgt, m_data=m_val, show_accuracy=True)
     print('-' * 89)
     print('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} | '
           'valid ppl {:8.2f} | acc {:5.2f}'.format(epoch, (time.time() - epoch_start_time),
-                                     val_loss, math.exp(val_loss), acc))
+                                     val_loss, math.exp(val_loss), acc_val))
     print('-' * 89)
 
     if val_loss < best_val_loss:
