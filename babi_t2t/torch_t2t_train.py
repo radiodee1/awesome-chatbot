@@ -166,7 +166,7 @@ parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
 parser.add_argument('--task', default=1, help='use specific question-set/task', type=int)
 parser.add_argument('--lr', default=0.1, help='learning rate', type=float)
 parser.add_argument('--epochs', default=30, help='number of epochs', type=int)
-parser.add_argument('--no_scheduler', action='store_false',help='cancel learning rate decay')
+parser.add_argument('--no_scheduler', action='store_true',help='cancel learning rate decay')
 args = parser.parse_args()
 
 import torchtext
@@ -450,13 +450,13 @@ def train():
         optimizer.zero_grad()
         output = model(data)
 
-        print(targets.size(),'t')
+        #print(targets.size(),'t')
         targets_t = targets.t()
-        print(targets_t.size(), targets.size())
+        #print(targets_t.size(), targets.size())
         prediction_text = torch.argmax(output.view(-1,ntokens), dim=1)
 
         index = 0
-        if (not ten_k or i % 100 == 0) and True:
+        if (not ten_k or i % 100 == 0) and False:
             print(
                 'i',
                 i,
@@ -493,6 +493,7 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
     total_loss = 0.
     ntokens = len(TEXT.vocab.stoi)
     acc = 0
+    acc_tot = 0
     saved_dim = -1
     out_dim = -1
     bptt = 1
@@ -510,9 +511,6 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
             total_loss += len(data) * criterion(output_flat, targets).item()
 
             targets_text = targets_t
-            if False:
-                print(targets.size(), torch.argmax(output_flat_t, dim=-1)[:20], 'tt,out', label)
-                print(TEXT.vocab.itos[output_argmax[0].item()], 'itos', output_argmax[0].item(),'sd', saved_dim,i)
 
             out_dim = output.size(0)
 
@@ -530,8 +528,9 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
                         break
                 if i == 0: print()
     if show_accuracy:
-        print('acc:', acc / len(data_source) * 100.00)
-    return total_loss / (len(data_source) - 1)
+        acc_tot = acc / len(data_source) * 100.0
+        print('acc:', acc_tot, 'lr', scheduler.get_lr()[0])
+    return total_loss / (len(data_source) - 1), acc_tot
 
 ######################################################################
 # Loop over epochs. Save the model if the validation loss is the best
@@ -545,11 +544,11 @@ for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
     label = 'val'
-    val_loss = evaluate(model, babi_val_txt, babi_val_tgt, m_data=m_val)
+    val_loss, acc = evaluate(model, babi_val_txt, babi_val_tgt, m_data=m_val, show_accuracy=True)
     print('-' * 89)
     print('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} | '
-          'valid ppl {:8.2f}'.format(epoch, (time.time() - epoch_start_time),
-                                     val_loss, math.exp(val_loss)))
+          'valid ppl {:8.2f} | acc {:5.2f}'.format(epoch, (time.time() - epoch_start_time),
+                                     val_loss, math.exp(val_loss), acc))
     print('-' * 89)
 
     if val_loss < best_val_loss:
@@ -557,9 +556,12 @@ for epoch in range(1, epochs + 1):
         best_model = model
 
     label = 'tst'
-    evaluate(model, babi_test_txt, babi_test_tgt,m_data=m_test, show_accuracy=True)
+    _, acc_tst = evaluate(model, babi_test_txt, babi_test_tgt,m_data=m_test, show_accuracy=True)
 
-    if not args.no_scheduler: scheduler.step()
+    if not bool(args.no_scheduler):
+        scheduler.step()
+
+
 
 
 ######################################################################
@@ -568,8 +570,8 @@ for epoch in range(1, epochs + 1):
 #
 # Apply the best model to check the result with the test dataset.
 
-test_loss = evaluate(best_model, babi_test_txt, babi_test_tgt)
+test_loss, acc = evaluate(best_model, babi_test_txt, babi_test_tgt, m_data=m_test, show_accuracy=True)
 print('=' * 89)
-print('| End of training | test loss {:5.2f} | test ppl {:8.2f}'.format(
-    test_loss, math.exp(test_loss)))
+print('| End of training | test loss {:5.2f} | test ppl {:8.2f} | acc {:5.2f} '.format(
+    test_loss, math.exp(test_loss), acc))
 print('=' * 89)
