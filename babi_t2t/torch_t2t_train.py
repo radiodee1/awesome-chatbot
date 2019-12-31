@@ -497,6 +497,7 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
     saved_dim = -1
     out_dim = -1
     bptt = 1
+    pr_to_screen = False
     with torch.no_grad():
         for i in range(0, data_source.size(0) - 1, bptt):
             data, targets = get_batch_babi(data_source, data_tgt, i,bptt=m_data, flatten_target=False)
@@ -516,17 +517,22 @@ def evaluate(eval_model, data_source, data_tgt,m_data=1, show_accuracy=False):
 
             if saved_dim == -1 or saved_dim == out_dim:
                 saved_dim = out_dim
-                if i == 0: print(bptt, out_dim, 'dim ', end='|')
-                for ii in range(0, 10): #output_flat.size(0)):
-                    text = torch.argmax(output_flat_t, dim=-1)[ii].item()
-                    if text != 0:
-                        #print(TEXT.vocab.itos[text], end='|')
-                        pass
-                    if text == targets_text[ii,0].item() and text != 0:
-                        acc += 1
-                        #print(TEXT.vocab.itos[text],'score acc')
-                        break
-                if i == 0: print()
+                if i == 0 and pr_to_screen: print(bptt, out_dim, 'dim ', end='|')
+                #print(targets_text.size(0), targets_text.size(1),'tt')
+
+                if targets_text.size(0) > i :
+                    for ii in range(0, 10): #output_flat.size(0)):
+                        text = torch.argmax(output_flat_t, dim=-1)[ii].item()
+                        if text != 0:
+                            #print(TEXT.vocab.itos[text], end='|')
+                            pass
+                        else:
+                            break
+                        if text == targets_text[i,ii].item() and text != 0:
+                            acc += 1
+                            print(ii,TEXT.vocab.itos[text],'score acc')
+                            #break
+                if i == 0 and pr_to_screen: print()
     if show_accuracy:
         acc_tot = acc / len(data_source) * 100.0
         print('acc:', acc_tot, 'lr', scheduler.get_lr()[0], label)
