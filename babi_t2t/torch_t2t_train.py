@@ -227,17 +227,18 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             target_data.extend(target_data_tmp)
         else:
             z.story.extend(z.query)
-            z.story.extend([ '<eos>'])
+            #z.story.extend([ '<eos>'])
             #z.story.extend('.')
             new_data.append(z.story)
             target_data.append([z.answer])
         pass
-    if print_to_screen: print(new_data,'nd')
-    m = max(len(x) for x in new_data)
-    n = max(len(x[0]) for x in target_data)
+    if print_to_screen: print(len(new_data[0]),'nd')
+    m = max([len(x) for x in new_data])
+    n = max([len(x[0]) for x in target_data])
     m = max(m, size_src)
     #n = max(n, size_tgt)
     n = m
+    #print(m,'m', [len(x) for x in new_data])
     if not separate_ques:
 
         new_data = TEXT.numericalize([new_data])
@@ -262,8 +263,8 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
 
     else:
 
-        padded_data = torch.zeros(1, m, dtype=torch.long)
-        padded_target = torch.zeros(1, n, dtype=torch.long)
+        #padded_data = torch.zeros(1, m, dtype=torch.long)
+        #padded_target = torch.zeros(1, n, dtype=torch.long)
         new_n_data = torch.zeros( len(new_data), m, dtype=torch.long)
         target_n_data = torch.zeros( len(target_data), n, dtype=torch.long)
 
@@ -272,14 +273,14 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             z = TEXT.numericalize([new_data[jj]])
             if z.size(0) > 1:
                 z = z.t()
-            p = padded_data[:]
-            p[0, :z.size(1)] = z
+            p = torch.zeros(1, m, dtype=torch.long) #padded_data[:]
+            p[0, :len(z[0])] = z
             new_n_data[jj, :] = p
             ## do target ##
             y = TEXT.numericalize(target_data[jj])
             if y.size(0) > 1:
                 y = y.t()
-            q = padded_target[:]
+            q = torch.zeros(1, n, dtype=torch.long) #padded_target[:]
             q[0,:len(y[0])] = y
             target_n_data[jj, :] = q
 
@@ -304,7 +305,7 @@ eval_batch_size = 10
 
 size_tgt = 24 #40000
 size_src = -1
-babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src, separate_ques=True)
+babi_train_txt, babi_train_tgt = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src,print_to_screen=True, separate_ques=True)
 babi_val_txt, babi_val_tgt = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
 babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
 
@@ -330,7 +331,8 @@ babi_test_txt, babi_test_tgt = batchify_babi(babi_test_txt, batch_size, size_tgt
 
 bptt = 35
 def get_batch_babi(source, target, i, print_to_screen=False, bptt=35, flatten_target=True):
-    seq_len = min(bptt, len(source) - 1 - i)
+    #seq_len = min(bptt, len(source) - 1 - i)
+    seq_len = len(source[0])
     data = source[i:i + seq_len]
     target = target[i:i + seq_len]
     if flatten_target:
@@ -362,9 +364,12 @@ if False:
     #show_strings(babi_train_txt[0])
     #show_strings(babi_train_tgt[0])
 
-    show_strings(tt1.t()[0])
-    print()
-    show_strings(tt2.t()[0])
+    for i in range(tt1.size(0)):
+        print(i, tt1.size(0))
+        show_strings(tt1.t()[i])
+        print()
+        show_strings(tt2.t()[i])
+        print('-')
     exit()
 
 
