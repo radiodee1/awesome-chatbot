@@ -169,6 +169,8 @@ parser.add_argument('--epochs', default=30, help='number of epochs', type=int)
 parser.add_argument('--no_scheduler', action='store_true',help='cancel learning rate decay')
 args = parser.parse_args()
 
+print('loading')
+
 import torchtext
 
 from torchtext.data.utils import get_tokenizer
@@ -447,7 +449,7 @@ def train():
     bptt = 1
     for batch, i in enumerate(range(0, babi_train_txt.size(0) - 1, bptt)):
         data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i,bptt=m_train, flatten_target=False)
-        bsz = data.size(0)
+        #bsz = data.size(0)
         optimizer.zero_grad()
         output = model(data)
 
@@ -650,6 +652,7 @@ if False:
         print(t,'t')
     exit()
 
+print('train')
 for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
