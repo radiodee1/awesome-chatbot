@@ -405,10 +405,10 @@ def show_tensor_vals(source):
 #
 
 ntokens = len(TEXT.vocab.stoi) # the size of vocabulary
-emsize = 200 # embedding dimension
-nhid = 200 # the dimension of the feedforward network model in nn.TransformerEncoder
-nlayers = 2 # the number of nn.TransformerEncoderLayer in nn.TransformerEncoder
-nhead = 2 # the number of heads in the multiheadattention models
+emsize = 512# 200 # embedding dimension
+nhid = 512#200 # the dimension of the feedforward network model in nn.TransformerEncoder
+nlayers = 8 #2 # the number of nn.TransformerEncoderLayer in nn.TransformerEncoder
+nhead = 8#2 # the number of heads in the multiheadattention models
 dropout = 0.2 # the dropout value
 model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
 
@@ -547,7 +547,10 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
                             pass
                 if i == 0 and pr_to_screen: print()
     if show_accuracy:
-        acc_tot = acc / acc_count * 100.0
+        if acc_count > 0:
+            acc_tot = acc / acc_count * 100.0
+        else:
+            acc_tot = 0.0
         print('acc:', acc_tot, 'lr', scheduler.get_lr()[0], label)
     return total_loss / (len(data_source) - 1), acc_tot
 
