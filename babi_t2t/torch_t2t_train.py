@@ -535,6 +535,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
                             pass
                         else:
                             break
+                            pass
                         if text == targets_text[i,ii].item() and text != 0:
                             acc += 1
                             print(
@@ -543,7 +544,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
                                 TEXT.vocab.itos[text],':score acc')
                             #break
                         else:
-                            #print(text_max[:5])
+                            print(text_max[:5])
                             pass
                 if i == 0 and pr_to_screen: print()
     if show_accuracy:
