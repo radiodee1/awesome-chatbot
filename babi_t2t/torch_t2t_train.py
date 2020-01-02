@@ -185,7 +185,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 ten_k = args.tenk
 task = args.task #1 #9
-babi_train_txt, babi_val_txt, babi_test_txt = torchtext.datasets.BABI20.splits(TEXT,  root='../raw/', tenK=ten_k, task=task)
+babi_train_txt_in, babi_val_txt_in, babi_test_txt_in = torchtext.datasets.BABI20.splits(TEXT,  root='../raw/', tenK=ten_k, task=task)
 
 def find_and_parse_story(data, period=False):
     for ii in range(len(data.examples)):
@@ -203,9 +203,9 @@ def find_and_parse_story(data, period=False):
     return data
 
 
-babi_train_txt = find_and_parse_story(babi_train_txt, period=True)
-babi_val_txt = find_and_parse_story(babi_val_txt, period=True)
-babi_test_txt = find_and_parse_story(babi_test_txt, period=True)
+babi_train_txt = find_and_parse_story(babi_train_txt_in, period=True)
+babi_val_txt = find_and_parse_story(babi_val_txt_in, period=True)
+babi_test_txt = find_and_parse_story(babi_test_txt_in, period=True)
 
 TEXT.build_vocab(babi_train_txt)
 
@@ -239,7 +239,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             target_data.append(target_data_tmp)
 
         pass
-    if print_to_screen: print(len(new_data[0]),'nd')
+    if print_to_screen: print(new_data[0:5],'nd')
     m = max([len(x) for x in new_data])
     n = max([len(x[0]) for x in target_data])
     m = max(m, size_src)
@@ -293,6 +293,7 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
 
         new_n_data = new_n_data.t().contiguous()
         target_n_data = target_n_data.t().contiguous()
+        print(new_n_data[0:5], 'nnd')
 
     return new_n_data.to(device), target_n_data.to(device), m
 
@@ -312,9 +313,31 @@ eval_batch_size = 10
 
 size_tgt = 24 #40000
 size_src = -1
-babi_train_txt, babi_train_tgt, m_train = batchify_babi(babi_train_txt, batch_size,size_tgt=size_tgt, size_src=size_src,print_to_screen=False, separate_ques=True)
-babi_val_txt, babi_val_tgt, m_val = batchify_babi(babi_val_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
-babi_test_txt, babi_test_tgt, m_test = batchify_babi(babi_test_txt, batch_size, size_tgt=size_tgt, size_src=size_src, separate_ques=True)
+
+print('train')
+babi_train_txt, babi_train_tgt, m_train = batchify_babi(
+    babi_train_txt,
+    batch_size,
+    size_tgt=size_tgt,
+    size_src=size_src,
+    print_to_screen=False,
+    separate_ques=True)
+
+print('val')
+babi_val_txt, babi_val_tgt, m_val = batchify_babi(
+    babi_val_txt,
+    batch_size,
+    size_tgt=size_tgt,
+    size_src=size_src,
+    separate_ques=True)
+
+print('tst')
+babi_test_txt, babi_test_tgt, m_test = batchify_babi(
+    babi_test_txt,
+    batch_size,
+    size_tgt=size_tgt,
+    size_src=size_src,
+    separate_ques=True)
 
 ######################################################################
 # Functions to generate input and target sequence
@@ -367,8 +390,13 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
-if False:
+if True:
     label = 'pre'
+    print(babi_train_txt_in.examples[0:5])
+
+    for i in babi_train_txt_in.examples[0:5]:
+        print(i.story)
+    exit()
     tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 5, bptt=1,flatten_target=False)
 
     print(tt1,'\n',tt2)
