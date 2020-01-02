@@ -315,7 +315,7 @@ eval_batch_size = 10
 size_tgt = 24 #40000
 size_src = -1
 
-print('train')
+print('load train')
 babi_train_txt, babi_train_tgt, m_train = batchify_babi(
     babi_train_txt,
     batch_size,
@@ -324,7 +324,7 @@ babi_train_txt, babi_train_tgt, m_train = batchify_babi(
     print_to_screen=False,
     separate_ques=True)
 
-print('val')
+print('load val')
 babi_val_txt, babi_val_tgt, m_val = batchify_babi(
     babi_val_txt,
     batch_size,
@@ -332,7 +332,7 @@ babi_val_txt, babi_val_tgt, m_val = batchify_babi(
     size_src=size_src,
     separate_ques=True)
 
-print('tst')
+print('load tst')
 babi_test_txt, babi_test_tgt, m_test = batchify_babi(
     babi_test_txt,
     batch_size,
@@ -463,7 +463,7 @@ if args.small:
 
 model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
 
-print(m_train, 'mtrain')
+#print(m_train, 'mtrain')
 
 ######################################################################
 # Run the model
@@ -631,7 +631,7 @@ if False:
         print(t,'t')
     exit()
 
-print('train')
+#print('train')
 acc_val = 0.0
 for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
