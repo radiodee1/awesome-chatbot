@@ -340,11 +340,6 @@ babi_test_txt, babi_test_tgt, m_test = batchify_babi(
     size_src=size_src,
     separate_ques=True)
 
-if False:
-    babi_train_txt = babi_val_txt
-    babi_train_tgt = babi_val_tgt
-    babi_test_txt = babi_val_txt
-    babi_test_tgt = babi_val_tgt
 
 ######################################################################
 # Functions to generate input and target sequence
