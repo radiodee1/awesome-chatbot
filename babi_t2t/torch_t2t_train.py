@@ -538,10 +538,10 @@ def train():
             elapsed = time.time() - start_time
             print('| epoch {:3d} | {:5d}/{:5d} batches | '
                   'lr {:02.2f} | ms/batch {:5.2f} | '
-                  'loss {:5.2f} | ppl {:8.2f}'.format(
+                  'loss {:5.2f} | ppl {:8.2f} | last acc val {:5.2f}'.format(
                     epoch, batch, len(babi_train_txt) // bptt, scheduler.get_lr()[0],
                     elapsed * 1000 / log_interval,
-                    cur_loss, math.exp(cur_loss)))
+                    cur_loss, math.exp(cur_loss), acc_val))
             total_loss = 0
             start_time = time.time()
 
@@ -611,7 +611,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
             acc_tot = acc / acc_count * 100.0
         else:
             acc_tot = 0.0
-        print('acc:', acc_tot, 'lr', scheduler.get_lr()[0], label)
+        print('acc:', acc_tot, 'lr:', scheduler.get_lr()[0],'loss:', total_loss/(len(data_source) -1) ,  ':'+label+':')
     return total_loss / (len(data_source) - 1), acc_tot
 
 
@@ -632,6 +632,7 @@ if False:
     exit()
 
 print('train')
+acc_val = 0.0
 for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
@@ -664,6 +665,6 @@ for epoch in range(1, epochs + 1):
 
 test_loss, acc = evaluate(best_model, babi_test_txt, babi_test_tgt, m_data=1, show_accuracy=True)
 print('=' * 89)
-print('| End of training | test loss {:5.2f} | test ppl {:8.2f} | acc {:5.2f} '.format(
+print('| End of training | test loss {:5.2f} | test ppl {:8.2f} | acc tst {:5.2f} '.format(
     test_loss, math.exp(test_loss), acc))
 print('=' * 89)
