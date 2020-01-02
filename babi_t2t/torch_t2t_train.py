@@ -167,6 +167,7 @@ parser.add_argument('--task', default=1, help='use specific question-set/task', 
 parser.add_argument('--lr', default=0.1, help='learning rate', type=float)
 parser.add_argument('--epochs', default=30, help='number of epochs', type=int)
 parser.add_argument('--no_scheduler', action='store_true',help='cancel learning rate decay')
+parser.add_argument('--small', action='store_true', help='use modest hparams')
 args = parser.parse_args()
 
 print('loading')
@@ -340,9 +341,11 @@ def get_batch_babi(source, target, i, print_to_screen=False, bptt=35, flatten_ta
     #seq_len = min(bptt, len(source) - 1 - i)
     seq_len = bptt #len(source[0])
     #seq_len = min(bptt, len(source) )
-
-    data = source[:,i:i + seq_len]
-    target = target[:,i:i + seq_len]
+    #data = source[:,i:i + seq_len]
+    #target = target[:,i:i + seq_len]
+    data = source[:, i : i +  seq_len]
+    target = target[:, i : i  + seq_len]
+    #print(label, bptt, i, 'lbl', data.size())
     if flatten_target:
         target = target.view(-1)
     if print_to_screen: print(data, target, i, 'dti')
@@ -365,7 +368,8 @@ def show_strings(source):
     print()
 
 if False:
-    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 0, bptt=m_train,flatten_target=False)
+    label = 'pre'
+    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 5, bptt=1,flatten_target=False)
 
     print(tt1,'\n',tt2)
     print(tt1.size(), tt2.size(),'t,t')
@@ -374,9 +378,9 @@ if False:
 
     for i in range(tt1.size(0)):
         print(i, tt1.size(0))
-        show_strings(tt1.t()[i])
+        show_strings(tt1.t())
         print()
-        show_strings(tt2.t()[i])
+        show_strings(tt2.t())
         print('-')
     exit()
 
@@ -412,8 +416,17 @@ nhid = 384#200 # the dimension of the feedforward network model in nn.Transforme
 nlayers = 4 #2 # the number of nn.TransformerEncoderLayer in nn.TransformerEncoder
 nhead = 4 #2 # the number of heads in the multiheadattention models
 dropout = 0.2 # the dropout value
+
+if args.small:
+    print('modest hparams')
+    emsize = 200
+    nhid = 200
+    nlayers = 2
+    nhead = 2
+
 model = TransformerModel(ntokens, emsize, nhead, nhid, nlayers, dropout).to(device)
 
+print(m_train, 'mtrain')
 
 ######################################################################
 # Run the model
@@ -446,9 +459,11 @@ def train():
     total_loss = 0.
     start_time = time.time()
     ntokens = len(TEXT.vocab.stoi)
-    bptt = 1
-    for batch, i in enumerate(range(0, babi_train_txt.size(0) - 1, bptt)):
-        data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i,bptt=m_train, flatten_target=False)
+    bptt = 1#m_train #1
+    for batch, i in enumerate(range(0, babi_train_txt.size(1) - 1, bptt)):
+        #print(i, 'progress', babi_train_txt.size())
+        data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i, bptt=bptt, flatten_target=False)
+        #print(data.size(), targets.size(),'d,t')
         #bsz = data.size(0)
         optimizer.zero_grad()
         output = model(data)
@@ -500,15 +515,16 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
     acc_count = 0
     saved_dim = -1
     out_dim = -1
-    bptt = 1
+    bptt = m_data #1
 
     data_source_size = data_source.size(0) - 1
     pr_to_screen = False
     with torch.no_grad():
         for i in range(0, data_source_size, bptt):
-            data, targets = get_batch_babi(data_source, data_tgt, i,bptt=m_data, flatten_target=False)
+            data, targets = get_batch_babi(data_source, data_tgt, i,bptt=bptt, flatten_target=False)
             output = eval_model(data)
-            #print(output.size(), 'out')
+            #output = output.squeeze(1)
+            print(output.size(), 'out', label)
             output_flat = output.view(-1, ntokens)
             output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
             #output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
@@ -521,13 +537,15 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
             targets_text = targets_t
 
             out_dim = output.size(0)
-
+            print(targets_text.size(), i, 'eval')
             if saved_dim == -1 or saved_dim == out_dim:
                 saved_dim = out_dim
                 if i == 0 and pr_to_screen: print(bptt, out_dim, 'dim ', end='|')
                 #print(targets_text.size(0), targets_text.size(1),'tt')
 
-                if targets_text.size(0) > i :
+                if targets_text.size(0) > i or bptt == 1:
+                    index_i = i
+                    if bptt == 1: index_i = 0
                     for ii in range(0, 10): #output_flat.size(0)):
                         text = torch.argmax(output_flat_t, dim=-1)[ii].item()
 
@@ -538,7 +556,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
                         else:
                             break
                             pass
-                        if text == targets_text[i,ii].item() and text != 0:
+                        if text == targets_text[index_i,ii].item() and text != 0:
                             acc += 1
                             print(
                                 text_max[:5],
@@ -558,84 +576,6 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
     return total_loss / (len(data_source) - 1), acc_tot
 
 
-def mult_word(eval_model, data_source, data_tgt, index=0, m_data=1, show_accuracy=False, append=None):
-    eval_model.eval()  # Turn on the evaluation mode
-    total_loss = 0.
-    ntokens = len(TEXT.vocab.stoi)
-    acc = 0
-    acc_tot = 0
-    acc_count = 0
-    saved_dim = -1
-    out_dim = -1
-    bptt = 1
-    if append is not None:
-        data_source_size = 1
-        m = [data_source.size(j) for j in range(2)]
-        m[0] += 1
-        m[1] = 1
-        for n in range(data_source.size(0)):
-            if data_source[n, index].item() == 0:
-                break
-        data_source_append = torch.zeros(m, dtype=torch.long)
-        data_source_append[0:m[0] - 1, 0] = data_source[:, index]
-        data_source_append[n, 0] = torch.tensor(append, dtype=torch.long)
-
-        data_target_append = torch.zeros(m, dtype=torch.long)
-        data_target_append[0:m[0] -1,0] = data_tgt[:, index]
-
-        data_source = data_source_append
-        data_tgt = data_target_append#[:, index]
-        m_data += 1
-        print(data_target_append.size(), data_tgt.size(),data_source.size(), m_data,index,n,'data')
-        # exit()
-    else:
-        data_source_size = data_source.size(0) - 1
-    pr_to_screen = False
-    ##########################
-    with torch.no_grad():
-        i = index #for i in range(0, data_source_size, bptt):
-        data, targets = get_batch_babi(data_source, data_tgt, i, bptt=m_data, flatten_target=False)
-        output = eval_model(data)
-        output_flat = output.view(-1, ntokens)
-        output_flat_t = output.contiguous().view(-1, ntokens)
-        # output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
-
-        # output_argmax = torch.argmax(output_flat_t, dim=-1)
-        targets_t = targets.t()
-        targets = targets.contiguous().view(-1)
-        total_loss += len(data) * criterion(output_flat, targets).item()
-
-        targets_text = targets_t
-
-        out_dim = output.size(0)
-
-        if saved_dim == -1 or saved_dim == out_dim:
-            saved_dim = out_dim
-            if i == 0 and pr_to_screen: print(bptt, out_dim, 'dim ', end='|')
-            # print(targets_text.size(0), targets_text.size(1),'tt')
-
-            if targets_text.size(0) > i:
-                for ii in range(0, 10):  # output_flat.size(0)):
-                    text = torch.argmax(output_flat_t, dim=-1)[ii].item()
-
-                    text_max = torch.argmax(output_flat_t, dim=-1)
-                    if text != 0:
-                        acc_count += 1
-                        pass
-                    else:
-                        break
-                    if text == targets_text[i, ii].item() and text != 0:
-                        acc += 1
-                        print(
-                            text_max[:5],
-                            ii,
-                            TEXT.vocab.itos[text], ':score acc')
-                        # break
-            if i == 0 and pr_to_screen: print()
-    if show_accuracy:
-        acc_tot = acc / acc_count * 100.0
-        print('acc:', acc_tot, 'lr', scheduler.get_lr()[0], label)
-    return targets_text[0,0].item(), total_loss / (len(data_source) - 1), acc_tot
 
 
 ######################################################################
@@ -657,7 +597,7 @@ for epoch in range(1, epochs + 1):
     epoch_start_time = time.time()
     train()
     label = 'val'
-    val_loss, acc_val = evaluate(model, babi_val_txt, babi_val_tgt, m_data=m_val, show_accuracy=True)
+    val_loss, acc_val = evaluate(model, babi_val_txt, babi_val_tgt, m_data=1, show_accuracy=True)
     print('-' * 89)
     print('| end of epoch {:3d} | time: {:5.2f}s | valid loss {:5.2f} | '
           'valid ppl {:8.2f} | acc {:5.2f}'.format(epoch, (time.time() - epoch_start_time),
@@ -669,7 +609,7 @@ for epoch in range(1, epochs + 1):
         best_model = model
 
     label = 'tst'
-    _, acc_tst = evaluate(model, babi_test_txt, babi_test_tgt, m_data=m_test, show_accuracy=True)
+    _, acc_tst = evaluate(model, babi_test_txt, babi_test_tgt, m_data=1, show_accuracy=True)
 
     if not bool(args.no_scheduler):
         scheduler.step()
@@ -683,7 +623,7 @@ for epoch in range(1, epochs + 1):
 #
 # Apply the best model to check the result with the test dataset.
 
-test_loss, acc = evaluate(best_model, babi_test_txt, babi_test_tgt, m_data=m_test, show_accuracy=True)
+test_loss, acc = evaluate(best_model, babi_test_txt, babi_test_tgt, m_data=1, show_accuracy=True)
 print('=' * 89)
 print('| End of training | test loss {:5.2f} | test ppl {:8.2f} | acc {:5.2f} '.format(
     test_loss, math.exp(test_loss), acc))
