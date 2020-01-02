@@ -280,20 +280,21 @@ def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, pri
             z = TEXT.numericalize([new_data[jj]])
             if z.size(0) > 1:
                 z = z.t()
-            p = torch.zeros(1, m, dtype=torch.long) #padded_data[:]
+            p = torch.zeros(1, m, dtype=torch.long)
             p[0, :len(z[0])] = z
             new_n_data[jj, :] = p
             ## do target ##
             y = TEXT.numericalize([target_data[jj]])
             if y.size(0) > 1:
                 y = y.t()
-            q = torch.zeros(1, n, dtype=torch.long) #padded_target[:]
+            q = torch.zeros(1, n, dtype=torch.long)
             q[0,:len(y[0])] = y
             target_n_data[jj, :] = q
 
         new_n_data = new_n_data.t().contiguous()
+        #new_n_data = new_n_data.contiguous()
         target_n_data = target_n_data.t().contiguous()
-        print(new_n_data[0:5], 'nnd')
+        #print(new_n_data.t()[0:5], 't-nnd')
 
     return new_n_data.to(device), target_n_data.to(device), m
 
@@ -338,6 +339,12 @@ babi_test_txt, babi_test_tgt, m_test = batchify_babi(
     size_tgt=size_tgt,
     size_src=size_src,
     separate_ques=True)
+
+if False:
+    babi_train_txt = babi_val_txt
+    babi_train_tgt = babi_val_tgt
+    babi_test_txt = babi_val_txt
+    babi_test_tgt = babi_val_tgt
 
 ######################################################################
 # Functions to generate input and target sequence
@@ -390,19 +397,21 @@ def show_strings(source):
             print(TEXT.vocab.itos[i], end=' | ')
     print()
 
-if True:
+if False:
     label = 'pre'
-    print(babi_train_txt_in.examples[0:5])
+    #print(babi_train_txt_in.examples[0:5])
 
-    for i in babi_train_txt_in.examples[0:5]:
-        print(i.story)
+    #for i in babi_train_txt_in.examples[0:5]:
+    #    print(i.story)
     exit()
-    tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, 5, bptt=1,flatten_target=False)
+    for i in range(5):
+        tt1, tt2 = get_batch_babi(babi_train_txt, babi_train_tgt, i, bptt=1,flatten_target=False)
 
-    print(tt1,'\n',tt2)
+        print(tt1.t(),'\n',tt2.t()[0])
     print(tt1.size(), tt2.size(),'t,t')
     #show_strings(babi_train_txt[0])
     #show_strings(babi_train_tgt[0])
+    exit()
 
     for i in range(tt1.size(0)):
         print(i, tt1.size(0))
@@ -488,8 +497,10 @@ def train():
     start_time = time.time()
     ntokens = len(TEXT.vocab.stoi)
     bptt = 1#m_train #1
-    for batch, i in enumerate(range(0, babi_train_txt.size(1) - 1, bptt)):
+    babi_train_txt_size = babi_train_txt.size(1) -1
+    for batch, i in enumerate(range(0, babi_train_txt_size, bptt)):
         #print(i, 'progress', babi_train_txt.size())
+        #babi_train_txt_t = babi_train_txt.t()
         data, targets = get_batch_babi(babi_train_txt, babi_train_tgt, i, bptt=bptt, flatten_target=False)
         #print(data.size(), targets.size(),'d,t')
         #bsz = data.size(0)
@@ -552,7 +563,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
             data, targets = get_batch_babi(data_source, data_tgt, i,bptt=bptt, flatten_target=False)
             output = eval_model(data)
             #output = output.squeeze(1)
-            print(output.size(), 'out', label)
+            #print(output.size(), 'out', label)
             output_flat = output.view(-1, ntokens)
             output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
             #output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
@@ -565,7 +576,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
             targets_text = targets_t
 
             out_dim = output.size(0)
-            print(targets_text.size(), i, 'eval')
+            #print(targets_text.size(), i, 'eval')
             if saved_dim == -1 or saved_dim == out_dim:
                 saved_dim = out_dim
                 if i == 0 and pr_to_screen: print(bptt, out_dim, 'dim ', end='|')
