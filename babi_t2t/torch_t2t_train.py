@@ -69,7 +69,6 @@ class TransformerModel(nn.Module):
         self.encoder = nn.Embedding(ntoken, ninp)
         self.ninp = ninp
         self.decoder = nn.Linear(ninp, ntoken)
-        #self.softmax = nn.Softmax(dim=2)
 
         self.init_weights()
 
@@ -94,8 +93,7 @@ class TransformerModel(nn.Module):
         src = self.pos_encoder(src)
         output = self.transformer_encoder(src, self.src_mask)
         output = self.decoder(output)
-        #output = self.softmax(output)
-        #output = torch.argmax(output, dim=-1) ## -3
+
         return output
 
 
@@ -443,7 +441,7 @@ def show_tensor_vals(source):
 #
 
 ntokens = len(TEXT.vocab.stoi) # the size of vocabulary
-emsize = 384# 200 # embedding dimension
+emsize = 40 #384# 200 # embedding dimension
 nhid = 384#200 # the dimension of the feedforward network model in nn.TransformerEncoder
 nlayers = 4 #2 # the number of nn.TransformerEncoderLayer in nn.TransformerEncoder
 nhead = 4 #2 # the number of heads in the multiheadattention models
@@ -451,7 +449,7 @@ dropout = 0.2 # the dropout value
 
 if args.small:
     print('modest hparams')
-    emsize = 200
+    emsize = 40 #200
     nhid = 200
     nlayers = 2
     nhead = 2
@@ -502,6 +500,7 @@ def train():
         optimizer.zero_grad()
         output = model(data)
 
+        #output = output.transpose(1,0)
         #print(output.size(),'os')
         targets_t = targets.t()
         #print(targets_t.size(), targets.size())
@@ -559,9 +558,11 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
             output = eval_model(data)
             #output = output.squeeze(1)
             #print(output.size(), 'out', label)
+            #output = output.t().contiguous()
             output_flat = output.view(-1, ntokens)
             output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
-            #output_flat_t = output.transpose(1,0).contiguous().view(-1, ntokens)
+            #output_flat_t = output.contiguous().view(-1, ntokens)
+            #print(output_flat_t.size(),'of')
 
             #output_argmax = torch.argmax(output_flat_t, dim=-1)
             targets_t = targets.t()
@@ -576,7 +577,7 @@ def evaluate(eval_model, data_source, data_tgt, m_data=1, show_accuracy=False):
                 saved_dim = out_dim
                 if i == 0 and pr_to_screen: print(bptt, out_dim, 'dim ', end='|')
                 #print(targets_text.size(0), targets_text.size(1),'tt')
-
+                #print(model.encoder.weight.data.size(),'enc')
                 if targets_text.size(0) > i or bptt == 1:
                     index_i = i
                     if bptt == 1: index_i = 0
