@@ -1,12 +1,7 @@
 #!/usr/bin/python3
 
 import aiml
-import sys
 
-if not sys.warnoptions:
-    import warnings, os
-    warnings.simplefilter("ignore")
-    os.environ["PYTHONWARNINGS"] = "ignore" # Also affect subprocesses
 
 # Create the kernel and learn AIML files
 kernel = aiml.Kernel()
