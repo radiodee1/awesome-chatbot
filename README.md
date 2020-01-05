@@ -96,6 +96,12 @@ Compiling pytorch was not trivial and took several tries.
 Also interestingly each reply from the chatbot takes ten to fifteen seconds. 
 I have yet to determine if this makes the deployed model unusable.
 
+1/5/2020 - I have a version of the gpt-2 model that refers to an aiml file before giving an answer. 
+This is an experimental file that is not currently used in any of my Raspberry Pi setups.
+The idea is that using a single aiml file you could give the gpt-2 chatbot more specific instructions about how to answer particular questions.
+The model answers random questions with the sort of answer you would expect from a model trained on Reddit data,
+but answers the questions found in the aiml file with the specific answers in the aiml.
+
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
