@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # -*- coding: utf-8 -*-
 """
 Chatbot Tutorial
@@ -98,8 +100,10 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import sys
+sys.path.append('..')
 import torch
-from torch.jit import script, trace
+#from torch.jit import script, trace
 import torch.nn as nn
 from torch import optim
 import torch.nn.functional as F
@@ -112,7 +116,8 @@ import codecs
 from io import open
 import itertools
 import math
-
+import argparse
+from settings import hparams
 
 USE_CUDA = False # torch.cuda.is_available()
 device = torch.device("cuda" if USE_CUDA else "cpu")
@@ -142,8 +147,13 @@ device = torch.device("cuda" if USE_CUDA else "cpu")
 # original format.
 #
 
+teacher_forcing_ratio = 0.0
+checkpoint = None
+
+raw_dir = '../raw/'
+
 corpus_name = "cornell movie-dialogs corpus"
-corpus = os.path.join("data", corpus_name)
+corpus = os.path.join(raw_dir, corpus_name)
 
 def printLines(file, n=10):
     with open(file, 'rb') as datafile:
@@ -226,36 +236,40 @@ def extractSentencePairs(conversations):
 # *formatted_movie_lines.txt*.
 #
 
-# Define path to new file
-datafile = os.path.join(corpus, "formatted_movie_lines.txt")
+datafile = None
 
-delimiter = '\t'
-# Unescape the delimiter
-delimiter = str(codecs.decode(delimiter, "unicode_escape"))
+def vocab_and_sentences():
+    global datafile
+    # Define path to new file
+    datafile = os.path.join(hparams['data_dir'], "formatted_movie_lines.txt")
 
-# Initialize lines dict, conversations list, and field ids
-lines = {}
-conversations = []
-MOVIE_LINES_FIELDS = ["lineID", "characterID", "movieID", "character", "text"]
-MOVIE_CONVERSATIONS_FIELDS = ["character1ID", "character2ID", "movieID", "utteranceIDs"]
+    delimiter = '\t'
+    # Unescape the delimiter
+    delimiter = str(codecs.decode(delimiter, "unicode_escape"))
 
-# Load lines and process conversations
-print("\nProcessing corpus...")
-lines = loadLines(os.path.join(corpus, "movie_lines.txt"), MOVIE_LINES_FIELDS)
-print("\nLoading conversations...")
-conversations = loadConversations(os.path.join(corpus, "movie_conversations.txt"),
-                                  lines, MOVIE_CONVERSATIONS_FIELDS)
+    # Initialize lines dict, conversations list, and field ids
+    lines = {}
+    conversations = []
+    MOVIE_LINES_FIELDS = ["lineID", "characterID", "movieID", "character", "text"]
+    MOVIE_CONVERSATIONS_FIELDS = ["character1ID", "character2ID", "movieID", "utteranceIDs"]
 
-# Write new csv file
-print("\nWriting newly formatted file...")
-with open(datafile, 'w', encoding='utf-8') as outputfile:
-    writer = csv.writer(outputfile, delimiter=delimiter)
-    for pair in extractSentencePairs(conversations):
-        writer.writerow(pair)
+    # Load lines and process conversations
+    print("\nProcessing corpus...")
+    lines = loadLines(os.path.join(corpus, "movie_lines.txt"), MOVIE_LINES_FIELDS)
+    print("\nLoading conversations...")
+    conversations = loadConversations(os.path.join(corpus, "movie_conversations.txt"),
+                                      lines, MOVIE_CONVERSATIONS_FIELDS)
 
-# Print a sample of lines
-print("\nSample lines from file:")
-printLines(datafile)
+    # Write new csv file
+    print("\nWriting newly formatted file...")
+    with open(datafile, 'w', encoding='utf-8') as outputfile:
+        writer = csv.writer(outputfile, delimiter=delimiter)
+        for pair in extractSentencePairs(conversations):
+            writer.writerow(pair)
+
+    # Print a sample of lines
+    print("\nSample lines from file:")
+    printLines(datafile)
 
 
 ######################################################################
@@ -396,14 +410,19 @@ def loadPrepareData(corpus, corpus_name, datafile, save_dir):
     print("Counted words:", voc.num_words)
     return voc, pairs
 
-
-# Load/Assemble voc and pairs
-save_dir = os.path.join("data", "save")
-voc, pairs = loadPrepareData(corpus, corpus_name, datafile, save_dir)
-# Print some pairs to validate
-print("\npairs:")
-for pair in pairs[:10]:
-    print(pair)
+voc = None
+pairs = None
+def vocab_and_sentences_pairs():
+    #global voc
+    global pairs
+    # Load/Assemble voc and pairs
+    save_dir = hparams['save_dir'] # os.path.join("data", "save")
+    voc, pairs = loadPrepareData(corpus, corpus_name, datafile, save_dir)
+    # Print some pairs to validate
+    print("\npairs:")
+    for pair in pairs[:10]:
+        print(pair)
+    return voc
 
 
 ######################################################################
@@ -449,9 +468,11 @@ def trimRareWords(voc, pairs, MIN_COUNT):
     print("Trimmed from {} pairs to {}, {:.4f} of total".format(len(pairs), len(keep_pairs), len(keep_pairs) / len(pairs)))
     return keep_pairs
 
-
-# Trim voc and pairs
-pairs = trimRareWords(voc, pairs, MIN_COUNT)
+def vocab_and_sentences_trim_rare(voc):
+    # Trim voc and pairs
+    #global voc
+    global pairs
+    pairs = trimRareWords(voc, pairs, MIN_COUNT)
 
 
 ######################################################################
@@ -554,17 +575,17 @@ def batch2TrainData(voc, pair_batch):
     output, mask, max_target_len = outputVar(output_batch, voc)
     return inp, lengths, output, mask, max_target_len
 
+def vocab_and_sentences_batches(voc):
+    # Example for validation
+    small_batch_size = 5
+    batches = batch2TrainData(voc, [random.choice(pairs) for _ in range(small_batch_size)])
+    input_variable, lengths, target_variable, mask, max_target_len = batches
 
-# Example for validation
-small_batch_size = 5
-batches = batch2TrainData(voc, [random.choice(pairs) for _ in range(small_batch_size)])
-input_variable, lengths, target_variable, mask, max_target_len = batches
-
-print("input_variable:", input_variable)
-print("lengths:", lengths)
-print("target_variable:", target_variable)
-print("mask:", mask)
-print("max_target_len:", max_target_len)
+    print("input_variable:", input_variable)
+    print("lengths:", lengths)
+    print("target_variable:", target_variable)
+    print("mask:", mask)
+    print("max_target_len:", max_target_len)
 
 
 ######################################################################
@@ -863,7 +884,7 @@ class LuongAttnDecoderRNN(nn.Module):
         attn_weights = self.attn(rnn_output, encoder_outputs)
         # Multiply attention weights to encoder outputs to get new "weighted sum" context vector
         
-        print(attn_weights.size(),'attn', encoder_outputs.size(),'eo')
+        #print(attn_weights.size(),'attn', encoder_outputs.size(),'eo')
         
         context = attn_weights.bmm(encoder_outputs.transpose(0, 1))
         # Concatenate weighted context vector and GRU output using Luong eq. 5
@@ -966,6 +987,8 @@ def maskNLLLoss(inp, target, mask):
 
 def train(input_variable, lengths, target_variable, mask, max_target_len, encoder, decoder, embedding,
           encoder_optimizer, decoder_optimizer, batch_size, clip, max_length=MAX_LENGTH):
+
+    global teacher_forcing_ratio
 
     # Zero gradients
     encoder_optimizer.zero_grad()
@@ -1088,7 +1111,8 @@ def trainIters(model_name, voc, pairs, encoder, decoder, encoder_optimizer, deco
 
         # Save checkpoint
         if (iteration % save_every == 0):
-            directory = os.path.join(save_dir, model_name, corpus_name, '{}-{}_{}'.format(encoder_n_layers, decoder_n_layers, hidden_size))
+            directory = hparams['save_dir'] + '/'
+            #directory = os.path.join(save_dir, model_name, corpus_name, '{}-{}_{}'.format(encoder_n_layers, decoder_n_layers, hidden_size))
             if not os.path.exists(directory):
                 os.makedirs(directory)
             torch.save({
@@ -1100,7 +1124,7 @@ def trainIters(model_name, voc, pairs, encoder, decoder, encoder_optimizer, deco
                 'loss': loss,
                 'voc_dict': voc.__dict__,
                 'embedding': embedding.state_dict()
-            }, os.path.join(directory, '{}_{}.tar'.format(iteration, 'checkpoint')))
+            }, os.path.join(directory, '{}_{}.tar'.format(iteration, 'checkpoint_' + model_name)))
 
 
 ######################################################################
@@ -1150,7 +1174,7 @@ class GreedySearchDecoder(nn.Module):
         # Forward input through encoder model
         encoder_outputs, encoder_hidden = self.encoder(input_seq, input_length)
         # Prepare encoder's final hidden layer to be first hidden input to the decoder
-        decoder_hidden = encoder_hidden[:decoder.n_layers]
+        decoder_hidden = encoder_hidden[:self.decoder.n_layers]
         # Initialize decoder input with SOS_token
         decoder_input = torch.ones(1, 1, device=device, dtype=torch.long) * SOS_token
         # Initialize tensors to append decoded words to
@@ -1252,55 +1276,141 @@ def evaluateInput(encoder, decoder, searcher, voc):
 # models. Feel free to play with different model configurations to
 # optimize performance.
 #
+class NMT:
+    def __init__(self):
+        self.encoder = None
+        self.decoder = None
+        self.loadFilename = None
 
-# Configure models
-model_name = 'cb_model'
-attn_model = 'dot'
-#attn_model = 'general'
-#attn_model = 'concat'
-hidden_size = 500
-encoder_n_layers = 2
-decoder_n_layers = 2
-dropout = 0.1
-batch_size = 64
+        self.encoder_optimizer_sd = None
+        self.decoder_optimizer_sd = None
+        self.embedding_sd = None
+        self.encoder_sd = None
+        self.decoder_sd = None
 
-# Set checkpoint to load from; set to None if starting from scratch
-loadFilename = None
-checkpoint_iter = 4000
-#loadFilename = os.path.join(save_dir, model_name, corpus_name,
-#                            '{}-{}_{}'.format(encoder_n_layers, decoder_n_layers, hidden_size),
-#                            '{}_checkpoint.tar'.format(checkpoint_iter))
+        self.model_name = 'cb_model'
+        self.attn_model = 'dot'
+        # attn_model = 'general'
+        # attn_model = 'concat'
+        self.hidden_size = 500
+        self.encoder_n_layers = 2
+        self.decoder_n_layers = 2
+        self.dropout = 0.1
+        self.batch_size = 64
+        self.embedding = None
+        self.voc = Voc('lang')
+
+        self.do_train = False
+        self.do_record_loss = False
+        self.do_load_babi = False
+        self.do_load_recurrent = False
+        self.do_train_long = False
+        self.do_recurrent_output = False
+        self.do_skip_unk = False
+        self.do_hide_unk = False
+        self.do_interactive = False
+        pass
+        parser = argparse.ArgumentParser(description='Train some NMT values')
+        parser.add_argument('--mode', help='mode of operation. (preset, long, interactive, plot)')
+        parser.add_argument('--printable', help='a string to print during training for identification.')
+        parser.add_argument('--basename', help='base filename to use if it is different from settings file.', default='chatbot_tutorial')
+        parser.add_argument('--build-train-data', action='store_true', help='build training data for later use.')
+        parser.add_argument('--train', action='store_true', help='train model')
+        self.args = parser.parse_args()
+
+        if self.args.mode is None or self.args.mode not in ['preset', 'long', 'interactive', 'plot']:
+            self.args.mode = 'preset'
+            pass
+        if self.args.mode == 'preset':
+            ''' some preset flags for a typical run '''
+            print('preset.')
+            self.do_train = False
+            self.do_record_loss = True
+            self.do_load_babi = True
+            self.do_load_recurrent = True
+            self.do_train_long = True
+            self.do_recurrent_output = True
+            self.do_skip_unk = True
+            self.do_hide_unk = True
+            self.args.build_train_data = True
+            self.args.mode = 'long'
+        if self.args.mode == 'long': self.do_train_long = True
+        if self.args.mode == 'interactive': self.do_interactive = True
+        if self.args.mode == 'plot':
+            self.do_review = True
+            self.do_plot = True
+        if self.args.train == True:
+            self.do_train = True
+        self.model_name = self.args.basename
+
+    def task_train_epochs(self):
+        pass
+
+    def task_interactive(self, l=None, call_from_script=None):
+        pass
+
+    def get_sentence(self, i):
+        self.task_interactive(l=i, call_from_script=True)
+
+    def configure_models(self):
+        global checkpoint
 
 
-# Load model if a loadFilename is provided
-if loadFilename:
-    # If loading on same machine the model was trained on
-    checkpoint = torch.load(loadFilename)
-    # If loading a model trained on GPU to CPU
-    #checkpoint = torch.load(loadFilename, map_location=torch.device('cpu'))
-    encoder_sd = checkpoint['en']
-    decoder_sd = checkpoint['de']
-    encoder_optimizer_sd = checkpoint['en_opt']
-    decoder_optimizer_sd = checkpoint['de_opt']
-    embedding_sd = checkpoint['embedding']
-    voc.__dict__ = checkpoint['voc_dict']
+        # Configure models
+        '''
+        model_name = 'cb_model'
+        attn_model = 'dot'
+        #attn_model = 'general'
+        #attn_model = 'concat'
+        hidden_size = 500
+        encoder_n_layers = 2
+        decoder_n_layers = 2
+        dropout = 0.1
+        batch_size = 64
+        '''
+        # Set checkpoint to load from; set to None if starting from scratch
+        self.loadFilename = None
+        checkpoint_iter = 4000
+        if self.do_train or self.do_interactive:
+            #try:
+            self.loadFilename = hparams['save_dir'] + '/' + str(1500) + '_checkpoint_' + self.model_name + '.tar'
+            #except:
+            #self.loadFilename = None
+        if not os.path.isfile(self.loadFilename):
+            self.loadFilename = hparams['save_dir'] + '/' + str(1500) + '_checkpoint.tar'
+        if not  os.path.isfile(self.loadFilename):
+            print('xxx',self.loadFilename,'xxx')
+
+        print(self.loadFilename,'name')
+        # Load model if a loadFilename is provided
+        if self.loadFilename:
+            # If loading on same machine the model was trained on
+            checkpoint = torch.load(self.loadFilename)
+            # If loading a model trained on GPU to CPU
+            #checkpoint = torch.load(loadFilename, map_location=torch.device('cpu'))
+            self.encoder_sd = checkpoint['en']
+            self.decoder_sd = checkpoint['de']
+            self.encoder_optimizer_sd = checkpoint['en_opt']
+            self.decoder_optimizer_sd = checkpoint['de_opt']
+            self.embedding_sd = checkpoint['embedding']
+            self.voc.__dict__ = checkpoint['voc_dict']
 
 
-print('Building encoder and decoder ...')
-# Initialize word embeddings
-embedding = nn.Embedding(voc.num_words, hidden_size)
-if loadFilename:
-    embedding.load_state_dict(embedding_sd)
-# Initialize encoder & decoder models
-encoder = EncoderRNN(hidden_size, embedding, encoder_n_layers, dropout)
-decoder = LuongAttnDecoderRNN(attn_model, embedding, hidden_size, voc.num_words, decoder_n_layers, dropout)
-if loadFilename:
-    encoder.load_state_dict(encoder_sd)
-    decoder.load_state_dict(decoder_sd)
-# Use appropriate device
-encoder = encoder.to(device)
-decoder = decoder.to(device)
-print('Models built and ready to go!')
+        print('Building encoder and decoder ...')
+        # Initialize word embeddings
+        self.embedding = nn.Embedding(self.voc.num_words, self.hidden_size)
+        if self.loadFilename:
+            self.embedding.load_state_dict(self.embedding_sd)
+        # Initialize encoder & decoder models
+        self.encoder = EncoderRNN(self.hidden_size, self.embedding, self.encoder_n_layers, self.dropout)
+        self.decoder = LuongAttnDecoderRNN(self.attn_model, self.embedding, self.hidden_size, self.voc.num_words, self.decoder_n_layers, self.dropout)
+        if self.loadFilename:
+            self.encoder.load_state_dict(self.encoder_sd)
+            self.decoder.load_state_dict(self.decoder_sd)
+        # Use appropriate device
+        self.encoder = self.encoder.to(device)
+        self.decoder = self.decoder.to(device)
+        print('Models built and ready to go!')
 
 
 ######################################################################
@@ -1313,33 +1423,36 @@ print('Models built and ready to go!')
 # finally we call the ``trainIters`` function to run our training
 # iterations.
 #
+    def configure_training(self):
+        # Configure training/optimization
+        global teacher_forcing_ratio
 
-# Configure training/optimization
-clip = 50.0
-teacher_forcing_ratio = 1.0
-learning_rate = 0.0001
-decoder_learning_ratio = 5.0
-n_iteration = 4000
-print_every = 1
-save_every = 500
 
-# Ensure dropout layers are in train mode
-encoder.train()
-decoder.train()
+        clip = 50.0
+        teacher_forcing_ratio = 1.0
+        learning_rate = 0.0001
+        decoder_learning_ratio = 5.0
+        n_iteration = 4000
+        print_every = 1
+        save_every = 500
 
-# Initialize optimizers
-print('Building optimizers ...')
-encoder_optimizer = optim.Adam(encoder.parameters(), lr=learning_rate)
-decoder_optimizer = optim.Adam(decoder.parameters(), lr=learning_rate * decoder_learning_ratio)
-if loadFilename:
-    encoder_optimizer.load_state_dict(encoder_optimizer_sd)
-    decoder_optimizer.load_state_dict(decoder_optimizer_sd)
+        # Ensure dropout layers are in train mode
+        self.encoder.train()
+        self.decoder.train()
 
-# Run training iterations
-print("Starting Training!")
-trainIters(model_name, voc, pairs, encoder, decoder, encoder_optimizer, decoder_optimizer,
-           embedding, encoder_n_layers, decoder_n_layers, save_dir, n_iteration, batch_size,
-           print_every, save_every, clip, corpus_name, loadFilename)
+        # Initialize optimizers
+        print('Building optimizers ...')
+        encoder_optimizer = optim.Adam(self.encoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.Adam(self.decoder.parameters(), lr=learning_rate * decoder_learning_ratio)
+        if self.loadFilename:
+            encoder_optimizer.load_state_dict(self.encoder_optimizer_sd)
+            decoder_optimizer.load_state_dict(self.decoder_optimizer_sd)
+
+        # Run training iterations
+        print("Starting Training!")
+        trainIters(self.model_name, self.voc, pairs, self.encoder, self.decoder, encoder_optimizer, decoder_optimizer,
+                   self.embedding, self.encoder_n_layers, self.decoder_n_layers, hparams['save_dir'], n_iteration, self.batch_size,
+                   print_every, save_every, clip, corpus_name, self.loadFilename)
 
 
 ######################################################################
@@ -1349,15 +1462,16 @@ trainIters(model_name, voc, pairs, encoder, decoder, encoder_optimizer, decoder_
 # To chat with your model, run the following block.
 #
 
-# Set dropout layers to eval mode
-encoder.eval()
-decoder.eval()
+    def configure_evaluation(self):
+        # Set dropout layers to eval mode
+        self.encoder.eval()
+        self.decoder.eval()
 
-# Initialize search module
-searcher = GreedySearchDecoder(encoder, decoder)
+        # Initialize search module
+        searcher = GreedySearchDecoder(self.encoder, self.decoder)
 
-# Begin chatting (uncomment and run the following line to begin)
-# evaluateInput(encoder, decoder, searcher, voc)
+        # Begin chatting (uncomment and run the following line to begin)
+        evaluateInput(self.encoder, self.decoder, searcher, self.voc)
 
 
 ######################################################################
@@ -1373,3 +1487,19 @@ searcher = GreedySearchDecoder(encoder, decoder)
 # Check out the other tutorials for more cool deep learning applications
 # in PyTorch!
 #
+if __name__ == '__main__':
+
+    n = NMT()
+    if n.args.build_train_data or n.args.train:
+        vocab_and_sentences()
+        n.voc = vocab_and_sentences_pairs()
+
+        vocab_and_sentences_trim_rare(n.voc)
+        vocab_and_sentences_batches(n.voc)
+        pass
+
+    n.configure_models()
+    if n.do_train:
+        n.configure_training()
+    if n.do_interactive:
+        n.configure_evaluation()
