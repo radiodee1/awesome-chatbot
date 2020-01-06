@@ -1280,6 +1280,7 @@ class NMT:
     def __init__(self):
         self.encoder = None
         self.decoder = None
+        self.searcher = None
         self.loadFilename = None
 
         self.encoder_optimizer_sd = None
@@ -1316,6 +1317,7 @@ class NMT:
         parser.add_argument('--basename', help='base filename to use if it is different from settings file.', default='chatbot_tutorial')
         parser.add_argument('--build-train-data', action='store_true', help='build training data for later use.')
         parser.add_argument('--train', action='store_true', help='train model')
+        parser.add_argument('--iter', type=int, help='itaration of interest for loading a saved model.')
         self.args = parser.parse_args()
 
         if self.args.mode is None or self.args.mode not in ['preset', 'long', 'interactive', 'plot']:
@@ -1347,41 +1349,46 @@ class NMT:
         pass
 
     def task_interactive(self, l=None, call_from_script=None):
+        try:
+            # Get input sentence
+            input_sentence = l
+            if call_from_script and not input_sentence.endswith('.') and not input_sentence.endswith('?'):
+                input_sentence += '?'
+            # Check if it is quit case
+
+            if input_sentence == 'q' or input_sentence == 'quit': return ''
+            # Normalize sentence
+            input_sentence = normalizeString(input_sentence)
+            print(input_sentence,'<')
+            # Evaluate sentence
+            output_words = evaluate(self.encoder, self.decoder, self.searcher, self.voc, input_sentence)
+            # Format and print response sentence
+            output_words[:] = [x for x in output_words if not (x == 'EOS' or x == 'PAD')]
+            print('Bot:', ' '.join(output_words))
+            return ' '.join(output_words)
+        except KeyError:
+            print("Error: Encountered unknown word.")
         pass
 
     def get_sentence(self, i):
-        self.task_interactive(l=i, call_from_script=True)
+        return self.task_interactive(l=i, call_from_script=True)
 
     def configure_models(self):
         global checkpoint
 
-
         # Configure models
-        '''
-        model_name = 'cb_model'
-        attn_model = 'dot'
-        #attn_model = 'general'
-        #attn_model = 'concat'
-        hidden_size = 500
-        encoder_n_layers = 2
-        decoder_n_layers = 2
-        dropout = 0.1
-        batch_size = 64
-        '''
+
         # Set checkpoint to load from; set to None if starting from scratch
         self.loadFilename = None
         checkpoint_iter = 4000
         if self.do_train or self.do_interactive:
-            #try:
-            self.loadFilename = hparams['save_dir'] + '/' + str(1500) + '_checkpoint_' + self.model_name + '.tar'
-            #except:
-            #self.loadFilename = None
+            self.loadFilename = hparams['save_dir'] + '/' + str(self.args.iter) + '_checkpoint_' + self.model_name + '.tar'
         if not os.path.isfile(self.loadFilename):
-            self.loadFilename = hparams['save_dir'] + '/' + str(1500) + '_checkpoint.tar'
+            self.loadFilename = hparams['save_dir'] + '/' + str(self.args.iter) + '_checkpoint.tar'
         if not  os.path.isfile(self.loadFilename):
             print('xxx',self.loadFilename,'xxx')
 
-        print(self.loadFilename,'name')
+        #print(self.loadFilename,'name')
         # Load model if a loadFilename is provided
         if self.loadFilename:
             # If loading on same machine the model was trained on
@@ -1468,10 +1475,10 @@ class NMT:
         self.decoder.eval()
 
         # Initialize search module
-        searcher = GreedySearchDecoder(self.encoder, self.decoder)
+        self.searcher = GreedySearchDecoder(self.encoder, self.decoder)
 
         # Begin chatting (uncomment and run the following line to begin)
-        evaluateInput(self.encoder, self.decoder, searcher, self.voc)
+        #evaluateInput(self.encoder, self.decoder, self.searcher, self.voc)
 
 
 ######################################################################
@@ -1493,7 +1500,6 @@ if __name__ == '__main__':
     if n.args.build_train_data or n.args.train:
         vocab_and_sentences()
         n.voc = vocab_and_sentences_pairs()
-
         vocab_and_sentences_trim_rare(n.voc)
         vocab_and_sentences_batches(n.voc)
         pass
@@ -1503,3 +1509,7 @@ if __name__ == '__main__':
         n.configure_training()
     if n.do_interactive:
         n.configure_evaluation()
+        while True:
+            i = input('> ')
+            out = n.get_sentence(i)
+            print(out)
