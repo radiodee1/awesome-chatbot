@@ -1242,7 +1242,7 @@ def evaluate(encoder, decoder, searcher, voc, sentence, max_length=MAX_LENGTH):
     decoded_words = [voc.index2word[token.item()] for token in tokens]
     return decoded_words
 
-
+'''
 def evaluateInput(encoder, decoder, searcher, voc):
     input_sentence = ''
     while(1):
@@ -1261,7 +1261,7 @@ def evaluateInput(encoder, decoder, searcher, voc):
 
         except KeyError:
             print("Error: Encountered unknown word.")
-
+'''
 
 ######################################################################
 # Run Model
@@ -1344,9 +1344,6 @@ class NMT:
         if self.args.train == True:
             self.do_train = True
         self.model_name = self.args.basename
-
-    def task_train_epochs(self):
-        pass
 
     def task_interactive(self, l=None, call_from_script=None):
         try:
