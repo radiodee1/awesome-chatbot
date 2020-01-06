@@ -1325,6 +1325,11 @@ class NMT:
             self.do_train = True
         self.model_name = self.args.basename
 
+    def setup_interactive(self):
+        self.configure_models()
+        self.configure_evaluation()
+        pass
+
     def task_interactive(self, l=None, call_from_script=None):
         try:
             # Get input sentence
