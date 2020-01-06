@@ -4,3 +4,6 @@
 [submodule "model/tf_gpt2"]
 	path = model/tf_gpt2
 	url = https://github.com/Tenoke/gpt-2.git
+[submodule "babi_t2t/t2t"]
+	path = babi_t2t/t2t
+	url = https://github.com/jadore801120/attention-is-all-you-need-pytorch.git
