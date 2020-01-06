@@ -15,7 +15,7 @@ do_not_end = True
 
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
-    import seq_2_seq.seq_2_seq as model
+    import seq_2_seq.seq_2_seq_tutorial as model
     import seq_2_seq.tokenize_weak as tokenize_weak
 
 elif mode == 'zero':

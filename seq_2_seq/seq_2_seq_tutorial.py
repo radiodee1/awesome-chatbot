@@ -1280,6 +1280,7 @@ class NMT:
         self.batch_size = 64
         self.embedding = None
         self.voc = Voc('lang')
+        self.output_lang = self.voc
 
         self.do_train = False
         self.do_record_loss = False
@@ -1325,7 +1326,7 @@ class NMT:
             self.do_train = True
         self.model_name = self.args.basename
 
-    def setup_interactive(self):
+    def setup_for_interactive(self):
         self.configure_models()
         self.configure_evaluation()
         pass
