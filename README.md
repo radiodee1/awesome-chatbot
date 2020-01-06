@@ -102,6 +102,13 @@ The idea is that using a single aiml file you could give the gpt-2 chatbot more 
 The model answers random questions with the sort of answer you would expect from a model trained on Reddit data,
 but answers the questions found in the aiml file with the specific answers in the aiml.
 
+1/6/2020 - I have disgarded my hand-coded version of the sequence to sequence chatbot as it did not produce the desired output.
+ I have found and employed a chatbot tutorial that could be found for a while on the Pytorch tutorial site.
+ The code was authored by Matthew Inkawhich.
+ The code works.
+ I contacted Mr. Inkawhich and asked him for instructions on how to cite his work in a paper using latex.
+ He was nice enough to help with that.
+
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
