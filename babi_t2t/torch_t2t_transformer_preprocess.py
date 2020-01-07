@@ -51,29 +51,6 @@ from torchtext.data.utils import get_tokenizer
 
 __author__ = "Yu-Hsiang Huang"
 
-_TRAIN_DATA_SOURCES_BABI = [
-    {"url": "http://data.statmt.org/wmt17/translation-task/" \
-             "training-parallel-nc-v12.tgz",
-     "trg": "news-commentary-v12.de-en.en",
-     "src": "news-commentary-v12.de-en.de"},
-    #{"url": "http://www.statmt.org/wmt13/training-parallel-commoncrawl.tgz",
-    # "trg": "commoncrawl.de-en.en",
-    # "src": "commoncrawl.de-en.de"},
-    #{"url": "http://www.statmt.org/wmt13/training-parallel-europarl-v7.tgz",
-    # "trg": "europarl-v7.de-en.en",
-    # "src": "europarl-v7.de-en.de"}
-    ]
-
-_VAL_DATA_SOURCES_BABI = [
-    {"url": "http://data.statmt.org/wmt17/translation-task/dev.tgz",
-     "trg": "newstest2013.en",
-     "src": "newstest2013.de"}]
-
-_TEST_DATA_SOURCES_BABI = [
-    {"url": "https://storage.googleapis.com/tf-perf-public/" \
-                "official_transformer/test_data/newstest2014.tgz",
-     "trg": "newstest2014.en",
-     "src": "newstest2014.de"}]
 
 
 _TRAIN_DATA_SOURCES = [
@@ -100,6 +77,27 @@ _TEST_DATA_SOURCES = [
      "trg": "newstest2014.en",
      "src": "newstest2014.de"}]
 
+def find_and_parse_story(data, period=False, iter_buckets=False):
+    if iter_buckets: return data
+    for ii in range(len(data.examples)):
+        z = data.examples[ii]
+        out = []
+        for i in z.story:
+            i = i.split(' ')
+            for j in i:
+                out.append(j)
+            if period:
+                out.append('.')
+        #print(out)
+        out.extend(z.query)
+        out.append('?')
+        data.examples[ii].story = out
+        data.examples[ii].query.append('?')
+
+        data.examples[ii].src = data.examples[ii].story
+        data.examples[ii].trg = data.examples[ii].answer
+
+    return data
 
 class TqdmUpTo(tqdm):
     def update_to(self, b=1, bsize=1, tsize=None):
@@ -311,7 +309,7 @@ def main_wo_bpe():
     parser.add_argument('-data_trg', type=str, default=None)
 
     parser.add_argument('-max_len', type=int, default=100)
-    parser.add_argument('-min_word_count', type=int, default=3)
+    parser.add_argument('-min_word_count', type=int, default=1)
     parser.add_argument('-keep_case', action='store_true')
     parser.add_argument('-share_vocab', action='store_true', default=True)
     #parser.add_argument('-ratio', '--train_valid_test_ratio', type=int, nargs=3, metavar=(8,1,1))
@@ -379,6 +377,13 @@ def main_wo_bpe():
         #filter_pred=filter_examples_with_length
     )
 
+    train = find_and_parse_story(train, period=True)
+    val = find_and_parse_story(val, period=True)
+    test = find_and_parse_story(test, period=True)
+
+    ## print some values
+    print(train)
+
     SRC.build_vocab(train.src, min_freq=MIN_FREQ)
     print('[Info] Get source language vocabulary size:', len(SRC.vocab))
     TRG.build_vocab(train.trg, min_freq=MIN_FREQ)
@@ -401,8 +406,9 @@ def main_wo_bpe():
         SRC.vocab.stoi = TRG.vocab.stoi
         SRC.vocab.itos = TRG.vocab.itos
 
-        print('[Info] Get merged vocabulary size:', len(TRG.vocab), len(TEXT.vocab))
+        print('[Info] Get merged vocabulary size:',  len(TEXT.vocab))
 
+    print(TEXT.vocab.stoi)
 
     data = {
         'settings': opt,
@@ -410,6 +416,9 @@ def main_wo_bpe():
         'train': train.examples,
         'valid': val.examples,
         'test': test.examples}
+
+    print(data['train'][0].src, data['train'][0].trg)
+    print(len(data['train']), 'train' ,len(data['valid']), 'valid', len(data['test']), 'test')
 
     print('[Info] Dumping the processed data to pickle file', opt.save_data)
     pickle.dump(data, open(opt.save_data, 'wb'))

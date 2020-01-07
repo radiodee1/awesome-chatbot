@@ -55,145 +55,7 @@ babi_train_txt, babi_val_txt, babi_test_txt = None, None, None
 
 TEXT = None
 
-'''
-def load_q_a(ten_k, task):
-    global babi_train_txt_in, babi_val_txt_in, babi_test_txt_in
-    global TEXT
-    from torchtext.data.utils import get_tokenizer
-    TEXT = torchtext.data.Field(tokenize=get_tokenizer("basic_english"),
-                                init_token='<sos>',
-                                eos_token='<eos>',
-                                lower=True)
 
-    babi20 = torchtext.datasets.BABI20
-    babi_train_txt_in, babi_val_txt_in, babi_test_txt_in = babi20.splits(TEXT, root='../raw/',tenK=ten_k, task=task)
-
-    pass
-
-def find_and_parse_story(data, period=False, iters=False):
-    if iters: return data
-    for ii in range(len(data.examples)):
-        z = data.examples[ii]
-        out = []
-        for i in z.story:
-            i = i.split(' ')
-            for j in i:
-                out.append(j)
-            if period:
-                out.append('.')
-        #print(out)
-        data.examples[ii].story = out
-        data.examples[ii].query.append('?')
-    return data
-
-def batchify_babi(data, bsz, separate_ques=True, size_src=200, size_tgt=200, print_to_screen=False, device='cpu'):
-    device = torch.device(device)
-    new_data = []
-    target_data = []
-    for ii in range(len(data.examples)):
-        z = data.examples[ii]
-        target_data_tmp = [] #['<sos>']
-        if not separate_ques:
-            z.story.extend(z.query)
-            z.story.extend('.')
-            new_data.extend(z.story)
-            new_data.append('<eos>')
-            target_data_tmp.extend(z.story)
-            target_data_tmp.extend(z.answer)
-            target_data_tmp.append('<eos>')
-            #print(z.answer, len(z.answer))
-            ll = 2
-            target_data_tmp = target_data_tmp[ll :len(z.story) + ll]
-            #print(z.story,'\n',target_data_tmp)
-            target_data.extend(target_data_tmp)
-        else:
-            z.story.insert(0, '<sos>')
-            z.story.extend(z.query)
-            z.story.extend([ '<eos>'])
-            #z.story.extend('.')
-            new_data.append(z.story)
-            target_data_tmp.extend(z.answer)
-            target_data_tmp.append('<eos>')
-            target_data.append(target_data_tmp)
-
-        pass
-    if print_to_screen: print(new_data[0:5],'nd')
-    m = max([len(x) for x in new_data])
-    n = max([len(x[0]) for x in target_data])
-    m = max(m, size_src)
-    #n = max(n, size_tgt)
-    n = m
-    #print(m,'m', [len(x) for x in new_data])
-    if not separate_ques:
-
-        new_data = TEXT.numericalize([new_data])
-        target_data = TEXT.numericalize([target_data])
-
-        #new_n_data = new_data
-        #target_n_data = target_data
-        bsz = n
-        nbatch_s = new_data.size(0) // bsz
-        nbatch_t = target_data.size(0) // bsz
-        nbatch = min(nbatch_s, nbatch_t)
-        #print(nbatch_s, nbatch_t, len(new_data), len(target_data))
-        # Trim off any extra elements that wouldn't cleanly fit (remainders).
-        new_data = new_data.narrow(0, 0, nbatch * bsz)
-        target_data = target_data.narrow(0, 0, nbatch * bsz)
-        ###target_data = target_data.narrow(0, 0, nbatch * bsz)
-        #print(new_data.size(), target_data.size())
-
-        # Evenly divide the data across the bsz batches.
-        new_n_data = new_data.view(bsz, -1).t().contiguous()
-        target_n_data = target_data.view(bsz, -1).t().contiguous()
-
-    else:
-
-        #padded_data = torch.zeros(1, m, dtype=torch.long)
-        #padded_target = torch.zeros(1, n, dtype=torch.long)
-        new_n_data = torch.zeros( len(new_data), m, dtype=torch.long)
-        target_n_data = torch.zeros( len(target_data), n, dtype=torch.long)
-
-        for jj in range(len(new_data)):
-            ## do source ##
-            z = TEXT.numericalize([new_data[jj]])
-            if z.size(0) > 1:
-                z = z.t()
-            p = torch.zeros(1, m, dtype=torch.long)
-            p[0, :len(z[0])] = z
-            new_n_data[jj, :] = p
-            ## do target ##
-            y = TEXT.numericalize([target_data[jj]])
-            if y.size(0) > 1:
-                y = y.t()
-            q = torch.zeros(1, n, dtype=torch.long)
-            q[0,:len(y[0])] = y
-            target_n_data[jj, :] = q
-
-        new_n_data = new_n_data.t().contiguous()
-        #new_n_data = new_n_data.contiguous()
-        target_n_data = target_n_data.t().contiguous()
-        #print(new_n_data.t()[0:5], 't-nnd')
-
-    return new_n_data.to(device), target_n_data.to(device), m
-
-def get_batch_babi(source, target, i, print_to_screen=False, bptt=35, flatten_target=True):
-    seq_len = bptt
-    data = source[:, i : i +  seq_len]
-    target = target[:, i : i  + seq_len]
-    #print(label, bptt, i, 'lbl', data.size())
-    if flatten_target:
-        target = target.view(-1)
-    if print_to_screen: print(data, target, i, 'dti')
-    return data, target
-
-def show_strings(source):
-    if len(source.size()) > 1:
-        source = source.squeeze(0)
-    for i in source:
-        if i != 0:
-            print(TEXT.vocab.itos[i], end=' | ')
-    print()
-'''
 
 def cal_performance(pred, gold, trg_pad_idx, smoothing=False):
     ''' Apply label smoothing if needed '''
@@ -373,7 +235,7 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-data_pkl', default=None)     # all-in-1 data pickle or bpe field
+    parser.add_argument('-data_pkl', default='../data/babi_transformer.bin')     # all-in-1 data pickle or bpe field
 
     parser.add_argument('-train_path', default=None)   # bpe encoded data
     parser.add_argument('-val_path', default=None)     # bpe encoded data
@@ -401,8 +263,8 @@ def main():
     parser.add_argument('-no_cuda', action='store_true', default=True)
     parser.add_argument('-label_smoothing', action='store_true')
 
-    parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
-    parser.add_argument('--task', default=1, help='use specific question-set/task', type=int)
+    #parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
+    #parser.add_argument('--task', default=1, help='use specific question-set/task', type=int)
 
     opt = parser.parse_args()
     opt.cuda = not opt.no_cuda
@@ -468,14 +330,14 @@ def main():
     '''
 
     if True:
-        if all((opt.train_path, opt.val_path) or int(opt.task) > 0):
+        if all((opt.train_path, opt.val_path)) :
             training_data, validation_data = prepare_dataloaders_from_bpe_files(opt, device)
         elif opt.data_pkl:
             training_data, validation_data = prepare_dataloaders(opt, device)
         else:
             raise
 
-    training_data, validation_data = prepare_dataloaders_from_bpe_files(opt, device)
+    #training_data, validation_data = prepare_dataloaders_from_bpe_files(opt, device)
 
     print(opt)
 
