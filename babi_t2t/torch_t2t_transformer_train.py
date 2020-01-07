@@ -55,6 +55,7 @@ babi_train_txt, babi_val_txt, babi_test_txt = None, None, None
 
 TEXT = None
 
+'''
 def load_q_a(ten_k, task):
     global babi_train_txt_in, babi_val_txt_in, babi_test_txt_in
     global TEXT
@@ -192,6 +193,7 @@ def show_strings(source):
         if i != 0:
             print(TEXT.vocab.itos[i], end=' | ')
     print()
+'''
 
 def cal_performance(pred, gold, trg_pad_idx, smoothing=False):
     ''' Apply label smoothing if needed '''
@@ -421,16 +423,18 @@ def main():
     print(device,'device')
     
     #========= Loading Dataset =========#
-    load_q_a(opt.tenk, opt.task)
-
+    #load_q_a(opt.tenk, opt.task)
+    '''
     babi_train_txt = find_and_parse_story(babi_train_txt_in, period=True)
     babi_val_txt = find_and_parse_story(babi_val_txt_in, period=True)
     babi_test_txt = find_and_parse_story(babi_test_txt_in, period=True)
 
     TEXT.build_vocab(babi_train_txt)
+    
     opt.src_vocab_size = len(TEXT.vocab)
     opt.trg_vocab_size = len(TEXT.vocab)
 
+    
     batch_size = 20
     eval_batch_size = 10
 
@@ -461,8 +465,9 @@ def main():
         size_tgt=size_tgt,
         size_src=size_src,
         separate_ques=True)
+    '''
 
-    if False:
+    if True:
         if all((opt.train_path, opt.val_path) or int(opt.task) > 0):
             training_data, validation_data = prepare_dataloaders_from_bpe_files(opt, device)
         elif opt.data_pkl:
@@ -505,7 +510,7 @@ def prepare_dataloaders_from_bpe_files(opt, device):
     MAX_LEN = 70
     if not opt.embs_share_weight:
         raise
-    '''
+
     data = pickle.load(open(opt.data_pkl, 'rb'))
     MAX_LEN = data['settings'].max_len
     field = data['vocab']
@@ -525,16 +530,15 @@ def prepare_dataloaders_from_bpe_files(opt, device):
         path=opt.val_path, 
         exts=('.src', '.trg'),
         filter_pred=filter_examples_with_length)
-    '''
-
 
     opt.max_token_seq_len = MAX_LEN + 2
-    opt.src_pad_idx = opt.trg_pad_idx =  TEXT.vocab.stoi[Constants.PAD_WORD]
+    opt.src_pad_idx = opt.trg_pad_idx =  field.vocab.stoi[Constants.PAD_WORD]
     #opt.src_vocab_size = opt.trg_vocab_size = len(field.vocab)
 
-    #train_iterator = BucketIterator(train, batch_size=batch_size, device=device, train=True)
-    #val_iterator = BucketIterator(val, batch_size=batch_size, device=device)
+    train_iterator = BucketIterator(train, batch_size=batch_size, device=device, train=True)
+    val_iterator = BucketIterator(val, batch_size=batch_size, device=device)
 
+    '''
     train_iterator = BucketIterator(
         babi_train_txt,
         batch_size=batch_size,
@@ -549,7 +553,7 @@ def prepare_dataloaders_from_bpe_files(opt, device):
         device=device,
         sort_key = lambda x: torchtext.data.interleave_keys(len(x.src), len(x.trg))
     )
-
+    '''
     print(train_iterator, 'ti')
 
     return train_iterator, val_iterator

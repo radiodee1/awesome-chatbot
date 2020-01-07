@@ -19,7 +19,7 @@ py-cpuinfo
 datetime
 pandas
 toposort
-spacy
+spacy ## python -m spacy download en ##
 #pytorch-pretrained-bert ## actually for gpt2 training/fine-tuning !!
 #python3-tk ## install this from linux distro, not pip3
 

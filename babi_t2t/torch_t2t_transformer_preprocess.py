@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 ''' Handling the data io '''
 
 
@@ -45,9 +47,33 @@ from torchtext.datasets import TranslationDataset
 import transformer.Constants as Constants
 from learn_bpe import learn_bpe
 from apply_bpe import BPE
-
+from torchtext.data.utils import get_tokenizer
 
 __author__ = "Yu-Hsiang Huang"
+
+_TRAIN_DATA_SOURCES_BABI = [
+    {"url": "http://data.statmt.org/wmt17/translation-task/" \
+             "training-parallel-nc-v12.tgz",
+     "trg": "news-commentary-v12.de-en.en",
+     "src": "news-commentary-v12.de-en.de"},
+    #{"url": "http://www.statmt.org/wmt13/training-parallel-commoncrawl.tgz",
+    # "trg": "commoncrawl.de-en.en",
+    # "src": "commoncrawl.de-en.de"},
+    #{"url": "http://www.statmt.org/wmt13/training-parallel-europarl-v7.tgz",
+    # "trg": "europarl-v7.de-en.en",
+    # "src": "europarl-v7.de-en.de"}
+    ]
+
+_VAL_DATA_SOURCES_BABI = [
+    {"url": "http://data.statmt.org/wmt17/translation-task/dev.tgz",
+     "trg": "newstest2013.en",
+     "src": "newstest2013.de"}]
+
+_TEST_DATA_SOURCES_BABI = [
+    {"url": "https://storage.googleapis.com/tf-perf-public/" \
+                "official_transformer/test_data/newstest2014.tgz",
+     "trg": "newstest2014.en",
+     "src": "newstest2014.de"}]
 
 
 _TRAIN_DATA_SOURCES = [
@@ -278,18 +304,20 @@ def main_wo_bpe():
     spacy_support_langs = ['de', 'el', 'en', 'es', 'fr', 'it', 'lt', 'nb', 'nl', 'pt']
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('-lang_src', required=True, choices=spacy_support_langs)
-    parser.add_argument('-lang_trg', required=True, choices=spacy_support_langs)
-    parser.add_argument('-save_data', required=True)
+    parser.add_argument('-lang_src', required=False, choices=spacy_support_langs, default='en')
+    parser.add_argument('-lang_trg', required=False, choices=spacy_support_langs, default='en')
+    parser.add_argument('-save_data', required=False, default='../data/babi_transformer.bin')
     parser.add_argument('-data_src', type=str, default=None)
     parser.add_argument('-data_trg', type=str, default=None)
 
     parser.add_argument('-max_len', type=int, default=100)
     parser.add_argument('-min_word_count', type=int, default=3)
     parser.add_argument('-keep_case', action='store_true')
-    parser.add_argument('-share_vocab', action='store_true')
+    parser.add_argument('-share_vocab', action='store_true', default=True)
     #parser.add_argument('-ratio', '--train_valid_test_ratio', type=int, nargs=3, metavar=(8,1,1))
     #parser.add_argument('-vocab', default=None)
+    parser.add_argument('-tenk', action='store_true', help='use ten-k dataset')
+    parser.add_argument('-task', default=1, help='use specific question-set/task', type=int)
 
     opt = parser.parse_args()
     assert not any([opt.data_src, opt.data_trg]), 'Custom data input is not support now.'
@@ -305,7 +333,16 @@ def main_wo_bpe():
     def tokenize_trg(text):
         return [tok.text for tok in trg_lang_model.tokenizer(text)]
 
+    TEXT = torchtext.data.Field(tokenize=get_tokenizer("basic_english"),
+                                init_token=Constants.BOS_WORD, #'<sos>',
+                                eos_token=Constants.EOS_WORD, #'<eos>',
+                                lower=True)
+
     SRC = torchtext.data.Field(
+        tokenize=tokenize_src, lower=not opt.keep_case,
+        pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
+
+    QUERY = torchtext.data.Field(
         tokenize=tokenize_src, lower=not opt.keep_case,
         pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
 
@@ -317,7 +354,7 @@ def main_wo_bpe():
     MIN_FREQ = opt.min_word_count
 
     if not all([opt.data_src, opt.data_trg]):
-        assert {opt.lang_src, opt.lang_trg} == {'de', 'en'}
+        assert {opt.lang_src, opt.lang_trg} == {'en', 'en'}
     else:
         # Pack custom txt file into example datasets
         raise NotImplementedError
@@ -325,15 +362,29 @@ def main_wo_bpe():
     def filter_examples_with_length(x):
         return len(vars(x)['src']) <= MAX_LEN and len(vars(x)['trg']) <= MAX_LEN
 
+    '''
     train, val, test = torchtext.datasets.Multi30k.splits(
             exts = ('.' + opt.lang_src, '.' + opt.lang_trg),
             fields = (SRC, TRG),
             filter_pred=filter_examples_with_length)
+    '''
+
+    train, val, test = torchtext.datasets.BABI20.splits(
+        TEXT,
+        #exts=('.' + opt.lang_src, '.' + opt.lang_trg),
+        #fields=(SRC, QUERY, TRG),
+        root='../raw/',
+        tenK=opt.tenk,
+        task=opt.task,
+        #filter_pred=filter_examples_with_length
+    )
 
     SRC.build_vocab(train.src, min_freq=MIN_FREQ)
     print('[Info] Get source language vocabulary size:', len(SRC.vocab))
     TRG.build_vocab(train.trg, min_freq=MIN_FREQ)
     print('[Info] Get target language vocabulary size:', len(TRG.vocab))
+    TEXT.build_vocab(train.trg, min_freq=MIN_FREQ)
+    print('[Info] Get text language vocabulary size:', len(TEXT.vocab))
 
     if opt.share_vocab:
         print('[Info] Merging two vocabulary ...')
@@ -341,12 +392,16 @@ def main_wo_bpe():
             # TODO: Also update the `freq`, although it is not likely to be used.
             if w not in TRG.vocab.stoi:
                 TRG.vocab.stoi[w] = len(TRG.vocab.stoi)
+                TEXT.vocab.stoi[w] = len(TRG.vocab.stoi)
         TRG.vocab.itos = [None] * len(TRG.vocab.stoi)
+        TEXT.vocab.itos = [None] * len(TRG.vocab.stoi)
         for w, i in TRG.vocab.stoi.items():
             TRG.vocab.itos[i] = w
+            TEXT.vocab.itos[i] = w
         SRC.vocab.stoi = TRG.vocab.stoi
         SRC.vocab.itos = TRG.vocab.itos
-        print('[Info] Get merged vocabulary size:', len(TRG.vocab))
+
+        print('[Info] Get merged vocabulary size:', len(TRG.vocab), len(TEXT.vocab))
 
 
     data = {
