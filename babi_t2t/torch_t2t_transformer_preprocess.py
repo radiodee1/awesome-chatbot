@@ -77,8 +77,8 @@ _TEST_DATA_SOURCES = [
      "trg": "newstest2014.en",
      "src": "newstest2014.de"}]
 
-def find_and_parse_story(data, period=False, iter_buckets=False):
-    if iter_buckets: return data
+def find_and_parse_story(data, period=False):
+    print(len(data.examples), 'length')
     for ii in range(len(data.examples)):
         z = data.examples[ii]
         out = []
@@ -94,8 +94,10 @@ def find_and_parse_story(data, period=False, iter_buckets=False):
         data.examples[ii].story = out
         data.examples[ii].query.append('?')
 
-        data.examples[ii].src = data.examples[ii].story
-        data.examples[ii].trg = data.examples[ii].answer
+        data.examples[ii].src = data.examples[ii].story[:]
+        data.examples[ii].trg = data.examples[ii].answer[:]
+        data.examples[ii].story = None
+        data.examples[ii].answer = None
 
     return data
 
@@ -336,6 +338,7 @@ def main_wo_bpe():
                                 eos_token=Constants.EOS_WORD, #'<eos>',
                                 lower=True)
 
+    '''
     SRC = torchtext.data.Field(
         tokenize=tokenize_src, lower=not opt.keep_case,
         pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
@@ -347,9 +350,9 @@ def main_wo_bpe():
     TRG = torchtext.data.Field(
         tokenize=tokenize_trg, lower=not opt.keep_case,
         pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
-
+    '''
     MAX_LEN = opt.max_len
-    MIN_FREQ = opt.min_word_count
+    MIN_FREQ = 0 #opt.min_word_count
 
     if not all([opt.data_src, opt.data_trg]):
         assert {opt.lang_src, opt.lang_trg} == {'en', 'en'}
@@ -369,12 +372,9 @@ def main_wo_bpe():
 
     train, val, test = torchtext.datasets.BABI20.splits(
         TEXT,
-        #exts=('.' + opt.lang_src, '.' + opt.lang_trg),
-        #fields=(SRC, QUERY, TRG),
         root='../raw/',
         tenK=opt.tenk,
         task=opt.task,
-        #filter_pred=filter_examples_with_length
     )
 
     train = find_and_parse_story(train, period=True)
@@ -382,16 +382,20 @@ def main_wo_bpe():
     test = find_and_parse_story(test, period=True)
 
     ## print some values
-    print(train)
+    print(i.story for i in train.examples[:3])
 
-    SRC.build_vocab(train.src, min_freq=MIN_FREQ)
-    print('[Info] Get source language vocabulary size:', len(SRC.vocab))
-    TRG.build_vocab(train.trg, min_freq=MIN_FREQ)
-    print('[Info] Get target language vocabulary size:', len(TRG.vocab))
-    TEXT.build_vocab(train.trg, min_freq=MIN_FREQ)
+    vocab = []
+    for i in train.examples[:]:
+        vocab.extend([i.src[:]])
+
+    #SRC.build_vocab(train.src, min_freq=MIN_FREQ)
+    #print('[Info] Get source language vocabulary size:', len(SRC.vocab))
+    #TRG.build_vocab(train.trg, min_freq=MIN_FREQ)
+    #print('[Info] Get target language vocabulary size:', len(TRG.vocab))
+    TEXT.build_vocab(vocab, min_freq=MIN_FREQ)
     print('[Info] Get text language vocabulary size:', len(TEXT.vocab))
 
-    if opt.share_vocab:
+    if opt.share_vocab and False:
         print('[Info] Merging two vocabulary ...')
         for w, _ in SRC.vocab.stoi.items():
             # TODO: Also update the `freq`, although it is not likely to be used.
@@ -409,10 +413,11 @@ def main_wo_bpe():
         print('[Info] Get merged vocabulary size:',  len(TEXT.vocab))
 
     print(TEXT.vocab.stoi)
+    SRC = TRG = TEXT
 
     data = {
         'settings': opt,
-        'vocab': {'src': SRC, 'trg': TRG},
+        'vocab': {'src': SRC, 'trg': TRG, 'txt': TEXT},
         'train': train.examples,
         'valid': val.examples,
         'test': test.examples}

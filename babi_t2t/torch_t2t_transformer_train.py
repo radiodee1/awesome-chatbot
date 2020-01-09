@@ -287,46 +287,7 @@ def main():
     #========= Loading Dataset =========#
     #load_q_a(opt.tenk, opt.task)
     '''
-    babi_train_txt = find_and_parse_story(babi_train_txt_in, period=True)
-    babi_val_txt = find_and_parse_story(babi_val_txt_in, period=True)
-    babi_test_txt = find_and_parse_story(babi_test_txt_in, period=True)
-
-    TEXT.build_vocab(babi_train_txt)
     
-    opt.src_vocab_size = len(TEXT.vocab)
-    opt.trg_vocab_size = len(TEXT.vocab)
-
-    
-    batch_size = 20
-    eval_batch_size = 10
-
-    size_tgt = 24  # 40000
-    size_src = -1
-
-    print('load train')
-    babi_train_txt, babi_train_tgt, m_train = batchify_babi(
-        babi_train_txt,
-        batch_size,
-        size_tgt=size_tgt,
-        size_src=size_src,
-        print_to_screen=False,
-        separate_ques=True)
-
-    print('load val')
-    babi_val_txt, babi_val_tgt, m_val = batchify_babi(
-        babi_val_txt,
-        batch_size,
-        size_tgt=size_tgt,
-        size_src=size_src,
-        separate_ques=True)
-
-    print('load tst')
-    babi_test_txt, babi_test_tgt, m_test = batchify_babi(
-        babi_test_txt,
-        batch_size,
-        size_tgt=size_tgt,
-        size_src=size_src,
-        separate_ques=True)
     '''
 
     if True:
@@ -400,22 +361,6 @@ def prepare_dataloaders_from_bpe_files(opt, device):
     train_iterator = BucketIterator(train, batch_size=batch_size, device=device, train=True)
     val_iterator = BucketIterator(val, batch_size=batch_size, device=device)
 
-    '''
-    train_iterator = BucketIterator(
-        babi_train_txt,
-        batch_size=batch_size,
-        device=device,
-        sort_key=lambda x: torchtext.data.interleave_keys(len(x.src), len(x.trg)),
-        train=True
-    )
-
-    val_iterator = BucketIterator(
-        babi_val_txt,
-        batch_size=batch_size,
-        device=device,
-        sort_key = lambda x: torchtext.data.interleave_keys(len(x.src), len(x.trg))
-    )
-    '''
     print(train_iterator, 'ti')
 
     return train_iterator, val_iterator
@@ -437,7 +382,8 @@ def prepare_dataloaders(opt, device):
         assert data['vocab']['src'].vocab.stoi == data['vocab']['trg'].vocab.stoi, \
             'To sharing word embedding the src/trg word2idx table shall be the same.'
 
-    fields = {'src': data['vocab']['src'], 'trg':data['vocab']['trg']}
+    print(len(data['vocab']['txt'].vocab),'length of vocab.')
+    fields = {'src': data['vocab']['txt'], 'trg':data['vocab']['txt']}
 
     train = Dataset(examples=data['train'], fields=fields)
     val = Dataset(examples=data['valid'], fields=fields)
