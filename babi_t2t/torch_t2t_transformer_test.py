@@ -59,6 +59,7 @@ def main():
     parser.add_argument('-beam_size', type=int, default=5)
     parser.add_argument('-max_seq_len', type=int, default=100)
     parser.add_argument('-no_cuda', action='store_true', default=True)
+    parser.add_argument('-print_to_screen', action='store_true')
 
     # TODO: Translate bpe encoded files 
     #parser.add_argument('-src', required=True,
@@ -97,12 +98,12 @@ def main():
     unk_idx = SRC.vocab.stoi[SRC.unk_token]
     with open(opt.output, 'w') as f:
         for example in tqdm(test_loader, mininterval=2, desc='  - (Test)', leave=False):
-            #print(' '.join(example.src))
+            if opt.print_to_screen: print(' '.join(example.src))
             src_seq = [SRC.vocab.stoi.get(word, unk_idx) for word in example.src]
             pred_seq = translator.translate_sentence(torch.LongTensor([src_seq]).to(device))
             pred_line = ' '.join(TRG.vocab.itos[idx] for idx in pred_seq)
             pred_line = pred_line.replace(Constants.BOS_WORD, '').replace(Constants.EOS_WORD, '')
-            #print(pred_line)
+            if opt.print_to_screen: print(pred_line)
             f.write(pred_line.strip() + '\n')
 
     print('[Info] Finished.')
