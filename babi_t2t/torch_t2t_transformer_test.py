@@ -77,13 +77,18 @@ def main():
     opt.cuda = not opt.no_cuda
 
     data = pickle.load(open(opt.data_pkl, 'rb'))
-    SRC, TRG = data['vocab']['src'], data['vocab']['trg']
-    opt.src_pad_idx = SRC.vocab.stoi[Constants.PAD_WORD]
-    opt.trg_pad_idx = TRG.vocab.stoi[Constants.PAD_WORD]
-    opt.trg_bos_idx = TRG.vocab.stoi[Constants.BOS_WORD]
-    opt.trg_eos_idx = TRG.vocab.stoi[Constants.EOS_WORD]
+    SRC, TRG, TXT = data['vocab']['src'], data['vocab']['trg'], data['vocab']['txt']
+    #opt.src_pad_idx = SRC.vocab.stoi[Constants.PAD_WORD]
+    #opt.trg_pad_idx = TRG.vocab.stoi[Constants.PAD_WORD]
+    #opt.trg_bos_idx = TRG.vocab.stoi[Constants.BOS_WORD]
+    #opt.trg_eos_idx = TRG.vocab.stoi[Constants.EOS_WORD]
 
-    test_loader = Dataset(examples=data['test'], fields={'src': SRC, 'trg': TRG})
+    opt.src_pad_idx = TXT.vocab.stoi[Constants.PAD_WORD]
+    opt.trg_pad_idx = TXT.vocab.stoi[Constants.PAD_WORD]
+    opt.trg_bos_idx = TXT.vocab.stoi[Constants.BOS_WORD]
+    opt.trg_eos_idx = TXT.vocab.stoi[Constants.EOS_WORD]
+
+    test_loader = Dataset(examples=data['test'], fields={'src': TXT, 'trg': TXT})
     
     device = torch.device('cuda' if opt.cuda else 'cpu')
     translator = Translator(
@@ -98,10 +103,12 @@ def main():
     unk_idx = SRC.vocab.stoi[SRC.unk_token]
     with open(opt.output, 'w') as f:
         for example in tqdm(test_loader, mininterval=2, desc='  - (Test)', leave=False):
+            #print(example.src, '<source')
             if opt.print_to_screen: print(' '.join(example.src))
             src_seq = [SRC.vocab.stoi.get(word, unk_idx) for word in example.src]
             pred_seq = translator.translate_sentence(torch.LongTensor([src_seq]).to(device))
-            pred_line = ' '.join(TRG.vocab.itos[idx] for idx in pred_seq)
+            if opt.print_to_screen: print(pred_seq)
+            pred_line = ' '.join(TXT.vocab.itos[idx] for idx in pred_seq)
             pred_line = pred_line.replace(Constants.BOS_WORD, '').replace(Constants.EOS_WORD, '')
             if opt.print_to_screen: print(pred_line)
             f.write(pred_line.strip() + '\n')

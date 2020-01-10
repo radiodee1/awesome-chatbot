@@ -150,6 +150,10 @@ def eval_epoch(model, validation_data, device, opt):
             src_seq = patch_src(batch.src, opt.src_pad_idx).to(device)
             trg_seq, gold = map(lambda x: x.to(device), patch_trg(batch.trg, opt.trg_pad_idx))
 
+            if opt.print_to_screen:
+                print(batch.src, batch.trg)
+                exit()
+
             # forward
             pred = model(src_seq, trg_seq)
             loss, n_correct, n_word = cal_performance(
@@ -263,7 +267,7 @@ def main():
     parser.add_argument('-no_cuda', action='store_true', default=True)
     parser.add_argument('-label_smoothing', action='store_true')
 
-    #parser.add_argument('--tenk', action='store_true', help='use ten-k dataset')
+    parser.add_argument('-print_to_screen', action='store_true', help='print some values to screen.')
     #parser.add_argument('--task', default=1, help='use specific question-set/task', type=int)
 
     opt = parser.parse_args()
