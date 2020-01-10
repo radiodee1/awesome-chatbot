@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/babi_t2t/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/babi_t2t/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/babi_t2t/torch_t2t_transformer_preprocess.py" beforeDir="false" afterPath="$PROJECT_DIR$/babi_t2t/torch_t2t_transformer_preprocess.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -91,10 +92,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1578409519396" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1577049564918">
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1578694217275">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1577049564918" />
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1578694217275" />
     <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1577114227039">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>

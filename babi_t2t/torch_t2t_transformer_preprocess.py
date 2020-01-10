@@ -375,7 +375,7 @@ def main_wo_bpe():
     for i in train.examples[:]:
         vocab.extend([i.src[:]])
 
-    
+
     TEXT.build_vocab(vocab, min_freq=MIN_FREQ)
     print('[Info] Get text language vocabulary size:', len(TEXT.vocab))
 
