@@ -342,19 +342,7 @@ def main_wo_bpe():
                                 eos_token=Constants.EOS_WORD, #'<eos>',
                                 lower=True)
 
-    '''
-    SRC = torchtext.data.Field(
-        tokenize=tokenize_src, lower=not opt.keep_case,
-        pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
 
-    QUERY = torchtext.data.Field(
-        tokenize=tokenize_src, lower=not opt.keep_case,
-        pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
-
-    TRG = torchtext.data.Field(
-        tokenize=tokenize_trg, lower=not opt.keep_case,
-        pad_token=Constants.PAD_WORD, init_token=Constants.BOS_WORD, eos_token=Constants.EOS_WORD)
-    '''
     MAX_LEN = opt.max_len
     MIN_FREQ = 0 #opt.min_word_count
 
@@ -367,12 +355,7 @@ def main_wo_bpe():
     def filter_examples_with_length(x):
         return len(vars(x)['src']) <= MAX_LEN and len(vars(x)['trg']) <= MAX_LEN
 
-    '''
-    train, val, test = torchtext.datasets.Multi30k.splits(
-            exts = ('.' + opt.lang_src, '.' + opt.lang_trg),
-            fields = (SRC, TRG),
-            filter_pred=filter_examples_with_length)
-    '''
+
 
     train, val, test = torchtext.datasets.BABI20.splits(
         TEXT,
@@ -392,10 +375,7 @@ def main_wo_bpe():
     for i in train.examples[:]:
         vocab.extend([i.src[:]])
 
-    #SRC.build_vocab(train.src, min_freq=MIN_FREQ)
-    #print('[Info] Get source language vocabulary size:', len(SRC.vocab))
-    #TRG.build_vocab(train.trg, min_freq=MIN_FREQ)
-    #print('[Info] Get target language vocabulary size:', len(TRG.vocab))
+    
     TEXT.build_vocab(vocab, min_freq=MIN_FREQ)
     print('[Info] Get text language vocabulary size:', len(TEXT.vocab))
 
