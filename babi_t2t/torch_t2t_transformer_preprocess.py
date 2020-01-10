@@ -96,8 +96,12 @@ def find_and_parse_story(data, period=False):
 
         data.examples[ii].src = [Constants.BOS_WORD] + data.examples[ii].story[:] + [Constants.EOS_WORD]
         data.examples[ii].trg = [Constants.BOS_WORD] + data.examples[ii].answer[:] + [Constants.EOS_WORD]
-        data.examples[ii].story = None
-        data.examples[ii].answer = None
+
+        delattr(data.examples[ii], 'story')
+        delattr(data.examples[ii], 'answer')
+        delattr(data.examples[ii], 'query')
+        #data.examples[ii].story = None
+        #data.examples[ii].answer = None
 
     return data
 
@@ -382,7 +386,7 @@ def main_wo_bpe():
     test = find_and_parse_story(test, period=True)
 
     ## print some values
-    print(i.story for i in train.examples[:3])
+    print(list(i.src for i in train.examples[:3]), '< src')
 
     vocab = []
     for i in train.examples[:]:
@@ -395,6 +399,7 @@ def main_wo_bpe():
     TEXT.build_vocab(vocab, min_freq=MIN_FREQ)
     print('[Info] Get text language vocabulary size:', len(TEXT.vocab))
 
+    '''
     if opt.share_vocab and False:
         print('[Info] Merging two vocabulary ...')
         for w, _ in SRC.vocab.stoi.items():
@@ -411,7 +416,7 @@ def main_wo_bpe():
         SRC.vocab.itos = TRG.vocab.itos
 
         print('[Info] Get merged vocabulary size:',  len(TEXT.vocab))
-
+    '''
     print(TEXT.vocab.stoi)
     SRC = TRG = TEXT
 

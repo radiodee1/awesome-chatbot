@@ -150,14 +150,15 @@ def eval_epoch(model, validation_data, device, opt):
             src_seq = patch_src(batch.src, opt.src_pad_idx).to(device)
             trg_seq, gold = map(lambda x: x.to(device), patch_trg(batch.trg, opt.trg_pad_idx))
 
-            if opt.print_to_screen:
-                print(batch.src, batch.trg)
-                exit()
-
             # forward
             pred = model(src_seq, trg_seq)
             loss, n_correct, n_word = cal_performance(
                 pred, gold, opt.trg_pad_idx, smoothing=False)
+
+            if opt.print_to_screen:
+                print(pred)
+                exit()
+
 
             # note keeping
             n_word_total += n_word
@@ -233,9 +234,9 @@ def main():
     Usage:
     python train.py -data_pkl m30k_deen_shr.pkl -log m30k_deen_shr -embs_share_weight -proj_share_weight -label_smoothing -save_model trained -b 256 -warmup 128000
     '''
-    global TEXT
-    global babi_train_txt_in, babi_val_txt_in, babi_test_txt_in
-    global babi_train_txt, babi_val_txt, babi_test_txt
+    #global TEXT
+    #global babi_train_txt_in, babi_val_txt_in, babi_test_txt_in
+    #global babi_train_txt, babi_val_txt, babi_test_txt
 
     parser = argparse.ArgumentParser()
 
@@ -254,7 +255,7 @@ def main():
 
     parser.add_argument('-n_head', type=int, default=8)
     parser.add_argument('-n_layers', type=int, default=6)
-    parser.add_argument('-warmup','--n_warmup_steps', type=int, default=4000)
+    parser.add_argument('-warmup','--n_warmup_steps', type=int, default=10) #4000
 
     parser.add_argument('-dropout', type=float, default=0.1)
     parser.add_argument('-embs_share_weight', action='store_true', default=True)
