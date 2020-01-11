@@ -165,7 +165,7 @@ class NMT:
     def get_sentence(self, i):
         r = self.kernel.respond(i)
         if r.strip() != "":
-            i += '\n' + self.a_string[0] + r
+            i += '\n' + self.a_string[0] + r 
             #i = r + '\n' + i
 
         a_chars = '' # self.a_string[0]
