@@ -246,7 +246,7 @@ def main():
     parser.add_argument('-val_path', default=None)     # bpe encoded data
 
     parser.add_argument('-epoch', type=int, default=10)
-    parser.add_argument('-b', '--batch_size', type=int, default=2048)
+    parser.add_argument('-b', '--batch_size', type=int, default=2048) ## 2048 -- try 512
 
     parser.add_argument('-d_model', type=int, default=512)
     parser.add_argument('-d_inner_hid', type=int, default=2048)
