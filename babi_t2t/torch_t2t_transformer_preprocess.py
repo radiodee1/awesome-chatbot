@@ -95,7 +95,7 @@ def find_and_parse_story(data, period=False):
         data.examples[ii].query.append('?')
 
         data.examples[ii].src = [Constants.BOS_WORD] + data.examples[ii].story[:] + [Constants.EOS_WORD]
-        data.examples[ii].trg = [Constants.BOS_WORD] + data.examples[ii].answer[:] + [Constants.EOS_WORD]
+        data.examples[ii].trg = [Constants.BOS_WORD] + data.examples[ii].story[:] + data.examples[ii].answer[:] + [Constants.EOS_WORD]
 
         delattr(data.examples[ii], 'story')
         delattr(data.examples[ii], 'answer')
