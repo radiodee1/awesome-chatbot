@@ -51,7 +51,7 @@ def main():
 
     parser.add_argument('-model', required=False, default='../saved/t2t_model.tar.chkpt',
                         help='Path to model weight file')
-    parser.add_argument('-data_pkl', required=False, default='../data/babi_transformer.bin',
+    parser.add_argument('-data_pkl', required=False, default='../data/data_transformer.bin',
                         help='Pickle file with both instances and vocabulary.')
     parser.add_argument('-output', default='../saved/babi_pred.txt',
                         help="""Path to output the predictions (each line will

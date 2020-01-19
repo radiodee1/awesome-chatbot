@@ -4,7 +4,7 @@ import sys
 sys.path.append('..')
 import re
 import unidecode
-from settings import hparams
+from model.settings import hparams
 
 timeframes = ['input']
 

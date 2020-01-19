@@ -240,7 +240,7 @@ def main():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-data_pkl', default='../data/babi_transformer.bin')     # all-in-1 data pickle or bpe field
+    parser.add_argument('-data_pkl', default='../data/data_transformer.bin')     # all-in-1 data pickle or bpe field
 
     parser.add_argument('-train_path', default=None)   # bpe encoded data
     parser.add_argument('-val_path', default=None)     # bpe encoded data

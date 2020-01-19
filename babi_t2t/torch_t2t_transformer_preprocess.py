@@ -32,6 +32,7 @@ sys.path.append('./t2t/')
 sys.path.append('../')
 import os
 import argparse
+from argparse import Namespace
 import logging
 import dill as pickle
 import urllib
@@ -48,6 +49,9 @@ import transformer.Constants as Constants
 from learn_bpe import learn_bpe
 from apply_bpe import BPE
 from torchtext.data.utils import get_tokenizer
+
+from model.tokenize_weak import format
+from model.settings import hparams as hp
 
 __author__ = "Yu-Hsiang Huang"
 
@@ -95,7 +99,7 @@ def find_and_parse_story(data, period=False):
         data.examples[ii].query.append('?')
 
         data.examples[ii].src = [Constants.BOS_WORD] + data.examples[ii].story[:] + [Constants.EOS_WORD]
-        data.examples[ii].trg = [Constants.BOS_WORD] + data.examples[ii].story[:] + data.examples[ii].answer[:] + [Constants.EOS_WORD]
+        data.examples[ii].trg = [Constants.BOS_WORD] + data.examples[ii].answer[:] + [Constants.EOS_WORD]
 
         delattr(data.examples[ii], 'story')
         delattr(data.examples[ii], 'answer')
@@ -104,6 +108,36 @@ def find_and_parse_story(data, period=False):
         #data.examples[ii].answer = None
 
     return data
+
+def find_and_parse_movie(name):
+    fr_name = '../data/' + name + '.big.from'
+    to_name = '../data/' + name + '.big.to'
+    data = Namespace()
+    data.examples = []
+    with open(fr_name,'r') as fr_file, open(to_name, 'r') as to_file:
+        fr_list = fr_file.readlines()
+        to_list = to_file.readlines()
+        for ii in range(len(fr_list)):
+            data.examples.append(None)
+            data.examples[ii] = Namespace(src='', trg='')
+            fr_words = fr_list[ii]
+            to_words = to_list[ii]
+            fr_words = format(fr_words)
+            to_words = format(to_words)
+
+            fr_words = fr_words.replace(hp['eol'], '')
+            fr_words = fr_words.replace(hp['sol'], '')
+
+            to_words = to_words.replace(hp['eol'], '')
+            to_words = to_words.replace(hp['sol'], '')
+
+            fr_words = fr_words.split(' ')
+            to_words = to_words.split(' ')
+            
+            data.examples[ii].src = [Constants.BOS_WORD] + fr_words + [Constants.EOS_WORD]
+            data.examples[ii].trg = [Constants.BOS_WORD] + to_words + [Constants.EOS_WORD]
+    return data
+
 
 class TqdmUpTo(tqdm):
     def update_to(self, b=1, bsize=1, tsize=None):
@@ -310,7 +344,7 @@ def main_wo_bpe():
     parser = argparse.ArgumentParser()
     parser.add_argument('-lang_src', required=False, choices=spacy_support_langs, default='en')
     parser.add_argument('-lang_trg', required=False, choices=spacy_support_langs, default='en')
-    parser.add_argument('-save_data', required=False, default='../data/babi_transformer.bin')
+    parser.add_argument('-save_data', required=False, default='../data/data_transformer.bin')
     parser.add_argument('-data_src', type=str, default=None)
     parser.add_argument('-data_trg', type=str, default=None)
 
@@ -322,11 +356,15 @@ def main_wo_bpe():
     #parser.add_argument('-vocab', default=None)
     parser.add_argument('-tenk', action='store_true', help='use ten-k dataset')
     parser.add_argument('-task', default=1, help='use specific question-set/task', type=int)
+    parser.add_argument('-movie', action='store_true', help='use movie corpus.')
 
     opt = parser.parse_args()
     assert not any([opt.data_src, opt.data_trg]), 'Custom data input is not support now.'
     assert not any([opt.data_src, opt.data_trg]) or all([opt.data_src, opt.data_trg])
     print(opt)
+
+    if opt.movie:
+        opt.save_data = '../data/data_transformer.bin'
 
     src_lang_model = spacy.load(opt.lang_src)
     trg_lang_model = spacy.load(opt.lang_trg)
@@ -356,17 +394,23 @@ def main_wo_bpe():
         return len(vars(x)['src']) <= MAX_LEN and len(vars(x)['trg']) <= MAX_LEN
 
 
+    if not opt.movie:
+        train, val, test = torchtext.datasets.BABI20.splits(
+            TEXT,
+            root='../raw/',
+            tenK=opt.tenk,
+            task=opt.task,
+        )
 
-    train, val, test = torchtext.datasets.BABI20.splits(
-        TEXT,
-        root='../raw/',
-        tenK=opt.tenk,
-        task=opt.task,
-    )
+        train = find_and_parse_story(train, period=True)
+        val = find_and_parse_story(val, period=True)
+        test = find_and_parse_story(test, period=True)
 
-    train = find_and_parse_story(train, period=True)
-    val = find_and_parse_story(val, period=True)
-    test = find_and_parse_story(test, period=True)
+    if opt.movie:
+        train = find_and_parse_movie('train')
+        val = find_and_parse_movie('valid')
+        test = find_and_parse_movie('test')
+        pass
 
     ## print some values
     print(list(i.src for i in train.examples[:3]), '< src')
