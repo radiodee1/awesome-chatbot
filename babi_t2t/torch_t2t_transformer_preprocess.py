@@ -109,7 +109,7 @@ def find_and_parse_story(data, period=False):
 
     return data
 
-def find_and_parse_movie(name):
+def find_and_parse_movie(name, max_len):
     fr_name = '../data/' + name + '.big.from'
     to_name = '../data/' + name + '.big.to'
     data = Namespace()
@@ -118,6 +118,8 @@ def find_and_parse_movie(name):
         fr_list = fr_file.readlines()
         to_list = to_file.readlines()
         for ii in range(len(fr_list)):
+            if ii >= max_len and max_len != -1: break
+
             data.examples.append(None)
             data.examples[ii] = Namespace(src='', trg='')
             fr_words = fr_list[ii]
@@ -133,7 +135,7 @@ def find_and_parse_movie(name):
 
             fr_words = fr_words.split(' ')
             to_words = to_words.split(' ')
-            
+
             data.examples[ii].src = [Constants.BOS_WORD] + fr_words + [Constants.EOS_WORD]
             data.examples[ii].trg = [Constants.BOS_WORD] + to_words + [Constants.EOS_WORD]
     return data
@@ -348,7 +350,7 @@ def main_wo_bpe():
     parser.add_argument('-data_src', type=str, default=None)
     parser.add_argument('-data_trg', type=str, default=None)
 
-    parser.add_argument('-max_len', type=int, default=100)
+    parser.add_argument('-max_len', type=int, default=-1)
     parser.add_argument('-min_word_count', type=int, default=1)
     parser.add_argument('-keep_case', action='store_true')
     parser.add_argument('-share_vocab', action='store_true', default=True)
@@ -407,9 +409,9 @@ def main_wo_bpe():
         test = find_and_parse_story(test, period=True)
 
     if opt.movie:
-        train = find_and_parse_movie('train')
-        val = find_and_parse_movie('valid')
-        test = find_and_parse_movie('test')
+        train = find_and_parse_movie('train', MAX_LEN)
+        val = find_and_parse_movie('valid', MAX_LEN)
+        test = find_and_parse_movie('test', MAX_LEN)
         pass
 
     ## print some values
