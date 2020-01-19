@@ -35,7 +35,7 @@ import math
 import time
 import dill as pickle
 from tqdm import tqdm
-
+import os
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
@@ -47,6 +47,7 @@ from transformer.Models import Transformer
 from transformer.Optim import ScheduledOptim
 import torchtext
 from model.settings import hparams
+import translate as translate
 
 __author__ = "Yu-Hsiang Huang"
 
@@ -269,7 +270,7 @@ def main():
     parser.add_argument('-label_smoothing', action='store_true')
 
     parser.add_argument('-print_to_screen', action='store_true', help='print some values to screen.')
-    #parser.add_argument('--task', default=1, help='use specific question-set/task', type=int)
+    parser.add_argument('-load_saved', help='use specific saved model file.', action='store_true')
 
     opt = parser.parse_args()
     opt.cuda = not opt.no_cuda
@@ -322,6 +323,13 @@ def main():
         n_layers=opt.n_layers,
         n_head=opt.n_head,
         dropout=opt.dropout).to(device)
+
+    print(opt.save_model,':name')
+
+    if opt.load_saved and os.path.isfile(opt.save_model + '.chkpt'):
+        opt.model = opt.save_model + '.chkpt'
+        transformer = translate.load_model(opt, device)
+        print('loaded transformer')
 
     optimizer = ScheduledOptim(
         optim.Adam(transformer.parameters(), betas=(0.9, 0.98), eps=1e-09),
