@@ -109,7 +109,7 @@ def find_and_parse_story(data, period=False):
 
     return data
 
-def find_and_parse_movie(name, max_len):
+def find_and_parse_movie(name, max_len, start=0):
     fr_name = '../data/' + name + '.big.from'
     to_name = '../data/' + name + '.big.to'
     data = Namespace()
@@ -118,10 +118,12 @@ def find_and_parse_movie(name, max_len):
         fr_list = fr_file.readlines()
         to_list = to_file.readlines()
         for ii in range(len(fr_list)):
-            if ii >= max_len and max_len != -1: break
+
+            if ii >= max_len + start and max_len != -1: break
+            if ii < start: continue
 
             data.examples.append(None)
-            data.examples[ii] = Namespace(src='', trg='')
+            data.examples[ii - start] = Namespace(src='', trg='')
             fr_words = fr_list[ii]
             to_words = to_list[ii]
             fr_words = format(fr_words)
@@ -136,8 +138,8 @@ def find_and_parse_movie(name, max_len):
             fr_words = fr_words.split(' ')
             to_words = to_words.split(' ')
 
-            data.examples[ii].src = [Constants.BOS_WORD] + fr_words + [Constants.EOS_WORD]
-            data.examples[ii].trg = [Constants.BOS_WORD] + to_words + [Constants.EOS_WORD]
+            data.examples[ii - start].src = [Constants.BOS_WORD] + fr_words + [Constants.EOS_WORD]
+            data.examples[ii - start].trg = [Constants.BOS_WORD] + to_words + [Constants.EOS_WORD]
     return data
 
 
@@ -359,6 +361,7 @@ def main_wo_bpe():
     parser.add_argument('-tenk', action='store_true', help='use ten-k dataset')
     parser.add_argument('-task', default=1, help='use specific question-set/task', type=int)
     parser.add_argument('-movie', action='store_true', help='use movie corpus.')
+    parser.add_argument('-movie_start', help='skip movie corpus lines.', default=0, type=int)
 
     opt = parser.parse_args()
     assert not any([opt.data_src, opt.data_trg]), 'Custom data input is not support now.'
@@ -385,6 +388,9 @@ def main_wo_bpe():
 
     MAX_LEN = opt.max_len
     MIN_FREQ = 0 #opt.min_word_count
+    MOVIE_START = opt.movie_start
+    MOVIE_ANY_LEN = -1
+    MOVIE_ANY_START = 0
 
     if not all([opt.data_src, opt.data_trg]):
         assert {opt.lang_src, opt.lang_trg} == {'en', 'en'}
@@ -409,9 +415,9 @@ def main_wo_bpe():
         test = find_and_parse_story(test, period=True)
 
     if opt.movie:
-        train = find_and_parse_movie('train', MAX_LEN)
-        val = find_and_parse_movie('valid', MAX_LEN)
-        test = find_and_parse_movie('test', MAX_LEN)
+        train = find_and_parse_movie('train', MAX_LEN, MOVIE_START)
+        val = find_and_parse_movie('valid', MOVIE_ANY_LEN, MOVIE_ANY_START)
+        test = find_and_parse_movie('test', MOVIE_ANY_LEN, MOVIE_ANY_START)
         pass
 
     ## print some values
