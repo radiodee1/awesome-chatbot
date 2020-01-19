@@ -329,7 +329,7 @@ def main():
     if opt.load_saved and os.path.isfile(opt.save_model + '.chkpt'):
         opt.model = opt.save_model + '.chkpt'
         transformer = translate.load_model(opt, device)
-        print('loaded transformer')
+        #print('loaded transformer')
 
     optimizer = ScheduledOptim(
         optim.Adam(transformer.parameters(), betas=(0.9, 0.98), eps=1e-09),
