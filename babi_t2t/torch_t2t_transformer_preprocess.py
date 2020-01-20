@@ -362,6 +362,7 @@ def main_wo_bpe():
     parser.add_argument('-task', default=1, help='use specific question-set/task', type=int)
     parser.add_argument('-movie', action='store_true', help='use movie corpus.')
     parser.add_argument('-movie_start', help='skip movie corpus lines.', default=0, type=int)
+    parser.add_argument('-vocab_file', help='path to separate vocab file.',default='../data/data_vocab.bin')
 
     opt = parser.parse_args()
     assert not any([opt.data_src, opt.data_trg]), 'Custom data input is not support now.'
@@ -463,12 +464,21 @@ def main_wo_bpe():
         'valid': val.examples,
         'test': test.examples}
 
+    voc_data = {
+        'vocab': {'src': SRC, 'trg': TRG, 'txt': TEXT}
+    }
+
     print(data['train'][0].src, data['train'][0].trg)
     print(len(data['train']), 'train' ,len(data['valid']), 'valid', len(data['test']), 'test')
 
     print('[Info] Dumping the processed data to pickle file', opt.save_data)
     pickle.dump(data, open(opt.save_data, 'wb'))
 
+    if not os.path.isfile(opt.vocab_file):
+        pickle.dump(voc_data, open(opt.vocab_file, 'wb'))
+        print(opt.vocab_file, 'NEW VOCAB FILE')
+    else:
+        print(opt.vocab_file, 'file exists. NOT REPLACING.')
 
 if __name__ == '__main__':
     main_wo_bpe()

@@ -3,6 +3,7 @@
 ''' Translate input text with trained model. '''
 
 import sys
+import os
 sys.path.append('./t2t/')
 sys.path.append('../')
 import torch
@@ -60,6 +61,8 @@ def main():
     parser.add_argument('-max_seq_len', type=int, default=100)
     parser.add_argument('-no_cuda', action='store_true', default=True)
     parser.add_argument('-print_to_screen', action='store_true')
+    parser.add_argument('-vocab_file', help='path to separate vocab file.',default='../data/data_vocab.bin')
+
 
     # TODO: Translate bpe encoded files 
     #parser.add_argument('-src', required=True,
@@ -78,6 +81,13 @@ def main():
 
     data = pickle.load(open(opt.data_pkl, 'rb'))
     SRC, TRG, TXT = data['vocab']['src'], data['vocab']['trg'], data['vocab']['txt']
+
+    if opt.vocab_file and os.path.isfile(opt.vocab_file):
+        data_vocab = pickle.load(open(opt.vocab_file, 'rb'))
+        fields = {'src': data_vocab['vocab']['txt'], 'trg': data_vocab['vocab']['txt']}
+        print(len(data['vocab']['txt'].vocab), len(data_vocab['vocab']['txt'].vocab), 'length of vocab.')
+        SRC, TRG, TXT = data_vocab['vocab']['src'], data_vocab['vocab']['trg'], data_vocab['vocab']['txt']
+
     #opt.src_pad_idx = SRC.vocab.stoi[Constants.PAD_WORD]
     #opt.trg_pad_idx = TRG.vocab.stoi[Constants.PAD_WORD]
     #opt.trg_bos_idx = TRG.vocab.stoi[Constants.BOS_WORD]

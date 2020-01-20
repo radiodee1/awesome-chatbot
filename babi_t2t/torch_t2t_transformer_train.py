@@ -271,6 +271,8 @@ def main():
 
     parser.add_argument('-print_to_screen', action='store_true', help='print some values to screen.')
     parser.add_argument('-load_saved', help='use specific saved model file.', action='store_true')
+    parser.add_argument('-vocab_file', help='path to separate vocab file.',default='../data/data_vocab.bin')
+
 
     opt = parser.parse_args()
     opt.cuda = not opt.no_cuda
@@ -291,10 +293,6 @@ def main():
     print(device,'device')
     
     #========= Loading Dataset =========#
-    #load_q_a(opt.tenk, opt.task)
-    '''
-    
-    '''
 
     if True:
         if all((opt.train_path, opt.val_path)) :
@@ -324,7 +322,7 @@ def main():
         n_head=opt.n_head,
         dropout=opt.dropout).to(device)
 
-    print(opt.save_model,':name')
+    print(opt.save_model,'name')
 
     if opt.load_saved and os.path.isfile(opt.save_model + '.chkpt'):
         opt.model = opt.save_model + '.chkpt'
@@ -383,6 +381,21 @@ def prepare_dataloaders(opt, device):
     batch_size = opt.batch_size
     data = pickle.load(open(opt.data_pkl, 'rb'))
 
+    if opt.vocab_file and os.path.isfile(opt.vocab_file):
+        data_vocab = pickle.load(open(opt.vocab_file, 'rb'))
+
+        data['vocab'] = data_vocab['vocab']
+        data['settings'].max_len = len(data_vocab['vocab']['src'].vocab.stoi)
+
+        print(len(data['vocab']['txt'].vocab), len(data_vocab['vocab']['txt'].vocab), 'length of vocab.')
+
+    fields = {'src': data['vocab']['txt'], 'trg': data['vocab']['txt']}
+
+
+    if opt.embs_share_weight:
+        assert data['vocab']['src'].vocab.stoi == data['vocab']['trg'].vocab.stoi, \
+            'To sharing word embedding the src/trg word2idx table shall be the same.'
+
     opt.max_token_seq_len = data['settings'].max_len
     opt.src_pad_idx = data['vocab']['src'].vocab.stoi[Constants.PAD_WORD]
     opt.trg_pad_idx = data['vocab']['trg'].vocab.stoi[Constants.PAD_WORD]
@@ -391,12 +404,6 @@ def prepare_dataloaders(opt, device):
     opt.trg_vocab_size = len(data['vocab']['trg'].vocab)
 
     #========= Preparing Model =========#
-    if opt.embs_share_weight:
-        assert data['vocab']['src'].vocab.stoi == data['vocab']['trg'].vocab.stoi, \
-            'To sharing word embedding the src/trg word2idx table shall be the same.'
-
-    print(len(data['vocab']['txt'].vocab),'length of vocab.')
-    fields = {'src': data['vocab']['txt'], 'trg':data['vocab']['txt']}
 
     train = Dataset(examples=data['train'], fields=fields)
     val = Dataset(examples=data['valid'], fields=fields)
