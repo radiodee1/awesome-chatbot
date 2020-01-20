@@ -394,6 +394,7 @@ def main_wo_bpe():
 
     if MAX_LEN < 500:
         MOVIE_ANY_LEN = MAX_LEN
+        MOVIE_ANY_START = 0
 
     if not all([opt.data_src, opt.data_trg]):
         assert {opt.lang_src, opt.lang_trg} == {'en', 'en'}
