@@ -104,7 +104,7 @@ def find_and_parse_story(data, period=False):
         delattr(data.examples[ii], 'story')
         delattr(data.examples[ii], 'answer')
         delattr(data.examples[ii], 'query')
-        
+
     return data
 
 def find_and_parse_movie(name, max_len, start=0):
