@@ -98,15 +98,13 @@ def find_and_parse_story(data, period=False):
         data.examples[ii].story = out
         data.examples[ii].query.append('?')
 
-        data.examples[ii].src = [Constants.BOS_WORD] + data.examples[ii].story[:] + [Constants.EOS_WORD]
-        data.examples[ii].trg = [Constants.BOS_WORD] + data.examples[ii].answer[:] + [Constants.EOS_WORD]
-
+        data.examples[ii].src = data.examples[ii].story[:] + [Constants.EOS_WORD]
+        data.examples[ii].trg = data.examples[ii].answer[:] + [Constants.EOS_WORD]
+        ## BOS_WORD added by model ##
         delattr(data.examples[ii], 'story')
         delattr(data.examples[ii], 'answer')
         delattr(data.examples[ii], 'query')
-        #data.examples[ii].story = None
-        #data.examples[ii].answer = None
-
+        
     return data
 
 def find_and_parse_movie(name, max_len, start=0):
