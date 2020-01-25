@@ -107,7 +107,7 @@ def find_and_parse_story(data, period=False):
 
     return data
 
-def find_and_parse_movie(name, max_len, start=0):
+def find_and_parse_movie(name, max_len, start=0, mask=False):
     fr_name = '../data/' + name + '.big.from'
     to_name = '../data/' + name + '.big.to'
     data = Namespace()
@@ -120,8 +120,8 @@ def find_and_parse_movie(name, max_len, start=0):
             if ii >= max_len + start and max_len != -1: break
             if ii < start: continue
 
-            data.examples.append(None)
-            data.examples[ii - start] = Namespace(src='', trg='')
+            #data.examples.append(None)
+            #data.examples[ii - start] = Namespace(src='', trg='')
             fr_words = fr_list[ii]
             to_words = to_list[ii]
             fr_words = format(fr_words)
@@ -136,8 +136,25 @@ def find_and_parse_movie(name, max_len, start=0):
             fr_words = fr_words.split(' ')
             to_words = to_words.split(' ')
 
-            data.examples[ii - start].src = [Constants.BOS_WORD] + fr_words + [Constants.EOS_WORD]
-            data.examples[ii - start].trg = [Constants.BOS_WORD] + to_words + [Constants.EOS_WORD]
+            if not mask:
+                data.examples.append(None)
+                data.examples[ii - start] = Namespace(src='', trg='')
+                data.examples[ii - start].src = fr_words + [Constants.EOS_WORD]
+                data.examples[ii - start].trg = to_words + [Constants.EOS_WORD]
+            else:
+                skip = 2
+                tokens = len(to_words)
+                j = 0
+                for jj in range(skip, tokens):
+                    if len(to_words[skip:j]) == 0 :
+                        j += 1
+                        continue
+                    data.examples.append(Namespace(src='', trg=''))
+                    data.examples[ii - start + j - skip - 1].src = fr_words[:] + [Constants.EOS_WORD]
+                    data.examples[ii - start + j - skip - 1].trg = to_words[:j] + [Constants.EOS_WORD]
+                    j += 1
+                    pass
+
     return data
 
 
@@ -418,8 +435,8 @@ def main_wo_bpe():
         test = find_and_parse_story(test, period=True)
 
     if opt.movie:
-        train = find_and_parse_movie('train', MAX_LEN, MOVIE_START)
-        val = find_and_parse_movie('valid', MOVIE_ANY_LEN, MOVIE_ANY_START)
+        train = find_and_parse_movie('train', MAX_LEN, MOVIE_START, mask=True)
+        val = find_and_parse_movie('valid', MOVIE_ANY_LEN, MOVIE_ANY_START, mask=True)
         test = find_and_parse_movie('test', MOVIE_ANY_LEN, MOVIE_ANY_START)
         pass
 
