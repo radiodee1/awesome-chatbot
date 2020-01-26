@@ -380,6 +380,7 @@ def main_wo_bpe():
     parser.add_argument('-movie', action='store_true', help='use movie corpus.')
     parser.add_argument('-movie_start', help='skip movie corpus lines.', default=0, type=int)
     parser.add_argument('-vocab_file', help='path to separate vocab file.',default='../data/data_vocab.bin')
+    parser.add_argument('-movie_stagger', action='store_true', help='enable movie target staggering.')
 
     opt = parser.parse_args()
     assert not any([opt.data_src, opt.data_trg]), 'Custom data input is not support now.'
@@ -437,8 +438,8 @@ def main_wo_bpe():
         test = find_and_parse_story(test, period=True)
 
     if opt.movie:
-        train = find_and_parse_movie('train', MAX_LEN, MOVIE_START, mask=True)
-        val = find_and_parse_movie('valid', MOVIE_ANY_LEN, MOVIE_ANY_START, mask=True)
+        train = find_and_parse_movie('train', MAX_LEN, MOVIE_START, mask=opt.movie_stagger)
+        val = find_and_parse_movie('valid', MOVIE_ANY_LEN, MOVIE_ANY_START, mask=opt.movie_stagger)
         test = find_and_parse_movie('test', MOVIE_ANY_LEN, MOVIE_ANY_START)
         pass
 
@@ -471,7 +472,7 @@ def main_wo_bpe():
 
         print('[Info] Get merged vocabulary size:',  len(TEXT.vocab))
     '''
-    print(TEXT.vocab.stoi)
+    #print(TEXT.vocab.stoi)
     SRC = TRG = TEXT
 
     data = {
