@@ -138,7 +138,7 @@ def find_and_parse_movie(name, max_len, start=0, mask=False):
 
             if not mask:
                 data.examples.append(None)
-                data.examples[ii - start] = Namespace(src=list(), trg=len())
+                data.examples[ii - start] = Namespace(src=list(), trg=list())
                 data.examples[ii - start].src = fr_words + [Constants.EOS_WORD]
                 data.examples[ii - start].trg = to_words + [Constants.EOS_WORD]
             else:
