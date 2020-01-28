@@ -1,0 +1,11 @@
+Hello.
+What is your name?
+What time is it?
+What do you do?
+What is your favorite color?
+Do you like red?
+Do you like blue?
+What is your favorite candy?
+Do you like ice cream?
+Good bye.
+
