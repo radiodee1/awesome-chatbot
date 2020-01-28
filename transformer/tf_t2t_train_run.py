@@ -166,18 +166,28 @@ class NMT:
             if '.' in z:
                 z = z.split('.')[0] ## take first sentence
             return z
-        except:
-            pass
-            print('terminate')
+        except (EOFError, KeyboardInterrupt):
             self.p.terminate()
+            print()
+            exit()
+        except NotImplementedError as xx:
+            pass
+            print('terminate', type(xx).__name__)
+            self.p.terminate()
+
 
     def loop(self):
 
         while True:
             try:
                 i = input("> ")
-                z = self.get_sentence(i)
+                print(i)
+                z = self.get_sentence(i.lower())
                 print(z)
+            except (EOFError, KeyboardInterrupt):
+                self.p.terminate()
+                print()
+                exit()
             except:
                 self.p.terminate()
 
