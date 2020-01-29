@@ -87,12 +87,12 @@ class ChatLineProblem(text_problems.Text2TextProblem):
 @registry.register_hparams
 def transformer_chat():
     hparams = transformer.transformer_base_v2()
-    hparams.num_hidden_layers = 2
-    hparams.hidden_size = 128
-    hparams.filter_size = 512
-    hparams.num_heads = 4
+    hparams.num_hidden_layers = 6 # 2
+    hparams.hidden_size = 512 # 128
+    hparams.filter_size = 2048 # 512
+    hparams.num_heads = 8 #4
     hparams.attention_dropout = 0.6
-    hparams.layer_prepostprocess_dropout = 0.6
+    hparams.layer_prepostprocess_dropout = 0.1 #0.6
     hparams.learning_rate = 0.05
     #hparams.learning_rate_constant = 0.05
     hparams.learning_rate_schedule = 'legacy'
@@ -105,7 +105,7 @@ def transformer_chat_tpu():
     transformer.update_hparams_for_tpu(hparams)
     return hparams
 
-
+'''
 # hyperparameter tuning ranges
 @registry.register_ranged_hparams
 def transformer_chat_range(rhp):
@@ -113,3 +113,4 @@ def transformer_chat_range(rhp):
     rhp.set_int("num_hidden_layers", 2, 4)
     rhp.set_discrete("hidden_size", [128, 256, 512])
     rhp.set_float("attention_dropout", 0.4, 0.7)
+'''
