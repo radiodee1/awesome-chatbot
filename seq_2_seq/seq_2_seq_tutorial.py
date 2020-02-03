@@ -191,7 +191,7 @@ def printLines(file, n=10):
     for line in lines[:n]:
         print(line)
 
-printLines(os.path.join(corpus, "movie_lines.txt"))
+#printLines(os.path.join(corpus, "movie_lines.txt"))
 
 
 ######################################################################
@@ -1510,7 +1510,7 @@ class NMT:
 if __name__ == '__main__':
 
     n = NMT()
-    if n.args.build_train_data or n.args.train:
+    if (n.args.build_train_data or n.args.train) and not n.do_interactive:
         vocab_and_sentences()
         n.voc = vocab_and_sentences_pairs()
         vocab_and_sentences_trim_rare(n.voc)
@@ -1518,7 +1518,7 @@ if __name__ == '__main__':
         pass
 
     n.configure_models()
-    if n.do_train:
+    if n.do_train and not n.do_interactive:
         n.configure_training()
     if n.do_interactive:
         n.configure_evaluation()
@@ -1529,4 +1529,7 @@ if __name__ == '__main__':
                 print(out)
             except EOFError:
                 print('eof')
+                exit()
+            except KeyboardInterrupt:
+                print()
                 exit()
