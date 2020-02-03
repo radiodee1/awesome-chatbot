@@ -1400,21 +1400,23 @@ class NMT:
             self.loadFilename = hparams['save_dir'] + '/' + str(self.args.iter) + '_checkpoint.tar'
         if not  os.path.isfile(self.loadFilename):
             print('xxx',self.loadFilename,'xxx')
+            self.loadFilename = None
 
         #print(self.loadFilename,'name')
         # Load model if a loadFilename is provided
         if self.loadFilename:
-            # If loading on same machine the model was trained on
-            checkpoint = torch.load(self.loadFilename)
-            # If loading a model trained on GPU to CPU
-            #checkpoint = torch.load(loadFilename, map_location=torch.device('cpu'))
-            self.encoder_sd = checkpoint['en']
-            self.decoder_sd = checkpoint['de']
-            self.encoder_optimizer_sd = checkpoint['en_opt']
-            self.decoder_optimizer_sd = checkpoint['de_opt']
-            self.embedding_sd = checkpoint['embedding']
-            self.voc.__dict__ = checkpoint['voc_dict']
-
+            try:
+                checkpoint = torch.load(self.loadFilename)
+                # If loading a model trained on GPU to CPU
+                #checkpoint = torch.load(loadFilename, map_location=torch.device('cpu'))
+                self.encoder_sd = checkpoint['en']
+                self.decoder_sd = checkpoint['de']
+                self.encoder_optimizer_sd = checkpoint['en_opt']
+                self.decoder_optimizer_sd = checkpoint['de_opt']
+                self.embedding_sd = checkpoint['embedding']
+                self.voc.__dict__ = checkpoint['voc_dict']
+            except:
+                pass
 
         print('Building encoder and decoder ...')
         # Initialize word embeddings
