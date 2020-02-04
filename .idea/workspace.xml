@@ -2,15 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_babi_download.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_bert_squad_download.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_db_from_french.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_french_download.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_glove_download.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_glue_download.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_pos_download.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_w2v_download.sh" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,7 +31,7 @@
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/babi_t2t" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -102,10 +95,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1580836921067" />
-    <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1577114227039">
+    <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1580837473024">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="452" y="190" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1577114227039" />
+    <state x="452" y="190" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1580837473024" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
