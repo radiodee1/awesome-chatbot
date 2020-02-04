@@ -193,6 +193,11 @@ def printLines(file, n=10):
 
 #printLines(os.path.join(corpus, "movie_lines.txt"))
 
+def fix_contractions(txt):
+    txt = txt.replace(' t ', 't ')
+    txt = txt.replace(' m ', 'm ')
+    txt = txt.replace(' s ', 's ')
+    return txt
 
 ######################################################################
 # Create formatted data file
@@ -1384,7 +1389,9 @@ class NMT:
         pass
 
     def get_sentence(self, i):
-        return self.task_interactive(l=i, call_from_script=True)
+        z = self.task_interactive(l=i, call_from_script=True)
+        z = fix_contractions(z)
+        return z #self.task_interactive(l=i, call_from_script=True)
 
     def configure_models(self):
         global checkpoint
