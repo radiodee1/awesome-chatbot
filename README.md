@@ -109,6 +109,8 @@ but answers the questions found in the aiml file with the specific answers in th
  I contacted Mr. Inkawhich and asked him for instructions on how to cite his work in a paper using latex.
  He was nice enough to help with that.
 
+2/4/2020 - I am removing all babi-type code from the repository.
+
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
