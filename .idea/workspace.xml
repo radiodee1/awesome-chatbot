@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_babi_download.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_bert_squad_download.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_db_from_french.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_french_download.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_glove_download.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_glue_download.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_pos_download.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_w2v_download.sh" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -88,10 +98,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1578409519396" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1578694217275">
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1580836921067">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1578694217275" />
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1580836921067" />
     <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1577114227039">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
