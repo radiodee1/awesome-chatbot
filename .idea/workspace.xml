@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitmodules" beforeDir="false" afterPath="$PROJECT_DIR$/.gitmodules" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,6 +87,11 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/babi_t2t/t2t" />
+    </ignored-roots>
+  </component>
   <component name="WindowStateProjectService">
     <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1578409519396">
       <screen x="0" y="27" width="1920" height="1053" />
@@ -95,10 +101,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1580836921067" />
-    <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1580837473024">
+    <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1580838300648">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="452" y="190" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1580837473024" />
+    <state x="452" y="190" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1580838300648" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

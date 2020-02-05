@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/babi_t2t/t2t" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/model/tf_gpt2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/model/torch_gpt2" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/torch_t2t/t2t" vcs="Git" />
