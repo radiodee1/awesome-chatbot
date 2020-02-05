@@ -290,8 +290,8 @@ class NMT:
         return i
 
     def prep_recent(self):
-        self.recent_in = self.recent_in.strip('.').lower()
-        self.recent_text = self.recent_text.strip('.').lower()
+        self.recent_in = self.q_string[0] + self.recent_in.strip('.').lower()
+        self.recent_text = self.a_string[0] + self.recent_text.strip('.').lower()
         for a in self.previous_sentences:
             a = a.replace('.', '')
             if self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' '):
@@ -304,10 +304,10 @@ class NMT:
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
                 self.recent_in = None
 
-        if self.recent_in is not None:
-            self.previous_sentences.append(self.q_string[0] + self.recent_in)
-        if self.recent_text is not None:
-            self.previous_sentences.append(self.a_string[0] + self.recent_text)
+        if self.recent_in is not None and self.recent_text is not None:
+            self.previous_sentences.extend([self.recent_in, self.recent_text])
+        #if self.recent_text is not None:
+        #    self.previous_sentences.append(self.recent_text)
 
         if self.save_num > -1:
             self.previous_sentences = self.previous_sentences[-self.save_num:]
@@ -318,7 +318,7 @@ class NMT:
             k = k.strip().strip('.').strip('\n')
             for z in self.a_string + self.q_string:
                 z = z.lower()
-                if k.lower().startswith(z): k = k[len(z):]
+                if k.lower().startswith(z) and False: k = k[len(z):]
             if len(k) > 0:
                 s.append( k.lower() + '.\n')
         #s = ['---'] + s + ['---']
