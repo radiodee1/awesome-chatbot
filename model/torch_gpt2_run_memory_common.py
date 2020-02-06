@@ -95,7 +95,7 @@ class NMT:
         self.gather_sentences = False
         self.recent_in = ''
         self.recent_text = ''
-        self.save_num = 10
+        self.save_num = 20
         self.save_on_failure = False
         self.use_common = True
 
@@ -125,7 +125,7 @@ class NMT:
 
     def prepare_common(self):
         self.common = ''
-        a_chars = self.a_string[0]
+        a_chars = '' #self.a_string[0]
         q_chars = self.q_string[0]
 
         now = datetime.datetime.now()
@@ -134,28 +134,20 @@ class NMT:
         name = self.name
         profession = 'student'
         location = 'New York'
-        key_action_string = '\n ' + a_chars + 'play media.\n'
-        key_phrases = [
-            'Play music? ' + key_action_string,
-            'Play movies? ' + key_action_string,
-            'Play radio? ' + key_action_string,
-            'Play any song? ' + key_action_string,
-            'Play any video? ' + key_action_string,
-            'Play any movie? ' + key_action_string,
-            'Play a song? ' + key_action_string,
-            'Play a video? ' + key_action_string,
-            'Play a movie? ' + key_action_string,
-
-        ]## doesn't work??
+        #key_action_string = '\n ' + a_chars + 'play media.\n'
 
         self.common += ' '
-        self.common += a_chars + 'Hello. Hi' + '.\n '
+        #self.common += q_chars + 'Hello?\n '
+        self.common +=   'Hello' + '.\n '
+        #self.common += q_chars + 'What is your name?\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
+        #self.common += q_chars + 'What time is it?\n '
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
+        #self.common += q_chars + 'What is your job?\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
+        #self.common += q_chars + 'Where are you?\n '
         self.common += a_chars + "I am in " + location + '. \n'
-        if self.args.apps and False:
-            self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
+
 
     def get_sentence(self, i):
         a_chars = '' # self.a_string[0]
@@ -304,10 +296,8 @@ class NMT:
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
                 self.recent_in = None
 
-        if self.recent_in is not None and self.recent_text is not None:
+        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
-        #if self.recent_text is not None:
-        #    self.previous_sentences.append(self.recent_text)
 
         if self.save_num > -1:
             self.previous_sentences = self.previous_sentences[-self.save_num:]
