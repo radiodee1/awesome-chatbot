@@ -52,6 +52,8 @@ from model.nmt_aiml_commands import Commands
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
 
+print('NOTE: consider using this source file: --source_file ../data/tf_gpt2_data/774M/converted/pytorch_model.bin')
+
 class Lang:
     def __init__(self, name, limit=None):
         self.name = name
@@ -90,6 +92,7 @@ class NMT:
         self.commands = None
 
         self.common = ''
+        self.common_pre = ''
         self.previous_sentences = []
         self.sentences_formatted = ''
         self.gather_sentences = False
@@ -125,7 +128,8 @@ class NMT:
 
     def prepare_common(self):
         self.common = ''
-        a_chars = '' #self.a_string[0]
+        self.common_pre = ''
+        a_chars = self.a_string[0]
         q_chars = self.q_string[0]
 
         now = datetime.datetime.now()
@@ -138,8 +142,8 @@ class NMT:
 
         self.common += ' '
         #self.common += q_chars + 'Hello?\n '
-        self.common +=   'Hello' + '.\n '
-        #self.common += q_chars + 'What is your name?\n '
+        self.common_pre +=  a_chars + 'Hello. Hi' + '.\n '
+        self.common += q_chars + 'What is your name?\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
         #self.common += q_chars + 'What time is it?\n '
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
@@ -155,14 +159,16 @@ class NMT:
 
         if self.use_common:
             self.recent_in = i
+            i = self.q_string[0] + i + '?'
+
             #if self.save_num > -1:
             #    self.previous_sentences = self.previous_sentences[-self.save_num:]
-            s = []
+
             s = self.sentences_formatted
 
             self.prepare_common()
             #i = self.common + "\n" + "\n" + ' ' +  ' '.join(s)
-            i = ' '.join(s) + "\n" + self.common + '\n' + i
+            i = self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
 
             print('',"+" * 10, '\n', i, '\n','+' * 10)
         i = self.prepare_input(i)
@@ -202,10 +208,11 @@ class NMT:
     def prepare_input(self, i):
         self.random_seed()
 
-        if True:
+        if False:
             i = self.q_string[0] + i + '?'
         else:
             i = i + "?"
+        #print(i)
         return i
 
     def prepare_output(self, i):
@@ -303,14 +310,14 @@ class NMT:
             self.previous_sentences = self.previous_sentences[-self.save_num:]
 
         #print(self.previous_sentences)
-        s = []
+        s = ''
         for k in self.previous_sentences:
             k = k.strip().strip('.').strip('\n')
             for z in self.a_string + self.q_string:
                 z = z.lower()
                 if k.lower().startswith(z) and False: k = k[len(z):]
             if len(k) > 0:
-                s.append( k.lower() + '.\n')
+                s += k + '.\n'
         #s = ['---'] + s + ['---']
         self.sentences_formatted = s
         #return s
