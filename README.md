@@ -1,5 +1,5 @@
 # `awesome-chatbot`
-The goal of this project is to make a Keras or Pytorch implementation of a chatbot.
+The goal of this project is to make a Keras, Tensorflow, or Pytorch implementation of a chatbot.
 The basic idea is to start by setting up your training environment as described below and then training on various data sets. 
 Later we want to use our code to implement a chatbot. This requires finding a suitable data set. 
 The inspiration for this project is the tensorflow NMT project found at the following link: [here](https://github.com/tensorflow/nmt) 
@@ -272,3 +272,8 @@ Test google speech recognition with the `bot/game_sr.py` script. The script may 
 * Save the changes.
 * You must exit and re-enter the bash shell in a new terminal for the changes to take effect. After that you should be able to run the `game_sr.py` file. You will be charged for the service.
 * On the Raspberry Pi use the same general technique as above. Edit the `.basshrc` file to contain the line `export GOOGLE_APPLICATION_CREDENTIALS=/opt/bot/awesome-sr-XXXXXX.json` where `XXXXXX` is the hexadecimal label on the json file on the Rapberry Pi. This number will be different from the one on your regular computer.
+
+### One Liner for `/etc/rc.local`
+On the raspberry pi there is a file called `/etc/rc.local` that is launched with every reboot. Use this file to launch the chatbot/smart-speaker on startup.
+
+* `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && cd /home/pi/workspace/awesome-chatbot/ && ./do_launch_game_s2s.sh'`
