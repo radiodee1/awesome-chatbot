@@ -33,7 +33,7 @@ spacy ## python -m spacy download en ##
 numpy
 
 ## kaggle ##
-kaggle
+#kaggle
 ## must install kaggle.json file as described here:
 ## https://github.com/Kaggle/kaggle-api
 
