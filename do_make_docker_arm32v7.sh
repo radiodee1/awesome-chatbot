@@ -15,7 +15,7 @@ fi
 echo $MODEL_NAME
 
 
-docker run --mount type=bind,src=${TESTDATA}/${MODEL_NAME}/,dst=/${MODEL_NAME}  --entrypoint ls emacski/tensorflow-serving:1.14.0-arm32v7  -hal chat_10
+#docker run --mount type=bind,src=${TESTDATA}/${MODEL_NAME}/,dst=/${MODEL_NAME}  --entrypoint ls emacski/tensorflow-serving:1.14.0-arm32v7  -hal chat_10
 
 docker run -t --rm -p 8500:8500 \
     --mount type=bind,src=${TESTDATA}/${MODEL_NAME}/,dst=/${MODEL_NAME} \
