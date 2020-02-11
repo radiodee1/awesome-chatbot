@@ -26,6 +26,7 @@ toposort
 ## t2t ##
 Tensor2Tensor
 #tensorflow-hub
+tensorflow_core==0.0.0.post1
 
 ## bert ##
 #bert-serving-server
