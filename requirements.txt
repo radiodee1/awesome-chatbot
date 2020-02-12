@@ -4,8 +4,8 @@
 tqdm
 colorama
 regex
-keras
-gensim
+#keras
+#gensim
 h5py
 
 ## both ##
