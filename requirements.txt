@@ -24,7 +24,7 @@ toposort
 #python3-tk ## install this from linux distro, not pip3
 
 ## t2t ##
-Tensor2Tensor
+Tensor2Tensor==1.14.0
 #tensorflow-hub
 #tensorflow_core==0.0.0.post1
 
