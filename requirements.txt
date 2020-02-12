@@ -17,7 +17,7 @@ unidecode
 matplotlib
 py-cpuinfo
 datetime
-pandas
+#pandas
 toposort
 #spacy ## python -m spacy download en ##
 #pytorch-pretrained-bert ## actually for gpt2 training/fine-tuning !!
