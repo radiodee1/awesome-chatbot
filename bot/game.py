@@ -95,7 +95,7 @@ class Game:
                     if mode == 'signal': self.voice.beep_out()
 
                     self.time_total = (te - ts) ## seconds
-                    if self.time_total > 3.5: mode = 'signal'
+                    if self.time_total > 3.5 and mode != 'sequence': mode = 'signal'
                     print(self.time_total, 'time')
 
                     blacklisted = False
