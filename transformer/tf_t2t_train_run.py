@@ -17,7 +17,7 @@ from model.settings import hparams as hp
 import os
 import subprocess
 import tensorflow as tf
-
+import datetime
 #from tensor2tensor import problems as problems_lib  # pylint: disable=unused-import
 
 #from tensor2tensor.serving import make_request_fn, validate_flags
@@ -31,6 +31,8 @@ flags = tf.flags
 FLAGS = flags.FLAGS
 
 name = 'chat_10'
+include_date = False
+include_questionmark = False
 
 parser = argparse.ArgumentParser(
     description='Run NMT for chat program.',
@@ -182,8 +184,18 @@ class NMT:
     def loop(self):
 
         while True:
+            if include_date:
+                now = datetime.datetime.now()
+                time = now.strftime("%I:%M %p")
+                date = now.strftime("%B %d, %Y")
+
             try:
                 i = input("> ")
+                if include_questionmark:
+                    if not i.endswith('?'):
+                        i = i + '?'
+                if include_date:
+                    i = "It's " + date + ' ' + time + '. ' + i
                 print(i)
                 z = self.get_sentence(i.lower())
                 print(z)
