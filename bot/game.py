@@ -68,6 +68,8 @@ class Game:
         ]
         self.voice.beep_out()
         self.time_total = 5
+        self.time_allowed = 3.5
+        if mode == 'sequential': self.time_allowed = 100
 
     def loop(self):
         global mode
@@ -94,8 +96,9 @@ class Game:
                     te = time.time()
                     if mode == 'signal': self.voice.beep_out()
 
-                    self.time_total = (te - ts) ## seconds
-                    if self.time_total > 3.5 and mode != 'sequence': mode = 'signal'
+                    ## seconds ##
+                    self.time_total = (te - ts)
+                    if self.time_total > self.time_allowed: mode = 'signal'
                     print(self.time_total, 'time')
 
                     blacklisted = False
