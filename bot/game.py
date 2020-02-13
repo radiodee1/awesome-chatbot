@@ -67,9 +67,10 @@ class Game:
             #"i do not know"
         ]
         self.voice.beep_out()
-
+        self.time_total = 5
 
     def loop(self):
+        global mode
         count = 0
         while True:
             i = self.sr.voice_detection()
@@ -88,8 +89,14 @@ class Game:
             if len(i) > 0:
                 if count > 0 :
                     if mode == 'signal': self.voice.beep_out()
+                    ts = time.time()
                     out = self.model.get_sentence(i)
+                    te = time.time()
                     if mode == 'signal': self.voice.beep_out()
+
+                    self.time_total = (te - ts) ## seconds
+                    if self.time_total > 3.5: mode = 'signal'
+                    print(self.time_total, 'time')
 
                     blacklisted = False
                     for jj in self.blacklist:
