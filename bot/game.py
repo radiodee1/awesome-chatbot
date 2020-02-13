@@ -18,10 +18,11 @@ if mode == 'sequence':
     import seq_2_seq.seq_2_seq_tutorial as model
     import seq_2_seq.tokenize_weak as tokenize_weak
 
-elif mode == 'zero':
-    sys.path.append(os.path.abspath('../model/torch_gpt2/'))
-    import model.torch_gpt2_run as model
-    import model.tokenize_weak as tokenize_weak
+
+#elif mode == 'zero':
+#    sys.path.append(os.path.abspath('../model/torch_gpt2/'))
+#    import model.torch_gpt2_run as model
+#    import model.tokenize_weak as tokenize_weak
 
 
 elif mode == 'memory' or mode == 'signal':
