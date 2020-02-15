@@ -84,7 +84,7 @@ class ChatLineProblem(text_problems.Text2TextProblem):
             # Smaller than the typical translate model, and with more regularization
 
 
-@registry.register_hparams
+@registry.register_hparams('transformer_chat')
 def transformer_chat():
     hparams = transformer.transformer_base_v2()
     hparams.num_hidden_layers = 6 # 2
@@ -96,10 +96,11 @@ def transformer_chat():
     hparams.learning_rate = 0.05
     #hparams.learning_rate_constant = 0.05
     hparams.learning_rate_schedule = 'legacy'
+
     return hparams
 
 
-@registry.register_hparams
+@registry.register_hparams()
 def transformer_chat_tpu():
     hparams = transformer_chat()
     transformer.update_hparams_for_tpu(hparams)
