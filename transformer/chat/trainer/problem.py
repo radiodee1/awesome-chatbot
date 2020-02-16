@@ -17,6 +17,7 @@ tf.summary.FileWriterCache.clear()  # ensure filewriter cache is clear for Tenso
 
 load_sep_files = True
 
+
 @registry.register_problem
 class ChatLineProblem(text_problems.Text2TextProblem):
     """Predict next line of chat from the last line. From Gutenberg texts."""
@@ -84,7 +85,7 @@ class ChatLineProblem(text_problems.Text2TextProblem):
             # Smaller than the typical translate model, and with more regularization
 
 
-@registry.register_hparams('transformer_chat')
+@registry.register_hparams #('transformer_chat')
 def transformer_chat():
     hparams = transformer.transformer_base_v2()
     hparams.num_hidden_layers = 6 # 2
@@ -99,12 +100,13 @@ def transformer_chat():
 
     return hparams
 
-
+'''
 @registry.register_hparams()
 def transformer_chat_tpu():
     hparams = transformer_chat()
     transformer.update_hparams_for_tpu(hparams)
     return hparams
+'''
 
 '''
 # hyperparameter tuning ranges
