@@ -277,3 +277,18 @@ Test google speech recognition with the `bot/game_sr.py` script. The script may 
 On the raspberry pi there is a file called `/etc/rc.local` that is launched with every reboot. Use this file to launch the chatbot/smart-speaker on startup.
 
 * `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && cd /home/pi/workspace/awesome-chatbot/ && ./do_launch_game_s2s.sh'`
+
+### Docker for ARMv7
+
+Run these commands on the raspberry pi.
+
+```
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ curl -fsSL test.docker.com -o get-docker.sh 
+$ sh get-docker.sh
+
+$ sudo usermod -aG docker $USER
+```
+
+Log out and then in again to use docker.
