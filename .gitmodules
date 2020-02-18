@@ -7,3 +7,6 @@
 [submodule "torch_t2t/t2t"]
 	path = torch_t2t/t2t
 	url = https://github.com/jadore801120/attention-is-all-you-need-pytorch.git
+[submodule "vis/bertviz"]
+	path = vis/bertviz
+	url = https://github.com/jessevig/bertviz.git
