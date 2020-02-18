@@ -19,6 +19,6 @@ fi
 export CHATBOT_MODE="transformer"
 
 cd bot
-python3.6 game.py ${TEST_5} # 2> /dev/null
+python3 game.py ${TEST_5} # 2> /dev/null
 
 ## this file must be hard coded for any model you want to run
