@@ -145,7 +145,7 @@ class NMT:
         self.common_pre +=  a_chars + 'Hello. Hi' + '.\n '
         self.common += q_chars + 'What is your name?\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
-        #self.common += q_chars + 'What time is it?\n '
+        self.common += q_chars + 'What time is it?\n '
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
         #self.common += q_chars + 'What is your job?\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
@@ -291,20 +291,25 @@ class NMT:
     def prep_recent(self):
         self.recent_in = self.q_string[0] + self.recent_in.strip('.').lower()
         self.recent_text = self.a_string[0] + self.recent_text.strip('.').lower()
+        y = 'yes'
+        n = 'no'
         for a in self.previous_sentences:
             a = a.replace('.', '')
-            if self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' '):
-                self.recent_text = None
+            if (self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' ')):
+                if y not in self.recent_text.lower() and n not in self.recent_text.lower():
+                    self.recent_text = None
             if self.recent_in is not None and len(self.recent_in.split(' ')) == 1 and self.recent_in.lower() in a.lower().split(' '):
                 self.recent_in = None
 
             if self.recent_text is not None and self.recent_text.lower().strip() == a.lower().strip():
-                self.recent_text = None
+                if y not in self.recent_text.lower() and n not in self.recent_text.lower():
+                    self.recent_text = None
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
                 self.recent_in = None
 
         if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
+
 
         if self.save_num > -1:
             self.previous_sentences = self.previous_sentences[-self.save_num:]
