@@ -48,6 +48,7 @@ from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
 from model.nmt_aiml_commands import Commands
+import aiml
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
@@ -90,6 +91,7 @@ class NMT:
 
         self.output_lang = None
         self.commands = None
+        self.kernel = None
 
         self.common = ''
         self.common_pre = ''
@@ -102,14 +104,16 @@ class NMT:
         self.save_on_failure = False
         self.use_common = True
 
+        self.reply_aiml = None
+
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
 
         self.name = 'Jane'
 
         if True:
-            self.q_string = ['YOU: ','YOUR: ', 'Q: ', 'Q :', 'Q.']
-            self.a_string = [self.name.upper() + ': ' ,'MY: ', 'A: ', 'A :', self.name+':', 'A.']
+            self.q_string = [ 'Q: ', 'Q :', 'Q.']
+            self.a_string = [ 'A: ', 'A :', self.name+':', 'A.']
 
     def setup_for_interactive(self):
         self.get_args()
@@ -122,6 +126,10 @@ class NMT:
         self.output_lang = Lang('lang')
         for i in range(len(self.enc.encoder.items())):
             self.output_lang.addWord(self.enc.decode([i]))
+
+        self.kernel = aiml.Kernel()
+        self.kernel.verbose(False)
+        self.kernel.learn("../data/std_startup.xml")
 
         ## do this also with each input...
         self.prepare_common()
@@ -143,6 +151,7 @@ class NMT:
         self.common += ' '
         #self.common += q_chars + 'Hello?\n '
         self.common_pre +=  a_chars + 'Hello. Hi' + '.\n '
+
         self.common += q_chars + 'What is your name?\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
         self.common += q_chars + 'What time is it?\n '
@@ -150,12 +159,21 @@ class NMT:
         #self.common += q_chars + 'What is your job?\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
         #self.common += q_chars + 'Where are you?\n '
-        self.common += a_chars + "I am in " + location + '. \n'
-
+        self.common += a_chars + "I am in " + location + '. \n '
+        if self.reply_aiml != None:
+            self.common += '\n ' + self.reply_aiml + '\n '
 
     def get_sentence(self, i):
-        a_chars = '' # self.a_string[0]
-        q_chars = '' # self.q_string[0]
+        prep_copy_boolean = False
+
+        r = self.kernel.respond(i)
+        if r.strip() != "":
+            self.reply_aiml = ''
+            self.reply_aiml += self.q_string[0] + i + '? \n '
+            self.reply_aiml += self.a_string[0] + r
+        else:
+            self.reply_aiml = None
+            prep_copy_boolean = True
 
         if self.use_common:
             self.recent_in = i
@@ -167,7 +185,6 @@ class NMT:
             s = self.sentences_formatted
 
             self.prepare_common()
-            #i = self.common + "\n" + "\n" + ' ' +  ' '.join(s)
             i = self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
 
             print('',"+" * 10, '\n', i, '\n','+' * 10)
@@ -182,7 +199,7 @@ class NMT:
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
         self.recent_text = text
-        self.prep_recent()
+        self.prep_recent(prep_copy_boolean)
 
         print(text,"<")
 
@@ -288,7 +305,7 @@ class NMT:
 
         return i
 
-    def prep_recent(self):
+    def prep_recent(self, prep_copy_boolean=True):
         self.recent_in = self.q_string[0] + self.recent_in.strip('.').lower()
         self.recent_text = self.a_string[0] + self.recent_text.strip('.').lower()
         y = 'yes'
@@ -306,6 +323,10 @@ class NMT:
                     self.recent_text = None
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
                 self.recent_in = None
+
+        if not prep_copy_boolean:
+            self.recent_in = None
+            self.recent_text = None
 
         if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
