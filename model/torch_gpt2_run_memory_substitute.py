@@ -105,6 +105,7 @@ class NMT:
         self.use_common = True
 
         self.reply_aiml = None
+        self.reply_aiml_dupes = 3
 
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
@@ -151,16 +152,16 @@ class NMT:
         self.common += ' '
         #self.common += q_chars + 'Hello?\n '
         self.common_pre +=  a_chars + 'Hello. Hi' + '.\n '
-
-        self.common += q_chars + 'What is your name?\n '
-        self.common += a_chars + 'My name is ' + name + '.\n '
-        self.common += q_chars + 'What time is it?\n '
-        self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
-        #self.common += q_chars + 'What is your job?\n '
-        self.common += a_chars + 'My job is as a ' + profession + '.\n '
-        #self.common += q_chars + 'Where are you?\n '
-        self.common += a_chars + "I am in " + location + '. \n '
-        if self.reply_aiml != None:
+        if self.reply_aiml is None:
+            self.common += q_chars + 'What is your name?\n '
+            self.common += a_chars + 'My name is ' + name + '.\n '
+            self.common += q_chars + 'What time is it?\n '
+            self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
+            #self.common += q_chars + 'What is your job?\n '
+            self.common += a_chars + 'My job is as a ' + profession + '.\n '
+            #self.common += q_chars + 'Where are you?\n '
+            self.common += a_chars + "I am in " + location + '. \n '
+        if self.reply_aiml is not None:
             self.common += '\n ' + self.reply_aiml + '\n '
 
     def get_sentence(self, i):
@@ -169,8 +170,9 @@ class NMT:
         r = self.kernel.respond(i)
         if r.strip() != "":
             self.reply_aiml = ''
-            self.reply_aiml += self.q_string[0] + i + '? \n '
-            self.reply_aiml += self.a_string[0] + r
+            for _ in range(self.reply_aiml_dupes):
+                self.reply_aiml += self.q_string[0] + i + '? \n '
+                self.reply_aiml += self.a_string[0] + r + '\n\n '
         else:
             self.reply_aiml = None
             prep_copy_boolean = True
@@ -179,10 +181,10 @@ class NMT:
             self.recent_in = i
             i = self.q_string[0] + i + '?'
 
-            #if self.save_num > -1:
-            #    self.previous_sentences = self.previous_sentences[-self.save_num:]
-
-            s = self.sentences_formatted
+            if self.reply_aiml is None:
+                s = self.sentences_formatted
+            else:
+                s = ''
 
             self.prepare_common()
             i = self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
@@ -199,7 +201,7 @@ class NMT:
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
         self.recent_text = text
-        self.prep_recent(prep_copy_boolean)
+        self.prep_recent(prep_copy_boolean or True)
 
         print(text,"<")
 
@@ -346,7 +348,6 @@ class NMT:
                 s += k + '.\n'
         #s = ['---'] + s + ['---']
         self.sentences_formatted = s
-        #return s
 
     #########################################
 
