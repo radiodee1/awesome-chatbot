@@ -15,7 +15,13 @@
             All I know is <star/>.
         </template>
     </category>
-    
+    <category>
+        <pattern>DO A URL</pattern>
+        <template>
+            http://www.google.com
+        </template>
+    </category>
+
     <!-- candy questions start here... -->
     <category>
         <pattern> WHAT CANDY DO YOU LIKE </pattern>
