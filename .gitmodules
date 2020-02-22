@@ -10,3 +10,5 @@
 [submodule "vis/bertviz"]
 	path = vis/bertviz
 	url = https://github.com/jessevig/bertviz.git
+	ignore = dirty
+
