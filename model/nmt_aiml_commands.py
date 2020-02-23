@@ -129,7 +129,7 @@ class Commands:
         return ii
 
 
-    def decide_commmand(self, i):
+    def decide_commmand(self, i, strip_contents=True):
         self.command_string = ''
 
         ## if pattern matches exactly ##
@@ -163,7 +163,8 @@ class Commands:
 
         ## match by occurance of special words ##
         if self.command_string == '' and self.is_command(i):
-            i = self.strip_command(i)
+            if strip_contents:
+                i = self.strip_command(i)
             if self.print_to_screen: print(i)
             chosen = {}
             commands = {}
@@ -211,13 +212,14 @@ class Commands:
             if self.print_to_screen: print(self.command_string,'<==')
         pass
 
-    def do_command(self, i):
+    def do_command(self, i, strip_contents=True):
         erase = False
         self.command_string = ''
         if isinstance(i,list): i = ' '.join(i)
-        i = self.re(i)
+        if strip_contents:
+            i = self.re(i)
 
-        self.decide_commmand(i)
+        self.decide_commmand(i, strip_contents)
 
         if self.print_to_screen or True: print(self.command_string)
 

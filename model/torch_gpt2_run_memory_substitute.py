@@ -169,12 +169,16 @@ class NMT:
         prep_copy_boolean = False
 
         r = self.kernel.respond(i)
+        url = self.detect_url(r)
+        if url:
+            print(url)
+
         if r.strip() != "":
             self.reply_aiml = ''
             for _ in range(self.reply_aiml_dupes):
                 #self.reply_aiml += self.q_string[0] + i + '? \n '
-                #self.reply_aiml += self.a_string[0] + r + '\n\n '
-                self.reply_aiml += r + '\n\n '
+                self.reply_aiml += self.a_string[0] + r + '\n\n '
+                #self.reply_aiml += r + '\n\n '
         else:
             self.reply_aiml = None
             prep_copy_boolean = True
@@ -187,11 +191,13 @@ class NMT:
                 s = self.sentences_formatted
             else:
                 s = ''
+                #i = ''
 
             self.prepare_common()
             i = self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
 
             print('',"+" * 10, '\n', i, '\n','+' * 10)
+            print(len(i.split()), 'tokens')
         i = self.prepare_input(i)
 
         self.args.text = i
@@ -209,8 +215,12 @@ class NMT:
 
         ## if you want to launch apps !!
         if self.args.apps is True:
+            strip = True
+            if url:
+                self.recent_in = 'find ' + url
+                strip = False
             if self.commands.is_command(self.recent_in):
-                self.commands.do_command(self.recent_in)
+                self.commands.do_command(self.recent_in, strip)
                 #self.previous_sentences = []
         return text
 
@@ -351,6 +361,13 @@ class NMT:
         #s = ['---'] + s + ['---']
         self.sentences_formatted = s
 
+    def detect_url(self, txt):
+        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', txt)
+        print(len(urls), 'urls')
+        if len(urls) > 0:
+            return urls[0]
+        else:
+            return None
     #########################################
 
     def random_seed(self):
