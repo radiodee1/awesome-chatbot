@@ -105,7 +105,7 @@ class NMT:
         self.use_common = True
 
         self.reply_aiml = None
-        self.reply_aiml_dupes = 3
+        self.reply_aiml_dupes = 1
 
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
@@ -151,8 +151,9 @@ class NMT:
 
         self.common += ' '
         #self.common += q_chars + 'Hello?\n '
-        self.common_pre +=  a_chars + 'Hello. Hi' + '.\n '
+
         if self.reply_aiml is None:
+            self.common_pre += a_chars + 'Hello. Hi' + '.\n '
             self.common += q_chars + 'What is your name?\n '
             self.common += a_chars + 'My name is ' + name + '.\n '
             self.common += q_chars + 'What time is it?\n '
@@ -171,8 +172,9 @@ class NMT:
         if r.strip() != "":
             self.reply_aiml = ''
             for _ in range(self.reply_aiml_dupes):
-                self.reply_aiml += self.q_string[0] + i + '? \n '
-                self.reply_aiml += self.a_string[0] + r + '\n\n '
+                #self.reply_aiml += self.q_string[0] + i + '? \n '
+                #self.reply_aiml += self.a_string[0] + r + '\n\n '
+                self.reply_aiml += r + '\n\n '
         else:
             self.reply_aiml = None
             prep_copy_boolean = True
