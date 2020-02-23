@@ -3,9 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/nmt_aiml_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/nmt_aiml_commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vis/head_view_gpt2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/vis/head_view_gpt2.ipynb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -98,10 +95,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1578409519396" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1581023513231">
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1582492580595">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1581023513231" />
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1582492580595" />
     <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1580838300648">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>

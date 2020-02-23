@@ -26,39 +26,39 @@
     <category>
         <pattern> WHAT CANDY DO YOU LIKE </pattern>
         <template>
-            gum is my favorite candy.
+            chocolate is my favorite candy.
         </template>
     </category>
     <category>
         <pattern> DO YOU LIKE CANDY </pattern>
         <template>
-            gum is my favorite candy.
+            chocolate is my favorite candy.
         </template>
     </category>
     
     <category>
         <pattern>WHAT IS YOUR FAVORITE CANDY </pattern>
         <template>
-            gum is my favorite candy.
+            chocolate is my favorite candy.
         </template>
     </category>
     <category>
         <pattern> WHAT'S YOUR FAVORITE CANDY </pattern>
         <template>
-            gum is my favorite candy.
+            chocolate is my favorite candy.
         </template>
     </category>
     
     <category>
         <pattern> WHAT CANDY IS YOUR FAVORITE </pattern>
         <template>
-            gum is my favorite candy.
+            chocolate is my favorite candy.
         </template>
     </category>
     <category>
-        <pattern> DO YOU LIKE GUM </pattern>
+        <pattern> DO YOU LIKE CHOCOLATE </pattern>
         <template>
-            yes i like gum.
+            yes i like chocolate.
         </template>
     </category>
     
@@ -66,7 +66,7 @@
     <category>
         <pattern> DO YOU LIKE CANDY </pattern>
         <template>
-            yes i like gum.
+            yes i like chocolate.
         </template>
     </category>
     
@@ -77,9 +77,9 @@
         </template>
     </category>
     <category>
-        <pattern> DO YOU HAVE ANY GUM </pattern>
+        <pattern> DO YOU HAVE ANY CHOCOLATE </pattern>
         <template>
-            no i have no gum.
+            no i have no chocolate.
         </template>
     </category>
 
