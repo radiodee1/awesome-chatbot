@@ -221,7 +221,7 @@ class NMT:
                 strip = False
             if self.commands.is_command(self.recent_in):
                 self.commands.do_command(self.recent_in, strip)
-                #self.previous_sentences = []
+
         return text
 
     def loop(self):
