@@ -167,8 +167,8 @@ class NMT:
 
     def get_sentence(self, i):
         prep_copy_boolean = False
-
-        r = self.kernel.respond(i)
+        k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
+        r = self.kernel.respond(k)
         url = self.detect_url(r)
         if url:
             print(url)
@@ -342,7 +342,7 @@ class NMT:
             self.recent_in = None
             self.recent_text = None
 
-        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
+        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in and 'name' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
 
 

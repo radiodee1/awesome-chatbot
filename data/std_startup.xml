@@ -83,4 +83,58 @@
         </template>
     </category>
 
+    <!-- start name discussion -->
+
+    <category>
+      <pattern>I AM *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   <category>
+      <pattern>IM *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   <category>
+      <pattern>MY NAME IS *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   <category>
+      <pattern>MY NAMES *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+
+   <category>
+      <pattern>WHAT IS MY NAME</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>WHATS MY NAME</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+   <category>
+      <pattern>WHO AM I</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>WHOM I</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+
 </aiml>
