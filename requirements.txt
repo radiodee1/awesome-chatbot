@@ -61,3 +61,5 @@ numpy
 
 ## aiml ##
 #aiml
+#beautifulsoup4
+#google

@@ -1,4 +1,3 @@
-
 <aiml version = "1.0.1" encoding = "UTF-8">
     <!-- This file is not standard aiml!! The pattern tag is the utterance of the
      user of the program, while the template tag is for the program to execute when
