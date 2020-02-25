@@ -108,6 +108,7 @@ class Game:
                         if out.startswith(jj):
                             blacklisted = True
                     if not blacklisted:
+                        print(out)
                         self.voice.speech_out(out)
             if not do_not_end: count -= 1
             if count <= 0 :

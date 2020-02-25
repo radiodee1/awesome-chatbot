@@ -168,8 +168,9 @@ class NMT:
             if '.' in z:
                 z = z.split('.')[0] ## take first sentence
             z = z.strip()
-            if z.endswith('eol'):
+            while z.endswith('eol'):
                 z = z[:-len('eol')]
+                z = z.strip()
             return z
         except (EOFError, KeyboardInterrupt):
             self.p.terminate()
