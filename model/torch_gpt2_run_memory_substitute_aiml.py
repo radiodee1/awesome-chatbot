@@ -184,8 +184,6 @@ class NMT:
                 self.wiki.set_topic(r[len(url):])
                 z = self.wiki.get_text()
                 self.common_wiki = z
-                #print(self.common_wiki,'out2', len(self.common_wiki.split(' ')))
-                #self.reply_aiml = self.a_string[0] + 'ask me a question \n\n'
             if url == self.wiki.url_stop:
                 self.common_wiki = ''
         elif url:
