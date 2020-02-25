@@ -1,17 +1,17 @@
 #!/usr/bin/python3
 
-import os
+#import os
 import sys
-from subprocess import Popen
-import re
-import xml.etree.ElementTree as ET
+#from subprocess import Popen
+#import re
+#import xml.etree.ElementTree as ET
 from googlesearch import search
 import bs4
 import requests
 sys.path.append('..')
-from model.settings import hparams as hp
+#from model.settings import hparams as hp
 
-aiml_txt = hp['data_dir'] + '/std_startup.xml'
+#aiml_txt = hp['data_dir'] + '/std_startup.xml'
 
 class Wikipedia:
     def __init__(self):
@@ -19,14 +19,16 @@ class Wikipedia:
         self.topic_old = ''
         self.text = ''
 
+        self.url_search = 'http://find'
+        self.url_stop = 'http://stop'
         self.url_start = 'https://en.wikipedia.org/wiki/'
         pass
 
-    def print_aiml_name(self):
-        print(aiml_txt)
-        tree = ET.parse(aiml_txt)
-        root = tree.getroot()
-        print(root)
+    def search_string(self, i):
+        if i.startswith(self.url_search):
+            i = i[len(self.url_search):]
+            self.set_topic(i)
+            return i
 
     def set_topic(self, topic):
         self.topic_old = self.topic
@@ -59,7 +61,6 @@ class Wikipedia:
 
 if __name__ == '__main__':
     w = Wikipedia()
-    w.print_aiml_name()
     w.set_topic('xxzz')
     z = w.get_text()
     print(z)

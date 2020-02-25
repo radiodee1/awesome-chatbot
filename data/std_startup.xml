@@ -10,7 +10,26 @@
     <category>
         <pattern>TELL ME ABOUT *</pattern>
         <template>
-            All I know is <star/>.
+            http://find <star/>.
+        </template>
+    </category>
+    <category>
+        <pattern>OK ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+
+    <category>
+        <pattern>ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OK</pattern>
+        <template>
+            http://stop
         </template>
     </category>
     <category>

@@ -48,6 +48,7 @@ from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
 from model.nmt_aiml_commands import Commands
+from model.nmt_wiki_commands import Wikipedia
 import aiml
 
 realpath = os.path.dirname(os.path.realpath(__file__))
@@ -92,9 +93,11 @@ class NMT:
         self.output_lang = None
         self.commands = None
         self.kernel = None
+        self.wiki = None
 
         self.common = ''
         self.common_pre = ''
+        self.common_wiki = ''
         self.previous_sentences = []
         self.sentences_formatted = ''
         self.gather_sentences = False
@@ -122,6 +125,7 @@ class NMT:
         self.load_model()
 
         self.commands = Commands()
+        self.wiki = Wikipedia()
 
         ## this is not used but is required for bot software...
         self.output_lang = Lang('lang')
@@ -138,6 +142,7 @@ class NMT:
     def prepare_common(self):
         self.common = ''
         self.common_pre = ''
+        #self.common_wiki = ''
         a_chars = self.a_string[0]
         q_chars = self.q_string[0]
 
@@ -153,7 +158,9 @@ class NMT:
         #self.common += q_chars + 'Hello?\n '
 
         if self.reply_aiml is None:
+            #if self.common_pre == '':
             self.common_pre += a_chars + 'Hello. Hi' + '.\n '
+
             self.common += q_chars + 'What is your name?\n '
             self.common += a_chars + 'My name is ' + name + '.\n '
             self.common += q_chars + 'What time is it?\n '
@@ -170,8 +177,20 @@ class NMT:
         k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
         r = self.kernel.respond(k)
         url = self.detect_url(r)
-        if url:
+        z = ''
+        if url and self.args.apps == True:
             print(url)
+            if url == self.wiki.url_search:
+                self.wiki.set_topic(r[len(url):])
+                z = self.wiki.get_text()
+                self.common_wiki = z
+                #print(self.common_wiki,'out2', len(self.common_wiki.split(' ')))
+                #self.reply_aiml = self.a_string[0] + 'ask me a question \n\n'
+            if url == self.wiki.url_stop:
+                self.common_wiki = ''
+        elif url:
+            i = ''
+            r = ''
 
         if r.strip() != "":
             self.reply_aiml = ''
@@ -194,7 +213,16 @@ class NMT:
                 #i = ''
 
             self.prepare_common()
-            i = self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
+            if self.common_wiki != '':
+                #print('here 1',i)
+                self.common_pre = ''
+                self.common = ''
+                self.common_wiki = ' '.join(self.common_wiki.split(' ')[:1000-(len(i.split(' ')) + 800)])
+                #print(self.common_wiki, 'here 2', s)
+                s = ''
+                pass
+
+            i = self.common_wiki + ' ' + self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
 
             print('',"+" * 10, '\n', i, '\n','+' * 10)
             print(len(i.split()), 'tokens')
@@ -219,7 +247,7 @@ class NMT:
             if url:
                 self.recent_in = 'find ' + url
                 strip = False
-            if self.commands.is_command(self.recent_in):
+            elif self.commands.is_command(self.recent_in):
                 self.commands.do_command(self.recent_in, strip)
 
         return text
