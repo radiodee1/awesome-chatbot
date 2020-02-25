@@ -1,8 +1,6 @@
 <aiml version="1.0.1" encoding="UTF-8">
 <!-- basic_chat.aiml -->
 
-    
-
     <category>
         <pattern>WHAT ARE YOU</pattern>
         <template>
@@ -84,7 +82,7 @@
     </category>
 
     <!-- start name discussion -->
-
+    <!-- record name if mentioned -->
     <category>
       <pattern>I AM *</pattern>
       <template>
@@ -109,7 +107,7 @@
          Hello <set name = "username"><star/></set> !
       </template>
    </category>
-
+    <!-- reply with name if asked -->
    <category>
       <pattern>WHAT IS MY NAME</pattern>
       <template>
@@ -136,5 +134,5 @@
          your name is <get name = "username"/>
       </template>
    </category>
-
+    <!-- end name discussion -->
 </aiml>
