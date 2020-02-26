@@ -109,6 +109,7 @@ class NMT:
 
         self.reply_aiml = None
         self.reply_aiml_dupes = 1
+        self.token_limit = 1024
 
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
@@ -215,7 +216,7 @@ class NMT:
                 #print('here 1',i)
                 self.common_pre = ''
                 self.common = ''
-                self.common_wiki = ' '.join(self.common_wiki.split(' ')[:1000-(len(i.split(' ')) + 800)])
+                self.common_wiki = ' '.join(self.common_wiki.split(' ')[:self.token_limit//2]) # -(len(i.split(' ')) + 800)])
                 #print(self.common_wiki, 'here 2', s)
                 s = ''
                 pass
