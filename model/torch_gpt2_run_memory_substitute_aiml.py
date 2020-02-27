@@ -308,8 +308,8 @@ class NMT:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
 
-        if len(i.split('.')) > 1:
-            i = i.split('.')[0]
+        #if len(i.split('.')) > 1:
+        #    i = i.split('.')[0]
 
         if len(i.split('?')) > 1:
             i = i.split('?')[0]
