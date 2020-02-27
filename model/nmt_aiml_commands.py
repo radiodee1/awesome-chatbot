@@ -110,6 +110,7 @@ class Commands:
         return re.sub('[.?!:;,]','', i)
 
     def is_command(self,i):
+        if not isinstance(i, str): i = ''
         i = self.re(i)
         output = False
         for x in i.split():

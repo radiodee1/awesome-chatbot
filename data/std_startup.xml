@@ -33,6 +33,18 @@
         </template>
     </category>
     <category>
+        <pattern>THANKS THATS ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>THANKS</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
         <pattern>DO A URL</pattern>
         <template>
             http://www.google.com

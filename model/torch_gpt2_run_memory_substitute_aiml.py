@@ -174,6 +174,8 @@ class NMT:
             self.common += '\n ' + self.reply_aiml + '\n '
 
     def get_sentence(self, i):
+
+        ## aiml and rule based stuff ##
         prep_copy_boolean = False
         k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
         r = self.kernel.respond(k)
@@ -187,9 +189,13 @@ class NMT:
                 self.common_wiki = z
             if url == self.wiki.url_stop:
                 self.common_wiki = ''
-        elif url:
+                r = 'ok'
+        elif url and url != self.wiki.url_stop:
             i = ''
             r = ''
+        elif url and url == self.wiki.url_stop:
+            i = ''
+            r = 'ok'
 
         if r.strip() != "":
             self.reply_aiml = ''
@@ -216,7 +222,7 @@ class NMT:
                 #print('here 1',i)
                 self.common_pre = ''
                 self.common = ''
-                self.common_wiki = ' '.join(self.common_wiki.split(' ')[:self.token_limit//2]) # -(len(i.split(' ')) + 800)])
+                self.common_wiki = ' '.join(self.common_wiki.split(' ')[:self.token_limit // 2 - len(i.split(' '))]) # -(len(i.split(' ')) + 800)])
                 #print(self.common_wiki, 'here 2', s)
                 s = ''
                 pass
@@ -243,7 +249,8 @@ class NMT:
         ## if you want to launch apps !!
         if self.args.apps is True:
             strip = True
-            if url:
+            if url or len(self.common_wiki) > 2:
+                if url is None: url = ''
                 self.recent_in = 'find ' + url
                 strip = False
             elif self.commands.is_command(self.recent_in):
@@ -343,7 +350,16 @@ class NMT:
 
             i = re.sub('[?!]', ' ', i)
 
-
+        ## long sentences with comma ##
+        slen = self.args.length
+        sout = ''
+        if len(i.split(' ')) > slen // 2 and ',' in i:
+            for x in i:
+                if x != ',':
+                    sout += x
+                elif x == ',':
+                    break
+            i = sout
         return i
 
     def prep_recent(self, prep_copy_boolean=True):
