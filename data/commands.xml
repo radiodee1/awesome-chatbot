@@ -79,6 +79,54 @@
       </template>
 
    </category>
-   
+
+   <category>
+      <pattern> letters</pattern>
+
+      <template>
+         mail
+      </template>
+
+   </category>
+   <category>
+      <pattern> mail</pattern>
+
+      <template>
+         mail
+      </template>
+
+   </category>
+   <category>
+      <pattern> email</pattern>
+
+      <template>
+         mail
+      </template>
+
+   </category>
+   <category>
+      <pattern> office</pattern>
+
+      <template>
+         office
+      </template>
+
+   </category>
+   <category>
+      <pattern> document</pattern>
+
+      <template>
+         office
+      </template>
+
+   </category>
+   <category>
+      <pattern> chrome</pattern>
+
+      <template>
+         search
+      </template>
+
+   </category>
 </aiml>
 

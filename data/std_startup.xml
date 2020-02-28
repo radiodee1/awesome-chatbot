@@ -45,6 +45,18 @@
         </template>
     </category>
     <category>
+        <pattern>QUIT</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>STOP</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
         <pattern>DO A URL</pattern>
         <template>
             http://www.google.com

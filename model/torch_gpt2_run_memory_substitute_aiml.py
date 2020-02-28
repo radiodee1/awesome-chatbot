@@ -196,6 +196,7 @@ class NMT:
         elif url and url == self.wiki.url_stop:
             i = ''
             r = 'ok'
+            self.common_wiki = ''
 
         if r.strip() != "":
             self.reply_aiml = ''
