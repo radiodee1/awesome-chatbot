@@ -111,6 +111,14 @@ but answers the questions found in the aiml file with the specific answers in th
 
 2/4/2020 - I am removing all babi-type code from the repository.
 
+2/28/2020 - I just spent some time on the gpt2 model and getting it to
+accept commands and even do some question and answer type stuff.
+It will search the internet for wiki articles and then answer questions about them.
+This was fun but not crucial to the overall goals of the project.
+It will even launch system apps for you if you ask it to.
+I use some aiml to do this.
+The aiml is the week link in all of this.
+
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
