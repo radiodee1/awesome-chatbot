@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 sys.path.append('..')
 from model.settings import hparams as hp
 
-aiml_txt = hp['data_dir'] + '/hello.aiml'
+aiml_txt = hp['data_dir'] + '/commands.xml'
 
 class Commands:
     def __init__(self):
