@@ -39,6 +39,7 @@ elif mode == 'transformer':
     import transformer.tf_t2t_train_run as model
     #import model.torch_gpt2_run_memory as model
     import model.tokenize_weak as tokenize_weak
+    must_stop = False
     mode = 'signal'
 
 import bot.game_sr as sr
