@@ -30,6 +30,7 @@ elif mode == 'wiki':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run_memory_substitute_aiml as model
     import model.tokenize_weak as tokenize_weak
+    mode = 'signal'
 
 elif mode == 'transformer':
     os.chdir('../transformer/')

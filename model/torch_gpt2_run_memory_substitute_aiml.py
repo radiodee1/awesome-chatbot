@@ -329,7 +329,7 @@ class NMT:
 
                 out.append(ii)
 
-                if (ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
+                if (ii.endswith('[') or ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
                     break
             i = ' '.join(out)
 
