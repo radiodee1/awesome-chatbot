@@ -5,6 +5,8 @@ mode = 'zero' #'sequence' # 'gpt2' 'zero'
 speech_start = 'hello'
 must_stop = True
 
+sound_tones = ['sequence', 'signal', 'wiki', 'transformer']
+
 import sys
 import os
 sys.path.append('..')
@@ -21,6 +23,7 @@ if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
     import seq_2_seq.tokenize_weak as tokenize_weak
+
 
 elif mode == 'memory' or mode == 'signal':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
@@ -40,6 +43,9 @@ elif mode == 'transformer':
     #import model.torch_gpt2_run_memory as model
     import model.tokenize_weak as tokenize_weak
     must_stop = False
+    mode = 'signal'
+
+if mode in sound_tones:
     mode = 'signal'
 
 import bot.game_sr as sr
