@@ -178,6 +178,7 @@ class NMT:
         ## aiml and rule based stuff ##
         prep_copy_boolean = False
         k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
+        #print(k,'k')
         r = self.kernel.respond(k)
         url = self.detect_url(r)
         z = ''
@@ -187,13 +188,14 @@ class NMT:
                 self.wiki.set_topic(r[len(url):])
                 z = self.wiki.get_text()
                 self.common_wiki = z
-            if url == self.wiki.url_stop:
+            if url == self.wiki.url_stop and self.common_wiki != "":
                 self.common_wiki = ''
                 r = 'ok'
+                i = ''
         elif url and url != self.wiki.url_stop:
             i = ''
             r = ''
-        elif url and url == self.wiki.url_stop:
+        elif url and url == self.wiki.url_stop and self.common_wiki == "":
             i = ''
             r = 'ok'
             self.common_wiki = ''
@@ -284,7 +286,7 @@ class NMT:
     def prepare_output(self, i):
         char_end = ['?','!']
         contains_junk = False
-        char_junk = [i for i in '{[]}@$%^&#']
+        char_junk = [i for i in '{}@$%^&#']
         out = []
         for ii in i:
             if ii.strip() != "" or ii == ' ':

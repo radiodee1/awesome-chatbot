@@ -14,7 +14,19 @@
         </template>
     </category>
     <category>
+        <pattern>LETS TALK ABOUT *</pattern>
+        <template>
+            http://find <star/>.
+        </template>
+    </category>
+    <category>
         <pattern>OK ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OK THANKS</pattern>
         <template>
             http://stop
         </template>
