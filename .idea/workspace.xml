@@ -3,7 +3,13 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_launch_game_s2s.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_game_s2s.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_launch_gpt2.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_gpt2.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_launch_gpt2_signal.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_gpt2_signal.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_launch_gpt2_wiki.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_gpt2_wiki.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_launch_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_transformer.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_launch_transformer_arm.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_transformer_arm.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,7 +36,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/babi_t2t" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">

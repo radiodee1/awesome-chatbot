@@ -17,6 +17,7 @@ exit
 
 fi
 export CHATBOT_MODE="transformer"
+export CHATBOT_START="hello. transformer model."
 
 cd bot
 python3 game.py ${TEST_5} # 2> /dev/null

@@ -25,6 +25,7 @@ exit
 fi
 
 export CHATBOT_MODE="sequence"
+export CHATBOT_START="hello. sequence to sequence model."
 
 cd bot
 python3 game.py ${TEST_7} # 2> /dev/null

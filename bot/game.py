@@ -2,6 +2,7 @@
 
 from __future__ import unicode_literals, print_function, division
 mode = 'zero' #'sequence' # 'gpt2' 'zero'
+speech_start = 'hello'
 
 import sys
 import os
@@ -11,19 +12,14 @@ sys.path.append(os.path.abspath('../seq_2_seq/'))
 sys.path.append(os.path.abspath('../transformer/'))
 
 mode = str(os.environ['CHATBOT_MODE'])
+if os.environ['CHATBOT_START']:
+    speech_start = str(os.environ['CHATBOT_START'])
 do_not_end = True
 
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
     import seq_2_seq.tokenize_weak as tokenize_weak
-
-
-#elif mode == 'zero':
-#    sys.path.append(os.path.abspath('../model/torch_gpt2/'))
-#    import model.torch_gpt2_run as model
-#    import model.tokenize_weak as tokenize_weak
-
 
 elif mode == 'memory' or mode == 'signal':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
@@ -74,6 +70,7 @@ class Game:
             #"i do not know"
         ]
         self.voice.beep_out()
+        self.voice.speech_out(speech_start)
         self.time_total = 5
         self.time_allowed = 3.5
         if mode == 'sequential': self.time_allowed = 100

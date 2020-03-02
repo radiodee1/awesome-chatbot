@@ -17,6 +17,8 @@ exit
 
 fi
 export CHATBOT_MODE="wiki"
+export CHATBOT_START="hello. G P T 2 wiki model."
+
 
 cd bot
 python3 game.py ${TEST_5} # 2> /dev/null

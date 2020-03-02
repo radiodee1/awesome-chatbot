@@ -17,6 +17,7 @@ exit
 
 fi
 export CHATBOT_MODE="transformer"
+export CHATBOT_START="hello. transformer model."
 
 ./do_make_docker_arm32v7.sh
 
