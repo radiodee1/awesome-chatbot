@@ -3,6 +3,7 @@
 from __future__ import unicode_literals, print_function, division
 mode = 'zero' #'sequence' # 'gpt2' 'zero'
 speech_start = 'hello'
+must_stop = True
 
 import sys
 import os
@@ -30,6 +31,7 @@ elif mode == 'wiki':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run_memory_substitute_aiml as model
     import model.tokenize_weak as tokenize_weak
+    must_stop = False
     mode = 'signal'
 
 elif mode == 'transformer':
@@ -89,7 +91,7 @@ class Game:
                     self.voice.speech_out('yes')
                     i = ''
                 self.first_run = False
-            if self.compare_sentence_to_list(i, self.words_stop):
+            if self.compare_sentence_to_list(i, self.words_stop) and must_stop:
                 count = 0
                 print('stopping')
             i = self.check_sentence(i)

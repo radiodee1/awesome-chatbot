@@ -31,9 +31,32 @@
             http://stop
         </template>
     </category>
-
+    <category>
+        <pattern>OKAY THANKS</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
     <category>
         <pattern>ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY STOP</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY</pattern>
         <template>
             http://stop
         </template>

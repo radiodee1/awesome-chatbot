@@ -188,8 +188,14 @@ class NMT:
                 self.wiki.set_topic(r[len(url):])
                 z = self.wiki.get_text()
                 self.common_wiki = z
+                if z == "":
+                    r = 'ok'
+                    i = ''
             if url == self.wiki.url_stop and self.common_wiki != "":
                 self.common_wiki = ''
+                r = 'ok'
+                i = ''
+            if url == self.wiki.url_stop and self.common_wiki == "":
                 r = 'ok'
                 i = ''
         elif url and url != self.wiki.url_stop:
