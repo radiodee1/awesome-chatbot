@@ -481,7 +481,7 @@ class NMT:
         parser.add_argument("--nsamples", type=int, default=1)
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
-        parser.add_argument("--length", type=int, default=25)
+        parser.add_argument("--length", type=int, default=100)
         parser.add_argument("--temperature", type=float, default=0.0001)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
