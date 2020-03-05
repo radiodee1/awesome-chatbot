@@ -5,6 +5,8 @@ mode = 'zero' #'sequence' # 'gpt2' 'zero'
 speech_start = 'hello'
 must_stop = True
 
+pin_skip = False
+
 sound_tones = ['sequence', 'signal', 'wiki', 'transformer']
 
 import sys
@@ -55,6 +57,13 @@ import model.settings as settings
 import argparse
 import time
 
+try:
+    import RPi.GPIO as GPIO
+    led_pin_a = 12
+except:
+    pin_skip = True
+
+
 base_filename = ''
 
 class Game:
@@ -85,11 +94,15 @@ class Game:
         self.time_allowed = 3.5
         if mode == 'sequential': self.time_allowed = 100
 
+        self.pin_setup()
+
     def loop(self):
         global mode
         count = 0
         while True:
+            self.pin_a_on()
             i = self.sr.voice_detection()
+            self.pin_a_off()
             i = tokenize_weak.format(i)
             if (self.compare_sentence_to_list(i, self.words_start) and count <= 0) or self.first_run:
                 count = self.count_max
@@ -143,7 +156,19 @@ class Game:
                 return True
         return False
 
+    def pin_setup(self):
+        if pin_skip: return
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setwarnings(False)
+        GPIO.setup(led_pin_a, GPIO.OUT)
 
+    def pin_a_on(self):
+        if pin_skip: return
+        GPIO.output(led_pin_a, GPIO.HIGH)
+
+    def pin_a_off(self):
+        if pin_skip: return
+        GPIO.output(led_pin_a, GPIO.LOW)
 
 if __name__ == '__main__':
 

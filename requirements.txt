@@ -63,3 +63,5 @@ numpy
 #aiml
 #beautifulsoup4
 #google
+
+RPi.GPIO

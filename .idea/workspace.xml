@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_gpt2_wiki.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_gpt2_wiki.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,7 +31,7 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../attention-is-all-you-need-pytorch" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
@@ -101,6 +101,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1582492580595" />
+    <state x="1003" y="328" width="424" height="491" key="FileChooserDialogImpl" timestamp="1583333860984">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="1003" y="328" width="424" height="491" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1583333860984" />
     <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1580838300648">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
