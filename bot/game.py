@@ -60,8 +60,10 @@ import time
 try:
     import RPi.GPIO as GPIO
     led_pin_a = 12
+    print('load gpio')
 except:
     pin_skip = True
+    print('no load gpio')
 
 
 base_filename = ''
