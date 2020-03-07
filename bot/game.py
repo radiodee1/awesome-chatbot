@@ -4,7 +4,7 @@ from __future__ import unicode_literals, print_function, division
 mode = 'zero' #'sequence' # 'gpt2' 'zero'
 speech_start = 'hello'
 must_stop = True
-
+no_tokenize_weak = False
 pin_skip = False
 
 sound_tones = ['sequence', 'signal', 'wiki', 'transformer']
@@ -37,6 +37,7 @@ elif mode == 'wiki':
     import model.torch_gpt2_run_memory_substitute_aiml as model
     import model.tokenize_weak as tokenize_weak
     must_stop = False
+    no_tokenize_weak = True
     mode = 'signal'
 
 elif mode == 'transformer':
@@ -105,7 +106,7 @@ class Game:
             self.pin_a_on()
             i = self.sr.voice_detection()
             self.pin_a_off()
-            i = tokenize_weak.format(i)
+            if not no_tokenize_weak: i = tokenize_weak.format(i)
             if (self.compare_sentence_to_list(i, self.words_start) and count <= 0) or self.first_run:
                 count = self.count_max
                 print('starting')

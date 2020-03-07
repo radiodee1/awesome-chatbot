@@ -25,6 +25,10 @@ export CHATBOT_START="hello. G P T 2 wiki model."
 cd bot
 if [ -f ${FILE_774} ]; then
     export TEST_5="${TEST_5} --source_file ${FILE_774}"
+else
+    echo "774M source file needed."
+    echo "run do_make_submodule_init.sh and do_make_submodule_init_774M.sh "
+
 fi
 
 echo ${TEST_5}
