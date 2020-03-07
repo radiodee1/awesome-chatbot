@@ -182,7 +182,7 @@ class NMT:
         r = self.kernel.respond(k)
         url = self.detect_url(r)
         z = ''
-        if url and self.args.apps == True:
+        if url and True: #self.args.apps == True:
             print(url)
             if url == self.wiki.url_search:
                 self.wiki.set_topic(r[len(url):])
@@ -206,6 +206,8 @@ class NMT:
             r = 'ok'
             self.common_wiki = ''
 
+        r = r.strip()
+        r = r.replace('\n', '.').replace('\t','')
         if r.strip() != "":
             self.reply_aiml = ''
             for _ in range(self.reply_aiml_dupes):
@@ -292,7 +294,7 @@ class NMT:
     def prepare_output(self, i):
         char_end = ['?','!']
         contains_junk = False
-        char_junk = [i for i in '{}@$%^&#']
+        char_junk = [i for i in '{}@^&#']
         out = []
         for ii in i:
             if ii.strip() != "" or ii == ' ':
@@ -481,11 +483,11 @@ class NMT:
         parser.add_argument("--nsamples", type=int, default=1)
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
-        parser.add_argument("--length", type=int, default=100)
+        parser.add_argument("--length", type=int, default=25)
         parser.add_argument("--temperature", type=float, default=1e-10)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
-        parser.add_argument("--source_file", type=str, required=False, default='torch_gpt2/GPT2/gpt2-pytorch_model.bin')
+        parser.add_argument("--source_file", type=str, required=False, default='../data/tf_gpt2_data/774M/converted/pytorch_model.bin') # torch_gpt2/GPT2/gpt2-pytorch_model.bin')
         self.args = parser.parse_args()
 
     def load_model(self):
