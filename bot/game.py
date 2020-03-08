@@ -61,6 +61,7 @@ import time
 try:
     import RPi.GPIO as GPIO
     led_pin_a = 12
+    led_pin_b = 16
     print('load gpio')
 except:
     pin_skip = True
@@ -164,14 +165,17 @@ class Game:
         GPIO.setmode(GPIO.BOARD)
         GPIO.setwarnings(False)
         GPIO.setup(led_pin_a, GPIO.OUT)
+        GPIO.setup(led_pin_b, GPIO.OUT)
 
     def pin_a_on(self):
         if pin_skip: return
         GPIO.output(led_pin_a, GPIO.HIGH)
+        GPIO.output(led_pin_b, GPIO.LOW)
 
     def pin_a_off(self):
         if pin_skip: return
         GPIO.output(led_pin_a, GPIO.LOW)
+        GPIO.output(led_pin_b, GPIO.HIGH)
 
 if __name__ == '__main__':
 
