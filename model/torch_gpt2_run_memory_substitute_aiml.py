@@ -82,6 +82,9 @@ class Lang:
 class NMT:
     def __init__(self):
         self.args = None
+
+        self.get_args()
+
         self.state_dict = None
         self.config = None
         self.device = None
@@ -121,7 +124,7 @@ class NMT:
             self.a_string = [ 'A: ', 'A :', self.name+':', 'A.']
 
     def setup_for_interactive(self):
-        self.get_args()
+        #self.get_args()
         self.load_state_dict()
         self.load_model()
 
@@ -422,6 +425,7 @@ class NMT:
             return urls[0]
         else:
             return None
+
     #########################################
 
     def random_seed(self):
@@ -435,11 +439,13 @@ class NMT:
         print(self.args.source_file)
         source_path = self.args.source_file.split('/')[:-1]
         source_path = '/'.join(source_path) + '/'
-        print(source_path)
+        print(source_path,'for vocab')
         with open(realpath + '/' + source_path + '/encoder.json', 'r') as f:
             encoder = json.load(f)
-        with open(realpath + '/' + source_path + '/vocab.bpe', 'r', encoding="utf-8") as f:
-            bpe_data = f.read()
+        f.close()
+        with open(realpath + '/' + source_path + '/vocab.bpe', 'r', encoding="utf-8") as ff:
+            bpe_data = ff.read()
+        ff.close()
         bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
         return Encoder(
             encoder=encoder,
@@ -450,30 +456,34 @@ class NMT:
         print(self.args.source_file)
         source_path = self.args.source_file.split('/')[:-1]
         source_path = '/'.join(source_path) + '/'
-        print(source_path)
+        print(source_path, 'source path', realpath,'real path')
+
         if '774M' in source_path :
             print('774M', 'model specific configs')
             #self.use_common = False
             self.args.temperature = 1e-10
             self.args.top_k = 100
-        if os.path.isfile(realpath + '/' + source_path + '/config.json'):
-            with open(realpath + '/' + source_path + '/config.json', 'r') as f:
-                hp_config = json.load(f)
-                print(hp_config)
-                self.config = GPT2Config(
-                    vocab_size_or_config_json_file=hp_config['vocab_size'],
-                    n_embd=hp_config['n_embd'],
-                    n_layer=hp_config['n_layer'],
-                    n_head=hp_config['n_head'],
-                    # intermediate_size=self.intermediate_size,
-                    # hidden_act=self.hidden_act,
-                    # hidden_dropout_prob=self.hidden_dropout_prob,
-                    # attention_probs_dropout_prob=self.attention_probs_dropout_prob,
-                    n_positions=hp_config['n_positions'],
-                    n_ctx=hp_config['n_ctx']
-                    # type_vocab_size=self.type_vocab_size,
-                    # initializer_range=self.initializer_range
-                )
+            if os.path.isfile(realpath + '/' + source_path + '/config.json'):
+                print(realpath + '/' + source_path, 'config.json')
+                with open(realpath + '/' + source_path + '/config.json', 'r') as f:
+                    hp_config = json.load(f)
+                    print(hp_config,'before')
+                    self.config = GPT2Config(
+                        vocab_size_or_config_json_file=hp_config['vocab_size'],
+                        n_embd=hp_config['n_embd'],
+                        n_layer=hp_config['n_layer'],
+                        n_head=hp_config['n_head'],
+                        # intermediate_size=self.intermediate_size,
+                        # hidden_act=self.hidden_act,
+                        # hidden_dropout_prob=self.hidden_dropout_prob,
+                        # attention_probs_dropout_prob=self.attention_probs_dropout_prob,
+                        n_positions=hp_config['n_positions'],
+                        n_ctx=hp_config['n_ctx']
+                        # type_vocab_size=self.type_vocab_size,
+                        # initializer_range=self.initializer_range
+                    )
+        else:
+            self.config = GPT2Config()
         print(self.config)
 
     def get_args(self ):
@@ -487,12 +497,12 @@ class NMT:
         parser.add_argument("--temperature", type=float, default=1e-10)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
-        parser.add_argument("--source_file", type=str, required=False, default='../data/tf_gpt2_data/774M/converted/pytorch_model.bin') # torch_gpt2/GPT2/gpt2-pytorch_model.bin')
+        parser.add_argument("--source_file", type=str, default='../data/tf_gpt2_data/774M/converted/pytorch_model.bin') # torch_gpt2/GPT2/gpt2-pytorch_model.bin')
         self.args = parser.parse_args()
 
     def load_model(self):
-        if self.args.quiet is False:
-            print(self.args)
+        if self.args.quiet is False or True:
+            print(self.args, 'args')
 
         if self.args.batch_size == -1:
             self.args.batch_size = 1
@@ -506,15 +516,18 @@ class NMT:
 
         self.get_config()
 
+        #self.get_args()
         # Load Model
         self.enc = self.get_encoder()
-        if self.config is None: self.config = GPT2Config()
+        if self.config is None:
+            print('change config')
+            self.config = GPT2Config()
         self.model = GPT2LMHeadModel(self.config)
         self.model = load_weight(self.model, self.state_dict)
         self.model.to(self.device)
         self.model.eval()
 
-        print(self.config)
+        print(self.config, 'config')
 
     def text_generator(self):
 
@@ -546,23 +559,18 @@ class NMT:
 
 
     def load_state_dict(self):
-        print(self.args.source_file)
-        source_path = self.args.source_file.split('/')[:-1]
-        source_path = '/'.join(source_path) + '/'
-        print(source_path, 2)
 
-        p = realpath + '/' + self.args.source_file #'./torch_gpt2/gpt2-pytorch_model.bin'
-
-        #p = realpath + '/' + source_path + '/' + self.args.source_file
+        p = realpath + '/' + self.args.source_file
 
         print(p)
         if os.path.exists(p):
-            self.state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
+            self.state_dict = torch.load(p, map_location='cpu') # if not torch.cuda.is_available() else None)
             #self.text_generator(state_dict)
+            print('load p', p)
         else:
             print('Please download gpt2-pytorch_model.bin')
             sys.exit()
-        return self.state_dict
+        #return self.state_dict
 
 if __name__ == '__main__':
 
