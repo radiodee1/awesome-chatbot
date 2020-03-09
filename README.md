@@ -119,6 +119,9 @@ It will even launch system apps for you if you ask it to.
 I use some aiml to do this.
 The aiml is the week link in all of this.
 
+3/9/2020 - Code was written so that Raspberry Pi installations could use indicator lights to show if output is being accepted or if the bot is processing input.
+The code was tested with indicator LEDs on the Raspberry Pi.
+
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
