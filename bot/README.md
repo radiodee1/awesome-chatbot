@@ -18,4 +18,6 @@ Further, we are going to try to install a shutdown button on the following gpio 
 
 The line to be added to the `/etc/rc.local` file is as follows:
 
+```
 sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &
+```

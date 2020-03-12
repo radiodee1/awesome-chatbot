@@ -289,6 +289,10 @@ On the raspberry pi there is a file called `/etc/rc.local` that is launched with
 
 * `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && cd /home/pi/workspace/awesome-chatbot/ && ./do_launch_game_s2s.sh'`
 
+### One-Liner for Shutdown Button
+This runs the shutdown script on the Pi. You must install the physical button on pins #05 and #20.
+* `sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &`
+
 ### Docker for ARMv7
 
 Run these commands on the raspberry pi.
