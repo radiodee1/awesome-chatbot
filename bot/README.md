@@ -11,3 +11,11 @@ The pins used are listed below.
 * 14 - GND
 * 16 - LED B -- RED
 
+Further, we are going to try to install a shutdown button on the following gpio pins.
+
+* 05 - BUTTON +
+* 20 - GND
+
+The line to be added to the `/etc/rc.local` file is as follows:
+
+sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &
