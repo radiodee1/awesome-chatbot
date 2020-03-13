@@ -2,6 +2,8 @@
 
 import time
 
+pin_skip = False
+
 try:
     import RPi.GPIO as GPIO
     led_pin_a = 12
