@@ -74,6 +74,8 @@ class Game:
     def __init__(self):
         global base_filename
 
+        self.pin_both()
+
         self.model = model.NMT()
         self.model.setup_for_interactive()
 
@@ -175,6 +177,11 @@ class Game:
     def pin_a_off(self):
         if pin_skip: return
         GPIO.output(led_pin_a, GPIO.LOW)
+        GPIO.output(led_pin_b, GPIO.HIGH)
+
+    def pin_both(self):
+        if pin_skip: return
+        GPIO.output(led_pin_a, GPIO.HIGH)
         GPIO.output(led_pin_b, GPIO.HIGH)
 
 if __name__ == '__main__':
