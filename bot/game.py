@@ -73,6 +73,7 @@ base_filename = ''
 class Game:
     def __init__(self):
         global base_filename
+        self.pin_setup()
 
         self.pin_both()
 
@@ -100,7 +101,6 @@ class Game:
         self.time_allowed = 3.5
         if mode == 'sequential': self.time_allowed = 100
 
-        self.pin_setup()
 
     def loop(self):
         global mode
