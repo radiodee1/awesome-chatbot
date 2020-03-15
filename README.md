@@ -295,7 +295,7 @@ On the raspberry pi there is a file called `/etc/rc.local` that is launched with
 
 ### Docker for ARMv7
 
-Run these commands on the raspberry pi.
+Run these commands on the raspberry pi. This is necessary for the Transformer model that uses Tensorflow. The GPT2 model uses Pytorch.
 
 ```
 $ sudo apt-get update
