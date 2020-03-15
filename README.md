@@ -284,14 +284,14 @@ Test google speech recognition with the `bot/game_sr.py` script. The script may 
 * You must exit and re-enter the bash shell in a new terminal for the changes to take effect. After that you should be able to run the `game_sr.py` file. You will be charged for the service.
 * On the Raspberry Pi use the same general technique as above. Edit the `.basshrc` file to contain the line `export GOOGLE_APPLICATION_CREDENTIALS=/opt/bot/awesome-sr-XXXXXX.json` where `XXXXXX` is the hexadecimal label on the json file on the Rapberry Pi. This number will be different from the one on your regular computer.
 
-### One-Liner for `/etc/rc.local`
+### One-Liner for Shutdown Button `/etc/rc.local`
+This runs the shutdown script on the Pi. You must install the physical button on pins #05 and #20.
+* `sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &`
+
+### One-Liner for Program Launch `/etc/rc.local`
 On the raspberry pi there is a file called `/etc/rc.local` that is launched with every reboot. Use this file to launch the chatbot/smart-speaker on startup.
 
 * `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && cd /home/pi/workspace/awesome-chatbot/ && ./do_launch_game_s2s.sh'`
-
-### One-Liner for Shutdown Button
-This runs the shutdown script on the Pi. You must install the physical button on pins #05 and #20.
-* `sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &`
 
 ### Docker for ARMv7
 
