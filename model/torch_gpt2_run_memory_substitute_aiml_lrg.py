@@ -463,25 +463,25 @@ class NMT:
             #self.use_common = False
             self.args.temperature = 1e-10
             self.args.top_k = 100
-            if os.path.isfile(realpath + '/' + source_path + '/config.json'):
-                print(realpath + '/' + source_path, 'config.json')
-                with open(realpath + '/' + source_path + '/config.json', 'r') as f:
-                    hp_config = json.load(f)
-                    print(hp_config,'before')
-                    self.config = GPT2Config(
-                        vocab_size_or_config_json_file=hp_config['vocab_size'],
-                        n_embd=hp_config['n_embd'],
-                        n_layer=hp_config['n_layer'],
-                        n_head=hp_config['n_head'],
-                        # intermediate_size=self.intermediate_size,
-                        # hidden_act=self.hidden_act,
-                        # hidden_dropout_prob=self.hidden_dropout_prob,
-                        # attention_probs_dropout_prob=self.attention_probs_dropout_prob,
-                        n_positions=hp_config['n_positions'],
-                        n_ctx=hp_config['n_ctx']
-                        # type_vocab_size=self.type_vocab_size,
-                        # initializer_range=self.initializer_range
-                    )
+        if os.path.isfile(realpath + '/' + source_path + '/config.json'):
+            print(realpath + '/' + source_path, 'config.json')
+            with open(realpath + '/' + source_path + '/config.json', 'r') as f:
+                hp_config = json.load(f)
+                print(hp_config,'before')
+                self.config = GPT2Config(
+                    vocab_size_or_config_json_file=hp_config['vocab_size'],
+                    n_embd=hp_config['n_embd'],
+                    n_layer=hp_config['n_layer'],
+                    n_head=hp_config['n_head'],
+                    # intermediate_size=self.intermediate_size,
+                    # hidden_act=self.hidden_act,
+                    # hidden_dropout_prob=self.hidden_dropout_prob,
+                    # attention_probs_dropout_prob=self.attention_probs_dropout_prob,
+                    n_positions=hp_config['n_positions'],
+                    n_ctx=hp_config['n_ctx']
+                    # type_vocab_size=self.type_vocab_size,
+                    # initializer_range=self.initializer_range
+                )
         else:
             self.config = GPT2Config()
         print(self.config)

@@ -48,6 +48,8 @@ from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
 from GPT2.encoder import Encoder
 from model.nmt_aiml_commands import Commands
+from model.nmt_wiki_commands import Wikipedia
+import aiml
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
@@ -80,6 +82,9 @@ class Lang:
 class NMT:
     def __init__(self):
         self.args = None
+
+        self.get_args()
+
         self.state_dict = None
         self.config = None
         self.device = None
@@ -90,9 +95,12 @@ class NMT:
 
         self.output_lang = None
         self.commands = None
+        self.kernel = None
+        self.wiki = None
 
         self.common = ''
         self.common_pre = ''
+        self.common_wiki = ''
         self.previous_sentences = []
         self.sentences_formatted = ''
         self.gather_sentences = False
@@ -101,6 +109,10 @@ class NMT:
         self.save_num = 20
         self.save_on_failure = False
         self.use_common = True
+
+        self.reply_aiml = None
+        self.reply_aiml_dupes = 1
+        self.token_limit = 1024
 
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
@@ -117,11 +129,16 @@ class NMT:
         self.load_model()
 
         self.commands = Commands()
+        self.wiki = Wikipedia()
 
         ## this is not used but is required for bot software...
         self.output_lang = Lang('lang')
         for i in range(len(self.enc.encoder.items())):
             self.output_lang.addWord(self.enc.decode([i]))
+
+        self.kernel = aiml.Kernel()
+        self.kernel.verbose(False)
+        self.kernel.learn("../data/std_startup.xml")
 
         ## do this also with each input...
         self.prepare_common()
@@ -129,6 +146,7 @@ class NMT:
     def prepare_common(self):
         self.common = ''
         self.common_pre = ''
+        #self.common_wiki = ''
         a_chars = self.a_string[0]
         q_chars = self.q_string[0]
 
@@ -142,35 +160,91 @@ class NMT:
 
         self.common += ' '
         #self.common += q_chars + 'Hello?\n '
-        self.common_pre +=  a_chars + 'Hello. Hi' + '.\n '
-        self.common += q_chars + 'What is your name?\n '
-        self.common += a_chars + 'My name is ' + name + '.\n '
-        self.common += q_chars + 'What time is it?\n '
-        self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
-        #self.common += q_chars + 'What is your job?\n '
-        self.common += a_chars + 'My job is as a ' + profession + '.\n '
-        #self.common += q_chars + 'Where are you?\n '
-        self.common += a_chars + "I am in " + location + '. \n'
 
+        if self.reply_aiml is None:
+            #if self.common_pre == '':
+            self.common_pre += a_chars + 'Hello. Hi' + '.\n '
+
+            self.common += q_chars + 'What is your name?\n '
+            self.common += a_chars + 'My name is ' + name + '.\n '
+            self.common += q_chars + 'What time is it?\n '
+            self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
+            #self.common += q_chars + 'What is your job?\n '
+            self.common += a_chars + 'My job is as a ' + profession + '.\n '
+            #self.common += q_chars + 'Where are you?\n '
+            self.common += a_chars + "I am in " + location + '. \n '
+        if self.reply_aiml is not None:
+            self.common += '\n ' + self.reply_aiml + '\n '
 
     def get_sentence(self, i):
-        a_chars = '' # self.a_string[0]
-        q_chars = '' # self.q_string[0]
+
+        ## aiml and rule based stuff ##
+        prep_copy_boolean = False
+        k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
+        #print(k,'k')
+        r = self.kernel.respond(k)
+        url = self.detect_url(r)
+        z = ''
+        if url and True: #self.args.apps == True:
+            print(url)
+            if url == self.wiki.url_search:
+                self.wiki.set_topic(r[len(url):])
+                z = self.wiki.get_text()
+                self.common_wiki = z
+                if z == "":
+                    r = 'ok'
+                    i = ''
+            if url == self.wiki.url_stop and self.common_wiki != "":
+                self.common_wiki = ''
+                r = 'ok'
+                i = ''
+            if url == self.wiki.url_stop and self.common_wiki == "":
+                r = 'ok'
+                i = ''
+        elif url and url != self.wiki.url_stop:
+            i = ''
+            r = ''
+        elif url and url == self.wiki.url_stop and self.common_wiki == "":
+            i = ''
+            r = 'ok'
+            self.common_wiki = ''
+
+        r = r.strip()
+        r = r.replace('\n', '.').replace('\t','')
+        if r.strip() != "":
+            self.reply_aiml = ''
+            for _ in range(self.reply_aiml_dupes):
+                #self.reply_aiml += self.q_string[0] + i + '? \n '
+                self.reply_aiml += self.a_string[0] + r + '\n\n '
+                #self.reply_aiml += r + '\n\n '
+        else:
+            self.reply_aiml = None
+            prep_copy_boolean = True
 
         if self.use_common:
             self.recent_in = i
             i = self.q_string[0] + i + '?'
 
-            #if self.save_num > -1:
-            #    self.previous_sentences = self.previous_sentences[-self.save_num:]
-
-            s = self.sentences_formatted
+            if self.reply_aiml is None:
+                s = self.sentences_formatted
+            else:
+                s = ''
+                #i = ''
 
             self.prepare_common()
-            #i = self.common + "\n" + "\n" + ' ' +  ' '.join(s)
-            i = self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
+            if self.common_wiki != '':
+                #print('here 1',i)
+                self.common_pre = ''
+                self.common = ''
+                self.common_wiki = ' '.join(self.common_wiki.split(' ')[:self.token_limit // 2 - len(i.split(' '))]) # -(len(i.split(' ')) + 800)])
+                #print(self.common_wiki, 'here 2', s)
+                s = ''
+                pass
+
+            i = self.common_wiki + ' ' + self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
 
             print('',"+" * 10, '\n', i, '\n','+' * 10)
+            print(len(i.split()), 'tokens')
         i = self.prepare_input(i)
 
         self.args.text = i
@@ -182,15 +256,20 @@ class NMT:
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
         self.recent_text = text
-        self.prep_recent()
+        self.prep_recent(prep_copy_boolean or True)
 
         print(text,"<")
 
         ## if you want to launch apps !!
         if self.args.apps is True:
-            if self.commands.is_command(self.recent_in):
-                self.commands.do_command(self.recent_in)
-                #self.previous_sentences = []
+            strip = True
+            if url or len(self.common_wiki) > 2:
+                if url is None: url = ''
+                self.recent_in = 'find ' + url
+                strip = False
+            elif self.commands.is_command(self.recent_in):
+                self.commands.do_command(self.recent_in, strip)
+
         return text
 
     def loop(self):
@@ -218,7 +297,7 @@ class NMT:
     def prepare_output(self, i):
         char_end = ['?','!']
         contains_junk = False
-        char_junk = [i for i in '{[]}@$%^&#']
+        char_junk = [i for i in '{}@^&#']
         out = []
         for ii in i:
             if ii.strip() != "" or ii == ' ':
@@ -243,8 +322,8 @@ class NMT:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
 
-        if len(i.split('.')) > 1:
-            i = i.split('.')[0]
+        #if len(i.split('.')) > 1:
+        #    i = i.split('.')[0]
 
         if len(i.split('?')) > 1:
             i = i.split('?')[0]
@@ -263,7 +342,7 @@ class NMT:
 
                 out.append(ii)
 
-                if (ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
+                if (ii.endswith('[') or ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
                     break
             i = ' '.join(out)
 
@@ -285,10 +364,19 @@ class NMT:
 
             i = re.sub('[?!]', ' ', i)
 
-
+        ## long sentences with comma ##
+        slen = self.args.length
+        sout = ''
+        if len(i.split(' ')) > slen // 2 and ',' in i:
+            for x in i:
+                if x != ',':
+                    sout += x
+                elif x == ',':
+                    break
+            i = sout
         return i
 
-    def prep_recent(self):
+    def prep_recent(self, prep_copy_boolean=True):
         self.recent_in = self.q_string[0] + self.recent_in.strip('.').lower()
         self.recent_text = self.a_string[0] + self.recent_text.strip('.').lower()
         y = 'yes'
@@ -307,7 +395,11 @@ class NMT:
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
                 self.recent_in = None
 
-        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
+        if not prep_copy_boolean:
+            self.recent_in = None
+            self.recent_text = None
+
+        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in and 'name' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
 
 
@@ -325,7 +417,14 @@ class NMT:
                 s += k + '.\n'
         #s = ['---'] + s + ['---']
         self.sentences_formatted = s
-        #return s
+
+    def detect_url(self, txt):
+        urls = re.findall('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+', txt)
+        print(len(urls), 'urls')
+        if len(urls) > 0:
+            return urls[0]
+        else:
+            return None
 
     #########################################
 
@@ -337,14 +436,18 @@ class NMT:
         pass
 
     def get_encoder(self):
-        print(self.args.source_file)
+        print(self.args.source_file,'##')
         source_path = self.args.source_file.split('/')[:-1]
         source_path = '/'.join(source_path) + '/'
-        print(source_path)
+        print(source_path,'for vocab')
         with open(realpath + '/' + source_path + '/encoder.json', 'r') as f:
             encoder = json.load(f)
-        with open(realpath + '/' + source_path + '/vocab.bpe', 'r', encoding="utf-8") as f:
-            bpe_data = f.read()
+            print('encoder.json')
+        f.close()
+        with open(realpath + '/' + source_path + '/vocab.bpe', 'r', encoding="utf-8") as ff:
+            bpe_data = ff.read()
+            print('bpe data')
+        ff.close()
         bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
         return Encoder(
             encoder=encoder,
@@ -355,16 +458,18 @@ class NMT:
         print(self.args.source_file)
         source_path = self.args.source_file.split('/')[:-1]
         source_path = '/'.join(source_path) + '/'
-        print(source_path)
+        print(source_path, 'source path', realpath,'real path')
+
         if '774M' in source_path :
             print('774M', 'model specific configs')
             #self.use_common = False
-            self.args.temperature = 1e-10
+            self.args.temperature = 1e-4
             self.args.top_k = 100
         if os.path.isfile(realpath + '/' + source_path + '/config.json'):
+            print(realpath + '/' + source_path, 'config.json')
             with open(realpath + '/' + source_path + '/config.json', 'r') as f:
                 hp_config = json.load(f)
-                print(hp_config)
+                print(hp_config,'before')
                 self.config = GPT2Config(
                     vocab_size_or_config_json_file=hp_config['vocab_size'],
                     n_embd=hp_config['n_embd'],
@@ -379,6 +484,8 @@ class NMT:
                     # type_vocab_size=self.type_vocab_size,
                     # initializer_range=self.initializer_range
                 )
+        else:
+            self.config = GPT2Config()
         print(self.config)
 
     def get_args(self ):
@@ -389,15 +496,15 @@ class NMT:
         parser.add_argument('--unconditional', action='store_true', help='If true, unconditional generation.')
         parser.add_argument("--batch_size", type=int, default=-1)
         parser.add_argument("--length", type=int, default=25)
-        parser.add_argument("--temperature", type=float, default=1e-5)
+        parser.add_argument("--temperature", type=float, default=1e-4)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
-        parser.add_argument("--source_file", type=str, required=False, default='torch_gpt2/GPT2/gpt2-pytorch_model.bin')
+        parser.add_argument("--source_file", type=str, required=False, default='../data/tf_gpt2_data/117M/converted/pytorch_model.bin')
         self.args = parser.parse_args()
 
     def load_model(self):
-        if self.args.quiet is False:
-            print(self.args)
+        if self.args.quiet is False or True:
+            print(self.args, 'args')
 
         if self.args.batch_size == -1:
             self.args.batch_size = 1
@@ -411,15 +518,18 @@ class NMT:
 
         self.get_config()
 
+        #self.get_args()
         # Load Model
         self.enc = self.get_encoder()
-        if self.config is None: self.config = GPT2Config()
+        if self.config is None:
+            print('change config')
+            self.config = GPT2Config()
         self.model = GPT2LMHeadModel(self.config)
         self.model = load_weight(self.model, self.state_dict)
         self.model.to(self.device)
         self.model.eval()
 
-        print(self.config)
+        print(self.config, 'config')
 
     def text_generator(self):
 
@@ -451,23 +561,18 @@ class NMT:
 
 
     def load_state_dict(self):
-        print(self.args.source_file)
-        source_path = self.args.source_file.split('/')[:-1]
-        source_path = '/'.join(source_path) + '/'
-        print(source_path, 2)
 
-        p = realpath + '/' + self.args.source_file #'./torch_gpt2/gpt2-pytorch_model.bin'
-
-        #p = realpath + '/' + source_path + '/' + self.args.source_file
+        p = realpath + '/' + self.args.source_file
 
         print(p)
         if os.path.exists(p):
-            self.state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
-            #self.text_generator(state_dict)
+            self.state_dict = torch.load(p) #, map_location='cpu') # if not torch.cuda.is_available() else None)
+
+            print('load p', p)
         else:
             print('Please download gpt2-pytorch_model.bin')
             sys.exit()
-        return self.state_dict
+        #return self.state_dict
 
 if __name__ == '__main__':
 
