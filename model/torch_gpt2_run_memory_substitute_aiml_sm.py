@@ -258,11 +258,13 @@ class NMT:
             print('',"+" * 10, '\n', i, '\n','+' * 10)
 
         print(len(i.split(' ')), 'tokens')
+
+        ### make sure history never gets too big ###
         if self.common_wiki == '' :
             z = i.split(' ')
             z = z[max(len(z)-(int(1024 * 3/4)), 0):]
             i = ' '.join(z)
-            #print(i, 'clipped')
+
         i = self.prepare_input(i)
 
         self.args.text = i
