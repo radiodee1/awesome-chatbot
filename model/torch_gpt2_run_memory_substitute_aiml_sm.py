@@ -148,6 +148,7 @@ class NMT:
             aiml_file = aiml01
         else:
             aiml_file = aiml02
+        print(aiml_file, 'aiml')
         self.kernel = aiml.Kernel()
         self.kernel.verbose(False)
         self.kernel.learn(aiml_file)

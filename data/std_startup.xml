@@ -185,6 +185,13 @@
          Hello <set name = "username"><star/></set> !
       </template>
    </category>
+    <category>
+      <pattern>* IS MY NAME</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   
    <category>
       <pattern>MY NAME IS *</pattern>
       <template>
