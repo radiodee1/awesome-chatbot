@@ -54,6 +54,12 @@ import aiml
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
 
+location01 = 'torch_gpt2/GPT2/gpt2-pytorch_model.bin'
+location02 = '../data/tf_gpt2_data/117M/converted/pytorch_model.bin'
+
+aiml01 = '../data/std_startup.xml'
+aiml02 = './data/std_startup.xml'
+
 print('NOTE: consider using this source file: --source_file ../data/tf_gpt2_data/774M/converted/pytorch_model.bin')
 
 class Lang:
@@ -131,16 +137,22 @@ class NMT:
         self.commands = Commands()
         self.wiki = Wikipedia()
 
-        ## this is not used but is required for bot software...
+        ## this is not used but is required for bot software... ##
         self.output_lang = Lang('lang')
         for i in range(len(self.enc.encoder.items())):
             self.output_lang.addWord(self.enc.decode([i]))
 
+        ### this file may be launched from parent dir!! ###
+        aiml_file = aiml01
+        if os.path.isfile(aiml01):
+            aiml_file = aiml01
+        else:
+            aiml_file = aiml02
         self.kernel = aiml.Kernel()
         self.kernel.verbose(False)
-        self.kernel.learn("../data/std_startup.xml")
+        self.kernel.learn(aiml_file)
 
-        ## do this also with each input...
+        ## do this also with each input... ##
         self.prepare_common()
 
     def prepare_common(self):
@@ -185,7 +197,7 @@ class NMT:
         r = self.kernel.respond(k)
         url = self.detect_url(r)
         z = ''
-        if url and True: #self.args.apps == True:
+        if url and self.args.apps == True:
             print(url)
             if url == self.wiki.url_search:
                 self.wiki.set_topic(r[len(url):])
@@ -244,7 +256,13 @@ class NMT:
             i = self.common_wiki + ' ' + self.common_pre + '\n' + s + "\n" + self.common + '\n' + i
 
             print('',"+" * 10, '\n', i, '\n','+' * 10)
-            print(len(i.split()), 'tokens')
+
+        print(len(i.split(' ')), 'tokens')
+        if self.common_wiki == '' :
+            z = i.split(' ')
+            z = z[max(len(z)-(int(1024 * 3/4)), 0):]
+            i = ' '.join(z)
+            #print(i, 'clipped')
         i = self.prepare_input(i)
 
         self.args.text = i
@@ -499,7 +517,7 @@ class NMT:
         parser.add_argument("--temperature", type=float, default=1e-4)
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
-        parser.add_argument("--source_file", type=str, required=False, default='../data/tf_gpt2_data/117M/converted/pytorch_model.bin')
+        parser.add_argument("--source_file", type=str, required=False, default=location01) #'../data/tf_gpt2_data/117M/converted/pytorch_model.bin')
         self.args = parser.parse_args()
 
     def load_model(self):

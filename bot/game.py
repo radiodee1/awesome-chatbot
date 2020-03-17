@@ -29,7 +29,7 @@ if mode == 'sequence':
 
 elif mode == 'memory' or mode == 'signal':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
-    import model.torch_gpt2_run_memory as model
+    import model.torch_gpt2_run_memory_substitute_aiml_sm as model
     import model.tokenize_weak as tokenize_weak
 
 elif mode == 'wiki':
