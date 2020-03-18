@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/do_calc_transformer.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/experiments/transformer_calc.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/std_startup.xml" beforeDir="false" afterPath="$PROJECT_DIR$/data/std_startup.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_sm.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_sm.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,19 +31,19 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../attention-is-all-you-need-pytorch" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/." />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/babi_t2t" />
       <recent name="$PROJECT_DIR$/model" />
       <recent name="$PROJECT_DIR$/babi" />
       <recent name="$PROJECT_DIR$/saved" />
-      <recent name="$PROJECT_DIR$/raw/srt_zip" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="ServiceViewManager">
@@ -97,10 +97,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1578409519396" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1582492580595">
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1584556617552">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1582492580595" />
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1584556617552" />
     <state x="1003" y="328" width="424" height="491" key="FileChooserDialogImpl" timestamp="1583500986944">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
