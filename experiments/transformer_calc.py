@@ -74,15 +74,28 @@ base_filename = ''
 class Game:
     def __init__(self):
         global base_filename
-        self.pin_setup()
+        #self.pin_setup()
 
-        self.pin_both()
+        #self.pin_both()
 
         self.model = model.NMT()
         self.model.setup_for_interactive()
 
         self.responses = {}
         self.responses_list = []
+        self.responses_words = {}
+        self.responses_words_list = []
+
+        self.csv_responses = []
+        self.csv_original = []
+        self.csv_repeats = []
+        self.csv_total = []
+
+        self.csv_words = []
+        self.csv_words_original = []
+        self.csv_words_repeats = []
+        self.csv_words_total = []
+
         #self.voice = v.VoiceOut()
         #self.sr = sr.VoiceGoogleSR()
 
@@ -142,6 +155,13 @@ class Game:
                         self.responses[out] = 1
                     else:
                         self.responses[out] += 1
+                    for word in out.split():
+                        if word not in self.responses_words:
+                            self.responses_words[word] = 1
+                        else:
+                            self.responses_words[word] += 1
+                        self.responses_words_list.append(word)
+                        pass
                     #print(' count:', self.responses[out])
                     ## seconds ##
                     self.time_total = (te - ts)
@@ -207,9 +227,60 @@ class Game:
             f.write(str(len(self.responses)) + ' responses / ' + str(len(self.responses_list)) + ' questions \n')
             f.write(str(original) + ' original / ' + str(len(self.responses_list)) + ' questions \n')
             f.write(str(len(self.responses) - original) + ' repeats / ' + str(len(self.responses_list)) + ' questions \n')
+            #f.write(str(len(self.responses_words)) + ' words \n')
             print(str(len(self.responses)) + ' responses / ' + str(len(self.responses_list)) + ' questions')
             print(original, 'original /', str(len(self.responses_list)), 'questions')
             print(len(self.responses) - original, 'repeats /', str(len(self.responses_list)), 'questions')
+
+            ### just words ###
+            z = [sorted(self.responses_words.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)]
+
+            num_words = 0
+            original_words = 0
+            for key in z[0]:
+                num_words += 1
+                if key[1] == 1: original_words += 1
+
+            f.write(str(len(self.responses_words)) + ' responses / ' + str(len(self.responses_words_list)) + ' words \n')
+            f.write(str(original_words) + ' original / ' + str(len(self.responses_words_list)) + ' words \n')
+            f.write(str(len(self.responses_words) - original_words) + ' repeats / ' + str(len(self.responses_words_list)) + ' words \n')
+            f.write(str(len(self.responses_words)) + ' words \n')
+            print(str(len(self.responses_words)) + ' responses / ' + str(len(self.responses_words_list)) + ' words')
+            print(original_words, 'original /', str(len(self.responses_words_list)), 'words')
+            print(len(self.responses_words) - original_words, 'repeats /', str(len(self.responses_words_list)), 'words')
+            print(len(self.responses_words), 'words')
+
+        self.csv_responses.append(len(self.responses))
+        self.csv_original.append(int(original))
+        self.csv_repeats.append(len(self.responses) - original)
+        self.csv_total.append(len(self.responses_list))
+
+        self.csv_words.append(len(self.responses_words))
+        self.csv_words_original.append(int(original_words))
+        self.csv_words_repeats.append(len(self.responses_words) - original_words)
+        self.csv_words_total.append(len(self.responses_words_list))
+
+        with open('../saved/output.csv', 'w') as g:
+            g.write('Total,')
+            for i in self.csv_total:
+                g.write(str(i) + ',')
+            g.write('\n')
+            g.write('Repeats,')
+            for i in self.csv_repeats:
+                g.write(str(i) + ',')
+            g.write('\n')
+            g.write('Original,')
+            for i in self.csv_original:
+                g.write(str(i) + ',')
+            g.write('\n')
+            g.write('Responses,')
+            for i in self.csv_responses:
+                g.write(str(i) + ',')
+            g.write('\n')
+            g.write('Words,')
+            for i in self.csv_words:
+                g.write(str(i) + ',')
+            g.write('\n')
 
 
     def pin_setup(self):
@@ -243,5 +314,6 @@ if __name__ == '__main__':
     except EOFError:
         pass
     finally:
+
         #g.print_contents(pr=False, code='a')
         pass
