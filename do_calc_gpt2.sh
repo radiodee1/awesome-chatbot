@@ -9,10 +9,10 @@ if [[ -t 0 ]]; then
     exit
 fi
 
-TEST_5="--name chat_movie_30 $@"
+TEST_5=" $@"
 
 LAUNCH=launch
-export STAT_LIMIT=2000
+export STAT_LIMIT=1000
 
 if [ ! -f ${LAUNCH} ]; then
 

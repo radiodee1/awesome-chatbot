@@ -154,6 +154,8 @@ class Game:
                 if count > 0 :
                     #if mode == 'signal': self.voice.beep_out()
                     ts = time.time()
+                    if (i.strip() == '' or len(i.strip()) == 0) or i.strip() == "'" :
+                        i = '.'
                     out = self.model.get_sentence(i)
                     te = time.time()
                     #if mode == 'signal': self.voice.beep_out()

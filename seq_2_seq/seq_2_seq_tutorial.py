@@ -194,6 +194,8 @@ def printLines(file, n=10):
 #printLines(os.path.join(corpus, "movie_lines.txt"))
 
 def fix_contractions(txt):
+    if txt is None:
+        txt = ''
     txt = txt.replace(' t ', 't ')
     txt = txt.replace(' m ', 'm ')
     txt = txt.replace(' s ', 's ')
