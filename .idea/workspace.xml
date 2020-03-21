@@ -6,7 +6,6 @@
       <change beforePath="$PROJECT_DIR$/do_calc_gpt2.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_calc_gpt2.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/do_calc_gru.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_calc_gru.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/chat_model_calc.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/chat_model_calc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_tutorial.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_tutorial.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

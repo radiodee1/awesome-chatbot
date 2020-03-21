@@ -17,6 +17,7 @@ sys.path.append(os.path.abspath('../seq_2_seq/'))
 sys.path.append(os.path.abspath('../transformer/'))
 
 csv_label = 't2t'
+csv_voc_tot = 0
 
 mode = str(os.environ['CHATBOT_MODE'])
 if os.environ['CHATBOT_START']:
@@ -29,6 +30,7 @@ if mode == 'sequence':
     import seq_2_seq.seq_2_seq_tutorial as model
     import seq_2_seq.tokenize_weak as tokenize_weak
     csv_label = 'gru'
+    csv_voc_tot = 7826
 
 
 elif mode == 'memory' or mode == 'signal':
@@ -36,6 +38,7 @@ elif mode == 'memory' or mode == 'signal':
     import model.torch_gpt2_run_memory_substitute_aiml_sm as model
     import model.tokenize_weak as tokenize_weak
     csv_label = 'gpt'
+    csv_voc_tot = 50000
 
 elif mode == 'wiki':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
@@ -45,6 +48,7 @@ elif mode == 'wiki':
     no_tokenize_weak = True
     mode = 'signal'
     csv_label = 'gpt'
+    csv_voc_tot = 50000
 
 elif mode == 'transformer':
     os.chdir('../transformer/')
@@ -54,6 +58,7 @@ elif mode == 'transformer':
     must_stop = False
     mode = 'signal'
     csv_label = 't2t'
+    csv_voc_tot = 8170
 
 if mode in sound_tones:
     mode = 'signal'
@@ -298,6 +303,10 @@ class Game:
             for i in self.csv_words:
                 g.write(str(i) + ',')
             g.write('\n')
+            g.write('Total_Voc.' + csv_label + ',')
+            for i in self.csv_words:
+                g.write(str(csv_voc_tot) + ',')
+            g.write('\n')
 
 
 
@@ -332,6 +341,7 @@ if __name__ == '__main__':
     except EOFError:
         pass
     finally:
-
+        if g.model.voc.num_words is not None:
+            print(g.model.voc.num_words, 'voc')
         #g.print_contents(pr=False, code='a')
         pass

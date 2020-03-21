@@ -12,7 +12,7 @@ fi
 TEST_5=" $@"
 
 LAUNCH=launch
-export STAT_LIMIT=1000
+export STAT_LIMIT=2000
 
 if [ ! -f ${LAUNCH} ]; then
 

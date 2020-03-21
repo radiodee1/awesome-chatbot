@@ -9,7 +9,7 @@ TEST_7="--mode interactive --iter 4000 ${@}"
 LAUNCH=launch
 CHECKPOINT=./saved/4000_checkpoint_chatbot_tutorial.tar
 
-export STAT_LIMIT=1000
+export STAT_LIMIT=2000
 
 if [ ! -f ${LAUNCH} ]; then
 
