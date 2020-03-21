@@ -16,6 +16,8 @@ sys.path.append(os.path.abspath('../model/'))
 sys.path.append(os.path.abspath('../seq_2_seq/'))
 sys.path.append(os.path.abspath('../transformer/'))
 
+csv_label = 't2t'
+
 mode = str(os.environ['CHATBOT_MODE'])
 if os.environ['CHATBOT_START']:
     speech_start = str(os.environ['CHATBOT_START'])
@@ -26,12 +28,14 @@ if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
     import seq_2_seq.tokenize_weak as tokenize_weak
+    csv_label = 'gru'
 
 
 elif mode == 'memory' or mode == 'signal':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
     import model.torch_gpt2_run_memory_substitute_aiml_sm as model
     import model.tokenize_weak as tokenize_weak
+    csv_label = 'gpt'
 
 elif mode == 'wiki':
     sys.path.append(os.path.abspath('../model/torch_gpt2/'))
@@ -40,6 +44,7 @@ elif mode == 'wiki':
     must_stop = False
     no_tokenize_weak = True
     mode = 'signal'
+    csv_label = 'gpt'
 
 elif mode == 'transformer':
     os.chdir('../transformer/')
@@ -48,6 +53,7 @@ elif mode == 'transformer':
     import model.tokenize_weak as tokenize_weak
     must_stop = False
     mode = 'signal'
+    csv_label = 't2t'
 
 if mode in sound_tones:
     mode = 'signal'
@@ -160,7 +166,7 @@ class Game:
                             self.responses_words[word] = 1
                         else:
                             self.responses_words[word] += 1
-                        self.responses_words_list.append(word)
+                        self.responses_words_list.append(word) ## do not use !!
                         pass
                     #print(' count:', self.responses[out])
                     ## seconds ##
@@ -205,7 +211,7 @@ class Game:
 
     def print_contents(self, pr=False, code='w'):
         if pr is True: print('\n-----')
-        with open('../saved/output.txt',code) as f:
+        with open('../saved/output.'+csv_label+'.txt',code) as f:
             if pr is True:
                 for i in self.responses_list:
                     print(i)
@@ -248,39 +254,49 @@ class Game:
             print(str(len(self.responses_words)) + ' responses / ' + str(len(self.responses_words_list)) + ' words')
             print(original_words, 'original /', str(len(self.responses_words_list)), 'words')
             print(len(self.responses_words) - original_words, 'repeats /', str(len(self.responses_words_list)), 'words')
-            print(len(self.responses_words), 'words')
+            #print(len(self.responses_words), 'words')
 
         self.csv_responses.append(len(self.responses))
         self.csv_original.append(int(original))
         self.csv_repeats.append(len(self.responses) - original)
-        self.csv_total.append(len(self.responses_list))
+        self.csv_total.append(len(self.responses_list)) ## num of sentences
 
         self.csv_words.append(len(self.responses_words))
         self.csv_words_original.append(int(original_words))
         self.csv_words_repeats.append(len(self.responses_words) - original_words)
-        self.csv_words_total.append(len(self.responses_words_list))
+        self.csv_words_total.append(len(self.responses_list)) ## num of sentences
 
-        with open('../saved/output.csv', 'w') as g:
-            g.write('Total,')
+        with open('../saved/output.'+csv_label+'.csv', 'w') as g:
+            g.write('Sentences.'+csv_label+',')
             for i in self.csv_total:
                 g.write(str(i) + ',')
             g.write('\n')
-            g.write('Repeats,')
+            g.write('Repeated_Sentences.'+csv_label+',')
             for i in self.csv_repeats:
                 g.write(str(i) + ',')
             g.write('\n')
-            g.write('Original,')
+            g.write('Sentences_Used_Once.'+csv_label+',')
             for i in self.csv_original:
                 g.write(str(i) + ',')
             g.write('\n')
-            g.write('Responses,')
+            g.write('Total_Sentences.'+csv_label+',')
             for i in self.csv_responses:
                 g.write(str(i) + ',')
             g.write('\n')
-            g.write('Words,')
+
+            g.write('Repeated_Words.'+csv_label+',')
+            for i in self.csv_words_repeats:
+                g.write(str(i) + ',')
+            g.write('\n')
+            g.write('Words_Used_Once.'+csv_label+',')
+            for i in self.csv_words_original:
+                g.write(str(i) + ',')
+            g.write('\n')
+            g.write('Total_Word_Responses.'+csv_label+',')
             for i in self.csv_words:
                 g.write(str(i) + ',')
             g.write('\n')
+
 
 
     def pin_setup(self):

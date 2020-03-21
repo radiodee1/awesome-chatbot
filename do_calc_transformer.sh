@@ -12,7 +12,7 @@ fi
 TEST_5="--name chat_movie_30 $@"
 
 LAUNCH=launch
-export STAT_LIMIT=1000
+export STAT_LIMIT=400
 
 if [ ! -f ${LAUNCH} ]; then
 
@@ -25,6 +25,6 @@ export CHATBOT_MODE="transformer"
 export CHATBOT_START="hello. transformer model."
 
 cd experiments
-python3 transformer_calc.py ${TEST_5}   #2> /dev/null
+python3 chat_model_calc.py ${TEST_5}   #2> /dev/null
 
 ## this file must be hard coded for any model you want to run
