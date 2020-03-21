@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/do_calc_gpt2.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/do_calc_gru.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/do_calc_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_calc_transformer.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/transformer_calc.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/chat_model_calc.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,15 +36,15 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/." />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/babi_t2t" />
       <recent name="$PROJECT_DIR$/model" />
       <recent name="$PROJECT_DIR$/babi" />
       <recent name="$PROJECT_DIR$/saved" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="ServiceViewManager">

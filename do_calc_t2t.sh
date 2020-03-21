@@ -12,7 +12,7 @@ fi
 TEST_5="--name chat_movie_30 $@"
 
 LAUNCH=launch
-export STAT_LIMIT=400
+export STAT_LIMIT=2000
 
 if [ ! -f ${LAUNCH} ]; then
 
@@ -22,7 +22,7 @@ exit
 
 fi
 export CHATBOT_MODE="transformer"
-export CHATBOT_START="hello. transformer model."
+export CHATBOT_START="hello."
 
 cd experiments
 python3 chat_model_calc.py ${TEST_5}   #2> /dev/null
