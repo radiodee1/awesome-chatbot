@@ -60,18 +60,19 @@ parser.add_argument('--aiml', default=None, type=str, help='name of input aiml f
 parser.add_argument('--tab', default=None, type=str, help='name of input tab file.')
 parser.add_argument('--basename', default='../train.big', type=str, help='basename for target files.')
 parser.add_argument('--tempname', default='../train.base', type=str, help='temporary base name.')
-parser.add_argument('--write_over', default=False, type=bool, help='write over files in place.')
+parser.add_argument('--write-over', default=False, action='store_true', help='write over files in place.')
 parser.add_argument('--ratio', default=.5, type=float, help='ratio of inserted lines to original lines.')
 parser.add_argument('--eol', default=False, action='store_true', help='strip or insert eol markers.')
+parser.add_argument('--zip', default=False, action='store_true', help='zip files.')
 
 args = parser.parse_args()
 
 folder_t = args.tempname.split('/')[:-1]
-folder_t = '/'.join(folder_t) + '/'
+folder_temp = '/'.join(folder_t) + '/'
 #print(folder_t)
 
-folder_b = args.basename.split('/')[:-1]
-folder_b = '/'.join(folder_b) + '/'
+#folder_b = args.basename.split('/')[:-1]
+#folder_b = '/'.join(folder_b) + '/'
 #print(folder_b)
 
 folder_t = ''
@@ -89,7 +90,7 @@ if args.ratio > 0.5:
 
 tr_fr = open(folder_t + args.tempname + '.from', 'w')
 tr_to = open(folder_t + args.tempname + '.to', 'w')
-
+tr_qu = open(folder_t + args.tempname + '.ques', 'w')
 ##############
 
 src_tr_fr = open(folder_b + args.basename + '.from', 'r')
@@ -125,13 +126,15 @@ for i in range(int(c)):
         mixlist[temp] = set_eol(mixlist[temp], args.eol)
         tr_fr.write(mixlist[temp][0] + '\n')
         tr_to.write(mixlist[temp][1] + '\n')
+        tr_qu.write('\n')
         mix += 1
     else:
         a = f_fr[num % z].strip()
         b = f_to[num % z].strip()
         a, b = set_eol([a,b], args.eol)
-        tr_fr.write(a + '< \n')
-        tr_to.write(b + '< \n')
+        tr_fr.write(a + '\n')
+        tr_to.write(b + '\n')
+        tr_qu.write('\n')
         num += 1
 
 
@@ -143,3 +146,21 @@ tr_to.close()
 
 src_tr_fr.close()
 src_tr_to.close()
+
+os.chdir(folder_temp)
+
+if args.write_over:
+    tname = args.tempname.split('/')[-1]
+    bname = args.basename.split('/')[-1]
+    os.system('mv ' + tname + '.from ' + bname + '.from' )
+    os.system('mv ' + tname + '.to ' + bname + '.to' )
+    os.system('mv ' + tname + '.ques ' + bname + '.ques' )
+
+    if args.zip:
+        bname_zip = bname.split('.')[-1]
+        os.system('zip chat_' + bname_zip + ' ' + bname + '.from ' + bname + '.to ' + bname + '.ques ')
+else:
+    tname = args.tempname.split('/')[-1]
+    tname_zip = tname.split('.')[-1]
+    if args.zip:
+        os.system('zip chat_' + tname_zip + ' ' + tname + '.from ' + tname + '.to ' + tname + '.ques ')
