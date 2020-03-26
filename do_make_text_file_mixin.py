@@ -92,9 +92,19 @@ src_tr_to = open(folder_b + args.basename + '.to', 'r')
 #src_val_fr = open(folder_b + args.basename + '.from', 'r')
 #src_val_to = open(folder_b + args.basename + '.to', 'r')
 
+f_fr = src_tr_fr.readlines()
+f_to = src_tr_to.readlines()
+
+if len(f_fr) != len(f_to):
+    print('input files dont match')
+    exit()
+
+else:
+    print(len(f_fr))
+
 ############
 print(mixlist)
-z = len(mixlist)
+z = len(f_fr)
 r = 1 - args.ratio
 x = ((z ) / r) - z
 print(x)
@@ -103,6 +113,8 @@ c = x + z
 print(r, z, c)
 ############
 
+
+############
 tr_fr.close()
 tr_to.close()
 
