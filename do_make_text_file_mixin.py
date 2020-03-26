@@ -95,11 +95,12 @@ src_tr_to = open(folder_b + args.basename + '.to', 'r')
 ############
 print(mixlist)
 z = len(mixlist)
-r = args.ratio * 100
-x = ((z ) / r) #- z
+r = 1 - args.ratio
+x = ((z ) / r) - z
 print(x)
-c = x + z + x
-print(r, z, c, z+x)
+c = x + z
+
+print(r, z, c)
 ############
 
 tr_fr.close()
