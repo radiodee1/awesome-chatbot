@@ -69,11 +69,6 @@ args = parser.parse_args()
 
 folder_t = args.tempname.split('/')[:-1]
 folder_temp = '/'.join(folder_t) + '/'
-#print(folder_t)
-
-#folder_b = args.basename.split('/')[:-1]
-#folder_b = '/'.join(folder_b) + '/'
-#print(folder_b)
 
 folder_t = ''
 folder_b = ''
