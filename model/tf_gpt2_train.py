@@ -13,6 +13,7 @@ import tensorflow as tf
 import time
 import tqdm
 from tensorflow.core.protobuf import rewriter_config_pb2
+import random
 import sys
 
 sys.path.append('tf_gpt2/src/')
@@ -238,7 +239,8 @@ def main():
 
             v = v[: HIDDEN_SIZE - 1]
             len_v += len(v)
-            data_sampler.extend(v) ## append(v)
+            #data_sampler.extend(v) ##
+            data_sampler.append(v)
             pass
 
         if len_v < HIDDEN_SIZE:
@@ -287,7 +289,10 @@ def main():
 
         def generate_samples():
             print('Generating samples...')
-            context_tokens = data_sampler.sample(1)
+            #context_tokens = data_sampler.sample(1)
+            context_tokens = data_sampler[0]
+            print(context_tokens, len(context_tokens))
+
             all_text = []
             index = 0
             while index < args.sample_num:
@@ -325,8 +330,12 @@ def main():
 
         def sample_batch():
             #z = [data_sampler.sample(1024) for _ in range(args.batch_size)]
-            z = [data_sampler[i*1024:(i+1)*1024] for i in range(args.batch_size)]
+            #print(len(data_sampler))
+            #print(len(data_sampler[0]))
+            z = [data_sampler[random.randint(0, args.batch_size)]]
             #print(enc.decode(z[0]))
+            #print(z[1],'\n1' ,z[2],'\n2' ,z[3] ,len(data_sampler[0]))
+            #exit()
             return z
 
 
@@ -338,7 +347,8 @@ def main():
                 if counter % args.save_every == 0:
                     save()
                 if counter % args.sample_every == 0:
-                    generate_samples()
+                    #generate_samples()
+                    pass
                 if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
                     validation()
 
@@ -369,8 +379,7 @@ def main():
                 counter += 1
         except KeyboardInterrupt:
             print('\ninterrupted')
-        except:
-            print('saved?')
+
         finally:
             save()
 
