@@ -6,6 +6,8 @@
 import argparse
 import json
 import os
+#os.environ['TF_CPP_MIN_VLOG_LEVEL'] = '3'
+
 import numpy as np
 import tensorflow as tf
 import time
@@ -58,7 +60,7 @@ parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Gene
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 
 parser.add_argument('--val_dataset', metavar='PATH', type=str, default=None, help='Dataset for validation loss, defaults to --dataset.')
-parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=2, help='Batch size for validation.')
+parser.add_argument('--val_batch_size', metavar='SIZE', type=int, default=1, help='Batch size for validation.')
 parser.add_argument('--val_batch_count', metavar='N', type=int, default=40, help='Number of batches for validation.')
 parser.add_argument('--val_every', metavar='STEPS', type=int, default=0, help='Calculate validation loss every STEPS steps.')
 parser.add_argument('--stop_after', metavar='STOP', type=int, default=100, help='Stop after training counter reaches STOP')
@@ -218,9 +220,10 @@ def main():
         trn_chunks_to = load_dataset(enc, to_name, args.combine) #if args.dataset else chunks
 
         skip_delimeter = True
-        trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, skip_delimeter=skip_delimeter)
-        #trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc, skip_delimeter=skip_delimeter)
-        trn_data_sampler_to = SamplerVal(trn_chunks_to, enc, skip_delimeter=skip_delimeter)
+        char = '\t'
+        trn_data_sampler_from = SamplerVal(trn_chunks_from, enc, char=char, skip_delimeter=skip_delimeter)
+        #trn_data_sampler_ques = SamplerVal(trn_chunks_ques, enc, char=char, skip_delimeter=skip_delimeter)
+        trn_data_sampler_to = SamplerVal(trn_chunks_to, enc, char=char, skip_delimeter=skip_delimeter)
 
         len_v = 0
         data_sampler = []
@@ -250,7 +253,8 @@ def main():
 
         if args.val_every > 0 and False:
             val_chunks = load_dataset(enc, args.val_dataset, args.combine) if args.val_dataset else chunks
-        print('dataset has', data_sampler.total_size, 'tokens')
+        if not isinstance(data_sampler, list):
+            print('dataset has', data_sampler.total_size, 'tokens')
         print('Training...')
 
         if args.val_every > 0:
@@ -320,7 +324,8 @@ def main():
                     loss=v_val_loss))
 
         def sample_batch():
-            z = [data_sampler.sample(1024) for _ in range(args.batch_size)]
+            #z = [data_sampler.sample(1024) for _ in range(args.batch_size)]
+            z = [data_sampler[i*1024:(i+1)*1024] for i in range(args.batch_size)]
             #print(enc.decode(z[0]))
             return z
 
@@ -363,7 +368,9 @@ def main():
 
                 counter += 1
         except KeyboardInterrupt:
-            print('interrupted')
+            print('\ninterrupted')
+        except:
+            print('saved?')
         finally:
             save()
 

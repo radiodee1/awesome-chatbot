@@ -137,6 +137,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--basename', default='../train.base', type=str, help='basename for target files.')
 parser.add_argument('--mult', default=10, type=int, help='number of repetitions.')
 parser.add_argument('--single', default=False, action='store_true', help='store single file.')
+parser.add_argument('--zip', default=False, action='store_true', help='zip files.')
+
 args = parser.parse_args()
 
 print(len(namelist), 'num of names.')
@@ -156,3 +158,14 @@ else:
             for i in namelist:
                 f_from.write(ques1.format(i,i) + '\t')
                 f_to.write(ans1.format(i) + '\t')
+
+if args.zip:
+    folder_t = args.basename.split('/')[:-1]
+    folder = '/'.join(folder_t) + '/'
+
+    os.chdir(folder)
+
+    tname = args.basename.split('/')[-1]
+    tname_zip = tname.split('.')[-1]
+    if args.zip:
+        os.system('zip chat_hello_' + tname_zip + ' ' + tname + '.from ' + tname + '.to ' + tname + '.ques ')
