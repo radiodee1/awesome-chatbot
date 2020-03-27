@@ -7,7 +7,7 @@ Alternately you can use reddit dumps using `./do_make_reddit_download.sh` .
 
 * Use `./seq_2_seq/do_split.py` for generating training data for training gpt2.
 For convenience the script `./model/do_split_run.sh` appears in this folder. You may have
-to move the ouput of the `do_split.py` file into the `./data` folder.
+to move the output of the `do_split.py` file into the `./data` folder.
 
 ```
 $ ./do_split_run.sh --filename ../../rc-movie.txt --to-gpt2 --length=500 --mode=train.big --zip=chat_gpt2_movie
