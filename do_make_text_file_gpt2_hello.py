@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 import math
+import random
 
 import xml.etree.ElementTree as ET
 
@@ -42,6 +43,8 @@ namelist = [
 ]
 
 ques1 = '''
+Q: What is your name?
+A: My name is {}.
 Q: My name is {}.
 A: Hello {}.
 
@@ -147,8 +150,9 @@ if args.single:
     with open(args.basename + '.txt', 'w') as f:
         for num in range(args.mult):
             for i in namelist:
+                k = namelist[random.randint(0, len(namelist) -1)]
                 j = ques1 + ans1
-                j = j.format(i,i,i)
+                j = j.format(k, i,i,i)
                 if num == 0 and False: print(j)
                 f.write(j+'\t')
 
@@ -156,7 +160,8 @@ else:
     with open(args.basename + '.from', 'w') as f_from, open(args.basename + '.to', 'w') as f_to:
         for num in range(args.mult):
             for i in namelist:
-                f_from.write(ques1.format(i,i) + '\t')
+                k = namelist[random.randint(0, len(namelist) - 1)]
+                f_from.write(ques1.format(k, i,i) + '\t')
                 f_to.write(ans1.format(i) + '\t')
 
 if args.zip:
