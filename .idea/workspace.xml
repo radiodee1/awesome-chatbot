@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_text_file_gpt2_hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_text_file_gpt2_hello.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_trained.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_trained.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
