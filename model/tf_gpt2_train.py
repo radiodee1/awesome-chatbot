@@ -56,7 +56,7 @@ parser.add_argument('--train_special', action='store_true', help='test special t
 parser.add_argument('--restore_from', type=str, default='latest', help='Either "latest", "fresh", or a path to a checkpoint file')
 parser.add_argument('--run_name', type=str, default='run1', help='Run id. Name of subdirectory in checkpoint/ and samples/')
 parser.add_argument('--sample_every', metavar='N', type=int, default=100, help='Generate samples every N steps')
-parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=1023, help='Sample this many tokens')
+parser.add_argument('--sample_length', metavar='TOKENS', type=int, default=50, help='Sample this many tokens')
 parser.add_argument('--sample_num', metavar='N', type=int, default=1, help='Generate this many samples')
 parser.add_argument('--save_every', metavar='N', type=int, default=1000, help='Write a checkpoint every N steps')
 
@@ -230,9 +230,9 @@ def main():
         data_sampler = []
         for i in range(trn_data_sampler_from.total_size):
             v = (
-                    enc.encode('\nQ: ') +
+                    #enc.encode('\nQ: ') +
                     trn_data_sampler_from.get(i) +
-                    enc.encode('. \nA: ') +
+                    #enc.encode('. \nA: ') +
                     trn_data_sampler_to.get(i)   +
                     enc.encode('. ')
             )
@@ -290,8 +290,10 @@ def main():
         def generate_samples():
             print('Generating samples...')
             #context_tokens = data_sampler.sample(1)
-            context_tokens = data_sampler[0]
-            print(context_tokens, len(context_tokens))
+            #context_tokens = data_sampler[0]
+            context_tokens = trn_data_sampler_from.get(random.randint(0,trn_data_sampler_from.total_size))
+            #print(enc.decode(context_tokens), len(context_tokens))
+            #print(args.batch_size * [context_tokens])
 
             all_text = []
             index = 0
@@ -347,7 +349,7 @@ def main():
                 if counter % args.save_every == 0:
                     save()
                 if counter % args.sample_every == 0:
-                    #generate_samples()
+                    generate_samples()
                     pass
                 if args.val_every > 0 and (counter % args.val_every == 0 or counter == 1):
                     validation()
