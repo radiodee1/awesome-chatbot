@@ -178,7 +178,7 @@ class NMT:
             #if self.common_pre == '':
             self.common_pre += a_chars + 'Hello. Hi' + '.\n '
 
-            self.common += q_chars + 'What is your name?\n '
+            self.common += q_chars + 'What is your name\n '
             self.common += a_chars + 'My name is ' + name + '.\n '
             self.common += q_chars + 'What time is it?\n '
             self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
