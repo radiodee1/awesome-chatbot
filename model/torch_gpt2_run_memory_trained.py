@@ -121,7 +121,7 @@ class NMT:
         self.token_limit = 1024
 
         self.q_string = ['Q: ']
-        self.a_string = ['A: ']
+        self.a_string = ['A: ', 'A:']
 
         self.name = 'Jane'
 
@@ -277,7 +277,7 @@ class NMT:
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
         self.recent_text = text
-        self.prep_recent(prep_copy_boolean or True)
+        self.prep_recent(prep_copy_boolean and False)
 
         print(text,"<")
 
@@ -316,13 +316,14 @@ class NMT:
         return i
 
     def prepare_output(self, i):
+        i = i.strip()
         char_end = ['?','!']
         contains_junk = False
         char_junk = [i for i in '{}@^&#']
         out = []
         for ii in i:
             if ii.strip() != "" or ii == ' ':
-                if ii not in ['*']:
+                if ii not in ['*'] + self.a_string:
                     out.append(ii)
             elif len(out) > 1:
                 break
@@ -334,6 +335,7 @@ class NMT:
         i = ''.join(out)
 
         i = i.strip()
+        i = i.strip('\t')
 
         for z in self.a_string:
             z = z.lower()
@@ -352,7 +354,7 @@ class NMT:
         if len(i.split('!')) > 1:
             i = i.split('!')[0]
 
-        start = i[:]
+        start = i[:].strip('\t')
         num = 0
         default = ''
         while num < 5:
@@ -402,6 +404,7 @@ class NMT:
         self.recent_text = self.a_string[0] + self.recent_text.strip('.').lower()
         y = 'yes'
         n = 'no'
+        '''
         for a in self.previous_sentences:
             a = a.replace('.', '')
             if (self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' ')):
@@ -415,17 +418,17 @@ class NMT:
                     self.recent_text = None
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
                 self.recent_in = None
-
-        if not prep_copy_boolean:
-            self.recent_in = None
-            self.recent_text = None
+        '''
+        #if not prep_copy_boolean:
+        #    self.recent_in = None
+        #    self.recent_text = None
 
         if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:# and 'name' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
 
 
-        if self.save_num > -1:
-            self.previous_sentences = self.previous_sentences[-self.save_num:]
+        #if self.save_num > -1:
+        #    self.previous_sentences = self.previous_sentences[-self.save_num:]
 
         #print(self.previous_sentences)
         s = ''

@@ -70,11 +70,13 @@ class SamplerVal(object):
 
     def __init__(self, chunks, encoder=None, char='\n', skip_delimeter=True):
         char = encoder.encode(char)
+        tab = encoder.encode('\t')
         chunks = chunks[0]
         l = []
         self.chunks = []
         for i in chunks:
-            if i != char[0] or not skip_delimeter:
+            #if i == tab[0]: i = chunks[0]
+            if (i != char[0] and i != tab[0]) or not skip_delimeter:
                 l.append(i)
             else:
                 l.append(encoder.encode(' ')[0])
@@ -233,8 +235,8 @@ def main():
                     #enc.encode('\nQ: ') +
                     trn_data_sampler_from.get(i) +
                     #enc.encode('. \nA: ') +
-                    trn_data_sampler_to.get(i)   +
-                    enc.encode('. ')
+                    trn_data_sampler_to.get(i) #  +
+                    #enc.encode('. ')
             )
 
             v = v[: HIDDEN_SIZE - 1]
