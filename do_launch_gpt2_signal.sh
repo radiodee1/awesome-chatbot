@@ -5,7 +5,7 @@ echo $@
 
 
 TEST_4="--mode=long --basename=test_s2s_movie_openvocab_d300_v15000_len15 --load-babi --lr=0.001 --dropout=0.5 --load-recurrent --units=300 --record-loss --multiplier=0.5 --length=15 --no-vocab "
-TEST_5="--length 12 $@"
+TEST_5="--length 12 --top_k 1 $@"
 
 LAUNCH=launch
 
