@@ -52,6 +52,8 @@ A: Hello {}.
 
 Q: What is my name?
 '''
+# bot, user, user
+
 ans1 = '''
 A: {}.
 '''
@@ -64,6 +66,7 @@ A: Hello {}.
 
 Q: What is my name?
 '''
+# bot, user, user
 
 ques1[2] = '''
 Q: I'm {}?
@@ -73,10 +76,9 @@ A: I'm {}.
 
 Q: What is my name?
 '''
+# user, user, bot
 
 mixlist = []
-
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--basename', default='../train.base', type=str, help='basename for target files.')
