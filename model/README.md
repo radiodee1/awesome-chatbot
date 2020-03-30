@@ -54,3 +54,23 @@ a change in behaviour that reflects the training that you did.
 ```
 $ ./torch_gpt2_run_memory.py --source_file ../saved/pytorch_model.bin 
 ```
+---
+
+## File Description:
+
+* `do_launch_tensorboard.sh` - Script to make running tensorboard easier.
+* `do_split_run.sh` - Script to run 'do_split.py' found in 'seq_2_seq' folder.
+* `nmt_aiml_commands.py` - Subscript for running aiml in gpt2 scripts.
+* `nmt_wiki_commands.py` - Subscript for running wiki searches in gpt2 scripts.
+* `settings.py` - file that contains some hyper-parameters.
+* `tf_gpt2/` - folder with Tensorflow GPT2 repository.
+* `tf_gpt2_download_model.py` - Script for downloading gpt2 files.
+* `tf_gpt2_torch_convert.py` - Convert tensorflow gpt2 to pytorch gpt2 format.
+* `tf_gpt2_train.py` - Train a tensorflow gpt2 image after download.
+* `tokenize_weak.py` - Subscript for tokenizing input strings.
+* `torch_gpt2/` - folder with Pytorch GPT2 repository.
+* `torch_gpt2_run_memory_common.py` - User runnable GPT2 chatbot script.
+* `torch_gpt2_run_memory.py` - User runnable GPT2 chatbot script.
+* `torch_gpt2_run_memory_substitute_aiml_lrg.py` - User runnable GPT2 chatbot script. Imports `nmt_wiki_commands.py`. This file searches on the internet.
+* `torch_gpt2_run_memory_substitute_aiml_sm.py` - User runnable GPT2 chatbot script. Imports `nmt_wiki_commands.py`. This file searches on the internet.
+* `torch_gpt2_run_memory_trained.py` - User runnable GPT2 chatbot script. Specifically for files trained after download.
