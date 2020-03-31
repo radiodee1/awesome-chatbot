@@ -289,6 +289,13 @@ def main():
             with open(counter_path, 'w') as fp:
                 fp.write(str(counter) + '\n')
 
+            #print(model_name, 'mn')
+            GPT2_DIR_X = model_name
+            cd = CHECKPOINT_DIR + "/" + args.run_name
+            if not os.path.isfile(cd + '/' + 'encoder.json'):
+                os.system("cp " + GPT2_DIR_X + '/' + 'encoder.json ' + cd + '/.')
+                os.system('cp ' + GPT2_DIR_X + "/" + 'vocab.bpe ' + cd + '/.')
+
         def generate_samples():
             print('Generating samples...')
             #context_tokens = data_sampler.sample(1)
