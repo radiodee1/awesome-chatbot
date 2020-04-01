@@ -112,7 +112,7 @@ class NMT:
 
         self.reply_aiml = None
         self.reply_aiml_dupes = 1
-        self.token_limit = 1024
+        self.token_limit = 1280 #1024
 
         self.q_string = ['Q: ']
         self.a_string = ['A: ']
