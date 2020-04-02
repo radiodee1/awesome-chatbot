@@ -319,7 +319,7 @@ class NMT:
         i = ''.join(out)
 
         i = i.strip()
-        print('=',i,'=1')
+        #print('=',i,'=1')
         i = re.sub('[\d+.]', '', i) ## remove number if it is included
         i = i.strip()
 
@@ -352,7 +352,7 @@ class NMT:
             num += 1
 
         if i.strip() == '': i = default
-        print('=',i,'=2')
+        #print('=',i,'=2')
         i = re.sub('[;]','',i)
         i = i.strip()
 
