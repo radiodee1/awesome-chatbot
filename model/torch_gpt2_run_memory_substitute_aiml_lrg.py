@@ -314,6 +314,9 @@ class NMT:
 
         i = i.strip()
 
+        i = re.sub('[\d+.]', '', i) ## remove number if it is included
+        i = i.strip()
+
         for z in self.a_string:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
@@ -353,6 +356,8 @@ class NMT:
         if i.strip() == '': i = default
 
         i = re.sub('[;]','',i)
+        i = i.strip()
+
         if contains_junk is True:
             i = ''
 
@@ -399,7 +404,7 @@ class NMT:
             self.recent_in = None
             self.recent_text = None
 
-        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in and 'name' not in self.recent_in:
+        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in and ('name' not in self.recent_in or self.args.numbers):
             self.previous_sentences.extend([self.recent_in, self.recent_text])
 
 
@@ -408,13 +413,21 @@ class NMT:
 
         #print(self.previous_sentences)
         s = ''
+        num = 0
+        pnum = 1
         for k in self.previous_sentences:
             k = k.strip().strip('.').strip('\n')
             for z in self.a_string + self.q_string:
                 z = z.lower()
                 if k.lower().startswith(z) and False: k = k[len(z):]
+
+            if self.args.numbers:
+                k = str(pnum) + '. ' + k
+                if num % 2 == 1:
+                    pnum += 1
             if len(k) > 0:
                 s += k + '.\n'
+            num += 1
         #s = ['---'] + s + ['---']
         self.sentences_formatted = s
 
@@ -498,6 +511,7 @@ class NMT:
         parser.add_argument("--top_k", type=int, default=40)
         parser.add_argument("--apps", type=bool, required=False, default=False)
         parser.add_argument("--source_file", type=str, default='../data/tf_gpt2_data/774M/converted/pytorch_model.bin') # torch_gpt2/GPT2/gpt2-pytorch_model.bin')
+        parser.add_argument("--numbers", action='store_true', help='Add numbers to memory sentences.')
         self.args = parser.parse_args()
 
     def load_model(self):
