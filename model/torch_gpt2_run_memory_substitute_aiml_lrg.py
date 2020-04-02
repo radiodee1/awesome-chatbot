@@ -121,7 +121,7 @@ class NMT:
 
         if True:
             self.q_string = ['Question: ', 'Q: ', 'Q :', 'Q.']
-            self.a_string = ['Answer: ', 'A: ', 'A :', self.name+':', 'A.']
+            self.a_string = ['Answer: ', 'Answer:',  'A: ', 'A :', self.name+':', 'A.']
 
     def setup_for_interactive(self):
         #self.get_args()
@@ -295,15 +295,21 @@ class NMT:
         return i
 
     def prepare_output(self, i):
+
+        i = re.sub('[\d+.]', '', i)  ## remove number if it is included
+        i = re.sub('[\s]{2,}', '', i)  ## remove space if it is included
+
         char_end = ['?','!']
         contains_junk = False
         char_junk = [i for i in '{}@^&#']
         out = []
         for ii in i:
             if ii.strip() != "" or ii == ' ':
-                if ii not in ['*']:
+                if ii not in ['*', '\t', '\n']:
                     out.append(ii)
+                    #continue
             elif len(out) > 1:
+                pass
                 break
             if ii in char_end:
                 break
@@ -313,26 +319,18 @@ class NMT:
         i = ''.join(out)
 
         i = i.strip()
-
+        print('=',i,'=1')
         i = re.sub('[\d+.]', '', i) ## remove number if it is included
         i = i.strip()
 
-        for z in self.a_string:
+        for z in self.a_string + self.q_string:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
-
-        for z in self.q_string:
-            z = z.lower()
-            if i.lower().startswith(z): i = i[len(z):]
-
-        #if len(i.split('.')) > 1:
-        #    i = i.split('.')[0]
 
         if len(i.split('?')) > 1:
             i = i.split('?')[0]
 
-        if len(i.split('!')) > 1:
-            i = i.split('!')[0]
+
 
         start = i[:]
         num = 0
@@ -354,7 +352,7 @@ class NMT:
             num += 1
 
         if i.strip() == '': i = default
-
+        print('=',i,'=2')
         i = re.sub('[;]','',i)
         i = i.strip()
 
