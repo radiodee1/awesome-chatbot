@@ -120,8 +120,8 @@ class NMT:
         self.name = 'Jane'
 
         if True:
-            self.q_string = [ 'Q: ', 'Q :', 'Q.']
-            self.a_string = [ 'A: ', 'A :', self.name+':', 'A.']
+            self.q_string = ['Question: ', 'Q: ', 'Q :', 'Q.']
+            self.a_string = ['Answer: ', 'A: ', 'A :', self.name+':', 'A.']
 
     def setup_for_interactive(self):
         #self.get_args()
