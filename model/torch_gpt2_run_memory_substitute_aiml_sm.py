@@ -316,6 +316,7 @@ class NMT:
         return i
 
     def prepare_output(self, i):
+
         char_end = ['?','!']
         contains_junk = False
         char_junk = [i for i in '{}@^&#']
@@ -332,6 +333,7 @@ class NMT:
                 contains_junk = True
                 break
         i = ''.join(out)
+        i = re.sub('[\s]{2,}', '', i)  ## remove space if it is included
 
         i = i.strip()
 
