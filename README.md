@@ -293,6 +293,11 @@ On the raspberry pi there is a file called `/etc/rc.local` that is launched with
 
 * `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && cd /home/pi/workspace/awesome-chatbot/ && ./do_launch_game_s2s.sh'`
 
+### One-Liner for `start_test.py` Google Cloud loading in `/etc/rc.local`
+
+* `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && /home/pi/workspace/awesome-chatbot/start_test.py'`
+* Place this line first before all others.
+
 ### Docker for ARMv7
 
 Run these commands on the raspberry pi. This is necessary for the Transformer model that uses Tensorflow. The GPT2 model uses Pytorch.
