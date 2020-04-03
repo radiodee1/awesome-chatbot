@@ -333,7 +333,7 @@ class NMT:
                 contains_junk = True
                 break
         i = ''.join(out)
-        i = re.sub('[\s]{2,}', '', i)  ## remove space if it is included
+        i = re.sub('^[\s]{2,}', '', i)  ## remove space if it is included
 
         i = i.strip()
 
@@ -344,9 +344,6 @@ class NMT:
         for z in self.q_string:
             z = z.lower()
             if i.lower().startswith(z): i = i[len(z):]
-
-        #if len(i.split('.')) > 1:
-        #    i = i.split('.')[0]
 
         if len(i.split('?')) > 1:
             i = i.split('?')[0]
@@ -362,17 +359,12 @@ class NMT:
             i = start[:]
             out = []
             for ii in i.split(' '):
-
                 out.append(ii)
-
                 if (ii.endswith('[') or ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
                     break
             i = ' '.join(out)
-
             if num == 0: default = i
-
             num += 1
-
         if i.strip() == '': i = default
 
         i = re.sub('[;]','',i)

@@ -296,8 +296,8 @@ class NMT:
 
     def prepare_output(self, i):
 
-        i = re.sub('[\d+.]', '', i)  ## remove number if it is included
-        i = re.sub('[\s]{2,}', '', i)  ## remove space if it is included
+        i = re.sub('^[\d]{1,2}.', '', i)  ## remove number if it is included
+        i = re.sub('^[\s]{2,}', '', i)  ## remove space if it is included
 
         char_end = ['?','!']
         contains_junk = False
@@ -320,7 +320,7 @@ class NMT:
 
         i = i.strip()
         #print('=',i,'=1')
-        i = re.sub('[\d+.]', '', i) ## remove number if it is included
+        #i = re.sub('[\d+.]', '', i) ## remove number if it is included
         i = i.strip()
 
         for z in self.a_string + self.q_string:
@@ -330,8 +330,6 @@ class NMT:
         if len(i.split('?')) > 1:
             i = i.split('?')[0]
 
-
-
         start = i[:]
         num = 0
         default = ''
@@ -340,17 +338,12 @@ class NMT:
             i = start[:]
             out = []
             for ii in i.split(' '):
-
                 out.append(ii)
-
                 if (ii.endswith('[') or ii.endswith('.') or ii.endswith('!') or ii.endswith('?')) and len(ii) > 1 and ii.count('.') >= 1:
                     break
             i = ' '.join(out)
-
             if num == 0: default = i
-
             num += 1
-
         if i.strip() == '': i = default
         #print('=',i,'=2')
         i = re.sub('[;]','',i)
