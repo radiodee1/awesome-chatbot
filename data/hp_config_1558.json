@@ -1,0 +1,14 @@
+{
+    "vocab_size": 50257,
+    "n_ctx": 1024,
+    "n_embd": 1600,
+    "n_head": 25,
+    "n_layer": 48,
+    "n_positions": 1024,
+    "embd_pdrop":0.1,
+    "attn_pdrop": 0.1,
+    "resid_pdrop": 0.1,
+    "layer_norm_epsilon": 1e-5,
+    "initializer_range": 0.02
+}
+
