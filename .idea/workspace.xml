@@ -2,9 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/data/hp_config_1558.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/do_make_submodule_init_1558M.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_lrg.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_lrg.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,11 +38,11 @@
       <recent name="$PROJECT_DIR$/." />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/data" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/babi_t2t" />
       <recent name="$PROJECT_DIR$/model" />
       <recent name="$PROJECT_DIR$/babi" />
-      <recent name="$PROJECT_DIR$/saved" />
     </key>
   </component>
   <component name="ServiceViewManager">

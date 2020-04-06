@@ -472,6 +472,9 @@ class NMT:
             with open(realpath + '/' + source_path + '/config.json', 'r') as f:
                 hp_config = json.load(f)
                 print(hp_config,'before')
+                self.hp_config = hp_config
+                if self.hp_config is not None:
+                    self.token_limit = self.hp_config['n_positions']
                 self.config = GPT2Config(
                     vocab_size_or_config_json_file=hp_config['vocab_size'],
                     n_embd=hp_config['n_embd'],
