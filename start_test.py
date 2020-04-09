@@ -201,12 +201,13 @@ class VoiceGoogleSR:
                 return str(transcript).strip()
 
 
-    def voice_detection(self):
+    def voice_detection(self, empty=False):
         with MicrophoneStream(RATE, CHUNK) as stream:
             audio_generator = stream.generator()
             requests = (types.StreamingRecognizeRequest(audio_content=content)
                         for content in audio_generator)
-
+            if empty:
+                requests = ()
             responses = self.client.streaming_recognize(self.streaming_config, requests)
 
             # Now, put the transcription responses to use.
@@ -215,12 +216,17 @@ class VoiceGoogleSR:
             return value
 
 
-    def run_recognition(self):
+    def run_recognition(self, empty=False):
         with MicrophoneStream(RATE, CHUNK) as stream:
-            audio_generator = stream.generator()
+            if empty:
+                stream.closed = True
+                audio_generator = ()
+            else:
+                audio_generator = stream.generator()
             requests = (types.StreamingRecognizeRequest(audio_content=content)
                         for content in audio_generator)
-
+            if empty:
+                requests = ()
             responses = self.client.streaming_recognize(self.streaming_config, requests)
 
             # Now, put the transcription responses to use.
@@ -231,6 +237,8 @@ if __name__ == '__main__':
 
     try:
         v = VoiceGoogleSR()
+        words = v.run_recognition(empty=True)
+        print(words)
     except:
         pass
     finally:
