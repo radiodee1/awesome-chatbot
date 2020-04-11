@@ -381,7 +381,7 @@ class Encoder(nn.Module):
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
-        method = 'general' #'concat' #''dot' #'general'
+        method = 'concat' #'concat' #''dot' #'general'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat']:
@@ -552,8 +552,9 @@ class Decoder(nn.Module):
         attn_weights = attn_weights.permute(0,1,2)
 
         if index is not None and index < self.maxtokens and False:
-            attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
-            encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
+            #attn_weights = attn_weights[index,:,:].unsqueeze(0).transpose(2,0)
+            #encoder_out_small = encoder_out_x[index,:,:].unsqueeze(0).transpose(1,0)
+            pass
         else:
             attn_weights = attn_weights.transpose(2, 0)
             encoder_out_small = encoder_out_x.transpose(1, 0)
@@ -580,8 +581,10 @@ class Decoder(nn.Module):
 
         out_voc = out_voc.permute(1,0,2)
 
-        #print(out_x,'ox')
-        #out_x = torch.softmax(out_x, dim=-1)
+        #print(out_x.size(),'ox')
+
+        out_voc = torch.softmax(out_voc, dim=-1)
+        out_x = torch.softmax(out_x, dim=-1)
         #out_x = torch.tanh(out_x)
 
         decoder_hidden_x = hidden #.permute(1,0,2)
@@ -749,9 +752,10 @@ class WrapMemRNN: #(nn.Module):
                     q_var = prune_tensor(question_variable[m,n], 2)
                     out, hidden = self.model_1_seq(q_var, 0, hidden)
                     hidden = hidden.permute(1,0,2)
-                    if q_var.item() == EOS_token and ret_hidden is None and True:
+                    if q_var.item() == EOS_token and ret_hidden is None:
                         ret_hidden = hidden.permute(1,0,2)#.clone()
                         test = num
+                        break
                     elif ret_hidden is not None:
                         #hidden = None
                         pass
@@ -769,12 +773,12 @@ class WrapMemRNN: #(nn.Module):
             output = torch.cat(output, dim=0)
             hidden = torch.cat(hid_lst, dim=0)
 
-            print(hidden.size(),'hidd', output.size(),'out')
-
             out = output.permute(1,0,2)
+            #print(hidden.size(),'hidd', out.size(),'out single')
 
         else:
             out, hidden = self.model_1_seq(question_variable, length_variable, None)
+            #print(hidden.size(),'hidd', out.size(),'out batch')
 
         return out, hidden
 

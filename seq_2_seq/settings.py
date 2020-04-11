@@ -48,5 +48,5 @@ hparams = {
     'split_sentences': True,
     'multiplier': 1.0, #0.5
     'beam': None,
-    'single': False
+    'single': True
 }
