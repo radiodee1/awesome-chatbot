@@ -546,6 +546,9 @@ class Decoder(nn.Module):
 
         attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
 
+        #print(hidden_small.size(), encoder_out_x.size(),'hid,eoutx')
+
+        #attn_weights = self.attention_mod(hidden, hidden)
         attn_weights = attn_weights.permute(0,1,2)
 
         if index is not None and index < self.maxtokens and False:
@@ -554,6 +557,7 @@ class Decoder(nn.Module):
         else:
             attn_weights = attn_weights.transpose(2, 0)
             encoder_out_small = encoder_out_x.transpose(1, 0)
+            #print(attn_weights.size(), encoder_out_small.size(),'att,eoutsmall')
 
         if index >= hparams['tokens_per_sentence']: print('index:', index)
 
@@ -765,7 +769,7 @@ class WrapMemRNN: #(nn.Module):
             output = torch.cat(output, dim=0)
             hidden = torch.cat(hid_lst, dim=0)
 
-            #print(hidden.size(),'hidd', output.size(),'out')
+            print(hidden.size(),'hidd', output.size(),'out')
 
             out = output.permute(1,0,2)
 
@@ -777,7 +781,7 @@ class WrapMemRNN: #(nn.Module):
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion):
         hidden = encoder_hidden.contiguous()
 
-        hidden = hidden[:,self.n_layers:,:] #+ hidden[:,:self.n_layers,:]
+        hidden = hidden[:,self.n_layers:,:] + hidden[:,:self.n_layers,:]
 
         target_variable = target_variable.permute(2,1,0)
 
@@ -797,8 +801,9 @@ class WrapMemRNN: #(nn.Module):
             #print(encoder_output.size(), decoder_hidden.size(),'eo,dh-dec')
 
             for i in range(s):
+                #print(encoder_output.size(),'eo.size')
 
-                encoder_out_x = prune_tensor(encoder_output[i], 3)
+                encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
 
@@ -843,7 +848,8 @@ class WrapMemRNN: #(nn.Module):
             #ans = torch.softmax(ans, dim=-1)
             #print(ans.size(), ans)
         else:
-
+            pass
+            '''
             encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
 
             decoder_hidden_x = prune_tensor(hidden, 3).transpose(1, 0)
@@ -853,7 +859,7 @@ class WrapMemRNN: #(nn.Module):
             ans = None
 
             best_sequence = prune_tensor(best_sequence, 3)
-
+            '''
         return ans, best_sequence
 
 
@@ -2457,17 +2463,17 @@ class NMT:
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    ans = ans.transpose(1,0)
-                    target_variable = target_variable.transpose(1,0)
-                    #mask = mask.transpose(1,0)
+                    #ans = ans.transpose(1,0)
+                    #target_variable = target_variable.transpose(1,0)
 
-                    for i in range(ans.size(0)): #ans.size(0)
+                    for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
-                        #print(max_target_length,'mtl-size')
-                        z = min([ans[i].size(0),target_variable[i].size(0)]) #max(max_target_length) #[i]
+                        #print(target_variable.size(),'tv-size', ans.size(),'ans')
+                        #z = min([ans[i].size(0),target_variable[i].size(0)])
                         #print(z, i,'z,i')
-                        a_var = ans[i][:z]
-                        t_var = target_variable[i][:z]
+
+                        a_var = ans[i,:,] #[:z]
+                        t_var = target_variable[i,:] #[:z]
                         #m_var = mask[i][:z]
 
                         if hparams['cuda']:
@@ -2481,7 +2487,7 @@ class NMT:
                             loss += l
                             n_tot += t_var.size(0)
                         except ValueError as e:
-                            print('skip for size...', z)
+                            #print('skip for size...', z)
                             print(e)
                             print(a_var.size(), t_var.size(),'a,t')
                             exit()
@@ -2500,6 +2506,13 @@ class NMT:
 
             if not isinstance(loss, int) or True:
                 loss.backward()
+
+            if self.do_clip_grad_norm:
+                clip = float(hparams['units'] / 10.0)  # 30.00
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                print('clip', clip)
+
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()
 
@@ -2529,11 +2542,11 @@ class NMT:
             ans = ansx.permute(1,0)
             #print(ans.size(),'ans')
 
-        if self.do_clip_grad_norm:
-            clip = 30.0 # float(hparams['units'] / 10.0)
+        if self.do_clip_grad_norm and False:
+            clip = float(hparams['units'] / 10.0) # 30.00
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
             _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-            #print('clip')
+            print('clip', clip)
 
         return outputs, ans , loss
 
@@ -2596,6 +2609,7 @@ class NMT:
         weight = torch.ones(self.output_lang.n_words)
         weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
+        weight = None
         self.criterion = nn.CrossEntropyLoss(weight=weight, size_average=False)
 
         #self.criterion = self.maskNLLLoss
