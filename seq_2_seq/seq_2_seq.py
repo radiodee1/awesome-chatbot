@@ -839,6 +839,11 @@ class WrapMemRNN: #(nn.Module):
                     ans = prune_tensor(ans, 2)
                     sent_out.append(ans)
 
+                    if True:
+                        #print(ans_small.size(),'ans')
+                        ans_small = torch.cat([ans_small, ans_small], dim=-1)
+                        encoder_out_x = prune_tensor(ans_small, 3)
+
                 #if True: print(teacher_out)
                 sent_out = torch.cat(sent_out, dim=0)
                 sent_out = prune_tensor(sent_out, 3)
