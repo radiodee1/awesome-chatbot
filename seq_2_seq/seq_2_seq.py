@@ -2463,18 +2463,21 @@ class NMT:
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    #ans = ans.transpose(1,0)
-                    #target_variable = target_variable.transpose(1,0)
+                    ans = ans.transpose(1,0)
+                    target_variable = target_variable.transpose(1,0)
 
                     for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
-                        #print(target_variable.size(),'tv-size', ans.size(),'ans')
-                        #z = min([ans[i].size(0),target_variable[i].size(0)])
+                        #print(target_variable.size(),'tv-size', ans.size(),'ans',i)
+                        z = min([ans[i].size(0),target_variable[i].size(0)])
                         #print(z, i,'z,i')
+                        #ans = ans.transpose(1,0)
 
-                        a_var = ans[i,:,] #[:z]
-                        t_var = target_variable[i,:] #[:z]
+                        a_var = ans[i,:z,] #[:z]
+                        t_var = target_variable[i,:z] #[:z]
                         #m_var = mask[i][:z]
+
+                        #print(a_var.size(),'avar')
 
                         if hparams['cuda']:
                             t_var = t_var.cuda()
@@ -2504,14 +2507,16 @@ class NMT:
                 pass
                 #loss = criterion(ans, target_variable)
 
-            if not isinstance(loss, int) or True:
-                loss.backward()
-
             if self.do_clip_grad_norm:
                 clip = float(hparams['units'] / 10.0)  # 30.00
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                 print('clip', clip)
+
+
+            if not isinstance(loss, int) or True:
+                loss.backward()
+
 
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()
@@ -2609,7 +2614,7 @@ class NMT:
         weight = torch.ones(self.output_lang.n_words)
         weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
-        weight = None
+        #weight = None
         self.criterion = nn.CrossEntropyLoss(weight=weight, size_average=False)
 
         #self.criterion = self.maskNLLLoss
