@@ -816,7 +816,7 @@ class WrapMemRNN: #(nn.Module):
                 #teacher_out = []
                 for j in range(l):
 
-                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
+                    ans, decoder_hidden_x_, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
 
                     #token = torch.argmax(ans, dim=-1)
 
