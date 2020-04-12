@@ -584,7 +584,7 @@ class Decoder(nn.Module):
         #print(out_x.size(),'ox')
 
         out_voc = torch.softmax(out_voc, dim=-1)
-        out_x = torch.softmax(out_x, dim=-1)
+        #out_x = torch.softmax(out_x, dim=-1)
         #out_x = torch.tanh(out_x)
 
         decoder_hidden_x = hidden #.permute(1,0,2)
