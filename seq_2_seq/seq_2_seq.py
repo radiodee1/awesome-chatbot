@@ -436,7 +436,7 @@ class Attn(torch.nn.Module):
         elif self.method == 'none':
             attn_energies = torch.ones(encoder_outputs.size()[:1])
             attn_energies = attn_energies.unsqueeze(0).t()
-            print(attn_energies.size(), 'attn')
+            #print(attn_energies.size(), 'attn')
         # Transpose max_length and batch_size dimensions
         #attn_energies = torch.relu(attn_energies)
         #attn_energies = attn_energies.t()
