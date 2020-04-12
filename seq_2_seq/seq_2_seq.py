@@ -381,10 +381,10 @@ class Encoder(nn.Module):
 
 class Attn(torch.nn.Module):
     def __init__(self,  hidden_size):
-        method = 'dot' #'concat' #''dot' #'general'
+        method = 'none' #'concat' #''dot' #'general'
         super(Attn, self).__init__()
         self.method = method
-        if self.method not in ['dot', 'general', 'concat']:
+        if self.method not in ['dot', 'general', 'concat', 'none']:
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size * 2
         if self.method == 'general':
@@ -433,7 +433,10 @@ class Attn(torch.nn.Module):
             attn_energies = self.concat_score(hidden, encoder_outputs)
         elif self.method == 'dot':
             attn_energies = self.dot_score(hidden, encoder_outputs)
-
+        elif self.method == 'none':
+            attn_energies = torch.ones(encoder_outputs.size()[:1])
+            attn_energies = attn_energies.unsqueeze(0).t()
+            print(attn_energies.size(), 'attn')
         # Transpose max_length and batch_size dimensions
         #attn_energies = torch.relu(attn_energies)
         #attn_energies = attn_energies.t()
@@ -546,7 +549,7 @@ class Decoder(nn.Module):
 
         attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
 
-        #print(hidden_small.size(), encoder_out_x.size(),'hid,eoutx')
+        #print(hidden_small.size(), encoder_out.size(),attn_weights.size(),'hid,eoutx,att')
 
         #attn_weights = self.attention_mod(hidden, hidden)
         attn_weights = attn_weights.permute(0,1,2)
@@ -2474,6 +2477,7 @@ class NMT:
                 if True:
                     ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
+
 
                     for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
