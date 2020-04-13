@@ -451,7 +451,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention_mod = Attn(hidden_dim, method='none')
+        #self.attention_mod = Attn(hidden_dim, method='none')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -585,18 +585,18 @@ class Decoder(nn.Module):
 
         #out_x = torch.tanh(out_x) ## <<-- use or not use?
 
-        out_voc = self.out_target_b(rnn_output)
+        #out_voc = self.out_target_b(rnn_output)
 
-        out_voc = out_voc.permute(1,0,2)
+        #out_voc = out_voc.permute(1,0,2)
 
         #print(out_x.size(),'ox')
 
-        out_voc = torch.softmax(out_voc, dim=-1)
+        #out_voc = torch.softmax(out_voc, dim=-1)
         #out_x = torch.softmax(out_x, dim=-1)
 
         decoder_hidden_x = hidden_small #.permute(1,0,2)
 
-        return out_voc, decoder_hidden_x, out_x
+        return None, decoder_hidden_x, out_x
 
 
 
@@ -634,6 +634,10 @@ class WrapMemRNN: #(nn.Module):
                                    cancel_attention=self.cancel_attention)
 
         self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
+
+        self.attention_mod = Attn(hidden_size, method='none')
+        self.out_target_b = nn.Linear(self.hidden_size *2, vocab_size)
+
 
         self.opt_1 = None
         self.opt_2 = None
@@ -816,15 +820,33 @@ class WrapMemRNN: #(nn.Module):
 
                 encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
+
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3).permute(1,0,2)
 
                 sent_out = []
 
                 #teacher_out = []
                 for j in range(l):
+                    attn_weights = self.attention_mod(encoder_hidden, encoder_out_x)
 
-                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
+                    _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
 
+                    context = attn_weights.bmm(ans_small)
+
+                    output_list = [
+                        ans_small.permute(1, 0, 2),
+                        context,  # [:, :, :],
+                    ]
+                    #for i in output_list: print(i.size())
+                    #print('---')
+
+                    ans = torch.cat(output_list, dim=-1)
+
+                    ans = self.out_target_b(ans)
+
+                    ans = ans.permute(1, 0, 2)
+
+                    ans = torch.softmax(ans, dim=-1)
                     #token = torch.argmax(ans, dim=-1)
 
                     if not self.pass_no_token:
