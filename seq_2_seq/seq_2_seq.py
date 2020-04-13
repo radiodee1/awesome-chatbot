@@ -593,7 +593,6 @@ class Decoder(nn.Module):
 
         out_voc = torch.softmax(out_voc, dim=-1)
         #out_x = torch.softmax(out_x, dim=-1)
-        #out_x = torch.tanh(out_x)
 
         decoder_hidden_x = hidden_small #.permute(1,0,2)
 
@@ -830,6 +829,8 @@ class WrapMemRNN: #(nn.Module):
 
                     if not self.pass_no_token:
                         ans = prune_tensor(ans, 1)
+                        #ans = torch.softmax(ans, dim=-1)
+                        #print(ans,'ans')
                         _, token = ans.topk(1)
                     else:
                         token = ans_small
@@ -848,8 +849,10 @@ class WrapMemRNN: #(nn.Module):
                     sent_out.append(ans)
 
                     if True:
-                        #print(ans_small.size(),'ans')
-                        ans_small = torch.cat([ans_small, ans_small], dim=-1)
+                        #print(token, 'tok')
+                        token = self.model_6_dec.embed(token)
+                        #print(token.size(),'tok')
+                        ans_small = torch.cat([token, token], dim=-1)
                         encoder_out_x = prune_tensor(ans_small, 3)
 
                 #if True: print(teacher_out)
