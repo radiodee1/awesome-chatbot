@@ -380,8 +380,8 @@ class Encoder(nn.Module):
 
 
 class Attn(torch.nn.Module):
-    def __init__(self,  hidden_size):
-        method = 'none' #'concat' #''dot' #'general'
+    def __init__(self,  hidden_size, method="dot"):
+        #method = 'none' #'concat' #''dot' #'general'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat', 'none']:
@@ -451,7 +451,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention_mod = Attn(hidden_dim)
+        self.attention_mod = Attn(hidden_dim, method='none')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -820,7 +820,7 @@ class WrapMemRNN: #(nn.Module):
                 #teacher_out = []
                 for j in range(l):
 
-                    ans, decoder_hidden_x_, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
+                    ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, token, j) ## <--
 
                     #token = torch.argmax(ans, dim=-1)
 
