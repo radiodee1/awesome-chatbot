@@ -832,7 +832,7 @@ class WrapMemRNN: #(nn.Module):
 
                     token = prune_tensor(token, 1)
 
-                    if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
+                    if teacher_forcing_ratio > 0.0 and self.model_6_dec.training and False:
                         if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                             token = target_variable[i,j,:]
                             if self.pass_no_token:
