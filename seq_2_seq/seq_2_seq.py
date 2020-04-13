@@ -861,7 +861,7 @@ class WrapMemRNN: #(nn.Module):
 
                     #print(attn_weights.size(), ans_small.size(), 'weight')
                     context = attn_weights.bmm(ans_small)
-
+                    #context = torch.tanh(context)
                     output_list = [
                         ans_small, #.permute(1, 0, 2),
                         context,
@@ -870,7 +870,7 @@ class WrapMemRNN: #(nn.Module):
                     #print('---')
 
                     ans = torch.cat(output_list, dim=-1)
-
+                    ans = torch.tanh(ans)
                     ans = self.out_target_b(ans)
 
                     ans = ans.permute(1, 0, 2)
