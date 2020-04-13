@@ -510,8 +510,11 @@ class Decoder(nn.Module):
 
         #decoder_hidden_x = decoder_hidden_x[ -self.n_layers:, :, :]
 
-        encoder_out_x = prune_tensor(encoder_out_x, 3)
+        #encoder_out_x = prune_tensor(encoder_out_x, 3)
+        if len(decoder_hidden_x.size()) > 3:
+            decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
+        #print(decoder_hidden_x.size(),'dhx')
         hidden = prune_tensor(decoder_hidden_x, 3)
         hidden = hidden.permute(1, 0, 2)
         #print(hidden.size(),'hid')
@@ -539,7 +542,7 @@ class Decoder(nn.Module):
 
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
-        hidden_small = torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
+        hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
 
         #hidden_small = self.out_mod(hidden_small)
         #hidden_small = torch.tanh(hidden_small)
@@ -548,6 +551,7 @@ class Decoder(nn.Module):
 
         hidden_small = hidden_small.transpose(1,0)
 
+        '''
         attn_weights = self.attention_mod(hidden_small.transpose(1,0), encoder_out.transpose(1,0))
 
         #print(hidden_small.size(), encoder_out.size(),attn_weights.size(),'hid,eoutx,att')
@@ -576,12 +580,12 @@ class Decoder(nn.Module):
         #print('---')
 
         output_list = torch.cat(output_list, dim=2)
-
-        out_x = self.out_concat_b(output_list)
+        '''
+        out_x = rnn_output # self.out_concat_b(rnn_output)
 
         #out_x = torch.tanh(out_x) ## <<-- use or not use?
 
-        out_voc = self.out_target_b(out_x)
+        out_voc = self.out_target_b(rnn_output)
 
         out_voc = out_voc.permute(1,0,2)
 
@@ -591,7 +595,7 @@ class Decoder(nn.Module):
         #out_x = torch.softmax(out_x, dim=-1)
         #out_x = torch.tanh(out_x)
 
-        decoder_hidden_x = hidden #.permute(1,0,2)
+        decoder_hidden_x = hidden_small #.permute(1,0,2)
 
         return out_voc, decoder_hidden_x, out_x
 
