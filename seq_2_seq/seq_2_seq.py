@@ -452,7 +452,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        #self.attention_mod = Attn(hidden_dim, method='none')
+        self.attention_mod = Attn(hidden_dim, method='dot')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -467,7 +467,7 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim, target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * 2, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
@@ -639,8 +639,8 @@ class WrapMemRNN: #(nn.Module):
 
         self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
 
-        self.attention_mod = Attn(hidden_size, method='dot')
-        self.out_target_b = nn.Linear(self.hidden_size *2, vocab_size)
+        #self.attention_mod = Attn(hidden_size, method='dot')
+        #self.out_target_b = nn.Linear(self.hidden_size *2, vocab_size)
 
 
         self.opt_1 = None
@@ -826,21 +826,20 @@ class WrapMemRNN: #(nn.Module):
                 #print(encoder_output.size(),s,'eo.size')
 
                 encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
-                #print(decoder_hidden.size(),'dhx-permute')
+                #print(encoder_out_x.size(),'eox')
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
 
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i], 3)#.permute(1,0,2)
                 decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
                 sent_out = []
 
-                #teacher_out = []
                 for j in range(l):
-
                     encoder_out_x = (
                             encoder_out_x[:, :, self.hidden_size:] +
                             encoder_out_x[:, :, :self.hidden_size]
                     )
-
+                    #if encoder_out_x.size(1) > 1:
+                    #    encoder_out_x = encoder_out_x #[:,j,:].unsqueeze(0)
                     #encoder_out_x = encoder_out_x.permute(1,0,2)
                     #print(encoder_out_x.size(),decoder_hidden_x.size(), 'outxs')
 
@@ -848,30 +847,49 @@ class WrapMemRNN: #(nn.Module):
                         decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
                     if encoder_out_x.size(1) == 1:
                         encoder_out_x = encoder_out_x.permute(1,0,2)
+                    else:
+                        pass
+                        ## This should be dim1 = 24!!
+                        #encoder_out_x = encoder_out_x[:,j,:].unsqueeze(0)
 
+                    #print(encoder_out_x.size(),'some eox')
 
-                    attn_weights = self.attention_mod(decoder_hidden_x, encoder_out_x)
+                    attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, encoder_out_x)
 
-                    attn_weights = attn_weights.permute(0,2,1)
-                    attn_weights = attn_weights[0,:,:] + attn_weights[1,:,:]
-                    attn_weights = attn_weights.unsqueeze(1)#.permute(0,2,1)
+                    if attn_weights.size(-1) > 1:
+                        attn_weights = attn_weights[:,:,j].unsqueeze(0)
+                        attn_weights = attn_weights.permute(0,2,1)
+
+                    if attn_weights.size(0) == 2:
+                        attn_weights = attn_weights.permute(2,1,0)
+                    #print(attn_weights.size(), 'att-1')
+                    attn_weights = attn_weights[:,:,0] + attn_weights[:,:,1]
+                    attn_weights = attn_weights.unsqueeze(1).permute(2,1,0)
                     #print(attn_weights.size(),'attnweight')
 
                     _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, j) ## <--
 
-                    #print(attn_weights.size(), ans_small.size(), 'weight')
-                    context = attn_weights.bmm(ans_small)
+                    #print(attn_weights.size(), ans_small.size(), 'weight1')
+
+                    ans_small = ans_small.permute(0,2,1)
+                    #print(attn_weights.size(), ans_small.size(), 'weight2')
+                    context = attn_weights * ans_small
+                    #context = attn_weights.bmm(ans_small)
                     #context = torch.tanh(context)
+
                     output_list = [
-                        ans_small, #.permute(1, 0, 2),
-                        context,
+                        ans_small.permute(0, 2, 1),
+                        context.permute(0,2,1),
                     ]
                     #for i in output_list: print(i.size())
                     #print('---')
 
                     ans = torch.cat(output_list, dim=-1)
+
+                    #ans = ans_small + context
                     ans = torch.tanh(ans)
-                    ans = self.out_target_b(ans)
+                    #print(ans.size(),'ans-s')
+                    ans = self.model_6_dec.out_target_b(ans)
 
                     ans = ans.permute(1, 0, 2)
 
