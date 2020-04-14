@@ -467,7 +467,7 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim, hidden_dim, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * 2, target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * 1, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
@@ -478,7 +478,8 @@ class Decoder(nn.Module):
         self.decoder_hidden_z = None
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
-
+        self.tanh_b = nn.Tanh()
+        self.softmax_b = nn.Softmax(dim=-1)
         self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
         self.reset_parameters()
 
@@ -841,18 +842,18 @@ class WrapMemRNN: #(nn.Module):
                     #if encoder_out_x.size(1) > 1:
                     #    encoder_out_x = encoder_out_x #[:,j,:].unsqueeze(0)
                     #encoder_out_x = encoder_out_x.permute(1,0,2)
-                    #print(encoder_out_x.size(),decoder_hidden_x.size(), 'outxs')
+                    #print(encoder_out_x.size(), decoder_hidden_x.size(), 'outxs')
 
                     if decoder_hidden_x.size(0) == 1:
                         decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
                     if encoder_out_x.size(1) == 1:
                         encoder_out_x = encoder_out_x.permute(1,0,2)
+
                     else:
                         pass
-                        ## This should be dim1 = 24!!
+                        #print(encoder_out_x.size(),'encoder')
+                        ## This should be dim1 = 24 !!
                         #encoder_out_x = encoder_out_x[:,j,:].unsqueeze(0)
-
-                    #print(encoder_out_x.size(),'some eox')
 
                     attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, encoder_out_x)
 
@@ -875,31 +876,45 @@ class WrapMemRNN: #(nn.Module):
                     #print(attn_weights.size(), ans_small.size(), 'weight2')
                     context = attn_weights * ans_small
                     #context = attn_weights.bmm(ans_small)
-                    #context = torch.tanh(context)
-
+                    context = torch.tanh(context)
+                    '''
                     output_list = [
                         ans_small.permute(0, 2, 1),
                         context.permute(0,2,1),
                     ]
                     #for i in output_list: print(i.size())
                     #print('---')
-
-                    ans = torch.cat(output_list, dim=-1)
-
+                    '''
+                    #print(ans_small.size(), context.size(),'a/con')
+                    #ans = torch.cat(output_list, dim=-2)
+                    ans = ans_small.permute(0,2,1) + context.permute(0,2,1)
                     #ans = ans_small + context
-                    ans = torch.tanh(ans)
+                    #print(ans.size(),'ans-j')
+
+                    if False:
+                        ans = torch.sum(ans, dim=0)
+                        ans = ans.unsqueeze(0)
+                    else:
+                        #print(ans.size())
+                        if ans.size(0) > 1:
+                            ans = ans[j]
+                            ans = ans.unsqueeze(0)
+
+                    #ans = torch.tanh(ans)
+                    ans = self.model_6_dec.tanh_b(ans)
+                    #ans = ans.unsqueeze(0)
                     #print(ans.size(),'ans-s')
                     ans = self.model_6_dec.out_target_b(ans)
 
                     ans = ans.permute(1, 0, 2)
-
-                    ans = torch.softmax(ans, dim=-1)
+                    ans = self.model_6_dec.softmax_b(ans)
+                    #ans = torch.softmax(ans, dim=-1)
                     #token = torch.argmax(ans, dim=-1)
 
                     if not self.pass_no_token:
                         ans = prune_tensor(ans, 1)
                         #ans = torch.softmax(ans, dim=-1)
-                        #print(ans,'ans')
+                        #print(ans.size(),'ans')
                         _, token = ans.topk(1)
                     else:
                         token = ans_small
@@ -921,7 +936,13 @@ class WrapMemRNN: #(nn.Module):
                         #print(token, 'tok')
                         token = self.model_6_dec.embed(token)
                         #print(token.size(),'tok')
-                        ans_small = torch.cat([token, token], dim=-1)
+                        token_x = torch.cat([token, token], dim=-1)
+                        t_list = []
+                        for _ in range(encoder_out_x.size(-2)):
+                            t_list.append(token_x)
+                        #ans_small = torch.cat([token, token], dim=-1)
+                        ans_small = torch.cat(t_list, dim=0)
+                        #print(encoder_out_x.size(), ans_small.size(), 'eout, ans small')
                         encoder_out_x = prune_tensor(ans_small, 3)
                         if len(decoder_hidden_x.size()) > 3:
                             decoder_hidden_x = decoder_hidden_x.squeeze(1)
@@ -2601,7 +2622,7 @@ class NMT:
                 pass
                 #loss = criterion(ans, target_variable)
 
-            if self.do_clip_grad_norm:
+            if self.do_clip_grad_norm and False:
                 clip = float(hparams['units'] / 10.0)  # 30.00
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
                 _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
