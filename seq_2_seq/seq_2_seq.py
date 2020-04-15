@@ -770,10 +770,6 @@ class WrapMemRNN: #(nn.Module):
                 sent_out = []
 
                 for j in range(l):
-                    #encoder_out_x_ = (
-                    #        encoder_out_x[:, :, self.hidden_size:] +
-                    #        encoder_out_x[:, :, :self.hidden_size]
-                    #)
 
                     if decoder_hidden_x.size(0) == 1:
                         decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
@@ -784,7 +780,6 @@ class WrapMemRNN: #(nn.Module):
                         pass
                         #print(encoder_out_x.size(),'encoder')
                         ## This should be dim1 = 24 !!
-                        #encoder_out_x = encoder_out_x[:,j,:].unsqueeze(0)
 
                     attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, encoder_out_x)
 
@@ -856,19 +851,7 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = torch.softmax(ans, dim=-1)
             #print(ans.size(), ans)
-        else:
-            pass
-            '''
-            encoder_out_x = prune_tensor(encoder_output, 3).transpose(1, 0)
-
-            decoder_hidden_x = prune_tensor(hidden, 3).transpose(1, 0)
-
-            best_score, best_sequence = self.beam_helper(self.model_6_dec, encoder_out_x, decoder_hidden_x)
-
-            ans = None
-
-            best_sequence = prune_tensor(best_sequence, 3)
-            '''
+        
         return ans, best_sequence
 
 
