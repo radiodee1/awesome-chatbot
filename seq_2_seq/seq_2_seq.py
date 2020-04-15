@@ -465,7 +465,7 @@ class Decoder(nn.Module):
 
         batch_first = False #self.word_mode
 
-        self.gru = nn.GRU(gru_in_dim * 2, hidden_dim *2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
+        self.gru = nn.GRU(gru_in_dim * 2, hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
         self.out_target_b = nn.Linear(self.hidden_dim * 2, target_vocab_size)
 
@@ -808,7 +808,7 @@ class WrapMemRNN: #(nn.Module):
                     ans = self.model_6_dec.out_target_b(ans)
                     ans = torch.sum(ans, dim=0).unsqueeze(0)
                     ans = ans.permute(1, 0, 2)
-                    #ans = self.model_6_dec.softmax_b(ans)
+                    #ans = self.model_6_dec.softmax_b(ans) ## <-- remove??
                     #print(ans.size(), 'ans 1')
 
                     ans = prune_tensor(ans, 1)
