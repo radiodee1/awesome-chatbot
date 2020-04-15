@@ -747,7 +747,7 @@ class WrapMemRNN: #(nn.Module):
 
         target_variable = target_variable.permute(2,1,0)
 
-        if  True:
+        if True:
 
             encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
 
@@ -756,7 +756,6 @@ class WrapMemRNN: #(nn.Module):
             all_out = []
 
             s, l, hid = encoder_output.size()
-
 
             for i in range(s):
                 #print(encoder_output.size(),s,'eo.size')
@@ -851,7 +850,7 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = torch.softmax(ans, dim=-1)
             #print(ans.size(), ans)
-        
+
         return ans, best_sequence
 
 
