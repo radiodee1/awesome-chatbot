@@ -648,6 +648,7 @@ class WrapMemRNN: #(nn.Module):
             out = prune_tensor(encoder_output[0][0], 1)
             plot_vector(out)
             exit()
+        #print(hidden.size(), encoder_output.size(), self.model_6_dec.training,  'before')
 
         ans, seq = self.wrap_decoder_module(encoder_output, hidden, target_variable, criterion)
 
@@ -692,7 +693,7 @@ class WrapMemRNN: #(nn.Module):
 
     def wrap_encoder_module(self, question_variable, length_variable):
 
-        if hparams['single']:
+        if True:
 
             output = []
             hid_lst = []
@@ -733,9 +734,6 @@ class WrapMemRNN: #(nn.Module):
             out = output.permute(1,0,2)
             #print(hidden.size(),'hidd', out.size(),'out single')
 
-        else:
-            out, hidden = self.model_1_seq(question_variable, length_variable, None)
-            #print(hidden.size(),'hidd', out.size(),'out batch')
 
         return out, hidden
 
@@ -756,17 +754,23 @@ class WrapMemRNN: #(nn.Module):
             all_out = []
 
             s, l, hid = encoder_output.size()
+            l = hparams['tokens_per_sentence']
 
             for i in range(s):
                 #print(encoder_output.size(),s,'eo.size')
 
                 encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
                 #print(encoder_out_x.size(),'eox')
-                decoder_hidden_x = decoder_hidden.permute(1,0,2)
+                #encoder_out_lrg = encoder_out_x
 
-                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:,:], 3)#.permute(1,0,2)
+                decoder_hidden_x = decoder_hidden.permute(1,0,2)
+                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:,:], 3)
                 decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
+                #decoder_hidden_lrg = decoder_hidden_x
+
                 sent_out = []
+
+                #attn_weights = self.model_6_dec.attention_mod(decoder_hidden_lrg, encoder_out_lrg)
 
                 for j in range(l):
 
@@ -775,16 +779,15 @@ class WrapMemRNN: #(nn.Module):
                     if encoder_out_x.size(1) == 1:
                         encoder_out_x = encoder_out_x.permute(1,0,2)
 
-                    else:
-                        pass
-                        #print(encoder_out_x.size(),'encoder')
-                        ## This should be dim1 = 24 !!
+                    #encoder_out_x = encoder_out_x[:,j,:].unsqueeze(0)
+                    #print(encoder_out_x.size(), decoder_hidden_x.size() ,'eox 1')
 
                     attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, encoder_out_x)
 
                     if attn_weights.size(-1) > 1:
-                        attn_weights = attn_weights[:,:,j].unsqueeze(0)
-                        attn_weights = attn_weights.permute(0,2,1)
+                        #attn_weights = attn_weights[:,:,j].unsqueeze(0)
+                        #attn_weights = attn_weights.permute(0,2,1)
+                        pass
 
                     if attn_weights.size(0) == 2:
                         attn_weights = attn_weights.permute(2,1,0)
@@ -792,8 +795,10 @@ class WrapMemRNN: #(nn.Module):
                     _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, j) ## <--
 
                     ans_small = ans_small.permute(0,2,1)
-                    #print(attn_weights.size(), ans_small.size(), 'weight2')
                     context = attn_weights * ans_small
+
+                    #if j == 0:
+                    #print(j, ans_small.size(), context.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
 
                     ans = torch.cat([ans_small.permute(0,2,1) , context.permute(0,2,1)], dim=1 )
 
@@ -834,11 +839,16 @@ class WrapMemRNN: #(nn.Module):
 
                     sent_out.append(ans)
 
-                    encoder_out_x = prune_tensor(token_x, 3)
+                    if True:
+                        index = 0 ## j ?
+                        token_x = prune_tensor(token_x, 3)
+                        encoder_out_x = prune_tensor(encoder_out_x, 3)
+                        encoder_out_x = encoder_out_x[index, :, :] + token_x
+
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
-                #if True: print(teacher_out)
+
                 sent_out = torch.cat(sent_out, dim=0)
                 sent_out = prune_tensor(sent_out, 3)
                 all_out.append(sent_out)
@@ -2678,6 +2688,8 @@ class NMT:
             elif self.do_batch_process:
                 continue
                 pass
+
+            #print(input_variable.size(), target_variable.size(), 'stats')
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
                                             decoder, self.model_0_wra.opt_1, self.model_0_wra.opt_2,
