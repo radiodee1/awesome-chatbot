@@ -795,24 +795,31 @@ class WrapMemRNN: #(nn.Module):
 
                     _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, j) ## <--
 
-                    ans_small = ans_small.permute(0,2,1)
-                    context = attn_weights * ans_small
+                    #print(j, ans_small.size(), attn_weights.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
 
-                    #if j == 0:
-                    #print(j, ans_small.size(), context.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
+                    ans_small = ans_small.permute(0,2,1)
+                    attn_weights = attn_weights[:,:,0].unsqueeze(0).permute(0,2,1)
+
+                    #print(j, ans_small.size(), attn_weights.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
+
+                    context = attn_weights * ans_small
 
                     ans = torch.cat([ans_small.permute(0,2,1) , context.permute(0,2,1)], dim=1 )
 
                     #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
+                    #print(ans.size(), 'ans 3')
 
                     ans = torch.sum(ans, dim=-2)
-                    #print(ans.size(), 'ans 3')
 
                     #############
                     #ans = self.model_6_dec.tanh_bb(ans) ## <-- remove??
                     ans = ans.unsqueeze(1)
-                    ans = self.model_6_dec.out_target_b(ans)
+                    #print(ans.size(), 'ans 4')
+
                     ans = torch.sum(ans, dim=0).unsqueeze(0)
+
+                    ans = self.model_6_dec.out_target_b(ans)
+                    #ans = torch.sum(ans, dim=0).unsqueeze(0)
                     ans = ans.permute(1, 0, 2)
                     #ans = self.model_6_dec.softmax_b(ans) ## <-- remove??
                     #print(ans.size(), 'ans 1')
