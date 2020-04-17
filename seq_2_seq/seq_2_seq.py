@@ -843,7 +843,8 @@ class WrapMemRNN: #(nn.Module):
                         index = j #0 ## j ?
                         token_x = prune_tensor(token_x, 3)
                         encoder_out_x = prune_tensor(encoder_out_x, 3)
-                        encoder_out_x = encoder_out_x[index, :, :] + token_x
+                        print(index,encoder_out_x.size(), token_x.size(),'eoxtxs')
+                        encoder_out_x = torch.cat([encoder_out_x[:,:index, :] , token_x], dim=1)
 
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
