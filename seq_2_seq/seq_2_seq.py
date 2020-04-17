@@ -386,7 +386,7 @@ class Attn(torch.nn.Module):
         self.method = method
         if self.method not in ['dot', 'general', 'concat', 'none']:
             raise ValueError(self.method, "is not an appropriate attention method.")
-        self.hidden_size = hidden_size * 2
+        self.hidden_size = hidden_size #* 2
         if self.method == 'general':
             self.attn = torch.nn.Linear(self.hidden_size, self.hidden_size)
         elif self.method == 'concat':
@@ -452,7 +452,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
-        self.attention_mod = Attn(hidden_dim *2, method='dot')
+        self.attention_mod = Attn(hidden_dim , method='dot')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -465,9 +465,9 @@ class Decoder(nn.Module):
 
         batch_first = False #self.word_mode
 
-        self.gru = nn.GRU(gru_in_dim * 2, hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
+        self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim, target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * 2, target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim , target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
@@ -734,14 +734,15 @@ class WrapMemRNN: #(nn.Module):
             out = output.permute(1,0,2)
             #print(hidden.size(),'hidd', out.size(),'out single')
 
-
         return out, hidden
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion):
         hidden = encoder_hidden.contiguous()
-        #print(hidden.size(), 'hid-1')
-
-        hidden = torch.cat([hidden[:,self.n_layers:,:] , hidden[:,:self.n_layers,:]], dim=-1 )
+        #print(hidden.size(),'size h')
+        hidden = hidden[:,0,:] + hidden[:,1,:] + hidden[:,2,:] + hidden[:,3,:]
+        hidden = hidden.unsqueeze(1)
+        encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
+        #print(hidden.size(), 'hid-1', encoder_output.size(), encoder_hidden.size())
 
         target_variable = target_variable.permute(2,1,0)
 
@@ -764,9 +765,11 @@ class WrapMemRNN: #(nn.Module):
                 #encoder_out_lrg = encoder_out_x
 
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
-                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:,:], 3)
+                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,0,:], 3)
                 decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
                 decoder_hidden_lrg = decoder_hidden_x
+
+                decoder_hidden_x = torch.cat([decoder_hidden_x,decoder_hidden_x], dim=1)
 
                 sent_out = []
 
@@ -807,7 +810,7 @@ class WrapMemRNN: #(nn.Module):
                     ans = torch.cat([ans_small.permute(0,2,1) , context.permute(0,2,1)], dim=1 )
 
                     #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
-                    #print(ans.size(), 'ans 3')
+                    #print(ans.size(), attn_weights.size(), context.size(),'ans 3')
 
                     ans = torch.sum(ans, dim=-2)
 
@@ -843,16 +846,17 @@ class WrapMemRNN: #(nn.Module):
 
                     token = self.model_6_dec.embed(token)
 
-                    token_x = torch.cat([token, token], dim=-1)
+                    token_x = token #torch.cat([token, token], dim=-1)
 
                     sent_out.append(ans)
 
                     if True:
-                        index = j #0 ## j ?
+                        index = 0 #j #0 ## j ?
                         token_x = prune_tensor(token_x, 3)
                         encoder_out_x = prune_tensor(encoder_output[i], 3)
-                        encoder_out_x = torch.cat([encoder_out_x[:,:index, :] , token_x], dim=1)
                         #print(index,encoder_out_x.size(), token_x.size(),'eoxtxs')
+
+                        encoder_out_x = torch.cat([encoder_out_x[:,:index, :] , token_x], dim=1)
 
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
