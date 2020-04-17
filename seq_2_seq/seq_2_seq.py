@@ -840,7 +840,7 @@ class WrapMemRNN: #(nn.Module):
                     sent_out.append(ans)
 
                     if True:
-                        index = 0 ## j ?
+                        index = j #0 ## j ?
                         token_x = prune_tensor(token_x, 3)
                         encoder_out_x = prune_tensor(encoder_out_x, 3)
                         encoder_out_x = encoder_out_x[index, :, :] + token_x
