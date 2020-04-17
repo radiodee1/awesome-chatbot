@@ -766,7 +766,7 @@ class WrapMemRNN: #(nn.Module):
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
                 decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:,:], 3)
                 decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
-                #decoder_hidden_lrg = decoder_hidden_x
+                decoder_hidden_lrg = decoder_hidden_x
 
                 sent_out = []
 
@@ -780,9 +780,10 @@ class WrapMemRNN: #(nn.Module):
                         encoder_out_x = encoder_out_x.permute(1,0,2)
 
                     #encoder_out_x = encoder_out_x[:,j,:].unsqueeze(0)
-                    #print(encoder_out_x.size(), decoder_hidden_x.size() ,'eox 1')
 
-                    attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, encoder_out_x)
+                    attn_weights = self.model_6_dec.attention_mod(decoder_hidden_lrg, encoder_out_x)
+
+                    #print(encoder_out_x.size(), decoder_hidden_lrg.size(), attn_weights.size() ,'eox 1')
 
                     if attn_weights.size(-1) > 1:
                         #attn_weights = attn_weights[:,:,j].unsqueeze(0)
