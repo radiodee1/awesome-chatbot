@@ -851,7 +851,7 @@ class Attn(torch.nn.Module):
 
         # Transpose max_length and batch_size dimensions
         attn_energies = attn_energies.t()
-
+        #print(attn_energies.size(),'attn')
         # Return the softmax normalized probability scores (with added dimension)
         return F.softmax(attn_energies, dim=1).unsqueeze(1)
 
@@ -1058,6 +1058,7 @@ def train(input_variable, lengths, target_variable, mask, max_target_len, encode
     # Forward batch of sequences through decoder one time step at a time
     if use_teacher_forcing:
         for t in range(max_target_len):
+            #
             decoder_output, decoder_hidden = decoder(
                 decoder_input, decoder_hidden, encoder_outputs
             )

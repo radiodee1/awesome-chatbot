@@ -741,7 +741,11 @@ class WrapMemRNN: #(nn.Module):
         #print(hidden.size(),'size h')
         hidden = hidden[:,0,:] + hidden[:,1,:] + hidden[:,2,:] + hidden[:,3,:]
         hidden = hidden.unsqueeze(1)
-        encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
+        encoder_output = encoder_output[:,-1,:self.hidden_size] + encoder_output[:,-1,self.hidden_size:]
+        #encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
+
+        encoder_output = encoder_output.unsqueeze(1)
+
         #print(hidden.size(), 'hid-1', encoder_output.size(), encoder_hidden.size())
 
         target_variable = target_variable.permute(2,1,0)
@@ -801,16 +805,24 @@ class WrapMemRNN: #(nn.Module):
                     #print(j, ans_small.size(), attn_weights.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
 
                     ans_small = ans_small.permute(0,2,1)
-                    attn_weights = attn_weights[:,:,0].unsqueeze(0).permute(0,2,1)
+
+                    #print(attn_weights.size(),'pre')
+                    #attn_weights = attn_weights[:,:,0].unsqueeze(0).permute(0,2,1)
 
                     #print(j, ans_small.size(), attn_weights.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
 
-                    context = attn_weights * ans_small
+                    context = attn_weights.permute(0,2,1) @ ans_small.permute(0,2,1)
 
-                    ans = torch.cat([ans_small.permute(0,2,1) , context.permute(0,2,1)], dim=1 )
+                    ans_small = ans_small.permute(0,2,1)
+
+                    #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans 3')
+
+                    ans = torch.cat([
+                        ans_small,#.permute(0,2,1) ,
+                        context #.permute(1,0,2)
+                    ], dim=1 )
 
                     #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
-                    #print(ans.size(), attn_weights.size(), context.size(),'ans 3')
 
                     ans = torch.sum(ans, dim=-2)
 
@@ -851,7 +863,7 @@ class WrapMemRNN: #(nn.Module):
                     sent_out.append(ans)
 
                     if True:
-                        index = 0 #j #0 ## j ?
+                        index = l #j #0 ## j ?
                         token_x = prune_tensor(token_x, 3)
                         encoder_out_x = prune_tensor(encoder_output[i], 3)
                         #print(index,encoder_out_x.size(), token_x.size(),'eoxtxs')
@@ -1014,6 +1026,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
         self.do_no_vocabulary = False
+        self.do_save_often = True
 
         self.do_clip_grad_norm = True
 
@@ -2063,7 +2076,7 @@ class NMT:
                 torch.save(state, update)
 
                 self.best_accuracy_old = self.best_accuracy
-            return
+            if not self.do_save_often: return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
@@ -2782,11 +2795,13 @@ class NMT:
                         extra = ''
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
+                        if self.do_save_often:
+                            extra = '.batch'
 
                         if not self.do_test_not_train:
                             self.best_loss_graph = print_loss_avg
 
-                        if not self.do_test_not_train and not self.do_load_babi:
+                        if (not self.do_test_not_train and not self.do_load_babi) or self.do_save_often :
                             self.save_checkpoint(num=iter,extra=extra)
                             self.saved_files += 1
                             print('======= save file '+ extra+' ========')
