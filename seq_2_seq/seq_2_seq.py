@@ -823,15 +823,18 @@ class WrapMemRNN: #(nn.Module):
                     ], dim=1 )
 
                     #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
+                    #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans b')
 
                     ans = torch.sum(ans, dim=-2)
 
                     #############
                     #ans = self.model_6_dec.tanh_bb(ans) ## <-- remove??
                     ans = ans.unsqueeze(1)
-                    #print(ans.size(), 'ans 4')
+                    #print(ans.size(0), 'ans 4')
 
-                    ans = torch.sum(ans, dim=0).unsqueeze(0)
+                    ### ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
+
+                    ans = ans[min(j, ans.size(0) - 1)].unsqueeze(0)
 
                     ans = self.model_6_dec.out_target_b(ans)
                     #ans = torch.sum(ans, dim=0).unsqueeze(0)
