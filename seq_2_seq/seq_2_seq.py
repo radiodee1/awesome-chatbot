@@ -2076,7 +2076,7 @@ class NMT:
                 torch.save(state, update)
 
                 self.best_accuracy_old = self.best_accuracy
-            if not self.do_save_often or self.saved_files % 10 != 0: return
+            if not self.do_save_often or num % 100 != 0: return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
@@ -2802,7 +2802,7 @@ class NMT:
                             self.best_loss_graph = print_loss_avg
 
                         if ((not self.do_test_not_train and not self.do_load_babi) or
-                                (self.do_save_often and self.saved_files % 10  == 0)):
+                                (self.do_save_often and iter % 100  == 0)):
                             self.save_checkpoint(num=iter, extra=extra)
                             self.saved_files += 1
                             print('======= save file '+ extra+' ========')
