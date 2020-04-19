@@ -480,6 +480,7 @@ class Decoder(nn.Module):
         self.dropout_e = nn.Dropout(dropout)
         self.tanh_b = nn.Tanh()
         self.tanh_bb = nn.Tanh()
+        self.norm_layer_b = nn.BatchNorm1d(hidden_dim)
         self.softmax_b = nn.Softmax(dim=-1)
         self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
         self.reset_parameters()
@@ -828,17 +829,20 @@ class WrapMemRNN: #(nn.Module):
                     ans = torch.sum(ans, dim=-2)
 
                     #############
+                    #ans = ans.unsqueeze(1).unsqueeze(1)
+                    ans = self.model_6_dec.norm_layer_b(ans)
+
+                    ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
+                    #print(ans.size(), 'ans 4')
+
+                    #ans = ans.permute(1,0)
+                    ### ans = ans[min(j, ans.size(0) - 1)].unsqueeze(0)
                     #ans = self.model_6_dec.tanh_bb(ans) ## <-- remove??
-                    ans = ans.unsqueeze(1)
-                    #print(ans.size(0), 'ans 4')
 
-                    ### ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
-
-                    ans = ans[min(j, ans.size(0) - 1)].unsqueeze(0)
-
+                    #print(j, ans,'ans 5')
                     ans = self.model_6_dec.out_target_b(ans)
                     #ans = torch.sum(ans, dim=0).unsqueeze(0)
-                    ans = ans.permute(1, 0, 2)
+                    #ans = ans.permute(1, 0, 2)
                     #ans = self.model_6_dec.softmax_b(ans) ## <-- remove??
                     #print(ans.size(), 'ans 1')
 
