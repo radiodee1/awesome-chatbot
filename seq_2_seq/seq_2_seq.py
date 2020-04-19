@@ -832,7 +832,7 @@ class WrapMemRNN: #(nn.Module):
                         ], dim=1 )
 
                         #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
-                        #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans b')
+                        #print(j,ans_small.size(), attn_weights.size(), context.size(),ans,'ans b')
 
                         ans = torch.sum(ans, dim=-2)
 
@@ -841,9 +841,10 @@ class WrapMemRNN: #(nn.Module):
 
                         #ans = self.model_6_dec.norm_layer_b(ans)
 
-                        ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
-                        #print(ans, 'ans 4')
-                        ans = self.model_6_dec.norm_layer_b(ans)
+                        if ans.size(0) > 1:
+                            ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
+                            #print(ans, 'ans 4')
+                            ans = self.model_6_dec.norm_layer_b(ans)
 
                         #ans = ans.permute(1,0)
                         ### ans = ans[min(j, ans.size(0) - 1)].unsqueeze(0)
@@ -878,8 +879,8 @@ class WrapMemRNN: #(nn.Module):
 
                     sent_out.append(ans)
 
-                    if use_attention:
-                        index = l #j #0 ## j ?
+                    if False:
+                        index = l
                         token_x = prune_tensor(token_x, 3)
                         encoder_out_x = prune_tensor(encoder_output[i], 3)
                         #print(index,encoder_out_x.size(), token_x.size(),'eoxtxs')
@@ -2515,8 +2516,8 @@ class NMT:
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    #ans = ans.transpose(1,0)
-                    #target_variable = target_variable.transpose(1,0)
+                    ans = ans.transpose(1,0)
+                    target_variable = target_variable.transpose(1,0)
                     ##
 
                     for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
