@@ -2098,7 +2098,7 @@ class NMT:
                 torch.save(state, update)
 
                 self.best_accuracy_old = self.best_accuracy
-            if not self.do_save_often or not 'batch' in extra: return
+            if not self.do_save_often or  'batch' not in extra: return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
