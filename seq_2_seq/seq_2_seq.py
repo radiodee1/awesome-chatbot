@@ -2099,6 +2099,7 @@ class NMT:
 
                 self.best_accuracy_old = self.best_accuracy
             if not self.do_save_often or  'batch' not in extra: return
+        basename = hparams['save_dir'] + hparams['base_filename']
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
@@ -2406,6 +2407,7 @@ class NMT:
                     pass
                 else:
                     if x != hparams['eol'] and x != hparams['sol'] and x != hparams['unk'] and x != hparams['eow']:
+                        if x in out: break
                         out.append(x)
                     if x == hparams['eow']:
                         #print('!!')
@@ -2438,6 +2440,7 @@ class NMT:
         for i in sentence:
             if i in saved and last != i: break
             if i != hparams['sol'] and last != i:
+                if i in out: break
                 out.append(i)
             if i in punct: break
             if last != i :
