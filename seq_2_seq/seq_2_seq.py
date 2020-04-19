@@ -153,6 +153,8 @@ blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 blacklist_sent = blacklist_vocab #+ ['i']
 blacklist_supress = [] #[['i', 0.0001], ['you', 1.0]]
 
+save_every_mod = 1000
+
 def plot_vector(vec):
     fig, ax = plt.subplots()
     lst_x = []
@@ -480,7 +482,7 @@ class Decoder(nn.Module):
         self.dropout_e = nn.Dropout(dropout)
         self.tanh_b = nn.Tanh()
         self.tanh_bb = nn.Tanh()
-        self.norm_layer_b = nn.BatchNorm1d(hidden_dim)
+        self.norm_layer_b = nn.LayerNorm(hidden_dim)
         self.softmax_b = nn.Softmax(dim=-1)
         self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
         self.reset_parameters()
@@ -751,6 +753,8 @@ class WrapMemRNN: #(nn.Module):
 
         target_variable = target_variable.permute(2,1,0)
 
+        use_attention = True
+
         if True:
 
             encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
@@ -782,6 +786,8 @@ class WrapMemRNN: #(nn.Module):
 
                 for j in range(l):
 
+                    encoder_out_x = encoder_out_x[:,-1,:].unsqueeze(1)
+
                     if decoder_hidden_x.size(0) == 1:
                         decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
                     if encoder_out_x.size(1) == 1:
@@ -791,7 +797,7 @@ class WrapMemRNN: #(nn.Module):
 
                     attn_weights = self.model_6_dec.attention_mod(decoder_hidden_lrg, encoder_out_x)
 
-                    #print(encoder_out_x.size(), decoder_hidden_lrg.size(), attn_weights.size() ,'eox 1')
+                    #print(encoder_out_x.size() ,'eox 1')
 
                     if attn_weights.size(-1) > 1:
                         #attn_weights = attn_weights[:,:,j].unsqueeze(0)
@@ -812,32 +818,39 @@ class WrapMemRNN: #(nn.Module):
 
                     #print(j, ans_small.size(), attn_weights.size(), decoder_hidden_x.size(),self.model_6_dec.training ,'weight')
 
-                    context = attn_weights.permute(0,2,1) @ ans_small.permute(0,2,1)
+                    if use_attention:
 
-                    ans_small = ans_small.permute(0,2,1)
+                        context = attn_weights.permute(0,2,1) @ ans_small.permute(0,2,1)
 
-                    #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans 3')
+                        ans_small = ans_small.permute(0,2,1)
 
-                    ans = torch.cat([
-                        ans_small,#.permute(0,2,1) ,
-                        context #.permute(1,0,2)
-                    ], dim=1 )
+                        #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans 3')
 
-                    #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
-                    #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans b')
+                        ans = torch.cat([
+                            ans_small,#.permute(0,2,1) ,
+                            context #.permute(1,0,2)
+                        ], dim=1 )
 
-                    ans = torch.sum(ans, dim=-2)
+                        #ans = self.model_6_dec.tanh_b(ans) ## <-- remove??
+                        #print(j,ans_small.size(), attn_weights.size(), context.size(),'ans b')
 
-                    #############
-                    #ans = ans.unsqueeze(1).unsqueeze(1)
-                    ans = self.model_6_dec.norm_layer_b(ans)
+                        ans = torch.sum(ans, dim=-2)
 
-                    ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
-                    #print(ans.size(), 'ans 4')
+                        #############
+                        #ans = ans.unsqueeze(0)#.unsqueeze(1)
 
-                    #ans = ans.permute(1,0)
-                    ### ans = ans[min(j, ans.size(0) - 1)].unsqueeze(0)
-                    #ans = self.model_6_dec.tanh_bb(ans) ## <-- remove??
+                        #ans = self.model_6_dec.norm_layer_b(ans)
+
+                        ans = torch.sum(ans, dim=0).unsqueeze(0) ## <-- compress 'ans'
+                        #print(ans, 'ans 4')
+                        ans = self.model_6_dec.norm_layer_b(ans)
+
+                        #ans = ans.permute(1,0)
+                        ### ans = ans[min(j, ans.size(0) - 1)].unsqueeze(0)
+                        #ans = self.model_6_dec.tanh_bb(ans) ## <-- remove??
+                    else:
+                        ans = ans_small.permute(2,0,1)
+                        #print(j, ans.size(),ans, 'ans')
 
                     #print(j, ans,'ans 5')
                     ans = self.model_6_dec.out_target_b(ans)
@@ -856,10 +869,6 @@ class WrapMemRNN: #(nn.Module):
                     if teacher_forcing_ratio > 0.0 and self.model_6_dec.training :
                         if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                             token = target_variable[i,j,:]
-                            if False:
-                                token = self.model_6_dec.embed(token)
-                            #teacher_out.append(token)
-                            #print(token, 'tf')
 
                     ans = prune_tensor(ans, 2)
 
@@ -869,13 +878,19 @@ class WrapMemRNN: #(nn.Module):
 
                     sent_out.append(ans)
 
-                    if True:
+                    if use_attention:
                         index = l #j #0 ## j ?
                         token_x = prune_tensor(token_x, 3)
                         encoder_out_x = prune_tensor(encoder_output[i], 3)
                         #print(index,encoder_out_x.size(), token_x.size(),'eoxtxs')
 
                         encoder_out_x = torch.cat([encoder_out_x[:,:index, :] , token_x], dim=1)
+                    else:
+                        token_x = prune_tensor(token_x, 3)
+                        encoder_out_x = token_x
+
+                    #print(encoder_out_x.size(),'eox')
+
 
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
@@ -2083,7 +2098,7 @@ class NMT:
                 torch.save(state, update)
 
                 self.best_accuracy_old = self.best_accuracy
-            if not self.do_save_often or num % 100 != 0: return
+            if not self.do_save_often or num % save_every_mod != 0: return
         torch.save(state, basename + extra + '.' + str(num)+ '.pth')
         if is_best:
             os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
@@ -2809,7 +2824,7 @@ class NMT:
                             self.best_loss_graph = print_loss_avg
 
                         if ((not self.do_test_not_train and not self.do_load_babi) or
-                                (self.do_save_often and iter % 100  == 0)):
+                                (self.do_save_often and iter % save_every_mod  == 0)):
                             self.save_checkpoint(num=iter, extra=extra)
                             self.saved_files += 1
                             print('======= save file '+ extra+' ========')
