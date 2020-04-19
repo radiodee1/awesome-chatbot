@@ -2512,9 +2512,9 @@ class NMT:
                 #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    ans = ans.transpose(1,0)
-                    target_variable = target_variable.transpose(1,0)
-                    #
+                    #ans = ans.transpose(1,0)
+                    #target_variable = target_variable.transpose(1,0)
+                    ##
 
                     for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
