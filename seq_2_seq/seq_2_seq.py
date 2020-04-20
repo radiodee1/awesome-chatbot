@@ -757,27 +757,29 @@ class WrapMemRNN: #(nn.Module):
         use_attention = True
 
         if True:
-
-            encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
-
-            decoder_hidden = prune_tensor(hidden, 3).transpose(1, 0)
-
-            all_out = []
+            if self.model_6_dec.training or encoder_output.size(1) != 1:
+                encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
+                decoder_hidden = prune_tensor(hidden, 3).transpose(1, 0)
+            else:
+                encoder_output = prune_tensor(encoder_output, 3)
+                decoder_hidden = prune_tensor(hidden, 3)
 
             s, l, hid = encoder_output.size()
-            #l = hparams['tokens_per_sentence']
-            if not self.model_6_dec.training:
-                s = 1
+
+            if not self.model_6_dec.training: ## <----
+                s = encoder_output.size(1)
+                #print(s,encoder_output.size(),decoder_hidden.size(), 'stats')
+                pass
 
             encoder_output = encoder_output.permute(1,0,2)
+            print(encoder_output.size(), s, decoder_hidden.size(), 'eo.size')
 
             for i in range(s):
-                #print(encoder_output.size(),s,'eo.size')
 
                 encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
 
                 decoder_hidden_x = decoder_hidden.permute(1,0,2)
-                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,0,:], 3)
+                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:,:], 3)
                 decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
                 decoder_hidden_lrg = decoder_hidden_x
 
@@ -830,10 +832,12 @@ class WrapMemRNN: #(nn.Module):
                 #################################
                 sent_out = sent_out.permute(0,1,2)[:attn_weights.size(2),:,:]
                 attn_weights = attn_weights.permute(2,0,1)
-                if not self.model_6_dec.training:
-                    attn_weights = attn_weights.permute(1,0,2)[:,:,:]#.unsqueeze(0)
-                    sent_out = sent_out.permute(1,0,2)
-                    print(attn_weights.size(), sent_out.size(),'aw,so')
+                if not self.model_6_dec.training and attn_weights.size(0) != 1:
+                    attn_weights = attn_weights.permute(1,0,2)#[:,:,:]#.unsqueeze(0)
+                    sent_out = sent_out#.permute(1,0,2)
+
+                #print(attn_weights.size(), sent_out.size(),'aw,so')
+
                 context = attn_weights.bmm(sent_out)
 
                 ans_small = sent_out #.permute(0, 2, 1)
@@ -891,7 +895,7 @@ class WrapMemRNN: #(nn.Module):
             all_out = prune_tensor(all_out, 3)
             #print(all_out.size(), 'ans 01')
 
-            ans = all_out.permute(1,0,2)
+            ans = all_out#.permute(1,0,2)
 
             best_sequence = None
 
@@ -3046,12 +3050,12 @@ class NMT:
                                                                          lang3=self.train_ques, reverse=False,
                                                                          omit_unk=self.do_hide_unk,
                                                                          skip_unk=self.do_skip_unk)
-        self.do_test_not_train = True
+        ### self.do_test_not_train = True ## <---- remove
         self.first_load = True
         self.load_checkpoint()
         lr = hparams['learning_rate']
         self.start = 0
-        self.train_iters(None,None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
+        ## self.train_iters(None,None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
         if len(self.score_list) > 0 and float(self.score_list[-1]) >= self.record_threshold: #100.00:
             self.best_accuracy = float(self.score_list[-1])
             self.save_checkpoint(num=len(self.pairs))
