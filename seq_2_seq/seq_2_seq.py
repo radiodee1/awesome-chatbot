@@ -795,7 +795,7 @@ class WrapMemRNN: #(nn.Module):
 
                     #encoder_out_x = encoder_out_x[:,j,:].unsqueeze(0)
 
-                    attn_weights = self.model_6_dec.attention_mod(decoder_hidden_lrg, encoder_out_x)
+                    attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, encoder_out_x)
 
                     #print(encoder_out_x.size() ,'eox 1')
 
@@ -1049,7 +1049,7 @@ class NMT:
         self.do_print_control = False
         self.do_load_once = True
         self.do_no_vocabulary = False
-        self.do_save_often = True
+        self.do_save_often = False
 
         self.do_clip_grad_norm = True
 
