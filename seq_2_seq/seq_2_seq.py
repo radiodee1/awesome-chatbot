@@ -744,10 +744,11 @@ class WrapMemRNN: #(nn.Module):
         #print(hidden.size(),'size h')
         hidden = hidden[:,0,:] + hidden[:,1,:] + hidden[:,2,:] + hidden[:,3,:]
         hidden = hidden.unsqueeze(1)
-        encoder_output = encoder_output[:,-1,:self.hidden_size] + encoder_output[:,-1,self.hidden_size:]
+        encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
         #encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
+        encoder_output = encoder_output.permute(1,0,2)
 
-        encoder_output = encoder_output.unsqueeze(1)
+        #print(encoder_output.size(),'eo size')
 
         #print(hidden.size(), 'hid-1', encoder_output.size(), encoder_hidden.size())
 
@@ -764,7 +765,11 @@ class WrapMemRNN: #(nn.Module):
             all_out = []
 
             s, l, hid = encoder_output.size()
-            l = hparams['tokens_per_sentence']
+            #l = hparams['tokens_per_sentence']
+            if not self.model_6_dec.training:
+                s = 1
+
+            encoder_output = encoder_output.permute(1,0,2)
 
             for i in range(s):
                 #print(encoder_output.size(),s,'eo.size')
@@ -779,7 +784,7 @@ class WrapMemRNN: #(nn.Module):
                 decoder_hidden_x = torch.cat([decoder_hidden_x,decoder_hidden_x], dim=1)
 
                 sent_out = []
-
+                all_out = []
                 attn_weights = self.model_6_dec.attention_mod(decoder_hidden_lrg, encoder_out_x)
 
                 for j in range(l):
@@ -806,13 +811,6 @@ class WrapMemRNN: #(nn.Module):
                     ans_small = ans_small.permute(0,2,1)
 
                     ans = ans_small.permute(2,0,1)
-                    #print(j, ans.size(),ans, 'ans')
-
-                    #print(j, ans,'ans 5')
-
-                    ####################################
-
-                    #token_x = prune_tensor(token_x, 3)
 
                     encoder_out_x = ans
 
@@ -822,7 +820,7 @@ class WrapMemRNN: #(nn.Module):
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
-
+                    #print(ans.size(),'ans')
                     sent_out.append(ans)
 
                 sent_out = torch.cat(sent_out, dim=0)
@@ -832,7 +830,10 @@ class WrapMemRNN: #(nn.Module):
                 #################################
                 sent_out = sent_out.permute(0,1,2)[:attn_weights.size(2),:,:]
                 attn_weights = attn_weights.permute(2,0,1)
-
+                if not self.model_6_dec.training:
+                    attn_weights = attn_weights.permute(1,0,2)[:,:,:]#.unsqueeze(0)
+                    sent_out = sent_out.permute(1,0,2)
+                    print(attn_weights.size(), sent_out.size(),'aw,so')
                 context = attn_weights.bmm(sent_out)
 
                 ans_small = sent_out #.permute(0, 2, 1)
@@ -843,49 +844,52 @@ class WrapMemRNN: #(nn.Module):
                 ]
 
                 #print('---')
-                #for ii in ans: print(ii.size())
+                #for iii in ans: print(iii.size())
                 #print('---')
-                ans = torch.cat(ans, dim=1)
+                ans = torch.cat(ans, dim=-2)
 
                 ans = torch.sum(ans, dim=-2)
 
-                if ans.size(0) > 1 and False:
-                    ans = torch.sum(ans, dim=0).unsqueeze(0)  ## <-- compress 'ans'
-                    # print(ans, 'ans 4')
-
                 ans = self.model_6_dec.norm_layer_b(ans)
-                sent_out = ans
+                sent_out = ans.unsqueeze(0)
 
                 all_out.append(sent_out)
-                all_out = torch.cat(all_out, dim=1)
-                all_out = self.model_6_dec.out_target_b(all_out)
 
-                ans = prune_tensor(all_out, 2)
-                # print(ans.size(), 'ans 2')
-                _, token = ans.topk(1)
+                ans = torch.cat(all_out, dim=1)
 
-                token = prune_tensor(token, 1)
-                # print(token.size(),'tok')
-                '''
+                #all_out = self.model_6_dec.out_target_b(all_out)
+                #all_out = []
+                ans = prune_tensor(ans, 3)
+                #print(ans.size(), 'ans 2')
+                _, token = ans.topk(k=1, dim=-1)
+
+                token = prune_tensor(token, 2)
+
                 if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
                     if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
                         token = target_variable[i, :, :]
 
-                #ans = prune_tensor(ans, 2)
-
                 token = self.model_6_dec.embed(token)
-                '''
-                token_x = token  # torch.cat([token, token], dim=-1)
+                #print(token.size(),'embed')
+                token_x = token #.permute(0,2,1)  # torch.cat([token, token], dim=-1)
+                #if not self.model_6_dec.training:
 
-                # sent_out.append(ans)
+                #token_x = token_x #.permute(1,0,2)
                 ####################################
-
                 token_x = prune_tensor(token_x, 3)
                 #encoder_out_x = token_x
+                #encoder_output = token_x.permute(1,0,2)
+                if not self.model_6_dec.training:
+                    encoder_output = token_x.permute(1,0,2)
 
+            all_out = torch.cat(all_out, dim=1)
 
             #ans = torch.cat(all_out, dim=0)
             all_out = all_out.unsqueeze(0)
+            all_out = self.model_6_dec.out_target_b(all_out)
+
+            all_out = prune_tensor(all_out, 3)
+            #print(all_out.size(), 'ans 01')
 
             ans = all_out.permute(1,0,2)
 
