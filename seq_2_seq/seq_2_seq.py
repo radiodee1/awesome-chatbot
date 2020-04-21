@@ -481,8 +481,8 @@ class Decoder(nn.Module):
         self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
         self.tanh_b = nn.Tanh()
-        self.tanh_bb = nn.Tanh()
-        self.norm_layer_b = nn.LayerNorm(hidden_dim)
+        self.relu_b = nn.ReLU()
+        self.norm_layer_b = nn.LayerNorm(target_vocab_size)
         self.softmax_b = nn.Softmax(dim=-1)
         self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
         self.reset_parameters()
@@ -755,7 +755,7 @@ class WrapMemRNN: #(nn.Module):
         target_variable = target_variable.permute(2,1,0)
 
         use_attention = True
-
+        s, l, hid = encoder_output.size()
         if True:
             if self.model_6_dec.training or encoder_output.size(1) != 1:
                 encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
@@ -764,7 +764,7 @@ class WrapMemRNN: #(nn.Module):
                 encoder_output = prune_tensor(encoder_output, 3)
                 decoder_hidden = prune_tensor(hidden, 3)
 
-            s, l, hid = encoder_output.size()
+            #s, l, hid = encoder_output.size()
 
             if not self.model_6_dec.training: ## <----
                 s = encoder_output.size(1)
@@ -772,8 +772,8 @@ class WrapMemRNN: #(nn.Module):
                 pass
 
             encoder_output = encoder_output.permute(1,0,2)
-            print(encoder_output.size(), s, decoder_hidden.size(), 'eo.size')
-
+            #print(encoder_output.size(), s, decoder_hidden.size(), 'eo.size')
+            all_out = []
             for i in range(s):
 
                 encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
@@ -786,7 +786,7 @@ class WrapMemRNN: #(nn.Module):
                 decoder_hidden_x = torch.cat([decoder_hidden_x,decoder_hidden_x], dim=1)
 
                 sent_out = []
-                all_out = []
+                #all_out = []
                 attn_weights = self.model_6_dec.attention_mod(decoder_hidden_lrg, encoder_out_x)
 
                 for j in range(l):
@@ -828,13 +828,27 @@ class WrapMemRNN: #(nn.Module):
                 sent_out = torch.cat(sent_out, dim=0)
                 sent_out = prune_tensor(sent_out, 3)
                 #all_out.append(sent_out)
-
+                #print(i, l, sent_out.size(),'sent')
                 #################################
-                sent_out = sent_out.permute(0,1,2)[:attn_weights.size(2),:,:]
+                sent_out = sent_out.permute(0,1,2)#[i,:,:]#.unsqueeze(0)
                 attn_weights = attn_weights.permute(2,0,1)
+                #print(attn_weights.size(), sent_out.size(),'aw,so,01')
+
                 if not self.model_6_dec.training and attn_weights.size(0) != 1:
-                    attn_weights = attn_weights.permute(1,0,2)#[:,:,:]#.unsqueeze(0)
-                    sent_out = sent_out#.permute(1,0,2)
+                    attn_weights = attn_weights.permute(1,0,2)
+                    #sent_out = sent_out#.permute(1,0,2)
+
+                #print(s,i, attn_weights.size(), sent_out.size(),'atso')
+                #if True: #not self.model_6_dec.training:
+                if attn_weights.size(0) != s :
+                    attn_weights = attn_weights.permute(1,2,0)
+                    #print(s, 'attn')
+                elif attn_weights.size(1) == l:
+                    attn_weights = attn_weights.permute(0,2,1)
+                if sent_out.size(0) != s :
+                    sent_out = sent_out.permute(1,0,2)
+                    #attn_weights = attn_weights.permute(1, 2, 0)
+                    #print(s, 'sent')
 
                 #print(attn_weights.size(), sent_out.size(),'aw,so')
 
@@ -850,18 +864,16 @@ class WrapMemRNN: #(nn.Module):
                 #print('---')
                 #for iii in ans: print(iii.size())
                 #print('---')
-                ans = torch.cat(ans, dim=-2)
+                ans = torch.cat(ans, dim=-2) ## -2/0
 
-                ans = torch.sum(ans, dim=-2)
+                #ans = torch.sum(ans, dim=1)
 
-                ans = self.model_6_dec.norm_layer_b(ans)
-                sent_out = ans.unsqueeze(0)
-
+                sent_out = ans #.unsqueeze(0)
+                #print(i,sent_out.size(),'soutsize')
                 all_out.append(sent_out)
 
-                ans = torch.cat(all_out, dim=1)
+                #ans = torch.cat(all_out, dim=1)
 
-                #all_out = self.model_6_dec.out_target_b(all_out)
                 #all_out = []
                 ans = prune_tensor(ans, 3)
                 #print(ans.size(), 'ans 2')
@@ -886,21 +898,24 @@ class WrapMemRNN: #(nn.Module):
                 if not self.model_6_dec.training:
                     encoder_output = token_x.permute(1,0,2)
 
-            all_out = torch.cat(all_out, dim=1)
-
+            all_out = torch.cat(all_out, dim=0) ## dim=1
+            #print(all_out.size(),'all')
             #ans = torch.cat(all_out, dim=0)
             all_out = all_out.unsqueeze(0)
+
             all_out = self.model_6_dec.out_target_b(all_out)
+            all_out = self.model_6_dec.norm_layer_b(all_out)
 
             all_out = prune_tensor(all_out, 3)
             #print(all_out.size(), 'ans 01')
+            all_out = self.model_6_dec.relu_b(all_out)
 
-            ans = all_out#.permute(1,0,2)
+            ans = all_out.permute(1,0,2)
 
             best_sequence = None
 
             #ans = torch.softmax(ans, dim=-1)
-            #print(ans.size(), ans)
+            #print(ans, 'ans')
 
         return ans, best_sequence
 
@@ -1027,6 +1042,7 @@ class NMT:
         self.do_load_embeddings = False
         self.do_auto_stop = False
         self.do_skip_validation = False
+        self.do_local_validation_skip = True
         self.do_print_to_screen = False
         self.do_recipe_dropout = False
         self.do_recipe_lr = False
@@ -1043,6 +1059,7 @@ class NMT:
         self.do_load_once = True
         self.do_no_vocabulary = False
         self.do_save_often = False
+
 
         self.do_clip_grad_norm = True
 
@@ -2756,13 +2773,14 @@ class NMT:
             if self.do_recurrent_output and self.do_load_babi:
 
                 for i in range(len(ans)):
-                    num_tot += int(max_target_length_variable[i])  # += temp_batch_size * hparams['tokens_per_sentence']
+                    ii = min(i, len(max_target_length_variable) - 1)
+                    num_tot += int(max_target_length_variable[ii])  # += temp_batch_size * hparams['tokens_per_sentence']
 
-                    for j in range(ans[i].size(0)):
-                        t_val = target_variable[i][0,j,0].item()
+                    for j in range(ans[ii].size(0)):
+                        t_val = target_variable[ii][0,j,0].item()
 
-                        o_val = ans[i][j].item()
-                        l_val = length_variable[i].item()
+                        o_val = ans[ii][j].item()
+                        l_val = length_variable[ii].item()
 
                         if int(o_val) == int(t_val):
                             num_right += 1 * float(1/l_val )
@@ -3050,12 +3068,13 @@ class NMT:
                                                                          lang3=self.train_ques, reverse=False,
                                                                          omit_unk=self.do_hide_unk,
                                                                          skip_unk=self.do_skip_unk)
-        ### self.do_test_not_train = True ## <---- remove
+        self.do_test_not_train = True ## <---- remove
         self.first_load = True
         self.load_checkpoint()
         lr = hparams['learning_rate']
         self.start = 0
-        ## self.train_iters(None,None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
+        if not self.do_local_validation_skip:
+            self.train_iters(None,None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
         if len(self.score_list) > 0 and float(self.score_list[-1]) >= self.record_threshold: #100.00:
             self.best_accuracy = float(self.score_list[-1])
             self.save_checkpoint(num=len(self.pairs))
