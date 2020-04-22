@@ -861,7 +861,7 @@ class WrapMemRNN: #(nn.Module):
 
 
                 if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
-                    if teacher_forcing_ratio > random.random(): # and j < target_variable.size(1):
+                    if teacher_forcing_ratio > random.random():
                         token = target_variable[i, :, :]
 
                         token = prune_tensor(token, 3)
@@ -873,7 +873,7 @@ class WrapMemRNN: #(nn.Module):
                             token = token.squeeze(1)
                         z = min(ans.size(1), token.size(1))
                         ans = token[:,:z] + ans[:,:z]
-
+                        #print(ans, ans.size(), 'ans 02')
                 ####################################
                 #token_x = prune_tensor(token_x, 3)
 
