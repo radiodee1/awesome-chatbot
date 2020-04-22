@@ -2549,6 +2549,8 @@ class NMT:
                     return None, outputs, None
 
                 if not self.do_recurrent_output:
+                    print('here')
+
                     loss = None
                     ans = ans.permute(1,0)
 
@@ -2943,7 +2945,7 @@ class NMT:
 
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
-
+            ans = ans.permute(1,0,2)
         if hparams['beam'] is None:
             outputs = [ans]
 
