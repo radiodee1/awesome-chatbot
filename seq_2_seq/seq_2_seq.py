@@ -643,6 +643,8 @@ class WrapMemRNN: #(nn.Module):
         encoder_output = prune_tensor(encoder_output,3)
         hidden = prune_tensor(hidden,3)
 
+        #print(encoder_output.size(), hidden.size(),'call')
+
         #encoder_output = torch.sigmoid(encoder_output)
 
         if self.print_to_screen and False:
@@ -697,10 +699,8 @@ class WrapMemRNN: #(nn.Module):
     def wrap_encoder_module(self, question_variable, length_variable):
 
         if True:
-
             output = []
             hid_lst = []
-
             #print(question_variable.size(),'qv')
             for m in range(question_variable.size(0)):
                 ret_hidden = None
@@ -711,12 +711,13 @@ class WrapMemRNN: #(nn.Module):
                 test = 0
                 for n in range(question_variable.size(1)):
                     q_var = prune_tensor(question_variable[m,n], 2)
-                    out, hidden = self.model_1_seq(q_var, 0, hidden)
+                    out, hidden = self.model_1_seq(q_var, 1, hidden)
+                    #print(hidden.size(),'encoder hid')
                     hidden = hidden.permute(1,0,2)
                     if q_var.item() == EOS_token and ret_hidden is None:
                         ret_hidden = hidden.permute(1,0,2)#.clone()
                         test = num
-                        break
+                        #break
                     elif ret_hidden is not None:
                         #hidden = None
                         pass
@@ -870,8 +871,8 @@ class WrapMemRNN: #(nn.Module):
 
                         if token.size(1) == 1:
                             token = token.squeeze(1)
-
-                        ans = token
+                        z = min(ans.size(1), token.size(1))
+                        ans = token[:,:z] + ans[:,:z]
 
                 ####################################
                 #token_x = prune_tensor(token_x, 3)
@@ -2487,20 +2488,22 @@ class NMT:
             self.model_0_wra.model_1_seq.train()
             self.model_0_wra.model_6_dec.train()
 
+            #input_variable = input_variable.permute(1,0)
+
             outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
             loss = 0
             n_tot = 0
 
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
-                print(ans.size(),' ', target_variable.size(),'\n' ,ansx[:4,:],'\n-----',sep="")
+                print(ans.size(),' ', target_variable.size(),' ', input_variable.size() ,'\n' ,ansx[:4,:],'\n-----',sep="")
                 #ansx = Variable(ans.data.max(dim=-1)[1])
 
                 target_variable = target_variable.squeeze(0)
 
                 if True:
-                    ans = ans.transpose(1,0)
-                    #target_variable = target_variable.transpose(1,0)
+                    #ans = ans.transpose(1,0)
+                    target_variable = target_variable.transpose(1,0)
                     ##
 
                     #print(ans.size(),  target_variable.size(), 'axantv')
