@@ -2493,14 +2493,14 @@ class NMT:
 
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
-                print(ansx.size(), ansx,'\n-----')
+                print(ansx.size(), target_variable.size() ,ansx,'\n-----')
                 #ansx = Variable(ans.data.max(dim=-1)[1])
 
                 target_variable = target_variable.squeeze(0)
 
                 if True:
-                    #ans = ans.transpose(1,0)
-                    target_variable = target_variable.transpose(1,0)
+                    ans = ans.transpose(1,0)
+                    #target_variable = target_variable.transpose(1,0)
                     ##
 
                     #print(ans.size(),  target_variable.size(), 'axantv')
