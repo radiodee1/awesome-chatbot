@@ -809,7 +809,6 @@ class WrapMemRNN: #(nn.Module):
 
                     #print(encoder_out_x.size(),'eox')
 
-
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
@@ -818,8 +817,7 @@ class WrapMemRNN: #(nn.Module):
 
                 sent_out = torch.cat(sent_out, dim=0)
                 sent_out = prune_tensor(sent_out, 3)
-                #all_out.append(sent_out)
-                #print(i, l, sent_out.size(),'sent')
+
                 #################################
                 attn_weights = self.model_6_dec.attention_mod(sent_out, encoder_out_lrg)
                 if attn_weights.size(0) == s:
@@ -827,8 +825,6 @@ class WrapMemRNN: #(nn.Module):
                     pass
 
                 sent_out = sent_out.permute(0,1,2)#[i,:,:]#.unsqueeze(0)
-                #attn_weights = attn_weights.permute(2,0,1)
-                #print(attn_weights.size(), sent_out.size(),'aw,so,01')
 
                 if not self.model_6_dec.training and attn_weights.size(0) != 1:
                     attn_weights = attn_weights.permute(1,0,2)
@@ -860,46 +856,46 @@ class WrapMemRNN: #(nn.Module):
 
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
-                sent_out = ans #.unsqueeze(0)
 
-                all_out.append(sent_out)
-
-                ans = prune_tensor(ans, 3)
-
-                _, token = ans.topk(k=1, dim=-1)
-
-                token = prune_tensor(token, 2)
 
                 if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
-                    if teacher_forcing_ratio > random.random() and j < target_variable.size(1):
+                    if teacher_forcing_ratio > random.random(): # and j < target_variable.size(1):
                         token = target_variable[i, :, :]
 
-                token = self.model_6_dec.embed(token)
+                        token = prune_tensor(token, 3)
+                        token = token.permute(0, 2, 1)
 
-                token_x = token #.permute(0,2,1)  # torch.cat([token, token], dim=-1)
+                        token = self.model_6_dec.embed(token)
+
+                        if token.size(1) == 1:
+                            token = token.squeeze(1)
+
+                        ans = token
 
                 ####################################
-                token_x = prune_tensor(token_x, 3)
+                #token_x = prune_tensor(token_x, 3)
 
                 if not self.model_6_dec.training:
-                    encoder_output = token_x.permute(1,0,2)
+                    encoder_output = ans.permute(1,0,2)
+                all_out.append(ans)
 
             all_out = torch.cat(all_out, dim=0)
 
-            all_out = all_out.unsqueeze(0)
+            all_out = all_out.squeeze(0)
 
             all_out = self.model_6_dec.out_target_b(all_out)
-
+            #print(all_out.size(), 'allout')
+            #all_out = self.model_6_dec.norm_layer_b(all_out)
+            #all_out = self.model_6_dec.tanh_b(all_out)
+            all_out = self.model_6_dec.relu_b(all_out)
             all_out = prune_tensor(all_out, 3)
 
-            ans = all_out.permute(1,0,2)
-
-            best_sequence = None
+            ans = all_out #.permute(1,0,2)
 
             #ans = torch.softmax(ans, dim=-1)
-            #print(ans, 'ans')
+            #print(ans.size(),ans, 'ans')
 
-        return ans, best_sequence
+        return ans, None
 
 
 
