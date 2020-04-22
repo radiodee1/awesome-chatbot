@@ -886,9 +886,9 @@ class WrapMemRNN: #(nn.Module):
 
             all_out = self.model_6_dec.out_target_b(all_out)
             #print(all_out.size(), 'allout')
-            #all_out = self.model_6_dec.norm_layer_b(all_out)
-            #all_out = self.model_6_dec.tanh_b(all_out)
-            all_out = self.model_6_dec.relu_b(all_out)
+            all_out = self.model_6_dec.norm_layer_b(all_out)
+            #all_out = self.model_6_dec.softmax_b(all_out)
+            #all_out = self.model_6_dec.relu_b(all_out)
             all_out = prune_tensor(all_out, 3)
 
             ans = all_out #.permute(1,0,2)
@@ -2491,23 +2491,19 @@ class NMT:
             loss = 0
             n_tot = 0
 
-            if True: #self.do_recurrent_output:
-                ##lz = len(target_variable[0])
+            if True:
+                ansx = ans.topk(k=1 )[1].squeeze(2)
+                print(ansx.size(), ansx,'\n-----')
+                #ansx = Variable(ans.data.max(dim=-1)[1])
 
-                #target_variable = Variable(torch.LongTensor(target_variable)) #torch.cat(target_variable, dim=0)
-
-                ansx = Variable(ans.data.max(dim=2)[1])
-
-                #ans = ans.float().permute(1,0,2).contiguous()
-
-                #ans = ans.permute(1,0,2)
                 target_variable = target_variable.squeeze(0)
-                #print(ans.size(), target_variable.size(), mask.size(),max_target_length,'a,tv,m')
 
                 if True:
-                    ans = ans.transpose(1,0)
+                    #ans = ans.transpose(1,0)
                     target_variable = target_variable.transpose(1,0)
                     ##
+
+                    #print(ans.size(),  target_variable.size(), 'axantv')
 
                     for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
@@ -2519,14 +2515,6 @@ class NMT:
                         a_var = ans[i,:z,] #[:z]
                         t_var = target_variable[i,:z] #[:z]
                         #m_var = mask[i][:z]
-
-                        #print(a_var.size(),'avar')
-
-                        if hparams['cuda']:
-                            t_var = t_var.cuda()
-                            #m_var = m_var.cuda()
-
-                        #print(a_var.size(), t_var.size(), m_var.size(),'atm')
 
                         try:
                             l = criterion(a_var, t_var)
@@ -2541,24 +2529,8 @@ class NMT:
                         #print(l, loss, n_tot, 'loss')
 
 
-
-            #ans = ans.permute(1,0)
-
-            #print(ans.size(), target_variable.size(),'criterion')
-
-            if not self.do_recurrent_output:
-                pass
-                #loss = criterion(ans, target_variable)
-
-            if self.do_clip_grad_norm and False:
-                clip = float(hparams['units'] / 10.0)  # 30.00
-                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
-                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-                print('clip', clip)
-
-
-            if not isinstance(loss, int) or True:
-                loss.backward()
+            #if not isinstance(loss, int) or True:
+            loss.backward()
 
 
             wrapper_optimizer_1.step()
@@ -2573,6 +2545,7 @@ class NMT:
                 outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                       criterion)
                 if outputs is not None and ans is None:
+                    print('short', ans.size())
                     return None, outputs, None
 
                 if not self.do_recurrent_output:
@@ -2581,20 +2554,14 @@ class NMT:
 
                 else:
                     loss = None
-                    ansx = Variable(ans.data.max(dim=2)[1])
+                    #ansx = Variable(ans.data.max(dim=2)[1])
                     ans = ans.permute(1,0,2)
 
             #self._test_embedding()
 
         if self.do_recurrent_output:
-            ans = ansx.permute(1,0)
+            ans = ansx #.permute(1,0)
             #print(ans.size(),'ans')
-
-        if self.do_clip_grad_norm and False:
-            clip = float(hparams['units'] / 10.0) # 30.00
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
-            _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-            print('clip', clip)
 
         return outputs, ans , loss
 
