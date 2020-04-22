@@ -856,6 +856,7 @@ class WrapMemRNN: #(nn.Module):
 
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
+                all_out.append(ans)
 
 
                 if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
@@ -877,7 +878,7 @@ class WrapMemRNN: #(nn.Module):
 
                 if not self.model_6_dec.training:
                     encoder_output = ans.permute(1,0,2)
-                all_out.append(ans)
+                #all_out.append(ans)
 
             all_out = torch.cat(all_out, dim=0)
 
