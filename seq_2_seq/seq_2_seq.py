@@ -2493,7 +2493,7 @@ class NMT:
 
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
-                print(ans.size(), target_variable.size() ,ansx[:4,:],'\n-----')
+                print(ans.size(),' ', target_variable.size(),'\n' ,ansx[:4,:],'\n-----',sep="")
                 #ansx = Variable(ans.data.max(dim=-1)[1])
 
                 target_variable = target_variable.squeeze(0)
