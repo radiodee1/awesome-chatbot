@@ -2971,7 +2971,7 @@ class NMT:
 
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
-            ans = ans.permute(1,0,2)
+            #ans = ans.permute(1,0,2)
         if hparams['beam'] is None:
             outputs = [ans]
 
