@@ -702,6 +702,7 @@ class WrapMemRNN: #(nn.Module):
             output = []
             hid_lst = []
             #print(question_variable.size(),'qv')
+            qv = hparams['tokens_per_sentence']
             for m in range(question_variable.size(0)):
                 ret_hidden = None
                 hidden = None
@@ -709,8 +710,10 @@ class WrapMemRNN: #(nn.Module):
                 sub_lst = []
                 num = 0
                 test = 0
-                for n in range(question_variable.size(1)):
-                    q_var = prune_tensor(question_variable[m,n], 2)
+                for n in range(qv): #question_variable.size(1)):
+                    zz = min(n, question_variable.size(1))
+
+                    q_var = prune_tensor(question_variable[m,zz], 2)
                     out, hidden = self.model_1_seq(q_var, 1, hidden)
                     #print(hidden.size(),'encoder hid')
                     hidden = hidden.permute(1,0,2)
@@ -757,6 +760,8 @@ class WrapMemRNN: #(nn.Module):
 
         use_attention = True
         s, l, hid = encoder_output.size()
+        l = hparams['tokens_per_sentence']
+
         if True:
             if self.model_6_dec.training or encoder_output.size(1) != 1:
                 encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
@@ -859,33 +864,48 @@ class WrapMemRNN: #(nn.Module):
                 ans = self.model_6_dec.tanh_b(ans)
                 #all_out.append(ans)
 
+                _, token_i = ans.topk(k=1)
+                token_i = token_i.squeeze(0)
+                token_i = torch.LongTensor([token_i[i][0] for i in range(l)])
 
                 if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
-                    if teacher_forcing_ratio > random.random():
-                        token = target_variable[i, :, :]
+                    tf_out = []
+                    for jj in range(l):
+                        if teacher_forcing_ratio > random.random():
+                            token = target_variable[i, jj, :]
+                        else:
+                            token = torch.LongTensor([token_i[jj].item()])
 
                         token = prune_tensor(token, 3)
                         token = token.permute(0, 2, 1)
+                        tf_out.append(token)
+                    token = torch.cat(tf_out,dim=0)
+                else:
+                    token = token_i
 
-                        token = self.model_6_dec.embed(token)
+                token = self.model_6_dec.embed(token)
+                token = prune_tensor(token, 3)
 
-                        if token.size(1) == 1:
-                            token = token.squeeze(1)
-                        z = min(ans.size(1), token.size(1))
-                        ans = token[:,:z] + ans[:,:z]
-                        #print(ans, ans.size(), 'ans 02')
+                if token.size(1) == 1:
+                    token = token.squeeze(1)
+
+                z = min(ans.size(1), token.size(1))
+                ans = token #[:,:z] + ans[:,:z]
+                #print(token.size(), ans.size(),'token,ans')
+
                 ####################################
-                #token_x = prune_tensor(token_x, 3)
+
+                ans = self.model_6_dec.out_target_b(ans)
 
                 if not self.model_6_dec.training:
                     encoder_output = ans.permute(1,0,2)
                 all_out.append(ans)
 
-            all_out = torch.cat(all_out, dim=0)
+            all_out = torch.cat(all_out, dim=1) ## 0
 
             all_out = all_out.squeeze(0)
 
-            all_out = self.model_6_dec.out_target_b(all_out)
+            #all_out = self.model_6_dec.out_target_b(all_out)
             #print(all_out.size(), 'allout')
             #all_out = self.model_6_dec.norm_layer_b(all_out)
             #all_out = self.model_6_dec.softmax_b(all_out)
@@ -1793,8 +1813,8 @@ class NMT:
     def inputVar(self, l, voc):
 
         add_eos = True
-
-        indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=True) for sentence in l]
+        no_padding = not hparams['single']
+        indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=no_padding) for sentence in l]
         lengths = []
         if False:
             for indexes in indexes_batch:
@@ -1817,7 +1837,7 @@ class NMT:
     # Returns padded target sequence tensor, padding mask, and max target length
     def outputVar(self, l, voc):
         add_eos = True
-        no_padding = False
+        no_padding = not hparams['single']
         indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=no_padding) for sentence in l]
 
         if True:
@@ -1848,9 +1868,9 @@ class NMT:
 
     # Returns all items for a given batch of pairs
     def batch2TrainData(self, voc, pair_batch):
-
+        no_padding = not hparams['single']
         def local_func(x):
-            z = self.indexesFromSentence(self.output_lang, x[0], add_eos=True, pad=-1, no_padding=True)
+            z = self.indexesFromSentence(self.output_lang, x[0], add_eos=True, pad=-1, no_padding=no_padding)
 
             return len(z)
 
@@ -2497,7 +2517,6 @@ class NMT:
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
                 print(ans.size(),' ', target_variable.size(),' ', input_variable.size() ,'\n' ,ansx[:4,:],'\n-----',sep="")
-                #ansx = Variable(ans.data.max(dim=-1)[1])
 
                 target_variable = target_variable.squeeze(0)
 
