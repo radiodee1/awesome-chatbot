@@ -862,7 +862,10 @@ class WrapMemRNN: #(nn.Module):
 
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
-                #all_out.append(ans)
+
+                ans = self.model_6_dec.out_target_b(ans)
+                ans = self.model_6_dec.softmax_b(ans)
+                all_out.append(ans.permute(1,0,2))
 
                 _, token_i = ans.topk(k=1)
                 token_i = token_i.squeeze(0)
@@ -881,26 +884,28 @@ class WrapMemRNN: #(nn.Module):
                         token = token.permute(0, 2, 1)
                         tf_out.append(token)
                     token = torch.cat(tf_out,dim=0)
+                    token = prune_tensor(token, 3)
+                    token = token.permute(2, 1, 0)
                 else:
                     token = token_i
+                    token = prune_tensor(token, 3)
 
                 token = self.model_6_dec.embed(token)
+
                 token = prune_tensor(token, 3)
 
                 if token.size(1) == 1:
                     token = token.squeeze(1)
 
-                z = min(ans.size(1), token.size(1))
+                #z = min(ans.size(1), token.size(1))
                 ans = token #[:,:z] + ans[:,:z]
+
                 #print(token.size(), ans.size(),'token,ans')
 
                 ####################################
 
-                ans = self.model_6_dec.out_target_b(ans)
-
                 if not self.model_6_dec.training:
                     encoder_output = ans.permute(1,0,2)
-                all_out.append(ans)
 
             all_out = torch.cat(all_out, dim=1) ## 0
 
@@ -908,16 +913,12 @@ class WrapMemRNN: #(nn.Module):
 
             #all_out = self.model_6_dec.out_target_b(all_out)
             #print(all_out.size(), 'allout')
-            #all_out = self.model_6_dec.norm_layer_b(all_out)
+
             all_out = self.model_6_dec.softmax_b(all_out)
-            #all_out = self.model_6_dec.relu_b(all_out)
+
             all_out = prune_tensor(all_out, 3)
 
-            ans = all_out #.permute(1,0,2)
-
-            #ans = torch.softmax(ans, dim=-1)
-            #print(ans.size(),ans, 'ans')
-
+            ans = all_out.permute(1,0,2)
         return ans, None
 
 
@@ -2373,12 +2374,7 @@ class NMT:
         return False
 
     def _test_embedding(self, num=None, exit=True):
-        '''
-        if num is None:
-            num = 'dave' #55 #hparams['unk']
-        num = self.variableFromSentence(self.output_lang, str(num), pad=1)
-        print('\n',num)
-        '''
+
         self.model_0_wra.test_embedding()
         if exit: exit()
 
@@ -2515,18 +2511,21 @@ class NMT:
             loss = 0
             n_tot = 0
 
+            target_variable = target_variable.permute(1,0,2)
             ans = ans.permute(1,0,2)
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
                 print(
+                    #ans.size(), ' ',
+                    #target_variable.size(), ' ',
                     ansx[:4,:],'\n-----',sep=""
                 )
 
-                target_variable = target_variable.squeeze(0)
+                target_variable = target_variable.squeeze(1)
 
                 if True:
-                    #ans = ans.transpose(1,0)
-                    target_variable = target_variable.transpose(1,0)
+                    ans = ans.transpose(1,0)
+                    target_variable = target_variable.permute(1,0)
                     ##
 
                     #print(ans.size(),  target_variable.size(), 'axantv')
@@ -2971,10 +2970,11 @@ class NMT:
 
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
-            #ans = ans.permute(1,0,2)
-        if hparams['beam'] is None:
-            outputs = [ans]
+            ans = ans.permute(1,0,2)
 
+        if hparams['beam'] is None or True:
+            outputs = [ans]
+            #print(hparams['beam'], 'beam')
         else:
             outputs = prune_tensor(outputs, 4).transpose(0,2)
 
@@ -2991,7 +2991,7 @@ class NMT:
                     output = output.permute(1, 0)
                     #print(output,'out')
 
-                    if hparams['beam'] is None:
+                    if hparams['beam'] is None or True:
                         ni = torch.argmax(output, dim=0)[0]
                         #print(ni,'ni')
                     else:
