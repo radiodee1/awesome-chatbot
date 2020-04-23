@@ -909,7 +909,7 @@ class WrapMemRNN: #(nn.Module):
             #all_out = self.model_6_dec.out_target_b(all_out)
             #print(all_out.size(), 'allout')
             #all_out = self.model_6_dec.norm_layer_b(all_out)
-            #all_out = self.model_6_dec.softmax_b(all_out)
+            all_out = self.model_6_dec.softmax_b(all_out)
             #all_out = self.model_6_dec.relu_b(all_out)
             all_out = prune_tensor(all_out, 3)
 
