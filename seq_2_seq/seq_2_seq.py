@@ -871,8 +871,9 @@ class WrapMemRNN: #(nn.Module):
                 if teacher_forcing_ratio > 0.0 and self.model_6_dec.training:
                     tf_out = []
                     for jj in range(l):
+                        jjj = min(jj, len(target_variable[i]) -1)
                         if teacher_forcing_ratio > random.random():
-                            token = target_variable[i, jj, :]
+                            token = target_variable[i, jjj, :]
                         else:
                             token = torch.LongTensor([token_i[jj].item()])
 
@@ -2514,9 +2515,12 @@ class NMT:
             loss = 0
             n_tot = 0
 
+            ans = ans.permute(1,0,2)
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
-                print(ans.size(),' ', target_variable.size(),' ', input_variable.size() ,'\n' ,ansx[:4,:],'\n-----',sep="")
+                print(
+                    ansx[:4,:],'\n-----',sep=""
+                )
 
                 target_variable = target_variable.squeeze(0)
 
