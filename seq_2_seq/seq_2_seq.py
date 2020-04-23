@@ -864,7 +864,7 @@ class WrapMemRNN: #(nn.Module):
                 ans = self.model_6_dec.tanh_b(ans)
 
                 ans = self.model_6_dec.out_target_b(ans)
-                ans = self.model_6_dec.softmax_b(ans)
+                #ans = self.model_6_dec.softmax_b(ans)
                 all_out.append(ans.permute(1,0,2))
 
                 _, token_i = ans.topk(k=1)
