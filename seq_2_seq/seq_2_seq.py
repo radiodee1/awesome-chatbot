@@ -2515,8 +2515,9 @@ class NMT:
             ans = ans.permute(1,0,2)
             if True:
                 ansx = ans.topk(k=1 )[1].squeeze(2)
+                ansx = ansx.permute(1,0)
                 print(
-                    #ans.size(), ' ',
+                    #ansx.size(), ' ',
                     #target_variable.size(), ' ',
                     ansx[:4,:],'\n-----',sep=""
                 )
@@ -2553,10 +2554,8 @@ class NMT:
                             pass
                         #print(l, loss, n_tot, 'loss')
 
-
             #if not isinstance(loss, int) or True:
             loss.backward()
-
 
             wrapper_optimizer_1.step()
             wrapper_optimizer_2.step()
