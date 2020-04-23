@@ -1058,7 +1058,7 @@ class NMT:
         self.do_convert = False
         self.do_plot = False
         self.do_load_babi = True #False
-        self.do_hide_unk = False
+        self.do_hide_unk = True
         self.do_conserve_space = False
         self.do_test_not_train = False
         self.do_freeze_embedding = False
@@ -1074,10 +1074,10 @@ class NMT:
         self.do_batch_process = True
         self.do_sample_on_screen = True
         self.do_recurrent_output = True
-        self.do_load_recurrent = False
+        self.do_load_recurrent = True
         self.do_no_positional = False
         self.do_no_attention = False
-        self.do_skip_unk = False
+        self.do_skip_unk = True
         self.do_autoencode_words = False
         self.do_record_loss = False
         self.do_print_control = False
