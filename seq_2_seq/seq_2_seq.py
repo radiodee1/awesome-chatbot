@@ -864,10 +864,11 @@ class WrapMemRNN: #(nn.Module):
 
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
+                encoder_output = ans
 
                 ans = self.model_6_dec.out_target_b(ans)
-
-                #ans = self.model_6_dec.softmax_b(ans)
+                '''
+                ans = self.model_6_dec.softmax_b(ans)
 
 
                 _, token_i = ans.topk(k=1)
@@ -923,7 +924,9 @@ class WrapMemRNN: #(nn.Module):
 
                 #z = min(ans.size(1), token.size(1))
                 ans = token #[:,:z] + ans[:,:z]
-                all_out.append(ans.permute(1,0,2))
+                '''
+                ans = ans.permute(0,1,2)
+                all_out.append(ans)
 
                 ####################################
 
@@ -2994,7 +2997,7 @@ class NMT:
 
         with torch.no_grad():
             outputs, _, ans , _ = self.model_0_wra( input_variable, None, t_var, lengths, None)
-            ans = ans.permute(1,0,2)
+            #ans = ans.permute(1,0,2)
             #print(ans.size(),'ans 00')
         if hparams['beam'] is None or True:
             outputs = [ans]
@@ -3004,7 +3007,7 @@ class NMT:
             pass
         #####################
 
-        print(outputs[0].size(),'tv')
+        #print(outputs[0].size(),'tv')
         if True:
             decoded_words = []
 
