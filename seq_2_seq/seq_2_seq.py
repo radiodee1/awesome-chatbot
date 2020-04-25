@@ -691,7 +691,7 @@ class WrapMemRNN(nn.Module):
     def test_embedding(self, num=None):
 
         if num is None or True:
-            num = torch.LongTensor([0]) #EOS_token  # magic number for testing = garden
+            num = torch.LongTensor([SOS_token]) #EOS_token  # magic number for testing = garden
         e = self.embed(num)
         print('encoder :',num)
         print(not self.embed.weight.requires_grad,': grad freeze')
