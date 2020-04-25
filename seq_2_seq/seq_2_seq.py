@@ -2685,10 +2685,10 @@ class NMT:
             wrapper_optimizer_2 = self._make_optimizer(self.model_0_wra.model_6_dec,lm)
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
-        weight = torch.ones(self.output_lang.n_words)
-        weight[self.output_lang.word2index[hparams['unk']]] = 0.0
+        #weight = torch.ones(self.output_lang.n_words)
+        #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
-        #weight = None
+        weight = None
         self.criterion = nn.CrossEntropyLoss(weight=weight, reduction='sum')
 
         #self.criterion = self.maskNLLLoss
