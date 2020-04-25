@@ -865,7 +865,8 @@ class WrapMemRNN(nn.Module):
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
                 encoder_output = ans
-
+                #print(encoder_output.size(), 'eo size')
+                #exit()
                 ans = self.model_6_dec.out_target_b(ans)
                 '''
                 ans = self.model_6_dec.softmax_b(ans)
