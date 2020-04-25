@@ -745,16 +745,12 @@ class WrapMemRNN(nn.Module):
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion):
         hidden = encoder_hidden.contiguous()
-        #print(hidden.size(),'size h')
+
         hidden = hidden[:,0,:] + hidden[:,1,:] + hidden[:,2,:] + hidden[:,3,:]
         hidden = hidden.unsqueeze(1)
         encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
-        #encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
+
         encoder_output = encoder_output.permute(1,0,2)
-
-        #print(encoder_output.size(),'eo size')
-
-        #print(hidden.size(), 'hid-1', encoder_output.size(), encoder_hidden.size())
 
         target_variable = target_variable.permute(2,1,0)
 
@@ -762,6 +758,11 @@ class WrapMemRNN(nn.Module):
         s, l, hid = encoder_output.size()
         l = hparams['tokens_per_sentence']
 
+        sol_list = []
+        sol = self.model_1_seq.embed(torch.LongTensor([SOS_token]))
+        for _ in range(l): sol_list.append(sol)
+        encoder_output = prune_tensor(torch.cat(sol_list, dim=0), 3)
+        
         if True:
             if self.model_6_dec.training or encoder_output.size(1) != 1:
                 encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
