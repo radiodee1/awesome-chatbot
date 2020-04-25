@@ -551,12 +551,12 @@ class Decoder(nn.Module):
 
 #################### Wrapper ####################
 
-class WrapMemRNN: #(nn.Module):
+class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
                  cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
 
-        #super(WrapMemRNN, self).__init__()
+        super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -634,7 +634,7 @@ class WrapMemRNN: #(nn.Module):
         return
 
 
-    def __call__(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
+    def forward(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
         input_variable = input_variable.permute(1,0)
 
@@ -2075,6 +2075,7 @@ class NMT:
                     'epoch':0,
                     'start': self.start,
                     'arch': None,
+                    'state_dict_0_wra': self.model_0_wra.state_dict(),
                     'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                     'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                     'embedding': self.model_0_wra.embed.state_dict(),
@@ -2092,6 +2093,7 @@ class NMT:
                     'epoch': 0,
                     'start': self.start,
                     'arch': None,
+                    'state_dict_0_wra': self.model_0_wra.state_dict(),
                     'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                     'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                     'embedding': self.model_0_wra.embed.state_dict(),
@@ -2191,6 +2193,7 @@ class NMT:
                 if hparams['zero_start'] is True:
                     self.start = 0
 
+                self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
                 self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
 
@@ -2528,6 +2531,7 @@ class NMT:
             wrapper_optimizer_1.zero_grad()
             wrapper_optimizer_2.zero_grad()
 
+            self.model_0_wra.train()
             self.model_0_wra.model_1_seq.train()
             self.model_0_wra.model_6_dec.train()
 
@@ -2592,8 +2596,10 @@ class NMT:
         else:
             #self.model_0_wra.eval()
             with torch.no_grad():
+                self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
                 self.model_0_wra.model_6_dec.eval()
+
                 outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
                                                       criterion)
                 if outputs is not None and ans is None:
@@ -2713,10 +2719,12 @@ class NMT:
 
         if self.do_load_babi:
             if self.do_test_not_train:
+                self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
                 self.model_0_wra.model_6_dec.eval()
 
             else:
+                self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
 
@@ -2992,6 +3000,7 @@ class NMT:
 
         #question_variable = question
 
+        self.model_0_wra.eval()
         self.model_0_wra.model_1_seq.eval()
         self.model_0_wra.model_6_dec.eval()
 
