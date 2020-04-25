@@ -330,7 +330,7 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.bidirectional = True
-        self.embed = embed
+        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
         self.sum_encoder = True
         self.pack_and_pad = True
         if hparams['single']:
@@ -453,7 +453,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed = embed # nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
         self.attention_mod = Attn(hidden_dim , method='dot')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -573,16 +573,17 @@ class WrapMemRNN(nn.Module):
         self.cancel_attention = cancel_attention
         beam_width = 0 if hparams['beam'] is None else hparams['beam']
 
-        self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
-        self.embed.weight.requires_grad = not self.freeze_embedding
 
         self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
-                                          2, dropout,embed=self.embed)
+                                          2, dropout,embed=None)
 
-        self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, self.embed,
+        self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, None,
                                    cancel_attention=self.cancel_attention)
 
         self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
+
+        self.embed = self.model_1_seq.embed # None  # nn.Embedding(vocab_size, hidden_size, padding_idx=1)
+        #self.embed.weight.requires_grad = not self.model_1_seq.freeze_embedding
 
         #self.attention_mod = Attn(hidden_size, method='dot')
         #self.out_target_b = nn.Linear(self.hidden_size *2, vocab_size)
@@ -604,7 +605,7 @@ class WrapMemRNN(nn.Module):
         self.pass_no_token = False
 
         self.reset_parameters()
-
+        '''
         if self.embedding is not None:
             self.load_embedding(self.embedding, not self.freeze_embedding)
         self.share_embedding()
@@ -616,6 +617,7 @@ class WrapMemRNN(nn.Module):
             self.new_freeze_encoding()
         if freeze_decoder:
             self.new_freeze_decoding()
+        '''
         pass
 
     def load_embedding(self, embedding, requires_grad=True):
@@ -626,9 +628,9 @@ class WrapMemRNN(nn.Module):
         self.embed.weight.requires_grad = requires_grad
 
     def share_embedding(self):
-
-        self.model_1_seq.load_embedding(self.embed, not self.freeze_embedding)
-        self.model_6_dec.load_embedding(self.embed, not self.freeze_embedding)
+        pass
+        #self.model_1_seq.load_embedding(self.embed, not self.freeze_embedding)
+        #self.model_6_dec.load_embedding(self.embed, not self.freeze_embedding)
 
     def reset_parameters(self):
         return
