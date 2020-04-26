@@ -870,68 +870,9 @@ class WrapMemRNN(nn.Module):
 
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
-                #encoder_output = ans
-                #print(encoder_output.size(), 'eo size')
-                #exit()
+
                 ans = self.model_6_dec.out_target_b(ans)
-                '''
-                ans = self.model_6_dec.softmax_b(ans)
-
-
-                _, token_i = ans.topk(k=1)
-                token_i = token_i.squeeze(0)
-                token_i = torch.LongTensor([token_i[iii] for iii in range(l)])
-
-                #print(token_i, 'tok i')
-
-                if self.model_6_dec.training:
-                    tf_out = []
-                    for jj in range(l):
-                        jjj = min(jj, len(target_variable[i]) -1)
-                        if teacher_forcing_ratio > random.random():
-                            token = target_variable[i, jjj, :]
-                            #print(jj,jjj,token)
-                        else:
-                            token = torch.LongTensor([token_i[jj].item()])
-                            #print(jj,jjj,token)
-
-                        token = prune_tensor(token, 3)
-                        #token = token.permute(0, 2, 1)
-                        #print(token.size(),'tok 00')
-                        tf_out.append(token)
-                        #print(tf_out, 'out')
-
-                    token = torch.cat(tf_out, dim=-1)
-                    #print(token.size(), token, 'token')
-                    token = prune_tensor(token, 3)
-                    token = token.permute(2, 1, 0)
-                    #print(token.size(), 'tok 01')
-                    #exit()
-                else:
-                    token = token_i
-                    token = prune_tensor(token, 3)
-                    #print(token.size(),token, 'tok 02')
-                    #exit()
-
-                #all_out.append(token.permute(1,0,2))
-
-                token = self.model_6_dec.embed(token)
-                token = token.squeeze(1)
-                if not self.model_6_dec.training or True:
-                    pass
-                    #print(token.size(),'ts 01')
-                    encoder_output = token.permute(1,0,2)
-
-                token = self.model_6_dec.out_target_b(token)
-
-                token = prune_tensor(token, 3)
-                #print(token.size(),'ts')
-                if token.size(1) == 1 and False:
-                    token = token.squeeze(1)
-
-                #z = min(ans.size(1), token.size(1))
-                ans = token #[:,:z] + ans[:,:z]
-                '''
+                
                 ans = ans.permute(0,1,2)
                 all_out.append(ans)
 
@@ -939,9 +880,38 @@ class WrapMemRNN(nn.Module):
                 _, token_i = ans.topk(k=1)
                 token_i = token_i.squeeze(0)
                 token_i = torch.LongTensor([token_i[iii] for iii in range(l)])
-                embed_index = token_i
-                #encoder_output = ans
 
+                #################################
+                if self.model_6_dec.training:
+                    tf_out = []
+                    for jj in range(l):
+                        jjj = min(jj, len(target_variable[i]) - 1)
+                        if teacher_forcing_ratio > random.random():
+                            token = target_variable[i, jjj, :]
+                            # print(jj,jjj,token)
+                        else:
+                            token = torch.LongTensor([token_i[jj].item()])
+                            # print(jj,jjj,token)
+
+                        token = prune_tensor(token, 3)
+                        # token = token.permute(0, 2, 1)
+                        # print(token.size(),'tok 00')
+                        tf_out.append(token)
+                        # print(tf_out, 'out')
+
+                    token_i = torch.cat(tf_out, dim=-1)
+                    # print(token.size(), token, 'token')
+                    token_i = prune_tensor(token_i, 3)
+                    token_i = token_i.permute(2, 1, 0)
+                    #print(token_i.size(), 'tok 01')
+                    # exit()
+                else:
+                    token_i = prune_tensor(token_i, 3)
+                    #print(token_i.size(), 'token 03')
+
+                token_i = token_i.squeeze(1).squeeze(1)
+                embed_index = token_i
+                #print(token_i.size(),token_i, 'tok 02')
 
             all_out = torch.cat(all_out, dim=0) ## 0
 
