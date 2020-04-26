@@ -591,6 +591,7 @@ class WrapMemRNN(nn.Module):
 
         self.opt_1 = None
         self.opt_2 = None
+        self.opt_3 = None
 
         self.input_var = None  # for input
         self.answer_var = None  # for answer
@@ -873,6 +874,8 @@ class WrapMemRNN(nn.Module):
                 ans = self.model_6_dec.tanh_b(ans)
 
                 ans = self.model_6_dec.out_target_b(ans)
+
+                #ans = self.model_6_dec.softmax_b(ans)
 
                 ans = ans.permute(0,1,2)
                 all_out.append(ans)
@@ -1799,7 +1802,7 @@ class NMT:
         if self.do_load_recurrent:
             sent = sent[:MAX_LENGTH]
 
-        if not self.model_0_wra.model_6_dec.train: print(sent)
+        #if not self.model_0_wra.model_6_dec.train: print(sent)
 
         if return_string:
             return sentence
@@ -2063,6 +2066,7 @@ class NMT:
                 'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
                 'optimizer_1': self.model_0_wra.opt_1.state_dict(),
                 'optimizer_2': self.model_0_wra.opt_2.state_dict(),
+                'optimizer_3': self.model_0_wra.opt_3.state_dict(),
                 'best_loss': self.best_loss,
                 'long_term_loss' : self.long_term_loss,
                 'tag': self.tag,
@@ -2205,6 +2209,16 @@ class NMT:
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
                         self.model_0_wra.opt_2 = self._make_optimizer(self.model_0_wra.model_6_dec, lm)
+                if self.model_0_wra.opt_3 is not None:
+                    #####
+                    try:
+                        self.model_0_wra.opt_3.load_state_dict(checkpoint[0]['optimizer_3'])
+                        if self.model_0_wra.opt_3.param_groups[0]['lr'] != hparams['learning_rate']:
+                            raise Exception('new optimizer...')
+                    except:
+                        if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
+                        lm = hparams['multiplier']
+                        self.model_0_wra.opt_3 = self._make_optimizer(self.model_0_wra.model_0_wra, lm)
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -2489,13 +2503,15 @@ class NMT:
             loss = loss.cuda()
         return loss, nTotal.item()
 
-    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer, attention_optimizer, criterion, mask, max_target_length):
+    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
         #max_target_length = [hparams['tokens_per_sentence'] for _ in max_target_length]
         #question_variable = None
 
         if criterion is not None : #or not self.do_test_not_train:
-            wrapper_optimizer_1.zero_grad()
-            wrapper_optimizer_2.zero_grad()
+            #wrapper_optimizer_1.zero_grad()
+            #wrapper_optimizer_2.zero_grad()
+
+            memory_optimizer_3.zero_grad()
 
             self.model_0_wra.train()
             self.model_0_wra.model_1_seq.train()
@@ -2555,8 +2571,10 @@ class NMT:
             #if not isinstance(loss, int) or True:
             loss.backward()
 
-            wrapper_optimizer_1.step()
-            wrapper_optimizer_2.step()
+            #wrapper_optimizer_1.step()
+            #wrapper_optimizer_2.step()
+            memory_optimizer_3.step()
+
 
 
         else:
@@ -2647,6 +2665,11 @@ class NMT:
             wrapper_optimizer_2 = self._make_optimizer(self.model_0_wra.model_6_dec,lm)
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
+        if self.model_0_wra.opt_3 is None or self.first_load:
+            lm = hparams['multiplier']
+            wrapper_optimizer_3 = self._make_optimizer(self.model_0_wra, lm)
+            self.model_0_wra.opt_3 = wrapper_optimizer_3
+
         #weight = torch.ones(self.output_lang.n_words)
         #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
@@ -2728,8 +2751,8 @@ class NMT:
             #print(input_variable.size(), target_variable.size(), 'stats')
 
             outputs, ans, l = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
-                                            decoder, self.model_0_wra.opt_1, self.model_0_wra.opt_2,
-                                            None, None, criterion, mask_variable, max_target_length_variable)
+                                            decoder, self.model_0_wra.opt_1, self.model_0_wra.opt_2, self.model_0_wra.opt_3
+                                            , None, criterion, mask_variable, max_target_length_variable)
 
             target_variable = target_variable.unsqueeze(1).transpose(-1,0)
 
@@ -3016,6 +3039,7 @@ class NMT:
                                 print(int(ni), self.output_lang.index2word[int(ni)])
                         if di == 5 and len(outputs) > 5:
                             print('...etc')
+                            break
                         ######################
                         if int(ni) == 0 and False:
                             print(ni, '<--')
