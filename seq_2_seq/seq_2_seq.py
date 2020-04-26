@@ -695,7 +695,8 @@ class WrapMemRNN(nn.Module):
         e = self.embed(num)
         print('encoder :',num)
         print(not self.embed.weight.requires_grad,': grad freeze')
-        print(e.size(), 'test embedding')
+        print(e.size(), ': test embedding')
+        print(self.embed.training, ': training now')
         print(e[ 0, 0:10])  # print first ten values
 
     def wrap_encoder_module(self, question_variable, length_variable):
@@ -872,7 +873,7 @@ class WrapMemRNN(nn.Module):
                 ans = self.model_6_dec.tanh_b(ans)
 
                 ans = self.model_6_dec.out_target_b(ans)
-                
+
                 ans = ans.permute(0,1,2)
                 all_out.append(ans)
 
@@ -911,7 +912,7 @@ class WrapMemRNN(nn.Module):
 
                 token_i = token_i.squeeze(1).squeeze(1)
                 embed_index = token_i
-                #print(token_i.size(),token_i, 'tok 02')
+                # print(token_i.size(),token_i, 'tok 02')
 
             all_out = torch.cat(all_out, dim=0) ## 0
 
@@ -2050,42 +2051,25 @@ class NMT:
 
 
     def make_state(self, converted=False):
-        if not converted:
-            z = [
-                {
-                    'epoch':0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict_0_wra': self.model_0_wra.state_dict(),
-                    'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
-                    'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
-                    'embedding': self.model_0_wra.embed.state_dict(),
-                    'optimizer_1': self.model_0_wra.opt_1.state_dict(),
-                    'optimizer_2': self.model_0_wra.opt_2.state_dict(),
-                    'best_loss': self.best_loss,
-                    'long_term_loss' : self.long_term_loss,
-                    'tag': self.tag,
-                    'score': self.score
-                }
-            ]
-        else:
-            z = [
-                {
-                    'epoch': 0,
-                    'start': self.start,
-                    'arch': None,
-                    'state_dict_0_wra': self.model_0_wra.state_dict(),
-                    'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
-                    'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
-                    'embedding': self.model_0_wra.embed.state_dict(),
-                    'optimizer_1': None , # self.opt_1.state_dict(),
-                    'optimizer_2': None,
-                    'best_loss': self.best_loss,
-                    'long_term_loss': self.long_term_loss,
-                    'tag': self.tag,
-                    'score': self.score
-                }
-            ]
+        z = [
+            {
+                'epoch':0,
+                'start': self.start,
+                'arch': None,
+                'state_dict_0_wra': self.model_0_wra.state_dict(),
+                'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
+                'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
+                'embedding01': self.model_0_wra.model_1_seq.embed.state_dict(),
+                'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
+                'optimizer_1': self.model_0_wra.opt_1.state_dict(),
+                'optimizer_2': self.model_0_wra.opt_2.state_dict(),
+                'best_loss': self.best_loss,
+                'long_term_loss' : self.long_term_loss,
+                'tag': self.tag,
+                'score': self.score
+            }
+        ]
+
         #print(z)
         return z
         pass
@@ -2179,7 +2163,8 @@ class NMT:
                 self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
 
                 if not self.do_load_embeddings:
-                    self.model_0_wra.embed.load_state_dict(checkpoint[0]['embedding'])
+                    self.model_0_wra.model_1_seq.embed.load_state_dict(checkpoint[0]['embedding01'])
+                    self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding02'])
 
                 if self.do_load_embeddings:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
