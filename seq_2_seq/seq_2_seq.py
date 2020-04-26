@@ -761,10 +761,10 @@ class WrapMemRNN(nn.Module):
         l = hparams['tokens_per_sentence']
 
         sol_list = []
-        sol = self.model_1_seq.embed(torch.LongTensor([SOS_token]))
+        sol = torch.LongTensor([SOS_token])
         for _ in range(l): sol_list.append(sol)
-        encoder_output = prune_tensor(torch.cat(sol_list, dim=0), 3)
-        
+
+        embed_index = prune_tensor(torch.cat(sol_list, dim=0), 3)
         if True:
             if self.model_6_dec.training or encoder_output.size(1) != 1:
                 encoder_output = prune_tensor(encoder_output, 3).transpose(1, 0)
@@ -784,6 +784,9 @@ class WrapMemRNN(nn.Module):
             #print(encoder_output.size(), s, decoder_hidden.size(), 'eo.size')
             all_out = []
             for i in range(s):
+                encoder_output = self.model_6_dec.embed(embed_index)
+
+                #print(encoder_output.size(),'eos')
                 if encoder_output.size(0) == s:
                     encoder_out_x = prune_tensor(encoder_output[i,:,:], 3)
                 else:
@@ -867,7 +870,7 @@ class WrapMemRNN(nn.Module):
 
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
-                encoder_output = ans
+                #encoder_output = ans
                 #print(encoder_output.size(), 'eo size')
                 #exit()
                 ans = self.model_6_dec.out_target_b(ans)
@@ -933,7 +936,11 @@ class WrapMemRNN(nn.Module):
                 all_out.append(ans)
 
                 ####################################
-
+                _, token_i = ans.topk(k=1)
+                token_i = token_i.squeeze(0)
+                token_i = torch.LongTensor([token_i[iii] for iii in range(l)])
+                embed_index = token_i
+                #encoder_output = ans
 
 
             all_out = torch.cat(all_out, dim=0) ## 0
