@@ -330,7 +330,7 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.bidirectional = True
-        self.embed = nn.Embedding(source_vocab_size, embed_dim, padding_idx=1)
+        self.embed = nn.Embedding(source_vocab_size, embed_dim)
         self.sum_encoder = True
         self.pack_and_pad = True
         if hparams['single']:
@@ -453,7 +453,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed = nn.Embedding(target_vocab_size, embed_dim, padding_idx=1)
+        self.embed = nn.Embedding(target_vocab_size, embed_dim)
         self.attention_mod = Attn(hidden_dim , method='dot')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
