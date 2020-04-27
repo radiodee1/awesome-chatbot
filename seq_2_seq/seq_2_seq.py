@@ -823,12 +823,9 @@ class WrapMemRNN(nn.Module):
 
                     ans = ans_small.permute(2,0,1)
 
-                    #if ans.size(1) > 1:
-                    #    ans = prune_tensor(ans[:,0,:], 3)
-
                     encoder_out_x = ans
 
-                    #print(encoder_out_x.size(),decoder_hidden_x.size() ,'eox')
+                    # print(encoder_out_x.size(),decoder_hidden_x.size() ,'eox')
 
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
@@ -840,8 +837,8 @@ class WrapMemRNN(nn.Module):
                 sent_out = prune_tensor(sent_out, 3)
 
                 encoder_out_lrgx = encoder_out_lrg[:,i,:].unsqueeze(0) ## last
-                #sent_out = sent_out.permute(1,0,2)
-                #print(sent_out.size(), encoder_out_lrg.size(),'so,eol')
+
+                # print(sent_out.size(), encoder_out_lrg.size(),'so,eol')
 
                 #################################
 

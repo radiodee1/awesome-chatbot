@@ -85,9 +85,11 @@ class ChatLineProblem(text_problems.Text2TextProblem):
             # Smaller than the typical translate model, and with more regularization
 
 
-@registry.register_hparams #('transformer_chat')
+@registry.register_hparams
 def transformer_chat():
-    hparams = transformer.transformer_base_v2()
+    hparams = transformer.transformer_base_v2() ## comment out
+    #hparams = transformer.transformer_base()   ## comment in
+
     hparams.num_hidden_layers = 6 # 2
     hparams.hidden_size = 512 # 128
     hparams.filter_size = 2048 # 512
@@ -95,8 +97,8 @@ def transformer_chat():
     hparams.attention_dropout = 0.6
     hparams.layer_prepostprocess_dropout = 0.1 #0.6
     hparams.learning_rate = 0.05
-    #hparams.learning_rate_constant = 0.05
-    hparams.learning_rate_schedule = 'legacy'
+
+    hparams.learning_rate_schedule = 'legacy' ## comment out
 
     return hparams
 
