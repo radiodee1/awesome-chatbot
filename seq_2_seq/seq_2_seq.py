@@ -2544,8 +2544,8 @@ class NMT:
                 target_variable = target_variable.squeeze(1)
 
                 if True:
-                    ans = ans.transpose(1,0)
-                    #target_variable = target_variable.transpose(1,0)
+                    #ans = ans.transpose(1,0)
+                    target_variable = target_variable.transpose(1,0)
                     ##
 
                     #print(ans.size(),  target_variable.size(), 'axantv')
