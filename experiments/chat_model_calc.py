@@ -308,7 +308,30 @@ class Game:
                 g.write(str(csv_voc_tot) + ',')
             g.write('\n')
 
+    def print_tab_file(self, pr=False, code='w'):
+        if pr is True: print('\n-----')
+        with open('../saved/output.'+csv_label+'.tab.txt',code) as f:
+            if pr is True and False:
+                for i in self.responses_list:
+                    print(i)
+                    #f.write(i[0] + ' ' + i[1] + '\n')
+                print('-----')
+                f.write('-----\n')
+            count = self.responses
+            z = self.responses_list
 
+            num = 0
+            original = 0
+            for key in z:
+                if pr is True:
+                    print(num, key)
+
+                    if count[key[1]] > 1:
+                        f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])])  + '\n')
+                num += 1
+                if key[1] == 1: original += 1
+            print('-----')
+        pass
 
     def pin_setup(self):
         if pin_skip: return
@@ -341,7 +364,7 @@ if __name__ == '__main__':
     except EOFError:
         pass
     finally:
-        if g.model.voc.num_words is not None:
-            print(g.model.voc.num_words, 'voc')
-        #g.print_contents(pr=False, code='a')
+        #if g.model.voc.num_words is not None:
+        #    print(g.model.voc.num_words, 'voc')
+        g.print_tab_file(pr=True, code='w')
         pass
