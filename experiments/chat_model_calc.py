@@ -310,21 +310,6 @@ class Game:
 
     def print_tab_file(self, pr=False, code='w'):
         if pr is True: print('\n-----')
-        with open('../saved/output.'+csv_label+'.tab.txt',code) as f:
-            count = self.responses
-            z = self.responses_list
-            num = 0
-            original = 0
-            for key in z:
-                if pr is True:
-                    print(num, key)
-
-                    if count[key[1]] > 1:
-                        f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])])  + '\n')
-                num += 1
-                if key[1] == 1: original += 1
-            print('-----')
-        pass
         with open('../saved/output.'+csv_label+'.enu.txt',code) as f:
             count = self.responses
             z = self.responses_list
@@ -337,6 +322,23 @@ class Game:
                     f.write(str(key[1]) + '\t' + str(chart[key[1]]) + '\n')
                     num += 1
                 pass
+
+        with open('../saved/output.'+csv_label+'.tab.txt',code) as f:
+            count = self.responses
+            z = self.responses_list
+            num = 0
+            original = 0
+            for key in z:
+                if pr is True:
+                    print(num, key)
+
+                    if count[key[1]] > 1:
+                        f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])]) + '\t' + str(chart[key[1]]) + '\n')
+                num += 1
+                if key[1] == 1: original += 1
+            print('-----')
+        pass
+
 
     def pin_setup(self):
         if pin_skip: return
