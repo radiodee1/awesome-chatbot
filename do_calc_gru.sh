@@ -35,7 +35,14 @@ fi
 export CHATBOT_MODE="sequence"
 export CHATBOT_START="hello."
 
+if [[ -z "${STAT_ENUM}" ]]; then
+    export STAT_ENUM=0
+fi
 
+if [[ -z "${STAT_TAB}" ]]; then
+    echo "set STAT_TAB for yourself"
+    export STAT_TAB=${STAT_LIMIT}
+fi
 cd experiments
 python3 chat_model_calc.py ${TEST_7}   #2> /dev/null
 

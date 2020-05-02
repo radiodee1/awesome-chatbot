@@ -25,6 +25,9 @@ if os.environ['CHATBOT_START']:
 do_not_end = True
 stat_limit = int(str(os.environ['STAT_LIMIT']))
 
+stat_enum = int(str(os.environ['STAT_ENUM'])) ## could be zero
+stat_tab = int(str(os.environ['STAT_TAB'])) ## could be very large
+
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
@@ -107,6 +110,7 @@ class Game:
         self.csv_words_repeats = []
         self.csv_words_total = []
 
+        self.chart = {}
         #self.voice = v.VoiceOut()
         #self.sr = sr.VoiceGoogleSR()
 
@@ -138,7 +142,7 @@ class Game:
         while True:
             #self.pin_a_on()
             #i = self.sr.voice_detection()
-            if stat_limit <= num: break
+            if stat_tab <= num: break
             i = input(str(num)+ '> ')
             #print(i)
             #self.pin_a_off()
@@ -191,7 +195,7 @@ class Game:
                         #self.voice.speech_out(out)
             if not do_not_end: count -= 1
             num += 1
-            if num % 100 == 0:
+            if num % 100 == 0 and num <= stat_limit:
                 self.print_contents(pr=False, code='a')
             if count <= 0 :
                 #print('quiet')
@@ -310,18 +314,26 @@ class Game:
 
     def print_tab_file(self, pr=False, code='w'):
         if pr is True: print('\n-----')
-        with open('../saved/output.'+csv_label+'.enu.txt',code) as f:
-            count = self.responses
-            z = self.responses_list
-            chart = {}
-            num = 0
-            for key in z:
-                #print(key[1], key[0], num)
-                if count[key[1]] > 1 and key[1] not in chart:
-                    chart[key[1]] = num
-                    f.write(str(key[1]) + '\t' + str(chart[key[1]]) + '\n')
-                    num += 1
-                pass
+        if stat_enum > 0:
+            with open('../saved/output.'+csv_label+'.enu.txt',code) as f:
+                count = self.responses
+                z = self.responses_list
+                self.chart = {}
+                num = 0
+                for key in z:
+                    #print(key[1], key[0], num)
+                    if count[key[1]] > 1 and key[1] not in self.chart and num < stat_enum:
+                        self.chart[key[1]] = num
+                        f.write(str(key[1]) + '\t' + str(self.chart[key[1]]) + '\n')
+                        num += 1
+                    pass
+        else:
+            with open('../saved/output.'+ csv_label + '.enu.txt', 'r') as f:
+                z = f.readlines()
+                self.chart = {}
+                for line in z:
+                    key = line.split('\t')
+                    self.chart[key[0]] = key[-1]
 
         with open('../saved/output.'+csv_label+'.tab.txt',code) as f:
             count = self.responses
@@ -332,8 +344,8 @@ class Game:
                 if pr is True:
                     print(num, key)
 
-                    if count[key[1]] > 1:
-                        f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])]) + '\t' + str(chart[key[1]]) + '\n')
+                    if count[key[1]] > 1 and key[1] in self.chart:
+                        f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])]) + '\t' + str(self.chart[key[1]]) + '\n')
                 num += 1
                 if key[1] == 1: original += 1
             print('-----')
