@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+TAB_FILE=output.t2t.tab.txt
+ENU_FILE=output.t2t.enu.txt
+
+if [ ! -f "../data/${TAB_FILE}" ]; then
+    cp ../saved/${TAB_FILE} ../data/${TAB_FILE}
+    cp ../saved/${ENU_FILE} ../data/${ENU_FILE}
+fi
+
+
 export BERT_BASE_DIR=../data/uncased_L-6_H-512_A-8
 export CHAT_DIR=../data/
 
