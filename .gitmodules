@@ -12,3 +12,6 @@
 	url = https://github.com/jessevig/bertviz.git
 	ignore = dirty
 
+[submodule "classifier/bert"]
+	path = classifier/bert
+	url = https://github.com/google-research/bert.git
