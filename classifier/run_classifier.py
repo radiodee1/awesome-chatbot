@@ -28,6 +28,7 @@ import modeling
 import optimization
 import tokenization
 import tensorflow as tf
+import numpy as np
 
 flags = tf.flags
 
@@ -1023,12 +1024,14 @@ def main(_):
                 tf.logging.info("***** Predict results *****")
                 for (i, prediction) in enumerate(result):
                     probabilities = prediction["probabilities"]
+
+                    z = np.argmax(probabilities)
                     if i >= num_actual_predict_examples:
                         break
                     output_line = "\t".join(
                         str(class_probability)
                         for class_probability in probabilities) + "\n"
-                    print(output_line , '<')
+                    print(output_line , z, '<')
                     writer.write(output_line)
                     num_written_lines += 1
             assert num_written_lines == num_actual_predict_examples
