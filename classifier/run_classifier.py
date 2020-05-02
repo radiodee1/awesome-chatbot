@@ -212,21 +212,18 @@ class CHATProcessor(DataProcessor):
 
     def __init__(self):
         self.language = "en"
+        self.sentences = {}
 
     def get_train_examples(self, data_dir):
         """See base class."""
         lines = self._read_tsv(os.path.join(data_dir,  "output.t2t.tab.txt" ))
-
         examples = []
         for (i, line) in enumerate(lines):
-            if i == 0:
-                continue
             guid = "train-%d" % (i)
             text_a = tokenization.convert_to_unicode(line[0])
             text_b = '' #tokenization.convert_to_unicode(line[1])
             label = tokenization.convert_to_unicode(line[-1])
-            #if label == tokenization.convert_to_unicode("contradictory"):
-            #    label = tokenization.convert_to_unicode("contradiction")
+
             examples.append(
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
@@ -236,12 +233,8 @@ class CHATProcessor(DataProcessor):
         lines = self._read_tsv(os.path.join(data_dir, "output.t2t.tab.txt"))
         examples = []
         for (i, line) in enumerate(lines):
-            if i == 0:
-                continue
             guid = "dev-%d" % (i)
-            #language = tokenization.convert_to_unicode(line[0])
-            #if language != tokenization.convert_to_unicode(self.language):
-            #    continue
+
             text_a = tokenization.convert_to_unicode(line[0])
             text_b = '' #tokenization.convert_to_unicode(line[1])
             label = tokenization.convert_to_unicode(line[-1])
@@ -249,8 +242,19 @@ class CHATProcessor(DataProcessor):
                 InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
 
+    def get_sentences(self, data_dir):
+        lines = self._read_tsv(os.path.join(data_dir, "output.t2t.enu.txt"))
+
+        for (i, line) in enumerate(lines):
+
+            text_a = tokenization.convert_to_unicode(line[0])
+            label = tokenization.convert_to_unicode(line[-1])
+            label = int(label)
+            self.sentences[label] = text_a
+
     def get_interactive_examples(self):
         line = input('> ')
+        print(line)
         text_a = line
         text_b = None
         examples = [InputExample(guid='cli-0', text_a=text_a, text_b=text_b, label='0')]
@@ -985,6 +989,7 @@ def main(_):
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
     if FLAGS.do_predict:
+        processor.get_sentences(FLAGS.data_dir)
         while True:
 
             #predict_examples = processor.get_test_examples(FLAGS.data_dir)
@@ -1031,7 +1036,8 @@ def main(_):
                     output_line = "\t".join(
                         str(class_probability)
                         for class_probability in probabilities) + "\n"
-                    print(output_line , z, '<')
+                    #print(output_line , z, '<')
+                    print(processor.sentences[z], '<<')
                     writer.write(output_line)
                     num_written_lines += 1
             assert num_written_lines == num_actual_predict_examples

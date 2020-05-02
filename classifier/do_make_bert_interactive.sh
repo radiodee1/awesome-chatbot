@@ -24,4 +24,4 @@ python3 run_classifier.py \
   --train_batch_size=32 \
   --learning_rate=2e-5 \
   --num_train_epochs=0.1 \
-  --output_dir=../saved/bert_output/
+  --output_dir=../saved/bert_output/ 2> /dev/null
