@@ -256,7 +256,8 @@ class NMT:
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
         self.recent_text = text
-        self.prep_recent(prep_copy_boolean or True)
+        if not self.args.no_recent:
+            self.prep_recent(prep_copy_boolean or True)
 
         print(text,"<")
 
@@ -506,6 +507,7 @@ class NMT:
         parser.add_argument("--apps", type=bool, required=False, default=False)
         parser.add_argument("--source_file", type=str, default='../data/tf_gpt2_data/774M/converted/pytorch_model.bin') # torch_gpt2/GPT2/gpt2-pytorch_model.bin')
         parser.add_argument("--numbers", action='store_true', help='Add numbers to memory sentences.')
+        parser.add_argument("--no-recent", type=bool, default=False, help="Do not show model recent q and a.")
         self.args = parser.parse_args()
 
     def load_model(self):

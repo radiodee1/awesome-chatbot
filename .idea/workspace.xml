@@ -3,8 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifier/run_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/run_classifier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_calc_gpt2.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_calc_gpt2.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/chat_model_calc.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/chat_model_calc.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_lrg.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_lrg.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_sm.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/torch_gpt2_run_memory_substitute_aiml_sm.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

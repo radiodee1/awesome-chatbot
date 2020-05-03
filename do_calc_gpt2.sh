@@ -9,7 +9,7 @@ if [[ -t 0 ]]; then
     exit
 fi
 
-TEST_5=" $@"
+TEST_5=" --no-recent=True $@"
 
 LAUNCH=launch
 export STAT_LIMIT=2000
@@ -21,7 +21,7 @@ echo "quit -- no 'launch' file present."
 exit
 
 fi
-export CHATBOT_MODE="memory"
+export CHATBOT_MODE="memory" #"wiki" #"memory"
 export CHATBOT_START="hello."
 
 

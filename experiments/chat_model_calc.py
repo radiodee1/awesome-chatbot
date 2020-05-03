@@ -319,7 +319,7 @@ class Game:
                 count = self.responses
                 z = self.responses_list
                 zz = sorted(self.responses.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:stat_enum]
-                print(zz, len(zz), stat_enum)
+                #print(zz, len(zz), stat_enum)
                 self.chart = {}
                 num = 0
                 for key in z:
@@ -348,7 +348,7 @@ class Game:
             original = 0
             for key in z:
                 if pr is True:
-                    print(num, key)
+                    #print(num, key)
 
                     if count[key[1]] > 1 and key[1] in self.chart and key[0] not in l:
                         f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])]) + '\t' + str(self.chart[key[1]]) + '\n')
