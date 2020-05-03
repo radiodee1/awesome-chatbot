@@ -213,6 +213,7 @@ class CHATProcessor(DataProcessor):
     def __init__(self):
         self.language = "en"
         self.sentences = {}
+        self.limit = 100
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -244,13 +245,16 @@ class CHATProcessor(DataProcessor):
 
     def get_sentences(self, data_dir):
         lines = self._read_tsv(os.path.join(data_dir, "output.t2t.enu.txt"))
-
+        max = 0
         for (i, line) in enumerate(lines):
 
             text_a = tokenization.convert_to_unicode(line[0])
             label = tokenization.convert_to_unicode(line[-1])
             label = int(label)
             self.sentences[label] = text_a
+            if label > max:
+                max = label
+        self.limit = max + 1
 
     def get_interactive_examples(self):
         line = input('> ')
@@ -264,7 +268,8 @@ class CHATProcessor(DataProcessor):
     def get_labels(self):
         """See base class."""
         #return ["contradiction", "entailment", "neutral"]
-        return [str(ii) for ii in range(95)]
+        self.get_sentences(FLAGS.data_dir)
+        return [str(ii) for ii in range(self.limit)]
 
 class XnliProcessor(DataProcessor):
     """Processor for the XNLI data set."""

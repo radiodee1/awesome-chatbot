@@ -318,16 +318,19 @@ class Game:
             with open('../saved/output.'+csv_label+'.enu.txt',code) as f:
                 count = self.responses
                 z = self.responses_list
-                z = sorted(self.responses_list, key=lambda kv: (kv[1], kv[0]), reverse=True)
-
+                zz = sorted(self.responses.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)[:stat_enum]
+                print(zz, len(zz), stat_enum)
                 self.chart = {}
                 num = 0
                 for key in z:
-                    #print(key[1], key[0], num)
-                    if count[key[1]] > 1 and key[1] not in self.chart and num < stat_enum:
-                        self.chart[key[1]] = num
-                        f.write(str(key[1]) + '\t' + str(self.chart[key[1]]) + '\n')
-                        num += 1
+                    if key[1]  in [item[0] for item in zz]: ## membership in most frequent list
+
+                        if count[key[1]] > 1 and key[1] not in self.chart and num < stat_enum:
+                            self.chart[key[1]] = num
+                            f.write(str(key[1]) + '\t' + str(self.chart[key[1]]) + '\n')
+                            num += 1
+                    else:
+                        print('skip', key[1])
                     pass
         else:
             with open('../saved/output.'+ csv_label + '.enu.txt', 'r') as f:
