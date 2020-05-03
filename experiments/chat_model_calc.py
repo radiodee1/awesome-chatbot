@@ -143,7 +143,7 @@ class Game:
             #self.pin_a_on()
             #i = self.sr.voice_detection()
             if stat_tab <= num: break
-            i = input(str(num)+ '> ')
+            i = input(str(num)+ ' > ')
             #print(i)
             #self.pin_a_off()
             if not no_tokenize_weak: i = tokenize_weak.format(i)
