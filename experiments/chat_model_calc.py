@@ -347,12 +347,13 @@ class Game:
                 if pr is True:
                     print(num, key)
 
-                    if count[key[1]] > 1 and key[1] in self.chart and key[1] not in l:
+                    if count[key[1]] > 1 and key[1] in self.chart and key[0] not in l:
                         f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])]) + '\t' + str(self.chart[key[1]]) + '\n')
                         l.append(key[0])
                 num += 1
                 if key[1] == 1: original += 1
             print('-----')
+            #print(l)
         pass
 
 
