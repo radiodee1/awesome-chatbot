@@ -26,12 +26,13 @@ export CHATBOT_START="hello."
 
 ## set this to 100
 if [[ -z "${STAT_ENUM}" ]]; then
+    echo "set STAT_ENUM for yourself to 100"
     export STAT_ENUM=0
 fi
 
 ## set this to 10000
 if [[ -z "${STAT_TAB}" ]]; then
-    echo "set STAT_TAB for yourself"
+    echo "set STAT_TAB for yourself to 10000"
     export STAT_TAB=${STAT_LIMIT}
 fi
 
