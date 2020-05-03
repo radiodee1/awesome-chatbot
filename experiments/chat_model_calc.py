@@ -139,7 +139,7 @@ class Game:
         num = 0
         print('starting')
         self.print_contents(pr=False, code='w')
-        while True:
+        for _ in range(max(stat_limit, stat_tab)):
             #self.pin_a_on()
             #i = self.sr.voice_detection()
             if stat_tab <= num: break
@@ -385,10 +385,12 @@ if __name__ == '__main__':
     g = Game()
     try:
         g.loop()
+        g.print_tab_file(pr=True, code='w')
     except EOFError:
+        g.print_tab_file(pr=True, code='w')
         pass
     finally:
         #if g.model.voc.num_words is not None:
         #    print(g.model.voc.num_words, 'voc')
-        g.print_tab_file(pr=True, code='w')
+        #g.print_tab_file(pr=True, code='w')
         pass
