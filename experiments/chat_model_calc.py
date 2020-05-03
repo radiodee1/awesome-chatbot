@@ -318,6 +318,8 @@ class Game:
             with open('../saved/output.'+csv_label+'.enu.txt',code) as f:
                 count = self.responses
                 z = self.responses_list
+                z = sorted(self.responses_list, key=lambda kv: (kv[1], kv[0]), reverse=True)
+
                 self.chart = {}
                 num = 0
                 for key in z:
@@ -338,14 +340,16 @@ class Game:
         with open('../saved/output.'+csv_label+'.tab.txt',code) as f:
             count = self.responses
             z = self.responses_list
+            l = []
             num = 0
             original = 0
             for key in z:
                 if pr is True:
                     print(num, key)
 
-                    if count[key[1]] > 1 and key[1] in self.chart:
+                    if count[key[1]] > 1 and key[1] in self.chart and key[1] not in l:
                         f.write(str(key[0]) + '\t'+ key[1] + '\t' + str(count[str(key[1])]) + '\t' + str(self.chart[key[1]]) + '\n')
+                        l.append(key[0])
                 num += 1
                 if key[1] == 1: original += 1
             print('-----')
