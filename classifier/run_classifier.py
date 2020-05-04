@@ -257,7 +257,8 @@ class CHATProcessor(DataProcessor):
         self.limit = max + 1
 
     def get_interactive_examples(self):
-        line = input('> ')
+        print('> ', end='')
+        line = input(' ')
         print(line)
         text_a = line
         text_b = None

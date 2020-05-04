@@ -13,7 +13,7 @@ ENU_FILE=output.${INFILE}.enu.txt
 TAB_FILE_OUT=output.${OUTFILE}.tab.txt
 ENU_FILE_OUT=output.${OUTFILE}.enu.txt
 
-if [ ! -f "../data/${TAB_FILE}" ]; then
+if [ ! -f "../data/${TAB_FILE_OUT}" ]; then
     cp ../saved/${TAB_FILE} ../data/${TAB_FILE_OUT}
     cp ../saved/${ENU_FILE} ../data/${ENU_FILE_OUT}
 fi
@@ -34,4 +34,4 @@ python3 run_classifier.py \
   --train_batch_size=32 \
   --learning_rate=2e-5 \
   --num_train_epochs=0.1 \
-  --output_dir=../saved/bert_output/ 2> /dev/null
+  --output_dir=../saved/bert_output/${INFILE}/ 2> /dev/null
