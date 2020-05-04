@@ -217,7 +217,7 @@ class CHATProcessor(DataProcessor):
 
     def get_train_examples(self, data_dir):
         """See base class."""
-        lines = self._read_tsv(os.path.join(data_dir,  "output.t2t.tab.txt" ))
+        lines = self._read_tsv(os.path.join(data_dir,  "output.xxx.tab.txt" ))
         examples = []
         for (i, line) in enumerate(lines):
             guid = "train-%d" % (i)
@@ -231,7 +231,7 @@ class CHATProcessor(DataProcessor):
 
     def get_dev_examples(self, data_dir):
         """See base class."""
-        lines = self._read_tsv(os.path.join(data_dir, "output.t2t.tab.txt"))
+        lines = self._read_tsv(os.path.join(data_dir, "output.xxx.tab.txt"))
         examples = []
         for (i, line) in enumerate(lines):
             guid = "dev-%d" % (i)
@@ -244,7 +244,7 @@ class CHATProcessor(DataProcessor):
         return examples
 
     def get_sentences(self, data_dir):
-        lines = self._read_tsv(os.path.join(data_dir, "output.t2t.enu.txt"))
+        lines = self._read_tsv(os.path.join(data_dir, "output.xxx.enu.txt"))
         max = 0
         for (i, line) in enumerate(lines):
 

@@ -1,11 +1,21 @@
 #!/usr/bin/env bash
 
-TAB_FILE=output.t2t.tab.txt
-ENU_FILE=output.t2t.enu.txt
+if [[ -z "${INFILE}" ]]; then
+    export INFILE=gpt
+fi
+
+#INFILE=gpt
+OUTFILE=xxx
+
+TAB_FILE=output.${INFILE}.tab.txt
+ENU_FILE=output.${INFILE}.enu.txt
+
+TAB_FILE_OUT=output.${OUTFILE}.tab.txt
+ENU_FILE_OUT=output.${OUTFILE}.enu.txt
 
 if [ ! -f "../data/${TAB_FILE}" ]; then
-    cp ../saved/${TAB_FILE} ../data/${TAB_FILE}
-    cp ../saved/${ENU_FILE} ../data/${ENU_FILE}
+    cp ../saved/${TAB_FILE} ../data/${TAB_FILE_OUT}
+    cp ../saved/${ENU_FILE} ../data/${ENU_FILE_OUT}
 fi
 
 
