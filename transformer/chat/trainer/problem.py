@@ -87,8 +87,8 @@ class ChatLineProblem(text_problems.Text2TextProblem):
 
 @registry.register_hparams
 def transformer_chat():
-    hparams = transformer.transformer_base_v2() ## comment out
-    #hparams = transformer.transformer_base()   ## comment in
+    #hparams = transformer.transformer_base_v2() ## comment out
+    hparams = transformer.transformer_base()   ## comment in
 
     hparams.num_hidden_layers = 6 # 2
     hparams.hidden_size = 512 # 128
@@ -98,7 +98,7 @@ def transformer_chat():
     hparams.layer_prepostprocess_dropout = 0.1 #0.6
     hparams.learning_rate = 0.05
 
-    hparams.learning_rate_schedule = 'legacy' ## comment out
+    #hparams.learning_rate_schedule = 'legacy' ## comment out
 
     return hparams
 
