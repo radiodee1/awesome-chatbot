@@ -24,7 +24,7 @@ export CHAT_DIR=../data/
 
 python3 run_classifier.py \
   --task_name=CHAT \
-  --do_train=true \
+  --do_train=false \
   --do_predict=true \
   --data_dir=$CHAT_DIR \
   --vocab_file=$BERT_BASE_DIR/vocab.txt \
