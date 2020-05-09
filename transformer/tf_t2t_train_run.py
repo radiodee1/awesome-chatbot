@@ -33,6 +33,7 @@ FLAGS = flags.FLAGS
 name = 'chat_10'
 include_date = False
 include_questionmark = False
+include_eol = True
 
 parser = argparse.ArgumentParser(
     description='Run NMT for chat program.',
@@ -164,6 +165,11 @@ class NMT:
 
     def get_sentence(self, i):
         try:
+            if include_eol:
+                i = i.strip()
+                if not i.endswith('eol'):
+                    i = i + ' eol'
+            #print(i)
             z = predict_once(i)
             if '.' in z:
                 z = z.split('.')[0] ## take first sentence
@@ -193,8 +199,13 @@ class NMT:
             try:
                 i = input("> ")
                 if include_questionmark:
+                    i = i.strip()
+                    while i.endswith('.'):
+                        i = i[:-len('.')]
+                        i = i.strip()
                     if not i.endswith('?'):
                         i = i + '?'
+
                 if include_date:
                     i = "It's " + date + ' ' + time + '. ' + i
                 print(i)
