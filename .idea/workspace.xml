@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/docker/docker_test_armv7/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/docker_test_armv7/do_launch.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/docker_test_armv7/docker-compose.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/docker_test_sr.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/docker_test_x86_64/Dockerfile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/docker_test_x86_64/do_launch.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.armv7.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile.amd64" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/docker_test_armv7/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker_test_armv7/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/docker_test_armv7/do_launch.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker_test_armv7/do_launch.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/docker_test_x86_64/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker_test_x86_64/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/docker_test_x86_64/do_launch.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/docker_test_x86_64/do_launch.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +82,10 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
+    <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589411891761">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1589411891761" />
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1589323828180">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
