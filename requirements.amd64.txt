@@ -1,0 +1,67 @@
+
+## keras ##
+#tensorflow==1.14.0
+tqdm
+colorama
+regex
+#keras
+#gensim
+h5py
+
+## both ##
+gtts
+google-api-python-client
+google-cloud-speech
+#PyAudio ## install this from linux distro repository, not pip3
+unidecode
+matplotlib
+py-cpuinfo
+datetime
+#pandas
+toposort
+#spacy ## python -m spacy download en ##
+#pytorch-pretrained-bert ## actually for gpt2 training/fine-tuning !!
+#python3-tk ## install this from linux distro, not pip3
+
+## t2t ##
+Tensor2Tensor==1.14.0
+#tensorflow-hub
+#tensorflow_core==0.0.0.post1
+
+## bert ##
+#bert-serving-server
+#bert-serving-client
+numpy
+
+## kaggle ##
+#kaggle
+## must install kaggle.json file as described here:
+## https://github.com/Kaggle/kaggle-api
+
+## pytorch ##
+#torchtext
+## go to the pytorch web site to download the latest version of pytorch ##
+
+## text-to-speech ##
+## install mpg321 from your linux repository ##
+## install python3-pyaudio
+## install python-pyaudio
+
+## tensorflow-model-server ##
+## see this url:
+## https://www.tensorflow.org/tfx/serving/setup#installing_the_modelserver
+## this python package is also required
+#tensorflow-serving-api==1.14.0
+
+## from the system package manager ##
+#libopenblas-dev libblas-dev m4 cmake cython python3-dev python3-yaml python3-setuptools
+
+## large gpt2 model ##
+#transformers ## include on laptop/desktop install
+
+## aiml ##
+#aiml
+#beautifulsoup4
+#google
+
+RPi.GPIO

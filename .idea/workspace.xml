@@ -2,8 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/docker/docker_test_armv7/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/docker_test_armv7/do_launch.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/docker_test_armv7/docker-compose.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/docker_test_sr.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/docker_test_x86_64/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/docker_test_x86_64/do_launch.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/requirements.armv7.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer/tf_t2t_train_run.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer/tf_t2t_train_run.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,19 +36,19 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/classifier" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/docker/docker_test" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/." />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docker/docker_test" />
       <recent name="$PROJECT_DIR$/classifier" />
       <recent name="$PROJECT_DIR$/data" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/babi_t2t" />
-      <recent name="$PROJECT_DIR$/model" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -78,14 +85,10 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
-    <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1578409519396">
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1589323828180">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="869" y="385" width="677" height="397" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1578409519396" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1584556617552">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1584556617552" />
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1589323828180" />
     <state x="1003" y="328" width="424" height="491" key="FileChooserDialogImpl" timestamp="1583500986944">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
