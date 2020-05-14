@@ -2,7 +2,7 @@
 
 DOCKER_BUILDKIT=1
 
-cd ../../
+cd ../
 
 echo ${PWD}
 

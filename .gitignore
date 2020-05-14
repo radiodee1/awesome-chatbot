@@ -3,6 +3,8 @@ data/*
 saved/*
 .idea/*
 
+*.json
+
 vis/bertviz/
 
 *.db
