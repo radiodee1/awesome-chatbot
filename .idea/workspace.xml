@@ -2,19 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/Dockerfile.armv7" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/do_launch_amd64.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/do_launch_armv7.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/do_build_amd64.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/do_build_armv7.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.amd64" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.amd64" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_amd64/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_amd64/do_launch.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_amd64/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_armv7/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_armv7/do_launch.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_armv7/requirements.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/docker_test_sr.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile.armv7" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.armv7" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/do_launch_amd64.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_amd64.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/do_launch_armv7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_armv7.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,20 +33,20 @@
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/docker/docker_test" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/docker" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/." />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/docker" />
       <recent name="$PROJECT_DIR$/docker/docker_test" />
       <recent name="$PROJECT_DIR$/classifier" />
       <recent name="$PROJECT_DIR$/data" />
       <recent name="$PROJECT_DIR$" />
-      <recent name="$PROJECT_DIR$/babi_t2t" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="SvnConfiguration">
