@@ -4,8 +4,25 @@ DOCKER_BUILDKIT=1
 
 cd ../
 
+echo ${#}
+if [[ "${#}" == "1" ]]; then
+    ENTRY_POINT=${1}
+fi
 echo ${PWD}
+export CREDENTIALS=`cat credentials.txt`
+echo ${CREDENTIALS}
 
-#docker build --tag awesome:1.0 -f ${PWD}/Dockerfile.amd64 .
+if [[ -z "${ENTRY_POINT}" ]]; then
+    ENTRY_POINT="/bin/bash"
+fi
 
-docker run -p 8001:8001 --entrypoint "./game_sr.py" awesome:1.0
+#export ENTRY_POINT=./bot/game_sr.py
+#export ENTRY_POINT=/bin/bash
+
+echo ${ENTRY_POINT}
+
+docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
+    --device /dev/snd/ --group-add audio --env ALSA_CARD="PCH" \
+    --env CREDENTIALS="${ENTRY_POINT}" -ti \
+    --env GOOGLE_APPLICATION_CREDENTIALS=/app/${CREDENTIALS} \
+    --entrypoint "${ENTRY_POINT}" awesome:1.0
