@@ -4,7 +4,8 @@ ARG CREDENTIALS
 ENV CREDENTIALS $CREDENTIALS
 
 RUN apt-get update \
-    && apt-get install -y mpg123 python3-pyaudio vim python3 python3-pip curl mpg321 alsa-utils alsa-base  \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y mpg123 python3-pyaudio vim python3 python3-pip curl mpg321 \
+    alsa-utils alsa-base libasound2-plugins \
     && rm -fr /var/lib/apt/lists/*
 
 COPY requirements.amd64.txt requirements.txt

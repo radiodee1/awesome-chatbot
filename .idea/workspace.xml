@@ -2,12 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/docker/do_find_credentials.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile.amd64" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.amd64" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/do_build_amd64.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_build_amd64.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game_voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_voice.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker/do_launch_amd64.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_amd64.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.amd64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -87,6 +86,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1589411891761" />
+    <state x="849" y="363" width="626" height="403" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1589550823943">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="849" y="363" width="626" height="403" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1589550823943" />
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1589323828180">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
@@ -99,10 +102,6 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="1003" y="328" width="424" height="491" key="FileChooserDialogImpl/0.27.1920.1053@0.27.1920.1053" timestamp="1583500986944" />
-    <state x="452" y="190" width="1022" height="737" key="SettingsEditor" timestamp="1580838300648">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="452" y="190" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1580838300648" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
