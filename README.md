@@ -312,3 +312,12 @@ $ sudo usermod -aG docker $USER
 ```
 
 Log out and then in again to use docker.
+
+### WIKI SEARCH
+
+You need two credentials stored in files. The files are kept in the `/home/<username>/bin/` folder. 
+One is the `api_key.txt` file. One is the `cse_id.txt` file.
+* API Key - https://cloud.google.com/docs/authentication/api-keys - place generated key in `~/bin/api_key.txt` file.
+* Custom Search Engine ID - https://cse.google.com/cse/all - place generated ID in `~/bin/cse_id.txt` file.
+* Getting Started Doc - https://github.com/googleapis/google-api-python-client/blob/master/docs/start.md
+
