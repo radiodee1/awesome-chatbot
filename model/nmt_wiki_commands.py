@@ -5,7 +5,18 @@ import sys
 #from subprocess import Popen
 #import re
 #import xml.etree.ElementTree as ET
-from googlesearch import search
+#from google import search
+print(sys.path)
+import importlib
+#google = importlib.import_module('/usr/local/lib/python3.7/dist-packages/google/__init__.py')
+try:
+    from google import search
+except:
+    pass
+#search = google.search
+#from serpapi.google_search_results import GoogleSearchResults
+#from googlesearch.googlesearch import GoogleSearch
+#search = GoogleSearch().search
 import bs4
 import requests
 sys.path.append('..')
@@ -42,6 +53,9 @@ class Wikipedia:
             ## search for text ##
             query = self.topic
             s = search(query, tld='com', num=20, stop=20)
+            #client = GoogleSearchResults({'q':query})
+            #s = client.get_dict()
+            print(s)
             r = ''
             for j in s:
                 print(j)

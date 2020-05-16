@@ -60,9 +60,11 @@ numpy
 #transformers ## include on laptop/desktop install
 
 ## aiml ##
-#aiml
+aiml
+
 #beautifulsoup4
-#google
+
+google
 google-search
 
 RPi.GPIO

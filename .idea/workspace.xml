@@ -2,11 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.amd64" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.amd64" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game_voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_voice.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/do_launch_amd64.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_amd64.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/model/nmt_wiki_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/nmt_wiki_commands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.amd64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
