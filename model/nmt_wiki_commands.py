@@ -1,28 +1,30 @@
 #!/usr/bin/python3
 
-#import os
+import os
 import sys
-#from subprocess import Popen
-#import re
-#import xml.etree.ElementTree as ET
-#from google import search
+import json
+
 print(sys.path)
-import importlib
-#google = importlib.import_module('/usr/local/lib/python3.7/dist-packages/google/__init__.py')
-try:
-    from google import search
-except:
-    pass
-#search = google.search
-#from serpapi.google_search_results import GoogleSearchResults
-#from googlesearch.googlesearch import GoogleSearch
-#search = GoogleSearch().search
+
+from googleapiclient.discovery import build
+
 import bs4
 import requests
 sys.path.append('..')
 #from model.settings import hparams as hp
+cse_id = os.environ['CSE_ID']
+api_key = os.environ['API_KEY']
 
-#aiml_txt = hp['data_dir'] + '/std_startup.xml'
+def google_query(query, api_key, cse_id, **kwargs):
+    query_service = build("customsearch",
+                          "v1",
+                          developerKey=api_key
+                          )
+    query_results = query_service.cse().list(q=query,    # Query
+                                             cx=cse_id,  # CSE ID
+                                             **kwargs
+                                             ).execute()
+    return query_results['items']
 
 class Wikipedia:
     def __init__(self):
@@ -52,12 +54,12 @@ class Wikipedia:
         else:
             ## search for text ##
             query = self.topic
-            s = search(query, tld='com', num=20, stop=20)
-            #client = GoogleSearchResults({'q':query})
-            #s = client.get_dict()
+            #s = search(query, tld='com', num=20, stop=20)
+            s = google_query(query, api_key=api_key, cse_id=cse_id)
             print(s)
             r = ''
             for j in s:
+                j = j['link']
                 print(j)
                 if j.startswith(self.url_start):
                     rr = requests.get(j).text
@@ -75,6 +77,6 @@ class Wikipedia:
 
 if __name__ == '__main__':
     w = Wikipedia()
-    w.set_topic('xxzz')
+    w.set_topic('BEATLES')
     z = w.get_text()
     print(z)

@@ -22,8 +22,12 @@ fi
 
 echo ${ENTRY_POINT}
 
+export CSE_ID=$(cat cse_id.txt)
+export API_KEY=$(cat api_key.txt)
+
 docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
     --device /dev/snd --group-add audio --env ALSA_CARD="PCH" \
+    --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
     --env GOOGLE_APPLICATION_CREDENTIALS=/app/${CREDENTIALS} \

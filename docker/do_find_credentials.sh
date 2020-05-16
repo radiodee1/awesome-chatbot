@@ -10,4 +10,6 @@ ls awesome-sr-*.json > credentials.txt
 
 cat credentials.txt
 
+cp ${HOME}/bin/api_key.txt ${HOME}/bin/cse_id.txt ${PWD}/.
+
 cd docker
