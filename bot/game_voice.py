@@ -21,6 +21,8 @@ class VoiceOut:
             except AssertionError:
                 print('assertion error.')
                 pass
+            except:
+                pass
             os.system("mpg123 " + path + " > /dev/null 2>&1 ")
         pass
 

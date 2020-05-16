@@ -6,7 +6,10 @@ import json
 
 print(sys.path)
 
-from googleapiclient.discovery import build
+try:
+    from googleapiclient.discovery import build
+except:
+    pass
 
 import bs4
 import requests
