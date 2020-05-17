@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 DOCKER_BUILDKIT=1
+ulimit -c unlimited
 
 cd ../
 

@@ -8,6 +8,7 @@ RUN apt-get update \
     alsa-utils alsa-base libasound2-plugins \
     && rm -fr /var/lib/apt/lists/*
 
+RUN pip3 install --upgrade pip
 COPY requirements.amd64.txt requirements.txt
 RUN pip3 install -r requirements.txt
 RUN pip3 install torch==1.5.0+cpu torchvision==0.6.0+cpu -f https://download.pytorch.org/whl/torch_stable.html
