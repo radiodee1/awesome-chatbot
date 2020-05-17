@@ -327,9 +327,9 @@ work in the Docker version of the project.
 With an update to a version of Ubuntu, Python 3.7 was replaced with a later version and scripts for this project stopped working.
 To use this project with Docker, follow the commands below. This should work on any linux amd64 operating system with Docker.
 * Install docker on your machine
-* `git pull` the project to the directory of your choice.
-* `cd` into the directory.
-* `cd` into the docker folder.
+* `git pull` this project to the directory of your choice.
+* `cd` into the project directory.
+* `cd` into the `docker` folder.
 * `./do_build_amd64.sh` to build the docker container.
 * After the build process the script will automatically start the launch script called `./do_launch_amd64.sh`. You will be presented with a bash prompt. This will be inside the Docker container.
 * Train networks or run programs to use pre-trained networks from the `bash` prompt.
