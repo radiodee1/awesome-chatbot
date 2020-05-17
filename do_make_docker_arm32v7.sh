@@ -19,7 +19,7 @@ echo $MODEL_NAME
 
 docker run -t --rm -p 8500:8500 \
     --mount type=bind,src=${TESTDATA}/${MODEL_NAME}/,dst=/${MODEL_NAME} \
-    -e MODEL_NAME=$MODEL_NAME -e MODEL_BASE_PATH="" \
+    -e MODEL_NAME=$MODEL_NAME -e MODEL_BASE_PATH="" --name tfs_v7 \
     --entrypoint tensorflow_model_server emacski/tensorflow-serving:1.14.0-arm32v7 \
     --port=8500 --model_name=${MODEL_NAME} --model_base_path=/$MODEL_NAME/export/ &
 

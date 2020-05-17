@@ -3,7 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.amd64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_docker_arm32v7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_docker_arm32v7.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/do_build_armv7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_build_armv7.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/do_launch_amd64.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_amd64.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/do_launch_armv7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_armv7.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

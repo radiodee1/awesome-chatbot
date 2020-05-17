@@ -2,11 +2,15 @@
 
 DOCKER_BUILDKIT=1
 
-cd ../..
+./do_find_credentials.sh
 
-echo ${PWD}
+cd ../
 
-docker build --tag awesome:1.0 ./docker/docker_test_armv7/
-#docker run --publish 8000:8080 awesome:1.0
-./do_make_docker_arm32v7.sh
 
+docker build --tag awesome_v7:1.0 -f ${PWD}/Dockerfile.armv7 .
+
+cd docker
+
+./do_launch_armv7.sh
+
+#docker run -p 8001:8001 --entrypoint "./game_sr.py" awesome:1.0

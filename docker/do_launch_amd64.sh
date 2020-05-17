@@ -28,6 +28,7 @@ export API_KEY=$(cat api_key.txt)
 
 docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
     --device /dev/snd --group-add audio --env ALSA_CARD="PCH" \
+    --name awe_64 \
     --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
