@@ -16,7 +16,7 @@ google-api-python-client==1.8.3
 google-cloud-speech==1.3.2
 #PyAudio ## install this from linux distro repository, not pip3
 unidecode==1.1.1
-matplotlib==3.2.1
+#matplotlib==3.2.1 ##cythonize?
 py-cpuinfo==5.0.0
 datetime==4.3
 #pandas
@@ -30,10 +30,7 @@ Tensor2Tensor==1.15.5
 #tensorflow-hub
 #tensorflow_core==0.0.0.post1
 
-## bert ##
-#bert-serving-server
-#bert-serving-client
-numpy==1.18.4
+#numpy==1.18.4
 
 ## kaggle ##
 #kaggle

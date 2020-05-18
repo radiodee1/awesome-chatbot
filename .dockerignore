@@ -1,5 +1,5 @@
 vis/
-do_make*
+#do_make*
 torch_t2t/
 raw/
 data/tf_gpt2_data/1558M/

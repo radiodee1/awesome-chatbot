@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 DOCKER_BUILDKIT=1
 
@@ -6,16 +6,30 @@ cd ../
 
 echo ${PWD}
 
-Container_ID=${docker ps -aqf "name=^tfs_v7$"}
+Container_ID=$(docker ps -aqf 'name=^tfs_v7$')
+#Container_ID="hello"
 
 result=$( docker inspect -f {{.State.Running}} $Container_ID)
 
+echo $Container_ID
+echo $result
+
+if [[  -z "$result" ]]; then
+    echo fail
+    result="false"
+else
+    echo pass
+    result="true"
+fi
+
 echo "result is" $result
+
 
 if [[ $result = "true" ]]; then
     echo "docker is already running"
 else
     #systemctl restart docker
+    echo "new tensorflow-serving instance must be started."
     ./do_make_docker_arm32v7.sh
 fi
 
@@ -48,4 +62,3 @@ docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
     --entrypoint "${ENTRY_POINT}" awesome_v7:1.0
 
 
-#docker run -p 8001:8001 --entrypoint "./game_sr.py" awesome:1.0
