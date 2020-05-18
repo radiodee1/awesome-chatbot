@@ -13,6 +13,7 @@ vis/bertviz/
 
 *.bz2
 *.zip
+*.whl
 
 *.decodes
 
