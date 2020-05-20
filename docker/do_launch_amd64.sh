@@ -5,6 +5,10 @@ ulimit -c unlimited
 
 cd ../
 
+if [[ -z "${ALSA_CARD}" ]]; then
+    ALSA_CARD='PCH'
+fi
+
 echo ${#}
 if [[ "${#}" == "1" ]]; then
     ENTRY_POINT=${1}
@@ -27,7 +31,7 @@ export CSE_ID=$(cat cse_id.txt)
 export API_KEY=$(cat api_key.txt)
 
 docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
-    --device /dev/snd --group-add audio --env ALSA_CARD="PCH" \
+    --device /dev/snd --group-add audio --env ALSA_CARD="${ALSA_CARD}" \
     --name awe_64 \
     --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \

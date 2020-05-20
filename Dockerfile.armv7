@@ -1,4 +1,4 @@
-FROM arm32v7/debian:buster
+FROM arm32v7/ubuntu:19.10
 
 ARG CREDENTIALS
 ENV CREDENTIALS $CREDENTIALS
@@ -7,33 +7,29 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y mpg123 python3-pyaudio vim python3 python3-pip curl mpg321 \
     alsa-utils  libasound2-plugins wget build-essential python-opencv python3-opencv cython3 cython python3-scipy \
     python3-matplotlib python3-cffi python3-greenlet python3-pycparser python3-gevent python3-grpcio python3-h5py \
-    libxml2-dev libxslt-dev python3-lxml \
+    libxml2-dev libxslt-dev python3-lxml libopenblas-dev pciutils alsa alsa-base \
     && rm -fr /var/lib/apt/lists/*
 
 COPY do_make_tf_armv7_download.sh get_arm.sh
-#RUN pip3 install --upgrade pip
 RUN ./get_arm.sh
-#RUN chmod a+x miniconda.sh
-#RUN  /miniconda.sh -b -p miniconda
-#RUN chmod a+x miniconda/bin/activate
-#RUN ls -l miniconda/bin
-#RUN ["/bin/bash", "source", "miniconda/bin/activate"]
-#RUN conda init
-#RUN conda install -c powerai sentencepiece
 
 RUN pip3 install opencv_python-4.1.1.26-cp37-cp37m-linux_armv7l.whl
 RUN pip3 install tensorflow-1.14.0-cp37-none-linux_armv7l.whl
 RUN pip3 install torch-1.4.0a0+7f73f1d-cp37-cp37m-linux_armv7l.whl
-#RUN dpkg -i *.deb
+
 COPY requirements.armv7.txt requirements.txt
 
 RUN pip3 install -r requirements.txt
-#RUN ./get_arm.sh
-#RUN echo 'deb [arch=amd64] https://storage.googleapis.com/tensorflow-serving-apt stable tensorflow-model-server tensorflow-model-server-universal' |  tee /etc/apt/sources.list.d/tensorflow-serving.list
-#RUN curl https://storage.googleapis.com/tensorflow-serving-apt/tensorflow-serving.release.pub.gpg |  apt-key add -
-#RUN apt-get update \
-#    && apt-get install -y tensorflow-model-server
+RUN pip3 install --upgrade pip
+
+RUN pip3 install tensor2tensor==1.14.0 tensorflow-serving-api==1.14.0
+
 RUN echo "@audio - rtprio 99" >> /etc/security/limits.conf
+RUN echo "snd-hda-intel" >> /etc/modules
+RUN echo "options snd-hda-intel model=auto" >> /etc/modprobe.d/alsa-base.conf
+RUN echo "options snd-hda-intel dmic_detect=0" >> /etc/modprobe.d/alsa-base.conf
+RUN echo "blacklist snd_soc_skl" >> /etc/modprobe.d/blacklist.conf
+
 RUN mkdir app
 WORKDIR app
 

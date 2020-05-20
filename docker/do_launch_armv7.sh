@@ -6,8 +6,16 @@ cd ../
 
 echo ${PWD}
 
+if [[ -z "${ALSA_CARD}" ]]; then
+    ALSA_CARD='PCH'
+fi
+
 Container_ID=$(docker ps -aqf 'name=^tfs_v7$')
-#Container_ID="hello"
+
+
+if [[ -z "${Container_ID}" ]]; then
+    Container_ID="xxx"
+fi
 
 result=$( docker inspect -f {{.State.Running}} $Container_ID)
 
@@ -24,6 +32,7 @@ fi
 
 echo "result is" $result
 
+result="true"
 
 if [[ $result = "true" ]]; then
     echo "docker is already running"
@@ -53,8 +62,8 @@ export CSE_ID=$(cat cse_id.txt)
 export API_KEY=$(cat api_key.txt)
 
 docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
-    --device /dev/snd --group-add audio --env ALSA_CARD="PCH" \
-    --name awe_v7 \
+    --device /dev/snd:/dev/snd --group-add audio --env ALSA_CARD="${ALSA_CARD}" \
+    --name awe_v7  \
     --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
