@@ -1,0 +1,1 @@
+docker run --privileged -d arm32v7/docker:dind --entrypoint bash

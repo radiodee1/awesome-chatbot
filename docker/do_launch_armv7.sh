@@ -10,11 +10,14 @@ if [[ -z "${ALSA_CARD}" ]]; then
     ALSA_CARD='PCH'
 fi
 
+###########################
+
 Container_ID=$(docker ps -aqf 'name=^tfs_v7$')
 
 
 if [[ -z "${Container_ID}" ]]; then
     Container_ID="xxx"
+    echo 'set container id'
 fi
 
 result=$( docker inspect -f {{.State.Running}} $Container_ID)
@@ -32,17 +35,51 @@ fi
 
 echo "result is" $result
 
-result="true"
+#result="true"
 
 if [[ $result = "true" ]]; then
-    echo "docker is already running"
+    echo "tfs_v7 is already running ${Container_ID}"
+    docker restart ${Container_ID}
 else
-    #systemctl restart docker
     echo "new tensorflow-serving instance must be started."
-    ./do_make_docker_arm32v7.sh
+    #./do_make_docker_arm32v7.sh
 fi
 
 ########################################
+
+Container_ID2=$(docker ps -aqf 'name=^awe_v7$')
+
+
+if [[ -z "${Container_ID2}" ]]; then
+    Container_ID2="xxx"
+fi
+
+result=$( docker inspect -f {{.State.Running}} $Container_ID2)
+
+echo $Container_ID2
+echo $result
+
+if [[  -z "$result" ]]; then
+    echo fail
+    result="false"
+else
+    echo pass
+    result="true"
+fi
+
+echo "result is" $result
+
+#result="true"
+
+if [[ $result = "true" ]]; then
+    echo "awe_v7 is already running ${Container_ID2}"
+    docker restart ${Container_ID2}
+    exit
+else
+    echo "new arm instance must be started."
+fi
+###############################################
+
 echo ${#}
 echo ${@}
 if [[ "${#}" == "1" ]]; then
@@ -65,16 +102,17 @@ echo ${ENTRY_POINT}
 export CSE_ID=$(cat cse_id.txt)
 export API_KEY=$(cat api_key.txt)
 
+echo ${DOCKER_DAEMON_ARGS}
 
-
-docker run -p 8001:8001 --mount type=bind,src=${PWD}/,dst=/app/. \
+docker run -p 8001:8001  --mount type=bind,src=${PWD}/,dst=/app/. \
     --device /dev/snd:/dev/snd --group-add audio --env ALSA_CARD=${ALSA_CARD} \
-    --name awe_v7  \
+    --name awe_v7  --rm \
     --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
     --env GOOGLE_APPLICATION_CREDENTIALS=/app/${CREDENTIALS} \
+    --env DOCKER_DAEMON_ARGS="" \
     awesome_v7:1.0 \
     --entrypoint ${ENTRY_POINT}
 
-
+# --env DOCKER_HOST="tcp://0.0.0.0:2375" \

@@ -7,14 +7,13 @@ RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y mpg123 python3-pyaudio vim python3 python3-pip curl mpg321 \
     alsa-utils  libasound2-plugins wget build-essential python-opencv python3-opencv cython3 cython python3-scipy \
     python3-matplotlib python3-cffi python3-greenlet python3-pycparser python3-gevent python3-grpcio python3-h5py \
-    libxml2-dev libxslt-dev python3-lxml libopenblas-dev pciutils alsa alsa-base \
+    libxml2-dev libxslt-dev python3-lxml libopenblas-dev pciutils alsa alsa-base libhdf5-dev libhd-dev \
     && rm -fr /var/lib/apt/lists/*
 
 COPY do_make_tf_armv7_download.sh get_arm.sh
 RUN ./get_arm.sh
 
 RUN pip3 install opencv_python-4.1.1.26-cp37-cp37m-linux_armv7l.whl
-RUN pip3 install tensorflow-1.14.0-cp37-none-linux_armv7l.whl
 RUN pip3 install torch-1.4.0a0+7f73f1d-cp37-cp37m-linux_armv7l.whl
 
 COPY requirements.armv7.txt requirements.txt
@@ -22,7 +21,44 @@ COPY requirements.armv7.txt requirements.txt
 RUN pip3 install -r requirements.txt
 RUN pip3 install --upgrade pip
 
-RUN pip3 install tensor2tensor==1.14.0 tensorflow-serving-api==1.14.0
+RUN apt-get update && apt-get install -y git  apt-utils qemu-user-static qemu binfmt-support iptables iputils-ping lxc \
+    ca-certificates apt-transport-https
+
+VOLUME /var/lib/docker
+ADD docker/scripts/wrapdocker.sh /usr/local/bin/wrapdocker
+RUN chmod +x /usr/local/bin/wrapdocker
+
+#RUN  curl -fsSLk get.docker.com -o get-docker.sh
+COPY docker/scripts/get-docker.sh get-docker.sh
+
+RUN sh get-docker.sh
+#RUN DOCKER_CLI_EXPERIMENTAL=enabled
+RUN service docker start
+RUN echo $DOCKER
+RUN dockerd -H unix://
+#RUN docker run --rm --privileged multiarch/qemu-user-static:arm32v7 --reset -p yes
+#RUN ping www.google.com
+
+RUN docker run --privileged hello-world
+
+RUN cd / && git clone https://github.com/tensorflow/tensorflow.git
+#WORKDIR /tensorflow
+RUN cd /tensorflow && git checkout r1.15 && ls
+
+#RUN cd /tensorflow && CI_DOCKER_EXTRA_PARAMS="--privileged -e CI_BUILD_PYTHON=python3.7 -e CROSSTOOL_PYTHON_INCLUDE_PATH=/usr/include/python3.7" \
+#    tensorflow/tools/ci_build/ci_build.sh PI-PYTHON3 \
+#    tensorflow/tools/ci_build/pi/build_raspberry_pi.sh
+
+#RUN cd /tensorflow && tensorflow/tools/ci_build/ci_build.sh PI \
+#    tensorflow/tools/ci_build/pi/build_raspberry_pi.sh PI_ONE
+
+###RUN pip3 install tensorflow-1.15.2-cp37-none-linux_armv7l.whl
+#RUN pip3 install tensorflow-1.13.1-cp37-none-linux_armv7l.whl
+#RUN pip3 install tensorflow-1.14.0-cp37-none-linux_armv7l.whl
+###RUN pip3 install h5py
+
+RUN pip3 install tensor2tensor==1.15.0 tensorflow-serving-api==1.15.0 tensorflow-probability==0.7.0 tensorflow==1.15
+RUN apt-get -y remove python3-mpi4py
 
 RUN echo "@audio - rtprio 99" >> /etc/security/limits.conf
 RUN echo "snd-hda-intel" >> /etc/modules

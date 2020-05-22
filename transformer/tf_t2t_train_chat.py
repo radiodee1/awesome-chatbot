@@ -1,9 +1,10 @@
-#!/usr/bin/env python3
+#!/usr/bin/python3
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+#import tensor2tensor
 #from tensor2tensor.bin import t2t_trainer
 #from tensor2tensor.bin import t2t_decoder
 import sys
@@ -36,6 +37,7 @@ args = parser.parse_args()
 if True:
     from tensor2tensor.bin import t2t_trainer
     from tensor2tensor.bin import t2t_decoder
+    #import tensorflow as tf
     pass
 
 train_not_test = True
