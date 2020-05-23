@@ -12,42 +12,10 @@ fi
 
 ###########################
 
-Container_ID=$(docker ps -aqf 'name=^tfs_v7$')
-
-
-if [[ -z "${Container_ID}" ]]; then
-    Container_ID="xxx"
-    echo 'set container id'
-fi
-
-result=$( docker inspect -f {{.State.Running}} $Container_ID)
-
-echo $Container_ID
-echo $result
-
-if [[  -z "$result" ]]; then
-    echo fail
-    result="false"
-else
-    echo pass
-    result="true"
-fi
-
-echo "result is" $result
-
-#result="true"
-
-if [[ $result = "true" ]]; then
-    echo "tfs_v7 is already running ${Container_ID}"
-    docker restart ${Container_ID}
-else
-    echo "new tensorflow-serving instance must be started."
-    #./do_make_docker_arm32v7.sh
-fi
 
 ########################################
 
-Container_ID2=$(docker ps -aqf 'name=^awe_build_v7$')
+Container_ID2=$(docker ps -aqf 'name=^awe_cross_v7$')
 
 
 if [[ -z "${Container_ID2}" ]]; then
@@ -72,12 +40,12 @@ echo "result is" $result
 #result="true"
 
 if [[ $result = "true" ]]; then
-    echo "awe_v7 is already running ${Container_ID2}"
+    echo "awe_x7 is already running ${Container_ID2}"
     #docker restart ${Container_ID2}
-    export DOCKER_LOCAL_ARGS="--link awe_build_v7 ${DOCKER_LOCAL_ARGS}"
+    export DOCKER_LOCAL_ARGS="--link awe_cross_v7 ${DOCKER_LOCAL_ARGS}"
     #exit
 else
-    export DOCKER_LOCAL_ARGS="--name awe_build_v7 ${DOCKER_LOCAL_ARGS}"
+    export DOCKER_LOCAL_ARGS="--name awe_cross_v7 ${DOCKER_LOCAL_ARGS}"
     echo "new arm instance must be started."
 fi
 ###############################################
@@ -115,7 +83,7 @@ docker run -p 8002:8002  --mount type=bind,src=${PWD}/,dst=/app/. \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
     --env GOOGLE_APPLICATION_CREDENTIALS=/app/${CREDENTIALS} \
     --env DOCKER_DAEMON_ARGS="" \
-    awesome_v7:1.0 \
+    awesome_x7/dind:1.0 \
     --entrypoint ${ENTRY_POINT}
 
 # --env DOCKER_HOST="tcp://0.0.0.0:2375" \

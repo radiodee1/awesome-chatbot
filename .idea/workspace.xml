@@ -2,17 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/docker/scripts/LICENSE" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/scripts/do_dind_launch.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/scripts/get-docker.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docker/scripts/wrapdocker.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Dockerfile.cross" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/do_build_cross.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/do_launch_cross.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docker/scripts/build_tensorflow.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Dockerfile.armv7" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.armv7" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_docker_arm32v7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_docker_arm32v7.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_tf_armv7_download.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tf_armv7_download.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker/do_build_armv7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_build_armv7.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker/do_launch_armv7.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/do_launch_armv7.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer/tf_t2t_train_chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer/tf_t2t_train_chat.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/scripts/do_dind_launch.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/scripts/do_dind_launch.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docker/scripts/wrapdocker.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/scripts/wrapdocker.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,15 +42,15 @@
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/." />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/docker" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/docker/docker_test" />
       <recent name="$PROJECT_DIR$/classifier" />
       <recent name="$PROJECT_DIR$/data" />
-      <recent name="$PROJECT_DIR$" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="SvnConfiguration">
@@ -92,10 +91,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1589411891761" />
-    <state x="849" y="363" width="626" height="403" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1590168930737">
+    <state x="849" y="363" width="641" height="403" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1590238789582">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="849" y="363" width="626" height="403" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1590168930737" />
+    <state x="849" y="363" width="641" height="403" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1590238789582" />
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1589323828180">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>

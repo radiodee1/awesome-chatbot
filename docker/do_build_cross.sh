@@ -11,7 +11,7 @@ cd ..
 docker run --rm --privileged multiarch/qemu-user-static:arm32v7 --reset -p yes
 
 
-docker buildx build  --tag awesome_v7/dind:1.0 -f ${PWD}/Dockerfile.armv7 .
+docker buildx build  --tag awesome_x7/dind:1.0 -f ${PWD}/Dockerfile.cross .
 
 cd docker
 
