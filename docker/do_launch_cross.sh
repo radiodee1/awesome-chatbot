@@ -77,13 +77,15 @@ echo "${DOCKER_LOCAL_ARGS} <<--"
 
 docker run -p 8002:8002  --mount type=bind,src=${PWD}/,dst=/app/. \
     --device /dev/snd:/dev/snd --group-add audio --env ALSA_CARD=${ALSA_CARD} \
-    --privileged ${DOCKER_LOCAL_ARGS} \
+    --privileged ${DOCKER_LOCAL_ARGS}  \
     --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
     --env GOOGLE_APPLICATION_CREDENTIALS=/app/${CREDENTIALS} \
     --env DOCKER_DAEMON_ARGS="" \
-    awesome_x7/dind:1.0 \
-    --entrypoint ${ENTRY_POINT}
+    awesome_x7/dind:1.0
+
+#--entrypoint ${ENTRY_POINT}
 
 # --env DOCKER_HOST="tcp://0.0.0.0:2375" \
+# --security-opt seccomp=unconfined --security-opt apparmor=unconfined

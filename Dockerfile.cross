@@ -11,26 +11,29 @@ RUN apt-get update \
     ca-certificates \
     && rm -fr /var/lib/apt/lists/*
 
-COPY do_make_tf_armv7_download.sh get_arm.sh
-RUN ./get_arm.sh
+#COPY do_make_tf_armv7_download.sh get_arm.sh
+#RUN ./get_arm.sh
 
-RUN pip3 install opencv_python-4.1.1.26-cp37-cp37m-linux_armv7l.whl
-RUN pip3 install torch-1.4.0a0+7f73f1d-cp37-cp37m-linux_armv7l.whl
+#RUN pip3 install opencv_python-4.1.1.26-cp37-cp37m-linux_armv7l.whl
+#RUN pip3 install torch-1.4.0a0+7f73f1d-cp37-cp37m-linux_armv7l.whl
 
-COPY requirements.armv7.txt requirements.txt
+#COPY requirements.armv7.txt requirements.txt
 
-RUN pip3 install -r requirements.txt
+#RUN pip3 install -r requirements.txt
 RUN pip3 install --upgrade pip
 
 RUN apt-get update && apt-get install -y git qemu-user-static qemu binfmt-support iptables iputils-ping lxc \
     ca-certificates apt-transport-https
 
+RUN update-alternatives --set iptables /usr/sbin/iptables-legacy
+RUN update-alternatives --set ip6tables /usr/sbin/ip6tables-legacy
+
 VOLUME /var/lib/docker
 ADD docker/scripts/wrapdocker.sh /usr/local/bin/wrapdocker
 RUN chmod +x /usr/local/bin/wrapdocker
 
-RUN  curl -fsSLk get.docker.com -o get-docker.sh
-#COPY docker/scripts/get-docker.sh /get-docker.sh
+#RUN  curl -fsSLk get.docker.com -o get-docker.sh
+COPY docker/scripts/get-docker.sh /get-docker.sh
 
 RUN sh get-docker.sh
 #RUN wrapdocker
@@ -70,7 +73,8 @@ RUN echo "options snd-hda-intel model=auto" >> /etc/modprobe.d/alsa-base.conf
 RUN echo "options snd-hda-intel dmic_detect=0" >> /etc/modprobe.d/alsa-base.conf
 RUN echo "blacklist snd_soc_skl" >> /etc/modprobe.d/blacklist.conf
 
+RUN echo "${PATH}"
 RUN mkdir app
 #WORKDIR app
-CMD ['wrapdocker']
+#CMD ['wrapdocker']
 #ENTRYPOINT wrapdocker

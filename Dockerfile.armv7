@@ -16,6 +16,7 @@ RUN ./get_arm.sh
 
 RUN pip3 install opencv_python-4.1.1.26-cp37-cp37m-linux_armv7l.whl
 RUN pip3 install torch-1.4.0a0+7f73f1d-cp37-cp37m-linux_armv7l.whl
+RUN pip3 install tensorflow-1.14.0-cp37-none-linux_armv7l.whl
 
 COPY requirements.armv7.txt requirements.txt
 
@@ -25,16 +26,16 @@ RUN pip3 install --upgrade pip
 RUN apt-get update && apt-get install -y git qemu-user-static qemu binfmt-support iptables iputils-ping lxc \
     ca-certificates apt-transport-https
 
-VOLUME /var/lib/docker
-ADD docker/scripts/wrapdocker.sh /usr/local/bin/wrapdocker
-RUN chmod +x /usr/local/bin/wrapdocker
+#VOLUME /var/lib/docker
+#ADD docker/scripts/wrapdocker.sh /usr/local/bin/wrapdocker
+#RUN chmod +x /usr/local/bin/wrapdocker
 
-RUN  curl -fsSLk get.docker.com -o get-docker.sh
+#RUN  curl -fsSLk get.docker.com -o get-docker.sh
 #COPY docker/scripts/get-docker.sh /get-docker.sh
 
-RUN sh get-docker.sh
+#RUN sh get-docker.sh
 #RUN wrapdocker
-RUN apt-get -y install docker-ce docker-ce-cli docker-compose #docker.io
+#RUN apt-get -y install docker-ce docker-ce-cli docker-compose #docker.io
 
 #RUN DOCKER_CLI_EXPERIMENTAL=enabled
 #RUN service docker start
@@ -45,9 +46,9 @@ RUN apt-get -y install docker-ce docker-ce-cli docker-compose #docker.io
 
 #RUN docker run  hello-world
 
-RUN cd / && git clone https://github.com/tensorflow/tensorflow.git /tensorflow
+#RUN cd / && git clone https://github.com/tensorflow/tensorflow.git /tensorflow
 #WORKDIR /tensorflow
-RUN cd /tensorflow && git checkout r1.15 && ls
+#RUN cd /tensorflow && git checkout r1.15 && ls
 
 #RUN cd /tensorflow && CI_DOCKER_EXTRA_PARAMS="--privileged -e CI_BUILD_PYTHON=python3.7 -e CROSSTOOL_PYTHON_INCLUDE_PATH=/usr/include/python3.7" \
 #    tensorflow/tools/ci_build/ci_build.sh PI-PYTHON3 \
@@ -71,6 +72,7 @@ RUN echo "options snd-hda-intel dmic_detect=0" >> /etc/modprobe.d/alsa-base.conf
 RUN echo "blacklist snd_soc_skl" >> /etc/modprobe.d/blacklist.conf
 
 RUN mkdir app
-#WORKDIR app
+
+WORKDIR app
 CMD ['wrapdocker']
 #ENTRYPOINT wrapdocker
