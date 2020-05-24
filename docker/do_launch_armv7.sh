@@ -99,7 +99,7 @@ if [[ -z "${ENTRY_POINT}" ]]; then
     #ENTRY_POINT="jackd -R -d alsa -d hw:1"
 fi
 
-echo ${ENTRY_POINT}
+echo "${ENTRY_POINT} {{--"
 
 export CSE_ID=$(cat cse_id.txt)
 export API_KEY=$(cat api_key.txt)
@@ -108,14 +108,17 @@ echo ${DOCKER_DAEMON_ARGS}
 echo "${DOCKER_LOCAL_ARGS} <<--"
 
 docker run -p 8002:8002  --mount type=bind,src=${PWD}/,dst=/app/. \
-    --device /dev/snd:/dev/snd --group-add audio --env ALSA_CARD=${ALSA_CARD} \
+    --device /dev/snd:/dev/snd --group-add audio \
+    --env ALSA_CARD=${ALSA_CARD} \
     --privileged ${DOCKER_LOCAL_ARGS} \
-    --env CSE_ID=${CSE_ID} --env API_KEY=${API_KEY} \
+    --env CSE_ID=${CSE_ID} \
+    --env API_KEY=${API_KEY} \
     --env DEBIAN_FRONTEND=noninteractive \
     --env CREDENTIALS="${ENTRY_POINT}" -ti \
     --env GOOGLE_APPLICATION_CREDENTIALS=/app/${CREDENTIALS} \
-    --env DOCKER_DAEMON_ARGS="" \
-    awesome_v7:1.0 \
-    --entrypoint ${ENTRY_POINT}
+    awesome_v7/dind:1.0 \
+    ${ENTRY_POINT}
 
 # --env DOCKER_HOST="tcp://0.0.0.0:2375" \
+# --name awe_build_v7 \
+# --entrypoint="" ${ENTRY_POINT}

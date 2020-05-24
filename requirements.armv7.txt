@@ -50,7 +50,7 @@ Tensor2Tensor==1.14.0 ## sentencepiece problem
 ## https://www.tensorflow.org/tfx/serving/setup#installing_the_modelserver
 ## this python package is also required
 
-tensorflow-serving-api==1.14.0
+#tensorflow-serving-api==1.14.0
 
 ## from the system package manager ##
 #libopenblas-dev libblas-dev m4 cmake cython python3-dev python3-yaml python3-setuptools
@@ -67,3 +67,5 @@ google==2.0.3
 google-search==1.0.2
 
 RPi.GPIO==0.7.0
+
+#cloudpickle==1.2.0

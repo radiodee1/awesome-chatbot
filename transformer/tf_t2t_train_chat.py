@@ -10,13 +10,17 @@ from __future__ import print_function
 import sys
 
 sys.path.append('..')
-
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except:
+    print('no tensorflow')
 import argparse
 from model.settings import hparams as hp
 import os
 #import json
 #from tensor2tensor.serving import query as t2t_query
+pwd = os.getcwd() + os.sep
+print(pwd)
 
 name = 'chat_10'
 
@@ -46,11 +50,11 @@ increment = str(int(args.increment))
 limit = int(args.limit)
 problem = 'chat_line_problem'
 
-counter_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
+counter_dir = os.path.join(pwd , hp['save_dir'], 't2t_train', args.name)
 counter_path = counter_dir + '/counter'
 counter = 0
 
-checkpoint_dir = os.path.join(hp['save_dir'], 't2t_train', args.name)
+checkpoint_dir = os.path.join(pwd, hp['save_dir'], 't2t_train', args.name)
 checkpoint_path = checkpoint_dir + '/checkpoint'
 
 
@@ -60,24 +64,24 @@ def maketree(path):
     except:
         pass
 
-maketree(hp['data_dir'] + '/t2t_data/' + args.name + '/')
-maketree(hp['data_dir'] + '/t2t_data/' + args.name + '/' + 'tmp/')
+maketree(pwd + hp['data_dir'] + '/t2t_data/' + args.name + '/')
+maketree(pwd + hp['data_dir'] + '/t2t_data/' + args.name + '/' + 'tmp/')
 
-maketree(hp['save_dir'] + '/t2t_train/' + args.name + '/')
+maketree(pwd + hp['save_dir'] + '/t2t_train/' + args.name + '/')
 maketree(counter_dir)
 
 trainer_args = [
     sys.argv[0],
     '--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/',
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/' + 'tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
+    '--data_dir=' +pwd + hp['data_dir'] + 't2t_data/' + args.name + '/',
+    '--tmp_dir=' +pwd + hp['data_dir'] + 't2t_data/' + args.name + '/' + 'tmp/',
+    '--output_dir='+ pwd + hp['save_dir'] + 't2t_train/' + args.name + '/',
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem=' + problem,
     '--model=transformer',
     '--hparams_set=transformer_chat',
     '--eval_steps=350',
-    '--score_file=' + hp['data_dir'] + '/t2t_data/' + 'eval_tab.txt',
+    '--score_file=' + pwd + hp['data_dir'] + 't2t_data/' + 'eval_tab.txt',
     '--t2t_usr_dir=./chat/trainer',
 ]
 
@@ -86,9 +90,9 @@ train_steps_arg = '--train_steps='
 decoder_args = [
     sys.argv[0],
     #'--generate_data' ,
-    '--data_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/' ,
-    '--tmp_dir=' + hp['data_dir'] + '/t2t_data/' + args.name + '/'+ 'tmp/',
-    '--output_dir=' + hp['save_dir'] + '/t2t_train/' + args.name + '/',
+    '--data_dir=' + pwd + hp['data_dir'] + 't2t_data/' + args.name + '/' ,
+    '--tmp_dir=' + pwd + hp['data_dir'] + 't2t_data/' + args.name + '/'+ 'tmp/',
+    '--output_dir='+ pwd + hp['save_dir'] + 't2t_train/' + args.name + '/',
     #'--problem=babi_qa_concat_task' + task + '_10k' ,
     '--problem='+ problem,
     '--model=transformer' ,
@@ -134,7 +138,7 @@ if __name__ == "__main__":
     print(sys.argv)
     try:
         with open('logdir.txt', 'w') as z:
-            z.write(hp['save_dir'] + '/t2t_train/' + args.name + '/')
+            z.write(pwd + hp['save_dir'] + 't2t_train/' + args.name + '/')
     except:
         print('could not write logdir.txt!!')
 
