@@ -366,4 +366,6 @@ echo 'Limits:'
 check_limit_over /proc/sys/kernel/keys/root_maxkeys 10000
 echo
 
+dmidecode -t 4 | egrep -i "Designation|Intel|core|thread"
+
 exit $EXITCODE
