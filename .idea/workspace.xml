@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dockerfile.armv7" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile.armv7" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/docker/scripts/check-config.sh" beforeDir="false" afterPath="$PROJECT_DIR$/docker/scripts/check-config.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
