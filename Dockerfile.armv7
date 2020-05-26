@@ -15,11 +15,15 @@ RUN apt-get update \
 COPY do_make_tf_armv7_download.sh get_arm.sh
 RUN ./get_arm.sh
 
+#RUN mv tensorflow-1.14.0-cp35-none-linux_armv7l.whl tensorflow-1.14.0-cp37-none-linux_armv7l.whl
+
 RUN pip3 install opencv_python-4.1.1.26-cp37-cp37m-linux_armv7l.whl
 RUN pip3 install torch-1.4.0a0+7f73f1d-cp37-cp37m-linux_armv7l.whl
 RUN pip3 install tensorflow-1.15.0-cp37-cp37m-linux_armv7l.whl
 #RUN pip3 install tflite_runtime-1.15.2-cp37-cp37m-linux_armv7l.whl
 
+### for tensorflow 1.14.0
+#RUN sed -i '31s/.*/    pass ##no line here##/' /usr/local/lib/python3.7/dist-packages/tensorflow/contrib/__init__.py
 
 COPY requirements.armv7.txt requirements.txt
 
@@ -41,7 +45,7 @@ RUN apt-get update && apt-get install -y git qemu-user-static qemu binfmt-suppor
 #RUN service docker start
 
 
-RUN pip3 install tensor2tensor==1.15.5 tensorflow-serving-api==1.15.0 #tensorflow-probability==0.7.0
+RUN pip3 install tensor2tensor==1.15.5 tensorflow-serving-api==1.15.0 #tensorflow-datasets==1.0.2
 RUN apt-get -y remove python3-mpi4py
 
 RUN pip3 install h5py-2.9.0-cp37-cp37m-linux_armv7l.whl
@@ -52,9 +56,10 @@ RUN echo "options snd-hda-intel model=auto" >> /etc/modprobe.d/alsa-base.conf
 RUN echo "options snd-hda-intel dmic_detect=0" >> /etc/modprobe.d/alsa-base.conf
 RUN echo "blacklist snd_soc_skl" >> /etc/modprobe.d/blacklist.conf
 
-RUN mkdir app
-VOLUME /app
+RUN mkdir /app
+#VOLUME /app
 
-#WORKDIR app
+WORKDIR app
+
 #CMD ['wrapdocker']
 #ENTRYPOINT wrapdocker
