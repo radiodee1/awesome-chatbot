@@ -14,9 +14,29 @@ except:
 import bs4
 import requests
 sys.path.append('..')
-#from model.settings import hparams as hp
-cse_id = os.environ['CSE_ID']
-api_key = os.environ['API_KEY']
+
+def load_string(str_in):
+    l = [str_in, '../' + str_in]
+    out = ''
+    for i in l:
+        if os.path.isfile(i):
+            with open(i, 'r') as f:
+                out = f.readline()
+                return out.strip()
+    return out
+
+try:
+    cse_id = os.environ['CSE_ID']
+    api_key = os.environ['API_KEY']
+except:
+    cse_id = ""
+    api_key = ""
+
+if len(cse_id) is 0:
+    cse_id = load_string('cse_id.txt')
+
+if len(api_key) is 0:
+    api_key = load_string('api_key.txt')
 
 def google_query(query, api_key, cse_id, **kwargs):
     query_service = build("customsearch",
