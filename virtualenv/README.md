@@ -13,8 +13,8 @@ Files in this folder:
 wget --no-check-certificate  https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
 tar xvzf Python-3.7.7.tgz 
 cd Python-3.7.7
-./configure
-sudo make --enable-optimizations
+./configure --enable-optimizations
+sudo make 
 sudo make altinstall
 ```
 
