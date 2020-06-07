@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/docker/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/virtualenv/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/virtualenv/do_make_virtualenv_bash.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/virtualenv/do_make_virtualenv_setup.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/virtualenv/do_make_virtualenv_use.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -80,6 +83,10 @@
     </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
+    <state x="807" y="223" width="800" height="719" key="#Plugins" timestamp="1591297602264">
+      <screen x="0" y="27" width="1920" height="1053" />
+    </state>
+    <state x="807" y="223" width="800" height="719" key="#Plugins/0.27.1920.1053@0.27.1920.1053" timestamp="1591297602264" />
     <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589411891761">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
@@ -88,10 +95,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="849" y="363" width="641" height="403" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1590238789582" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1589323828180">
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1591297447022">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1589323828180" />
+    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1591297447022" />
     <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1589459373999">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>

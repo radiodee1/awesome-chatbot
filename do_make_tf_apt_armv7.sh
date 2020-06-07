@@ -3,7 +3,7 @@ sudo apt-get update \
     alsa-utils  libasound2-plugins wget build-essential python-opencv python3-opencv cython3 cython python3-scipy \
     python3-matplotlib python3-cffi python3-greenlet python3-pycparser python3-gevent python3-grpcio python3-h5py \
     libxml2-dev libxslt-dev python3-lxml libopenblas-dev pciutils alsa-base libhdf5-dev libhd-dev apt-transport-https \
-    ca-certificates \
+    ca-certificates portaudio19-dev \
     && sudo rm -fr /var/lib/apt/lists/*
 
 sudo apt-get -y remove python3-mpi4py
