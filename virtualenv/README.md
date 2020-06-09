@@ -10,6 +10,7 @@ Files in this folder:
 ## Building Python3.7
 
 ```
+sudo apt-get install libssl-dev # other dev packages may be required
 wget --no-check-certificate  https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
 tar xvzf Python-3.7.7.tgz 
 cd Python-3.7.7
