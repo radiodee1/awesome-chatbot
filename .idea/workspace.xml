@@ -1,36 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game_sr.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_sr.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/game_voice.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_voice.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/bot/test_gpio.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/test_gpio.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_db_from_reddit.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_db_from_reddit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_db_tab_from_cornell_movie.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_db_tab_from_cornell_movie.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_skip_hide_from_corpus.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_skip_hide_from_corpus.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_tab_file_from_persona.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tab_file_from_persona.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_tab_file_from_srt.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_tab_file_from_srt.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_text_file_from_aiml.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_text_file_from_aiml.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_text_file_gpt2_hello.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_text_file_gpt2_hello.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_text_file_mixin.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_text_file_mixin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_zip_pytorch_copy.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_zip_pytorch_copy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_zip_tf_t2t_server_copy.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_zip_tf_t2t_server_copy.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/do_plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/aiml_run_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/aiml_run_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/experiments/chat_model_calc.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/chat_model_calc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/do_make_train_test_from_db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/do_make_vocab.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/do_make_vocab.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/do_split.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/do_split.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_tutorial.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/seq_2_seq_tutorial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/seq_2_seq/tokenize_weak.py" beforeDir="false" afterPath="$PROJECT_DIR$/seq_2_seq/tokenize_weak.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/start_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/start_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/transformer/tf_t2t_train_chat.py" beforeDir="false" afterPath="$PROJECT_DIR$/transformer/tf_t2t_train_chat.py" afterDir="false" />
-    </list>
+    <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />

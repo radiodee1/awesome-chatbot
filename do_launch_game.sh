@@ -18,6 +18,6 @@ fi
 export CHATBOT_MODE="sequence"
 
 cd bot
-python3.6 game.py ${TEST_6} # 2> /dev/null
+python3 game.py ${TEST_6} # 2> /dev/null
 
 ## this file must be hard coded for any model you want to run
