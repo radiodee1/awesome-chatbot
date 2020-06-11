@@ -291,11 +291,11 @@ This runs the shutdown script on the Pi. You must install the physical button on
 ### One-Liner for Program Launch `/etc/rc.local`
 On the raspberry pi there is a file called `/etc/rc.local` that is launched with every reboot. Use this file to launch the chatbot/smart-speaker on startup.
 
-* `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && cd /home/pi/workspace/awesome-chatbot/ && ./do_launch_game_s2s.sh'`
+* `su pi  -c 'cd /home/pi/workspace/awesome-chatbot/ && GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json ./do_launch_game_s2s.sh'`
 
 ### One-Liner for `start_test.py` Google Cloud loading in `/etc/rc.local`
 
-* `su pi  -c 'export GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json && /home/pi/workspace/awesome-chatbot/start_test.py'`
+* `su pi  -c 'GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json /home/pi/workspace/awesome-chatbot/start_test.py'`
 * Place this line first before all others.
 
 ### Docker for ARMv7
