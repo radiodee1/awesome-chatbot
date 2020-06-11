@@ -288,14 +288,27 @@ Test google speech recognition with the `bot/game_sr.py` script. The script may 
 This runs the shutdown script on the Pi. You must install the physical button on pins #05 and #20.
 * `sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &`
 
+If you intend to use a virtual environment, you must activate it in this line.
+
+* `export VIRTUALENVWRAPPER_PYTHON=$(which python3.7) && source $(which virtualenvwrapper.sh) && workon chatbot37 && sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &`
+
 ### One-Liner for Program Launch `/etc/rc.local`
 On the raspberry pi there is a file called `/etc/rc.local` that is launched with every reboot. Use this file to launch the chatbot/smart-speaker on startup.
 
 * `su pi  -c 'cd /home/pi/workspace/awesome-chatbot/ && GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json ./do_launch_game_s2s.sh'`
 
+With virtualenv:
+
+* `su pi  -c 'export VIRTUALENVWRAPPER_PYTHON=$(which python3.7) && source $(which virtualenvwrapper.sh) && workon chatbot37 && cd /home/pi/workspace/awesome-chatbot/ && GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json ./do_launch_game_s2s.sh'`
+
 ### One-Liner for `start_test.py` Google Cloud loading in `/etc/rc.local`
 
 * `su pi  -c 'GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json /home/pi/workspace/awesome-chatbot/start_test.py'`
+* Place this line first before all others.
+
+With virtualenv:
+
+* `su pi  -c 'export VIRTUALENVWRAPPER_PYTHON=$(which python3.7) && source $(which virtualenvwrapper.sh) && workon chatbot37 && GOOGLE_APPLICATION_CREDENTIALS=/home/pi/bin/awesome-sr-xxxxxx.json /home/pi/workspace/awesome-chatbot/start_test.py'`
 * Place this line first before all others.
 
 ### Docker for ARMv7
