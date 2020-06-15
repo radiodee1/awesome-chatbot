@@ -140,7 +140,7 @@ Though some of the setup scripts are also written in python, this folder holds t
 * `raw` This folder holds the raw downloads that are manipulated by the setup scripts. These include the GloVe vectors and the Reddit Comments download.
 * `saved` This folder holds the saved values from the training process.
 * `graph` This folder holds some json files that the author wants to save for later graphs for comparison with other data.
-* `babi` This is for babi question answering.
+* `classifier` This folder is for BERT and an attempt to create a model that did the chatbot task that at its core was a classifier. The experiment was not successful.
 * `seq_2_seq` This is for a rnn based sequence to sequence model.
 * `transformer` This is for the 'transformer' based chat bot model.  
 * `torch_t2t` This experimental directory is for a transformer model written in pytorch. A working model for the chatbot task has not been developed using this code.
