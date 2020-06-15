@@ -122,12 +122,10 @@ The aiml is the week link in all of this.
 3/9/2020 - Code was written so that Raspberry Pi installations could use indicator lights to show if output is being accepted or if the bot is processing input.
 The code was tested with indicator LEDs on the Raspberry Pi.
 
-6/15/2020 - The old readme file was moved to a safe location and this new readme file was created.
-
 # Organization
 The folders and files in the project are organized in the following manor. 
 The root directory of the project is called `awesome-chatbot`. 
-In that folder are sub folders named `data`,  `model`, `raw`, `seq_2_seq`, `transformer`, and `saved`.
+In that folder are sub folders named `data`,  `model`, `raw`, `babi`, `seq_2_seq`, `transformer`, and `saved`. 
 There are several script files in the main folder along side the folders mentioned above. 
 These scripts all have names that start with the word `do_` . 
 This is so that when the files are listed by the computer the scripts will all appear together. 
@@ -143,10 +141,6 @@ Though some of the setup scripts are also written in python, this folder holds t
 * `babi` This is for babi question answering.
 * `seq_2_seq` This is for a rnn based sequence to sequence model.
 * `transformer` This is for the 'transformer' based chat bot model.  
-* `torch_t2t` This experimental directory is for a transformer model written in pytorch. A working model for the chatbot task has not been developed using this code.
-* `docker` This folder has scripts for generating docker containers for the project. This was a programming experiment and code from this directory is not used in any of the final installed models.
-* `virtualenv` This folder has scripts for working with virtual environments. Some of the scipts are more like templates than working programs.
-* `vis` This folder has some code that helps visualize data from the transrormer model and the gpt2 model.
 
 Description of the individual setup scripts is included below.
 # Suggested Reading - Acknowledgements
@@ -171,12 +165,77 @@ Description of the individual setup scripts is included below.
   * https://github.com/huggingface/pytorch-pretrained-BERT
 
 
+# GloVe and W2V Word Embeddings Download
+* This link brings you to a page where you can download W2V embeddings that google makes available. At the time of this writing this project does not use w2v embeddings, but uses GloVe instead.
+  * https://code.google.com/archive/p/word2vec/
+* This link starts a download of the GloVe vectors in the `glove.6B` collection. The download takes a while and uses 823M.
+  * http://nlp.stanford.edu/data/glove.6B.zip
+# REDDIT Download
+* This link starts a download that takes several hours for the Reddit Comments file from November of 2017. The file is several gigabytes.
+  * http://files.pushshift.io/reddit/comments/RC_2017-11.bz2
 # Scripts For Setup
-Here is a list of scripts and their description and possibly their location. It is recommended that you install all the packages in the `requirements.txt` file. You can do this with the command `pip3 install -r requirements.txt`
-* `do_make_train_test_from_db.py` This file is not located in the root folder of the repository. It is in the subfolder that the `model.py` file is found in. Execute this file with one argument, the location of the `input.db` file. The script takes several hours and creates many files in the `data` folder that the `model.py` file will later use for training. These data files are also used to create the vocabulary files that are essential for the model.
-* `do_make_vocab.py` This file is located in the directory  that the `do_make_train_test_from_db.py` is found in. It takes no arguments. It proceeds to find the most popular words in the training files and makes them into a list of vocabulary words of the size specified by the `settings.py` file. It also adds a token for unknown words and for the start and end of each sentence. If word embeddings are enabled, it will prepare the word embeddings from the GloVe download. The GloVe download does not include contractions, so if it is used no contractions will appear in the `vocab.big.txt` file. The embeddings can be disabled by specifying 'None' for `embed_size` in the `model/settings.py` file. Embeddings can be enabled with some versions of the keras model. The pytorch model is to be used without pre-set embeddings. This script could take hours to run. It puts its vocabulary list in the `data` folder, along with a modified GloVe word embeddings file.
-* `do_make_rename_train.sh` This file should be called once after the data folder is set up to create some important symbolic links that will allow the `model.py` file to find the training data. If your computer has limited resources this method can be called with a single integer, `n`, as the first argument. This sets up the symbolic links to piont the `model.py` file at the `n`th training file. It should be noted that there are about 80 training files in the `RC_2017-11` download, but these training files are simply copies of the larger training file, called `train.big.from` and `train.big.to`, split up into smaller pieces. When strung together they are identical to the bigger file. If your computer can use the bigger file it is recommended that you do so. If you are going to use the larger file, call the script withhout any arguments. If you are going to use the smaller files, call the script with the number associated with the file you are interested in. This call woudl look like this: `./do_make_rename_train.sh 1`
+Here is a list of scripts and their description and possibly their location. You must execute them in order. It is recommended that you install all the packages in the `requirements.txt` file. You can do this with the command `pip3 install -r requirements.txt`
+1. `do_make_glove_download.sh` This script is located in the root folder of the repository. It takes no arguments. Execute this command and the GloVe word embeddings will be downloaded on your computer. This download could take several minutes. The file is found in the `raw` folder. In order to continue to later steps you must unpack the file. In the `raw` directory, execute the command `unzip glove.6B.zip`. 
+2. `do_make_reddit_download.sh` This script is located in the root folder of the repository. It takes no arguments. Execute this command and the Reddit Comments JSON file will be downloaded on your computer. This download could take several hours and requires several gigabytes of space. The file is found in the `raw` folder. In order to continue to later steps you must unpack the file. In the `raw` directory execute the command `bunzip2 RC_2017-11.bz2`. Unzipping this file takes hours and consumes 30 to 50 gigabytes of space on your hard drive.
+3. `do_make_db_from_reddit.py` This script is located in the root folder of the repository. It takes one argument, a specification of the location of the uunpacked Reddit Comments JSON file. Typically you would execute the command as `./do_make_db_from_reddit.py raw/RC_2017-11`. Executing this file takes several hours and outputs a sqlite data base called `input.db` in the root directory or your repository. There should be 5.9 Million paired rows of comments in the final db file. You can move the file or rename it for convenience. I typically put it in the `raw` folder. This python script uses `sqlite3`.
+4. `do_make_train_test_from_db.py` This file is not located in the root folder of the repository. It is in the subfolder that the `model.py` file is found in. Execute this file with one argument, the location of the `input.db` file. The script takes several hours and creates many files in the `data` folder that the `model.py` file will later use for training. These data files are also used to create the vocabulary files that are essential for the model.
+5. `do_make_vocab.py` This file is located in the directory  that the `do_make_train_test_from_db.py` is found in. It takes no arguments. It proceeds to find the most popular words in the training files and makes them into a list of vocabulary words of the size specified by the `settings.py` file. It also adds a token for unknown words and for the start and end of each sentence. If word embeddings are enabled, it will prepare the word embeddings from the GloVe download. The GloVe download does not include contractions, so if it is used no contractions will appear in the `vocab.big.txt` file. The embeddings can be disabled by specifying 'None' for `embed_size` in the `model/settings.py` file. Embeddings can be enabled with some versions of the keras model. The pytorch model is to be used without pre-set embeddings. This script could take hours to run. It puts its vocabulary list in the `data` folder, along with a modified GloVe word embeddings file.
+6. `do_make_rename_train.sh` This file should be called once after the data folder is set up to create some important symbolic links that will allow the `model.py` file to find the training data. If your computer has limited resources this method can be called with a single integer, `n`, as the first argument. This sets up the symbolic links to piont the `model.py` file at the `n`th training file. It should be noted that there are about 80 training files in the `RC_2017-11` download, but these training files are simply copies of the larger training file, called `train.big.from` and `train.big.to`, split up into smaller pieces. When strung together they are identical to the bigger file. If your computer can use the bigger file it is recommended that you do so. If you are going to use the larger file, call the script withhout any arguments. If you are going to use the smaller files, call the script with the number associated with the file you are interested in. This call woudl look like this: `./do_make_rename_train.sh 1`
+# Scripts For Train - `do_launch_game.sh`
+This is a script for running the `seq_2_seq.py` python file located in the `seq_2_seq` folder. There are several commandline options available for the script. Type `./do_launch_game.sh --help` to see them all. Some options are listed below.
+* `--help` This prints the help text for the program.
+* `--mode=MODENAME` This sets the mode for the program. It can be one of the following:
+  * `train` This is for training the model for one pass of the selected training file.
+  * `long` This is for training the model for several epochs on the selected training files. It is the preferred method for doing extended training.
+  * `infer` This just runs the program's `infer` method once so that the state of the model's training might be determined from observation.
+  * `review` This loads all the saved model files and performs a `infer` on each of them in order. This way if you have several training files you can choose the best.
+  * `interactive` This allows for interactive input with the `predict` part of the program.
+  * `plot` This runs the review code but also plots a rudimentary graph at the end. This option is only found in the pytorch code.
+* `--printable=STRING` This parameter allows you to set a string that is printed on the screen with every call of the `fit` function. It allows the `do_launch_series_model.py` script to inform the user what stage training is at, if for example the user looks at the screen between the switching of input files. (see description of `do_launch_series_model.py` below.)
+* `--baename=NAME` This allows you to specify what filename to use when the program loads a saved model file. This is useful if you want to load a filename that is different from the filename specified in the `settings.py` file. This parameter only sets the basename.
+* `--autoencode=FLOAT` This option turns on auto encoding during training. It overrides the `model/settings.py` hyper parameter. 0.0 is no autoencoding and 1.0 is total autoencoding.
+* `--train-all` This option overrides the `settings.py` option that dictated when the embeddings layer is modified during training. It can be used on a saved model that was created with embedding training disabled.
 
+Similar scripts exist for running GPT2 and also the transformer model.
+They are called `do_launch_gpt2.sh` and `do_launch_transformer.sh`. Those two
+scripts do not use as many paramters, but there are some which can be seen by
+typing the script name followed by `--help`.
+
+# Hyper-parameters - `model/settings.py`
+This file is for additional parameters that can be set using a text editor before the `do_launch_model.sh` file is run.
+* `save_dir` This is the relative path to the directory where model files are saved.
+* `data_dir` This is the relative path to the directory where training and testing data ate saved.
+* `embed_name` This is the name of the embed file that is found in the `data` folder.
+* `vocab_name` This is the name of the primary vocabulary list file. It is found in the `data` folder.
+* `test_name` This is the name of the test file. It is not used presently.
+* `test_size` This is the size of the test file in lines. It is not used.
+* `train_name` This is the name of the train file. It is the 'base' name so it doesn't include the file ending.
+* `src_ending` This is the filename ending for the source test and training files.
+* `tgt_ending` This is the filename ending for the target test and training files.
+* `base_filename` This is the base filename for when the program saves the network weights and biases.
+* `base_file_num` This is a number that is part of the final filename for the saved weights from the network.
+* `num_vocab_total` This number is the size of the vocabulary. It is also read by the `do_make_vocab.py` file. It can only be chhanged when the vocabulary is being created before training.
+* `batch_size` Training batch size. May be replaced by `batch_constant`.
+* `steps_to_stats` Number representing how many times the `fit` method is called before the stats are printed to the screen.
+* `epochs` Number of training epochs.
+* `embed_size` Dimensionality of the basic word vector length. Each word is represented by a vector of numbers and this vector is as long as `embed_size`. This can only take certain values. The GloVe download, mentioned above, has word embedding in only certain sizes. These sizes are: None, 50, 100, 200, and 300. If 'None' is specified then the GloVe vectors are not used. Note: GloVe vectors do not contain contractions, so contractions do not appear in the generated vocabulary files if `embed_size` is not None.
+* `embed_train` This is a True/False parameter that determines whether the model will allow the loaded word vector values to be modified at the time of training.
+* `autoencode` This is a True/False parameter that determines whether the model is set up for regular encoding or autoencoding during the training phase.
+* `infer_repeat` This parameter is a number higher than zero that determines how many times the program will run the `infer` method when stats are being printed.
+* `embed_mode` This is a string. Accepted values are 'mod' and 'normal' and only the keras model is effected. This originally allowed the development of code that used different testing scenarios. 'mod' is not supported at the time of this writing. Use 'normal' at all times.
+* `dense_activation` There is a dense layer in the model and this parameter tells that layer how to perform its activations. If the value None or 'none' is passed to the program the dense layer is skipped entirely. The value 'softmax' was used initially but produced poor results. The value 'tanh' produces some reasonable results.
+* `sol` This is the symbol used for the 'start of line' token.
+* `eol` This is the symbol used for the 'end of line' token.
+* `unk` This is the symbol used for the 'unknown word' token.
+* `units` This is the initial value for hidden units in the first LSTM cell in the keras model. In the pytorch model this is the hidden units value used by both the encoder and the decoder. For the pytorch model GRU cells are used.
+* `layers` This is the number of layers for both the encoder and decoder in the pytorch model.
+* `learning_rate` This is the learning rate for the 'adam' optimizer.
+* `tokens_per_sentence` This is the number of tokens per sentence.
+* `batch_constant` This number serves as a batch size parameter.
+* `teacher_forcing_ratio` This number tells the pytorch version of the model exactly how often to use teacher forcing during training.
+* `dropout` This number tells the pytorch version of the model how much dropout to use.
+* `pytorch_embed_size` This number tells the pytorch model how big to make the embedding vector.
+* `zero_start` True/False variable that tells the pytorch model to start at the beginning of the training corpus files every time the program is restarted. Overrides the saved line number that allows the pytorch model to start training where it left off after each restart.
 
 # Raspberry Pi and Speech Recognition
 The goal of this part of the project is to provide for comprehensive speech-to-text and text-to-speech for the use of the chatbot when it is installed on a Raspberry Pi. For this purpose we use the excellent google api. The google api 'Cloud Speech API' costs money to operate. If you want to use it you must sign up for Google Cloud services and enable the Speech API for the project. This document will attempt to direct a developer how to setup the account, but may not go into intimate detail. Use this document as a guide, but not necessarily the last word. After everything is set up the project will require internet access to perform speech recognition.
