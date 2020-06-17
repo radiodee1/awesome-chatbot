@@ -1,6 +1,6 @@
 ## Virtual Environment
 
-You need to install python3.7 or build it yourself before launching the virtual environment scripts.
+You need to install python3.7 or build it yourself before launching the virtual environment scripts. You might need `libffi-dev`.
 
 Files in this folder:
 * `do_make_virtualenv_bash.sh` -- run once to add a few lines to your bash file that will let you run a virtualenv from the terminal easily.
