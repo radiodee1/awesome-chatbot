@@ -300,3 +300,19 @@ Use the command below to setup the Nano for the first time headless.
 
 `sudo screen /dev/ttyACM0 115200`
 
+The Nano runs python 3.6 in the aarch64 environment. 
+Launch these scripts in order to setup an environment for the gpt2 small model.
+You will probably need to install sentencepiece from source before installing `transformers`.
+
+```
+## install sentencepiece from source here! ##
+$ ./do_make_tf_apt_aarch64.sh
+$ sudo python3 -m pip install -r requirements.aarch64.txt
+$ ./do_make_submodule_init.sh
+```
+
+Install Pytorch 1.5 for python3.6 from the following forum site.
+
+`curl https://nvidia.box.com/shared/static/3ibazbiwtkl181n95n9em3wtrca7tdzp.whl -o  torch-1.5.0-cp36-cp36m-linux_aarch64.whl `
+
+Then you can test the model at the command line.
