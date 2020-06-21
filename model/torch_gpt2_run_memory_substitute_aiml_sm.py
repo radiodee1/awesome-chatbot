@@ -149,10 +149,13 @@ class NMT:
         else:
             aiml_file = aiml02
         print(aiml_file, 'aiml')
-        self.kernel = aiml.Kernel()
-        self.kernel.verbose(False)
-        self.kernel.learn(aiml_file)
-
+        try:
+            self.kernel = aiml.Kernel()
+            self.kernel.verbose(False)
+            self.kernel.learn(aiml_file)
+        except:
+            print ('no aiml')
+            pass
         ## do this also with each input... ##
         self.prepare_common()
 
@@ -169,6 +172,7 @@ class NMT:
         name = self.name
         profession = 'student'
         location = 'New York'
+        mood = 'happy'
         #key_action_string = '\n ' + a_chars + 'play media.\n'
 
         self.common += ' '
@@ -181,11 +185,13 @@ class NMT:
             self.common += q_chars + 'What is your name?\n '
             self.common += a_chars + 'My name is ' + name + '.\n '
             self.common += q_chars + 'What time is it?\n '
-            self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
+            self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n\n '
             #self.common += q_chars + 'What is your job?\n '
             self.common += a_chars + 'My job is as a ' + profession + '.\n '
             #self.common += q_chars + 'Where are you?\n '
             self.common += a_chars + "I am in " + location + '. \n '
+            #self.common += q_chars + 'How do you feel?\n '
+            self.common += a_chars + "I feel " + mood + '. \n '
         if self.reply_aiml is not None:
             self.common += '\n ' + self.reply_aiml + '\n '
 
