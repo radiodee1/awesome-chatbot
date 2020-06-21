@@ -292,3 +292,11 @@ To use this project with Docker, follow the commands below. This should work on 
 * Exit `bash` with the `exit` command.
 * You can change or add to the contents of the project directory as you wish before and after launching Docker. The contents of the folder are mounted in the Docker context.
 * Run `./do_launch_amd64.sh` any time to start the image after build.
+
+### Jetson Nano Headless setup
+Flash the OS to the sd card.
+Use a wire USB-A male to micro USB male to connect to the host machine for the first time.
+Use the command below to setup the Nano for the first time headless.
+
+`sudo screen /dev/ttyACM0 115200`
+
