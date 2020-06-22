@@ -72,6 +72,8 @@ beautifulsoup4==4.9.0
 google==2.0.3
 google-search==1.0.2
 
+grpcio
+
 #RPi.GPIO==0.7.0
 
 ## build sentencepiece from source before installing these files.

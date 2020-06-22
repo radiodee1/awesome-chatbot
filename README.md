@@ -331,3 +331,12 @@ curl https://nvidia.box.com/shared/static/3ibazbiwtkl181n95n9em3wtrca7tdzp.whl -
 ```
 Then you can test the model at the command line.
 This does not ensure text-to-speech or speech-to-text is working.
+
+Some useful pulseaudio commands:
+
+```
+alsamixer ## <-- use F6 to find your USB audio
+pacmd list-sources
+pacmd set-default-source 0 ## <-- 0 is the card's index number from the list.
+pacmd set-default-sink 0 ## <-- this will be some number other than 0
+```
