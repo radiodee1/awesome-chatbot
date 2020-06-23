@@ -23,11 +23,11 @@ sudo python /home/pi/workspace/awesome-chatbot/shutdown.py &
 ```
 
 ## Alternate Wiring
+The alternate wiring is simply so that the `button+` and `button-` are on wire `05` and `06` respectively.
 
-
-* 20 - GND
-* 12 - LED A -- GREEN
 * 14 - GND
+* 12 - LED A -- GREEN
+* 20 - GND
 * 16 - LED B -- RED
 
 Further, we are going to try to install a shutdown button on the following gpio pins.

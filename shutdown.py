@@ -1,5 +1,15 @@
 #!/usr/bin/python
-import RPi.GPIO as GPIO
+
+
+try:
+    import RPi.GPIO as GPIO
+except:
+    try:
+        import Jetson.GPIO as GPIO
+    except:
+        exit()
+        pass
+
 import time
 import subprocess
 
