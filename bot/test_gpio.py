@@ -8,10 +8,16 @@ try:
     import RPi.GPIO as GPIO
     led_pin_a = 12
     led_pin_b = 16
-    print('load gpio')
+    print('load rpi gpio')
 except:
-    pin_skip = True
-    print('no load gpio')
+    try:
+        import Jetson.GPIO as GPIO
+        led_pin_a = 12
+        led_pin_b = 16
+        print('load jetson gpio')
+    except:
+        pin_skip = True
+        print('no load gpio')
 
 
 class Game:
