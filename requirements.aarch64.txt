@@ -77,3 +77,5 @@ grpcio==1.30.0
 #RPi.GPIO==0.7.0
 
 ## build sentencepiece from source before installing these files.
+
+## Jetson.GPIO is installed as a default on Nano in a debian package.
