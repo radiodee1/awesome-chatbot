@@ -341,3 +341,4 @@ pacmd list-sinks
 pacmd set-default-source 0 ## <-- 0 is the microphone's index number from the list.
 pacmd set-default-sink 0 ## <-- this will be some number other than 0
 ```
+
