@@ -3,6 +3,8 @@
 from __future__ import absolute_import, division, print_function
 import os
 from gtts import gTTS
+from io import BytesIO
+import pygame
 import sys
 sys.path.append('..')
 from model.settings import hparams
@@ -15,16 +17,30 @@ class VoiceOut:
     def speech_out(self,text=""):
         if len(text) > 0 and text.split(' ')[0] not in ['.','!','?',',']:
             try:
-                tts = gTTS(text=text, lang='en')
-                path = os.path.join(self.dir_out,"temp_speech.mp3")
-                tts.save(path)
+                #mp3_fp = BytesIO()
+                tts = gTTS(text=text, lang='en', slow=False, lang_check=False)
+                #tts.write_to_fp(mp3_fp)
+                #path = os.path.join(self.dir_out,"temp_speech.mp3")
+                #tts.save(path)
             except AssertionError:
                 print('assertion error.')
                 pass
             except:
                 pass
-            os.system("mpg123 " + path + " > /dev/null 2>&1 ")
-        pass
+            pass
+            #os.system("mpg123 " + path + " > /dev/null 2>&1 ")
+            with BytesIO() as f:
+                pygame.mixer.init(24000, -16, 1, 4096)
+
+                tts.write_to_fp(f)
+                f.seek(0)
+                pygame.mixer.music.load(f)
+
+                pygame.mixer.music.play()
+                while pygame.mixer.music.get_busy():
+                    pygame.time.Clock().tick(10)
+                pygame.quit()
+    pass
 
     def beep_out(self):
         path = os.path.join(self.dir_out,"beep.mp3")
