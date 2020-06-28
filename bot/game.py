@@ -4,6 +4,7 @@ from __future__ import unicode_literals, print_function, division
 mode = 'zero' #'sequence' # 'gpt2' 'zero'
 speech_start = 'hello'
 must_stop = True
+always_beep = True
 no_tokenize_weak = False
 pin_skip = False
 
@@ -137,7 +138,7 @@ class Game:
 
                     ## seconds ##
                     self.time_total = (te - ts)
-                    if self.time_total > self.time_allowed: mode = 'signal'
+                    if self.time_total > self.time_allowed or always_beep: mode = 'signal'
                     print(self.time_total, 'time')
 
                     blacklisted = False
