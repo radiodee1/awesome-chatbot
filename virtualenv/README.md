@@ -6,7 +6,7 @@ Files in this folder:
 * `do_make_virtualenv_setup3#.sh` -- run once to add virtualenv to the installed packages... or simply `source` this file.
 * `do_make_virtualenv_use_3#.sh` -- run every time you want to use your environment. The env name is 'chatbot3#'
 
-These files probably work best if run with `source`.
+These files probably work best if run with `source`. Type `deactivate` to exit the virtualenv.
 
 ## Building Python3.7
 
