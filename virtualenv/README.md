@@ -3,8 +3,8 @@
 You need to install python3.7 or build it yourself before launching the virtual environment scripts. You might need `libffi-dev`.
 
 Files in this folder:
-* `do_make_virtualenv_setup.sh` -- run once to add virtualenv to the installed packages... or simply `source` this file.
-* `do_make_virtualenv_use.sh` -- run every time you want to use your environment. The env name is 'chatbot'
+* `do_make_virtualenv_setup3#.sh` -- run once to add virtualenv to the installed packages... or simply `source` this file.
+* `do_make_virtualenv_use_3#.sh` -- run every time you want to use your environment. The env name is 'chatbot3#'
 
 These files probably work best if run with `source`.
 
