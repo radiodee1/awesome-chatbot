@@ -44,10 +44,19 @@ class VoiceOut:
 
     def beep_out(self):
         path = os.path.join(self.dir_out,"beep.mp3")
-        os.system("mpg123 " + path + " > /dev/null 2>&1 ")
+        pygame.mixer.init()
+        pygame.mixer.music.load(path)
+        pygame.mixer.music.set_volume(0.7)
+        pygame.mixer.music.play()
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
+        pygame.quit()
+        
+        #os.system("mpg123 " + path + " > /dev/null 2>&1 ")
 
 if __name__ == '__main__':
     v = VoiceOut()
     v.speech_out("hello")
     v.speech_out("this is a test")
     v.speech_out("goodbye")
+    v.beep_out()
