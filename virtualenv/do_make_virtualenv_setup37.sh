@@ -9,3 +9,5 @@ export VIRTUALENVWRAPPER_PYTHON=$(which python3.7)
 source $(which virtualenvwrapper.sh)
 
 mkvirtualenv chatbot37 --python $(which python3.7)
+
+## type `deactivate` to exit ##

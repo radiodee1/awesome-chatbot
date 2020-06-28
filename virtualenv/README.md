@@ -3,16 +3,17 @@
 You need to install python3.7 or build it yourself before launching the virtual environment scripts. You might need `libffi-dev`.
 
 Files in this folder:
-* `do_make_virtualenv_bash.sh` -- run once to add a few lines to your bash file that will let you run a virtualenv from the terminal easily.
 * `do_make_virtualenv_setup.sh` -- run once to add virtualenv to the installed packages... or simply `source` this file.
 * `do_make_virtualenv_use.sh` -- run every time you want to use your environment. The env name is 'chatbot'
+
+These files probably work best if run with `source`.
 
 ## Building Python3.7
 
 This formula seems to work for Python3.7 also.
 
 ```
-sudo apt-get install libssl-dev # other dev packages may be required
+sudo apt-get install libssl-dev libbz2-dev libffi-dev # other dev packages may be required
 wget --no-check-certificate  https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
 tar xvzf Python-3.7.7.tgz 
 cd Python-3.7.7
