@@ -10,7 +10,7 @@ These files probably work best if run with `source`. Type `deactivate` to exit t
 
 ## Building Python3.7
 
-This formula seems to work for Python3.7 also.
+This formula seems to work for Python3.6 also.
 
 ```
 sudo apt-get install libssl-dev libbz2-dev libffi-dev # other dev packages may be required
