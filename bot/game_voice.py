@@ -51,7 +51,7 @@ class VoiceOut:
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
         pygame.quit()
-        
+
         #os.system("mpg123 " + path + " > /dev/null 2>&1 ")
 
 if __name__ == '__main__':
