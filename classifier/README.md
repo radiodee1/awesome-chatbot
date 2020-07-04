@@ -1,4 +1,4 @@
-## classifier
+## Classifier
 
 These files run a simple classifier.
 
@@ -23,3 +23,8 @@ The versions available are:
 * `INFILE=t2t`
 * `INFILE=gpt`
 * `INFILE=gru`
+
+## Comparison
+
+These additional files run a sentence comparison scheme where there are two classifications, `yes` and `no`. 
+The question asked is weather the sentences follow each other in sample text.
