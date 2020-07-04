@@ -22,13 +22,23 @@ fi
 export BERT_BASE_DIR=../data/uncased_L-12_H-768_A-12
 export CHAT_DIR=../data/
 
+python3 run_pretraining_two.py \
+  --input_file=../saved/bert_output/output_file.txt \
+  --output_dir=../saved/bert_output \
+  --bert_config_file=$BERT_BASE_DIR/bert_config.json \
+  --do_eval \
+  --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt
+
+
+exit 0
+
 python3 extract_features_two.py \
   --input_file=../saved/bert_output/input.txt \
   --output_file=../saved/bert_output/output.jsonl \
   --vocab_file=$BERT_BASE_DIR/vocab.txt \
   --bert_config_file=$BERT_BASE_DIR/bert_config.json \
   --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt \
-  --layers=-1 \
+  --layers=0 \
   --max_seq_length=128 \
   --batch_size=8
 
@@ -47,3 +57,4 @@ python3 run_classifier_two.py \
   --learning_rate=2e-5 \
   --num_train_epochs=0.1 \
   --output_dir=../saved/bert_output/${INFILE}/ #2> /dev/null
+

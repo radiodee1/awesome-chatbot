@@ -20,12 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/classifier/extract_features_two.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/do_make_bert_L_6_download.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classifier/create_pretraining_data_two.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classifier/run_pretraining_two.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/classifier/do_make_two_bert_interactive.sh" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/do_make_two_bert_interactive.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifier/run_classifier_two.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/run_classifier_two.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_bert_download.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_bert_L_12_download.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,16 +56,16 @@
     <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/model/" />
+      <recent name="$PROJECT_DIR$/." />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/classifier" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/data/uncased_L-6_H-512_A-8" />
       <recent name="$PROJECT_DIR$/virtualenv" />
       <recent name="$PROJECT_DIR$/docker" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/model/" />
-      <recent name="$PROJECT_DIR$/." />
     </key>
   </component>
   <component name="SvnConfiguration">
