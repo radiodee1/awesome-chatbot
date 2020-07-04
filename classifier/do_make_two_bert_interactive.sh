@@ -19,8 +19,20 @@ if [ ! -f "../data/${TAB_FILE_OUT}" ]; then
 fi
 
 
-export BERT_BASE_DIR=../data/uncased_L-6_H-512_A-8
+export BERT_BASE_DIR=../data/uncased_L-12_H-768_A-12
 export CHAT_DIR=../data/
+
+python3 extract_features_two.py \
+  --input_file=../saved/bert_output/input.txt \
+  --output_file=../saved/bert_output/output.jsonl \
+  --vocab_file=$BERT_BASE_DIR/vocab.txt \
+  --bert_config_file=$BERT_BASE_DIR/bert_config.json \
+  --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt \
+  --layers=-1 \
+  --max_seq_length=128 \
+  --batch_size=8
+
+exit 0
 
 python3 run_classifier_two.py \
   --task_name=CHAT \

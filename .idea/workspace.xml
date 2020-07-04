@@ -20,13 +20,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/classifier/do_make_two_bert_interactive.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/classifier/run_classifier_two.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/classifier/extract_features_two.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/do_make_bert_L_6_download.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifier/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifier/do_make_bert_interactive.sh" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/do_make_hundred_bert_interactive.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/classifier/do_make_bert_train.sh" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/do_make_hundred_bert_train.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_make_bert_download.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_bert_download.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifier/do_make_two_bert_interactive.sh" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/do_make_two_bert_interactive.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/classifier/run_classifier_two.py" beforeDir="false" afterPath="$PROJECT_DIR$/classifier/run_classifier_two.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_bert_download.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_bert_L_12_download.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,15 +53,15 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/data/uncased_L-6_H-512_A-8" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/classifier" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="preferences.general" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/data/uncased_L-6_H-512_A-8" />
       <recent name="$PROJECT_DIR$/classifier" />
       <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/data/uncased_L-6_H-512_A-8" />
       <recent name="$PROJECT_DIR$/virtualenv" />
       <recent name="$PROJECT_DIR$/docker" />
     </key>
@@ -121,10 +120,10 @@
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
     <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1591297447022" />
-    <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1589459373999">
+    <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1593884842161">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>
-    <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.27.1920.1053@0.27.1920.1053" timestamp="1589459373999" />
+    <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.27.1920.1053@0.27.1920.1053" timestamp="1593884842161" />
     <state x="701" y="214" width="1022" height="737" key="SettingsEditor" timestamp="1592694147929">
       <screen x="0" y="27" width="1920" height="1053" />
     </state>

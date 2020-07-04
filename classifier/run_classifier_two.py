@@ -1049,8 +1049,8 @@ def main(_):
                     output_line = "\t".join(
                         str(class_probability)
                         for class_probability in probabilities) + "\n"
-                    print(output_line , z, '<')
-                    #print(processor.sentences[z], '<<')
+                    print(output_line , z, processor.get_labels()[z], '<')
+                    #print(processor.get_labels()[z], '<<')
                     writer.write(output_line)
                     num_written_lines += 1
             assert num_written_lines == num_actual_predict_examples
