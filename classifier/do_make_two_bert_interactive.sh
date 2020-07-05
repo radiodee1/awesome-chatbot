@@ -23,12 +23,13 @@ export BERT_BASE_DIR=../data/uncased_L-12_H-768_A-12
 export CHAT_DIR=../data/
 
 python3 run_pretraining_two.py \
-  --input_file=../saved/bert_output/output_file.txt \
+  --input_file=../saved/bert_output/input_file.txt \
   --output_dir=../saved/bert_output \
   --bert_config_file=$BERT_BASE_DIR/bert_config.json \
   --do_eval \
-  --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt
-
+  --eval_batch_size=1 \
+  --init_checkpoint=$BERT_BASE_DIR/bert_model.ckpt \
+  --use_tpu=False
 
 exit 0
 
@@ -41,6 +42,7 @@ python3 extract_features_two.py \
   --layers=0 \
   --max_seq_length=128 \
   --batch_size=8
+
 
 exit 0
 
