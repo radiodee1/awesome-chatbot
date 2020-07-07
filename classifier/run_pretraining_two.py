@@ -21,7 +21,6 @@ from __future__ import print_function
 import sys
 
 sys.path.append('./bert/')
-
 import os
 import modeling
 import optimization
@@ -65,8 +64,6 @@ flags.DEFINE_bool("do_train", False, "Whether to run training.")
 
 flags.DEFINE_bool("do_eval", False, "Whether to run eval on the dev set.")
 
-flags.DEFINE_bool("do_predict", False, "Do predict")
-
 flags.DEFINE_integer("train_batch_size", 32, "Total batch size for training.")
 
 flags.DEFINE_integer("eval_batch_size", 8, "Total batch size for eval.")
@@ -83,7 +80,7 @@ flags.DEFINE_integer("save_checkpoints_steps", 1000,
 flags.DEFINE_integer("iterations_per_loop", 1000,
                      "How many steps to make in each estimator call.")
 
-flags.DEFINE_integer("max_eval_steps", 100, "Maximum number of eval steps.")
+flags.DEFINE_integer("max_eval_steps", 1, "Maximum number of eval steps.") ## 100
 
 flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
@@ -111,8 +108,6 @@ flags.DEFINE_integer(
     "num_tpu_cores", 8,
     "Only used if `use_tpu` is True. Total number of TPU cores to use.")
 
-#nslp = None
-#zz = None
 
 def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                      num_train_steps, num_warmup_steps, use_tpu,
@@ -121,7 +116,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
 
     def model_fn(features, labels, mode, params):  # pylint: disable=unused-argument
         """The `model_fn` for TPUEstimator."""
-        #global nslp
+
         tf.logging.info("*** Features ***")
         for name in sorted(features.keys()):
             tf.logging.info("  name = %s, shape = %s" % (name, features[name].shape))
@@ -135,8 +130,6 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
         next_sentence_labels = features["next_sentence_labels"]
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
-        #if FLAGS.do_predict or FLAGS.do_eval:
-        #    is_training = False
 
         model = modeling.BertModel(
             config=bert_config,
@@ -154,8 +147,6 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
         (next_sentence_loss, next_sentence_example_loss,
          next_sentence_log_probs) = get_next_sentence_output(
             bert_config, model.get_pooled_output(), next_sentence_labels)
-
-        #nslp = next_sentence_log_probs
 
         total_loss = masked_lm_loss + next_sentence_loss
 
@@ -183,7 +174,6 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                 init_string = ", *INIT_FROM_CKPT*"
             tf.logging.info("  name = %s, shape = %s%s", var.name, var.shape,
                             init_string)
-            ## tf.logging.info('+++' + str(nslp.eval()) + '+++')
 
         output_spec = None
         if mode == tf.estimator.ModeKeys.TRAIN:
@@ -195,7 +185,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                 loss=total_loss,
                 train_op=train_op,
                 scaffold_fn=scaffold_fn)
-        elif mode == tf.estimator.ModeKeys.EVAL: # or mode == tf.estimator.ModeKeys.PREDICT:
+        elif mode == tf.estimator.ModeKeys.EVAL:
 
             def metric_fn(masked_lm_example_loss, masked_lm_log_probs, masked_lm_ids,
                           masked_lm_weights, next_sentence_example_loss,
@@ -225,11 +215,14 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                 next_sentence_mean_loss = tf.metrics.mean(
                     values=next_sentence_example_loss)
 
+                #next_sentence_accuracy = next_sentence_predictions
+
                 return {
                     "masked_lm_accuracy": masked_lm_accuracy,
                     "masked_lm_loss": masked_lm_mean_loss,
                     "next_sentence_accuracy": next_sentence_accuracy,
                     "next_sentence_loss": next_sentence_mean_loss,
+                    #"next_sentence_list":  ( next_sentence_predictions, (lambda g: g.graph)  )
                 }
 
             eval_metrics = (metric_fn, [
@@ -242,16 +235,10 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                 loss=total_loss,
                 eval_metrics=eval_metrics,
                 scaffold_fn=scaffold_fn,
-                predictions=next_sentence_log_probs
-            )
 
-            #with tf.Session() as sess: print(next_sentence_log_probs.eval())
-            #exit()
-        if mode == tf.estimator.ModeKeys.PREDICT and False:
-            return tf.estimator.EstimatorSpec(mode=mode)
+            )
         else:
-            pass
-            #raise ValueError("Only TRAIN and EVAL modes are supported: %s" % (mode))
+            raise ValueError("Only TRAIN and EVAL modes are supported: %s" % (mode))
 
         return output_spec
 
@@ -323,10 +310,6 @@ def get_next_sentence_output(bert_config, input_tensor, labels):
         one_hot_labels = tf.one_hot(labels, depth=2, dtype=tf.float32)
         per_example_loss = -tf.reduce_sum(one_hot_labels * log_probs, axis=-1)
         loss = tf.reduce_mean(per_example_loss)
-
-        #with tf.Session() as sess: print(output_weights.eval())
-        #exit()
-
         return (loss, per_example_loss, log_probs)
 
 
@@ -355,10 +338,7 @@ def input_fn_builder(input_files,
 
     def input_fn(params):
         """The actual input function."""
-        if not FLAGS.do_predict:
-            batch_size = params["batch_size"]
-        else:
-            batch_size = 1
+        batch_size = params["batch_size"]
 
         name_to_features = {
             "input_ids":
@@ -379,7 +359,7 @@ def input_fn_builder(input_files,
 
         # For training, we want a lot of parallel reading and shuffling.
         # For eval, we want no shuffling and parallel reading doesn't matter.
-        if is_training: # and not FLAGS.do_predict:
+        if is_training:
             d = tf.data.Dataset.from_tensor_slices(tf.constant(input_files))
             d = d.repeat()
             d = d.shuffle(buffer_size=len(input_files))
@@ -434,12 +414,8 @@ def _decode_record(record, name_to_features):
 def main(_):
     tf.logging.set_verbosity(tf.logging.INFO)
 
-    if not FLAGS.do_train and not FLAGS.do_eval and not FLAGS.do_predict:
+    if not FLAGS.do_train and not FLAGS.do_eval:
         raise ValueError("At least one of `do_train` or `do_eval` must be True.")
-
-    if FLAGS.do_predict and FLAGS.do_eval:
-        pass
-        #raise ValueError("not train predict and eval at once.")
 
     bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
 
@@ -494,14 +470,20 @@ def main(_):
             input_files=input_files,
             max_seq_length=FLAGS.max_seq_length,
             max_predictions_per_seq=FLAGS.max_predictions_per_seq,
-            is_training=True)
-        estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
+            is_training=False)
+        r = estimator.train(input_fn=train_input_fn, max_steps=FLAGS.num_train_steps)
+        print('^^^' , r , '^^^')
+        '''
+        for key in sorted(r):
+            tf.logging.info("  %s = %s", key, str(r))
+            #writer.write("%s = %s\n" % (key, str(result[key])))
+        exit()
+        '''
 
     if FLAGS.do_eval:
         tf.logging.info("***** Running evaluation *****")
         tf.logging.info("  Batch size = %d", FLAGS.eval_batch_size)
 
-        #if not FLAGS.do_predict:
         eval_input_fn = input_fn_builder(
             input_files=input_files,
             max_seq_length=FLAGS.max_seq_length,
@@ -514,37 +496,9 @@ def main(_):
         output_eval_file = os.path.join(FLAGS.output_dir, "eval_results.txt")
         with tf.gfile.GFile(output_eval_file, "w") as writer:
             tf.logging.info("***** Eval results *****")
-            # with modeling.as_default():
             for key in sorted(result.keys()):
                 tf.logging.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
-
-    if FLAGS.do_predict:
-
-        pred_input_fn = input_fn_builder(
-            input_files=input_files,
-            max_seq_length=FLAGS.max_seq_length,
-            max_predictions_per_seq=1, #FLAGS.max_predictions_per_seq,
-            is_training=False)
-
-        predict_result = estimator.predict(input_fn=pred_input_fn)
-        print('+++', predict_result, '+++')
-        tf.logging.info('+++' + str(predict_result) + '+++')
-
-        output_predict_file = os.path.join(FLAGS.output_dir, "predict_results.txt")
-        with tf.gfile.GFile(output_predict_file, "w") as writer:
-            tf.logging.info("***** Predict results *****")
-            #for key in predict_result:
-            if True:
-                key = next(predict_result)
-                tf.logging.info("===  %s ===", key) #, str(predict_result[key]))
-                writer.write("=== %s ===\n" % (key)) #, str(predict_result[key])))
-            else:
-                #predictor = SN_classifier.predict(input_fn=predict_result);
-                results = list(predict_result);
-                tf.logging.info(results);
-
-
 
 
 if __name__ == "__main__":
