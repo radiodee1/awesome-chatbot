@@ -215,12 +215,14 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                 next_sentence_mean_loss = tf.metrics.mean(
                     values=next_sentence_example_loss)
 
+                #next_sentence_accuracy = next_sentence_predictions
+
                 return {
                     "masked_lm_accuracy": masked_lm_accuracy,
                     "masked_lm_loss": masked_lm_mean_loss,
                     "next_sentence_accuracy": next_sentence_accuracy,
                     "next_sentence_loss": next_sentence_mean_loss,
-                    "next_sentence_log_probs":  next_sentence_log_probs,
+                    #"next_sentence_list":  (next_sentence_predictions,  )
                 }
 
             eval_metrics = (metric_fn, [
