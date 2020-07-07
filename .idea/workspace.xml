@@ -20,11 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/classifier/run_torch_bert_transformers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/model/tf_gpt2_torch_convert.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.aarch64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.aarch64.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.amd64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_submodule_init_117M.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_submodule_init_117M.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_submodule_init_1558M.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_submodule_init_1558M.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/do_make_submodule_init_774M.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_make_submodule_init_774M.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
