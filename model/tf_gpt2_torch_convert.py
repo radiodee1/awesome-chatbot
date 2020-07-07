@@ -22,7 +22,9 @@ GPT2_DIR_X = GPT2_DIR_X[0:-1]
 GPT2_DIR_X = '/'.join(GPT2_DIR_X) + '/'
 print(GPT2_DIR_X)
 
-os.system("pytorch_pretrained_bert convert_gpt2_checkpoint " + GPT2_DIR + " " +PYTORCH_DUMP_OUTPUT)
+#os.system("pytorch_pretrained_bert convert_gpt2_checkpoint " + GPT2_DIR + " " +PYTORCH_DUMP_OUTPUT)
+
+os.system("transformers-cli --model_type gpt2 --tf_checkpoint " + GPT2_DIR + " --pytorch_dump_output  " +PYTORCH_DUMP_OUTPUT)
 
 if os.path.isfile(GPT2_DIR_X + '/' + 'encoder.json'):
     os.system("cp " + GPT2_DIR_X + '/' + 'encoder.json ' + PYTORCH_DUMP_OUTPUT + '/.')
