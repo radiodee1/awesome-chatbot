@@ -222,7 +222,7 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
                     "masked_lm_loss": masked_lm_mean_loss,
                     "next_sentence_accuracy": next_sentence_accuracy,
                     "next_sentence_loss": next_sentence_mean_loss,
-                    #"next_sentence_list":  (next_sentence_predictions,  )
+                    #"next_sentence_list":  ( next_sentence_predictions, (lambda g: g.graph)  )
                 }
 
             eval_metrics = (metric_fn, [
