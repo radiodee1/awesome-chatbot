@@ -149,7 +149,7 @@ Further BERT experiments can be found here.
 * `vis` This folder has some code that helps visualize data from the transrormer model and the gpt2 model.
 * `experiments` This folder is for experiments.
 
-Description of the individual setup scripts is included below.
+Description of some of the individual setup scripts is included below.
 # Suggested Reading - Acknowledgements
 * Some basic material on sequence to sequence NMT models came from these sources. The first link is to Jason Brownlee's masterful blog series. The second is to Francois Chollet's Keras blog.
   * https://machinelearningmastery.com/develop-encoder-decoder-model-sequence-sequence-prediction-keras/
