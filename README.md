@@ -146,6 +146,7 @@ Though some of the setup scripts are also written in python, this folder holds t
 * `docker` This folder has scripts for generating docker containers for the project. This was a programming experiment and code from this directory is not used in any of the final installed models.
 * `virtualenv` This folder has scripts for working with virtual environments. Some of the scipts are more like templates than working programs.
 * `vis` This folder has some code that helps visualize data from the transrormer model and the gpt2 model.
+* `experiments` This folder is for experiments.
 
 Description of the individual setup scripts is included below.
 # Suggested Reading - Acknowledgements
