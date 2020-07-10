@@ -1,0 +1,235 @@
+<aiml version="1.0.1" encoding="UTF-8">
+<!-- basic_chat.aiml -->
+
+    <category>
+        <pattern>WHAT ARE YOU</pattern>
+        <template>
+            I'm a bot, silly!
+        </template>
+    </category>
+    <category>
+        <pattern>TELL ME ABOUT *</pattern>
+        <template>
+            http://find <star/>.
+        </template>
+    </category>
+    <category>
+        <pattern>LETS TALK ABOUT *</pattern>
+        <template>
+            http://find <star/>.
+        </template>
+    </category>
+    <category>
+        <pattern>TALK ABOUT *</pattern>
+        <template>
+            http://find <star/>.
+        </template>
+    </category>
+    <category>
+        <pattern>OK ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OK THANKS</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY THANKS</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY STOP</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OKAY</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>OK</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>THANKS THATS ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>THANKS</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>QUIT</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>THATS ENOUGH</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>STOP</pattern>
+        <template>
+            http://stop
+        </template>
+    </category>
+    <category>
+        <pattern>DO A URL</pattern>
+        <template>
+            http://www.google.com
+        </template>
+    </category>
+
+    <!-- candy questions start here... -->
+    <category>
+        <pattern> WHAT CANDY DO YOU LIKE </pattern>
+        <template>
+            chocolate is my favorite candy.
+        </template>
+    </category>
+    <category>
+        <pattern> DO YOU LIKE CANDY </pattern>
+        <template>
+            chocolate is my favorite candy.
+        </template>
+    </category>
+    
+    <category>
+        <pattern>WHAT IS YOUR FAVORITE CANDY </pattern>
+        <template>
+            chocolate is my favorite candy.
+        </template>
+    </category>
+    <category>
+        <pattern> WHAT'S YOUR FAVORITE CANDY </pattern>
+        <template>
+            chocolate is my favorite candy.
+        </template>
+    </category>
+    
+    <category>
+        <pattern> WHAT CANDY IS YOUR FAVORITE </pattern>
+        <template>
+            chocolate is my favorite candy.
+        </template>
+    </category>
+    <category>
+        <pattern> DO YOU LIKE CHOCOLATE </pattern>
+        <template>
+            yes i like chocolate.
+        </template>
+    </category>
+    
+    
+    <category>
+        <pattern> DO YOU LIKE CANDY </pattern>
+        <template>
+            yes i like chocolate.
+        </template>
+    </category>
+    
+    <category>
+        <pattern> DO YOU HAVE ANY CANDY </pattern>
+        <template>
+            no i have no candy.
+        </template>
+    </category>
+    <category>
+        <pattern> DO YOU HAVE ANY CHOCOLATE </pattern>
+        <template>
+            no i have no chocolate.
+        </template>
+    </category>
+
+    <!-- start name discussion -->
+    <!-- record name if mentioned -->
+    <category>
+      <pattern>I AM *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   <category>
+      <pattern>IM *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+    <category>
+      <pattern>* IS MY NAME</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   
+   <category>
+      <pattern>MY NAME IS *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+   <category>
+      <pattern>MY NAMES *</pattern>
+      <template>
+         Hello <set name = "username"><star/></set> !
+      </template>
+   </category>
+    <!-- reply with name if asked -->
+   <category>
+      <pattern>WHAT IS MY NAME</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>WHATS MY NAME</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+   <category>
+      <pattern>WHO AM I</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+
+   <category>
+      <pattern>WHOM I</pattern>
+      <template>
+         your name is <get name = "username"/>
+      </template>
+   </category>
+    <!-- end name discussion -->
+</aiml>

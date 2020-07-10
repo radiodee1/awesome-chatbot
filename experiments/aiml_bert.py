@@ -68,11 +68,9 @@ class Kernel:
         num = 0
         for i in self.l:
             ii = i[0]
-            encoding = self.tokenizer(ii, input, return_tensors='pt')
-            loss, logits = self.model(**encoding, next_sentence_label=torch.LongTensor([1]))
-            s = logits[0][0].item()
+            s = self.bert_compare(ii, input)
             self.score.append(s)
-            if self.verbose_response: print(num, s, logits)
+            if self.verbose_response: print(num, s)
             num += 1
         ## find highest entry ##
         high = 0
@@ -93,10 +91,16 @@ class Kernel:
             self.output = self.l[index][1]
         return self.output
 
+    def bert_compare(self, prompt1, prompt2):
+        encoding = self.tokenizer(prompt1, prompt2, return_tensors='pt')
+        loss, logits = self.model(**encoding, next_sentence_label=torch.LongTensor([1]))
+        s = logits[0][0].item()
+        return s
+
 if __name__ == '__main__':
 
     k = Kernel()
     k.verbose(True)
-    k.learn('../data/std_startup.xml')
+    k.learn('startup.xml')
     while True:
         print(k.respond(input('> ')))
