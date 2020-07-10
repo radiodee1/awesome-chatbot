@@ -6,8 +6,8 @@ import torch
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased')
 
-prompt = "In Italy, pizza served in formal settings, such as at a restaurant, is presented unsliced."
-next_sentence = "The sky is blue due to the shorter wavelength of blue light."
+#prompt = "In Italy, pizza served in formal settings, such as at a restaurant, is presented unsliced."
+#next_sentence = "The sky is blue due to the shorter wavelength of blue light."
 
 prompt = "that's great."
 next_sentence = "that is great"
