@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import aiml as aiml_std
+#import aiml as aiml_std
 from transformers import BertTokenizer, BertForNextSentencePrediction
 import torch
 import xml.etree.ElementTree as ET
@@ -12,12 +12,13 @@ class Kernel:
         self.filename = 'name'
         self.verbose_response = True
         self.output = ""
-        self.kernel = aiml_std.Kernel()
+        #self.kernel = aiml_std.Kernel()
         self.tree = None
         self.root = None
         self.l = []
         self.score = []
         self.memory = {}
+        self.index = -1
 
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         self.model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased')
@@ -25,11 +26,11 @@ class Kernel:
     def verbose(self, isverbose):
         #print(isverbose)
         self.verbose_response = isverbose
-        self.kernel.verbose(isverbose)
+        #self.kernel.verbose(isverbose)
 
     def learn(self, file):
         self.filename = file
-        self.kernel.learn(file)
+        #self.kernel.learn(file)
         self.l = []
         self.score = []
         self.tree = ET.parse(file)
@@ -51,6 +52,7 @@ class Kernel:
 
     def respond(self, input):
         self.score = []
+        self.index = -1
         tempout = '' #self.kernel.respond(input)
         ## checkout input and response ##
         self.output = tempout
@@ -80,11 +82,10 @@ class Kernel:
             num += 1
         ## update dictionary ##
         self.mod_dict_out(self.l[index][2], input)
-        print(self.l)
-        print(self.memory,'<<')
-        if False: #len(pat) > 0:
-            if self.verbose_response: print(input,'--' ,index, '-- find k response for --', pat)
-            self.output = self.kernel.respond(pat)
+        #print(self.l)
+        #print(self.memory,'<<')
+        self.index = index
+
         if len(self.output) is 0 and index is not -1:
             if self.verbose_response: print(input,'--' ,index, '-- print template --', self.l[index][2]['template'])
             self.output = self.l[index][2]['template']
@@ -92,7 +93,14 @@ class Kernel:
             self.output = self.output.text.strip()
         return self.output
 
+    def bert_score(self):
+        if self.index == -1:
+            return 0
+        return self.score[self.index]
+
     def bert_compare(self, prompt1, prompt2):
+        if not isinstance(prompt1, str): prompt1 = str(prompt1)
+        if not isinstance(prompt2, str): prompt2 = str(prompt2)
         encoding = self.tokenizer(prompt1, prompt2, return_tensors='pt')
         loss, logits = self.model(**encoding, next_sentence_label=torch.LongTensor([1]))
         s = logits[0][0].item()
@@ -104,8 +112,9 @@ class Kernel:
         set = None
         get = None
         z = None
+        tem_02 = None
         for i in category:
-            print (i.tag, i, 'iiii')
+            #print (i.tag, i, 'iiii')
             if i.tag == 'pattern':
                 pat = ET.tostring(i)
                 if '*' in pat.decode('utf-8'):
@@ -180,7 +189,7 @@ class Kernel:
         pat_02 = re.sub('<'+tag+'>', '', pattern)
         pat_02 = re.sub('</'+tag+'>', '', pat_02)
         pat_02 = pat_02.strip()
-        print('---', pat_02, '---')
+        #print('---', pat_02, '---')
         return pat_02
 
     def mod_input(self, d_list, input):
@@ -235,12 +244,12 @@ class Kernel:
             n = ET.Element('template')
             n.text = tt
             tem = n
-            print('>>',ET.tostring(tem), t, self.memory)
+            #print('>>',ET.tostring(tem), t, self.memory)
             d['template'] = tem
             #exit()
         if sta is not None:
             t = sta
-            print(t,'===') #, ET.tostring(get))
+            #print(t,'===') #, ET.tostring(get))
             #exit()
             star = tem.find('star')
             tt = ''
@@ -248,22 +257,22 @@ class Kernel:
                 tem.remove(star)
             if d['tem_wo_end']:
                 tt = tem.text.strip() + ' ' + t
-                print(tt, 'end')
+                #print(tt, 'end')
             if d['tem_wo_start']:
                 tt = t + ' ' + tem.text.strip()
-                print(tt, 'start')
+                #print(tt, 'start')
             #d['template'] = tem.text
             n = ET.Element('template')
             n.text = tt
             #tem = n
-            print('>>',ET.tostring(tem), t, self.memory)
+            #print('>>',ET.tostring(tem), t, self.memory)
             d['template'] = n
 
 
 if __name__ == '__main__':
 
     k = Kernel()
-    k.verbose(True)
+    k.verbose(False)
     k.learn('startup.xml')
     while True:
         print(k.respond(input('> ')))
