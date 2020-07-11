@@ -39,7 +39,7 @@
     <category>
       <pattern>I AM *</pattern>
       <template>
-         Hello <set name = "username"><star/></set> !
+         Hello <set name = "username"><star/></set>
       </template>
    </category>
 

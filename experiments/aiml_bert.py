@@ -40,20 +40,7 @@ class Kernel:
             #tem = None
             pat_dict = self.pattern_factory(child)
             pat_dict['index'] = num
-            '''
-            for i in child:
-                #print(i.tag)
-                #z = ''
-                #for c in i:
-                #    z = c.tag
-                #if self.verbose_response: print(num,z, i.tag)
-                if i.tag == 'pattern':
-                    pat = i.text.strip()
-                    if '*' in pat:
-                        z = '*'
-                if i.tag == 'template':
-                    tem = i.text.strip()
-            '''
+
             self.l.append([None, None, pat_dict])
 
             num += 1
@@ -73,7 +60,7 @@ class Kernel:
         ## compare all aiml input patttern ##
         num = 0
         for i in self.l:
-            ii = i[0]
+            i[2]['star'] = None
             input_02 = self.mod_input(i[2], input)
             ii = i[2]['pattern']
             s = self.bert_compare(ii, input_02)
@@ -99,9 +86,9 @@ class Kernel:
             if self.verbose_response: print(input,'--' ,index, '-- find k response for --', pat)
             self.output = self.kernel.respond(pat)
         if len(self.output) is 0 and index is not -1:
-            if self.verbose_response: print(input,'--' ,index, '-- print template --', self.l[index][1])
+            if self.verbose_response: print(input,'--' ,index, '-- print template --', self.l[index][2]['template'])
             self.output = self.l[index][2]['template']
-            print (ET.tostring(self.output), "???")
+            #print (ET.tostring(self.output), "???")
             self.output = self.output.text.strip()
         return self.output
 
@@ -116,24 +103,26 @@ class Kernel:
         tem = None
         set = None
         get = None
-        z = ''
+        z = None
         for i in category:
             print (i.tag, i, 'iiii')
             if i.tag == 'pattern':
                 pat = ET.tostring(i)
                 if '*' in pat.decode('utf-8'):
                     pat = re.sub('\*', '<star/>', pat.decode('utf-8'))
-                    print (pat)
+                    #print (pat)
+                    set = True
+                    get = True
 
             if i.tag == 'template':
                 tem = i #.text.strip()
                 tem_02 = ET.tostring(i).decode('utf-8').strip()
                 tem_02 = self.strip_right_left('template', tem_02)
                 if '<' in tem_02 or '>' in tem_02:
-                    print(ET.tostring(tem) ,'here')
+                    #print(ET.tostring(tem) ,'here')
                     set = i.find('./set')
                     get = i.find('./get')
-
+                    z = True
                 pass
 
         pat_02 = self.strip_right_left('pattern', pat)
@@ -171,11 +160,13 @@ class Kernel:
             'wo_start_end': wo_start_end,
             'pattern': pat_02,
             'template': tem,
+            'initial_template': tem,
             'index': None,
             'set_exp': set,
             'get_exp': get,
-            'tem_wo_start':tem_02.startswith('<') or tem_02.startswith('*'),
-            'tem_wo_end':tem_02.endswith('>') or tem_02.endswith("*")
+            'tem_wo_start':tem_02.startswith('<') or tem_02.startswith('*') ,
+            'tem_wo_end':tem_02.endswith('>') or tem_02.endswith("*") ,
+            'star': None
         }
 
         self.mod_get_set(d)
@@ -204,7 +195,6 @@ class Kernel:
             #exit()
 
         input = ' '.join(l)
-
         return input
 
     def mod_dict_out(self, d_list, input):
@@ -212,28 +202,27 @@ class Kernel:
         l = input.split(' ')
         if d['wo_start']:
             d['start'] = l[0]
-            #print(l[0])
+            d['star'] = l[0]
         if d['wo_end']:
             d['end'] = l[-1]
-            #print(l[-1])
-
+            d['star'] = l[-1]
         self.mod_get_set(d)
 
     def mod_get_set(self, d):
         set = d['set_exp']
         get = d['get_exp']
-        tem = d['template']
+        tem = d['initial_template']
+        sta = d['star']
         if set is not None:
-
             if d['wo_end']:
                 self.memory[set.attrib['name']] = d['end']
             if d['wo_start']:
                 self.memory[set.attrib['name']] = d['start']
-        if get is not None:
+        elif get is not None:
             t = ''
             if get.attrib['name'] in self.memory:
                 t = self.memory[get.attrib['name']]
-            print(t,'===', ET.tostring(get))
+            #print(t,'===', ET.tostring(get))
             star = tem.find('get')
             tt = ''
             if star is not None:
@@ -244,12 +233,31 @@ class Kernel:
                 tt = t + ' ' + tem.text.strip()
             #d['template'] = tem.text
             n = ET.Element('template')
-
             n.text = tt
             tem = n
             print('>>',ET.tostring(tem), t, self.memory)
             d['template'] = tem
             #exit()
+        if sta is not None:
+            t = sta
+            print(t,'===') #, ET.tostring(get))
+            #exit()
+            star = tem.find('star')
+            tt = ''
+            if star is not None:
+                tem.remove(star)
+            if d['tem_wo_end']:
+                tt = tem.text.strip() + ' ' + t
+                print(tt, 'end')
+            if d['tem_wo_start']:
+                tt = t + ' ' + tem.text.strip()
+                print(tt, 'start')
+            #d['template'] = tem.text
+            n = ET.Element('template')
+            n.text = tt
+            #tem = n
+            print('>>',ET.tostring(tem), t, self.memory)
+            d['template'] = n
 
 
 if __name__ == '__main__':
