@@ -17,6 +17,7 @@ class Kernel:
         self.root = None
         self.l = []
         self.score = []
+        self.memory = {}
 
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         self.model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased')
@@ -35,23 +36,25 @@ class Kernel:
         self.root = self.tree.getroot()
         num = 0
         for child in self.root.iter('category'):
-            pat = None
-            tem = None
+            #pat = None
+            #tem = None
             pat_dict = self.pattern_factory(child)
             pat_dict['index'] = num
+            '''
             for i in child:
                 #print(i.tag)
-                z = ''
-                for c in i:
-                    z = c.tag
-                if self.verbose_response: print(num,z, i.tag)
+                #z = ''
+                #for c in i:
+                #    z = c.tag
+                #if self.verbose_response: print(num,z, i.tag)
                 if i.tag == 'pattern':
                     pat = i.text.strip()
                     if '*' in pat:
                         z = '*'
                 if i.tag == 'template':
                     tem = i.text.strip()
-            self.l.append([pat,tem, pat_dict])
+            '''
+            self.l.append([None, None, pat_dict])
 
             num += 1
             pass
@@ -61,7 +64,7 @@ class Kernel:
 
     def respond(self, input):
         self.score = []
-        tempout = self.kernel.respond(input)
+        tempout = '' #self.kernel.respond(input)
         ## checkout input and response ##
         self.output = tempout
 
@@ -72,7 +75,7 @@ class Kernel:
         for i in self.l:
             ii = i[0]
             input_02 = self.mod_input(i[2], input)
-            #
+            ii = i[2]['pattern']
             s = self.bert_compare(ii, input_02)
             self.score.append(s)
             if self.verbose_response: print(num, s)
@@ -89,15 +92,17 @@ class Kernel:
                 index = num
             num += 1
         ## update dictionary ##
-        self.mod_output(self.l[index][2], input)
+        self.mod_dict_out(self.l[index][2], input)
         print(self.l)
-
-        if len(pat) > 0:
+        print(self.memory,'<<')
+        if False: #len(pat) > 0:
             if self.verbose_response: print(input,'--' ,index, '-- find k response for --', pat)
             self.output = self.kernel.respond(pat)
         if len(self.output) is 0 and index is not -1:
             if self.verbose_response: print(input,'--' ,index, '-- print template --', self.l[index][1])
-            self.output = self.l[index][1]
+            self.output = self.l[index][2]['template']
+            print (ET.tostring(self.output), "???")
+            self.output = self.output.text.strip()
         return self.output
 
     def bert_compare(self, prompt1, prompt2):
@@ -109,28 +114,30 @@ class Kernel:
     def pattern_factory(self, category):
         pat = None
         tem = None
+        set = None
+        get = None
         z = ''
         for i in category:
-            print (i.tag, i)
+            print (i.tag, i, 'iiii')
             if i.tag == 'pattern':
                 pat = ET.tostring(i)
-                pat = re.sub('\*', '<star/>', pat.decode('utf-8'))
+                if '*' in pat.decode('utf-8'):
+                    pat = re.sub('\*', '<star/>', pat.decode('utf-8'))
+                    print (pat)
 
-                i = ET.XML(pat)
-                pat_txt = ''
-                if i.text is not None:
-                    pat_txt = i.text.strip()
-                pat_tail = ''
-                if i.tail is not None:
-                    pat_tail = i.tail.strip()
             if i.tag == 'template':
-                tem = i.text.strip()
-                #tem = ET.tostring(i)
+                tem = i #.text.strip()
+                tem_02 = ET.tostring(i).decode('utf-8').strip()
+                tem_02 = self.strip_right_left('template', tem_02)
+                if '<' in tem_02 or '>' in tem_02:
+                    print(ET.tostring(tem) ,'here')
+                    set = i.find('./set')
+                    get = i.find('./get')
+
                 pass
-        #print(pat)
 
         pat_02 = self.strip_right_left('pattern', pat)
-        #print('---',pat_02, '---')
+
         start = ''
         end = ''
         wo_start = False
@@ -140,19 +147,17 @@ class Kernel:
             wo_start_end = True # pat_txt
             pass
         else:
-
             wo_start_end = False # pat_txt
 
         if pat_02.endswith('>') or pat_02.endswith('*'):
-            wo_end = True # pat_txt
-
+            wo_end = True
         else:
-            wo_end = False # pat_02
+            wo_end = False
 
         if pat_02.startswith('<') or pat_02.startswith('*'):
-            wo_start = True # pat_tail
+            wo_start = True
         else:
-            wo_start = False # pat_02
+            wo_start = False
 
         pat_02 = ET.XML(pat).text
         if pat_02 is not None:
@@ -164,12 +169,16 @@ class Kernel:
             'wo_start': wo_start,
             'wo_end': wo_end,
             'wo_start_end': wo_start_end,
-            'text': pat_02,
+            'pattern': pat_02,
             'template': tem,
-            'index': None
+            'index': None,
+            'set_exp': set,
+            'get_exp': get,
+            'tem_wo_start':tem_02.startswith('<') or tem_02.startswith('*'),
+            'tem_wo_end':tem_02.endswith('>') or tem_02.endswith("*")
         }
 
-        #exit()
+        self.mod_get_set(d)
         return d
 
     def strip_right_left(self, tag, pattern):
@@ -180,25 +189,25 @@ class Kernel:
         pat_02 = re.sub('<'+tag+'>', '', pattern)
         pat_02 = re.sub('</'+tag+'>', '', pat_02)
         pat_02 = pat_02.strip()
-        #print('---', pat_02, '---')
+        print('---', pat_02, '---')
         return pat_02
 
     def mod_input(self, d_list, input):
         d = d_list
         l = input.split(' ')
         if d['wo_start']:
-            #d['start'] = l[0]
             l = l[1:]
 
         if d['wo_end']:
-            #d['end'] = l[-1]
             l = l[:-1]
+            #print (l)
+            #exit()
 
         input = ' '.join(l)
 
         return input
 
-    def mod_output(self, d_list, input):
+    def mod_dict_out(self, d_list, input):
         d = d_list
         l = input.split(' ')
         if d['wo_start']:
@@ -207,6 +216,41 @@ class Kernel:
         if d['wo_end']:
             d['end'] = l[-1]
             #print(l[-1])
+
+        self.mod_get_set(d)
+
+    def mod_get_set(self, d):
+        set = d['set_exp']
+        get = d['get_exp']
+        tem = d['template']
+        if set is not None:
+
+            if d['wo_end']:
+                self.memory[set.attrib['name']] = d['end']
+            if d['wo_start']:
+                self.memory[set.attrib['name']] = d['start']
+        if get is not None:
+            t = ''
+            if get.attrib['name'] in self.memory:
+                t = self.memory[get.attrib['name']]
+            print(t,'===', ET.tostring(get))
+            star = tem.find('get')
+            tt = ''
+            if star is not None:
+                tem.remove(star)
+            if d['tem_wo_end']:
+                tt = tem.text.strip() + ' ' + t
+            if d['tem_wo_start']:
+                tt = t + ' ' + tem.text.strip()
+            #d['template'] = tem.text
+            n = ET.Element('template')
+
+            n.text = tt
+            tem = n
+            print('>>',ET.tostring(tem), t, self.memory)
+            d['template'] = tem
+            #exit()
+
 
 if __name__ == '__main__':
 
