@@ -286,10 +286,10 @@ class NMT:
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
 
-        print(text, "<< text")
-        print(r, "<< r")
+        print("text g >>", text)
+        print("text k >>", r)
         k_score = self.kernel.bert_score()
-        g_score = self.kernel.bert_compare(in_01, text)
+        g_score = self.kernel.bert_compare(text,in_01)
         print('g', g_score, '- k', k_score)
         if k_score > g_score and r != '':
             text = r
