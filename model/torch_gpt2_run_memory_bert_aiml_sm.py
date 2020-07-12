@@ -535,7 +535,7 @@ class NMT:
         parser.add_argument("--length", type=int, default=25)
         parser.add_argument("--temperature", type=float, default=1e-4)
         parser.add_argument("--top_k", type=int, default=40)
-        parser.add_argument("--apps", type=bool, required=False, default=False)
+        parser.add_argument("--apps", type=bool, required=False, default=True)
         parser.add_argument("--source_file", type=str, required=False, default=location01) #'../data/tf_gpt2_data/117M/converted/pytorch_model.bin')
         parser.add_argument("--no-recent", type=bool, default=False, help="Do not show model recent q and a.")
         self.args = parser.parse_args()
