@@ -19,6 +19,7 @@ class Kernel:
         self.score = []
         self.memory = {}
         self.index = -1
+        self.incomplete = False
 
         self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         self.model = BertForNextSentencePrediction.from_pretrained('bert-base-uncased')
@@ -53,6 +54,8 @@ class Kernel:
     def respond(self, input):
         self.score = []
         self.index = -1
+        self.incomplete = False
+
         tempout = '' #self.kernel.respond(input)
         ## checkout input and response ##
         self.output = tempout
@@ -91,6 +94,9 @@ class Kernel:
             self.output = self.l[index][2]['template']
             #print (ET.tostring(self.output), "???")
             self.output = self.output.text.strip()
+
+        if self.incomplete == True:
+            self.output = ''
         return self.output
 
     def bert_score(self):
@@ -216,6 +222,9 @@ class Kernel:
             d['end'] = l[-1]
             d['star'] = l[-1]
         self.mod_get_set(d)
+        #if d['wo_start'] and len(d['start']) == 0: self.incomplete = True
+        #if d['wo_end'] and len(d['end']) == 0: self.incomplete = True
+
 
     def mod_get_set(self, d):
         set = d['set_exp']
@@ -225,12 +234,21 @@ class Kernel:
         if set is not None:
             if d['wo_end']:
                 self.memory[set.attrib['name']] = d['end']
+                #if d['end'] == '': self.incomplete = True
             if d['wo_start']:
                 self.memory[set.attrib['name']] = d['start']
+                #if d['start'] == '': self.incomplete = True
+            #if d['end'] is not None and d['start'] is not None:
         elif get is not None:
             t = ''
             if get.attrib['name'] in self.memory:
                 t = self.memory[get.attrib['name']]
+                if t is  None or t == '':
+                    self.incomplete = True
+                    n = ET.Element('template')
+                    n.text = ''
+                    d['template'] = n #ET.Element('template')
+                    return
             #print(t,'===', ET.tostring(get))
             star = tem.find('get')
             tt = ''
@@ -262,6 +280,8 @@ class Kernel:
                 tt = t + ' ' + tem.text.strip()
                 #print(tt, 'start')
             #d['template'] = tem.text
+            if t == '':
+                tt = ''
             n = ET.Element('template')
             n.text = tt
             #tem = n

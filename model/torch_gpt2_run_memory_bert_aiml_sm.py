@@ -192,6 +192,13 @@ class NMT:
             self.common += a_chars + "I am in " + location + '. \n '
             #self.common += q_chars + 'How do you feel?\n '
             self.common += a_chars + "I feel " + mood + '. \n '
+
+            r = self.kernel.respond(self.recent_in)
+            if r != "":
+                self.common += '\n '
+                #self.common += q_chars + self.recent_in + '\n '
+                self.common += a_chars + r + ". \n "
+
         if self.reply_aiml is not None:
             self.common += '\n ' + self.reply_aiml + '\n '
 
@@ -202,7 +209,7 @@ class NMT:
         k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
         #print(k,'k')
         k = str(k)
-        r = self.kernel.respond(k)
+        r = '' #self.kernel.respond(k)
         url = self.detect_url(r)
         z = ''
         if url and self.args.apps == True and False:
@@ -281,11 +288,9 @@ class NMT:
 
         if not self.args.quiet or True: print(text)
 
-
-
         text = self.prepare_output(text)
         text = re.sub(endoftext, '', text)
-
+        '''
         print("text g >>", text)
         print("text k >>", r)
         k_score = self.kernel.bert_score()
@@ -294,7 +299,8 @@ class NMT:
         if k_score > g_score and r != '':
             text = r
         print(text, '<< choose')
-
+        '''
+        print(text, "<<")
 
         self.recent_text = text
 
