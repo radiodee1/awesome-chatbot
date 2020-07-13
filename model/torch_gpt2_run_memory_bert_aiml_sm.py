@@ -49,7 +49,8 @@ from GPT2.sample import sample_sequence
 from GPT2.encoder import Encoder
 from model.nmt_aiml_commands import Commands
 from model.nmt_wiki_commands import Wikipedia
-import experiments.aiml_bert as aiml
+import experiments.aiml_bert as aimlb
+import aiml
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
@@ -150,9 +151,13 @@ class NMT:
             aiml_file = aiml02
         print(aiml_file, 'aiml')
         try:
-            self.kernel = aiml.Kernel()
+            self.kernel = aimlb.Kernel()
             self.kernel.verbose(False)
             self.kernel.learn(aiml_file)
+
+            self.k = aiml.Kernel()
+            self.k.verbose(False)
+            self.k.learn(aiml_file)
         except:
             print ('no aiml')
             pass
@@ -209,10 +214,10 @@ class NMT:
         k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
         #print(k,'k')
         k = str(k)
-        r = '' #self.kernel.respond(k)
+        r = self.k.respond(k)
         url = self.detect_url(r)
         z = ''
-        if url and self.args.apps == True and False:
+        if url and self.args.apps == True:
             print(url)
             if url == self.wiki.url_search:
                 self.wiki.set_topic(r[len(url):])
