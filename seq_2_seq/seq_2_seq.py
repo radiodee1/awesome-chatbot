@@ -363,7 +363,7 @@ class Encoder(nn.Module):
 
         embedded = self.embed(source) #.transpose(1,0)
 
-        print(embedded.size(), hparams['single'], 'emb-enc')
+        #print(embedded.size(), hparams['single'], 'emb-enc')
 
         if self.pack_and_pad:
             if self.training and False: print('pack and pad')
@@ -517,7 +517,7 @@ class Decoder(nn.Module):
         #if len(decoder_hidden_x.size()) > 3:
         #    decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
-        print(decoder_hidden_x.size(),'dhx')
+        #print(decoder_hidden_x.size(),'dhx')
         hidden = prune_tensor(decoder_hidden_x, 3)
         #hidden = hidden.permute(1, 0, 2)
         #print(hidden.size(),'hid')
@@ -528,18 +528,15 @@ class Decoder(nn.Module):
 
         embedded = self.dropout_e(encoder_out_x)
 
-        print(embedded.size(),'emb')
+        #print(embedded.size(), hidden.size(), 'emb')
 
         hidden_prev = hidden #.transpose(1,0).contiguous()
-        if hidden_prev.size(0) == 1:
-            #hidden_prev = hidden_prev.transpose(1,0)
-            pass
 
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
         hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
 
-        hidden_small = hidden_small #.unsqueeze(0)
+        #hidden_small = hidden_small #.unsqueeze(0)
 
         #hidden_small = hidden_small.transpose(1,0)
 
@@ -711,7 +708,7 @@ class WrapMemRNN(nn.Module):
             hid_lst = []
             hidden = None
 
-            print(question_variable.size(),'qv')
+            #print(question_variable.size(),'qv')
             qv = question_variable.size(0) # hparams['tokens_per_sentence']
             if hparams['single']: qv = 1
 
@@ -727,10 +724,10 @@ class WrapMemRNN(nn.Module):
                 zz = min(n, question_variable.size(0))
 
                 q_var = question_variable#[zz]
-                print(q_var.size(), 'qvsize')
+                #print(q_var.size(), 'qvsize')
                 q_var = q_var.unsqueeze(0)
                 out, hidden = self.model_1_seq(q_var, len, hidden)
-                print(hidden.size(), q_var.size(), 'encoder hid')
+                #print(hidden.size(), q_var.size(), 'encoder hid')
                 #hidden = hidden.permute(1,0,2)
 
                 if False and q_var.item() == EOS_token and ret_hidden is None:
@@ -769,14 +766,14 @@ class WrapMemRNN(nn.Module):
         hidden = hidden[0,:,:] + hidden[1,:,:] + hidden[2,:,:] + hidden[3,:,:]
         #hidden = hidden.unsqueeze(1)
         #encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
-        print(hidden.size(),encoder_output.size(), '< hids')
+        #print(hidden.size(),encoder_output.size(), '< hids')
 
         #encoder_output = encoder_output #.permute(1,0,2)
 
         #target_variable = target_variable.permute(2,1,0)
 
         #use_attention = True
-        s = encoder_output.size(0)
+        s = encoder_output.size()[0]
         #l = hparams['tokens_per_sentence']
         l = 1 # one word at a time!!
         #sol_list = []
@@ -786,48 +783,46 @@ class WrapMemRNN(nn.Module):
         embed_index = encoder_output # prune_tensor(torch.cat(sol_list, dim=0), 3)
 
         if True:
-            if self.model_6_dec.training or encoder_output.size(1) != 1:
-                encoder_output = prune_tensor(encoder_output, 3) #.transpose(1, 0)
-                decoder_hidden = prune_tensor(hidden, 3) #.transpose(1, 0)
-            else:
-                encoder_output = prune_tensor(encoder_output, 3)
-                decoder_hidden = prune_tensor(hidden, 3)
 
+
+            decoder_hidden = hidden
             #s, l, hid = encoder_output.size()
-
+            '''
             if not self.model_6_dec.training: ## <----
-                s = encoder_output.size(1)
+                s = encoder_output.size(0)
                 #print(s,encoder_output.size(),decoder_hidden.size(), 'stats')
                 pass
 
             #encoder_output = encoder_output.permute(1,0,2)
             #print(encoder_output.size(), s, decoder_hidden.size(), 'eo.size')
-
+            '''
             all_out = []
             for i in range(s):
 
                 #print(encoder_output.size(),'eos')
                 if encoder_output.size(0) == s:
-                    encoder_out_x = prune_tensor(encoder_output[i,:], 3)
+                    encoder_out_x = encoder_output # prune_tensor(encoder_output[i,:], 3)
                 else:
                     encoder_out_x = prune_tensor(encoder_output, 3) #.permute(1,0,2)
+                    #print(s, encoder_output.size())
+                    #exit()
 
                 encoder_out_lrg = encoder_out_x
                 encoder_out_x = embed_index #prune_tensor(self.model_6_dec.embed(embed_index), 3)
 
                 decoder_hidden_x = decoder_hidden #.permute(1,0,2)
-                decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:], 3)
+                ### decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:], 3)
                 #decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
-                decoder_hidden_x = decoder_hidden_x.unsqueeze(0).unsqueeze(0)
+                decoder_hidden_x = decoder_hidden_x.unsqueeze(0) #.unsqueeze(0)
 
-                print(decoder_hidden_x.size(), 'dhx.size()')
+                #print(decoder_hidden_x.size(), 'dhx.size()')
                 decoder_hidden_x = torch.cat([decoder_hidden_x, decoder_hidden_x], dim=0)
                 encoder_out_x = encoder_out_x.unsqueeze(0)
 
                 sent_out = []
 
                 for j in range(l):
-                    print(encoder_out_x.size(),decoder_hidden_x.size(), 'eox')
+                    #print(encoder_out_x.size(),decoder_hidden_x.size(), 'eox')
                     #encoder_out_x = encoder_out_x[:,-1,:] #.unsqueeze(1)
 
                     _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, j) ## <--
@@ -836,22 +831,22 @@ class WrapMemRNN(nn.Module):
 
                     #ans_small = ans_small.permute(0,2,1)
 
-                    ans = ans_small #.permute(2,0,1)
+                    #ans = ans_small #.permute(2,0,1)
 
-                    encoder_out_x = ans
+                    encoder_out_x = ans_small
 
-                    # print(encoder_out_x.size(),decoder_hidden_x.size() ,'eox')
+                    #print(encoder_out_x.size(),decoder_hidden_x.size() ,'eox')
 
                     if len(decoder_hidden_x.size()) > 3:
                         decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
                     #print(ans.size(),'ans')
-                    sent_out.append(ans)
+                    sent_out.append(ans_small)
 
                 sent_out = torch.cat(sent_out, dim=0) ## 0
                 sent_out = prune_tensor(sent_out, 3)
 
-                print(encoder_out_lrg.size(), 'eol.size')
+                #print(encoder_out_lrg.size(), 'eol.size')
                 encoder_out_lrgx = encoder_out_lrg #[:,i,:] #.unsqueeze(0) ## last
 
                 # print(sent_out.size(), encoder_out_lrg.size(),'so,eol')
@@ -894,11 +889,11 @@ class WrapMemRNN(nn.Module):
                 _, token_i = ans.topk(k=1)
                 token_i = token_i.squeeze(0)
                 token_i = torch.LongTensor([token_i[iii] for iii in range(l)])
-                print(i,token_i.size(),'size tok i')
+                #print(i,token_i.size(),'size tok i')
                 #################################
                 if self.model_6_dec.training:
                     tf_out = []
-                    print(l,target_variable.size(), 'l')
+                    #print(l,target_variable.size(), 'l')
                     for jj in range(l):
                         #jjj = min(jj, len(target_variable[i]) - 1)
                         #print(jjj, target_variable.size(), 'tv')
@@ -927,14 +922,14 @@ class WrapMemRNN(nn.Module):
 
                 token_i = token_i #.squeeze(1).squeeze(1)
                 embed_index = token_i
-                print(token_i.size(),token_i, 'tok 02')
+                #print(token_i.size(),token_i, 'tok 02')
 
             all_out = torch.cat(all_out, dim=0) ## 0
 
             all_out = all_out.squeeze(0)
 
             #all_out = self.model_6_dec.out_target_b(all_out)
-            print(all_out.size(), 'allout')
+            #print(all_out.size(), 'allout')
 
             #all_out = self.model_6_dec.softmax_b(all_out)
 
@@ -1170,7 +1165,9 @@ class NMT:
         #if self.args['mode'] == 'infer': self.do_infer = True
         #if self.args['mode'] == 'review': self.do_review = True
         if self.args['mode'] == 'long': self.do_train_long = True
-        if self.args['mode'] == 'interactive': self.do_interactive = True
+        if self.args['mode'] == 'interactive':
+            self.do_interactive = True
+            self.args['single'] = True
         if self.args['mode'] == 'plot':
             self.do_review = True
             self.do_plot = True
@@ -1493,6 +1490,8 @@ class NMT:
                 add_eol = False
                 #print(line)
                 line_out = self.variableFromSentence(self.input_lang, line, pad=pad)
+                #line_out.transpose(1,0)
+                #print(line_out.size())
                 lengths = 0
                 for x in line_out:
                     if x != 0: lengths +=1
@@ -2527,14 +2526,14 @@ class NMT:
             #input_variable = input_variable.permute(1,0)
             tv_large = target_variable
             iv_large = input_variable
-            print(input_variable.size(), target_variable.size(), length_variable.size() ,'iv--')
+            #print(input_variable.size(), target_variable.size(), length_variable.size() ,'iv--')
             for i in range(min(input_variable.size(0), target_variable.size(0))):
                 ## each word in sentence
                 input_variable = iv_large[i,:]
                 target_variable = tv_large[i,:]
                 #length_variable = length_variable[i,:]
                 #print(i)
-                print('train', length_variable.size(), target_variable.size(), input_variable.size(), i)
+                #print('train', length_variable.size(), target_variable.size(), input_variable.size(), i)
 
                 memory_optimizer_3.zero_grad()
 
@@ -2549,9 +2548,10 @@ class NMT:
                 #target_variable = target_variable.permute(2,0,1)
                 #ans = ans.permute(1,0,2)
                 if True:
-                    print(ans.size(), 'ans')
+                    #print(ans.size(), 'ans')
                     ansx = ans.topk(k=1 )[1].squeeze(1)
                     #ansx = ansx.permute(1,0)
+                    '''
                     print(
                         #ans.size(), ' \n',
                         #target_variable.size(), ' \n',
@@ -2559,6 +2559,7 @@ class NMT:
                         '\n-----',
                         sep=""
                     )
+                    '''
                     ans_batch.append(ansx.item())
                     #target_variable = target_variable.squeeze(1)
 
@@ -2571,7 +2572,7 @@ class NMT:
 
                         for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
-                            print(target_variable.size(),'tv-size', ans.size(),'ans',i)
+                            #print(target_variable.size(),'tv-size', ans.size(),'ans',i)
                             z = min([ans.size(0), target_variable.size(0)])
                             #print(z, i,'z,i')
                             #ans = ans.transpose(1,0)
@@ -2610,21 +2611,21 @@ class NMT:
 
                 ans_batch = []
                 # input_variable = input_variable.permute(1,0)
-                tv_large = target_variable
-                iv_large = input_variable
+                tv_large = target_variable[:,:]
+                iv_large = input_variable[:,:]
 
-                print('before eval', length_variable.size(), target_variable.size(), input_variable.size())
+                #print('before eval', length_variable.size(), target_variable.size(), input_variable.size())
 
-                for i in range(min(input_variable.size(0), target_variable.size(0))):
-                    input_variable = iv_large[i, :]
-                    target_variable = tv_large[i, :]
-                    print('eval', length_variable.size(), target_variable.size(), input_variable.size(), i)
+                for i in range(min(iv_large.size(0), tv_large.size(0))):
+                    input_variable = iv_large[i, :]#.unsqueeze(0)
+                    target_variable = tv_large[i, :]#.unsqueeze(0)
+                    #print('eval', length_variable.size(), target_variable.size(), input_variable.size(), i)
 
-                    outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable,
-                                                          criterion)
-                    print(ans.size(), 'ans eval')
+                    outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, None)
+                    #print(ans.size(), 'ans eval')
                     ansx = ans.topk(k=1)[1].squeeze(1)
                     # ansx = ansx.permute(1,0)
+                    '''
                     print(
                         # ans.size(), ' \n',
                         # target_variable.size(), ' \n',
@@ -2632,6 +2633,7 @@ class NMT:
                         '\n-----',
                         sep=""
                     )
+                    '''
                     ans_batch.append(ansx.item())
 
                 if outputs is not None and ans is None:
@@ -2639,7 +2641,7 @@ class NMT:
                     return None, outputs, None
 
                 if not self.do_recurrent_output:
-                    print('here')
+                    #print('here')
 
                     loss = None
                     #ans = ans.permute(1,0)
@@ -2656,7 +2658,7 @@ class NMT:
             #print(ans.size(),'ans')
             pass
 
-        print(ans_batch)
+        #print(ans_batch)
         return outputs, ans , loss, ans_batch
 
     #######################################
@@ -2789,7 +2791,7 @@ class NMT:
                 max_target_length_variable = group[5]
 
                 target_variable = prune_tensor(target_variable, 3)
-                print(input_variable.size(),'iv--')
+                #print(input_variable.size(),'iv--')
                 #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
@@ -2964,7 +2966,7 @@ class NMT:
 
     def _show_sample(self, iter=0, epoch_start=0, epoch_stop=hparams['batch_size'], temp_batch_size=hparams['batch_size']):
         ###########################
-        return 
+
         group = []
         while len(group) < 4:
 
@@ -3000,7 +3002,7 @@ class NMT:
         #ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'],  add_eos=True)
         #target_variable = target_variable.unsqueeze(1)
 
-        print(input_variable.size(), target_variable.size(), 'eval sizes')
+        #print(input_variable.size(), target_variable.size(), 'eval sizes')
 
         print('src:', choice[0])
         question = None
@@ -3057,20 +3059,20 @@ class NMT:
 
             for db in range(1):
                 outputs = outputs[0] #.squeeze(0)
-                for di in range(outputs.size(0) - 1):
+                for di in range(len(outputs) - 1):
                     #print(db,di, 'outputs')
                     output = outputs[di]
-
+                    ni = output
                     #output = output.permute(1, 0)
                     #print(output,'out')
-
+                    '''
                     if True:
                         #print(output.size(),'out')
                         ni = torch.argmax(output, dim=0).item()
                         #print(ni,'ni')
                     else:
                         ni = output[di]
-
+                    '''
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
                         xxx = hparams['eol']
