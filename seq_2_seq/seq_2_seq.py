@@ -783,19 +783,9 @@ class WrapMemRNN(nn.Module):
         embed_index = encoder_output # prune_tensor(torch.cat(sol_list, dim=0), 3)
 
         if True:
-
-
             decoder_hidden = hidden
             #s, l, hid = encoder_output.size()
-            '''
-            if not self.model_6_dec.training: ## <----
-                s = encoder_output.size(0)
-                #print(s,encoder_output.size(),decoder_hidden.size(), 'stats')
-                pass
 
-            #encoder_output = encoder_output.permute(1,0,2)
-            #print(encoder_output.size(), s, decoder_hidden.size(), 'eo.size')
-            '''
             all_out = []
             for i in range(s):
 
@@ -807,6 +797,10 @@ class WrapMemRNN(nn.Module):
                     #print(s, encoder_output.size())
                     #exit()
 
+                if hparams['teacher_forcing_ratio'] > random.random():
+                    #if target_variable is not None:
+                    embed_index = self.embed(target_variable)
+                    #print(embed_index, 'emb-tf')
                 encoder_out_lrg = encoder_out_x
                 encoder_out_x = embed_index #prune_tensor(self.model_6_dec.embed(embed_index), 3)
 
@@ -897,14 +891,14 @@ class WrapMemRNN(nn.Module):
                     for jj in range(l):
                         #jjj = min(jj, len(target_variable[i]) - 1)
                         #print(jjj, target_variable.size(), 'tv')
-                        if teacher_forcing_ratio > random.random():
+                        if teacher_forcing_ratio > random.random() and False:
                             token = target_variable.item() # target_variable[i, jjj, :]
                             # print(jj,jjj,token)
                         else:
                             token = torch.LongTensor([token_i[jj].item()])
                             # print(jj,jjj,token)
 
-                        token = prune_tensor(token, 3)
+                        #token = prune_tensor(token, 3)
                         # token = token.permute(0, 2, 1)
                         # print(token.size(),'tok 00')
                         tf_out.append(token)
@@ -2531,6 +2525,10 @@ class NMT:
                 ## each word in sentence
                 input_variable = iv_large[i,:]
                 target_variable = tv_large[i,:]
+                if i > 0: # and hparams['teacher_forcing_ratio'] > random.random():
+                    target_variable = tv_large[i - 1,:]
+                else:
+                    target_variable = torch.LongTensor([SOS_token])
                 #length_variable = length_variable[i,:]
                 #print(i)
                 #print('train', length_variable.size(), target_variable.size(), input_variable.size(), i)
@@ -2578,7 +2576,7 @@ class NMT:
                             #ans = ans.transpose(1,0)
 
                             a_var = ans#[i,:z,] #[:z]
-                            t_var = target_variable#[i,:z] #[:z]
+                            t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
                             #m_var = mask[i][:z]
 
                             try:
