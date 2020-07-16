@@ -800,7 +800,8 @@ class WrapMemRNN(nn.Module):
                 if hparams['teacher_forcing_ratio'] > random.random():
                     #if target_variable is not None:
                     embed_index = self.embed(target_variable)
-                    #print(embed_index, 'emb-tf')
+                    #print(target_variable, 'emb-tf')
+
                 encoder_out_lrg = encoder_out_x
                 encoder_out_x = embed_index #prune_tensor(self.model_6_dec.embed(embed_index), 3)
 
@@ -2568,7 +2569,7 @@ class NMT:
 
                         #print(ans.size(),  target_variable.size(), 'axantv')
 
-                        for i in range(min(ans.size(0), target_variable.size(0))): #ans.size(0)
+                        for ii in range(1): #min(ans.size(0), target_variable.size(0))): #ans.size(0)
 
                             #print(target_variable.size(),'tv-size', ans.size(),'ans',i)
                             z = min([ans.size(0), target_variable.size(0)])
