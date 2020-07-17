@@ -403,9 +403,11 @@ class Attn(torch.nn.Module):
         return torch.sum(hidden * encoder_output, dim=2)
 
     def general_score(self, hidden, encoder_output):
-        #print(hidden.size(),'hid')
+        hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
+        #print(hidden.size(), encoder_output.size(),'hid')
         energy = self.attn(encoder_output).permute(0,2,1)
-        #z = hidden * energy
+        #print(energy.size(), 'energy')
+        #z = hidden @ energy #.squeeze(0)
         #print(z.size(), 'zzz')
         return torch.sum(hidden @ energy, dim=0)
 
@@ -764,7 +766,7 @@ class WrapMemRNN(nn.Module):
 
         return out, hidden
 
-    def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion, hidden_unchanged=None):
+    def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, criterion, input_unchanged=None):
         hidden = encoder_hidden.contiguous()
         if hidden.size(0) == 4:
             hidden = hidden[0,:,:] + hidden[1,:,:] + hidden[2,:,:] + hidden[3,:,:]
@@ -832,7 +834,7 @@ class WrapMemRNN(nn.Module):
 
                 #################################
 
-                attn_weights = self.model_6_dec.attention_mod(hidden_unchanged, ans_small)
+                attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small)
 
                 #sent_out = sent_out.permute(0,1,2)
 
@@ -2480,7 +2482,7 @@ class NMT:
 
             encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, None)
 
-            if hidden_x.size(1) > 1: use = - 1 #2
+            if hidden_x.size(1) > 1: use = - 2
             else:
                 use = -1
 
@@ -2497,7 +2499,7 @@ class NMT:
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(0)
 
-
+            output_unchanged = encoder_output
 
             num = torch.LongTensor([SOS_token])
             encoder_output = self.model_0_wra.embed(num)
@@ -2514,7 +2516,7 @@ class NMT:
                         pass
                         #target_variable = torch.LongTensor([SOS_token])
 
-                ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, criterion, hidden_x[:,use, :])
+                ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, criterion, output_unchanged) #hidden_x[:,use, :])
                 #print(ans[:,:10], hidden.size(), 'ans,hid')
                 #outputs, _, ans, _ = self.model_0_wra(input_variable, None, target_variable, length_variable, criterion)
                 loss = 0
