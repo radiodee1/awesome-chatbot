@@ -2482,8 +2482,10 @@ class NMT:
 
             if hidden_x.size(1) > 1: use = - 1 #2
             else:
-                print(hidden_x.size())
                 use = -1
+
+            #print(hidden_x.size())
+
             hidden = hidden_x[:,use,:].unsqueeze(1)
 
             num = torch.LongTensor([SOS_token])
