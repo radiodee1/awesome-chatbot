@@ -403,7 +403,8 @@ class Attn(torch.nn.Module):
         return torch.sum(hidden * encoder_output, dim=2)
 
     def general_score(self, hidden, encoder_output):
-        hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
+        if hidden.size(-1) > self.hidden_size:
+            hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
         #print(hidden.size(), encoder_output.size(),'hid')
         energy = self.attn(encoder_output).permute(0,2,1)
         #print(energy.size(), 'energy')
@@ -482,7 +483,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
-        self.out_concat_b = nn.Linear(hidden_dim * 2, hidden_dim)
+        self.out_concat_b = nn.Linear(hidden_dim * 1, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -512,6 +513,9 @@ class Decoder(nn.Module):
         encoder_out_x = encoder_out
 
         decoder_hidden_x = decoder_hidden
+
+        if len(decoder_hidden_x.size()) < 3:
+            decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
         #encoder_out_x = encoder_out_x.transpose(1,0)
 
         output = last_word
@@ -770,7 +774,7 @@ class WrapMemRNN(nn.Module):
         hidden = encoder_hidden.contiguous()
         if hidden.size(0) == 4:
             hidden = hidden[0,:,:] + hidden[1,:,:] + hidden[2,:,:] + hidden[3,:,:]
-        else:
+        elif hidden.size(0) == 2:
             hidden = hidden[0, :, :] + hidden[1, :, :]
 
             #hidden = hidden.unsqueeze(1)
@@ -817,12 +821,12 @@ class WrapMemRNN(nn.Module):
                 decoder_hidden_x = decoder_hidden #.permute(1,0,2)
                 ### decoder_hidden_x = prune_tensor(decoder_hidden_x[i,:], 3)
                 #decoder_hidden_x = decoder_hidden_x.permute(1,0,2)
-                decoder_hidden_x = decoder_hidden_x.unsqueeze(0) #.unsqueeze(0)
+                #decoder_hidden_x = decoder_hidden_x.unsqueeze(0) #.unsqueeze(0)
 
                 #print(decoder_hidden_x.size(), 'dhx.size()')
                 decoder_hidden_x = torch.cat([decoder_hidden_x, decoder_hidden_x], dim=0)
                 encoder_out_x = encoder_out_x.unsqueeze(0)
-
+                #decoder_hidden_x.unsqueeze(1)
                 sent_out = []
 
                     #for j in range(l):
@@ -834,7 +838,7 @@ class WrapMemRNN(nn.Module):
 
                 #################################
 
-                attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small)
+                attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small) #.permute(0,2,1)
 
                 #sent_out = sent_out.permute(0,1,2)
 
@@ -855,8 +859,9 @@ class WrapMemRNN(nn.Module):
                 #for iii in ans: print(iii.size())
                 #print('---')
 
-                ans = torch.cat(ans, dim=-1) ## -2/0
-
+                ans = torch.cat(ans, dim=-2) ## -2/0
+                ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
+                #print(ans.size(),'ans')
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
                 
@@ -2486,7 +2491,7 @@ class NMT:
             else:
                 use = -1
 
-            hidden = hidden_x[:, use, :].unsqueeze(1)
+
             #print(hidden_x.size())
 
             if hidden_x.size(0) == 4:
@@ -2499,7 +2504,8 @@ class NMT:
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(0)
 
-            output_unchanged = encoder_output
+            hidden = hidden_x[:, use, :].unsqueeze(1)
+            output_unchanged = hidden_x #encoder_output
 
             num = torch.LongTensor([SOS_token])
             encoder_output = self.model_0_wra.embed(num)
