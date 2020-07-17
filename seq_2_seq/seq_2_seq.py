@@ -730,7 +730,7 @@ class WrapMemRNN(nn.Module):
             #print(q_var.size(), 'qvsize')
             #q_var = q_var.unsqueeze(0)
             out, hidden = self.model_1_seq(q_var, len, hidden)
-            print(hidden.size(), out.size(), 'encoder hid,out')
+            #print(hidden.size(), out.size(), 'encoder hid,out')
             #hidden = hidden.permute(1,0,2)
 
             if False and q_var.item() == EOS_token and ret_hidden is None:
@@ -1714,7 +1714,7 @@ class NMT:
         return l
 
 
-    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1, no_padding=False):
+    def indexesFromSentence(self,lang, sentence, skip_unk=False, add_sos=True, add_eos=False, return_string=False, pad=-1, no_padding=True):
         if pad == -1:
             MAX_LENGTH = hparams['tokens_per_sentence']
         else:
@@ -1780,7 +1780,7 @@ class NMT:
     def inputVar(self, l, voc):
 
         add_eos = True
-        no_padding = not hparams['single']
+        no_padding = True #not hparams['single']
         indexes_batch = [self.indexesFromSentence(voc, sentence, add_eos=add_eos, no_padding=no_padding) for sentence in l]
         lengths = []
         if False:
@@ -2459,6 +2459,7 @@ class NMT:
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
+        #print(input_variable,'full input')
 
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
@@ -2479,8 +2480,10 @@ class NMT:
 
             encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, None)
 
-            if hidden_x.size(1) > 1: use = - 2
-            else: use = -1
+            if hidden_x.size(1) > 1: use = - 1 #2
+            else:
+                print(hidden_x.size())
+                use = -1
             hidden = hidden_x[:,use,:].unsqueeze(1)
 
             num = torch.LongTensor([SOS_token])
@@ -2665,7 +2668,7 @@ class NMT:
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
                 skip_unk = self.do_skip_unk
-                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk)
+                group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk, pad_and_batch=True)
 
                 #for i in group: print(i.size() if not isinstance(i,list) else ('->', i[0].size()), len(i))
                 #print('---')
@@ -2674,8 +2677,8 @@ class NMT:
                 question_variable = None #group[2]
                 target_variable = group[1]
                 length_variable = group[3]
-                mask_variable = group[4]
-                max_target_length_variable = group[5]
+                mask_variable = None #group[4]
+                max_target_length_variable = None #group[5]
 
                 target_variable = prune_tensor(target_variable, 3)
                 #print(input_variable.size(),'iv--')
