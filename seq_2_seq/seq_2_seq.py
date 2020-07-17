@@ -404,10 +404,10 @@ class Attn(torch.nn.Module):
 
     def general_score(self, hidden, encoder_output):
         #print(hidden.size(),'hid')
-        energy = self.attn(encoder_output)
+        energy = self.attn(encoder_output).permute(0,2,1)
         #z = hidden * energy
         #print(z.size(), 'zzz')
-        return torch.sum(hidden * energy, dim=0)
+        return torch.sum(hidden @ energy, dim=0)
 
     def concat_score(self, hidden, encoder_output):
         #print(encoder_output,encoder_output.size(),'eo0')
@@ -443,13 +443,13 @@ class Attn(torch.nn.Module):
             attn_energies = self.dot_score(hidden, encoder_outputs)
         elif self.method == 'none':
             attn_energies = torch.ones(encoder_outputs.size()[:1])
-            attn_energies = attn_energies.unsqueeze(0).t()
+            attn_energies = attn_energies.unsqueeze(0).permute(-1,-2)
             #print(attn_energies.size(), 'attn')
             return attn_energies.unsqueeze(1)
         # Transpose max_length and batch_size dimensions
         #attn_energies = torch.relu(attn_energies)
         #print(attn_energies.size(),self.hidden_size ,'att.before')
-        attn_energies = attn_energies.t()
+        #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
         return F.softmax(attn_energies, dim=0).unsqueeze(0)
@@ -823,30 +823,30 @@ class WrapMemRNN(nn.Module):
 
                 sent_out = []
 
-                for j in range(l):
+                    #for j in range(l):
                     #print(encoder_out_x.size(),decoder_hidden_x.size(), 'eox')
                     #encoder_out_x = encoder_out_x[:,-1,:] #.unsqueeze(1)
 
-                    _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, j) ## <--
+                _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
 
                 #################################
 
-                #attn_weights = self.model_6_dec.attention_mod(sent_out, encoder_out_lrgx)
+                attn_weights = self.model_6_dec.attention_mod(hidden_unchanged, ans_small)
 
                 #sent_out = sent_out.permute(0,1,2)
 
 
-                #print(attn_weights.size(), sent_out.size(),'aw,so')
+                #print(attn_weights.size(), ans_small.size(),'aw,so')
 
-                #context = attn_weights.bmm(sent_out)
+                context = attn_weights.bmm(ans_small)
 
                 #ans_small = sent_out
-                '''
+
                 ans = [
                     ans_small,  # .permute(0,2,1) ,
-                    #context  # .permute(1,0,2)
-                    sent_out
+                    context  # .permute(1,0,2)
+                    #sent_out
                 ]
 
                 #print('---')
@@ -858,9 +858,9 @@ class WrapMemRNN(nn.Module):
                 ans = self.model_6_dec.out_concat_b(ans)
                 ans = self.model_6_dec.tanh_b(ans)
                 
-                '''
+
                 ans_sized = ans_small[:,:,:]
-                ans = self.model_6_dec.out_target_b(ans_small)
+                ans = self.model_6_dec.out_target_b(ans)
 
                 ans = self.model_6_dec.softmax_b(ans)
 
@@ -2484,9 +2484,20 @@ class NMT:
             else:
                 use = -1
 
+            hidden = hidden_x[:, use, :].unsqueeze(1)
             #print(hidden_x.size())
 
-            hidden = hidden_x[:,use,:].unsqueeze(1)
+            if hidden_x.size(0) == 4:
+                hidden_x = hidden_x[0, :, :] + hidden_x[1, :, :] + hidden_x[2, :, :] + hidden_x[3, :, :]
+            elif hidden_x.size(0) == 2:
+                pass
+                hidden_x = hidden_x[0, :, :] + hidden_x[1, :, :]
+            else:
+                pass
+            if len(hidden_x.size()) == 2:
+                hidden_x = hidden_x.unsqueeze(0)
+
+
 
             num = torch.LongTensor([SOS_token])
             encoder_output = self.model_0_wra.embed(num)
