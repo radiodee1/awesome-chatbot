@@ -843,7 +843,7 @@ class WrapMemRNN(nn.Module):
             #ans_small = sent_out
 
             ans = [
-                #ans_small,  # .permute(0,2,1) ,
+                ans_small,  # .permute(0,2,1) ,
                 context  # .permute(1,0,2)
                 #sent_out
             ]
@@ -856,7 +856,7 @@ class WrapMemRNN(nn.Module):
             ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
             #ans = self.model_6_dec.out_concat_b(ans)
-            #ans = self.model_6_dec.tanh_b(ans)
+            ans = self.model_6_dec.tanh_b(ans)
 
 
             #ans_sized = ans_small[:,:,:]
