@@ -2517,8 +2517,8 @@ class NMT:
                 if i < tv_large.size(0):
                     target_variable = tv_large[i,:]
                 current_tv = ansx
-                if criterion is not None:
-                    wrapper_optimizer_2.zero_grad()
+                if criterion is not None: pass
+                    #wrapper_optimizer_2.zero_grad()
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i > 0 and i < tv_large.size(0):
@@ -2579,7 +2579,7 @@ class NMT:
                 loss.backward()
 
                 #wrapper_optimizer_1.step()
-                wrapper_optimizer_2.step()
+                #wrapper_optimizer_2.step()
 
             if criterion is not None:
                 memory_optimizer_3.step()
