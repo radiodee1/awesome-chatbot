@@ -2508,7 +2508,7 @@ class NMT:
                 input_variable = iv_large[i,:]
                 target_variable = tv_large[i,:]
                 current_tv = ansx
-                if criterion is not None: #  self.model_0_wra.model_6_dec.training:
+                if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i > 0:
                         target_variable = tv_large[i  ,:] # i-1
                     else:
