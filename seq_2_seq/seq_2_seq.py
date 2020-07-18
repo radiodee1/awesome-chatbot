@@ -2180,10 +2180,15 @@ class NMT:
 
     def _make_optimizer(self, module=None, lr=1.0):
         print('new optimizer', hparams['learning_rate'] * lr)
-        if module is None:
-            module = self.model_0_wra
-        parameters = filter(lambda p: p.requires_grad, module.parameters())
-        return optim.Adam(parameters, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
+        if not isinstance(module, list):
+            module = [module]
+        #if module is None:
+        #    module = self.model_0_wra
+        z = []
+        for i in module:
+            parameters = filter(lambda p: p.requires_grad, i.parameters())
+            z.extend(parameters)
+        return optim.Adam(z, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
 
@@ -2465,6 +2470,7 @@ class NMT:
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
                 memory_optimizer_3.zero_grad()
+                #wrapper_optimizer_2.zero_grad()
 
             else:
                 self.model_0_wra.eval()
@@ -2501,18 +2507,24 @@ class NMT:
 
             num = torch.LongTensor([SOS_token])
             encoder_output = self.model_0_wra.embed(num)
+            if criterion is not None:
+                pass #memory_optimizer_3.step()
 
-
-            for i in range(min(input_variable.size(0), target_variable.size(0))):
+            for i in range(hparams['tokens_per_sentence']): #min(input_variable.size(0), target_variable.size(0))):
                 ## each word in sentence
-                input_variable = iv_large[i,:]
-                target_variable = tv_large[i,:]
+                #input_variable = iv_large[i,:]
+                target_variable = torch.LongTensor([UNK_token])
+                if i < tv_large.size(0):
+                    target_variable = tv_large[i,:]
                 current_tv = ansx
+                if criterion is not None:
+                    wrapper_optimizer_2.zero_grad()
+
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
-                    if i > 0:
+                    if i > 0 and i < tv_large.size(0):
                         target_variable = tv_large[i  ,:] # i-1
                     else:
-                        #target_variable = torch.LongTensor(ansx)
+                        target_variable = torch.LongTensor([ansx])
                         pass
                         #target_variable = torch.LongTensor([SOS_token])
 
@@ -2534,7 +2546,18 @@ class NMT:
 
 
                 a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
-                t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
+
+                #print(ansx.size(), ansx, hparams['tokens_per_sentence'], i ,'a_var')
+                if ansx.item() == EOS_token and i > 0:
+                    #print('break')
+                    #break
+                    pass
+
+                if i < tv_large.size(0):
+                    t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
+                else:
+                    t_var = torch.LongTensor([UNK_token])
+
                 #m_var = mask[i][:z]
 
                 if criterion is not None:
@@ -2552,12 +2575,15 @@ class NMT:
 
                 #if not isinstance(loss, int) or True:
 
-            if criterion is not None:
+            if criterion is not None and not isinstance(loss, int):
                 loss.backward()
 
                 #wrapper_optimizer_1.step()
-                #wrapper_optimizer_2.step()
+                wrapper_optimizer_2.step()
+
+            if criterion is not None:
                 memory_optimizer_3.step()
+                pass
 
         if self.do_recurrent_output:
             ans = ansx #.permute(1,0)
@@ -2615,17 +2641,17 @@ class NMT:
 
         if self.model_0_wra.opt_1 is None or self.first_load:
 
-            wrapper_optimizer_1 = self._make_optimizer(self.model_0_wra.model_1_seq)
+            wrapper_optimizer_1 = self._make_optimizer([self.model_0_wra.model_1_seq , self.model_0_wra.model_6_dec])
             self.model_0_wra.opt_1 = wrapper_optimizer_1
 
         if self.model_0_wra.opt_2 is None or self.first_load:
             lm = hparams['multiplier']
-            wrapper_optimizer_2 = self._make_optimizer(self.model_0_wra.model_6_dec,lm)
+            wrapper_optimizer_2 = self._make_optimizer([self.model_0_wra.model_1_seq, self.model_0_wra.model_6_dec],lm)
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
         if self.model_0_wra.opt_3 is None or self.first_load:
             lm = hparams['multiplier']
-            wrapper_optimizer_3 = self._make_optimizer(self.model_0_wra, lm)
+            wrapper_optimizer_3 = self._make_optimizer([self.model_0_wra, self.model_0_wra.model_1_seq, self.model_0_wra.model_6_dec], lm)
             self.model_0_wra.opt_3 = wrapper_optimizer_3
 
         #weight = torch.ones(self.output_lang.n_words)
