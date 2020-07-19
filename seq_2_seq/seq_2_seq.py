@@ -1900,9 +1900,9 @@ class NMT:
                 else:
                     #x = triplet
                     x = [
-                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_eos=True, return_string=True),
-                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_eos=False, return_string=True),
-                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_eos=False, return_string=True)
+                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_sos=True ,add_eos=True, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_sos=True, add_eos=False, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_sos=True, add_eos=False, return_string=True)
                     ]
                     if x[0] is None: x = None
 
@@ -2501,6 +2501,7 @@ class NMT:
             if criterion is not None:
                 pass #memory_optimizer_3.step()
 
+            eol_found = False
             for i in range(hparams['tokens_per_sentence']): #min(input_variable.size(0), target_variable.size(0))):
                 ## each word in sentence
                 #input_variable = iv_large[i,:]
@@ -2528,16 +2529,16 @@ class NMT:
 
 
                 #print(tv_large.size(), ansx, hparams['tokens_per_sentence'], i ,'a_var')
-                if ansx.item() == EOS_token and i >= tv_large.size(0):
-                    #print('break')
-                    #if i > 0: loss.backward()
+                if ansx.item() == EOS_token :
+                    eol_found = True
+
+                if eol_found and i >= tv_large.size(0):
                     break
-                    pass
 
                 if i < tv_large.size(0):
                     t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
                 else:
-                    t_var = torch.LongTensor([EOS_token])
+                    t_var = torch.LongTensor([UNK_token])
 
                 if criterion is not None:
                     try:
@@ -2880,7 +2881,7 @@ class NMT:
             else:
                 choice = random.choice(self.pairs[epoch_start + iter: epoch_start + iter + temp_batch_size])
 
-            group = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk)
+            group = self.variables_for_batch([choice], 1, 0, skip_unk=self.do_skip_unk, pad_and_batch=True)
             '''
             print(choice)
             print('----')
@@ -2894,28 +2895,17 @@ class NMT:
         ques_variable = None  # group[2]
         target_variable = group[1]
         lengths = group[3]
-        mask = group[4]
-        max_target_length = group[5]
-
-        #training_batches = self.batch2TrainData(self.output_lang, [choice])
-        #input_variable, lengths, target_variable, mask, max_target_len = training_batches
+        #mask = group[4]
+        #max_target_length = group[5]
 
         pad = hparams['tokens_per_sentence']
-        #input_variable = self.variableFromSentence(self.output_lang, choice[0], pad=pad, add_eos=True)
 
-        #lengths = Variable(torch.LongTensor([pad]))
-        #ques_variable = self.variableFromSentence(self.output_lang, hparams['unk'],  add_eos=True)
-        #target_variable = target_variable.unsqueeze(1)
-
-        #print(input_variable.size(), target_variable.size(), 'eval sizes')
-
-        print('src:', choice[0])
+        print('src: sol', choice[0])
         question = None
-        if self.do_load_babi:
-            #print('ques:', choice[1])
-            print('ref:', choice[2])
-        else:
-            print('tgt:', choice[1])
+        #if self.do_load_babi:
+        #print('ques:', choice[1])
+        print('ref: sol', choice[2])
+
         '''
         nums = self.variablesFromPair(choice)
         if self.do_load_babi:
