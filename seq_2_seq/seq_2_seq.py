@@ -2489,9 +2489,6 @@ class NMT:
             else:
                 use = -1
 
-
-            #print(hidden_x.size())
-
             if hidden_x.size(0) == 4:
                 hidden_x = hidden_x[0, :, :] + hidden_x[1, :, :] #+ hidden_x[2, :, :] + hidden_x[3, :, :]
             elif hidden_x.size(0) == 2:
