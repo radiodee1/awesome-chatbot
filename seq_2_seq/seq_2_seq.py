@@ -2514,19 +2514,13 @@ class NMT:
                 ## each word in sentence
                 #input_variable = iv_large[i,:]
                 target_variable = torch.LongTensor([EOS_token])
-                if i < tv_large.size(0):
-                    target_variable = tv_large[i,:]
+                #if i < tv_large.size(0) or True:
+                #    target_variable = tv_large[i,:]
                 current_tv = ansx
-                if criterion is not None: pass
-                    #wrapper_optimizer_2.zero_grad()
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
-                    if i > 0 and i < tv_large.size(0):
+                    if i < tv_large.size(0):
                         target_variable = tv_large[i  ,:] # i-1
-                    else:
-                        target_variable = torch.LongTensor([ansx])
-                        pass
-                        #target_variable = torch.LongTensor([SOS_token])
 
                 #print(target_variable, tv_large.size(), ansx, 'tv.size')
                 ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, current_tv, output_unchanged)
@@ -2536,20 +2530,16 @@ class NMT:
                 n_tot = 0
 
                 ansx = token_i #.squeeze(0)
-                #ansx = ansx.permute(1,0)
-
-                #print(ansx, 'ansx')
-                #encoder_output = sized.squeeze(0) #
 
                 ans_batch.append(ansx.item())
-                #target_variable = target_variable.squeeze(1)
-
 
                 a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
+
 
                 #print(tv_large.size(), ansx, hparams['tokens_per_sentence'], i ,'a_var')
                 if ansx.item() == EOS_token and i >= tv_large.size(0):
                     #print('break')
+                    #if i > 0: loss.backward()
                     break
                     pass
 
@@ -2557,8 +2547,6 @@ class NMT:
                     t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
                 else:
                     t_var = torch.LongTensor([EOS_token])
-
-                #m_var = mask[i][:z]
 
                 if criterion is not None:
                     try:
@@ -2572,14 +2560,8 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
+                    loss.backward(retain_graph=True)
 
-                #if not isinstance(loss, int) or True:
-
-            if criterion is not None and not isinstance(loss, int):
-                loss.backward()
-
-                #wrapper_optimizer_1.step()
-                #wrapper_optimizer_2.step()
 
             if criterion is not None:
                 memory_optimizer_3.step()
