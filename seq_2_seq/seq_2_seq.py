@@ -813,8 +813,7 @@ class WrapMemRNN(nn.Module):
             else:
                 embed_index = self.embed(token)
 
-            #encoder_out_lrg = encoder_out_x
-            encoder_out_x = embed_index #prune_tensor(self.model_6_dec.embed(embed_index), 3)
+            encoder_out_x = embed_index
 
             decoder_hidden_x = decoder_hidden #.permute(1,0,2)
 
@@ -824,19 +823,12 @@ class WrapMemRNN(nn.Module):
             #decoder_hidden_x.unsqueeze(1)
             sent_out = []
 
-
-
             _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
 
             #################################
 
-            attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small) #.permute(0,2,1)
-
-            #sent_out = sent_out.permute(0,1,2)
-
-
-            #print(attn_weights.size(), ans_small.size(),'aw,so')
+            attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small) 
 
             context = attn_weights.bmm(ans_small)
             #context = self.model_6_dec.tanh_b(context)
@@ -2485,9 +2477,9 @@ class NMT:
 
             encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, None)
 
-            if hidden_x.size(1) > 1: use = -1
-            else:
-                use = -1
+            #if hidden_x.size(1) > 1: use = -1
+            #else:
+            use = -1
 
             if hidden_x.size(0) == 4:
                 hidden_x = hidden_x[0, :, :] + hidden_x[1, :, :] #+ hidden_x[2, :, :] + hidden_x[3, :, :]
@@ -2517,7 +2509,7 @@ class NMT:
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(0):
-                        target_variable = tv_large[i  ,:] # i-1
+                        if i > 0: target_variable = tv_large[i -1 ,:] # i-1
 
                 #print(target_variable, tv_large.size(), ansx, 'tv.size')
                 ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, current_tv, output_unchanged)
