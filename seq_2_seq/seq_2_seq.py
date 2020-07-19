@@ -2513,7 +2513,7 @@ class NMT:
             for i in range(hparams['tokens_per_sentence']): #min(input_variable.size(0), target_variable.size(0))):
                 ## each word in sentence
                 #input_variable = iv_large[i,:]
-                target_variable = torch.LongTensor([UNK_token])
+                target_variable = torch.LongTensor([EOS_token])
                 if i < tv_large.size(0):
                     target_variable = tv_large[i,:]
                 current_tv = ansx
@@ -2547,16 +2547,16 @@ class NMT:
 
                 a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
 
-                #print(ansx.size(), ansx, hparams['tokens_per_sentence'], i ,'a_var')
-                if ansx.item() == EOS_token and i > 0:
+                #print(tv_large.size(), ansx, hparams['tokens_per_sentence'], i ,'a_var')
+                if ansx.item() == EOS_token and i >= tv_large.size(0):
                     #print('break')
-                    #break
+                    break
                     pass
 
                 if i < tv_large.size(0):
                     t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
                 else:
-                    t_var = torch.LongTensor([UNK_token])
+                    t_var = torch.LongTensor([EOS_token])
 
                 #m_var = mask[i][:z]
 
