@@ -828,7 +828,7 @@ class WrapMemRNN(nn.Module):
 
             #################################
 
-            attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small) 
+            attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small)
 
             context = attn_weights.bmm(ans_small)
             #context = self.model_6_dec.tanh_b(context)
