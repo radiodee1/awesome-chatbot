@@ -509,7 +509,6 @@ class Decoder(nn.Module):
 
     def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
-
         encoder_out_x = encoder_out
 
         decoder_hidden_x = decoder_hidden
@@ -649,31 +648,8 @@ class WrapMemRNN(nn.Module):
 
     def forward(self, input_variable, question_variable, target_variable, length_variable, criterion=None):
 
-        #input_variable = input_variable.permute(1,0)
 
-        #encoder_output, hidden = self.wrap_encoder_module(input_variable, length_variable)
-
-        #encoder_output = prune_tensor(encoder_output,3)
-        #hidden = prune_tensor(hidden,3)
-
-        #print(encoder_output.size(), hidden.size(),'call')
-
-        #encoder_output = torch.sigmoid(encoder_output)
-
-        if self.print_to_screen and False:
-            ''' here we test the plot_vector() function. '''
-            print(hidden.size(),'qv', hidden[0][0])
-            out = prune_tensor(encoder_output[0][0], 1)
-            plot_vector(out)
-            exit()
-        #print(hidden.size(), encoder_output.size(), self.model_6_dec.training,  'before')
-
-        #ans, seq = self.wrap_decoder_module(encoder_output, hidden, target_variable, criterion)
-
-        if self.print_to_screen and True:
-            print(ans.size(), seq,'ans,seq')
-            plot_vector(ans[1][0])
-            exit()
+        ### removed ###
 
         return seq, None, ans, None
 
@@ -739,6 +715,7 @@ class WrapMemRNN(nn.Module):
             #print(hidden.size(), out.size(), 'encoder hid,out')
             #hidden = hidden.permute(1,0,2)
 
+            '''
             if False and q_var.item() == EOS_token and ret_hidden is None:
                 ret_hidden = hidden #.permute(1,0,2)#.clone()
                 test = num
@@ -748,25 +725,11 @@ class WrapMemRNN(nn.Module):
                 pass
             else:
                 ret_hidden = hidden #.permute(1,0,2)
+            '''
             #out = prune_tensor(out, 2)
             sub_lst.append(out)
             num += 1
-            #print(test, length_variable[m], ret_hidden, 'hidd')
-            #print(sub_lst, sub_lst[0].size())
-            '''
-                sub_lst = torch.cat(sub_lst, dim=0)
-                sub_lst = prune_tensor(sub_lst, 3)
-                output.append(sub_lst)
-                hid_lst.append(ret_hidden)
-            output = torch.cat(output, dim=0)
-            hidden = torch.cat(hid_lst, dim=0)
 
-            out = output #.permute(1,0,2)
-            '''
-            #print(hidden.size(),'hidd', out.size(),'out single')
-
-            #num = torch.LongTensor([SOS_token])  # EOS_token  # magic number for testing = garden
-            #out = output #self.embed(num)
 
         return out, hidden
 
@@ -779,23 +742,9 @@ class WrapMemRNN(nn.Module):
 
         #print(token,'tok 01')
         token = torch.LongTensor([token])
-            #hidden = hidden.unsqueeze(1)
-        #encoder_output = encoder_output[:,:,:self.hidden_size] + encoder_output[:,:,self.hidden_size:]
-        #print(hidden.size(),encoder_output.size(), '< hids')
 
-        #encoder_output = encoder_output #.permute(1,0,2)
+        #s = encoder_output.size()[0]
 
-        #target_variable = target_variable.permute(2,1,0)
-
-        #use_attention = True
-        s = encoder_output.size()[0]
-        #l = hparams['tokens_per_sentence']
-        l = 1 # one word at a time!!
-        #sol_list = []
-        #sol = torch.LongTensor([SOS_token])
-        #for _ in range(l): sol_list.append(sol)
-
-        #embed_index = encoder_output # prune_tensor(torch.cat(sol_list, dim=0), 3)
 
         if True:
             decoder_hidden = hidden
@@ -858,18 +807,13 @@ class WrapMemRNN(nn.Module):
 
             #ans = self.model_6_dec.softmax_b(ans)
 
-            #ans = ans.permute(0,1,2)
-            #all_out.append(ans)
-
             ####################################
             #print(ans.size(),'k')
             _, token_i = ans.topk(k=1)
             token_i = token_i.squeeze(0)
-            #token_i = torch.LongTensor([token_i[iii] for iii in range(l)])
             #print(token_i.size(),'size tok i')
             #################################
             ans_sized = self.embed(token_i)
-
 
         return ans, decoder_hidden_x, ans_sized, token_i
 
