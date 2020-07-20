@@ -835,8 +835,8 @@ class WrapMemRNN(nn.Module):
             #ans_small = sent_out
 
             ans = [
-                #ans_small,  # .permute(0,2,1) ,
-                context  # .permute(1,0,2)
+                ans_small,  # .permute(0,2,1) ,
+                context [:,-1,:].unsqueeze(1) # .permute(1,0,2)
                 #sent_out
             ]
 
