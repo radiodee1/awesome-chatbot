@@ -2512,7 +2512,7 @@ class NMT:
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(0):
-                        if i > 0 or True: target_variable = tv_large[i  ,:] # i-1
+                        if i > 0 : target_variable = tv_large[i -1  ,:] # i-1
 
                 #print(target_variable, tv_large.size(), ansx, 'tv.size')
                 ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, current_tv, output_unchanged)
