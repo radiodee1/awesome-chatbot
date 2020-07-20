@@ -483,7 +483,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
-        self.out_concat_b = nn.Linear(hidden_dim * 1, hidden_dim)
+        self.out_concat_b = nn.Linear(hidden_dim * 2, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -830,7 +830,9 @@ class WrapMemRNN(nn.Module):
 
             attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small)
 
-            context = attn_weights.bmm(ans_small)
+            attn_weights = attn_weights.permute(0,2,1)
+            #print(attn_weights.size(), input_unchanged.size(),'aw,iu')
+            context = attn_weights.bmm(input_unchanged)
             #context = self.model_6_dec.tanh_b(context)
             #ans_small = sent_out
 
@@ -844,13 +846,13 @@ class WrapMemRNN(nn.Module):
             #for iii in ans: print(iii.size())
             #print('---')
 
-            ans = torch.cat(ans, dim=-2) ## -2/0
-            ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
+            ans = torch.cat(ans, dim=-1) ## -2/0
+            #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
-            #ans = self.model_6_dec.out_concat_b(ans)
+            ans = self.model_6_dec.out_concat_b(ans)
             ans = self.model_6_dec.tanh_b(ans)
 
-
+            #print(ans.size(), 'ans')
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
 
