@@ -2431,11 +2431,11 @@ class NMT:
 
             #print(tv_large.size(), iv_large.size(), length_variable.size(), 'sos')
 
-            if length_variable.size(0) != 1: # hparams['batch_size']:
+            if length_variable.size(0) != 1 or True: # hparams['batch_size']:
                 tv_large = tv_large.t()
                 iv_large = iv_large.t()
 
-            #print(iv_large.size(), tv_large.size(), length_variable.size(),  'iv,tv, t()')
+            #print(iv_large.size(), tv_large.size(), length_variable.size(), size, 'iv,tv, t()')
 
             encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, length_variable)
 
@@ -2495,7 +2495,8 @@ class NMT:
                     if i < tv_large.size(0):
                         if i > 0 :
                             if hparams['single'] and False:
-                                target_variable = tv_large[i -1  ,:] # i-1
+                                pass
+                                #target_variable = tv_large[i -1  ,:] # i-1
                             else:
                                 target_variable = tv_large[:, i -1] ## batch first??
 
@@ -2526,7 +2527,7 @@ class NMT:
                 if eol_found and i >= tv_large.size(0):
                     break
 
-                if i < tv_large.size(0):
+                if i < tv_large.size(1):
                     t_var = tv_large[:,i]  #[i,:] # target_variable#[i,:z] #[:z]
                 else:
                     t_var = torch.LongTensor([UNK_token for _ in range(size)])
@@ -2693,7 +2694,7 @@ class NMT:
 
                 #print(length_variable,'len')
                 #target_variable = prune_tensor(target_variable, 3)
-                print(input_variable.size(),'iv--')
+                #print(input_variable.size(),'iv--')
                 #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
@@ -2893,10 +2894,10 @@ class NMT:
         lengths = group[3]
         #mask = group[4]
         #max_target_length = group[5]
-        input_variable = input_variable.permute(-1,-2)#.unsqueeze(0)
-        target_variable = target_variable.permute(-1,-2)#.unsqueeze(0)
+        #input_variable = input_variable.permute(-1,-2)#.unsqueeze(0)
+        #target_variable = target_variable.permute(-1,-2)#.unsqueeze(0)
 
-        print(input_variable.size(), target_variable.size(),lengths.size(), 'it')
+        #print(input_variable.size(), target_variable.size(),lengths.size(), 'it')
 
         pad = hparams['tokens_per_sentence']
 
