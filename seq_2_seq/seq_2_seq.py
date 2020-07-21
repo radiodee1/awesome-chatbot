@@ -367,13 +367,13 @@ class Encoder(nn.Module):
 
         if self.pack_and_pad:
             if self.training and False: print('pack and pad')
-            embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first, enforce_sorted=False)
+            embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         #print(encoder_out.size(), encoder_hidden.size(), 'eo,eh')
         if self.pack_and_pad:
-            outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first, enforce_sorted=False)
+            outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first)
             encoder_out = outputs
 
         #encoder_hidden = encoder_hidden.permute(1,0,2)
@@ -510,6 +510,8 @@ class Decoder(nn.Module):
     def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
         encoder_out_x = encoder_out
+        if len(encoder_out_x.size()) > 3:
+            encoder_out_x = encoder_out_x.squeeze(0)
 
         decoder_hidden_x = decoder_hidden
 
@@ -700,14 +702,12 @@ class WrapMemRNN(nn.Module):
             #for m in range(question_variable.size(1)):
             ret_hidden = None
             #len = 1 #question_variable.size(1)
-            len = None # torch.LongTensor(len)
+            len = length_variable # torch.LongTensor(len)
 
             sub_lst = []
             num = 0
             test = 0
-            #for _ in range(1): #qv): #question_variable.size(1)):
-                #zz = min(n, question_variable.size(0))
-
+            #print(question_variable.size(), length_variable.size(), 'qv,lv')
             q_var = question_variable#[zz]
             #print(q_var.size(), 'qvsize')
             #q_var = q_var.unsqueeze(0)
@@ -741,7 +741,8 @@ class WrapMemRNN(nn.Module):
             hidden = hidden[0, :, :] + hidden[1, :, :]
 
         #print(token,'tok 01')
-        token = torch.LongTensor([token])
+        if isinstance(token, int):
+            token = torch.LongTensor([token])
 
         #s = encoder_output.size()[0]
 
@@ -779,14 +780,16 @@ class WrapMemRNN(nn.Module):
 
             attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small)
 
-            attn_weights = attn_weights.permute(0,2,1)
+            attn_weights = attn_weights.permute(2,1,0)
+
             #print(attn_weights.size(), input_unchanged.size(),'aw,iu')
+
             context = attn_weights.bmm(input_unchanged)
             #context = self.model_6_dec.tanh_b(context)
             #ans_small = sent_out
 
             ans = [
-                ans_small,  # .permute(0,2,1) ,
+                ans_small.permute(1,0,2) ,
                 context #[:,-1,:].unsqueeze(1) # .permute(1,0,2)
                 #sent_out
             ]
@@ -1769,6 +1772,11 @@ class NMT:
         #print(padVar.size(), mask.size(),'pad,size')
         return padVar, mask, max_target_len
 
+    def sort_by_input_var(self, pair):
+        pair_out = pair[:]
+        pair_out.sort(key=lambda x: len(x[0].split(" ")), reverse=True)
+        return pair_out
+
     # Returns all items for a given batch of pairs
     def batch2TrainData(self, voc, pair_batch):
         no_padding = not hparams['single']
@@ -2400,7 +2408,7 @@ class NMT:
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
-        #print(input_variable,'full input')
+        size = length_variable.size()[0]
 
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
@@ -2421,11 +2429,17 @@ class NMT:
             tv_large = target_variable[:]
             iv_large = input_variable[:]
 
-            #print(tv_large, iv_large, 'sos')
+            #print(tv_large.size(), iv_large.size(), length_variable.size(), 'sos')
 
-            encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, None)
+            if length_variable.size(0) != 1: # hparams['batch_size']:
+                tv_large = tv_large.t()
+                iv_large = iv_large.t()
 
-            #if hidden_x.size(1) > 1: use = -1
+            #print(iv_large.size(), tv_large.size(), length_variable.size(),  'iv,tv, t()')
+
+            encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, length_variable)
+
+            #print(encoder_output.size(), hidden_x.size(),  'eos size')
             #else:
             use = -1
 
@@ -2437,28 +2451,53 @@ class NMT:
             else:
                 pass
             if len(hidden_x.size()) == 2:
-                hidden_x = hidden_x.unsqueeze(0)
+                hidden_x = hidden_x.unsqueeze(1)
 
-            hidden = hidden_x[:, use, :].unsqueeze(1)
+            #print(hidden_x.size(), 'hidx size')
+
+            #if hparams['single'] :
+            #    hidden = hidden_x[:, use, :].unsqueeze(1)
+            #else:
+
+            hidden = hidden_x[use,:,:] #.unsqueeze(0)
+
+            if len(hidden.size()) == 2 and hidden.size(0) != 1:
+                hidden = hidden.unsqueeze(0)
+
+            #print(hidden.size(), 'hidx size2')
+
             output_unchanged = hidden_x #encoder_output
 
-            num = torch.LongTensor([ansx])
+            num = torch.LongTensor([ansx for _ in range(size)])
+            #print(num, 'num')
             encoder_output = self.model_0_wra.embed(num)
-            if criterion is not None:
-                pass #memory_optimizer_3.step()
+
+            if iv_large.size(0) != 1:
+                encoder_output = encoder_output.unsqueeze(1)
+            #print(encoder_output.size(),'eo embed')
 
             eol_found = False
             for i in range(hparams['tokens_per_sentence']): #min(input_variable.size(0), target_variable.size(0))):
                 ## each word in sentence
                 #input_variable = iv_large[i,:]
-                target_variable = torch.LongTensor([EOS_token])
+                target_variable = torch.LongTensor([EOS_token for _ in range(size)])
+
                 #if i < tv_large.size(0) or True:
                 #    target_variable = tv_large[i,:]
-                current_tv = ansx
+
+
+                current_tv = ansx #[ansx for _ in range(size)]
+
+
+                #print(current_tv.size(),'ctv')
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(0):
-                        if i > 0 : target_variable = tv_large[i -1  ,:] # i-1
+                        if i > 0 :
+                            if hparams['single'] and False:
+                                target_variable = tv_large[i -1  ,:] # i-1
+                            else:
+                                target_variable = tv_large[:, i -1] ## batch first??
 
                 #print(target_variable, tv_large.size(), ansx, 'tv.size')
                 ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, current_tv, output_unchanged)
@@ -2467,24 +2506,33 @@ class NMT:
                 loss = 0
                 n_tot = 0
 
+
                 ansx = token_i #.squeeze(0)
 
-                ans_batch.append(ansx.item())
+                if ansx.size(0) == 1:
+                    ansx = ansx.item()
+                ans_batch.append(ansx)
+                #print(ansx.size(), 'ansx')
+
+                if size == 1: ansx = torch.LongTensor([ansx])
 
                 a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
 
 
                 #print(tv_large.size(), ansx, hparams['tokens_per_sentence'], i ,'a_var')
-                if ansx.item() == EOS_token :
+                if EOS_token in ansx:
                     eol_found = True
 
                 if eol_found and i >= tv_large.size(0):
                     break
 
                 if i < tv_large.size(0):
-                    t_var = tv_large[i,:] # target_variable#[i,:z] #[:z]
+                    t_var = tv_large[:,i]  #[i,:] # target_variable#[i,:z] #[:z]
                 else:
-                    t_var = torch.LongTensor([UNK_token])
+                    t_var = torch.LongTensor([UNK_token for _ in range(size)])
+
+                if len(a_var.size()) > 2:
+                    a_var = a_var.squeeze(1)
 
                 if criterion is not None:
                     try:
@@ -2629,6 +2677,7 @@ class NMT:
 
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
+
                 skip_unk = self.do_skip_unk
                 group = self.variables_for_batch(self.pairs, hparams['batch_size'], iter, skip_unk=skip_unk, pad_and_batch=True)
 
@@ -2642,8 +2691,9 @@ class NMT:
                 mask_variable = None #group[4]
                 max_target_length_variable = None #group[5]
 
-                target_variable = prune_tensor(target_variable, 3)
-                #print(input_variable.size(),'iv--')
+                #print(length_variable,'len')
+                #target_variable = prune_tensor(target_variable, 3)
+                print(input_variable.size(),'iv--')
                 #print(temp_batch_size,'temp')
                 #if self.do_recurrent_output:
                 #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
@@ -2843,6 +2893,10 @@ class NMT:
         lengths = group[3]
         #mask = group[4]
         #max_target_length = group[5]
+        input_variable = input_variable.permute(-1,-2)#.unsqueeze(0)
+        target_variable = target_variable.permute(-1,-2)#.unsqueeze(0)
+
+        print(input_variable.size(), target_variable.size(),lengths.size(), 'it')
 
         pad = hparams['tokens_per_sentence']
 
