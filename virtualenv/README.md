@@ -30,3 +30,18 @@ sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 2
 # run below and select python3.7 from the list
 sudo update-alternatives --config python3
 ```
+
+## Setup file:
+This is the contents of the setup python 3.6 file. 
+You may have to run these commands without the `sudo` or `--user` options.
+
+```
+sudo pip3 install --user virtualenv
+sudo pip3 install --user virtualenvwrapper
+export WORKON_HOME=$HOME/.virtualenvs
+mkdir -p $WORKON_HOME
+export VIRTUALENVWRAPPER_PYTHON=$(which python3.6)
+source $(which virtualenvwrapper.sh)
+
+mkvirtualenv chatbot36 --python $(which python3.6)
+```
