@@ -2506,8 +2506,9 @@ class NMT:
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(1):
-                        if i > 0 :
-                            target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
+                        if i > 0 : pass
+                        if i < tv_large.size(1) - 1:
+                            target_variable = tv_large[:, i + 1] ## batch first?? [:, i -1]
 
                 #hidden = torch.cat([hidden, hidden], dim=0)
 
