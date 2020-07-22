@@ -2494,7 +2494,7 @@ class NMT:
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(1):
                         if i > 0 :
-                            target_variable = tv_large[:, i ] ## batch first?? [:, i -1]
+                            target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
 
                 ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, current_tv, output_unchanged)
 
