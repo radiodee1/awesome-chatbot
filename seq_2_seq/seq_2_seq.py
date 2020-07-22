@@ -2506,9 +2506,9 @@ class NMT:
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(1):
-                        if i > 0 : pass
-                        if i < tv_large.size(1) - 1:
-                            target_variable = tv_large[:, i + 1] ## batch first?? [:, i -1]
+                        if i > 0 :
+                            #if i < tv_large.size(1) - 1:
+                            target_variable = tv_large[:, i ] ## batch first?? [:, i -1]
 
                 #hidden = torch.cat([hidden, hidden], dim=0)
 
@@ -2535,7 +2535,7 @@ class NMT:
                 if EOS_token in ansx:
                     eol_found = True
 
-                if eol_found and i >= tv_large.size(0):
+                if eol_found and i >= tv_large.size(1):
                     break
 
                 if i < tv_large.size(1):
@@ -2558,10 +2558,11 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    loss.backward(retain_graph=True)
+                    #loss.backward(retain_graph=True)
 
 
             if criterion is not None:
+                loss.backward()
                 memory_optimizer_3.step()
                 pass
 
