@@ -393,7 +393,7 @@ class Attn(torch.nn.Module):
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size #* 2
         if self.method == 'general':
-            self.attn = torch.nn.Linear(self.hidden_size, self.hidden_size)
+            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size *2)
         elif self.method == 'concat':
             self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
@@ -403,14 +403,19 @@ class Attn(torch.nn.Module):
         return torch.sum(hidden * encoder_output, dim=2)
 
     def general_score(self, hidden, encoder_output):
-        if hidden.size(-1) > self.hidden_size:
-            hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
-        #print(hidden.size(), encoder_output.size(),'hid')
+        #if hidden.size(-1) > self.hidden_size or True:
+        #print('hiddsize')
+        #hidden = hidden[0,:,:] + hidden[1,:,:]
+        #hidden = hidden.unsqueeze(1)
+        #hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
+        hidden = torch.cat([hidden[0,:,:], hidden[1,:,:]], dim=-1)
+        #print(hidden.size(), encoder_output.size(),'hid attn')
         energy = self.attn(encoder_output).permute(0,2,1)
-        #print(energy.size(), 'energy')
+        #hidden = hidden.permute(0,2,1)
+        #print(energy.size(),  hidden.size() ,'energy')
         #z = hidden @ energy #.squeeze(0)
         #print(z.size(), 'zzz')
-        return torch.sum(hidden @ energy, dim=0)
+        return torch.sum(hidden @ energy, dim=1)
 
     def concat_score(self, hidden, encoder_output):
         #print(encoder_output,encoder_output.size(),'eo0')
@@ -455,7 +460,7 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        return F.softmax(attn_energies, dim=0).unsqueeze(0)
+        return F.softmax(attn_energies, dim=0).unsqueeze(1)
 
 
 class Decoder(nn.Module):
@@ -483,7 +488,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim)
-        self.out_concat_b = nn.Linear(hidden_dim * 2, hidden_dim)
+        self.out_concat_b = nn.Linear(hidden_dim * 3, hidden_dim)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -528,7 +533,7 @@ class Decoder(nn.Module):
         #    decoder_hidden_x = decoder_hidden_x.squeeze(1)
 
         #print(decoder_hidden_x.size(),'dhx')
-        hidden = prune_tensor(decoder_hidden_x, 3)
+        hidden = decoder_hidden_x #prune_tensor(decoder_hidden_x, 3)
         #hidden = hidden.permute(1, 0, 2)
         #print(hidden.size(),'hid')
 
@@ -734,11 +739,13 @@ class WrapMemRNN(nn.Module):
         return out, hidden
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
-        hidden = encoder_hidden.contiguous()
+        hidden = encoder_hidden #.contiguous()
+        '''
         if hidden.size(0) == 4:
             hidden = hidden[0,:,:] + hidden[1,:,:] + hidden[2,:,:] + hidden[3,:,:]
         elif hidden.size(0) == 2:
             hidden = hidden[0, :, :] + hidden[1, :, :]
+        '''
 
         #print(token,'tok 01')
         if isinstance(token, int):
@@ -768,8 +775,8 @@ class WrapMemRNN(nn.Module):
             decoder_hidden_x = decoder_hidden #.permute(1,0,2)
 
             #print(decoder_hidden_x.size(), 'dhx.size()')
-            decoder_hidden_x = torch.cat([decoder_hidden_x, decoder_hidden_x], dim=0)
-            encoder_out_x = encoder_out_x.unsqueeze(0)
+            #decoder_hidden_x = torch.cat([decoder_hidden_x, decoder_hidden_x], dim=0)
+            encoder_out_x = encoder_out_x.unsqueeze(1)
             #decoder_hidden_x.unsqueeze(1)
             sent_out = []
 
@@ -777,10 +784,11 @@ class WrapMemRNN(nn.Module):
 
 
             #################################
+            #print(input_unchanged.size(),'unchanged')
 
-            attn_weights = self.model_6_dec.attention_mod(input_unchanged, ans_small)
+            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
 
-            attn_weights = attn_weights.permute(2,1,0)
+            #attn_weights = attn_weights.permute(0,2,1)
 
             #print(attn_weights.size(), input_unchanged.size(),'aw,iu')
 
@@ -789,8 +797,9 @@ class WrapMemRNN(nn.Module):
             #ans_small = sent_out
 
             ans = [
-                ans_small.permute(1,0,2) ,
-                context #[:,-1,:].unsqueeze(1) # .permute(1,0,2)
+                ans_small, #.permute(1,0,2) ,
+                context[:,:,:self.hidden_size], #[:,-1,:].unsqueeze(1) # .permute(1,0,2)
+                context[:,:,self.hidden_size:]
                 #sent_out
             ]
 
@@ -2442,7 +2451,7 @@ class NMT:
             #print(encoder_output.size(), hidden_x.size(),  'eos size')
             #else:
             use = -1
-
+            '''
             if hidden_x.size(0) == 4:
                 hidden_x = hidden_x[0, :, :] + hidden_x[1, :, :] #+ hidden_x[2, :, :] + hidden_x[3, :, :]
             elif hidden_x.size(0) == 2:
@@ -2450,6 +2459,9 @@ class NMT:
                 hidden_x = hidden_x[0, :, :] + hidden_x[1, :, :]
             else:
                 pass
+            '''
+            hidden_x = hidden_x[:2,:,:]
+
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(1)
 
@@ -2459,14 +2471,15 @@ class NMT:
             #    hidden = hidden_x[:, use, :].unsqueeze(1)
             #else:
 
-            hidden = hidden_x[use,:,:] #.unsqueeze(0)
+            #print(hidden_x.size(),'hidx size')
+            hidden = hidden_x #[use,:,:] #.unsqueeze(0)
 
             if len(hidden.size()) == 2 and hidden.size(0) != 1:
                 hidden = hidden.unsqueeze(0)
 
             #print(hidden.size(), 'hidx size2')
 
-            output_unchanged = hidden_x #encoder_output
+            output_unchanged = encoder_output[:]
 
             num = torch.LongTensor([ansx for _ in range(size)])
             #print(num, 'num')
@@ -2489,18 +2502,21 @@ class NMT:
                 current_tv = ansx #[ansx for _ in range(size)]
 
 
-                #print(current_tv.size(),'ctv')
+                #print(hidden.size(),'hid in')
 
                 if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
                     if i < tv_large.size(1):
                         if i > 0 :
                             target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
 
+                #hidden = torch.cat([hidden, hidden], dim=0)
+
                 ans, hidden, sized, token_i = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, current_tv, output_unchanged)
 
                 loss = 0
                 n_tot = 0
 
+                #print(hidden.size(),'hid out')
 
                 ansx = token_i #.squeeze(0)
 
