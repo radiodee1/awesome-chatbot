@@ -393,7 +393,7 @@ class Attn(torch.nn.Module):
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size #* 2
         if self.method == 'general':
-            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size *2)
+            self.attn = torch.nn.Linear(self.hidden_size * 1, self.hidden_size * 1)
         elif self.method == 'concat':
             self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
@@ -406,12 +406,12 @@ class Attn(torch.nn.Module):
         #if hidden.size(-1) > self.hidden_size or True:
         #print('hiddsize')
         #hidden = hidden[0,:,:] + hidden[1,:,:]
-        #hidden = hidden.unsqueeze(1)
+        hidden = hidden.permute(1,2,0)[:,:,:1]
         #hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
-        hidden = torch.cat([hidden[0,:,:], hidden[1,:,:]], dim=-1)
+        #hidden = torch.cat([hidden[0,:,:], hidden[1,:,:]], dim=-1)
         #print(hidden.size(), encoder_output.size(),'hid attn')
         energy = self.attn(encoder_output).permute(0,2,1)
-        #hidden = hidden.permute(0,2,1)
+        hidden = hidden.permute(0,2,1)
         #print(energy.size(),  hidden.size() ,'energy')
         #z = hidden @ energy #.squeeze(0)
         #print(z.size(), 'zzz')
@@ -468,7 +468,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed = nn.Embedding(target_vocab_size, embed_dim)
+        self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
         self.attention_mod = Attn(hidden_dim , method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -481,7 +481,7 @@ class Decoder(nn.Module):
             linear_in_dim = hidden_dim
 
         batch_first = True #self.word_mode
-        concat_num = 3
+        concat_num = 2
 
         self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
@@ -592,7 +592,7 @@ class WrapMemRNN(nn.Module):
 
         self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
 
-        self.embed = self.model_1_seq.embed # None  # nn.Embedding(vocab_size, hidden_size, padding_idx=1)
+        #self.embed = self.model_1_seq.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
         #self.embed.weight.requires_grad = not self.model_1_seq.freeze_embedding
 
         #self.attention_mod = Attn(hidden_size, method='dot')
@@ -728,7 +728,7 @@ class WrapMemRNN(nn.Module):
             decoder_hidden = hidden
 
             if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training:
-                embed_index = self.embed(target_variable)#.permute(1,0,2)
+                embed_index = self.model_1_seq.embed(target_variable)#.permute(1,0,2)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
             else:
@@ -740,17 +740,18 @@ class WrapMemRNN(nn.Module):
 
             encoder_out_x = encoder_out_x.unsqueeze(1)
             #decoder_hidden_x.unsqueeze(1)
-            sent_out = []
+            #sent_out = []
+            #print(encoder_out_x)
 
             _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
 
             #################################
-            #print(input_unchanged.size(),'unchanged')
+            #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
 
-            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
+            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged[:,:,:self.hidden_size])
 
-            context = attn_weights.bmm(input_unchanged)
+            context = attn_weights.bmm(input_unchanged[:,:,:self.hidden_size])
             #context = self.model_6_dec.tanh_b(context)
             #ans_small = sent_out
 
@@ -1923,7 +1924,7 @@ class NMT:
                 'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                 'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                 'embedding01': self.model_0_wra.model_1_seq.embed.state_dict(),
-                'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
+                #'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
                 'optimizer_1': self.model_0_wra.opt_1.state_dict(),
                 'optimizer_2': self.model_0_wra.opt_2.state_dict(),
                 'optimizer_3': self.model_0_wra.opt_3.state_dict(),
@@ -2028,12 +2029,12 @@ class NMT:
 
                 if not self.do_load_embeddings:
                     self.model_0_wra.model_1_seq.embed.load_state_dict(checkpoint[0]['embedding01'])
-                    self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding02'])
-
-                if self.do_load_embeddings:
+                    #self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding01'])
+                '''
+                if self.do_load_embeddings and False:
                     self.model_0_wra.load_embedding(self.embedding_matrix)
                     self.embedding_matrix_is_loaded = True
-                if self.do_freeze_embedding:
+                if self.do_freeze_embedding and False:
                     self.model_0_wra.new_freeze_embedding()
                     self.model_0_wra.embed.weight.requires_grad = False
                     self.model_0_wra.model_1_seq.embed.weight.requires_grad = False
@@ -2049,7 +2050,7 @@ class NMT:
                     self.model_0_wra.new_freeze_decoding()
                 else:
                     self.model_0_wra.new_freeze_decoding(do_freeze=False)
-
+                '''
                 if self.model_0_wra.opt_1 is not None:
                     #####
                     try:
@@ -2425,7 +2426,7 @@ class NMT:
 
             num = torch.LongTensor([ansx for _ in range(size)])
 
-            encoder_output = self.model_0_wra.embed(num)
+            encoder_output = self.model_0_wra.model_1_seq.embed(num)
             #print(encoder_output.size(), 'num')
 
             #print(hidden.size(), 'hid cat 00')
@@ -2501,11 +2502,11 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    #loss.backward(retain_graph=True)
+                    loss.backward(retain_graph=True)
 
 
             if criterion is not None:
-                loss.backward()
+                #loss.backward()
                 memory_optimizer_3.step()
                 pass
 
