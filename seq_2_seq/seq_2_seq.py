@@ -460,8 +460,9 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        return F.softmax(attn_energies, dim=1).unsqueeze(1)
-
+        z = F.softmax(attn_energies, dim=1).unsqueeze(1)
+        #print(z, 'z')
+        return z
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
@@ -752,12 +753,13 @@ class WrapMemRNN(nn.Module):
             context = attn_weights.bmm(input_unchanged)
             #context = self.model_6_dec.tanh_b(context)
             #ans_small = sent_out
-            #print(context,'con')
+
+            #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
 
             ans = [
                 ans_small, #.permute(1,0,2) ,
-                context[:,:,:self.hidden_size],
-                context[:,:,self.hidden_size:]
+                context #[:,:,:self.hidden_size],
+                #context[:,:,self.hidden_size:]
             ]
 
             #print('---')
