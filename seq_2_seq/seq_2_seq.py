@@ -2476,8 +2476,8 @@ class NMT:
 
                 a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
 
-                #encoder_output = self.model_0_wra.model_6_dec.embed(ansx)
-                encoder_output = hidden.permute(1,0,2)[:,1:,:]
+                encoder_output = self.model_0_wra.model_1_seq.embed(ansx)
+                #encoder_output = hidden.permute(1,0,2)[:,1:,:]
 
                 #print(tv_large.size(), a_var.size() ,ansx.size(), hparams['tokens_per_sentence'], i ,'a_var')
 
