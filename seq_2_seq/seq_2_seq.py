@@ -2505,14 +2505,17 @@ class NMT:
                         pass
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
-
+                    if False:
+                        clip = 50.0
+                        _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                        _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
                 #loss.backward()
-
-                clip = 50.0
-                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+                if False:
+                    clip = 50.0
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
                 memory_optimizer_3.step()
                 pass
