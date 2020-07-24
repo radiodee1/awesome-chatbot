@@ -2413,7 +2413,7 @@ class NMT:
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(1)
 
-            print(hidden_x, 'hidx size')
+            #print(hidden_x, 'hidx size')
 
 
             #print(hidden_x.size(),'hidx size')
