@@ -410,7 +410,7 @@ class NMT:
         n = 'no'
         for a in self.previous_sentences:
             a = a.replace('.', '')
-            
+
             if self.recent_in is not None and a.startswith(self.recent_in): self.recent_in = None
 
             if (self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' ')):

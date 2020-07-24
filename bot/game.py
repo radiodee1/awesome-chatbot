@@ -68,6 +68,7 @@ except:
     pin_skip = True
     try:
         import Jetson.GPIO as GPIO
+        pin_skip = False
         led_pin_a = 12
         led_pin_b = 16
         print('load jetson gpio')
