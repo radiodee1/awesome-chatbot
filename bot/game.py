@@ -65,6 +65,7 @@ try:
     led_pin_b = 16
     print('load rpi gpio')
 except:
+    pin_skip = True
     try:
         import Jetson.GPIO as GPIO
         led_pin_a = 12

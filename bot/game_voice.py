@@ -37,8 +37,12 @@ class VoiceOut:
                 pygame.mixer.music.load(f)
 
                 pygame.mixer.music.play()
-                while pygame.mixer.music.get_busy():
+
+                num = 0
+                while pygame.mixer.music.get_busy() and num < 100:
                     pygame.time.Clock().tick(10)
+                    num += 1
+                    #print(num)
                 pygame.quit()
     pass
 
@@ -48,8 +52,11 @@ class VoiceOut:
         pygame.mixer.music.load(path)
         pygame.mixer.music.set_volume(0.7)
         pygame.mixer.music.play()
-        while pygame.mixer.music.get_busy():
+        num = 0
+        while pygame.mixer.music.get_busy() and num < 100:
             pygame.time.Clock().tick(10)
+            num += 1
+            #print(num)
         pygame.quit()
 
         #os.system("mpg123 " + path + " > /dev/null 2>&1 ")

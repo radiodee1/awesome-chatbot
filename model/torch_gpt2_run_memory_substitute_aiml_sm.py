@@ -129,6 +129,10 @@ class NMT:
             self.q_string = [ 'Q: ', 'Q :', 'Q.']
             self.a_string = [ 'A: ', 'A :', self.name+':', 'A.']
 
+        if self.args.full_label :
+            self.q_string[0] = 'Question: '
+            self.a_string[0] = 'Answer: '
+
     def setup_for_interactive(self):
         self.get_args()
         self.load_state_dict()
@@ -406,6 +410,9 @@ class NMT:
         n = 'no'
         for a in self.previous_sentences:
             a = a.replace('.', '')
+            
+            if self.recent_in is not None and a.startswith(self.recent_in): self.recent_in = None
+
             if (self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' ')):
                 if y not in self.recent_text.lower() and n not in self.recent_text.lower():
                     self.recent_text = None
@@ -431,7 +438,7 @@ class NMT:
 
         #print(self.previous_sentences)
         s = ''
-        for k in self.previous_sentences:
+        for k in self.previous_sentences[:]:
             k = k.strip().strip('.').strip('\n')
             for z in self.a_string + self.q_string:
                 z = z.lower()
@@ -524,6 +531,7 @@ class NMT:
         parser.add_argument("--apps", type=bool, required=False, default=False)
         parser.add_argument("--source_file", type=str, required=False, default=location01) #'../data/tf_gpt2_data/117M/converted/pytorch_model.bin')
         parser.add_argument("--no-recent", type=bool, default=False, help="Do not show model recent q and a.")
+        parser.add_argument("--full_label", action="store_true", help='Use full Question/Answer label.')
         self.args = parser.parse_args()
 
     def load_model(self):
