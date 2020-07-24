@@ -32,7 +32,7 @@ RATE = 44100 #16000
 # note: 44100 works with device on raspberry pi
 # Bus 001 Device 005: ID 0d8c:013c C-Media Electronics, Inc. CM108 Audio Controller
 
-CHUNK = int(RATE / 10)  # 100ms
+CHUNK = int(RATE / 400)  # 100ms... 10 for pi boards
 
 
 class MicrophoneStream(object):
@@ -78,6 +78,7 @@ class MicrophoneStream(object):
         return None, pyaudio.paContinue
 
     def generator(self):
+
         while not self.closed:
             # Use a blocking get() to ensure there's at least one chunk of
             # data, and stop iteration if the chunk is None, indicating the
