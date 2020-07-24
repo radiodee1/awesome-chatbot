@@ -49,7 +49,7 @@ class VoiceOut:
                     while pygame.mixer.music.get_busy() and num < 100:
                         pygame.time.Clock().tick(10)
                         num += 1
-                        print(num)
+                        #print(num)
                     if self._do_quit: pygame.quit()
             except e:
                 print(e)
