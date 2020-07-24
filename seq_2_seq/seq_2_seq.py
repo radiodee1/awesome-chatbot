@@ -752,7 +752,7 @@ class WrapMemRNN(nn.Module):
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged[:,:,:self.hidden_size])
 
             context = attn_weights.bmm(input_unchanged[:,:,:self.hidden_size])
-            #context = self.model_6_dec.tanh_b(context)
+            context = self.model_6_dec.tanh_a(context)
             #ans_small = sent_out
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
@@ -768,14 +768,16 @@ class WrapMemRNN(nn.Module):
             #print('---')
 
             ans = torch.cat(ans, dim=-1) ## -2/0
+            #ans = self.model_6_dec.tanh_a(ans)
+
             #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
             ans = self.model_6_dec.out_concat_b(ans)
-            ans = self.model_6_dec.tanh_a(ans)
+            #ans = self.model_6_dec.tanh_b(ans)
 
-            #print(ans, 'ans')
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
+            #print(ans, 'ans')
 
             #ans = self.model_6_dec.tanh_b(ans)
 
@@ -2411,7 +2413,7 @@ class NMT:
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(1)
 
-            #print(hidden_x.size(), 'hidx size')
+            print(hidden_x, 'hidx size')
 
 
             #print(hidden_x.size(),'hidx size')
@@ -2507,6 +2509,11 @@ class NMT:
 
             if criterion is not None:
                 #loss.backward()
+
+                clip = 50.0
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+
                 memory_optimizer_3.step()
                 pass
 
