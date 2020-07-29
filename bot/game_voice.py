@@ -14,7 +14,7 @@ class VoiceOut:
     def __init__(self):
         self.dir_out = hparams['data_dir']
         self.use_me = Queue()
-        self._do_quit = True
+        self._do_quit = False
         pass
 
     def speech_out(self,text=""):
