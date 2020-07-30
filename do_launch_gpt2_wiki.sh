@@ -10,6 +10,8 @@ TEST_5="--length 25 --apps True $@"
 FILE_774='../data/tf_gpt2_data/774M/converted/pytorch_model.bin'
 
 LAUNCH=launch
+LOG=log
+FILENAME=${HOME}/workspace/log.txt
 
 if [ ! -f ${LAUNCH} ]; then
 
@@ -19,7 +21,7 @@ exit
 
 fi
 export CHATBOT_MODE="wiki"
-export CHATBOT_START="hello. G P T 2 wiki model."
+export CHATBOT_START="start. G P T 2 wiki model."
 
 
 cd bot
@@ -32,6 +34,21 @@ else
 fi
 
 echo ${TEST_5}
+
+if [ -f ${LOG} ]; then
+  echo "logging"
+
+
+  echo ${TEST_5}
+  echo "----" >> ${FILENAME}
+  date >> ${FILENAME}
+  echo "----" >> ${FILENAME}
+  cd bot
+  python3 -u game.py ${TEST_5} >> ${FILENAME} 2>&1
+else
+  cd bot
+  python3 game.py ${TEST_5}
+fi
 
 python3 game.py ${TEST_5} # 2> /dev/null
 

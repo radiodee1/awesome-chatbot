@@ -8,6 +8,8 @@ TEST_4="--mode=long --basename=test_s2s_movie_openvocab_d300_v15000_len15 --load
 TEST_5=$@
 
 LAUNCH=launch
+LOG=log
+FILENAME=${HOME}/workspace/log.txt
 
 if [ ! -f ${LAUNCH} ]; then
 
@@ -17,7 +19,7 @@ exit
 
 fi
 export CHATBOT_MODE="memory"
-export CHATBOT_START="hello. G P T 2 model."
+export CHATBOT_START="start. G P T 2 model."
 
 cd bot
 python3 game.py ${TEST_5} # 2> /dev/null

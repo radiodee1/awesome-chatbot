@@ -21,7 +21,7 @@ exit
 fi
 
 export CHATBOT_MODE="signal"
-export CHATBOT_START="hello. G P T 2 model."
+export CHATBOT_START="start. G P T 2 model."
 
 if [ -f ${LOG} ]; then
   echo "logging"
@@ -42,8 +42,8 @@ fi
 #export CHATBOT_START="hello. G P T 2 model."
 
 
-#cd bot
-#python3 -u game.py ${TEST_6}
+cd bot
+python3 -u game.py ${TEST_6}
 #/bin/bash python ./game.py ${TEST_6}
 
 ## this file must be hard coded for any model you want to run

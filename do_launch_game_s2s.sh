@@ -8,6 +8,8 @@ TEST_6="--mode=long --load-babi --load-recurrent --units=500 --length=15 --lr=0.
 TEST_7="--mode interactive --iter 4000"
 LAUNCH=launch
 CHECKPOINT=./saved/4000_checkpoint_chatbot_tutorial.tar
+LOG=log
+FILENAME=${HOME}/workspace/log.txt
 
 if [ ! -f ${LAUNCH} ]; then
 
@@ -25,7 +27,7 @@ exit
 fi
 
 export CHATBOT_MODE="sequence"
-export CHATBOT_START="hello. sequence to sequence model."
+export CHATBOT_START="start. sequence to sequence model."
 
 cd bot
 python3 game.py ${TEST_7} # 2> /dev/null
