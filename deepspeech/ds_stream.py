@@ -1,4 +1,4 @@
-from deepspeech import Model
+from deepspeech import Model, Stream
 import numpy as np
 import speech_recognition as sr
 import argparse
@@ -30,7 +30,10 @@ with sr.Microphone() as source:
     print("Say Something")
     audio = r.listen(source)
     #fs = audio.sample_rate
-    #audio = np.frombuffer(audio.frame_data, np.int16)
-    print('ans:', r.recognize(audio))
+    #audio = np.frombuffer(audio.frame_data, np.int8)
+    #print('ans:', r.recognize(audio))
+    #a = ds.createStream()
+    #a.feedAudioContent(audio)
+    print('ans:', r.recognize_sphinx(audio) ) #.feedAudioContent(audio))
     #print(ds.stt(audio))
 
