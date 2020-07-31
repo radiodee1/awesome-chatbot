@@ -22,8 +22,11 @@ if os.environ['CHATBOT_START']:
     speech_start = str(os.environ['CHATBOT_START'])
 do_not_end = True
 
-if os.environ['SPEECH_RECOGNITION']:
-    speech_recognition = str(os.environ['SPEECH_RECOGNITION']) ## sphinx??
+speech_recognition = 'google'
+try:
+    if os.environ['SPEECH_RECOGNITION']:
+        speech_recognition = str(os.environ['SPEECH_RECOGNITION']) ## sphinx??
+except: pass
 
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model

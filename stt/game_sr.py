@@ -45,14 +45,20 @@ class VoiceGoogleSR:
             full_utt=False,
             hmm=os.path.join(model_path, 'en-us'),
             lm=os.path.join(model_path, 'en-us.lm.bin'),
-            dic=os.path.join(model_path, 'cmudict-en-us.dict')
+            dic=os.path.join(model_path, 'cmudict-en-us.dict'),
+            #silence_limit= 1,
+            #prev_audio=0.5,
+            #threshold=4500
         )
+        speech.silence_limit = 1
+        speech.prev_audio=0.5
+        speech.threshold = 4500
 
         out = ''
         for z in speech:
             out = z
             break
-        return out
+        return str(out)
 
 
     def run_recognition(self):
