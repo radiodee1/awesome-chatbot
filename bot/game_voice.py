@@ -25,9 +25,9 @@ class VoiceOut:
             try:
                 #mp3_fp = BytesIO()
                 tts = gTTS(text=text, lang='en', slow=False, lang_check=False)
-                #tts.write_to_fp(mp3_fp)
+                #stt.write_to_fp(mp3_fp)
                 #path = os.path.join(self.dir_out,"temp_speech.mp3")
-                #tts.save(path)
+                #stt.save(path)
             except AssertionError:
                 print('assertion error.')
                 pass

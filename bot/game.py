@@ -22,6 +22,9 @@ if os.environ['CHATBOT_START']:
     speech_start = str(os.environ['CHATBOT_START'])
 do_not_end = True
 
+if os.environ['SPEECH_RECOGNITION']:
+    speech_recognition = str(os.environ['SPEECH_RECOGNITION']) ## sphinx??
+
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
@@ -58,6 +61,9 @@ import bot.game_voice as v
 import model.settings as settings
 import argparse
 import time
+
+if speech_recognition == 'sphinx':
+    import stt.game_sr as sr
 
 try:
     import RPi.GPIO as GPIO
