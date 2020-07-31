@@ -59,6 +59,8 @@ class VoiceGoogleSR:
         pass
 
 if __name__ == '__main__':
+    print(model_path)
+
     v = VoiceGoogleSR()
     for i in range(300):  # test three iterations
         words = v.voice_detection()
