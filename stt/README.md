@@ -20,4 +20,5 @@ At this writing the code has not been tested on the Raspberry Pi.
 sphinxbase is at: 
 ````
 wget https://sourceforge.net/projects/cmusphinx/files/sphinxbase/5prealpha/sphinxbase-5prealpha.tar.gz/download -O sphinxbase.tar.gz
+https://github.com/bambocher/pocketsphinx-python/issues/23
 ````
