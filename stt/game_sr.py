@@ -30,9 +30,11 @@ class VoiceGoogleSR:
         pass
 
     def listen_print_loop(self, responses):
+        raise NotImplementedError
         pass
 
     def listen(self, responses):
+        raise NotImplementedError
         pass
 
 
@@ -60,6 +62,7 @@ class VoiceGoogleSR:
 
 
     def run_recognition(self):
+        raise NotImplementedError
         pass
 
 if __name__ == '__main__':
