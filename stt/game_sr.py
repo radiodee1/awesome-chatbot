@@ -53,7 +53,7 @@ class VoiceGoogleSR:
         speech.silence_limit = 1.5 ## does this even work??
         speech.prev_audio=0.5
         speech.threshold = 4500
-
+        
         out = ''
         for z in speech:
             out = z
