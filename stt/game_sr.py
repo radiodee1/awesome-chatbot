@@ -48,7 +48,7 @@ class VoiceGoogleSR:
             hmm=os.path.join(model_path, 'en-us'),
             lm=os.path.join(model_path, 'en-us.lm.bin'),
             dic=os.path.join(model_path, 'cmudict-en-us.dict'),
-
+            audio_device='plughw:1,0'
         )
         speech.silence_limit = 1.5 ## does this even work??
         speech.prev_audio=0.5
