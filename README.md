@@ -328,6 +328,8 @@ $ ./do_make_submodule_init.sh
 
 Install Pytorch 1.5 for python3.6 from the following forum site.
 
+Site: https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-5-0-now-available/72048
+
 ```
 curl https://nvidia.box.com/shared/static/3ibazbiwtkl181n95n9em3wtrca7tdzp.whl -o  torch-1.5.0-cp36-cp36m-linux_aarch64.whl 
 ```
