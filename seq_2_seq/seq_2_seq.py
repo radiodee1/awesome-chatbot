@@ -561,12 +561,12 @@ class Decoder(nn.Module):
 
 #################### Wrapper ####################
 
-class WrapMemRNN(nn.Module):
+class WrapMemRNN: #(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
                  cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
 
-        super(WrapMemRNN, self).__init__()
+        #super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -590,7 +590,7 @@ class WrapMemRNN(nn.Module):
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, None,
                                    cancel_attention=self.cancel_attention)
 
-        self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
+        #self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
 
         #self.embed = self.model_1_seq.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
         #self.embed.weight.requires_grad = not self.model_1_seq.freeze_embedding
@@ -752,7 +752,7 @@ class WrapMemRNN(nn.Module):
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged[:,:,:self.hidden_size])
 
             context = attn_weights.bmm(input_unchanged[:,:,:self.hidden_size])
-            context = self.model_6_dec.tanh_a(context)
+            #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
@@ -1922,12 +1922,12 @@ class NMT:
                 'epoch':0,
                 'start': self.start,
                 'arch': None,
-                'state_dict_0_wra': self.model_0_wra.state_dict(),
+                'state_dict_0_wra': None, # self.model_0_wra.state_dict(),
                 'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                 'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                 'embedding01': self.model_0_wra.model_1_seq.embed.state_dict(),
                 #'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
-                'optimizer_1': self.model_0_wra.opt_1.state_dict(),
+                'optimizer_1': None , #self.model_0_wra.opt_1.state_dict(),
                 'optimizer_2': self.model_0_wra.opt_2.state_dict(),
                 'optimizer_3': self.model_0_wra.opt_3.state_dict(),
                 'best_loss': self.best_loss,
@@ -2025,7 +2025,7 @@ class NMT:
                 if hparams['zero_start'] is True:
                     self.start = 0
 
-                self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
+                #self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
                 self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
 
@@ -2061,7 +2061,7 @@ class NMT:
                             raise Exception('new optimizer...')
                     except:
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
-                        self.model_0_wra.opt_1 = self._make_optimizer(self.model_0_wra.model_1_seq)
+                        self.model_0_wra.opt_1 = self._make_optimizer([])
                 if self.model_0_wra.opt_2 is not None:
                     #####
                     try:
@@ -2071,7 +2071,7 @@ class NMT:
                     except:
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
-                        self.model_0_wra.opt_2 = self._make_optimizer(self.model_0_wra.model_6_dec, lm)
+                        self.model_0_wra.opt_2 = self._make_optimizer([self.model_0_wra.model_1_seq], lm)
                 if self.model_0_wra.opt_3 is not None:
                     #####
                     try:
@@ -2081,7 +2081,7 @@ class NMT:
                     except:
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
-                        self.model_0_wra.opt_3 = self._make_optimizer(self.model_0_wra.model_0_wra, lm)
+                        self.model_0_wra.opt_3 = self._make_optimizer([self.model_0_wra.model_6_dec], lm)
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -2099,6 +2099,7 @@ class NMT:
         for i in module:
             parameters = filter(lambda p: p.requires_grad, i.parameters())
             z.extend(parameters)
+        if len(z) == 0: return None
         return optim.Adam(z, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
@@ -2371,20 +2372,22 @@ class NMT:
             loss = loss.cuda()
         return loss, nTotal.item()
 
-    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, memory_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
+    def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, wrapper_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
         size = length_variable.size()[0]
 
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
-                self.model_0_wra.train()
+                #self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
-                memory_optimizer_3.zero_grad()
-                #wrapper_optimizer_2.zero_grad()
+                #wrapper_optimizer_1.zero_grad()
+                wrapper_optimizer_2.zero_grad()
+                #memory_optimizer_3.zero_grad()
+                wrapper_optimizer_3.zero_grad()
 
             else:
-                self.model_0_wra.eval()
+                #self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
                 self.model_0_wra.model_6_dec.eval()
 
@@ -2504,20 +2507,23 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    loss.backward(retain_graph=True)
-                    if False:
+                    #loss.backward(retain_graph=True)
+                    if True:
                         clip = 50.0
                         _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                         _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
-                #loss.backward()
-                if False:
+                loss.backward()
+                if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
-                memory_optimizer_3.step()
+                #memory_optimizer_3.step()
+                #wrapper_optimizer_1.step()
+                wrapper_optimizer_2.step()
+                wrapper_optimizer_3.step()
                 pass
 
         if self.do_recurrent_output:
@@ -2576,17 +2582,17 @@ class NMT:
 
         if self.model_0_wra.opt_1 is None or self.first_load:
 
-            wrapper_optimizer_1 = self._make_optimizer([self.model_0_wra.model_1_seq , self.model_0_wra.model_6_dec])
+            wrapper_optimizer_1 = self._make_optimizer([])
             self.model_0_wra.opt_1 = wrapper_optimizer_1
 
         if self.model_0_wra.opt_2 is None or self.first_load:
             lm = hparams['multiplier']
-            wrapper_optimizer_2 = self._make_optimizer([self.model_0_wra.model_1_seq, self.model_0_wra.model_6_dec],lm)
+            wrapper_optimizer_2 = self._make_optimizer([self.model_0_wra.model_1_seq],lm)
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
         if self.model_0_wra.opt_3 is None or self.first_load:
             lm = hparams['multiplier']
-            wrapper_optimizer_3 = self._make_optimizer([self.model_0_wra, self.model_0_wra.model_1_seq, self.model_0_wra.model_6_dec], lm)
+            wrapper_optimizer_3 = self._make_optimizer([ self.model_0_wra.model_6_dec], lm)
             self.model_0_wra.opt_3 = wrapper_optimizer_3
 
         #weight = torch.ones(self.output_lang.n_words)
@@ -2627,12 +2633,12 @@ class NMT:
 
         if self.do_load_babi:
             if self.do_test_not_train:
-                self.model_0_wra.eval()
+                #self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
                 self.model_0_wra.model_6_dec.eval()
 
             else:
-                self.model_0_wra.train()
+                #self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
 
@@ -2902,7 +2908,7 @@ class NMT:
 
         #question_variable = question
 
-        self.model_0_wra.eval()
+        #self.model_0_wra.eval()
         self.model_0_wra.model_1_seq.eval()
         self.model_0_wra.model_6_dec.eval()
 
