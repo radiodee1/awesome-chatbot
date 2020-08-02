@@ -778,6 +778,7 @@ class WrapMemRNN: #(nn.Module):
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
             #print(ans, 'ans')
+            ans = self.model_6_dec.relu_b(ans)
 
             #ans = self.model_6_dec.tanh_b(ans)
 
@@ -2507,14 +2508,14 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    #loss.backward(retain_graph=True)
+                    loss.backward(retain_graph=True)
                     if True:
                         clip = 50.0
                         _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                         _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
-                loss.backward()
+                #loss.backward()
                 if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
