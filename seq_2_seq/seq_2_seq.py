@@ -2488,12 +2488,17 @@ class NMT:
                 #encoder_output = hidden.permute(1,0,2)[:,1:,:]
 
                 #print(tv_large.size(), a_var.size() ,ansx.size(), hparams['tokens_per_sentence'], i ,'a_var')
+                #t_var = tv_large[:,i]
 
                 if i < tv_large.size(1):
+                    pass
                     t_var = tv_large[:,i]
                 else:
                     #break
+                    #print('here')
                     t_var = torch.LongTensor([UNK_token for _ in range(size)])
+                    #print(t_var.size(), 'here', i)
+                    pass
 
                 #print(a_var.size(), t_var.size(),'tvar')
 
@@ -2512,14 +2517,14 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    loss.backward(retain_graph=True)
+                    #loss.backward(retain_graph=True)
                     if True:
                         clip = 50.0
                         _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                         _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
-                #loss.backward()
+                loss.backward()
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
