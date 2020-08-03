@@ -2592,7 +2592,7 @@ class NMT:
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
         if self.model_0_wra.opt_3 is None or self.first_load:
-            lm = hparams['multiplier']
+            lm = 5.0  #hparams['multiplier']
             wrapper_optimizer_3 = self._make_optimizer([ self.model_0_wra.model_6_dec], lm)
             self.model_0_wra.opt_3 = wrapper_optimizer_3
 
