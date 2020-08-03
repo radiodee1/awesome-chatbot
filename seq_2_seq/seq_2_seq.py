@@ -680,11 +680,12 @@ class WrapMemRNN: #(nn.Module):
 
         if num is None or True:
             num = torch.LongTensor([SOS_token]) #EOS_token  # magic number for testing = garden
-        e = self.embed(num)
+        #e = self.embed(num)
+        e = self.model_1_seq.embed(num)
         print('encoder :',num)
-        print(not self.embed.weight.requires_grad,': grad freeze')
+        print(not self.model_1_seq.embed.weight.requires_grad,': grad freeze')
         print(e.size(), ': test embedding')
-        print(self.embed.training, ': training now')
+        print(self.model_1_seq.embed.training, ': training now')
         print(e[ 0, 0:10])  # print first ten values
 
     def wrap_encoder_module(self, question_variable, length_variable):
@@ -777,8 +778,8 @@ class WrapMemRNN: #(nn.Module):
 
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
-            #print(ans, 'ans')
-            ans = self.model_6_dec.relu_b(ans)
+
+            ## ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
             #ans = self.model_6_dec.tanh_b(ans)
 
