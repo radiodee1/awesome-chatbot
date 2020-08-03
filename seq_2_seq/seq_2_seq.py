@@ -655,11 +655,14 @@ class WrapMemRNN: #(nn.Module):
         return seq, None, ans, None
 
     def new_freeze_embedding(self, do_freeze=True):
+        pass
+        '''
         self.embed.weight.requires_grad = not do_freeze
         self.model_1_seq.embed.weight.requires_grad = not do_freeze
         self.model_6_dec.embed.weight.requires_grad = not do_freeze
         #self.embed.weight.requires_grad = not do_freeze
         if do_freeze: print('freeze embedding')
+        '''
         pass
 
     def new_freeze_decoding(self, do_freeze=True):
