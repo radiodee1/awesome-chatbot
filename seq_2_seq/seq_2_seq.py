@@ -2380,7 +2380,9 @@ class NMT:
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, wrapper_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
         size = length_variable.size()[0]
-
+        loss = 0
+        n_tot = 0
+        
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
                 #self.model_0_wra.train()
@@ -2468,8 +2470,7 @@ class NMT:
 
                 ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, None, output_unchanged)
 
-                loss = 0
-                n_tot = 0
+
 
                 #print(hidden.size(),'hid out')
 
