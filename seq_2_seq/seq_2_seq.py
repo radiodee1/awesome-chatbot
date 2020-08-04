@@ -468,7 +468,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
+        self.embed =  nn.Embedding(target_vocab_size, embed_dim)
         self.attention_mod = Attn(hidden_dim , method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -592,7 +592,7 @@ class WrapMemRNN: #(nn.Module):
 
         #self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
 
-        #self.embed = self.model_1_seq.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
+        #self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
         #self.embed.weight.requires_grad = not self.model_1_seq.freeze_embedding
 
         #self.attention_mod = Attn(hidden_size, method='dot')
@@ -727,12 +727,12 @@ class WrapMemRNN: #(nn.Module):
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
         hidden = encoder_hidden #.contiguous()
-
+        encoder_output = self.model_6_dec.embed(encoder_output)
         if True:
             decoder_hidden = hidden
 
             if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training:
-                embed_index = self.model_1_seq.embed(target_variable)#.permute(1,0,2)
+                embed_index = self.model_6_dec.embed(target_variable)#.permute(1,0,2)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
             else:
@@ -782,7 +782,7 @@ class WrapMemRNN: #(nn.Module):
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
 
-            ## ans = self.model_6_dec.relu_b(ans) ## <-- ??
+            ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
             #ans = self.model_6_dec.tanh_b(ans)
 
@@ -2436,7 +2436,7 @@ class NMT:
 
             num = torch.LongTensor([ansx for _ in range(size)])
 
-            encoder_output = self.model_0_wra.model_1_seq.embed(num)
+            encoder_output = num # self.model_0_wra.model_1_seq.embed(num)
             #print(encoder_output.size(), 'num')
 
             #print(hidden.size(), 'hid cat 00')
@@ -2452,18 +2452,18 @@ class NMT:
 
                 ## each word in sentence
                 #input_variable = iv_large[i,:]
-                target_variable = torch.LongTensor([EOS_token for _ in range(size)])
+                target_variable = torch.LongTensor([SOS_token for _ in range(size)])
 
                 current_tv = ansx #[ansx for _ in range(size)]
 
 
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
 
-                if criterion is not None or True: #  self.model_0_wra.model_6_dec.training:
-                    if i < tv_large.size(1):
-                        if i > 0 :
-                            #if i < tv_large.size(1) - 1:
-                            target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
+                if True: #  self.model_0_wra.model_6_dec.training:
+                    if 0 < i < tv_large.size(1):
+                        #if i > 0 :
+                        #if i < tv_large.size(1) - 1:
+                        target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
 
 
                 ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, None, output_unchanged)
@@ -2484,7 +2484,7 @@ class NMT:
 
                 a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
 
-                encoder_output = self.model_0_wra.model_1_seq.embed(ansx)
+                encoder_output = ansx #self.model_0_wra.model_6_dec.embed(ansx)
                 #encoder_output = hidden.permute(1,0,2)[:,1:,:]
 
                 #print(tv_large.size(), a_var.size() ,ansx.size(), hparams['tokens_per_sentence'], i ,'a_var')
@@ -2517,14 +2517,14 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    #loss.backward(retain_graph=True)
-                    if True:
-                        clip = 50.0
-                        _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-                        _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+                    loss.backward(retain_graph=True)
+                if True:
+                    clip = 50.0
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
-                loss.backward()
+                #loss.backward()
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
