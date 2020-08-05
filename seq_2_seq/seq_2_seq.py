@@ -2108,7 +2108,7 @@ class NMT:
         return optim.Adam(z, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
-
+    '''
     def _auto_stop(self):
         threshold = 70.00
         use_recipe_switching = self.do_recipe_dropout and self.do_recipe_lr
@@ -2116,7 +2116,7 @@ class NMT:
         use_lr_recipe = self.do_recipe_lr
         use_dropout_recipe = self.do_recipe_dropout
 
-        ''' switch between two recipe types '''
+        # switch between two recipe types 
         if use_recipe_switching and self._recipe_switching % 2 == 0:
             use_dropout_recipe = False
             use_lr_recipe = True
@@ -2160,7 +2160,7 @@ class NMT:
 
                 self.do_skip_validation = False
 
-                ''' adjust learning_rate to different value if possible. -- validation '''
+                
 
                 if (False and len(self.score_list) > 3 and float(self.score_list[-2]) == 100.00 and
                         float(self.score_list[-3]) == 100.00 and float(self.score_list[-1]) != 100):
@@ -2172,7 +2172,7 @@ class NMT:
                     self.update_result_file()
                     exit()
 
-                ''' put convergence test here. '''
+                
                 if self._convergence_test(10,lst=self.score_list_training):# or self._convergence_test(4, value=100.00):
                     time.ctime()
                     t = time.strftime('%l:%M%p %Z on %b %d, %Y')
@@ -2206,7 +2206,7 @@ class NMT:
 
             if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
 
-                ''' adjust learning_rate to different value if possible. -- training '''
+                
 
                 if (float(self.score_list_training[-1]) == 100.00 and
                         float(self.score_list[-1]) != 100.00):
@@ -2223,6 +2223,7 @@ class NMT:
             elif use_lr_recipe and False:
                 print('reset learning rate.')
                 hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
+    '''
 
     def _convergence_test(self, num, lst=None, value=None):
         if lst is None:
@@ -2518,14 +2519,14 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    loss.backward(retain_graph=True)
+                    #loss.backward(retain_graph=True)
                 if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
-                #loss.backward()
+                loss.backward()
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
@@ -2890,15 +2891,7 @@ class NMT:
         #print('ques:', choice[1])
         print('ref: sol', choice[2])
 
-        '''
-        nums = self.variablesFromPair(choice)
-        if self.do_load_babi:
-            question = nums[1]
-            target = nums[2]
-        if not self.do_load_babi:
-            question = nums[0]
-            target = None
-        '''
+
         words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
@@ -2938,20 +2931,15 @@ class NMT:
 
             for db in range(1):
                 outputs = outputs[0] #.squeeze(0)
-                for di in range(len(outputs) - 1):
+                for di in range(hparams['tokens_per_sentence'] ):# len(outputs) - 1):
                     #print(db,di, 'outputs')
-                    output = outputs[di]
-                    ni = output
-                    #output = output.permute(1, 0)
-                    #print(output,'out')
-                    '''
-                    if True:
-                        #print(output.size(),'out')
-                        ni = torch.argmax(output, dim=0).item()
-                        #print(ni,'ni')
+                    if di < len(outputs):
+                        output = outputs[di]
                     else:
-                        ni = output[di]
-                    '''
+                        output = torch.LongTensor([EOS_token])
+                    #output = outputs[di]
+                    ni = output
+
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
                         xxx = hparams['eol']
@@ -2959,12 +2947,12 @@ class NMT:
                         print('eol found.')
                         if not self.do_print_to_screen: break
                     else:
-                        if di < 4:
+                        if di < hparams['tokens_per_sentence'] :
                             if int(ni) == 0 and False:
                                 print(ni, '<--', self.output_lang.word2index[hparams['unk']])
                             if True:
                                 print(int(ni), self.output_lang.index2word[int(ni)])
-                        if di == 5 and len(outputs) > 5:
+                        if di == hparams['tokens_per_sentence'] and len(outputs) > hparams['tokens_per_sentence']:
                             print('...etc')
                             break
                         ######################
