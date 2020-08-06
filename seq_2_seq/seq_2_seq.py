@@ -1332,8 +1332,6 @@ class NMT:
         for i in ending:
             if line.endswith(i):
                 line = line[:-1]
-
-
         line = line + '?'
         return line
 
