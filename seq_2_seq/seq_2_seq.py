@@ -1326,6 +1326,17 @@ class NMT:
         self.update_result_file()
         pass
 
+    def sentence_ending(self, line):
+        line = line.strip()
+        ending = '.?!'
+        for i in ending:
+            if line.endswith(i):
+                line = line[:-1]
+
+
+        line = line + '?'
+        return line
+
     def task_interactive(self, l=None, call_from_script=False):
 
         print('-------------------')
@@ -1333,6 +1344,7 @@ class NMT:
             while True:
                 if not call_from_script:
                     line = input("> ")
+                    line = self.sentence_ending(line)
                     line = tokenize_weak.format(line)
                     print(line)
                 elif l is not None:
