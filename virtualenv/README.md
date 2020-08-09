@@ -13,11 +13,11 @@ These files probably work best if run with `source`. Type `deactivate` to exit t
 This formula seems to work for Python3.6 also.
 
 ```
-sudo apt-get install libssl-dev libbz2-dev libffi-dev # other dev packages may be required
+sudo apt-get install libssl-dev libbz2-dev libffi-dev libsqlite3-dev sqlite3 # other dev packages may be required
 wget --no-check-certificate  https://www.python.org/ftp/python/3.7.7/Python-3.7.7.tgz
 tar xvzf Python-3.7.7.tgz 
 cd Python-3.7.7
-./configure --enable-optimizations
+./configure --enable-optimizations --enable-loadable-sqlite-extensions
 sudo make 
 sudo make altinstall
 ```

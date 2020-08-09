@@ -1407,6 +1407,7 @@ class NMT:
     def count_sentences(self, filename):
         print('count vocab:', filename)
         z = self.open_sentences(filename)
+        print(len(z),'len', filename)
         return len(z)
 
     def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
