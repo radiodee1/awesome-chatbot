@@ -150,7 +150,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+blacklist_vocab = [] # ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 blacklist_sent = blacklist_vocab #+ ['i']
 blacklist_supress = [] #[['i', 0.0001], ['you', 1.0]]
 
@@ -1401,6 +1401,7 @@ class NMT:
         t_yyy = []
         with open(filename, 'r') as r:
             for xx in r:
+                xx = xx.replace("'", '')
                 t_yyy.append(xx.lower())
         return t_yyy
 
@@ -1534,7 +1535,7 @@ class NMT:
                 v = self.open_sentences(self.vocab_lang.name)
                 for word in v:
                     self.vocab_lang.addSentence(word.strip())
-                    #print(word)
+                    #print(word.strip())
             #####
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
@@ -1558,6 +1559,7 @@ class NMT:
                         a.append(word)
                     elif skip_unk:
                         skip = True
+                        #print(word, 'skip from')
                     elif not omit_unk:
                         a.append(hparams['unk'])
                 for word in self.pairs[p][1].split(' '):
@@ -1565,6 +1567,7 @@ class NMT:
                         b.append(word)
                     elif skip_unk:
                         skip = True
+                        #print(word, 'skip to')
                     elif not omit_unk:
                         b.append(hparams['unk'])
                 pairs = [' '.join(a), ' '.join(b)]
