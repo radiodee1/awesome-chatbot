@@ -4,12 +4,18 @@
 echo $@
 
 
-TEST_4="--mode=long --basename=test_s2s_movie_openvocab_d300_v15000_len15 --load-babi --lr=0.001 --dropout=0.5 --load-recurrent --units=300 --record-loss --multiplier=0.5 --length=15 --no-vocab "
+TEST_4="$@ --apps True --source_file ../data/tf_gpt2_data/1558M/converted/pytorch_model.bin"
 TEST_5="$@ --apps True"
 
 LAUNCH=launch
 LOG=log
 FILENAME=${HOME}/workspace/log.txt
+PYTORCH_MODEL='data/tf_gpt2_data/1558M/converted/pytorch_model.bin'
+
+if [ -f ${PYTORCH_MODEL} ]; then
+  TEST_5=${TEST_4}
+  echo $TEST_5
+fi
 
 if [ ! -f ${LAUNCH} ]; then
 
