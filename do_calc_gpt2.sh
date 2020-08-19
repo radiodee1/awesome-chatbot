@@ -12,7 +12,12 @@ fi
 TEST_5=" --no-recent=True $@"
 
 LAUNCH=launch
-export STAT_LIMIT=2000
+#export STAT_LIMIT=2000
+if [[ -z "${STAT_LIMIT}" ]]; then
+
+  export STAT_LIMIT=2000
+fi
+
 
 if [ ! -f ${LAUNCH} ]; then
 
