@@ -727,12 +727,14 @@ class WrapMemRNN: #(nn.Module):
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
         hidden = encoder_hidden #.contiguous()
-        encoder_output = self.model_6_dec.embed(encoder_output)
+        #encoder_output = self.model_6_dec.embed(encoder_output)
+        encoder_output = self.model_1_seq.embed(encoder_output)
         if True:
             decoder_hidden = hidden
 
             if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training:
-                embed_index = self.model_6_dec.embed(target_variable)#.permute(1,0,2)
+                #embed_index = self.model_6_dec.embed(target_variable)#.permute(1,0,2)
+                embed_index = self.model_1_seq.embed(target_variable)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
             else:
