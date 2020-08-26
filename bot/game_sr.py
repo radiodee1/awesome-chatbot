@@ -211,7 +211,12 @@ class VoiceGoogleSR:
             responses = self.client.streaming_recognize(self.streaming_config, requests)
 
             # Now, put the transcription responses to use.
-            value = self.listen(responses)
+            try:
+                value = self.listen(responses)
+            except e:
+                value = ''
+                print(e)
+
             print(value)
             return value
 
