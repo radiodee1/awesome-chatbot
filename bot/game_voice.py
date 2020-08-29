@@ -51,7 +51,7 @@ class VoiceOut:
                         num += 1
                         #print(num)
                     if self._do_quit: pygame.quit()
-            except e:
+            except Exception as e:
                 print(e)
                 pass
 
@@ -74,7 +74,7 @@ class VoiceOut:
                 num += 1
                 #print(num)
             if self._do_quit: pygame.quit()
-        except e:
+        except Exception as e:
             print(e)
             pass
         while not self.use_me.empty(): self.use_me.get()
