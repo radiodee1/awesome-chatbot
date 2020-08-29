@@ -213,7 +213,7 @@ class VoiceGoogleSR:
             # Now, put the transcription responses to use.
             try:
                 value = self.listen(responses)
-            except e:
+            except Exception as e:
                 value = ''
                 print(e)
 
