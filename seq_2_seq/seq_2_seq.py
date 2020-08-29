@@ -399,8 +399,12 @@ class Attn(torch.nn.Module):
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def dot_score(self, hidden, encoder_output):
+        encoder_output = encoder_output.permute(0,2,1)
+        hidden = hidden.permute(1,2,0)[:,:,:1]
+        hidden = hidden.permute(0,2,1)
+
         #print(hidden.size(), encoder_output.size(), 'attn dot')
-        return torch.sum(hidden * encoder_output, dim=2)
+        return torch.sum(hidden @ encoder_output, dim=1)
 
     def general_score(self, hidden, encoder_output):
         #if hidden.size(-1) > self.hidden_size or True:
@@ -469,7 +473,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
-        self.attention_mod = Attn(hidden_dim , method='general')
+        self.attention_mod = Attn(hidden_dim , method='dot') ## general
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
