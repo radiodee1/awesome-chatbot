@@ -14,6 +14,7 @@ h5py==2.10.0
 gtts==2.1.1
 google-api-python-client==1.8.3
 google-cloud-speech==1.3.2
+google-api-core==1.21.0
 #PyAudio ## install this from linux distro repository, not pip3
 #portaudio19-dev ## install from linux distro...
 pyaudio
