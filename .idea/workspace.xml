@@ -20,9 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/requirements.aarch64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.aarch64.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.amd64.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.amd64.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.armv7.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.armv7.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/bot/game_sr.py" beforeDir="false" afterPath="$PROJECT_DIR$/bot/game_sr.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
