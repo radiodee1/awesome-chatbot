@@ -29,6 +29,22 @@ fi
 export CHATBOT_MODE="sequence"
 export CHATBOT_START="start. sequence to sequence model."
 
+if [ -f ${LOG} ]; then
+  echo "logging"
+
+
+  echo ${TEST_7}
+  echo "----" >> ${FILENAME}
+  date >> ${FILENAME}
+  echo "----" >> ${FILENAME}
+  cd bot
+  python3 -u game.py ${TEST_7} >> ${FILENAME} 2>&1
+else
+  cd bot
+  python3 game.py ${TEST_7}
+fi
+
+
 cd bot
 python3 game.py ${TEST_7} # 2> /dev/null
 
