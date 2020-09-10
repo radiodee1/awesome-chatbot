@@ -34,61 +34,7 @@ import numpy as np
 
 
 '''
-Some code was originally written by Yerevann Research Lab. This theano code
-implements the DMN Network Model.
 
-https://github.com/YerevaNN/Dynamic-memory-networks-in-Theano
-
-The MIT License (MIT)
-
-Copyright (c) 2016 YerevaNN
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-------------------------
-
-Some code was originally written by Austin Jacobson. This refers specifically 
-to the BeamSearch class and came from:
-
-https://github.com/A-Jacobson/minimal-nmt
-
-MIT License
-
-Copyright (c) 2018 Austin Jacobson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy 
-of this software and associated documentation files (the "Software"), to deal 
-in the Software without restriction, including without limitation the rights 
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-copies of the Software, and to permit persons to whom the Software is 
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in 
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
-THE SOFTWARE.
----------------------------
 
 Some code is originally written by Sean Robertson. This code includes 
 some of the text processing code and early versions of the Decoder and Encoder 
@@ -133,6 +79,37 @@ Specifically the code for the Attention Mechanism was used.
 It can be found at the following site:
 
 https://pytorch.org/tutorials/beginner/chatbot_tutorial.html
+
+
+BSD 3-Clause License
+
+Copyright (c) 2017, Pytorch contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 '''
 
@@ -191,140 +168,6 @@ def prune_tensor( input, size):
     return input
 
 ################# pytorch modules ###############
-
-## beam doesn't work!!
-
-class Beam:
-
-    def __init__(self, beam_width):
-        self.heap = list()
-        self.beam_width = beam_width
-        #self.words = list()
-
-    def add(self, score, sequence, hidden_state):
-        #heapq.heappush(self.heap, (score, sequence, hidden_state))
-        self.heap.append((score, sequence, hidden_state))
-        self.heap.sort(reverse=True, key=lambda x: x[0])
-
-        self.heap = self.heap[:self.beam_width]
-
-    def has_member(self, word_idx, heap=None):
-        if heap is None:
-            heap = self.heap
-        ret = False
-        for i in heap:
-            for j in i[1]:
-                if j.item() == word_idx:
-                    ret = True
-                    #return ret
-        return ret
-
-    def __iter__(self):
-        return iter(self.heap)
-
-    def __len__(self):
-        return len(self.heap)
-
-    def __getitem__(self, idx):
-        return self.heap[idx]
-
-class BeamHelper:
-    """
-    Model must be in eval mode
-    Note: Will be passed as decoding helper,
-    but does not currently conform to that api so it gets to live here.
-    Does not support batching. Does not work with current eval code
-    (can't compute Xentropy loss on returned indices).
-    """
-
-    def __init__(self, beam_size=3, maxlen=20, sos_index=SOS_token):
-        self.beam_size = beam_size
-        self.maxlen = maxlen
-        self.sos_index = sos_index
-        self.decoder = None
-        self.encoder_out = None
-
-        self.bad_sentence = [
-            "i don't know",
-            "6478 3929 7337",
-            "i do not know"
-        ]
-
-    def get_next(self, last_word, hidden_state):
-        """
-        Given the last item in a sequence and the hidden state used to generate the sequence
-        return the topk most likely words and their scores
-        """
-        output, hidden_state, _ = self.decoder( self.encoder_out, hidden_state, last_word)
-        probs = F.softmax(output, dim=2)
-        next_probs, next_words = probs.topk(self.beam_size)
-        return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), hidden_state
-
-    def search(self, start_token, initial_hidden):
-        global blacklist_supress
-
-        beam = Beam(self.beam_size)  # starting layer in search tree
-        beam.add(score=1.0, sequence=start_token, hidden_state=initial_hidden)  # initialize root
-        for _ in range(self.maxlen):
-            next_beam = Beam(self.beam_size)
-            for score, sequence, hidden_state in beam:
-                next_probs, next_words, hidden_state = self.get_next(sequence[-1:], hidden_state)
-
-                for i in range(self.beam_size):
-
-                    if True:
-                        black = False
-                        supress = 1.0
-                        for ii in blacklist_supress:
-
-                            if ii[0] == next_words[i].item():
-                                black = True
-                                supress = float(ii[1])
-
-                                break
-                        if black:
-                            if not beam.has_member(next_words[i]) and not next_beam.has_member(next_words[i]):
-                                score = score * next_probs[i] * supress
-                                sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
-                                next_beam.add(score, sequence, hidden_state)
-                        else:
-                            score = score * next_probs[i]
-                            sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
-                            next_beam.add(score, sequence, hidden_state)
-                        pass
-            # move down one layer (to the next word in sequence up to maxlen )
-            beam = next_beam
-
-
-        while True:
-            best_score, best_sequence, _ = max(beam)
-            b = []
-            bb = []
-            for ii in best_sequence:
-                if ii not in [UNK_token, SOS_token, EOS_token, 74]:
-                    b.append(str(ii.item()))
-                    #bb.append(ii.item())
-            blacklisted = False
-            for jj in self.bad_sentence:
-
-                if ' '.join(b).startswith(jj):
-                    blacklisted = True
-            if not blacklisted:
-                ## convert b to tensor!!
-                #best_sequence = torch.LongTensor(bb)
-                break
-            beam.heap.pop(0)
-
-        #best_score, best_sequence, _ = max(beam)  # get highest scoring sequence
-        return best_score, best_sequence
-
-    def __call__(self, decoder, encoder_out, encoder_hidden):
-        self.decoder = decoder
-        self.encoder_out = encoder_out
-        decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
-        start_token = Variable(decoder_hidden.data.new(1, 1).fill_(self.sos_index).long())  # start token (ugly hack)
-        best_score, best_sequence = self.search(start_token, decoder_hidden)
-        return best_score, best_sequence
 
 
 
