@@ -605,7 +605,7 @@ class WrapMemRNN(nn.Module):
             #################################
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
             input_unchanged = input_unchanged[:,:,:self.hidden_size] + input_unchanged[:,:,self.hidden_size:]
-            
+
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
 
             #attn_weights = attn_weights.permute(0,2,1)
