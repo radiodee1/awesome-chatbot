@@ -339,7 +339,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, self.hidden_dim * 1 ) # hidden_dim * 1)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num, target_vocab_size * 1 ) # hidden_dim * 1)
         self.out_bmm = torch.bmm
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -638,7 +638,7 @@ class WrapMemRNN(nn.Module):
             #ans = self.model_6_dec.tanh_b(ans)
 
             #ans_sized = ans_small[:,:,:]
-            ans = self.model_6_dec.out_target_b(ans)
+            #ans = self.model_6_dec.out_target_b(ans)
 
             #ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
@@ -849,6 +849,7 @@ class NMT:
         parser.add_argument('--multiplier', help='learning rate multiplier for decoder.')
         parser.add_argument('--length', help='number of tokens per sentence.')
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
+        parser.add_argument('--epochs', default=0, help='override settings for epochs.', type=int)
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -979,6 +980,8 @@ class NMT:
         if self.args['lr_adjust'] is not None:
             self.lr_adjustment_num = int(self.args['lr_adjust'])
             hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
+        if int(self.args['epochs']) > 0:
+            self.epochs = int(self.args['epochs'])
 
         self.read_json_file()
 
@@ -2618,6 +2621,8 @@ class NMT:
                           + str(len(self.pairs)), end=' ')
 
                     print()
+                    if self.true_epoch > self.epochs:
+                        exit()
 
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
