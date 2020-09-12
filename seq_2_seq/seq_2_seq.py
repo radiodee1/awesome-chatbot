@@ -252,7 +252,7 @@ class Attn(torch.nn.Module):
     def general_score(self, hidden, encoder_output):
         #if hidden.size(-1) > self.hidden_size or True:
         #print('hiddsize')
-        hidden = hidden[0,:,:] + hidden[1,:,:]
+        hidden = hidden[0,:,:] #+ hidden[1,:,:]
         #hidden = hidden.permute(1,2,0)[:,:,:1] #<---
         hidden = hidden.unsqueeze(2)
         #hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
@@ -604,7 +604,7 @@ class WrapMemRNN(nn.Module):
 
             #################################
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
-            input_unchanged = input_unchanged[:,:,:self.hidden_size] + input_unchanged[:,:,self.hidden_size:]
+            input_unchanged = input_unchanged[:,:,:self.hidden_size] #+ input_unchanged[:,:,self.hidden_size:]
 
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
 
