@@ -22,7 +22,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Make tab file from srt files.')
     parser.add_argument('--unzip' , help='subtitle files. (place zip files in "raw/srt_zip/" folder)' , action='store_true')
     parser.add_argument('--use-once', help='do not use each line as question and answer.', action='store_true')
-    parser.add_argument('--flat', help='make flat output (no tabs and one sentence per line)', action='store_true')
+    parser.add_argument('--flat', help='make flat output (no tabs and one sentence per line - will not work with "--separate")', action='store_true')
+    parser.add_argument('--separate', help='make separate input files also. (train.fr and train.to - will not work with "--flat")', action='store_true')
     args = parser.parse_args()
     args = vars(args)
 
@@ -34,6 +35,7 @@ if __name__ == '__main__':
     flag_use_both = not args['use_once']
 
     flag_make_flat = args['flat']
+    flag_make_separate = args['separate']
 
     filelist = []
     for i in glob.glob(filename):
@@ -46,8 +48,10 @@ if __name__ == '__main__':
     print_out = False
     l_out = ''
 
+    filename_output = 'train_movie_srt.txt'
+
     tot = 0
-    with open('movie_srt_text.txt','w') as z:
+    with open(filename_output,'w') as z:
         for i in filelist:
             if not os.path.isfile(i):
                 print('bad file, ', i)
@@ -116,4 +120,16 @@ if __name__ == '__main__':
             r.close()
     z.close()
     print('tot:', tot)
+
+    if flag_make_separate and not flag_make_flat:
+        with open(filename_output, 'r') as f, open('train.srt.fr.txt', 'w') as fr, open('train.srt.to.txt', 'w') as to:
+            lines = f.readlines()
+            for l in lines:
+                l_from = l.split('\t')[0]
+                l_to = l.split('\t')[1]
+                fr.write(l_from + '\n')
+                to.write(l_to + '\n')
+        print('separate files written.')
+        pass
+    print('you may need to rename your files.')
     pass
