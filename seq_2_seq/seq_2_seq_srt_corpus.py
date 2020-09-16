@@ -278,8 +278,9 @@ datafile = None
 def vocab_and_sentences():
     global datafile
     # Define path to new file
-    datafile = os.path.join(hparams['data_dir'], "formatted_movie_lines.txt")
+    datafile = os.path.join(hparams['data_dir'], "train_movie_srt.txt")
 
+    '''
     delimiter = '\t'
     # Unescape the delimiter
     delimiter = str(codecs.decode(delimiter, "unicode_escape"))
@@ -303,11 +304,11 @@ def vocab_and_sentences():
         writer = csv.writer(outputfile, delimiter=delimiter)
         for pair in extractSentencePairs(conversations):
             writer.writerow(pair)
-
+    '''
     # Print a sample of lines
     print("\nSample lines from file:")
     printLines(datafile)
-
+    
 
 ######################################################################
 # Load and trim data
