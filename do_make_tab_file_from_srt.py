@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import random
 import argparse
 import os
 import glob
@@ -20,20 +21,26 @@ def is_good(line):
 
     return True
 
-def is_writable(line, keep=0.5):
+def is_writable(line, keep=0.5, count=False):
     global number
     line = line.strip()
+    if len(line.split(' ')) <= 1:
+        return False
+    if line.endswith('?'):
+        return False
     if '?' in line: ## questions
         return True
     if number < 0:
         return True
-    number += 1 ## statemnts
-    if number % 100 > keep * 100:
-        print(line, number)
+    if count:
+        number += 1 ## statemnts
+    if random.randint(1,100)  > keep * 100:
+        #print(line, number)
         return False
     return True
 
 if __name__ == '__main__':
+
     parser = argparse.ArgumentParser(description='Make tab file from srt files.')
     parser.add_argument('--unzip' , help='subtitle files. (place zip files in "raw/srt_zip/" folder)' , action='store_true')
     parser.add_argument('--use-once', help='do not use each line as question and answer.', action='store_true')
@@ -87,7 +94,8 @@ if __name__ == '__main__':
                         last_print_bad = num + 1
                         
                         if flag_make_flat:
-                            if not start_flat.endswith(start_c):
+                            if not start_flat.endswith(start_c.strip()):
+
                                 start_flat += ' ' + start_c.strip()
 
                     if not is_good(l):
@@ -108,11 +116,12 @@ if __name__ == '__main__':
 
                             if (len(start_c) > 0 and len(start_b) > 0) and (len(l_out) > 0 or not flag_use_both):
                                 if not flag_make_flat:
-                                    if is_writable(start_c + ' ' + start_b, keep):
+                                    if is_writable(start_c + '\t' + start_b, keep, count=True):
                                         z.write(start_c + '\t' + start_b + '\t' + str(1) + '\n')
                                         tot += 1
-                                elif flag_make_flat and len(start_flat.strip()) > 0 :
-                                    if is_writable(start_c + ' ' + start_b, keep):
+                                elif flag_make_flat and len(start_flat.strip()) > 1 :
+                                    if is_writable(start_flat.strip() , keep, count=False): # and is_writable(start_c + '\t' + start_b, keep):
+                                        number += 1
                                         z.write(start_flat.strip() + '\n')
                                         tot += 1
 
