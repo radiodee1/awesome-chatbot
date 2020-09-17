@@ -7,6 +7,8 @@ import sys
 sys.path.append('model/.')
 from model.tokenize_weak import format
 
+number = 0
+
 def is_good(line):
     #if line[0].isspace():
     #    return False
@@ -18,12 +20,26 @@ def is_good(line):
 
     return True
 
+def is_writable(line, keep=0.5):
+    global number
+    line = line.strip()
+    if '?' in line: ## questions
+        return True
+    if number < 0:
+        return True
+    number += 1 ## statemnts
+    if number % 100 > keep * 100:
+        print(line, number)
+        return False
+    return True
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Make tab file from srt files.')
     parser.add_argument('--unzip' , help='subtitle files. (place zip files in "raw/srt_zip/" folder)' , action='store_true')
     parser.add_argument('--use-once', help='do not use each line as question and answer.', action='store_true')
     parser.add_argument('--flat', help='make flat output (no tabs and one sentence per line - will not work with "--separate")', action='store_true')
     parser.add_argument('--separate', help='make separate input files also. (train.fr and train.to - will not work with "--flat")', action='store_true')
+    parser.add_argument('--keep-statements', help='out of every 100 statements, what percentage to keep.', default=0.5)
     args = parser.parse_args()
     args = vars(args)
 
@@ -49,6 +65,7 @@ if __name__ == '__main__':
     l_out = ''
 
     filename_output = 'train_movie_srt.txt'
+    keep = args['keep_statements']
 
     tot = 0
     with open(filename_output,'w') as z:
@@ -91,11 +108,13 @@ if __name__ == '__main__':
 
                             if (len(start_c) > 0 and len(start_b) > 0) and (len(l_out) > 0 or not flag_use_both):
                                 if not flag_make_flat:
-                                    z.write(start_c + '\t' + start_b + '\t' + str(1) + '\n')
-                                    tot += 1
+                                    if is_writable(start_c + ' ' + start_b, keep):
+                                        z.write(start_c + '\t' + start_b + '\t' + str(1) + '\n')
+                                        tot += 1
                                 elif flag_make_flat and len(start_flat.strip()) > 0 :
-                                    z.write(start_flat.strip() + '\n')
-                                    tot += 1
+                                    if is_writable(start_c + ' ' + start_b, keep):
+                                        z.write(start_flat.strip() + '\n')
+                                        tot += 1
 
                             if not flag_use_both:
                                 start_c = start_b
