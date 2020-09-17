@@ -1334,7 +1334,7 @@ class NMT:
         parser = argparse.ArgumentParser(description='Train some NMT values')
         parser.add_argument('--mode', help='mode of operation. (preset, long, interactive, plot)')
         parser.add_argument('--printable', help='a string to print during training for identification.')
-        parser.add_argument('--basename', help='base filename to use if it is different from settings file.', default='chatbot_tutorial')
+        parser.add_argument('--basename', help='base filename to use if it is different from settings file.', default='chatbot_srt_tutorial')
         parser.add_argument('--build-train-data', action='store_true', help='build training data for later use.')
         parser.add_argument('--train', action='store_true', help='train model')
         parser.add_argument('--iter', type=int, help='itaration of interest for loading a saved model.')
