@@ -28,7 +28,11 @@ def is_writable(line, keep=0.5, count=False):
         return False
     if line.endswith('?'):
         return False
-    if '?' in line: ## questions
+    if '\t' in line:
+        line = line.split('\t')[0]
+        if line.endswith('?'):
+            return True
+    elif '?' in line: ## questions
         return True
     if number < 0:
         return True
