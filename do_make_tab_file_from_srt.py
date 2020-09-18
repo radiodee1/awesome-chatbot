@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import random
+#import random
 import argparse
 import os
 import glob
@@ -34,7 +34,7 @@ def is_writable(line, keep=0.5, count=False):
         return True
     if count:
         number += 1 ## statemnts
-    if random.randint(1,100)  > keep * 100:
+    if  (number % 5 ) * 20 > keep * 100:
         #print(line, number)
         return False
     return True
@@ -72,7 +72,7 @@ if __name__ == '__main__':
     l_out = ''
 
     filename_output = 'train_movie_srt.txt'
-    keep = args['keep_statements']
+    keep = float(args['keep_statements'])
 
     tot = 0
     with open(filename_output,'w') as z:
