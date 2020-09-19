@@ -28,6 +28,9 @@ stat_limit = int(str(os.environ['STAT_LIMIT']))
 stat_enum = int(str(os.environ['STAT_ENUM'])) ## could be zero
 stat_tab = int(str(os.environ['STAT_TAB'])) ## could be very large
 
+interval = 100
+if stat_limit > 20000: interval = 1000
+
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
@@ -195,7 +198,7 @@ class Game:
                         #self.voice.speech_out(out)
             if not do_not_end: count -= 1
             num += 1
-            if num % 100 == 0 and num <= stat_limit:
+            if num % interval == 0 and num <= stat_limit:
                 self.print_contents(pr=False, code='a')
             if count <= 0 :
                 #print('quiet')
