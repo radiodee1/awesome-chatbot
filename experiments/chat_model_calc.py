@@ -6,7 +6,7 @@ speech_start = 'hello'
 must_stop = True
 no_tokenize_weak = False
 pin_skip = False
-print_contents = True
+print_contents = False
 
 sound_tones = ['sequence', 'signal', 'wiki', 'transformer']
 
