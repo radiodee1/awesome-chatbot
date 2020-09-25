@@ -6,7 +6,6 @@ speech_start = 'hello'
 must_stop = True
 no_tokenize_weak = False
 pin_skip = False
-print_contents = False
 
 sound_tones = ['sequence', 'signal', 'wiki', 'transformer']
 
@@ -104,7 +103,6 @@ class Game:
         self.model = model.NMT()
         self.model.setup_for_interactive()
 
-        self.question_input = {}
         self.responses = {}
         self.responses_list = []
         self.responses_words = {}
@@ -148,7 +146,7 @@ class Game:
         count = 0
         num = 0
         print('starting')
-        self.print_contents(pr=print_contents, code='w')
+        self.print_contents(pr=False, code='w')
         for _ in range(max(stat_limit, stat_tab)):
             #self.pin_a_on()
             #i = self.sr.voice_detection()
@@ -169,8 +167,8 @@ class Game:
                 #print('stopping')
             i = self.check_sentence(i)
             print(i)
-            if len(i) > 0 or True:
-                if count > 0 or True:
+            if len(i) > 0:
+                if count > 0 :
                     #if mode == 'signal': self.voice.beep_out()
                     ts = time.time()
                     if (i.strip() == '' or len(i.strip()) == 0) or i.strip() == "'" :
@@ -178,8 +176,6 @@ class Game:
                     out = self.model.get_sentence(i)
                     te = time.time()
                     #if mode == 'signal': self.voice.beep_out()
-                    self.question_input[i] = out
-
                     if out not in self.responses:
                         self.responses[out] = 1
                     else:
@@ -201,27 +197,17 @@ class Game:
                     for jj in self.blacklist:
                         if out.startswith(jj):
                             blacklisted = True
-                    if not blacklisted or True:
+                    if not blacklisted:
                         print('[',out, '] count:', self.responses[out])
-                        if out not in self.responses_list:
-                            self.responses_list.append([i, out])
+                        self.responses_list.append([i, out])
                         #self.voice.speech_out(out)
             if not do_not_end: count -= 1
             num += 1
-            #print(num)
             if num % interval == 0 and num <= stat_limit:
-                self.print_contents(pr=print_contents, code='a')
+                self.print_contents(pr=False, code='a')
             if count <= 0 :
                 #print('quiet')
                 pass
-        '''
-        print(self.question_input)
-        print(self.responses)
-        for i in self.question_input:
-            print(i)
-            self.responses_list.append([self.question_input[i], self.responses[self.question_input[i]]])
-        print(self.responses_list)
-        '''
 
     def check_sentence(self, i):
         i = i.split(' ')
@@ -263,13 +249,13 @@ class Game:
                 if key[1] == 1: original += 1
             print('-----')
             f.write('-----\n')
-            f.write(str(len(self.responses_list)) + ' responses / ' + str(len(self.responses_list)) + ' questions \n')
+            f.write(str(len(self.responses)) + ' responses / ' + str(len(self.responses_list)) + ' questions \n')
             f.write(str(original) + ' original / ' + str(len(self.responses_list)) + ' questions \n')
-            f.write(str(len(self.responses_list) - original) + ' repeats / ' + str(len(self.responses_list)) + ' questions \n')
-
-            print(str(len(self.responses_list)) + ' responses / ' + str(len(self.responses_list)) + ' questions')
+            f.write(str(len(self.responses) - original) + ' repeats / ' + str(len(self.responses_list)) + ' questions \n')
+            #f.write(str(len(self.responses_words)) + ' words \n')
+            print(str(len(self.responses)) + ' responses / ' + str(len(self.responses_list)) + ' questions')
             print(original, 'original /', str(len(self.responses_list)), 'questions')
-            print(len(self.responses_list) - original, 'repeats /', str(len(self.responses_list)), 'questions')
+            print(len(self.responses) - original, 'repeats /', str(len(self.responses_list)), 'questions')
 
             ### just words ###
             z = [sorted(self.responses_words.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)]
@@ -280,22 +266,23 @@ class Game:
                 num_words += 1
                 if key[1] == 1: original_words += 1
 
-            f.write(str(len(self.responses_words_list)) + ' responses / ' + str(len(self.responses_words_list)) + ' words \n')
+            f.write(str(len(self.responses_words)) + ' responses / ' + str(len(self.responses_words_list)) + ' words \n')
             f.write(str(original_words) + ' original / ' + str(len(self.responses_words_list)) + ' words \n')
-            f.write(str(len(self.responses_words_list) - original_words) + ' repeats / ' + str(len(self.responses_words_list)) + ' words \n')
-            f.write(str(len(self.responses_words_list)) + ' words \n')
-            print(str(len(self.responses_words_list)) + ' responses / ' + str(len(self.responses_words_list)) + ' words')
+            f.write(str(len(self.responses_words) - original_words) + ' repeats / ' + str(len(self.responses_words_list)) + ' words \n')
+            f.write(str(len(self.responses_words)) + ' words \n')
+            print(str(len(self.responses_words)) + ' responses / ' + str(len(self.responses_words_list)) + ' words')
             print(original_words, 'original /', str(len(self.responses_words_list)), 'words')
-            print(len(self.responses_words_list) - original_words, 'repeats /', str(len(self.responses_words_list)), 'words')
+            print(len(self.responses_words) - original_words, 'repeats /', str(len(self.responses_words_list)), 'words')
+            #print(len(self.responses_words), 'words')
 
-        self.csv_responses.append(len(self.responses_list))
+        self.csv_responses.append(len(self.responses))
         self.csv_original.append(int(original))
-        self.csv_repeats.append(len(self.responses_list) - original)
+        self.csv_repeats.append(len(self.responses) - original)
         self.csv_total.append(len(self.responses_list)) ## num of sentences
 
-        self.csv_words.append(len(self.responses_words_list))
+        self.csv_words.append(len(self.responses_words))
         self.csv_words_original.append(int(original_words))
-        self.csv_words_repeats.append(len(self.responses_words_list) - original_words)
+        self.csv_words_repeats.append(len(self.responses_words) - original_words)
         self.csv_words_total.append(len(self.responses_list)) ## num of sentences
 
         with open('../saved/output.'+csv_label+'.csv', 'w') as g:
@@ -311,7 +298,7 @@ class Game:
             for i in self.csv_original:
                 g.write(str(i) + ',')
             g.write('\n')
-            g.write('Total_Sentences.'+csv_label+',')
+            g.write('Once_+_Repeated_Sentences.'+csv_label+',')
             for i in self.csv_responses:
                 g.write(str(i) + ',')
             g.write('\n')
