@@ -1,6 +1,6 @@
 
 ## TF ##
-tensorflow==1.15.2
+tensorflow==1.15.4
 tensorflow-probability==0.7.0
 gast==0.2.2
 tqdm==4.46.0
