@@ -53,6 +53,7 @@ import aiml
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
+force_no_aiml = True
 
 print('NOTE: consider using this source file: --source_file ../data/tf_gpt2_data/774M/converted/pytorch_model.bin')
 
@@ -182,7 +183,13 @@ class NMT:
         prep_copy_boolean = False
         k = i.replace("'", '').replace('?','').replace('.','').replace('!', '')
         #print(k,'k')
-        r = self.kernel.respond(k)
+        #r = self.kernel.respond(k)
+        if  self.args.no_aiml or force_no_aiml:
+            r = ''
+            url = ''
+        else:
+            r = self.kernel.respond(k)
+            #print('args no aiml')
         url = self.detect_url(r)
         z = ''
         if url and True: #self.args.apps == True:
@@ -223,7 +230,11 @@ class NMT:
 
         if self.use_common:
             self.recent_in = i
-            i = self.q_string[0] + i + '?'
+
+            i = self.q_string[0] + i # + '?'
+            if len(i.strip()) > 0 :
+                if i.strip()[-1] not in '.!?':
+                    i = i + '?'
 
             if self.reply_aiml is None:
                 s = self.sentences_formatted
@@ -508,6 +519,7 @@ class NMT:
         parser.add_argument("--source_file", type=str, default='../data/tf_gpt2_data/774M/converted/pytorch_model.bin') # torch_gpt2/GPT2/gpt2-pytorch_model.bin')
         parser.add_argument("--numbers", action='store_true', help='Add numbers to memory sentences.')
         parser.add_argument("--no-recent", type=bool, default=False, help="Do not show model recent q and a.")
+        parser.add_argument('--no-aiml', action='store_true', help='Do not use aiml kernel.')
         self.args = parser.parse_args()
 
     def load_model(self):
