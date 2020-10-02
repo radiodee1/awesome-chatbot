@@ -2715,7 +2715,10 @@ class NMT:
                             if int(ni) == 0 and False:
                                 print(ni, '<--', self.output_lang.word2index[hparams['unk']])
                             if True:
-                                print(int(ni), self.output_lang.index2word[int(ni)])
+                                if int(ni) in self.output_lang.index2word:
+                                    print(int(ni), self.output_lang.index2word[int(ni)])
+                                else:
+                                    print(int(ni))
                         if di == hparams['tokens_per_sentence'] and len(outputs) > hparams['tokens_per_sentence']:
                             print('...etc')
                             break
@@ -2723,7 +2726,10 @@ class NMT:
                         if int(ni) == 0 and False:
                             print(ni, '<--')
                         if int(ni) != UNK_token:
-                            decoded_words.append(self.output_lang.index2word[int(ni)])
+                            if int(ni) in self.output_lang.index2word:
+                                decoded_words.append(self.output_lang.index2word[int(ni)])
+                            else:
+                                decoded_words.append(' ')
                         if int(ni) == UNK_token:
                             decoded_words.append(' ')
                             #print('!!')
