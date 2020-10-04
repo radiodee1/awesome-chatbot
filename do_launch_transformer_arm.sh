@@ -23,6 +23,8 @@ export CHATBOT_START="start. transformer model."
 
 ./do_make_docker_arm32v7.sh
 
+sleep 15
+
 if [ -f ${LOG} ]; then
   echo "logging"
 
