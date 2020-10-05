@@ -1,20 +1,22 @@
-pcm.!default pulse
-ctl.!default pulse
+## save this file in the home directory with the filename '.asoundrc' -- note the period is important!
 
-#pcm.!default {
-#  type asym
-#  capture.pcm "mic"
-#  playback.pcm "speaker"
-#}
-#pcm.mic {
-#  type plug
-#  slave {
-#    pcm "hw:1,0"
-#  }
-#}
-#pcm.speaker {
-#  type plug
-#  slave {
-#    pcm "hw:2,0"
-#  }
-#}
+#pcm.!default pulse
+#ctl.!default pulse
+
+pcm.!default {
+  type asym
+  capture.pcm "mic"
+  playback.pcm "speaker"
+}
+pcm.mic {
+  type plug
+  slave {
+    pcm "hw:1,0"
+  }
+}
+pcm.speaker {
+  type plug
+  slave {
+    pcm "hw:2,0"
+  }
+}

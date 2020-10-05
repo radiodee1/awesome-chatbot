@@ -346,3 +346,21 @@ pacmd set-default-source 0 ## <-- 0 is the microphone's index number from the li
 pacmd set-default-sink 0 ## <-- this will be some number other than 0
 ```
 
+## Pulseaudio as service:
+```
+# save as a file at: /etc/systemd/system/pulseaudio.service
+# then execute:
+# systemctl enable pulseaudio
+# systemctl start pulseaudio
+
+[Unit]
+Description=PulseAudio Daemon
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+PrivateTmp=true
+ExecStart=/usr/bin/pulseaudio -–system -–realtime –-disallow-exit –-no-cpu-limit
+```
