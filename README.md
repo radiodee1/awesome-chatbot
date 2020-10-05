@@ -362,5 +362,5 @@ WantedBy=multi-user.target
 [Service]
 Type=simple
 PrivateTmp=true
-ExecStart=/usr/bin/pulseaudio -–system -–realtime –-disallow-exit –-no-cpu-limit
+ExecStart=/usr/bin/pulseaudio  
 ```
