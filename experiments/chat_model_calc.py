@@ -36,6 +36,14 @@ while stat_limit < interval and n < 10:
     interval = interval // 10
     n += 1
 
+if mode == 'raw':
+    sys.path.append(os.path.abspath('.'))
+    import chat_model_calc as model
+    import seq_2_seq.tokenize_weak as tokenize_weak
+    csv_label = 'raw'
+    csv_voc_tot = 7826
+
+
 if mode == 'sequence':
     #import seq_2_seq.seq_2_seq as model
     import seq_2_seq.seq_2_seq_tutorial as model
@@ -92,6 +100,16 @@ except:
 
 
 base_filename = ''
+
+class NMT:
+    def __init__(self):
+        pass
+    def setup_for_interactive(self):
+        print('raw interactive')
+
+    def get_sentence(self, i):
+        return i
+
 
 class Game:
     def __init__(self):
@@ -321,6 +339,8 @@ class Game:
             g.write('\n')
 
     def print_tab_file(self, pr=False, code='w'):
+        with open('../saved/output.' + csv_label + '.enu.txt', 'w') as f:
+            if pr: print('touch enum file')
         if pr is True: print('\n-----')
         if stat_enum > 0:
             with open('../saved/output.'+csv_label+'.enu.txt',code) as f:

@@ -26,7 +26,7 @@ echo "quit -- no 'launch' file present."
 exit
 
 fi
-export CHATBOT_MODE="memory" #"wiki" #"memory"
+export CHATBOT_MODE="raw" #"wiki" #"memory"
 export CHATBOT_START="hello."
 
 
