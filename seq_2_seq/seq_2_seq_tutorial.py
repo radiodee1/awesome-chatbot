@@ -1389,6 +1389,7 @@ class NMT:
             return ' '.join(output_words)
         except KeyError:
             print("Error: Encountered unknown word.")
+            return ''
         pass
 
     def get_sentence(self, i):
