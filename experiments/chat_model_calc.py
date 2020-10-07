@@ -33,6 +33,8 @@ if "ORIGINAL_SENTENCES" in os.environ:
     original_sentences = os.environ['ORIGINAL_SENTENCES']
     if original_sentences is not None:
         original_sentences = True
+        print('original sentences')
+
 
 interval = 100
 if stat_limit > 20000: interval = 1000
@@ -87,6 +89,9 @@ elif mode == 'transformer':
 
 if mode in sound_tones:
     mode = 'signal'
+
+if original_sentences:
+    csv_label = "original_" + csv_label
 
 #import bot.game_sr as sr
 #import bot.game_voice as v
