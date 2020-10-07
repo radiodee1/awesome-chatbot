@@ -205,7 +205,9 @@ class Game:
                         i = '.'
                     if original_sentences:
                         if i.strip() in self.original_input_sentences:
-                            num += 1
+                            #num += 1 ## use or not use!!
+                            if num % interval == 0 and num <= stat_limit:
+                                self.print_contents(pr=False, code='a')
                             continue
                         else:
                             self.original_input_sentences.append(i.strip())
@@ -245,6 +247,7 @@ class Game:
             if count <= 0 :
                 #print('quiet')
                 pass
+        print (num, 'num total')
 
     def check_sentence(self, i):
         i = i.split(' ')
@@ -435,11 +438,14 @@ if __name__ == '__main__':
     g = Game()
     try:
         g.loop()
-        g.print_tab_file(pr=True, code='w')
+
+        #g.print_tab_file(pr=True, code='w')
     except EOFError:
-        g.print_tab_file(pr=True, code='w')
+        #g.print_tab_file(pr=True, code='w')
         pass
     finally:
+        if original_sentences:
+            print(len(g.original_input_sentences), 'number of unique input sentences')
         #if g.model.voc.num_words is not None:
         #    print(g.model.voc.num_words, 'voc')
         #g.print_tab_file(pr=True, code='w')
