@@ -28,6 +28,12 @@ stat_limit = int(str(os.environ['STAT_LIMIT']))
 stat_enum = int(str(os.environ['STAT_ENUM'])) ## could be zero
 stat_tab = int(str(os.environ['STAT_TAB'])) ## could be very large
 
+original_sentences = False
+if "ORIGINAL_SENTENCES" in os.environ:
+    original_sentences = os.environ['ORIGINAL_SENTENCES']
+    if original_sentences is not None:
+        original_sentences = True
+
 interval = 100
 if stat_limit > 20000: interval = 1000
 
@@ -139,6 +145,7 @@ class Game:
         self.chart = {}
         #self.voice = v.VoiceOut()
         #self.sr = sr.VoiceGoogleSR()
+        self.original_input_sentences = []
 
         self.words_name = ['chatbot','mutter','robot']
         self.words_start = ['start','talk','answer','reply','hello','hi','okay']
@@ -191,6 +198,13 @@ class Game:
                     ts = time.time()
                     if (i.strip() == '' or len(i.strip()) == 0) or i.strip() == "'" :
                         i = '.'
+                    if original_sentences:
+                        if i.strip() in self.original_input_sentences:
+                            num += 1
+                            continue
+                        else:
+                            self.original_input_sentences.append(i.strip())
+
                     out = self.model.get_sentence(i)
                     te = time.time()
                     #if mode == 'signal': self.voice.beep_out()

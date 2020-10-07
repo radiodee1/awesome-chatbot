@@ -20,7 +20,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/do_calc_raw.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_calc_raw.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/experiments/chat_model_calc.py" beforeDir="false" afterPath="$PROJECT_DIR$/experiments/chat_model_calc.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
