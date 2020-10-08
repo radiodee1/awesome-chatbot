@@ -212,7 +212,7 @@ class Game:
                             if (num % interval == 0 and num <= stat_limit) or num == stat_limit:
                                 self.print_contents(pr=False, code='a')
                             '''
-                            num += 1
+                            #num += 1
                             continue
                         else:
                             self.original_input_sentences.append(i.strip())
