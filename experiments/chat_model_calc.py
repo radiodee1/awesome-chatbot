@@ -91,7 +91,8 @@ if mode in sound_tones:
     mode = 'signal'
 
 if original_sentences:
-    csv_label = "original_" + csv_label
+    csv_label = "original_" + csv_label + '.' + str(stat_limit)
+
 
 #import bot.game_sr as sr
 #import bot.game_voice as v
@@ -205,9 +206,13 @@ class Game:
                         i = '.'
                     if original_sentences:
                         if i.strip() in self.original_input_sentences:
-                            #num += 1 ## use or not use!!
-                            if num % interval == 0 and num <= stat_limit:
+                            '''
+                            if i == "":
+                                num += 1 ## use or not use!!
+                            if (num % interval == 0 and num <= stat_limit) or num == stat_limit:
                                 self.print_contents(pr=False, code='a')
+                            '''
+                            num += 1
                             continue
                         else:
                             self.original_input_sentences.append(i.strip())
@@ -242,7 +247,7 @@ class Game:
                         #self.voice.speech_out(out)
             if not do_not_end: count -= 1
             num += 1
-            if num % interval == 0 and num <= stat_limit:
+            if (num % interval == 0 and num <= stat_limit) or num == stat_limit:
                 self.print_contents(pr=False, code='a')
             if count <= 0 :
                 #print('quiet')
