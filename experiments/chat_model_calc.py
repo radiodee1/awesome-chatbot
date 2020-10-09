@@ -161,6 +161,10 @@ class Game:
 
         self.first_run = True
 
+        self.loop_pass_num = 0
+        self.num = 0
+        self.lines = 0
+
         self.blacklist = [
             #"i don't know",
             #"i do not know"
@@ -175,14 +179,16 @@ class Game:
     def loop(self):
         global mode
         count = 0
-        num = 0
+        self.num = 0
         print('starting')
+        self.loop_pass_num += 1
         self.print_contents(pr=False, code='w')
-        for _ in range(max(stat_limit, stat_tab)):
+        while True: #for _ in range(max(stat_limit, stat_tab)):
             #self.pin_a_on()
             #i = self.sr.voice_detection()
-            if stat_tab <= num: break
-            i = input(str(num)+ ' > ')
+            self.lines += 1
+            if stat_tab <= self.num and not original_sentences: break
+            i = input(str(self.num)+ ' > ')
             #print(i)
             #self.pin_a_off()
             if not no_tokenize_weak: i = tokenize_weak.format(i)
@@ -198,8 +204,8 @@ class Game:
                 #print('stopping')
             i = self.check_sentence(i)
             print(i)
-            if len(i) > 0:
-                if count > 0 :
+            if len(i) > 0 or True:
+                if count > 0 or True:
                     #if mode == 'signal': self.voice.beep_out()
                     ts = time.time()
                     if (i.strip() == '' or len(i.strip()) == 0) or i.strip() == "'" :
@@ -208,14 +214,15 @@ class Game:
                         if i.strip() in self.original_input_sentences:
                             '''
                             if i == "":
-                                num += 1 ## use or not use!!
+                                self.num += 1 ## use or not use!!
                             if (num % interval == 0 and num <= stat_limit) or num == stat_limit:
                                 self.print_contents(pr=False, code='a')
                             '''
-                            #num += 1
+                            #self.num += 1
                             continue
                         else:
-                            self.original_input_sentences.append(i.strip())
+                            if self.loop_pass_num == 1:
+                                self.original_input_sentences.append(i.strip())
 
                     out = self.model.get_sentence(i)
                     te = time.time()
@@ -246,13 +253,17 @@ class Game:
                         self.responses_list.append([i, out])
                         #self.voice.speech_out(out)
             if not do_not_end: count -= 1
-            num += 1
-            if (num % interval == 0 and num <= stat_limit) or num == stat_limit:
+            self.num += 1
+            if (self.num % interval == 0 and self.num <= stat_limit) or self.num == stat_limit:
                 self.print_contents(pr=False, code='a')
+            if self.num >= stat_limit:
+                break
             if count <= 0 :
                 #print('quiet')
                 pass
-        print (num, 'num total')
+        print()
+        print (self.num, 'num total')
+        print (self.lines, 'lines total scanned')
 
     def check_sentence(self, i):
         i = i.split(' ')
@@ -442,15 +453,16 @@ if __name__ == '__main__':
     print('enter command line options for NMT class')
     g = Game()
     try:
-        g.loop()
 
-        #g.print_tab_file(pr=True, code='w')
+        g.loop()
+        g.print_tab_file(pr=True, code='w')
     except EOFError:
         #g.print_tab_file(pr=True, code='w')
         pass
     finally:
         if original_sentences:
             print(len(g.original_input_sentences), 'number of unique input sentences')
+        print(g.num, 'num')
         #if g.model.voc.num_words is not None:
         #    print(g.model.voc.num_words, 'voc')
         #g.print_tab_file(pr=True, code='w')
