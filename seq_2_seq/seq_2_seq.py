@@ -245,9 +245,9 @@ class Attn(torch.nn.Module):
         encoder_output = encoder_output.permute(0,2,1)
         hidden = hidden[0,:,:]
         hidden = hidden.unsqueeze(2)
-        z = hidden * encoder_output
+        z = hidden.transpose(1,2) @ encoder_output
         #print(hidden.size(), encoder_output.size(), 'attn dot')
-        z = torch.sum(z, dim=1).unsqueeze(1)
+        #z = torch.sum(z, dim=1).unsqueeze(1)
         #print(z.size(), 'zzz-dot')
         return z # torch.sum(hidden @ encoder_output, dim=1)
 
@@ -263,8 +263,9 @@ class Attn(torch.nn.Module):
         energy = self.attn(encoder_output).permute(0,2,1)
         #hidden = hidden.permute(0,2,1)
         #print(energy.size(),  hidden.size() ,'energy,hidd')
-        z = hidden * energy #@ hidden #.squeeze(0)
-        z = torch.sum(z, dim=1).unsqueeze(1)
+        z = hidden.transpose(1,2) @ energy #.transpose(1,2) #@ hidden #.squeeze(0)
+        #print(z.size(),'z')
+        #z = torch.sum(z, dim=1).unsqueeze(1)
         #print(z.size(), 'zzz-general')
 
         return z #torch.sum(z, dim=2)
