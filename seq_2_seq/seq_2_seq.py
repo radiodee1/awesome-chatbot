@@ -313,9 +313,9 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        #z = F.softmax(attn_energies, dim=-1) #.squeeze(2)
+        z = F.softmax(attn_energies, dim=-1) #.squeeze(2)
         #print(z.size(), 'z')
-        z = attn_energies
+        #z = attn_energies
         return z
 
 class Decoder(nn.Module):
@@ -323,7 +323,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
-        self.attention_mod = Attn(hidden_dim , method='general') ## general
+        self.attention_mod = Attn(hidden_dim , method='dot') ## general
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -344,7 +344,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, target_vocab_size * 1 ) # hidden_dim * 1)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * 1 ) # hidden_dim * 1)
         self.out_bmm = torch.bmm
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -643,10 +643,10 @@ class WrapMemRNN(nn.Module):
             #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
             ans = self.model_6_dec.out_concat_b(ans)
-            #ans = self.model_6_dec.tanh_b(ans)
+            ans = self.model_6_dec.tanh_b(ans)
 
             #ans_sized = ans_small[:,:,:]
-            #ans = self.model_6_dec.out_target_b(ans)
+            ans = self.model_6_dec.out_target_b(ans)
 
             #ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
