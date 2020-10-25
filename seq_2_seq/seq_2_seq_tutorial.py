@@ -922,7 +922,7 @@ class LuongAttnDecoderRNN(nn.Module):
         # Multiply attention weights to encoder outputs to get new "weighted sum" context vector
         
         #print(attn_weights.size(),'attn', encoder_outputs.size(),'eo')
-        
+
         context = attn_weights.bmm(encoder_outputs.transpose(0, 1))
         # Concatenate weighted context vector and GRU output using Luong eq. 5
         rnn_output = rnn_output.squeeze(0)
