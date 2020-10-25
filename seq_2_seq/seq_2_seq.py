@@ -323,7 +323,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
-        self.attention_mod = Attn(hidden_dim , method='dot') ## general
+        self.attention_mod = Attn(hidden_dim , method='general') ## general
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -650,9 +650,9 @@ class WrapMemRNN(nn.Module):
 
             #ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
-            #ans = self.model_6_dec.tanh_b(ans)
+            ans = self.model_6_dec.tanh_b(ans)
 
-            ans = self.model_6_dec.softmax_b(ans)
+            #ans = self.model_6_dec.softmax_b(ans)
 
         return ans, decoder_hidden_x
 
