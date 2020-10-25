@@ -313,8 +313,9 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        z = F.softmax(attn_energies, dim=-1) #.squeeze(2)
-        #print(z, 'z')
+        #z = F.softmax(attn_energies, dim=-1) #.squeeze(2)
+        #print(z.size(), 'z')
+        z = attn_energies
         return z
 
 class Decoder(nn.Module):
