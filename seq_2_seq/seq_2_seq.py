@@ -245,9 +245,10 @@ class Attn(torch.nn.Module):
         encoder_output = encoder_output.permute(0,2,1)
         hidden = hidden[0,:,:]
         hidden = hidden.unsqueeze(2)
-        z = hidden.transpose(1,2) @ encoder_output
+        #z = hidden.transpose(1,2) * encoder_output
+        z = hidden * encoder_output
         #print(hidden.size(), encoder_output.size(), 'attn dot')
-        #z = torch.sum(z, dim=1).unsqueeze(1)
+        z = torch.sum(z, dim=1).unsqueeze(1)
         #print(z.size(), 'zzz-dot')
         return z # torch.sum(hidden @ encoder_output, dim=1)
 
@@ -263,9 +264,10 @@ class Attn(torch.nn.Module):
         energy = self.attn(encoder_output).permute(0,2,1)
         #hidden = hidden.permute(0,2,1)
         #print(energy.size(),  hidden.size() ,'energy,hidd')
-        z = hidden.transpose(1,2) @ energy #.transpose(1,2) #@ hidden #.squeeze(0)
+        #z = hidden.transpose(1,2) * energy.transpose(1,2) #@ hidden #.squeeze(0)
+        z = hidden * energy
         #print(z.size(),'z')
-        #z = torch.sum(z, dim=1).unsqueeze(1)
+        z = torch.sum(z, dim=1).unsqueeze(1)
         #print(z.size(), 'zzz-general')
 
         return z #torch.sum(z, dim=2)
@@ -323,7 +325,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
-        self.attention_mod = Attn(hidden_dim , method='general') ## general
+        self.attention_mod = Attn(hidden_dim , method='dot') ## general
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
