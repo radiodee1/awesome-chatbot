@@ -227,7 +227,52 @@ class Encoder(nn.Module):
         return encoder_out, encoder_hidden
 
 
+# Luong attention layer
 class Attn(torch.nn.Module):
+    def __init__(self,  hidden_dim=500,  method='dot'):
+        super(Attn, self).__init__()
+        self.method = method
+        hidden_size = hidden_dim
+        if self.method not in ['dot', 'general', 'concat']:
+            raise ValueError(self.method, "is not an appropriate attention method.")
+        self.hidden_size = hidden_size
+        if self.method == 'general':
+            self.attn = torch.nn.Linear(self.hidden_size, hidden_size)
+        elif self.method == 'concat':
+            self.attn = torch.nn.Linear(self.hidden_size * 2, hidden_size)
+            self.v = torch.nn.Parameter(torch.FloatTensor(hidden_size))
+
+    def dot_score(self, hidden, encoder_output):
+        return torch.sum(hidden * encoder_output, dim=2)
+
+    def general_score(self, hidden, encoder_output):
+        energy = self.attn(encoder_output)
+        return torch.sum(hidden * energy, dim=2)
+
+    def concat_score(self, hidden, encoder_output):
+        energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
+        return torch.sum(self.v * energy, dim=2)
+
+    def forward(self, hidden, encoder_outputs):
+        hidden = hidden[:1,:,:].transpose(1,0)
+        #print(hidden.size(), encoder_outputs.size(), 'hid,encoder')
+        # Calculate the attention weights (energies) based on the given method
+        if self.method == 'general':
+            attn_energies = self.general_score(hidden, encoder_outputs)
+        elif self.method == 'concat':
+            attn_energies = self.concat_score(hidden, encoder_outputs)
+        elif self.method == 'dot':
+            attn_energies = self.dot_score(hidden, encoder_outputs)
+
+        # Transpose max_length and batch_size dimensions
+        attn_energies = attn_energies.t()
+        #print(attn_energies.size(),'attn')
+        # Return the softmax normalized probability scores (with added dimension)
+        return F.softmax(attn_energies, dim=1).unsqueeze(1)
+
+
+
+class Attnx(torch.nn.Module):
     def __init__(self,  hidden_size, method="dot"):
         #method = 'none' #'concat' #''dot' #'general'
         super(Attn, self).__init__()
@@ -337,7 +382,7 @@ class Decoder(nn.Module):
             linear_in_dim = hidden_dim
 
         batch_first = True #self.word_mode
-        concat_num = tokens + 1
+        concat_num = 1 + 1
 
         self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
@@ -616,13 +661,13 @@ class WrapMemRNN(nn.Module):
 
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
 
-            #attn_weights = attn_weights.permute(0,2,1)
+            attn_weights = attn_weights.permute(2,1,0)
             #input_unchanged = input_unchanged[:,:,:self.hidden_size] #.permute(0,2,1)
             #ans_small = ans_small.permute(0,2,1)
             #print(attn_weights.size(), input_unchanged.size(), ans_small.size(),'att,input_un')
 
-            #context = self.model_6_dec.out_bmm(attn_weights.transpose(2,1), input_unchanged.transpose(2,1)) #, ans_small)
-            context = attn_weights.transpose(2,1)
+            context = self.model_6_dec.out_bmm(attn_weights, input_unchanged) #.transpose(2,1)) #, ans_small)
+            #context = attn_weights.transpose(2,1)
             #print(context.size(), 'context')
             #context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
 
@@ -631,7 +676,7 @@ class WrapMemRNN(nn.Module):
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
 
-            '''
+
             ans = [
                 ans_small, #.permute(1,0,2) ,
                 context #[:,:,:self.hidden_size],
@@ -645,6 +690,7 @@ class WrapMemRNN(nn.Module):
                     ans.append(context[:,iii,:].unsqueeze(1))
                 else:
                     ans.append(context[:,-1,:].unsqueeze(1))
+            '''
 
             #print('---')
             #for iii in ans: print(iii.size())
