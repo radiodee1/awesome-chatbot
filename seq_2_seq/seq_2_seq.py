@@ -621,9 +621,10 @@ class WrapMemRNN(nn.Module):
             #ans_small = ans_small.permute(0,2,1)
             #print(attn_weights.size(), input_unchanged.size(), ans_small.size(),'att,input_un')
 
-            context = self.model_6_dec.out_bmm(attn_weights.transpose(2,1), input_unchanged.transpose(2,1)) #, ans_small)
+            #context = self.model_6_dec.out_bmm(attn_weights.transpose(2,1), input_unchanged.transpose(2,1)) #, ans_small)
+            context = attn_weights.transpose(2,1)
             #print(context.size(), 'context')
-            context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
+            #context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
 
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
