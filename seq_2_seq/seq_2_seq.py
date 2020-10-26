@@ -271,7 +271,7 @@ class Attn(torch.nn.Module):
         return F.softmax(attn_energies, dim=1).unsqueeze(1)
 
 
-
+'''
 class Attnx(torch.nn.Module):
     def __init__(self,  hidden_size, method="dot"):
         #method = 'none' #'concat' #''dot' #'general'
@@ -364,6 +364,7 @@ class Attnx(torch.nn.Module):
         #print(z.size(), 'z')
         #z = attn_energies
         return z
+'''
 
 class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False, tokens=10):
