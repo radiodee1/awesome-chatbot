@@ -370,7 +370,7 @@ class Decoder(nn.Module):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
-        self.attention_mod = Attn(hidden_dim , method='general') ## general
+        self.attention_mod = Attn(hidden_dim , method=hparams['attn'] ) #method='general') ## general
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -750,7 +750,7 @@ class Lang:
 class NMT:
     def __init__(self):
 
-        global teacher_forcing_ratio, MAX_LENGTH
+        global teacher_forcing_ratio, MAX_LENGTH, hparams
 
         self.model_0_wra = None
         #self.opt_1 = None
@@ -919,6 +919,7 @@ class NMT:
         parser.add_argument('--length', help='number of tokens per sentence.')
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
         parser.add_argument('--epochs', default=0, help='override settings for epochs.', type=int)
+        parser.add_argument('--attn', default='dot', help='set attention mode. ("dot" or "general")')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1051,6 +1052,8 @@ class NMT:
             hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
         if int(self.args['epochs']) > 0:
             self.epochs = int(self.args['epochs'])
+
+        hparams['attn'] = self.args['attn']
 
         self.read_json_file()
 
