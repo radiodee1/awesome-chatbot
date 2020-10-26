@@ -248,7 +248,7 @@ class Attn(torch.nn.Module):
         #z = hidden.transpose(1,2) * encoder_output
         z = hidden * encoder_output
         #print(hidden.size(), encoder_output.size(), 'attn dot')
-        z = torch.sum(z, dim=1).unsqueeze(1)
+        #z = torch.sum(z, dim=1).unsqueeze(1)
         #print(z.size(), 'zzz-dot')
         return z # torch.sum(hidden @ encoder_output, dim=1)
 
@@ -267,7 +267,7 @@ class Attn(torch.nn.Module):
         #z = hidden.transpose(1,2) * energy.transpose(1,2) #@ hidden #.squeeze(0)
         z = hidden * energy
         #print(z.size(),'z')
-        z = torch.sum(z, dim=1).unsqueeze(1)
+        #z = torch.sum(z, dim=1).unsqueeze(1)
         #print(z.size(), 'zzz-general')
 
         return z #torch.sum(z, dim=2)
@@ -321,7 +321,7 @@ class Attn(torch.nn.Module):
         return z
 
 class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False, tokens=10):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
@@ -337,7 +337,7 @@ class Decoder(nn.Module):
             linear_in_dim = hidden_dim
 
         batch_first = True #self.word_mode
-        concat_num = 2
+        concat_num = tokens + 1
 
         self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
@@ -421,7 +421,7 @@ class Decoder(nn.Module):
 class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
-                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
+                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False, tokens=10):
 
         super(WrapMemRNN, self).__init__()
 
@@ -439,6 +439,7 @@ class WrapMemRNN(nn.Module):
         gru_dropout = dropout * 0.0 #0.5
         self.cancel_attention = cancel_attention
         beam_width = 0 if hparams['beam'] is None else hparams['beam']
+        self.tokens = tokens
 
 
         self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
@@ -620,24 +621,35 @@ class WrapMemRNN(nn.Module):
             #ans_small = ans_small.permute(0,2,1)
             #print(attn_weights.size(), input_unchanged.size(), ans_small.size(),'att,input_un')
 
-            context = self.model_6_dec.out_bmm(attn_weights, input_unchanged) #.transpose(1,2)) #, ans_small)
-
-            #context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
+            context = self.model_6_dec.out_bmm(attn_weights.transpose(2,1), input_unchanged.transpose(2,1)) #, ans_small)
+            #print(context.size(), 'context')
+            context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
 
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
 
+            '''
             ans = [
                 ans_small, #.permute(1,0,2) ,
                 context #[:,:,:self.hidden_size],
                 #context[:,:,self.hidden_size:]
             ]
+            '''
+
+            ans = [ans_small]
+            for iii in range(self.tokens):
+                if iii < context.size(1):
+                    ans.append(context[:,iii,:].unsqueeze(1))
+                else:
+                    ans.append(context[:,-1,:].unsqueeze(1))
 
             #print('---')
             #for iii in ans: print(iii.size())
             #print('---')
+
+            #print(ans.size(), 'answer')
 
             ans = torch.cat(ans, dim=-1) ## -2/0
             #ans = self.model_6_dec.tanh_a(ans)
