@@ -392,7 +392,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * 1 ) # hidden_dim * 1)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num, target_vocab_size * 1 ) # hidden_dim * 1)
         self.out_bmm = torch.bmm
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -708,7 +708,7 @@ class WrapMemRNN(nn.Module):
             #ans = self.model_6_dec.tanh_b(ans)
 
             #ans_sized = ans_small[:,:,:]
-            ans = self.model_6_dec.out_target_b(ans)
+            #ans = self.model_6_dec.out_target_b(ans)
 
             #ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
@@ -920,7 +920,7 @@ class NMT:
         parser.add_argument('--length', help='number of tokens per sentence.')
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
         parser.add_argument('--epochs', default=0, help='override settings for epochs.', type=int)
-        parser.add_argument('--attn', default='dot', help='set attention mode. ("dot" or "general")')
+        parser.add_argument('--attn', default='general', help='set attention mode. ("dot" or "general")')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
