@@ -254,7 +254,7 @@ class Attn(torch.nn.Module):
         return torch.sum(self.v * energy, dim=2)
 
     def forward(self, hidden, encoder_outputs):
-        hidden = hidden[:1,:,:].transpose(1,0)
+        hidden = hidden[:,1:,:] #.transpose(1,0)
         #print(hidden.size(), encoder_outputs.size(), 'hid,encoder')
         # Calculate the attention weights (energies) based on the given method
         if self.method == 'general':
@@ -655,19 +655,23 @@ class WrapMemRNN(nn.Module):
 
             _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
-
+            decoder_hidden_attn = decoder_hidden_x.transpose(1,0)
             #################################
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
-            input_unchanged = input_unchanged[:,:,:self.hidden_size] #+ input_unchanged[:,:,self.hidden_size:]
+            input_unchanged = input_unchanged[:,:,self.hidden_size:] #+ input_unchanged[:,:,self.hidden_size:]
 
-            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
+            #attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
+            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_attn, input_unchanged)
 
             attn_weights = attn_weights.permute(2,1,0)
+
             #input_unchanged = input_unchanged[:,:,:self.hidden_size] #.permute(0,2,1)
             #ans_small = ans_small.permute(0,2,1)
             #print(attn_weights.size(), input_unchanged.size(), ans_small.size(),'att,input_un')
 
             context = self.model_6_dec.out_bmm(attn_weights, input_unchanged) #.transpose(2,1)) #, ans_small)
+            #print(context.size(), 'c1')
+            #context = self.model_6_dec.out_bmm(input_unchanged.permute(0,2,1), attn_weights)
             #context = attn_weights.transpose(2,1)
             #print(context.size(), 'context')
             #context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
