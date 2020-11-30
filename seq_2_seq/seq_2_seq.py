@@ -254,7 +254,7 @@ class Attn(torch.nn.Module):
         return torch.sum(self.v * energy, dim=2)
 
     def forward(self, hidden, encoder_outputs):
-        hidden = hidden[:,1:,:] #.transpose(1,0)
+        hidden = hidden[:,:1,:] #.transpose(1,0)
         #print(hidden.size(), encoder_outputs.size(), 'hid,encoder')
         # Calculate the attention weights (energies) based on the given method
         if self.method == 'general':
