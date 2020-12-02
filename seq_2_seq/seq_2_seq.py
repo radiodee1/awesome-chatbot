@@ -2599,6 +2599,7 @@ class NMT:
 
                     print()
                     if self.true_epoch > self.epochs:
+                        print('last epoch reached.')
                         exit()
 
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
