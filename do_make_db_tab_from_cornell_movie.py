@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
 import codecs
-import sqlite3
+try:
+    import sqlite3
+except:
+    pass
+
 import os
 from datetime import datetime
 import sys
