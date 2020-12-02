@@ -392,7 +392,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, target_vocab_size * 1 ) # hidden_dim * 1)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * 1 ) # hidden_dim * 1)
         self.out_bmm = torch.bmm
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -711,8 +711,21 @@ class WrapMemRNN(nn.Module):
             ans = self.model_6_dec.out_concat_b(ans)
             #ans = self.model_6_dec.tanh_b(ans)
 
+            hid = [
+                #ans.transpose(1,0),
+                decoder_hidden_x[1:,:,:],
+                ans.transpose(1, 0),
+
+            ]
+
+            hid = torch.cat(hid, dim=0)
+
+            #print(ans.size(), decoder_hidden_x.size(),hid.size(), 'ans,dec_hid')
+
+            decoder_hidden_x = hid
+
             #ans_sized = ans_small[:,:,:]
-            #ans = self.model_6_dec.out_target_b(ans)
+            ans = self.model_6_dec.out_target_b(ans)
 
             #ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
