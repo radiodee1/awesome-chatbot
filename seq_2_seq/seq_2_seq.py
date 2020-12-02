@@ -2599,6 +2599,8 @@ class NMT:
 
                     print()
                     if self.true_epoch > self.epochs:
+                        self.save_checkpoint(num=len(self.pairs))
+
                         print('last epoch reached.')
                         exit()
 
