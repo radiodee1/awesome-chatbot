@@ -1299,6 +1299,7 @@ class NMT:
                 elif l is not None:
                     line = l
                 pad = hparams['tokens_per_sentence']
+                pad = len(line.split(' '))
                 add_eol = False
                 #print(line)
                 line_out = self.variableFromSentence(self.input_lang, line, pad=pad)
