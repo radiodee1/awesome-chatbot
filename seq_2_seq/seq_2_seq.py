@@ -714,7 +714,7 @@ class WrapMemRNN(nn.Module):
 
             hid = [
                 #ans.transpose(1,0),
-                decoder_hidden_x[1:,:,:],
+                decoder_hidden_x[:1,:,:],
                 ans.transpose(1, 0),
 
             ]
