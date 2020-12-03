@@ -713,9 +713,9 @@ class WrapMemRNN(nn.Module):
             ans = self.model_6_dec.tanh_b(ans)
 
             hid = [
-                #ans.transpose(1,0),
-                decoder_hidden_x[:1,:,:],
-                ans.transpose(1, 0),
+                ans.transpose(1,0),
+                decoder_hidden_x[1:,:,:],
+                #ans.transpose(1, 0),
 
             ]
 
