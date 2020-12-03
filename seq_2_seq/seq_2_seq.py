@@ -2274,7 +2274,7 @@ class NMT:
             #else:
             use = -1
 
-            hidden_x = hidden_x[:2,:,:] #.permute(1,0,2)
+            hidden_x = hidden_x[2:,:,:] # + hidden_x[2:,:,:]
 
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(1)
