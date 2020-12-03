@@ -387,12 +387,12 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * 1 , target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * 2 , target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * 1 ) # hidden_dim * 1)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * 2 ) # hidden_dim * 1)
         self.out_bmm = torch.bmm
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
@@ -712,19 +712,16 @@ class WrapMemRNN(nn.Module):
 
             ans = self.model_6_dec.tanh_b(ans)
 
-            hid = [
-                ans.transpose(1,0),
-                decoder_hidden_x[1:,:,:],
-                #ans.transpose(1, 0),
+            
+            #print(ans.size(), decoder_hidden_x.size(), 'ans,dec_hid')
 
-            ]
+            hid_1 = ans.transpose(1,0)[:,:,self.hidden_size:] + decoder_hidden_x[1:,:,:]
+            hid_2 = ans.transpose(1,0)[:,:,:self.hidden_size] + decoder_hidden_x[:1,:,:]
 
-            hid = torch.cat(hid, dim=0)
+            #print(hid_1.size(), hid_2.size(), 'hid12')
+            decoder_hidden_x = torch.cat([hid_1, hid_2], dim=0)
 
-            #print(ans.size(), decoder_hidden_x.size(),hid.size(), 'ans,dec_hid')
-
-            decoder_hidden_x = hid
-
+            #print(decoder_hidden_x.size(),'dhx')
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
 
