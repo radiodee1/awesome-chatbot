@@ -715,8 +715,8 @@ class WrapMemRNN(nn.Module):
             
             #print(ans.size(), decoder_hidden_x.size(), 'ans,dec_hid')
 
-            hid_1 = ans.transpose(1,0)[:,:,self.hidden_size:] + decoder_hidden_x[1:,:,:]
-            hid_2 = ans.transpose(1,0)[:,:,:self.hidden_size] + decoder_hidden_x[:1,:,:]
+            hid_1 = ans.transpose(1,0)[:,:,:self.hidden_size] + decoder_hidden_x[:1,:,:]
+            hid_2 = ans.transpose(1,0)[:,:,self.hidden_size:] + decoder_hidden_x[1:,:,:]
 
             #print(hid_1.size(), hid_2.size(), 'hid12')
             decoder_hidden_x = torch.cat([hid_1, hid_2], dim=0)
