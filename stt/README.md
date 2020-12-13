@@ -1,4 +1,4 @@
-## Alternative for Google Text To Speech: Pocketsphinx
+## Alternative for Google Speech To Text: Pocketsphinx
 
 For this prerequisite we built pocketsphinx from source.
 
