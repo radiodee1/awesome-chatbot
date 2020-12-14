@@ -5,7 +5,10 @@ architecture. Much of this code relies on the Tensor2Tensor project from
 Google. The training files in this directory do not use the same training
 corpus files that are used by the babi code or the seq2seq code. Instead they
 use a single file called `../data/raw.txt`. This file is generated from the 
-'Persona' data set.
+'Persona' data set. 
+
+You can also get the file by renaming the output of `do_make_db_tab_from_cornell_movie.py`. 
+You must use the `--text-file` commandline option. Then put the file in the `/data` folder. 
 
 * `tf_t2t_train_chat.py` - This is the script for training the transformer with
 the 'Persona' data. There are some important flags. They are `--name`, `--train` and
