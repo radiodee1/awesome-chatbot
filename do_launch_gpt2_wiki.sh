@@ -45,9 +45,11 @@ if [ -f ${LOG} ]; then
   echo "----" >> ${FILENAME}
   cd bot
   python3 -u game.py ${TEST_5} >> ${FILENAME} 2>&1
+  exit
 else
   cd bot
   python3 game.py ${TEST_5}
+  exit
 fi
 
 python3 game.py ${TEST_5} # 2> /dev/null
