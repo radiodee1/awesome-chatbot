@@ -21,11 +21,6 @@
   <component name="ChangeListManager">
     <list default="true" id="34ae3984-07d1-4aa0-98e6-9101ad62c532" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_game_s2s.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_game_s2s.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_gpt2_signal.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_gpt2_signal.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_gpt2_wiki.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_gpt2_wiki.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_transformer.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_transformer.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/do_launch_transformer_arm.sh" beforeDir="false" afterPath="$PROJECT_DIR$/do_launch_transformer_arm.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +50,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.general" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -103,36 +98,6 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/babi_t2t/t2t" />
     </ignored-roots>
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="807" y="223" width="800" height="719" key="#Plugins" timestamp="1591297602264">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="807" y="223" width="800" height="719" key="#Plugins/0.27.1920.1053@0.27.1920.1053" timestamp="1591297602264" />
-    <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1589411891761">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="664" y="235" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1589411891761" />
-    <state x="849" y="363" width="641" height="403" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1593878016042">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="849" y="363" width="641" height="403" key="#com.intellij.fileTypes.FileTypeChooser/0.27.1920.1053@0.27.1920.1053" timestamp="1593878016042" />
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog" timestamp="1591297447022">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="643" y="281" width="624" height="551" key="#com.intellij.openapi.updateSettings.impl.PluginUpdateInfoDialog/0.27.1920.1053@0.27.1920.1053" timestamp="1591297447022" />
-    <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1" timestamp="1593884842161">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="942" y="441" width="518" height="279" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.27.1920.1053@0.27.1920.1053" timestamp="1593884842161" />
-    <state x="701" y="214" width="1022" height="737" key="SettingsEditor" timestamp="1592694147929">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="701" y="214" width="1022" height="737" key="SettingsEditor/0.27.1920.1053@0.27.1920.1053" timestamp="1592694147929" />
-    <state x="871" y="271" width="672" height="678" key="search.everywhere.popup" timestamp="1593954493699">
-      <screen x="0" y="27" width="1920" height="1053" />
-    </state>
-    <state x="871" y="271" width="672" height="678" key="search.everywhere.popup/0.27.1920.1053@0.27.1920.1053" timestamp="1593954493699" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

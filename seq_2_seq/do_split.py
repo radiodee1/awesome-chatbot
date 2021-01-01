@@ -5,12 +5,15 @@ import os
 import sys
 import random
 import xml.etree.ElementTree as ET
-from tokenize_weak import format
+#from tokenize_weak import format
+
+def format(input):
+    return input.lower()
 
 hparams = {
 
-    'save_dir': "~/",
-    'data_dir': "~/",
+    'save_dir': "./data",
+    'data_dir': "./data",
     'test_name': "test",
     'train_name': "train",
     'valid_name':'valid',
@@ -20,7 +23,8 @@ hparams = {
     'hist_ending': 'hist',
     'babi_name':'babi',
     'eol': 'eol',
-    'unk': 'unk'
+    'unk': 'unk',
+    'sol': 'sol'
 }
 
 xml_list = []
@@ -98,7 +102,7 @@ def sentence_contains(sentence, words):
 if __name__ == '__main__':
     tokenizer = None
 
-    parser = argparse.ArgumentParser(description='split raw reddit file.')
+    parser = argparse.ArgumentParser(description='split raw reddit/tab file.')
     parser.add_argument('--filename',help='name of file to split.')
     parser.add_argument('--start',help='optional starting line number.')
     parser.add_argument('--length', help='length of output file. (default: 500)')
@@ -111,7 +115,8 @@ if __name__ == '__main__':
     parser.add_argument('--autoencode', help='setup files for autoencode operation. Set as percentage.')
     parser.add_argument('--stagger', help='stagger input for P.O.S.-style training.', action='store_true')
     parser.add_argument('--stagger-predict-word', help='stagger but predict only one word.', action='store_true')
-    parser.add_argument('--eol', help='add eol token', action='store_true')
+    parser.add_argument('--sol', help='add eol and sol tokens.', action='store_true')
+    parser.add_argument('--eol', help='add eol and sol tokens.', action='store_true')
     parser.add_argument('--xml-file', help='sentences.xml file to use.')
     parser.add_argument('--from-mnli', help='after mnli is done', action='store_true')
     parser.add_argument('--to-mnli', help='format file for later use with mnli classifier.', action='store_true')
@@ -120,6 +125,9 @@ if __name__ == '__main__':
     parser.add_argument('--to-gpt2', help='format file for later use with gpt2.', action='store_true')
     parser.add_argument('--babi-for-gpt2', help='train gpt2 for training with babi synthetic data set.', action='store_true')
     parser.add_argument('--filter-possessive', help='filter only possessive sentences for gpt2.', action='store_true')
+    parser.add_argument('--force', help='force normal file creation -- disable repeat detection.', action='store_true')
+    parser.add_argument('--reverse', help='force reverse output.', action='store_true')
+
 
     args = parser.parse_args()
     args = vars(args)
@@ -142,6 +150,7 @@ if __name__ == '__main__':
     arg_autoencode = False
     arg_stagger = False
     arg_eol = False
+    arg_sol = False
     arg_xml = False
 
     arg_classifier = ""
@@ -156,6 +165,8 @@ if __name__ == '__main__':
     arg_filter_gpt2 = False
     filter_num = 0
 
+    arg_reverse_order = False
+
     arg_mode = hparams['train_name']
 
     arg_destination_context = ''
@@ -167,7 +178,7 @@ if __name__ == '__main__':
         arg_filename = str(args['filename'])
 
     if not os.path.isfile(arg_filename):
-        arg_filename = '../hadoop-input/' + arg_filename
+        arg_filename = './raw/' + arg_filename
     if not os.path.isfile(arg_filename):
         print('bad path')
         exit()
@@ -189,6 +200,7 @@ if __name__ == '__main__':
         arg_pairs = True
         arg_processed = True
         arg_triplets = False
+        print(str(args['filename']))
 
     if args['dummy_question'] is not None:
         arg_question = str(args['dummy_question'])
@@ -214,6 +226,9 @@ if __name__ == '__main__':
 
     if args['eol'] == True:
         arg_eol = True
+
+    if args['sol'] == True:
+        arg_sol = True
 
     if args['fours'] == True:
         arg_triplets = True
@@ -273,8 +288,24 @@ if __name__ == '__main__':
 
     if arg_classifier != "":
         arg_end_filename = ".output.tsv"
+    
+    if args['force']:
+        #arg_processed = False
+        #arg_babi_for_gpt2 = True
+        #arg_pairs = True
+        #arg_eol = True # <---
+        #arg_stagger = True
+        #arg_question = 'eol'
+        #arg_filename = os.path.abspath(arg_filename)
+        pass
+
+    if args['reverse']:
+        arg_reverse_order = True
 
     #########
+
+    arg_filename = os.path.abspath(arg_filename)
+
     arg_destination = arg_filename + arg_end_filename #'.output.txt'
 
     if arg_babi_for_gpt2:
@@ -418,16 +449,28 @@ if __name__ == '__main__':
                 if num >= arg_start and (arg_length == 0 or num < arg_start + arg_length):
                     line = line.split('\t')
 
-                    line[0] = format(line[0])
-                    line[1] = format(line[1])
+                    if not args['force']:
+                        line[0] = format(line[0])
+                        line[1] = format(line[1])
 
-                    line[0], line[1] = move_order(line[0], line[1])
+                        line[0], line[1] = move_order(line[0], line[1])
 
                     if arg_eol and len(line[0]) > 1:
-                        line[0] += ' ' + hparams['eol']
+                        line[0] =   line[0] + ' ' + hparams['eol']
 
                     if arg_eol and len(line[1]) > 1:
-                        line[1] += ' ' + hparams['eol']
+                        line[1] =   line[1] + ' ' + hparams['eol']
+
+                    if arg_sol and len(line[0]) > 1:
+                        line[0] = hparams['sol'] + ' ' +  line[0] #+ ' ' + hparams['eol']
+
+                    if arg_sol and len(line[1]) > 1:
+                        line[1] = hparams['sol'] + ' ' +  line[1] #+ ' ' + hparams['eol']
+
+                    if arg_reverse_order == True:
+                        line_temp = line[1]
+                        line[1] = line[0]
+                        line[0] = line_temp
 
                     if not arg_stagger and arg_classifier != "MRPC" and arg_classifier != "MNLI" and not arg_gpt2:
 
@@ -507,7 +550,8 @@ if __name__ == '__main__':
                                 #if i != 0: print('bad string')
                                 hist_stagger = ''
 
-                            src_stagger = stop_repeats(src_stagger)
+                            if not args['force']:
+                                src_stagger = stop_repeats(src_stagger)
                             if not args['stagger_predict_word']:
                                 src.write(src_stagger.lower())
                             else:
