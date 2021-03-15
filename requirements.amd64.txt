@@ -80,3 +80,5 @@ grpcio==1.30.0
 ## for seq_2_seq vocab generation ##
 pandas
 gensim
+
+openai==0.4.0

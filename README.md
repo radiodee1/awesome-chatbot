@@ -364,3 +364,9 @@ Type=simple
 PrivateTmp=true
 ExecStart=/usr/bin/pulseaudio  
 ```
+
+## OPENAI
+
+Place Authentication code in file called: `~/bin/awesome-chatbot-openai.txt`
+
+This file should contain the code issued by OpenAi for the Beta.
