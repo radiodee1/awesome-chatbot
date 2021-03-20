@@ -31,7 +31,7 @@ SOFTWARE.
 
 import os
 import sys
-sys.path.append('torch_gpt2')
+#sys.path.append('torch_gpt2')
 sys.path.append('..')
 import torch
 import random
@@ -42,34 +42,19 @@ import re
 import datetime
 import openai
 #from functools import lru_cache
-from GPT2.model import (GPT2LMHeadModel)
-from GPT2.utils import load_weight
-from GPT2.config import GPT2Config
-from GPT2.sample import sample_sequence
+#from GPT2.model import (GPT2LMHeadModel)
+#from GPT2.utils import load_weight
+#from GPT2.config import GPT2Config
+#from GPT2.sample import sample_sequence
 #from GPT2.encoder import get_encoder
-from GPT2.encoder import Encoder
-from model.nmt_aiml_commands import Commands
+#from GPT2.encoder import Encoder
+#from model.nmt_aiml_commands import Commands
 
 realpath = os.path.dirname(os.path.realpath(__file__))
 endoftext = '<|endoftext|>'
 
-homepath = os.path.expanduser('~')
-z = open(homepath + "/bin/awesome-chatbot-openai.txt", 'r')
-z = z.readline().strip()
 
-openai.api_key = z
-print(openai.Engine.list())
 
-openai.api_key = z
-xx = openai.Completion.create(
-    engine="davinci",
-    prompt="Once upon a time",
-    max_tokens=10
-)
-
-print(xx)
-
-exit()
 
 class Lang:
     def __init__(self, name, limit=None):
@@ -113,7 +98,7 @@ class NMT:
         self.gather_sentences = False
         self.recent_in = ''
         self.recent_text = ''
-        self.save_num = 10
+        self.save_num = 100
         self.save_on_failure = False
         self.use_common = True
 
@@ -123,27 +108,27 @@ class NMT:
         self.name = 'Jane'
 
         if True:
-            self.q_string = [ 'Q: ', 'Q :', 'Q.']
-            self.a_string = [ 'A: ', 'A :', self.name+':', 'A.']
+            self.q_string = [ 'Question: ', 'Q :', 'Q.']
+            self.a_string = [ 'Answer: ', 'A :', self.name+':', 'A.']
 
     def setup_for_interactive(self):
         self.get_args()
-        self.load_state_dict()
-        self.load_model()
+        #self.load_state_dict()
+        #self.load_model()
 
-        self.commands = Commands()
+        #self.commands = Commands()
 
         ## this is not used but is required for bot software...
         self.output_lang = Lang('lang')
-        for i in range(len(self.enc.encoder.items())):
-            self.output_lang.addWord(self.enc.decode([i]))
+        #for i in range(len(self.enc.encoder.items())):
+        #    self.output_lang.addWord(self.enc.decode([i]))
 
         ## do this also with each input...
         self.prepare_common()
 
     def prepare_common(self):
         self.common = ''
-        a_chars = '' #self.a_string[0]
+        a_chars = self.a_string[0]
         q_chars = self.q_string[0]
 
         now = datetime.datetime.now()
@@ -153,6 +138,7 @@ class NMT:
         profession = 'student'
         location = 'New York'
         key_action_string = '\n ' + a_chars + 'play media.\n'
+        '''
         key_phrases = [
             'Play music? ' + key_action_string,
             'Play movies? ' + key_action_string,
@@ -165,15 +151,16 @@ class NMT:
             'Play a movie? ' + key_action_string,
 
         ]## doesn't work??
+        '''
 
         #self.common += self.a_string[0] + 'I am ' + self.a_string[0] + '. \n '
-        self.common += a_chars + 'A: Hello' + '.\n '
+        self.common += a_chars + 'Hello' + '.\n '
         self.common += a_chars + 'My name is ' + name + '.\n '
         self.common += a_chars + 'The time is ' + time + ' ' + date + '.\n '
         self.common += a_chars + 'My job is as a ' + profession + '.\n '
         self.common += a_chars + "I am in " + location + '. \n'
-        if self.args.apps and False:
-            self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
+        #if self.args.apps and False:
+        #    self.common +=' ' + ' '.join([q_chars + i for i in key_phrases])
 
     def get_sentence(self, i):
         a_chars = '' # self.a_string[0]
@@ -202,19 +189,22 @@ class NMT:
 
         self.args.text = i
         text = self.text_generator()
-        self.recent_text = text
+        #self.recent_text = text
+        #self.prep_recent()
 
-        if not self.args.quiet or True: print(text)
+        ##if not self.args.quiet or True: print(text)
 
         text = self.prepare_output(text)
+        self.recent_text = text
+        self.prep_recent()
         text = re.sub(endoftext, '', text)
         print(text,"<")
 
         ## if you want to launch apps !!
-        if self.args.apps is True:
-            if self.commands.is_command(self.recent_in):
-                self.commands.do_command(self.recent_in)
-                #self.previous_sentences = []
+        #if self.args.apps is True:
+        #    if self.commands.is_command(self.recent_in):
+        #        self.commands.do_command(self.recent_in)
+        #        #self.previous_sentences = []
         return text
 
     def loop(self):
@@ -230,7 +220,7 @@ class NMT:
                 exit()
 
     def prepare_input(self, i):
-        self.random_seed()
+        #self.random_seed()
 
         if True:
             i = self.q_string[0] + i + '?'
@@ -319,59 +309,47 @@ class NMT:
             #    self.previous_sentences.append(self.recent_in.strip() + '?' + self.recent_text + '\n')
         return i
 
+    def prep_recent(self):
+        self.recent_in = self.q_string[0] + self.recent_in.strip('.').lower()
+        self.recent_text = self.a_string[0] + self.recent_text.strip('.').lower()
+        y = 'yes'
+        n = 'no'
+        for a in self.previous_sentences:
+            a = a.replace('.', '')
+            if (self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' ')):
+                if y not in self.recent_text.lower() and n not in self.recent_text.lower():
+                    self.recent_text = None
+            if self.recent_in is not None and len(self.recent_in.split(' ')) == 1 and self.recent_in.lower() in a.lower().split(' '):
+                self.recent_in = None
+
+            if self.recent_text is not None and self.recent_text.lower().strip() == a.lower().strip():
+                if y not in self.recent_text.lower() and n not in self.recent_text.lower():
+                    self.recent_text = None
+            if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
+                self.recent_in = None
+
+        if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
+            self.previous_sentences.extend([self.recent_in, self.recent_text])
+
+
+        if self.save_num > -1:
+            self.previous_sentences = self.previous_sentences[-self.save_num:]
+
+        #print(self.previous_sentences)
+        s = ''
+        for k in self.previous_sentences:
+            k = k.strip().strip('.').strip('\n')
+            for z in self.a_string + self.q_string:
+                z = z.lower()
+                if k.lower().startswith(z) and False: k = k[len(z):]
+            if len(k) > 0:
+                s += k + '.\n'
+        #s = ['---'] + s + ['---']
+        self.sentences_formatted = s
+        #return s
+
+
     #########################################
-
-    def random_seed(self):
-        seed = random.randint(0, 2147483647)
-        np.random.seed(seed)
-        torch.random.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
-        pass
-
-    def get_encoder(self):
-        print(self.args.source_file)
-        source_path = self.args.source_file.split('/')[:-1]
-        source_path = '/'.join(source_path) + '/'
-        print(source_path)
-        with open(realpath + '/' + source_path + '/encoder.json', 'r') as f:
-            encoder = json.load(f)
-        with open(realpath + '/' + source_path + '/vocab.bpe', 'r', encoding="utf-8") as f:
-            bpe_data = f.read()
-        bpe_merges = [tuple(merge_str.split()) for merge_str in bpe_data.split('\n')[1:-1]]
-        return Encoder(
-            encoder=encoder,
-            bpe_merges=bpe_merges,
-        )
-
-    def get_config(self):
-        print(self.args.source_file)
-        source_path = self.args.source_file.split('/')[:-1]
-        source_path = '/'.join(source_path) + '/'
-        print(source_path)
-        if '774M' in source_path :
-            print('774M', 'model specific configs')
-            #self.use_common = False
-            self.args.temperature = 1e-10
-            self.args.top_k = 100
-        if os.path.isfile(realpath + '/' + source_path + '/config.json'):
-            with open(realpath + '/' + source_path + '/config.json', 'r') as f:
-                hp_config = json.load(f)
-                print(hp_config)
-                self.config = GPT2Config(
-                    vocab_size_or_config_json_file=hp_config['vocab_size'],
-                    n_embd=hp_config['n_embd'],
-                    n_layer=hp_config['n_layer'],
-                    n_head=hp_config['n_head'],
-                    # intermediate_size=self.intermediate_size,
-                    # hidden_act=self.hidden_act,
-                    # hidden_dropout_prob=self.hidden_dropout_prob,
-                    # attention_probs_dropout_prob=self.attention_probs_dropout_prob,
-                    n_positions=hp_config['n_positions'],
-                    n_ctx=hp_config['n_ctx']
-                    # type_vocab_size=self.type_vocab_size,
-                    # initializer_range=self.initializer_range
-                )
-        print(self.config)
 
     def get_args(self ):
         parser = argparse.ArgumentParser()
@@ -387,79 +365,29 @@ class NMT:
         parser.add_argument("--source_file", type=str, required=False, default='torch_gpt2/GPT2/gpt2-pytorch_model.bin')
         self.args = parser.parse_args()
 
-    def load_model(self):
-        if self.args.quiet is False:
-            print(self.args)
-
-        if self.args.batch_size == -1:
-            self.args.batch_size = 1
-        assert self.args.nsamples % self.args.batch_size == 0
-
-        seed = random.randint(0, 2147483647)
-        np.random.seed(seed)
-        torch.random.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-        self.get_config()
-
-        # Load Model
-        self.enc = self.get_encoder()
-        if self.config is None: self.config = GPT2Config()
-        self.model = GPT2LMHeadModel(self.config)
-        self.model = load_weight(self.model, self.state_dict)
-        self.model.to(self.device)
-        self.model.eval()
-
-        print(self.config)
-
     def text_generator(self):
+        ## replace for gpt3
 
-        if self.args.length == -1:
-            self.args.length = self.config.n_ctx // 2
-        elif self.args.length > self.config.n_ctx:
-            raise ValueError("Can't get samples longer than window size: %s" % self.config.n_ctx)
+        homepath = os.path.expanduser('~')
+        z = open(homepath + "/bin/awesome-chatbot-openai.txt", 'r')
+        z = z.readline().strip()
 
-        if self.args.quiet is False: print(self.args.text)
-        context_tokens = self.enc.encode(self.args.text)
+        openai.api_key = z
+        ##print(openai.Engine.list())
 
-        generated = 0
-        for _ in range(self.args.nsamples // self.args.batch_size):
-            out = sample_sequence(
-                model=self.model, length=self.args.length,
-                context=context_tokens  if not  self.args.unconditional else None,
-                start_token=self.enc.encoder['<|endoftext|>'] if self.args.unconditional else None,
-                batch_size=self.args.batch_size,
-                temperature=self.args.temperature, top_k=self.args.top_k, device=self.device
-            )
-            out = out[:, len(context_tokens):].tolist()
-            for i in range(self.args.batch_size):
-                generated += 1
-                text = self.enc.decode(out[i])
-                if self.args.quiet is False:
-                    print("=" * 40 + " SAMPLE " + str(generated) + " " + "=" * 40)
-                    print(text)
-        return text
+        openai.api_key = z
+        xx = openai.Completion.create(
+            engine="davinci",
+            prompt= self.args.text,
+            max_tokens=100,
+            ##stop=["\n"],
+            temperature=0.001
+        )
+        xx = xx['choices'][0]['text']
+        print(xx)
+        return xx
+        
 
-
-    def load_state_dict(self):
-        print(self.args.source_file)
-        source_path = self.args.source_file.split('/')[:-1]
-        source_path = '/'.join(source_path) + '/'
-        print(source_path, 2)
-
-        p = realpath + '/' + self.args.source_file #'./torch_gpt2/gpt2-pytorch_model.bin'
-
-        #p = realpath + '/' + source_path + '/' + self.args.source_file
-
-        print(p)
-        if os.path.exists(p):
-            self.state_dict = torch.load(p, map_location='cpu' if not torch.cuda.is_available() else None)
-            #self.text_generator(state_dict)
-        else:
-            print('Please download gpt2-pytorch_model.bin')
-            sys.exit()
-        return self.state_dict
 
 if __name__ == '__main__':
 
