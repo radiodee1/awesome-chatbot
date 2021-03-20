@@ -109,7 +109,7 @@ class NMT:
 
         if True:
             self.q_string = [ 'Question: ', 'Q :', 'Q.']
-            self.a_string = [ 'Answer: ', 'A :', self.name+':', 'A.']
+            self.a_string = [  self.name + ': ', 'A :', 'Answer:', 'A.', 'A:']
 
     def setup_for_interactive(self):
         self.get_args()
@@ -286,7 +286,7 @@ class NMT:
         if i.strip() == '': i = default
 
         i = re.sub('[;]','',i)
-        if contains_junk is True:
+        if contains_junk is True or False:
             i = ''
 
         if self.gather_sentences:
@@ -318,15 +318,18 @@ class NMT:
             a = a.replace('.', '')
             if (self.recent_text is not None and len(self.recent_text.split(' ')) == 1 and self.recent_text.lower() in a.lower().split(' ')):
                 if y not in self.recent_text.lower() and n not in self.recent_text.lower():
-                    self.recent_text = None
+                    #self.recent_text = None
+                    pass
             if self.recent_in is not None and len(self.recent_in.split(' ')) == 1 and self.recent_in.lower() in a.lower().split(' '):
-                self.recent_in = None
-
+                #self.recent_in = None
+                pass
             if self.recent_text is not None and self.recent_text.lower().strip() == a.lower().strip():
                 if y not in self.recent_text.lower() and n not in self.recent_text.lower():
-                    self.recent_text = None
+                    #self.recent_text = None
+                    pass
             if self.recent_in is not None and self.recent_in.lower().strip() == a.lower().strip():
-                self.recent_in = None
+                #self.recent_in = None
+                pass
 
         if self.recent_in is not None and self.recent_text is not None and 'time' not in self.recent_in:
             self.previous_sentences.extend([self.recent_in, self.recent_text])
