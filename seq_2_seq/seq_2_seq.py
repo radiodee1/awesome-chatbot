@@ -266,8 +266,12 @@ class Attn(torch.nn.Module):
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def dot_score(self, hidden, encoder_output):
+        #hidden = hidden[:0,:,:].permute(1,0,2)
+        #encoder_output = encoder_output.permute(1,0,2)
         #print(hidden.size(), encoder_output.size(), 'attn dot')
-        return torch.sum(hidden * encoder_output, dim=2)
+        #z = hidden * encoder_output
+        #print(z.size(), "hid z size")
+        return torch.sum(hidden * encoder_output, dim=2) ## dim=2
 
     def general_score(self, hidden, encoder_output):
         #if hidden.size(-1) > self.hidden_size or True:
@@ -618,8 +622,9 @@ class WrapMemRNN: #(nn.Module):
 
             #################################
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
-
+            #print(input_unchanged.size(), "input_unchanged")
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged[:,:,:self.hidden_size])
+            #print(attn_weights.size(), "attn weights")
 
             context = attn_weights.bmm(input_unchanged[:,:,:self.hidden_size])
             #context = self.model_6_dec.relu_b(context)
@@ -642,13 +647,15 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
-            ans = self.model_6_dec.out_concat_b(ans)
+            ## ans = self.model_6_dec.out_concat_b(ans)
             #ans = self.model_6_dec.tanh_b(ans)
 
             #ans_sized = ans_small[:,:,:]
+            #print(ans.size(), 'ans size')
+
             ans = self.model_6_dec.out_target_b(ans)
 
-            ans = self.model_6_dec.relu_b(ans) ## <-- ??
+            ## ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
             #ans = self.model_6_dec.tanh_b(ans)
 
