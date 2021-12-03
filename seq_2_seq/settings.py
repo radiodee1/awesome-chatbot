@@ -37,8 +37,8 @@ hparams = {
     'units': 100, #128, #256 , #64,
     'layers':2,
     'decoder_layers': 2,
-    'teacher_forcing_ratio': 0.0 , #1.0, ## 0.5
-    'dropout': 0.0,
+    'teacher_forcing_ratio': 0.8 , #1.0, ## 0.5
+    'dropout': 0.2,
     'learning_rate': 0.01, # adam = 0.001, adagrad = 0.01
     'weight_decay': 0, #5e-4,
     'tokens_per_sentence': 10, #10,
