@@ -34,61 +34,7 @@ import numpy as np
 
 
 '''
-Some code was originally written by Yerevann Research Lab. This theano code
-implements the DMN Network Model.
 
-https://github.com/YerevaNN/Dynamic-memory-networks-in-Theano
-
-The MIT License (MIT)
-
-Copyright (c) 2016 YerevaNN
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-------------------------
-
-Some code was originally written by Austin Jacobson. This refers specifically 
-to the BeamSearch class and came from:
-
-https://github.com/A-Jacobson/minimal-nmt
-
-MIT License
-
-Copyright (c) 2018 Austin Jacobson
-
-Permission is hereby granted, free of charge, to any person obtaining a copy 
-of this software and associated documentation files (the "Software"), to deal 
-in the Software without restriction, including without limitation the rights 
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-copies of the Software, and to permit persons to whom the Software is 
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in 
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
-THE SOFTWARE.
----------------------------
 
 Some code is originally written by Sean Robertson. This code includes 
 some of the text processing code and early versions of the Decoder and Encoder 
@@ -134,6 +80,37 @@ It can be found at the following site:
 
 https://pytorch.org/tutorials/beginner/chatbot_tutorial.html
 
+
+BSD 3-Clause License
+
+Copyright (c) 2017, Pytorch contributors
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice, this
+  list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+* Neither the name of the copyright holder nor the names of its
+  contributors may be used to endorse or promote products derived from
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 '''
 
 use_cuda = torch.cuda.is_available()
@@ -150,7 +127,7 @@ hparams['pytorch_embed_size'] = hparams['units']
 
 word_lst = ['.', ',', '!', '?', "'", hparams['unk']]
 
-blacklist_vocab = ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
+blacklist_vocab = [] # ['re', 've', 's', 't', 'll', 'm', 'don', 'd']
 blacklist_sent = blacklist_vocab #+ ['i']
 blacklist_supress = [] #[['i', 0.0001], ['you', 1.0]]
 
@@ -191,140 +168,6 @@ def prune_tensor( input, size):
     return input
 
 ################# pytorch modules ###############
-
-## beam doesn't work!!
-
-class Beam:
-
-    def __init__(self, beam_width):
-        self.heap = list()
-        self.beam_width = beam_width
-        #self.words = list()
-
-    def add(self, score, sequence, hidden_state):
-        #heapq.heappush(self.heap, (score, sequence, hidden_state))
-        self.heap.append((score, sequence, hidden_state))
-        self.heap.sort(reverse=True, key=lambda x: x[0])
-
-        self.heap = self.heap[:self.beam_width]
-
-    def has_member(self, word_idx, heap=None):
-        if heap is None:
-            heap = self.heap
-        ret = False
-        for i in heap:
-            for j in i[1]:
-                if j.item() == word_idx:
-                    ret = True
-                    #return ret
-        return ret
-
-    def __iter__(self):
-        return iter(self.heap)
-
-    def __len__(self):
-        return len(self.heap)
-
-    def __getitem__(self, idx):
-        return self.heap[idx]
-
-class BeamHelper:
-    """
-    Model must be in eval mode
-    Note: Will be passed as decoding helper,
-    but does not currently conform to that api so it gets to live here.
-    Does not support batching. Does not work with current eval code
-    (can't compute Xentropy loss on returned indices).
-    """
-
-    def __init__(self, beam_size=3, maxlen=20, sos_index=SOS_token):
-        self.beam_size = beam_size
-        self.maxlen = maxlen
-        self.sos_index = sos_index
-        self.decoder = None
-        self.encoder_out = None
-
-        self.bad_sentence = [
-            "i don't know",
-            "6478 3929 7337",
-            "i do not know"
-        ]
-
-    def get_next(self, last_word, hidden_state):
-        """
-        Given the last item in a sequence and the hidden state used to generate the sequence
-        return the topk most likely words and their scores
-        """
-        output, hidden_state, _ = self.decoder( self.encoder_out, hidden_state, last_word)
-        probs = F.softmax(output, dim=2)
-        next_probs, next_words = probs.topk(self.beam_size)
-        return next_probs.squeeze().data, next_words.view(self.beam_size, 1, 1), hidden_state
-
-    def search(self, start_token, initial_hidden):
-        global blacklist_supress
-
-        beam = Beam(self.beam_size)  # starting layer in search tree
-        beam.add(score=1.0, sequence=start_token, hidden_state=initial_hidden)  # initialize root
-        for _ in range(self.maxlen):
-            next_beam = Beam(self.beam_size)
-            for score, sequence, hidden_state in beam:
-                next_probs, next_words, hidden_state = self.get_next(sequence[-1:], hidden_state)
-
-                for i in range(self.beam_size):
-
-                    if True:
-                        black = False
-                        supress = 1.0
-                        for ii in blacklist_supress:
-
-                            if ii[0] == next_words[i].item():
-                                black = True
-                                supress = float(ii[1])
-
-                                break
-                        if black:
-                            if not beam.has_member(next_words[i]) and not next_beam.has_member(next_words[i]):
-                                score = score * next_probs[i] * supress
-                                sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
-                                next_beam.add(score, sequence, hidden_state)
-                        else:
-                            score = score * next_probs[i]
-                            sequence = torch.cat([sequence, next_words[i]])  # add next word to sequence
-                            next_beam.add(score, sequence, hidden_state)
-                        pass
-            # move down one layer (to the next word in sequence up to maxlen )
-            beam = next_beam
-
-
-        while True:
-            best_score, best_sequence, _ = max(beam)
-            b = []
-            bb = []
-            for ii in best_sequence:
-                if ii not in [UNK_token, SOS_token, EOS_token, 74]:
-                    b.append(str(ii.item()))
-                    #bb.append(ii.item())
-            blacklisted = False
-            for jj in self.bad_sentence:
-
-                if ' '.join(b).startswith(jj):
-                    blacklisted = True
-            if not blacklisted:
-                ## convert b to tensor!!
-                #best_sequence = torch.LongTensor(bb)
-                break
-            beam.heap.pop(0)
-
-        #best_score, best_sequence, _ = max(beam)  # get highest scoring sequence
-        return best_score, best_sequence
-
-    def __call__(self, decoder, encoder_out, encoder_hidden):
-        self.decoder = decoder
-        self.encoder_out = encoder_out
-        decoder_hidden = encoder_hidden[-decoder.n_layers:]  # take what we need from encoder
-        start_token = Variable(decoder_hidden.data.new(1, 1).fill_(self.sos_index).long())  # start token (ugly hack)
-        best_score, best_sequence = self.search(start_token, decoder_hidden)
-        return best_score, best_sequence
 
 
 
@@ -384,7 +227,52 @@ class Encoder(nn.Module):
         return encoder_out, encoder_hidden
 
 
+# Luong attention layer
 class Attn(torch.nn.Module):
+    def __init__(self,  hidden_dim=500,  method='dot'):
+        super(Attn, self).__init__()
+        self.method = method
+        hidden_size = hidden_dim
+        if self.method not in ['dot', 'general', 'concat']:
+            raise ValueError(self.method, "is not an appropriate attention method.")
+        self.hidden_size = hidden_size
+        if self.method == 'general':
+            self.attn = torch.nn.Linear(self.hidden_size, hidden_size)
+        elif self.method == 'concat':
+            self.attn = torch.nn.Linear(self.hidden_size * 2, hidden_size)
+            self.v = torch.nn.Parameter(torch.FloatTensor(hidden_size))
+
+    def dot_score(self, hidden, encoder_output):
+        return torch.sum(hidden * encoder_output, dim=2)
+
+    def general_score(self, hidden, encoder_output):
+        energy = self.attn(encoder_output)
+        return torch.sum(hidden * energy, dim=2)
+
+    def concat_score(self, hidden, encoder_output):
+        energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
+        return torch.sum(self.v * energy, dim=2)
+
+    def forward(self, hidden, encoder_outputs):
+        hidden = hidden[:,:1,:] #.transpose(1,0)
+        #print(hidden.size(), encoder_outputs.size(), 'hid,encoder')
+        # Calculate the attention weights (energies) based on the given method
+        if self.method == 'general':
+            attn_energies = self.general_score(hidden, encoder_outputs)
+        elif self.method == 'concat':
+            attn_energies = self.concat_score(hidden, encoder_outputs)
+        elif self.method == 'dot':
+            attn_energies = self.dot_score(hidden, encoder_outputs)
+
+        # Transpose max_length and batch_size dimensions
+        attn_energies = attn_energies.t()
+        #print(attn_energies.size(),'attn')
+        # Return the softmax normalized probability scores (with added dimension)
+        return F.softmax(attn_energies, dim=1).unsqueeze(1)
+
+
+'''
+class Attnx(torch.nn.Module):
     def __init__(self,  hidden_size, method="dot"):
         #method = 'none' #'concat' #''dot' #'general'
         super(Attn, self).__init__()
@@ -399,23 +287,35 @@ class Attn(torch.nn.Module):
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def dot_score(self, hidden, encoder_output):
+        encoder_output = encoder_output.permute(0,2,1)
+        hidden = hidden[0,:,:]
+        hidden = hidden.unsqueeze(2)
+        #z = hidden.transpose(1,2) * encoder_output
+        z = hidden * encoder_output
         #print(hidden.size(), encoder_output.size(), 'attn dot')
-        return torch.sum(hidden * encoder_output, dim=2)
+        #z = torch.sum(z, dim=1).unsqueeze(1)
+        #print(z.size(), 'zzz-dot')
+        return z # torch.sum(hidden @ encoder_output, dim=1)
 
     def general_score(self, hidden, encoder_output):
         #if hidden.size(-1) > self.hidden_size or True:
         #print('hiddsize')
-        #hidden = hidden[0,:,:] + hidden[1,:,:]
-        hidden = hidden.permute(1,2,0)[:,:,:1]
+        hidden = hidden[0,:,:] #+ hidden[1,:,:]
+        #hidden = hidden.permute(1,2,0)[:,:,:1] #<---
+        hidden = hidden.unsqueeze(2)
         #hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
         #hidden = torch.cat([hidden[0,:,:], hidden[1,:,:]], dim=-1)
         #print(hidden.size(), encoder_output.size(),'hid attn')
         energy = self.attn(encoder_output).permute(0,2,1)
-        hidden = hidden.permute(0,2,1)
-        #print(energy.size(),  hidden.size() ,'energy')
-        #z = hidden @ energy #.squeeze(0)
-        #print(z.size(), 'zzz')
-        return torch.sum(hidden @ energy, dim=1)
+        #hidden = hidden.permute(0,2,1)
+        #print(energy.size(),  hidden.size() ,'energy,hidd')
+        #z = hidden.transpose(1,2) * energy.transpose(1,2) #@ hidden #.squeeze(0)
+        z = hidden * energy
+        #print(z.size(),'z')
+        #z = torch.sum(z, dim=1).unsqueeze(1)
+        #print(z.size(), 'zzz-general')
+
+        return z #torch.sum(z, dim=2)
 
     def concat_score(self, hidden, encoder_output):
         #print(encoder_output,encoder_output.size(),'eo0')
@@ -460,16 +360,18 @@ class Attn(torch.nn.Module):
         #attn_energies = attn_energies.t()
         #print(attn_energies.size(),'att')
         # Return the softmax normalized probability scores (with added dimension)
-        z = F.softmax(attn_energies, dim=1).unsqueeze(1)
-        #print(z, 'z')
+        z = F.softmax(attn_energies, dim=-1) #.squeeze(2)
+        #print(z.size(), 'z')
+        #z = attn_energies
         return z
+'''
 
 class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False, tokens=10):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed =  nn.Embedding(target_vocab_size, embed_dim)
-        self.attention_mod = Attn(hidden_dim , method='general')
+        self.embed = None # nn.Embedding(target_vocab_size, embed_dim)
+        self.attention_mod = Attn(hidden_dim , method=hparams['attn'] ) #method='general') ## general
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
@@ -481,16 +383,17 @@ class Decoder(nn.Module):
             linear_in_dim = hidden_dim
 
         batch_first = True #self.word_mode
-        concat_num = 2
+        concat_num = 1 + 1
 
         self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * concat_num , target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * 2 , target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * concat_num)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * 2 ) # hidden_dim * 1)
+        self.out_bmm = torch.bmm
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -561,12 +464,12 @@ class Decoder(nn.Module):
 
 #################### Wrapper ####################
 
-class WrapMemRNN: #(nn.Module):
+class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
-                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
+                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False, tokens=10):
 
-        #super(WrapMemRNN, self).__init__()
+        super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -582,6 +485,7 @@ class WrapMemRNN: #(nn.Module):
         gru_dropout = dropout * 0.0 #0.5
         self.cancel_attention = cancel_attention
         beam_width = 0 if hparams['beam'] is None else hparams['beam']
+        self.tokens = tokens
 
 
         self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
@@ -591,7 +495,7 @@ class WrapMemRNN: #(nn.Module):
                                    cancel_attention=self.cancel_attention)
 
         #self.beam_helper = BeamHelper(beam_width, hparams['tokens_per_sentence'])
-
+        self.model_6_dec.embed = self.model_1_seq.embed
         #self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
         #self.embed.weight.requires_grad = not self.model_1_seq.freeze_embedding
 
@@ -727,12 +631,14 @@ class WrapMemRNN: #(nn.Module):
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
         hidden = encoder_hidden #.contiguous()
-        encoder_output = self.model_6_dec.embed(encoder_output)
+        #encoder_output = self.model_6_dec.embed(encoder_output)
+        encoder_output = self.model_1_seq.embed(encoder_output)
         if True:
             decoder_hidden = hidden
 
             if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training:
-                embed_index = self.model_6_dec.embed(target_variable)#.permute(1,0,2)
+                #embed_index = self.model_6_dec.embed(target_variable)#.permute(1,0,2)
+                embed_index = self.model_1_seq.embed(target_variable)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
             else:
@@ -749,27 +655,53 @@ class WrapMemRNN: #(nn.Module):
 
             _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
-
+            decoder_hidden_attn = decoder_hidden_x.transpose(1,0)
             #################################
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
+            input_unchanged = input_unchanged[:,:,self.hidden_size:] #+ input_unchanged[:,:,self.hidden_size:]
 
-            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged[:,:,:self.hidden_size])
+            #attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged)
+            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_attn, input_unchanged)
 
-            context = attn_weights.bmm(input_unchanged[:,:,:self.hidden_size])
+            attn_weights = attn_weights.permute(2,1,0)
+
+            #input_unchanged = input_unchanged[:,:,:self.hidden_size] #.permute(0,2,1)
+            #ans_small = ans_small.permute(0,2,1)
+            #print(attn_weights.size(), input_unchanged.size(), ans_small.size(),'att,input_un')
+
+            context = self.model_6_dec.out_bmm(attn_weights, input_unchanged) #.transpose(2,1)) #, ans_small)
+            #print(context.size(), 'c1')
+            #context = self.model_6_dec.out_bmm(input_unchanged.permute(0,2,1), attn_weights)
+            #context = attn_weights.transpose(2,1)
+            #print(context.size(), 'context')
+            #context = self.model_6_dec.out_bmm(context, input_unchanged) #[:,:,:self.hidden_size])
+
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
+
 
             ans = [
                 ans_small, #.permute(1,0,2) ,
                 context #[:,:,:self.hidden_size],
                 #context[:,:,self.hidden_size:]
             ]
+            '''
+
+            ans = [ans_small]
+            for iii in range(self.tokens):
+                if iii < context.size(1):
+                    ans.append(context[:,iii,:].unsqueeze(1))
+                else:
+                    ans.append(context[:,-1,:].unsqueeze(1))
+            '''
 
             #print('---')
             #for iii in ans: print(iii.size())
             #print('---')
+
+            #print(ans.size(), 'answer')
 
             ans = torch.cat(ans, dim=-1) ## -2/0
             #ans = self.model_6_dec.tanh_a(ans)
@@ -777,12 +709,23 @@ class WrapMemRNN: #(nn.Module):
             #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
             ans = self.model_6_dec.out_concat_b(ans)
-            #ans = self.model_6_dec.tanh_b(ans)
 
+            ans = self.model_6_dec.tanh_b(ans)
+
+            
+            #print(ans.size(), decoder_hidden_x.size(), 'ans,dec_hid')
+
+            hid_1 = ans.transpose(1,0)[:,:,:self.hidden_size] + decoder_hidden_x[:1,:,:]
+            hid_2 = ans.transpose(1,0)[:,:,self.hidden_size:] + decoder_hidden_x[1:,:,:]
+
+            #print(hid_1.size(), hid_2.size(), 'hid12')
+            decoder_hidden_x = torch.cat([hid_1, hid_2], dim=0)
+
+            #print(decoder_hidden_x.size(),'dhx')
             #ans_sized = ans_small[:,:,:]
             ans = self.model_6_dec.out_target_b(ans)
 
-            ans = self.model_6_dec.relu_b(ans) ## <-- ??
+            #ans = self.model_6_dec.relu_b(ans) ## <-- ??
 
             #ans = self.model_6_dec.tanh_b(ans)
 
@@ -823,7 +766,7 @@ class Lang:
 class NMT:
     def __init__(self):
 
-        global teacher_forcing_ratio, MAX_LENGTH
+        global teacher_forcing_ratio, MAX_LENGTH, hparams
 
         self.model_0_wra = None
         #self.opt_1 = None
@@ -991,6 +934,8 @@ class NMT:
         parser.add_argument('--multiplier', help='learning rate multiplier for decoder.')
         parser.add_argument('--length', help='number of tokens per sentence.')
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
+        parser.add_argument('--epochs', default=0, help='override settings for epochs.', type=int)
+        parser.add_argument('--attn', default='general', help='set attention mode. ("dot" or "general")')
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1121,6 +1066,10 @@ class NMT:
         if self.args['lr_adjust'] is not None:
             self.lr_adjustment_num = int(self.args['lr_adjust'])
             hparams['learning_rate'] = self.lr_low + float(self.lr_adjustment_num) * self.lr_increment
+        if int(self.args['epochs']) > 0:
+            self.epochs = int(self.args['epochs'])
+
+        hparams['attn'] = self.args['attn']
 
         self.read_json_file()
 
@@ -1153,19 +1102,19 @@ class NMT:
     def task_normal_train(self):
         self.train_fr = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['tgt_ending']
-        self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['src_ending']
+        self.train_ques = hparams['data_dir'] + hparams['train_name'] + '.' + hparams['question_ending']
         pass
 
     def task_normal_valid(self):
         self.train_fr = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['tgt_ending']
-        self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['src_ending']
+        self.train_ques = hparams['data_dir'] + hparams['valid_name'] + '.' + hparams['question_ending']
         pass
 
     def task_normal_test(self):
         self.train_fr = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
         self.train_to = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['tgt_ending']
-        self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['src_ending']
+        self.train_ques = hparams['data_dir'] + hparams['test_name'] + '.' + hparams['question_ending']
         pass
 
     def task_babi_files(self):
@@ -1326,6 +1275,15 @@ class NMT:
         self.update_result_file()
         pass
 
+    def sentence_ending(self, line):
+        line = line.strip()
+        ending = '.?!'
+        for i in ending:
+            if line.endswith(i):
+                line = line[:-1]
+        line = 'sol ' + line + '?' + ' eol'
+        return line
+
     def task_interactive(self, l=None, call_from_script=False):
 
         print('-------------------')
@@ -1333,11 +1291,14 @@ class NMT:
             while True:
                 if not call_from_script:
                     line = input("> ")
+                    line = self.sentence_ending(line)
                     line = tokenize_weak.format(line)
                     print(line)
                 elif l is not None:
                     line = l
                 pad = hparams['tokens_per_sentence']
+                pad = len(line.split(' '))
+                print(pad)
                 add_eol = False
                 #print(line)
                 line_out = self.variableFromSentence(self.input_lang, line, pad=pad)
@@ -1391,12 +1352,14 @@ class NMT:
         t_yyy = []
         with open(filename, 'r') as r:
             for xx in r:
+                xx = xx.replace("'", '')
                 t_yyy.append(xx.lower())
         return t_yyy
 
     def count_sentences(self, filename):
         print('count vocab:', filename)
         z = self.open_sentences(filename)
+        print(len(z),'len', filename)
         return len(z)
 
     def readLangs(self,lang1, lang2,lang3=None, reverse=False, load_vocab_file=None, babi_ending=False):
@@ -1523,7 +1486,7 @@ class NMT:
                 v = self.open_sentences(self.vocab_lang.name)
                 for word in v:
                     self.vocab_lang.addSentence(word.strip())
-                    #print(word)
+                    #print(word.strip())
             #####
             self.input_lang = self.vocab_lang
             self.output_lang = self.vocab_lang
@@ -1547,6 +1510,7 @@ class NMT:
                         a.append(word)
                     elif skip_unk:
                         skip = True
+                        #print(word, 'skip from')
                     elif not omit_unk:
                         a.append(hparams['unk'])
                 for word in self.pairs[p][1].split(' '):
@@ -1554,6 +1518,7 @@ class NMT:
                         b.append(word)
                     elif skip_unk:
                         skip = True
+                        #print(word, 'skip to')
                     elif not omit_unk:
                         b.append(hparams['unk'])
                 pairs = [' '.join(a), ' '.join(b)]
@@ -2108,121 +2073,9 @@ class NMT:
         return optim.Adam(z, lr=float(hparams['learning_rate'] * lr) , weight_decay=hparams['weight_decay'])
         #return optim.SGD(parameters, lr=hparams['learning_rate'])
 
-
-    def _auto_stop(self):
-        threshold = 70.00
-        use_recipe_switching = self.do_recipe_dropout and self.do_recipe_lr
-
-        use_lr_recipe = self.do_recipe_lr
-        use_dropout_recipe = self.do_recipe_dropout
-
-        ''' switch between two recipe types '''
-        if use_recipe_switching and self._recipe_switching % 2 == 0:
-            use_dropout_recipe = False
-            use_lr_recipe = True
-        elif use_recipe_switching and self._recipe_switching % 2 == 1:
-            use_lr_recipe = False
-            use_dropout_recipe = True
-
-        if self._highest_reached_test(num=20, goal=10):
-            time.ctime()
-            t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-            print(t)
-            print('no progress')
-            print('list:', self.score_list)
-            self.update_result_file()
-            exit()
-
-        self.epochs_since_adjustment += 1
-
-        if self.epochs_since_adjustment > 0:
-
-            z1 = z2 = z3 = z4 = 0.0
-
-            if len(self.score_list_training) >= 1:
-                z1 = float(self.score_list_training[-1])
-            if len(self.score_list_training) >= 3:
-                z2 = float(self.score_list_training[-2])
-                z3 = float(self.score_list_training[-3])
-
-            if len(self.score_list) > 0:
-                z4 = float(self.score_list[-1])
-
-            zz1 = z1 == 100.00 and z4 != 100.00 #and z2 == 100.00  ## TWO IN A ROW
-
-            zz2 = z1 == z2 and z1 == z3 and z1 != 0.0 ## TWO IN A ROW
-
-            if ( len(self.score_list) >= 2 and (
-                    float(self.score_list[-2]) == 100 or
-                    (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
-                    (float(self.score_list[-2]) == float(self.score_list[-1]) and
-                     float(self.score_list[-1]) != 0.0))):
-
-                self.do_skip_validation = False
-
-                ''' adjust learning_rate to different value if possible. -- validation '''
-
-                if (False and len(self.score_list) > 3 and float(self.score_list[-2]) == 100.00 and
-                        float(self.score_list[-3]) == 100.00 and float(self.score_list[-1]) != 100):
-                    self.move_high_checkpoint()
-                    time.ctime()
-                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                    print(t)
-                    print('list:', self.score_list)
-                    self.update_result_file()
-                    exit()
-
-                ''' put convergence test here. '''
-                if self._convergence_test(10,lst=self.score_list_training):# or self._convergence_test(4, value=100.00):
-                    time.ctime()
-                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                    print(t)
-                    print('converge')
-                    print('list:', self.score_list)
-                    self.update_result_file()
-                    exit()
-
-                if self.lr_adjustment_num < 1 and use_dropout_recipe:
-                    hparams['dropout'] = 0.0
-                    self.set_dropout(0.0)
-
-            if len(self.score_list_training) < 1: return
-
-            if z1 >= threshold and self.lr_adjustment_num != 0 and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15 ):
-                if use_lr_recipe:
-                    hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
-                self.epochs_since_adjustment = 0
-                self.do_skip_validation = False
-                self._recipe_switching += 1
-                if use_dropout_recipe:
-                    hparams['dropout'] = 0.00
-                    self.set_dropout(0.00)
-                print('max changes or max epochs')
-
-            if (self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300) and (self.do_recipe_lr or self.do_recipe_dropout):
-                print('max adjustments -- quit', self.lr_adjustment_num)
-                self.update_result_file()
-                exit()
-
-            if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
-
-                ''' adjust learning_rate to different value if possible. -- training '''
-
-                if (float(self.score_list_training[-1]) == 100.00 and
-                        float(self.score_list[-1]) != 100.00):
-                    if use_lr_recipe:
-                        hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                    if use_dropout_recipe:
-                        hparams['dropout'] = hparams['dropout'] + 0.025
-                        self.set_dropout(hparams['dropout'])
-                    self.do_skip_validation = False
-                    self.lr_adjustment_num += 1
-                    self.epochs_since_adjustment = 0
-                    print('train reached 100 but not validation')
-
-            elif use_lr_recipe and False:
-                print('reset learning rate.')
-                hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
+    '''
+    
+    '''
 
     def _convergence_test(self, num, lst=None, value=None):
         if lst is None:
@@ -2418,7 +2271,7 @@ class NMT:
             #else:
             use = -1
 
-            hidden_x = hidden_x[:2,:,:] #.permute(1,0,2)
+            hidden_x = hidden_x[2:,:,:] # + hidden_x[2:,:,:]
 
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(1)
@@ -2518,14 +2371,14 @@ class NMT:
                         exit()
                         pass
                     #print(l, loss, n_tot, 'loss')
-                    loss.backward(retain_graph=True)
+                    #loss.backward(retain_graph=True)
                 if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
             if criterion is not None:
-                #loss.backward()
+                loss.backward()
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
@@ -2745,6 +2598,11 @@ class NMT:
                           + str(len(self.pairs)), end=' ')
 
                     print()
+                    if self.true_epoch > self.epochs:
+                        self.save_checkpoint(num=len(self.pairs))
+
+                        print('last epoch reached.')
+                        exit()
 
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
                     save_num +=1
@@ -2890,15 +2748,7 @@ class NMT:
         #print('ques:', choice[1])
         print('ref: sol', choice[2])
 
-        '''
-        nums = self.variablesFromPair(choice)
-        if self.do_load_babi:
-            question = nums[1]
-            target = nums[2]
-        if not self.do_load_babi:
-            question = nums[0]
-            target = None
-        '''
+
         words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
@@ -2938,20 +2788,15 @@ class NMT:
 
             for db in range(1):
                 outputs = outputs[0] #.squeeze(0)
-                for di in range(len(outputs) - 1):
+                for di in range(hparams['tokens_per_sentence'] ):# len(outputs) - 1):
                     #print(db,di, 'outputs')
-                    output = outputs[di]
-                    ni = output
-                    #output = output.permute(1, 0)
-                    #print(output,'out')
-                    '''
-                    if True:
-                        #print(output.size(),'out')
-                        ni = torch.argmax(output, dim=0).item()
-                        #print(ni,'ni')
+                    if di < len(outputs):
+                        output = outputs[di]
                     else:
-                        ni = output[di]
-                    '''
+                        output = torch.LongTensor([EOS_token])
+                    #output = outputs[di]
+                    ni = output
+
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
                         xxx = hparams['eol']
@@ -2959,19 +2804,25 @@ class NMT:
                         print('eol found.')
                         if not self.do_print_to_screen: break
                     else:
-                        if di < 4:
+                        if di < hparams['tokens_per_sentence'] :
                             if int(ni) == 0 and False:
                                 print(ni, '<--', self.output_lang.word2index[hparams['unk']])
                             if True:
-                                print(int(ni), self.output_lang.index2word[int(ni)])
-                        if di == 5 and len(outputs) > 5:
+                                if int(ni) in self.output_lang.index2word:
+                                    print(int(ni), self.output_lang.index2word[int(ni)])
+                                else:
+                                    print(int(ni))
+                        if di == hparams['tokens_per_sentence'] and len(outputs) > hparams['tokens_per_sentence']:
                             print('...etc')
                             break
                         ######################
                         if int(ni) == 0 and False:
                             print(ni, '<--')
                         if int(ni) != UNK_token:
-                            decoded_words.append(self.output_lang.index2word[int(ni)])
+                            if int(ni) in self.output_lang.index2word:
+                                decoded_words.append(self.output_lang.index2word[int(ni)])
+                            else:
+                                decoded_words.append(' ')
                         if int(ni) == UNK_token:
                             decoded_words.append(' ')
                             #print('!!')
