@@ -192,7 +192,7 @@ def prune_tensor( input, size):
 
 ################# pytorch modules ###############
 
-## beam doesn't work!!
+
 
 
 class Encoder(nn.Module):
@@ -200,13 +200,13 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.bidirectional = True
-        self.embed = nn.Embedding(source_vocab_size, embed_dim)
+        self.embed = nn.Embedding(source_vocab_size, 2 * embed_dim)
         self.sum_encoder = True
-        self.pack_and_pad = True
+        self.pack_and_pad = True ##hiddencut
         if hparams['single']:
             self.pack_and_pad = False
         self.batch_first = True
-        self.gru = nn.GRU(embed_dim, hidden_dim, n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
+        self.gru = nn.GRU(embed_dim * 2, hidden_dim , n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
 
@@ -223,6 +223,7 @@ class Encoder(nn.Module):
     def forward(self, source, input_lengths, hidden=None):
         #source = prune_tensor(source, 3)
         #input_lengths = prune_tensor(input_lengths, 2)
+        #if hidden != None: print(hidden.size(), "hidden")
 
         if hparams['cuda']:
             source = source.cuda()
@@ -236,17 +237,20 @@ class Encoder(nn.Module):
             if self.training and False: print('pack and pad')
             embedded = torch.nn.utils.rnn.pack_padded_sequence(embedded, input_lengths, batch_first=self.batch_first)
 
+        #print(embedded.size(), "emb before")
+
         encoder_out, encoder_hidden = self.gru(embedded, hidden)
 
         #print(encoder_out.size(), encoder_hidden.size(), 'eo,eh')
+        
         if self.pack_and_pad:
             outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first)
             encoder_out = outputs
 
-        #encoder_hidden = encoder_hidden.permute(1,0,2)
+        encoder_hidden = torch.cat([encoder_hidden[:2,:,:], encoder_hidden[2:,:,:]], dim=2)
 
 
-        #print(encoder_hidden,'hidd')
+        #print(encoder_out.size(), encoder_hidden.size(),'hidd')
 
         return encoder_out, encoder_hidden
 
@@ -260,7 +264,7 @@ class Attn(torch.nn.Module):
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size #* 2
         if self.method == 'general':
-            self.attn = torch.nn.Linear(self.hidden_size * 1, self.hidden_size * 1)
+            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size * 2)
         elif self.method == 'concat':
             self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
             self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
@@ -277,7 +281,8 @@ class Attn(torch.nn.Module):
         #if hidden.size(-1) > self.hidden_size or True:
         #print('hiddsize')
         #hidden = hidden[0,:,:] + hidden[1,:,:]
-        hidden = hidden.permute(1,2,0)[:,:,:1]
+        hidden = hidden.permute(1,2,0)# [:,:,:1] ## hiddencut
+
         #hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
         #hidden = torch.cat([hidden[0,:,:], hidden[1,:,:]], dim=-1)
         #print(hidden.size(), encoder_output.size(),'hid attn')
@@ -354,9 +359,9 @@ class Decoder(nn.Module):
         batch_first = True #self.word_mode
         concat_num = 2
 
-        self.gru = nn.GRU(gru_in_dim , hidden_dim , self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
+        self.gru = nn.GRU(gru_in_dim , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * concat_num , target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * concat_num * 2, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
@@ -623,10 +628,10 @@ class WrapMemRNN: #(nn.Module):
             #################################
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
             #print(input_unchanged.size(), "input_unchanged")
-            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged[:,:,:self.hidden_size])
+            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
             #print(attn_weights.size(), "attn weights")
 
-            context = attn_weights.bmm(input_unchanged[:,:,:self.hidden_size])
+            context = attn_weights.bmm(input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
 
