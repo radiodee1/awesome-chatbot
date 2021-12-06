@@ -206,7 +206,7 @@ class Encoder(nn.Module):
         if hparams['single']:
             self.pack_and_pad = False
         self.batch_first = True
-        self.gru = nn.GRU(embed_dim * 2, hidden_dim , n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
+        self.gru = nn.GRU(embed_dim * 2, hidden_dim  , n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
         self.dropout_e = nn.Dropout(dropout)
         self.dropout_o = nn.Dropout(dropout)
 
@@ -344,7 +344,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed =  nn.Embedding(target_vocab_size, embed_dim)
+        self.embed =  nn.Embedding(target_vocab_size, embed_dim )
         self.attention_mod = Attn(hidden_dim , method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -359,7 +359,7 @@ class Decoder(nn.Module):
         batch_first = True #self.word_mode
         concat_num = 2
 
-        self.gru = nn.GRU(gru_in_dim , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
+        self.gru = nn.GRU(gru_in_dim * 2 , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
         self.out_target_b = nn.Linear(self.hidden_dim * concat_num * 2, target_vocab_size)
 
@@ -397,10 +397,6 @@ class Decoder(nn.Module):
         while len(encoder_out_x.size()) > 3 and encoder_out_x.size(1) == 1:
             encoder_out_x = encoder_out_x.squeeze(1)
 
-        #while len(encoder_out_x.size()) < 3:
-        #    encoder_out_x = encoder_out_x.unsqueeze(0)
-
-
         decoder_hidden_x = decoder_hidden
 
         if len(decoder_hidden_x.size()) < 3:
@@ -413,14 +409,16 @@ class Decoder(nn.Module):
         #print(decoder_hidden_x.size(), encoder_out_x.size(), 'dhx')
         hidden = decoder_hidden_x #prune_tensor(decoder_hidden_x, 3)
         #hidden = hidden.permute(1, 0, 2)
-        #print(hidden.size(),'hid')
+        
+        #print(encoder_out_x.size(),'eox')
 
 
-        embedded = self.dropout_e(encoder_out_x)
+        embedded = self.dropout_e(encoder_out_x )#.permute(1,0,2))
+        #embedded = embedded.unsqueeze(1).unsqueeze(0)
 
         #print(embedded.size(), hidden.size(), 'emb')
 
-        hidden_prev = hidden #.transpose(1,0).contiguous()
+        hidden_prev = hidden #.transpose(1,0) #.contiguous()
 
         rnn_output, hidden = self.gru(embedded, hidden_prev)
 
@@ -440,7 +438,7 @@ class Decoder(nn.Module):
 class WrapMemRNN: #(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
-                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False):
+                 cancel_attention=False, freeze_encoder=False, freeze_decoder=False, no_sol=False):
 
         #super(WrapMemRNN, self).__init__()
 
@@ -489,6 +487,7 @@ class WrapMemRNN: #(nn.Module):
         #self.memory_hops = hparams['babi_memory_hops']
         #self.inv_idx = torch.arange(100 - 1, -1, -1).long() ## inverse index for 100 values
         self.pass_no_token = False
+        self.no_sol = no_sol
 
         self.reset_parameters()
         '''
@@ -601,21 +600,29 @@ class WrapMemRNN: #(nn.Module):
         return out, hidden
 
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
-        hidden = encoder_hidden #.contiguous()
+        hidden = encoder_hidden
+
         encoder_output = self.model_6_dec.embed(encoder_output)
+        encoder_output = torch.cat([encoder_output, encoder_output], dim=-1)
+        
+        #print(encoder_output.size(), "eo wrap 2")
+            
         if True:
             decoder_hidden = hidden
 
-            if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training:
-                embed_index = self.model_6_dec.embed(target_variable)#.permute(1,0,2)
+            if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training and token != 0:
+                #print("force")
+                embed_index = self.model_1_seq.embed(target_variable) 
+                #embed_index = torch.cat([embed_index_x, embed_index_x], dim=2)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
             else:
                 embed_index = encoder_output
 
+            #print(embed_index.size(), "ei size")
             encoder_out_x = embed_index
 
-            decoder_hidden_x = decoder_hidden #.permute(1,0,2)
+            decoder_hidden_x = decoder_hidden 
 
             encoder_out_x = encoder_out_x.unsqueeze(1)
             #decoder_hidden_x.unsqueeze(1)
@@ -808,7 +815,7 @@ class NMT:
         self.do_load_once = True
         self.do_no_vocabulary = False
         self.do_save_often = False
-
+        self.no_sol = False
 
         self.do_clip_grad_norm = True
 
@@ -869,6 +876,7 @@ class NMT:
         parser.add_argument('--multiplier', help='learning rate multiplier for decoder.')
         parser.add_argument('--length', help='number of tokens per sentence.')
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
+        parser.add_argument('--no-sol', help="do not automatically add *sol* token.", action="store_true")
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -992,6 +1000,7 @@ class NMT:
         if self.args['no_vocab']:
             self.do_no_vocabulary = True
         if self.printable == '': self.printable = hparams['base_filename']
+        if self.args['no_sol'] == True: self.no_sol = True
 
         ''' reset lr vars if changed from command line '''
         self.lr_low = hparams['learning_rate'] #/ 100.0
@@ -1509,12 +1518,17 @@ class NMT:
         s = sentence.split(' ')
 
         sent = []
-        if add_sos and len(s) > 0 and s[0] != hparams['sol']: sent = [ SOS_token ]
+        if add_sos and len(s) > 0 and s[0] != hparams['sol'] and not self.args['no_sol']: 
+            sent = [ SOS_token ]
+        else:
+            #print("no sol")
+            pass
+
         for word in s:
             if not self.do_no_vocabulary:
                 if word in lang.word2index and word not in blacklist_sent:
                     if word == hparams['eol']: word = EOS_token
-                    elif word == hparams['sol']: word = SOS_token
+                    elif word == hparams['sol'] and not self.args['no_sol']: word = SOS_token
                     else: word = lang.word2index[word]
                     sent.append(word)
                 elif skip_unk:
@@ -1671,6 +1685,7 @@ class NMT:
     def variables_for_batch(self, pairs, size, start, skip_unk=False, pad_and_batch=True):
         e = self.epoch_length * self.this_epoch + self.epoch_length
         length = 0
+        add_sos = not self.args['no_sol']
 
         if start + size > e  and start < e :
             size = e - start #- 1
@@ -1702,9 +1717,9 @@ class NMT:
                 else:
                     #x = triplet
                     x = [
-                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_sos=True ,add_eos=True, return_string=True),
-                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_sos=True, add_eos=False, return_string=True),
-                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_sos=True, add_eos=False, return_string=True)
+                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_sos=add_sos ,add_eos=True, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_sos=add_sos, add_eos=False, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_sos=add_sos, add_eos=False, return_string=True)
                     ]
                     if x[0] is None: x = None
 
@@ -2296,7 +2311,9 @@ class NMT:
             #else:
             use = -1
 
-            hidden_x = hidden_x[:2,:,:] #.permute(1,0,2)
+            #print(hidden_x.size(),"1")
+            #hidden_x = hidden_x[:2,:,:] #.permute(1,0,2)
+            #print(hidden_x.size(), "2")
 
             if len(hidden_x.size()) == 2:
                 hidden_x = hidden_x.unsqueeze(1)
@@ -2305,7 +2322,7 @@ class NMT:
 
 
             #print(hidden_x.size(),'hidx size')
-            hidden = hidden_x #[use,:,:] #.unsqueeze(0)
+            hidden = hidden_x 
 
             if len(hidden.size()) == 2 and hidden.size(0) != 1:
                 hidden = hidden.unsqueeze(0)
@@ -2316,7 +2333,15 @@ class NMT:
 
             num = torch.LongTensor([ansx for _ in range(size)])
 
-            encoder_output = num # self.model_0_wra.model_1_seq.embed(num)
+            #print(num.size(),"num sol")
+
+            if self.args['no_sol']:
+                #num = encoder_output[0:, 0, :]
+                pass
+            #print(num.size(),"num no_sol")
+
+            encoder_output = num 
+            
             #print(encoder_output.size(), 'num')
 
             #print(hidden.size(), 'hid cat 00')
@@ -2327,7 +2352,7 @@ class NMT:
 
 
             eol_found = False
-            for i in range(hparams['tokens_per_sentence']): #min(input_variable.size(0), target_variable.size(0))):
+            for i in range(hparams['tokens_per_sentence']): 
                 #print('---')
 
                 ## each word in sentence
@@ -2339,35 +2364,35 @@ class NMT:
 
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
 
-                if True: #  self.model_0_wra.model_6_dec.training:
+                if not self.args['no_sol']: #  
                     if 0 < i < tv_large.size(1):
-                        #if i > 0 :
-                        #if i < tv_large.size(1) - 1:
                         target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
+                        #print(i, "sol")
+
+                elif self.args['no_sol']: #  
+                    if  i < tv_large.size(1):
+                        target_variable = tv_large[:, i ] 
+                        #print(i, "i - no_sol")
 
 
-                ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, None, output_unchanged)
-
-
+                ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i, output_unchanged)
 
                 #print(hidden.size(),'hid out')
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 #print(ansx.size(), 'ansx')
 
-                if ansx.size(0) == 1:
-                    ansx = ansx.item()
-                ans_batch.append(ansx)
+                if not self.args['no_sol']:
+                    if ansx.size(0) == 1:
+                        ansx = ansx.item()
+                    ans_batch.append(ansx)
 
-                if size == 1: ansx = torch.LongTensor([ansx])
+                if size == 1 and not self.args['no_sol']: 
+                    ansx = torch.LongTensor([ansx])
 
-                a_var = ans.squeeze(0) #self.model_0_wra.embed(ansx) # ans #[i,:z,] #[:z]
+                a_var = ans.squeeze(0) 
 
-                encoder_output = ansx #self.model_0_wra.model_6_dec.embed(ansx)
-                #encoder_output = hidden.permute(1,0,2)[:,1:,:]
-
-                #print(tv_large.size(), a_var.size() ,ansx.size(), hparams['tokens_per_sentence'], i ,'a_var')
-                #t_var = tv_large[:,i]
+                encoder_output = ansx 
 
                 if i < tv_large.size(1):
                     pass
@@ -2380,6 +2405,7 @@ class NMT:
                     pass
 
                 #print(a_var.size(), t_var.size(),'tvar')
+                #print(t_var)
 
                 if len(a_var.size()) > 2:
                     a_var = a_var.squeeze(1)
@@ -2762,11 +2788,13 @@ class NMT:
 
         pad = hparams['tokens_per_sentence']
 
-        print('src: sol', choice[0])
-        question = None
-        #if self.do_load_babi:
-        #print('ques:', choice[1])
-        print('ref: sol', choice[2])
+        if not self.args['no_sol']:
+            print('src: sol', choice[0])
+            
+            print('ref: sol', choice[2])
+        else:
+            print('src:', choice[0] )
+            print('ref:', choice[2])
 
         '''
         nums = self.variablesFromPair(choice)
@@ -2912,7 +2940,8 @@ class NMT:
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
                                       sol_token=sol_token, cancel_attention=self.do_no_attention,
-                                      freeze_decoder=self.do_freeze_decoding, freeze_encoder=self.do_freeze_encoding)
+                                      freeze_decoder=self.do_freeze_decoding, freeze_encoder=self.do_freeze_encoding, 
+                                      no_sol=self.no_sol)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.load_checkpoint()
@@ -2947,7 +2976,8 @@ class NMT:
                                       freeze_embedding=self.do_freeze_embedding, embedding=self.embedding_matrix,
                                       print_to_screen=self.do_print_to_screen, recurrent_output=self.do_recurrent_output,
                                       sol_token=sol_token, cancel_attention=self.do_no_attention,
-                                      freeze_decoder=self.do_freeze_decoding, freeze_encoder=self.do_freeze_encoding)
+                                      freeze_decoder=self.do_freeze_decoding, freeze_encoder=self.do_freeze_encoding, 
+                                      no_sol=self.no_sol)
         if hparams['cuda']: self.model_0_wra = self.model_0_wra.cuda()
 
         self.first_load = True
@@ -3114,7 +3144,8 @@ if __name__ == '__main__':
                                    freeze_embedding=n.do_freeze_embedding, embedding=n.embedding_matrix,
                                    print_to_screen=n.do_print_to_screen, recurrent_output=n.do_recurrent_output,
                                    sol_token=sol_token, cancel_attention=n.do_no_attention,
-                                   freeze_decoder=n.do_freeze_decoding, freeze_encoder=n.do_freeze_encoding)
+                                   freeze_decoder=n.do_freeze_decoding, freeze_encoder=n.do_freeze_encoding, 
+                                   no_sol=n.no_sol)
 
         #print(n.model_0_wra)
         #n.set_dropout(0.1334)
