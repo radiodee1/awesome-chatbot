@@ -1426,7 +1426,7 @@ class NMT:
 
                 if len(self.pairs[p][0].split(' ')) > hparams['tokens_per_sentence']: skip = True
                 if len(self.pairs[p][1].split(' ')) > hparams['tokens_per_sentence']: skip = True
-                if lang3 is not None:
+                if lang3 is not None and False:
                     if len(self.pairs[p][2].split(' ')) > hparams['tokens_per_sentence']: skip = True
 
                 for word in self.pairs[p][0].split(' '):
@@ -1506,7 +1506,7 @@ class NMT:
 
 
 
-        l.extend([lang.word2index[hparams['eow']]  ]) #, lang.word2index[hparams['unk']]])
+        l.extend([lang.word2index[hparams['eow']]  ]) 
         return l
 
 
@@ -1685,7 +1685,7 @@ class NMT:
     def variables_for_batch(self, pairs, size, start, skip_unk=False, pad_and_batch=True):
         e = self.epoch_length * self.this_epoch + self.epoch_length
         length = 0
-        add_sos = not self.args['no_sol']
+        add_sos_x = not self.args['no_sol']
 
         if start + size > e  and start < e :
             size = e - start #- 1
@@ -1717,9 +1717,9 @@ class NMT:
                 else:
                     #x = triplet
                     x = [
-                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_sos=add_sos ,add_eos=True, return_string=True),
-                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_sos=add_sos, add_eos=False, return_string=True),
-                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_sos=add_sos, add_eos=False, return_string=True)
+                        self.indexesFromSentence(self.output_lang, triplet[0], skip_unk=skip_unk, add_sos=add_sos_x ,add_eos=True, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[1], skip_unk=skip_unk, add_sos=add_sos_x, add_eos=False, return_string=True),
+                        self.indexesFromSentence(self.output_lang, triplet[2], skip_unk=skip_unk, add_sos=add_sos_x, add_eos=False, return_string=True)
                     ]
                     if x[0] is None: x = None
 
@@ -2333,13 +2333,6 @@ class NMT:
 
             num = torch.LongTensor([ansx for _ in range(size)])
 
-            #print(num.size(),"num sol")
-
-            if self.args['no_sol']:
-                #num = encoder_output[0:, 0, :]
-                pass
-            #print(num.size(),"num no_sol")
-
             encoder_output = num 
             
             #print(encoder_output.size(), 'num')
@@ -2790,7 +2783,6 @@ class NMT:
 
         if not self.args['no_sol']:
             print('src: sol', choice[0])
-            
             print('ref: sol', choice[2])
         else:
             print('src:', choice[0] )
