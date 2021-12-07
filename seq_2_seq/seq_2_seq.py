@@ -2832,7 +2832,7 @@ class NMT:
             _, batch = self.train(input_variable, t_var, None, lengths, None,None, None, None,None,None, None,None, None)
 
             #ans = ans.permute(1,0,2)
-            #print(ans.size(),'ans 00')
+            #print(batch,'- batch 00')
 
         #####################
         outputs = [batch]
