@@ -5,10 +5,10 @@ import os
 import sys
 import random
 import xml.etree.ElementTree as ET
-#from tokenize_weak import format
+from tokenize_weak import format as format_fn
 
 def format(input):
-    return input.lower()
+    return format_fn(input.lower())
 
 hparams = {
 

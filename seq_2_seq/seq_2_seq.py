@@ -31,7 +31,7 @@ import matplotlib.patches as mpatches
 #import matplotlib.pyplot as plt
 #import matplotlib.ticker as ticker
 import numpy as np
-
+from tokenize_weak import format as format_fn
 
 '''
 Some code was originally written by Yerevann Research Lab. This theano code
@@ -1315,6 +1315,10 @@ class NMT:
                             lques = ' '.join(lques)
 
                         lans = l_out[i].strip('\n')
+                        if True:
+                            lin = format_fn(lin)
+                            lques = format_fn(lques)
+                            lans = format_fn(lans)
                         line = [ lin, lques , lans]
                     self.pairs.append(line)
 
