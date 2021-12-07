@@ -671,7 +671,7 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = self.model_6_dec.tanh_b(ans)
 
-            #ans = self.model_6_dec.softmax_b(ans)
+            ans = self.model_6_dec.softmax_b(ans)
 
         return ans, decoder_hidden_x
 
@@ -2367,24 +2367,26 @@ class NMT:
                         #print(i, "sol")
 
                 elif self.args['no_sol']: #  
-                    if  i < tv_large.size(1):
+                    if i < tv_large.size(1):
                         target_variable = tv_large[:, i ] 
-                        #print(i, "i - no_sol")
-
+                        
+                #print(i, "i - no_sol")
+                #print(target_variable)
 
                 ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i, output_unchanged)
 
                 #print(hidden.size(),'hid out')
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
-                #print(ansx.size(), 'ansx')
+                #print(ans.size(), ansx.size(), 'ansx')
 
-                if not self.args['no_sol']:
-                    if ansx.size(0) == 1:
+                if True:
+                    if ansx.size(0) == 1: # and not self.model_0_wra.model_6_dec.training: # and not self.args['no_sol']:
                         ansx = ansx.item()
+                    #else:
                     ans_batch.append(ansx)
 
-                if size == 1 and not self.args['no_sol']: 
+                if size == 1 : #and not self.args['no_sol'] : 
                     ansx = torch.LongTensor([ansx])
 
                 a_var = ans.squeeze(0) 
@@ -2443,7 +2445,7 @@ class NMT:
             #print(ans.size(),'ans')
             pass
 
-        #print(ans_batch)
+        #print("ans_batch", len(ans_batch))
         return loss, ans_batch
 
     #######################################
