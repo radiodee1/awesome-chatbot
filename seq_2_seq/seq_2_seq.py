@@ -2383,13 +2383,13 @@ class NMT:
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
 
                 if not self.args['no_sol']: #  
-                    if 0 < i < tv_large.size(1):
-                        target_variable = tv_large[:, i -1] ## batch first?? [:, i -1]
+                    if 0 < i < tv_large.size(1) - 1:
+                        target_variable = tv_large[:, i + 1] ## batch first?? [:, i -1]
                         #print(i, "sol")
 
                 elif self.args['no_sol']: #  
-                    if i < tv_large.size(1) :
-                        target_variable = tv_large[:, i   ] 
+                    if i < tv_large.size(1) - 1:
+                        target_variable = tv_large[:, i  + 1] 
                         
                 #print(i, "i - no_sol")
                 #print(encoder_output.size(), "eout size")
