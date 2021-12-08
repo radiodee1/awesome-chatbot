@@ -603,7 +603,7 @@ class WrapMemRNN: #(nn.Module):
         hidden = encoder_hidden
 
         encoder_output = self.model_1_seq.embed(encoder_output)
-        encoder_output = torch.cat([encoder_output, encoder_output], dim=-1)
+        #encoder_output = torch.cat([encoder_output, encoder_output], dim=-1)
         
         #print(encoder_output.size(), "eo wrap 2")
             
