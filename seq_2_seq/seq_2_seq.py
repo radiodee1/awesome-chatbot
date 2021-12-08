@@ -602,14 +602,14 @@ class WrapMemRNN: #(nn.Module):
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
         hidden = encoder_hidden
         #print(encoder_output.size(), "eout")
-        encoder_output = self.model_1_seq.embed(encoder_output)
+        #encoder_output = self.model_1_seq.embed(encoder_output)
         #encoder_output = torch.cat([encoder_output, encoder_output], dim=-1)
         
         #print(encoder_output.size(), "eo wrap 2")
             
         if True:
             decoder_hidden = hidden
-
+            #print(token, "token")
             if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training and token != 0:
                 #print("force")
                 embed_index = self.model_1_seq.embed(target_variable) 
@@ -619,8 +619,29 @@ class WrapMemRNN: #(nn.Module):
             else:
                 embed_index = encoder_output
 
+            #print(embed_index.size(), "eindex size")
+            if embed_index.size(-1) is 1:
+                embed_index = self.model_1_seq.embed(embed_index)
+
+            j = 0
+            while len(embed_index.size()) > 3 and j < 5:
+                #print("squeeze")
+                j += 1
+                embed_index = embed_index.squeeze()
+
+            i = 0
+            while len(embed_index.size()) < 3 and i < 5:
+                #print("unsqueeze", len(embed_index.size()), embed_index.size())
+                i += 1
+                embed_index = embed_index.unsqueeze(1)
+
+            #print(embed_index.size(), "eindex 2 size")
+
+            #z, _ = self.model_1_seq.gru(embed_index, None)
+            
+            #print(z.size(), encoder_output.size(), 'w gru')
             #print(embed_index.size(), "ei size")
-            encoder_out_x = embed_index
+            encoder_out_x =  embed_index  ### z ?
 
             decoder_hidden_x = decoder_hidden 
 
@@ -2313,7 +2334,7 @@ class NMT:
 
             #print(encoder_output.size(), hidden_x.size(),  'eos size')
             #else:
-            use = -1
+            #use = -1
 
             #print(hidden_x.size(),"1")
             #hidden_x = hidden_x[:2,:,:] #.permute(1,0,2)
@@ -2337,14 +2358,14 @@ class NMT:
 
             num = torch.LongTensor([ansx for _ in range(size)])
 
-            encoder_output = num 
+            ### encoder_output = num 
             
             #print(encoder_output.size(), 'num')
 
             #print(hidden.size(), 'hid cat 00')
 
             #if iv_large.size(0) != 1:
-            encoder_output = encoder_output.unsqueeze(1)
+            #encoder_output = encoder_output.unsqueeze(1)
             #print(encoder_output.size(),'eo embed')
 
 
@@ -2356,7 +2377,7 @@ class NMT:
                 #input_variable = iv_large[i,:]
                 target_variable = torch.LongTensor([SOS_token for _ in range(size)])
 
-                current_tv = ansx #[ansx for _ in range(size)]
+                #current_tv = ansx #[ansx for _ in range(size)]
 
 
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
@@ -2367,11 +2388,18 @@ class NMT:
                         #print(i, "sol")
 
                 elif self.args['no_sol']: #  
-                    if i < tv_large.size(1):
-                        target_variable = tv_large[:, i ] 
+                    if i < tv_large.size(1) :
+                        target_variable = tv_large[:, i   ] 
                         
                 #print(i, "i - no_sol")
-                #print(target_variable)
+                #print(encoder_output.size(), "eout size")
+
+                #ii = i
+                if len(encoder_output.size()) == 3 and 1 is not encoder_output.size(1):
+                    encoder_output = encoder_output[:,i,:]
+                    #print("training")
+
+                #print(i, "index")
 
                 ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i, output_unchanged)
 
