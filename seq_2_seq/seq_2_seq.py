@@ -638,12 +638,11 @@ class WrapMemRNN: #(nn.Module):
                 embed_index = embed_index.unsqueeze(1)
 
             #print(embed_index.size(), "eindex 2 size")
-
-            #z, _ = self.model_1_seq.gru(embed_index, None)
-            
-            #print(z.size(), encoder_output.size(), 'w gru')
-            #print(embed_index.size(), "ei size")
-            encoder_out_x =  embed_index  ### z ?
+            if True:
+                z, _ = self.model_1_seq.gru(embed_index, None)
+                encoder_out_x = z # embed_index  ### z ?
+            else:
+                encoder_out_x = embed_index
 
             decoder_hidden_x = decoder_hidden 
 
