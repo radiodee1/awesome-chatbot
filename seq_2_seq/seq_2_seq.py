@@ -622,6 +622,8 @@ class WrapMemRNN: #(nn.Module):
             #print(embed_index.size(), "eindex size")
             if embed_index.size(-1) is 1:
                 embed_index = self.model_1_seq.embed(embed_index)
+                #print('index', embed_index.size())
+                pass
 
             j = 0
             while len(embed_index.size()) > 3 and j < 5:
@@ -662,6 +664,8 @@ class WrapMemRNN: #(nn.Module):
             context = attn_weights.bmm(input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
+            if ans_small.size(1) is not 1:
+                ans_small = ans_small[:,token].unsqueeze(1)
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
 
@@ -2368,9 +2372,12 @@ class NMT:
             #encoder_output = encoder_output.unsqueeze(1)
             #print(encoder_output.size(),'eo embed')
 
+            i_range = hparams['tokens_per_sentence']
+            if encoder_output.size(1) is 1:
+                i_range = 1
 
-            eol_found = False
-            for i in range(hparams['tokens_per_sentence']): 
+            #eol_found = False
+            for i in range(i_range): # hparams['tokens_per_sentence']): 
                 #print('---')
 
                 ## each word in sentence
@@ -2381,26 +2388,21 @@ class NMT:
 
 
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
-
+                shift = 1
                 if not self.args['no_sol']: #  
-                    if 0 < i < tv_large.size(1) - 0:
-                        target_variable = tv_large[:, i + 0] ## batch first?? [:, i -1]
+                    if 0 < i < tv_large.size(1) - shift:
+                        target_variable = tv_large[:, i + shift] ## batch first?? [:, i -1]
                         #print(i, "sol")
 
                 elif self.args['no_sol']: #  
-                    if i < tv_large.size(1) - 0:
-                        target_variable = tv_large[:, i  + 0] 
+                    if i < tv_large.size(1) - shift:
+                        target_variable = tv_large[:, i  + shift] 
                         
                 #print(i, "i - no_sol")
                 #print(encoder_output.size(), "eout size")
 
                 #ii = i
-                if len(encoder_output.size()) == 3 and 1 is not encoder_output.size(1):
-                    encoder_output = encoder_output[:,i,:]
-                    #print("training")
-
-                #print(i, "index")
-
+                
                 ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i, output_unchanged)
 
                 #print(hidden.size(),'hid out')
