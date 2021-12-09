@@ -609,10 +609,16 @@ class WrapMemRNN: #(nn.Module):
             
         if True:
             decoder_hidden = hidden
+            #force = False
             #print(token, "token")
-            if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training and token != 0:
+            if hparams['teacher_forcing_ratio'] > random.random(): # and self.model_6_dec.training and token != 0:
                 #print("force")
+                #force = True
                 embed_index = self.model_1_seq.embed(target_variable) 
+                embed_index = embed_index.unsqueeze(1)
+                if False:
+                    z, _ = self.model_1_seq.gru(embed_index, None)
+                    embed_index = z
                 #embed_index = torch.cat([embed_index_x, embed_index_x], dim=2)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
@@ -621,8 +627,8 @@ class WrapMemRNN: #(nn.Module):
 
             #print(embed_index.size(), "eindex size")
             if embed_index.size(-1) is 1:
-                embed_index = self.model_1_seq.embed(embed_index)
-                #print('index', embed_index.size())
+                #embed_index = self.model_1_seq.embed(embed_index)
+                #print('index', embed_index.size(), token)
                 pass
 
             j = 0
@@ -636,13 +642,8 @@ class WrapMemRNN: #(nn.Module):
                 #print("unsqueeze", len(embed_index.size()), embed_index.size())
                 i += 1
                 embed_index = embed_index.unsqueeze(1)
-
-            #print(embed_index.size(), "eindex 2 size")
-            if True:
-                z, _ = self.model_1_seq.gru(embed_index, None)
-                encoder_out_x = z # embed_index  ### z ?
-            else:
-                encoder_out_x = embed_index
+            
+            encoder_out_x = embed_index
 
             decoder_hidden_x = decoder_hidden 
 
@@ -658,13 +659,16 @@ class WrapMemRNN: #(nn.Module):
             #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
             #print(input_unchanged.size(), "input_unchanged")
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
-            #print(attn_weights.size(), "attn weights")
+            #print(attn_weights.size(), "attn weights", ans_small.size(), token)
 
             context = attn_weights.bmm(input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
-            if ans_small.size(1) is not 1:
+            if ans_small.size(1) is not 1 and ans_small.size(1) > token:
                 ans_small = ans_small[:,token].unsqueeze(1)
+                #print("force 2")
+            else: 
+                ans_small = ans_small[:,0].unsqueeze(1)
 
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
 
@@ -2359,7 +2363,7 @@ class NMT:
 
             output_unchanged = encoder_output[:]
 
-            num = torch.LongTensor([ansx for _ in range(size)])
+            ## num = torch.LongTensor([ansx for _ in range(size)])
 
             ### encoder_output = num 
             
@@ -2372,8 +2376,8 @@ class NMT:
             #print(encoder_output.size(),'eo embed')
 
             i_range = hparams['tokens_per_sentence']
-            if encoder_output.size(1) is 1:
-                i_range = 1
+            #if encoder_output.size(0) is 1:
+            #    i_range = 1
 
             #eol_found = False
             for i in range(i_range): # hparams['tokens_per_sentence']): 
@@ -2387,22 +2391,22 @@ class NMT:
 
 
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
-                shift = 1
+                shift = 0
                 if not self.args['no_sol']: #  
-                    if 0 < i < tv_large.size(1) - shift:
-                        target_variable = tv_large[:, i + shift] ## batch first?? [:, i -1]
+                    if 0 < i < tv_large.size(1) - (shift + 1 ):
+                        target_variable = tv_large[:, i - shift] ## batch first?? [:, i -1]
                         #print(i, "sol")
 
                 elif self.args['no_sol']: #  
                     if i < tv_large.size(1) - shift:
-                        target_variable = tv_large[:, i  + shift] 
+                        target_variable = tv_large[:, i  - shift] 
                         
                 #print(i, "i - no_sol")
                 #print(encoder_output.size(), "eout size")
 
                 #ii = i
                 
-                ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i, output_unchanged)
+                ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i , output_unchanged)
 
                 #print(hidden.size(),'hid out')
 
@@ -2420,7 +2424,7 @@ class NMT:
 
                 a_var = ans.squeeze(0) 
 
-                encoder_output = ansx 
+                #encoder_output = ansx 
 
                 if i < tv_large.size(1):
                     pass
