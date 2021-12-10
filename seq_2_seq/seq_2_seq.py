@@ -2424,22 +2424,11 @@ class NMT:
 
                 a_var = ans.squeeze(0) 
 
-                print(ansx.size()) 
+                #print(ansx.size(), a_var.size(), tv_large.size(), "a_var") 
 
                 encoder_output = ansx
 
-                if i < tv_large.size(1):
-                    pass
-                    t_var = tv_large[:,i]
-                else:
-                    #break
-                    #print('here')
-                    t_var = torch.LongTensor([UNK_token for _ in range(size)])
-                    #print(t_var.size(), 'here', i)
-                    pass
-
-                #print(a_var.size(), t_var.size(),'tvar')
-                #print(t_var)
+                t_var = target_variable
 
                 if len(a_var.size()) > 2:
                     a_var = a_var.squeeze(1)
