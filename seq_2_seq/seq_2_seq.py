@@ -2393,7 +2393,7 @@ class NMT:
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
                 shift = 0
                 if not self.args['no_sol']: #  
-                    if 0 < i < tv_large.size(1) - (shift + 1 ):
+                    if  i < tv_large.size(1) - (shift + 1 ):
                         target_variable = tv_large[:, i - shift] ## batch first?? [:, i -1]
                         #print(i, "sol")
 
