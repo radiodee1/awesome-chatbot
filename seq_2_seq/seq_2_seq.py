@@ -2378,6 +2378,7 @@ class NMT:
             i_range = hparams['tokens_per_sentence']
             #if encoder_output.size(0) is 1:
             #    i_range = 1
+            book_keeping = [SOS_token for _ in range(size)]
 
             #eol_found = False
             for i in range(i_range): # hparams['tokens_per_sentence']): 
@@ -2412,6 +2413,19 @@ class NMT:
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 #print(ans.size(), ansx.size(), 'ansx')
+
+                if True: ## modify ansx
+                    for j in range(size):
+                        if ansx[j].item() in [ EOS_token, UNK_token]:
+                            #print('end')
+                            book_keeping[j] = EOS_token
+                        if ansx[j].item() is SOS_token and book_keeping[j] is SOS_token:
+                            book_keeping[j] = EOS_token
+                        if ansx[j].item() is SOS_token: 
+                            book_keeping[j] = SOS_token
+                        if book_keeping[j] is EOS_token:
+                            ansx[j] = EOS_token
+                        pass
 
                 if True:
                     if ansx.size(0) == 1: # and not self.model_0_wra.model_6_dec.training: # and not self.args['no_sol']:
