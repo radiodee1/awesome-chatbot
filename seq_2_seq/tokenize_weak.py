@@ -12,7 +12,7 @@ to_lower = True
 test_on_screen = False
 remove_caps = True
 
-def format(content, do_tokenize=False):
+def format(content, do_tokenize=False, add_eol=False):
     c = content.lower().strip()
     c = unidecode.unidecode(c)
     c = re.sub('[][)(\n\r#@*^><:|{}]',' ', c)
@@ -100,6 +100,8 @@ def format(content, do_tokenize=False):
             cx.append(cc)
         elif i + 1 == len(c):
             cx.append(cc)
+    if add_eol:
+        cx.append(hparams['eol'])
 
     x = ' '.join(cx)
 

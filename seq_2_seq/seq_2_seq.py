@@ -905,6 +905,7 @@ class NMT:
         parser.add_argument('--length', help='number of tokens per sentence.')
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
         parser.add_argument('--no-sol', help="do not automatically add *sol* token.", action="store_true")
+        parser.add_argument('--add-eol', help="add eol to source material", action="store_true")
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -1344,9 +1345,9 @@ class NMT:
 
                         lans = l_out[i].strip('\n')
                         if True:
-                            lin = format_fn(lin)
-                            lques = format_fn(lques)
-                            lans = format_fn(lans)
+                            lin = format_fn(lin, add_eol=self.args['add_eol'])
+                            lques = format_fn(lques, add_eol=self.args['add_eol'])
+                            lans = format_fn(lans, add_eol=self.args['add_eol'])
                         line = [ lin, lques , lans]
                     self.pairs.append(line)
 
