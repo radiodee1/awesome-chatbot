@@ -2419,10 +2419,12 @@ class NMT:
                         if ansx[j].item() in [ EOS_token, UNK_token]:
                             #print('end')
                             book_keeping[j] = EOS_token
+
                         if ansx[j].item() is SOS_token and book_keeping[j] is SOS_token:
                             book_keeping[j] = EOS_token
-                        if ansx[j].item() is SOS_token: 
+                        elif ansx[j].item() is SOS_token and book_keeping[j] is not SOS_token: 
                             book_keeping[j] = SOS_token
+
                         if book_keeping[j] is EOS_token:
                             ansx[j] = EOS_token
                         pass
