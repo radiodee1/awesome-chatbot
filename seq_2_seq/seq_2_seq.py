@@ -614,7 +614,7 @@ class WrapMemRNN: #(nn.Module):
             if hparams['teacher_forcing_ratio'] > random.random(): # and self.model_6_dec.training and token != 0:
                 #print("force")
                 #force = True
-                embed_index = self.model_6_dec.embed(target_variable) 
+                embed_index = self.model_1_seq.embed(target_variable) 
                 embed_index = embed_index.unsqueeze(1)
                 if False:
                     z, _ = self.model_1_seq.gru(embed_index, None)
@@ -627,7 +627,7 @@ class WrapMemRNN: #(nn.Module):
 
             #print(embed_index.size(), "eindex size")
             if embed_index.size(-1) is 1:
-                embed_index = self.model_6_dec.embed(embed_index)
+                embed_index = self.model_1_seq.embed(embed_index)
                 #print('index', embed_index.size(), token)
                 pass
 
