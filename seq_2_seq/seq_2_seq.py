@@ -699,7 +699,7 @@ class WrapMemRNN: #(nn.Module):
 
             #ans = self.model_6_dec.tanh_b(ans)
 
-            ans = self.model_6_dec.softmax_b(ans)
+            #ans = self.model_6_dec.softmax_b(ans)
 
         return ans, decoder_hidden_x
 
