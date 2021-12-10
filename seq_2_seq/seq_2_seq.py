@@ -344,7 +344,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed =  nn.Embedding(target_vocab_size, embed_dim )
+        self.embed =  nn.Embedding(target_vocab_size, embed_dim * 2)
         self.attention_mod = Attn(hidden_dim , method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -614,7 +614,7 @@ class WrapMemRNN: #(nn.Module):
             if hparams['teacher_forcing_ratio'] > random.random(): # and self.model_6_dec.training and token != 0:
                 #print("force")
                 #force = True
-                embed_index = self.model_1_seq.embed(target_variable) 
+                embed_index = self.model_6_dec.embed(target_variable) 
                 embed_index = embed_index.unsqueeze(1)
                 if False:
                     z, _ = self.model_1_seq.gru(embed_index, None)
