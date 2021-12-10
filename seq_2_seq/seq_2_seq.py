@@ -627,7 +627,7 @@ class WrapMemRNN: #(nn.Module):
 
             #print(embed_index.size(), "eindex size")
             if embed_index.size(-1) is 1:
-                #embed_index = self.model_1_seq.embed(embed_index)
+                embed_index = self.model_6_dec.embed(embed_index)
                 #print('index', embed_index.size(), token)
                 pass
 
@@ -2424,7 +2424,9 @@ class NMT:
 
                 a_var = ans.squeeze(0) 
 
-                #encoder_output = ansx 
+                print(ansx.size()) 
+
+                encoder_output = ansx
 
                 if i < tv_large.size(1):
                     pass
