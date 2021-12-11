@@ -435,12 +435,12 @@ class Decoder(nn.Module):
 
 #################### Wrapper ####################
 
-class WrapMemRNN: #(nn.Module):
+class WrapMemRNN(nn.Module):
     def __init__(self,vocab_size, embed_dim,  hidden_size, n_layers, dropout=0.3, do_babi=True, bad_token_lst=[],
                  freeze_embedding=False, embedding=None, recurrent_output=False,print_to_screen=False, sol_token=0,
                  cancel_attention=False, freeze_encoder=False, freeze_decoder=False, no_sol=False):
 
-        #super(WrapMemRNN, self).__init__()
+        super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
         self.n_layers = n_layers
@@ -2311,7 +2311,7 @@ class NMT:
         
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
-                #self.model_0_wra.train()
+                self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
                 #wrapper_optimizer_1.zero_grad()
@@ -2320,7 +2320,7 @@ class NMT:
                 wrapper_optimizer_3.zero_grad()
 
             else:
-                #self.model_0_wra.eval()
+                self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
                 self.model_0_wra.model_6_dec.eval()
 
@@ -2393,15 +2393,15 @@ class NMT:
 
 
                 #print(hidden.size(),tv_large.size(), output_unchanged.size(), 'hid in')
-                shift = 0
+                shift = 1
                 if not self.args['no_sol']: #  
-                    if  i < tv_large.size(1) - (shift + 1 ):
-                        target_variable = tv_large[:, i - shift] ## batch first?? [:, i -1]
+                    if  i < tv_large.size(1) - shift: #(shift + 0 ):
+                        target_variable = tv_large[:, i + shift] ## batch first?? [:, i -1]
                         #print(i, "sol")
 
                 elif self.args['no_sol']: #  
                     if i < tv_large.size(1) - shift:
-                        target_variable = tv_large[:, i  - shift] 
+                        target_variable = tv_large[:, i  + shift] 
                         
                 #print(i, "i - no_sol")
                 #print(encoder_output.size(), "eout size")
