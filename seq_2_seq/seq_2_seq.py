@@ -2413,7 +2413,10 @@ class NMT:
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 #print(ans.size(), ansx.size(), 'ansx')
 
-                if False: ## modify ansx
+                ans_y = ans[0:0,0:0]
+                target_variable_y = target_variable[0:0]
+
+                if True: ## modify ansx
                     for j in range(size):
                         if ansx[j].item() in [ EOS_token, UNK_token]:
                             #print('end')
@@ -2430,7 +2433,7 @@ class NMT:
                         if book_keeping[j] is EOS_token:
                             ansx[j] = EOS_token
                             book_keeping[j] = UNK_token # for next pass
-                        pass
+                            
 
                 if True:
                     if ansx.size(0) == 1: 
@@ -2452,21 +2455,24 @@ class NMT:
                 if len(a_var.size()) > 2:
                     a_var = a_var.squeeze(1)
 
-                #print(a_var[:5], t_var[:5],'a,t')
+                #print(a_var.size(), t_var.size(),'a,t')
 
-                if criterion is not None:
-                    try:
-                        l = criterion(a_var, t_var)
-                        loss += l
-                        n_tot += t_var.size(0)
-                    except ValueError as e:
-                        #print('skip for size...', z)
-                        print(e)
-                        print(a_var.size(), t_var.size(),'a,t')
-                        exit()
-                        pass
-                    #print(l, loss, n_tot, 'loss')
-                    loss.backward(retain_graph=True)
+                for j in range(size):
+                    if criterion is not None and ansx[j].item() is not UNK_token:
+                        try:
+                            a = a_var[j,:].unsqueeze(0)
+                            t = t_var[j].unsqueeze(0)
+                            l = criterion(a, t)
+                            loss += l
+                            n_tot += t_var.size(0)
+                        except ValueError as e:
+                            #print('skip for size...', z)
+                            print(e)
+                            print(a_var.size(), t_var.size(),'a,t')
+                            exit()
+                            pass
+                        #print(l, loss, n_tot, 'loss')
+                        loss.backward(retain_graph=True)
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
