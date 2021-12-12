@@ -2413,7 +2413,7 @@ class NMT:
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 #print(ans.size(), ansx.size(), 'ansx')
 
-                if True: ## modify ansx
+                if False: ## modify ansx
                     for j in range(size):
                         if ansx[j].item() in [ EOS_token, UNK_token]:
                             #print('end')
@@ -2465,7 +2465,7 @@ class NMT:
                         pass
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
-                if True:
+                if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
@@ -2590,12 +2590,12 @@ class NMT:
 
         if self.do_load_babi:
             if self.do_test_not_train:
-                #self.model_0_wra.eval()
+                self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
                 self.model_0_wra.model_6_dec.eval()
 
             else:
-                #self.model_0_wra.train()
+                self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
 
@@ -2866,7 +2866,7 @@ class NMT:
 
         #question_variable = question
 
-        #self.model_0_wra.eval()
+        self.model_0_wra.eval()
         self.model_0_wra.model_1_seq.eval()
         self.model_0_wra.model_6_dec.eval()
 
