@@ -697,7 +697,7 @@ class WrapMemRNN(nn.Module):
 
             #ans = self.model_6_dec.tanh_b(ans)
 
-            #ans = self.model_6_dec.softmax_b(ans)
+            ans = self.model_6_dec.softmax_b(ans)
 
         return ans, decoder_hidden_x, ans_small
 
@@ -2451,6 +2451,8 @@ class NMT:
 
                 if len(a_var.size()) > 2:
                     a_var = a_var.squeeze(1)
+
+                #print(a_var[:5], t_var[:5],'a,t')
 
                 if criterion is not None:
                     try:
