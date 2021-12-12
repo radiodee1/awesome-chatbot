@@ -2366,7 +2366,7 @@ class NMT:
 
             encoder_output = encoder_output[:,0,:].unsqueeze(1) ### <--- remove???
             
-            #print(encoder_output.size(), 'num')
+            #print(encoder_output.size(), output_unchanged.size(), 'num')
 
             #print(hidden.size(), 'hid cat 00')
 
