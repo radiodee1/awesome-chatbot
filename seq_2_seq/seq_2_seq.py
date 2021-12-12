@@ -611,14 +611,12 @@ class WrapMemRNN(nn.Module):
             decoder_hidden = hidden
             #force = False
             #print(token, "token")
-            if hparams['teacher_forcing_ratio'] > random.random(): # and self.model_6_dec.training and token != 0:
-                #print("force")
+            if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training: # and token != 0:
+                #print("force", encoder_output.size())
                 #force = True
                 embed_index = self.model_1_seq.embed(target_variable) 
                 embed_index = embed_index.unsqueeze(1) + encoder_output
-                if False:
-                    z, _ = self.model_1_seq.gru(embed_index, None)
-                    embed_index = z
+                #print(embed_index.size(),"index")
                 #embed_index = torch.cat([embed_index_x, embed_index_x], dim=2)
             elif self.model_6_dec.training:
                 embed_index = encoder_output
@@ -2366,7 +2364,7 @@ class NMT:
 
             ## num = torch.LongTensor([ansx for _ in range(size)])
 
-            ### encoder_output = num 
+            encoder_output = encoder_output[:,0,:].unsqueeze(1) ### <--- remove???
             
             #print(encoder_output.size(), 'num')
 
@@ -2383,7 +2381,7 @@ class NMT:
 
             #eol_found = False
             for i in range(i_range): # hparams['tokens_per_sentence']): 
-                #print('---')
+                #print('---', i)
 
                 ## each word in sentence
                 #input_variable = iv_large[i,:]
