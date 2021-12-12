@@ -615,7 +615,7 @@ class WrapMemRNN(nn.Module):
                 #print("force")
                 #force = True
                 embed_index = self.model_1_seq.embed(target_variable) 
-                embed_index = embed_index.unsqueeze(1)
+                embed_index = embed_index.unsqueeze(1) + encoder_output
                 if False:
                     z, _ = self.model_1_seq.gru(embed_index, None)
                     embed_index = z
@@ -627,8 +627,8 @@ class WrapMemRNN(nn.Module):
 
             #print(embed_index.size(), "eindex size")
             if embed_index.size(-1) is 1:
-                embed_index = self.model_1_seq.embed(embed_index)
-                #print('index', embed_index.size(), token)
+                #embed_index = self.model_1_seq.embed(embed_index)
+                print('index', embed_index.size(), token)
                 pass
 
             j = 0
@@ -701,7 +701,7 @@ class WrapMemRNN(nn.Module):
 
             #ans = self.model_6_dec.softmax_b(ans)
 
-        return ans, decoder_hidden_x
+        return ans, decoder_hidden_x, ans_small
 
 
 
@@ -2408,7 +2408,7 @@ class NMT:
 
                 #ii = i
                 
-                ans, hidden = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i , output_unchanged)
+                ans, hidden, ans_small = self.model_0_wra.wrap_decoder_module(encoder_output, hidden, target_variable, i , output_unchanged)
 
                 #print(hidden.size(),'hid out')
 
@@ -2435,7 +2435,7 @@ class NMT:
                         pass
 
                 if True:
-                    if ansx.size(0) == 1: # and not self.model_0_wra.model_6_dec.training: # and not self.args['no_sol']:
+                    if ansx.size(0) == 1: 
                         ansx = ansx.item()
                     #else:
                     ans_batch.append(ansx)
@@ -2447,7 +2447,7 @@ class NMT:
 
                 #print(ansx.size(), a_var.size(), tv_large.size(), "a_var") 
 
-                encoder_output = ansx
+                encoder_output = ans_small ### ansx
 
                 t_var = target_variable
 
