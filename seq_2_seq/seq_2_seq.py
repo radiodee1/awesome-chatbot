@@ -2439,7 +2439,7 @@ class NMT:
                             print(a_var.size(), t_var.size(),'a,t')
                             exit()
                             pass
-                        print(l, loss, n_tot, 'loss')
+                        #print(l, loss, n_tot, 'loss')
                         loss.backward(retain_graph=True)
                     else:
                         #print(j, "block", ansx.size(), a_var.size(), t_var.size())
