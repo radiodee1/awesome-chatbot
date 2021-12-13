@@ -2273,6 +2273,7 @@ class NMT:
         size = length_variable.size()[0]
         loss = 0
         n_tot = 0
+        l = 0
         
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
@@ -2439,18 +2440,18 @@ class NMT:
                             exit()
                             pass
                         #print(l, loss, n_tot, 'loss')
-                        #loss.backward(retain_graph=True)
+                        loss.backward(retain_graph=True)
                     else:
                         #print(j, "block", ansx.size(), a_var.size(), t_var.size())
                         pass
 
             if not isinstance(loss, int):
                 #print("loss")
-                loss.backward(retain_graph=True)
+                #loss.backward(retain_graph=True)
                 wrapper_optimizer_2.step()
                 wrapper_optimizer_3.step()
                 
-                if False:
+                if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
@@ -2541,7 +2542,7 @@ class NMT:
         #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
 
         weight = None
-        self.criterion = nn.CrossEntropyLoss(weight=weight, reduction='sum')
+        self.criterion = nn.CrossEntropyLoss() ### weight=weight, reduction='sum')
 
         #self.criterion = self.maskNLLLoss
 

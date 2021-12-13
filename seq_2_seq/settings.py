@@ -40,7 +40,7 @@ hparams = {
     'teacher_forcing_ratio': 0.8 , #1.0, ## 0.5
     'dropout': 0.2,
     'learning_rate': 0.01, # adam = 0.001, adagrad = 0.01
-    'weight_decay': 0, #5e-4,
+    'weight_decay': 5e-4,
     'tokens_per_sentence': 100, #10,
     'batch_constant': 512, #
     'zero_start': False,
