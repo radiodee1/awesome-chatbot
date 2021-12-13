@@ -2413,8 +2413,8 @@ class NMT:
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 #print(ans.size(), ansx.size(), 'ansx')
 
-                ans_y = ans[0:0,0:0]
-                target_variable_y = target_variable[0:0]
+                #ans_y = ans[0:0,0:0]
+                #target_variable_y = target_variable[0:0]
 
                 if True: ## modify ansx
                     for j in range(size):
@@ -2455,10 +2455,10 @@ class NMT:
                 if len(a_var.size()) > 2:
                     a_var = a_var.squeeze(1)
 
-                #print(a_var.size(), t_var.size(),'a,t')
+                #print(ansx.size(), t_var.size(),'a,t')
 
                 for j in range(size):
-                    if criterion is not None and ansx[j].item() is not UNK_token:
+                    if criterion is not None and t_var[j].item() is not UNK_token:
                         try:
                             a = a_var[j,:].unsqueeze(0)
                             t = t_var[j].unsqueeze(0)
@@ -2473,6 +2473,9 @@ class NMT:
                             pass
                         #print(l, loss, n_tot, 'loss')
                         loss.backward(retain_graph=True)
+                    else:
+                        #print(j, "block", ansx.size(), a_var.size(), t_var.size())
+                        pass
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
