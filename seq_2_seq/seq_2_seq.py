@@ -33,6 +33,8 @@ import matplotlib.patches as mpatches
 import numpy as np
 from tokenize_weak import format as format_fn
 
+torch.autograd.set_detect_anomaly(True)
+
 '''
 Some code was originally written by Yerevann Research Lab. This theano code
 implements the DMN Network Model.
@@ -263,19 +265,11 @@ class Attn(torch.nn.Module):
         if self.method not in ['dot', 'general', 'concat', 'none']:
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size #* 2
-        if self.method == 'general':
-            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size * 2)
-        elif self.method == 'concat':
-            self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
-            self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
-
-    def dot_score(self, hidden, encoder_output):
-        #hidden = hidden[:0,:,:].permute(1,0,2)
-        #encoder_output = encoder_output.permute(1,0,2)
-        #print(hidden.size(), encoder_output.size(), 'attn dot')
-        #z = hidden * encoder_output
-        #print(z.size(), "hid z size")
-        return torch.sum(hidden * encoder_output, dim=2) ## dim=2
+        #if self.method == 'general':
+        self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size * 2)
+        #elif self.method == 'concat':
+        #    self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
+        #    self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def general_score(self, hidden, encoder_output):
         #if hidden.size(-1) > self.hidden_size or True:
@@ -293,43 +287,16 @@ class Attn(torch.nn.Module):
         #print(z.size(), 'zzz')
         return torch.sum(hidden @ energy, dim=1)
 
-    def concat_score(self, hidden, encoder_output):
-        #print(encoder_output,encoder_output.size(),'eo0')
-        #print(hidden.size(), 'hid 0')
-        #print(encoder_output.size(),'eo')
-        hidden = hidden.expand(encoder_output.size(0), -1, -1)
-        #print(hidden,hidden.size(),'hid')
-        #print(hidden.size(), encoder_output.size(), encoder_output,'eout')
-        cat = torch.cat((hidden, encoder_output), 2)
-        #print(cat, cat.size(), 'cat')
-        energy = self.attn(cat)
-        #print(energy, energy.size(), 'energy')
-        #energy = energy.tanh()
-        #print(energy, energy.size(),'energy2')
-        #product = hidden * energy #self.v * energy
-        #print(self.v,"v")
-        #print(product,product.size(), 'prod')
-        #sum = torch.sum(product, dim=(2))
-        #print(sum, sum.size(),'sum')
-        energy = torch.sum(energy, dim=2)
-        return energy
+    
 
         #energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
         #return torch.sum(self.v * energy, dim=2)
 
     def forward(self, hidden, encoder_outputs):
         # Calculate the attention weights (energies) based on the given method
-        if self.method == 'general':
-            attn_energies = self.general_score(hidden, encoder_outputs)
-        elif self.method == 'concat':
-            attn_energies = self.concat_score(hidden, encoder_outputs)
-        elif self.method == 'dot':
-            attn_energies = self.dot_score(hidden, encoder_outputs)
-        elif self.method == 'none':
-            attn_energies = torch.ones(encoder_outputs.size()[:1])
-            attn_energies = attn_energies.unsqueeze(0).permute(-1,-2)
-            #print(attn_energies.size(), 'attn')
-            return attn_energies.unsqueeze(1)
+        #if self.method == 'general':
+        attn_energies = self.general_score(hidden, encoder_outputs)
+        
         # Transpose max_length and batch_size dimensions
         #attn_energies = torch.relu(attn_energies)
         #print(attn_energies.size(),self.hidden_size ,'att.before')
@@ -2477,16 +2444,18 @@ class NMT:
                         #print(j, "block", ansx.size(), a_var.size(), t_var.size())
                         pass
 
-                if not isinstance(loss, int):
-                    #print("loss")
-                    loss.backward(retain_graph=True)
+            if not isinstance(loss, int):
+                #print("loss")
+                loss.backward(retain_graph=True)
+                wrapper_optimizer_2.step()
+                wrapper_optimizer_3.step()
                 
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
-            if criterion is not None:
+            if criterion is not None and False:
                 #loss.backward()
                 if False:
                     clip = 50.0
