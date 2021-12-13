@@ -333,7 +333,7 @@ class Decoder(nn.Module):
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num, hidden_dim * concat_num)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num * 2)
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -652,8 +652,8 @@ class WrapMemRNN(nn.Module):
 
             #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
             #print(ans.size(),'ans')
-            ## ans = self.model_6_dec.out_concat_b(ans)
-            #ans = self.model_6_dec.tanh_b(ans)
+            ans = self.model_6_dec.out_concat_b(ans)
+            ans = self.model_6_dec.tanh_b(ans)
 
             #ans_sized = ans_small[:,:,:]
             #print(ans.size(), 'ans size')
@@ -2439,7 +2439,7 @@ class NMT:
                             print(a_var.size(), t_var.size(),'a,t')
                             exit()
                             pass
-                        #print(l, loss, n_tot, 'loss')
+                        print(l, loss, n_tot, 'loss')
                         loss.backward(retain_graph=True)
                     else:
                         #print(j, "block", ansx.size(), a_var.size(), t_var.size())
