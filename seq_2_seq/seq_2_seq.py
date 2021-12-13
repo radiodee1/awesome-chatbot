@@ -2472,10 +2472,14 @@ class NMT:
                             exit()
                             pass
                         #print(l, loss, n_tot, 'loss')
-                        loss.backward(retain_graph=True)
+                        #loss.backward(retain_graph=True)
                     else:
                         #print(j, "block", ansx.size(), a_var.size(), t_var.size())
                         pass
+
+                if not isinstance(loss, int):
+                    loss.backward(retain_graph=True)
+                
                 if False:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
