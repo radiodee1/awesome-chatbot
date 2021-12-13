@@ -2478,6 +2478,7 @@ class NMT:
                         pass
 
                 if not isinstance(loss, int):
+                    #print("loss")
                     loss.backward(retain_graph=True)
                 
                 if False:
