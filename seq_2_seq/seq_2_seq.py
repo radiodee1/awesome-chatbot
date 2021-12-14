@@ -3197,6 +3197,7 @@ if __name__ == '__main__':
         if not n.do_interactive:
             n.update_result_file()
             n.save_checkpoint(interrupt=True)
+            print("keyboard interrupt")
         else:
             print()
 
