@@ -613,20 +613,17 @@ class WrapMemRNN(nn.Module):
             decoder_hidden_x = decoder_hidden 
 
             encoder_out_x = encoder_out_x.unsqueeze(1)
-            #decoder_hidden_x.unsqueeze(1)
-            #sent_out = []
-            #print(encoder_out_x)
+            
 
             _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
-
             #################################
-            #print(input_unchanged.size(), decoder_hidden_x.size(), 'unchanged')
-            #print(input_unchanged.size(), "input_unchanged")
-            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
-            #print(attn_weights.size(), "attn weights", ans_small.size(), token)
+            
+            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged) 
+            
+            #print(attn_weights.size(), "attn weights", ans_small.size(), input_unchanged.size(), token)
 
-            context = attn_weights.bmm(input_unchanged) #[:,:,:self.hidden_size]) ## hiddencut
+            context = attn_weights.bmm(input_unchanged) 
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
             if ans_small.size(1) is not 1 and ans_small.size(1) > token:
@@ -638,9 +635,8 @@ class WrapMemRNN(nn.Module):
             #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
 
             ans = [
-                ans_small, #.permute(1,0,2) ,
-                context #[:,:,:self.hidden_size],
-                #context[:,:,self.hidden_size:]
+                ans_small, 
+                context 
             ]
 
             #print('---')
@@ -648,15 +644,9 @@ class WrapMemRNN(nn.Module):
             #print('---')
 
             ans = torch.cat(ans, dim=-1) ## -2/0
-            #ans = self.model_6_dec.tanh_a(ans)
-
-            #ans = torch.sum(ans,keepdim=True, dim=1)#.unsqueeze(1)
-            #print(ans.size(),'ans')
+            
             ans = self.model_6_dec.out_concat_b(ans)
             ans = self.model_6_dec.tanh_b(ans)
-
-            #ans_sized = ans_small[:,:,:]
-            #print(ans.size(), 'ans size')
 
             ans = self.model_6_dec.out_target_b(ans)
 
