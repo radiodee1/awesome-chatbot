@@ -2687,7 +2687,7 @@ class NMT:
                             self.tag = 'performance'
 
                         if ((self.long_term_loss is None or self.long_term_loss == 0 or
-                             print_loss_avg <= self.long_term_loss) and not self.do_test_not_train):
+                             print_loss_avg <= self.long_term_loss) and not self.do_test_not_train and self.saved_files > 0):
                             self.long_term_loss = print_loss_avg
 
                         self.start = iter
