@@ -760,6 +760,9 @@ class NMT:
         self.pairs_train = []
         self.pairs_valid = []
 
+        self.criterion_tot = 0
+        self.criterion_used = 0
+
         self.do_train = False
         self.do_infer = False
         self.do_review = False
@@ -1201,6 +1204,12 @@ class NMT:
                 if not call_from_script:
                     line = input("> ")
                     line = tokenize_weak.format(line)
+                    ### add eol, sol ###
+                    if not self.args['no_sol']:
+                        line = hparams['sol'] + " " + line
+                    if self.args['add_eol']:
+                        line = line + ' ' + hparams['eol']
+                    ### print ###
                     print(line)
                 elif l is not None:
                     line = l
@@ -2260,6 +2269,10 @@ class NMT:
         loss = 0
         n_tot = 0
         l = 0
+
+        if criterion is not None:
+            self.criterion_tot = 0
+            self.criterion_used = 0
         
         if True: #criterion is not None : #or not self.do_test_not_train:
             if criterion is not None:
@@ -2412,7 +2425,10 @@ class NMT:
                 #print(ansx.size(), t_var.size(),'a,t')
 
                 for j in range(size):
+                    if criterion is not None:
+                        self.criterion_tot += 1
                     if criterion is not None and t_var[j].item() is not UNK_token:
+                        self.criterion_used +=1
                         try:
                             a = a_var[j,:].unsqueeze(0)
                             t = t_var[j].unsqueeze(0)
@@ -2593,13 +2609,7 @@ class NMT:
                 mask_variable = None #group[4]
                 max_target_length_variable = None #group[5]
 
-                #print(length_variable,'len')
-                #target_variable = prune_tensor(target_variable, 3)
-                #print(input_variable.size(),'iv--')
-                #print(temp_batch_size,'temp')
-                #if self.do_recurrent_output:
-                #    temp_batch_size = len(input_variable)# * hparams['tokens_per_sentence']
-
+                
             elif self.do_batch_process:
                 continue
                 pass
@@ -2661,7 +2671,6 @@ class NMT:
                           + ', low loss = %.6f' % self.long_term_loss + ',', end=' ')
                     print('true-epoch =', str(self.true_epoch) + ',','pairs = '
                           + str(len(self.pairs)), end=' ')
-
                     print()
 
                 if iter % (print_every * 20) == 0 or self.do_load_babi:
@@ -2821,8 +2830,13 @@ class NMT:
         words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
-            print('ans:', words)
+            print('ans:', words, end=' ')
+            if self.criterion_used > 0 and self.criterion_tot > 0:
+                print(', criterion-used =', self.criterion_used, '/', self.criterion_tot)
+            else:
+                print()
             print('try:', self._shorten(words, just_duplicates=True))
+            
             # self._word_from_prediction()
         ############################
         pass
