@@ -287,11 +287,6 @@ class Attn(torch.nn.Module):
         #print(z.size(), 'zzz')
         return torch.sum(hidden @ energy, dim=1)
 
-    
-
-        #energy = self.attn(torch.cat((hidden.expand(encoder_output.size(0), -1, -1), encoder_output), 2)).tanh()
-        #return torch.sum(self.v * energy, dim=2)
-
     def forward(self, hidden, encoder_outputs):
         # Calculate the attention weights (energies) based on the given method
         #if self.method == 'general':
@@ -569,6 +564,8 @@ class WrapMemRNN(nn.Module):
     def wrap_decoder_module(self, encoder_output, encoder_hidden, target_variable, token, input_unchanged=None):
         hidden = encoder_hidden
             
+        #print(encoder_output.size(), 'eos')
+
         if True:
             decoder_hidden = hidden
             #force = False
