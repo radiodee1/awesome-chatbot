@@ -641,7 +641,8 @@ class WrapMemRNN(nn.Module):
             ans = torch.cat(ans, dim=-1) ## -2/0
             
             ans = self.model_6_dec.out_concat_b(ans)
-            ans = self.model_6_dec.tanh_b(ans)
+            
+            ### ans = self.model_6_dec.tanh_b(ans)
 
             ans = self.model_6_dec.out_target_b(ans)
 
