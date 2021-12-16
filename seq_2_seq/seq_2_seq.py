@@ -2437,11 +2437,11 @@ class NMT:
 
                 if criterion is not None:
                     self.criterion_tot += i_range
-                if criterion is not None: # and t_var[j].item() is not UNK_token:
+                if criterion is not None: 
                     self.criterion_used += k
                     try:
-                        a = i_ans_out[j,:book_keeping[j],:] #.unsqueeze(0)
-                        t = i_tar_out[j,:book_keeping[j]] #.unsqueeze(0)
+                        a = i_ans_out[j,:book_keeping[j],:] 
+                        t = i_tar_out[j,:book_keeping[j]] 
                         #print(a.size(), t.size(), "a,t")
                         l = criterion(a, t)
                         loss += l
