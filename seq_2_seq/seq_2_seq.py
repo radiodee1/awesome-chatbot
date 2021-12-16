@@ -2427,7 +2427,7 @@ class NMT:
                         t = i_tar_out[j,:book_keeping[j]] 
                         #print(a.size(), t, "a,t")
                         l = criterion(a, t)
-                        if not (l != l):
+                        if not (l != l) or True:
                             loss += l
                         n_tot += t_var.size(0)
                     except ValueError as e:
