@@ -543,20 +543,22 @@ class WrapMemRNN(nn.Module):
             #len = 1 #question_variable.size(1)
             len = length_variable # torch.LongTensor(len)
 
-            sub_lst = []
-            num = 0
-            test = 0
+            #sub_lst = []
+            #num = 0
+            #test = 0
             #print(question_variable.size(), length_variable.size(), 'qv,lv')
-            q_var = question_variable#[zz]
+            q_var = question_variable #[zz]
             #print(q_var.size(), 'qvsize')
             #q_var = q_var.unsqueeze(0)
             out, hidden = self.model_1_seq(q_var, len, hidden)
+
             #print(hidden.size(), out.size(), 'encoder hid,out')
+            #print(hidden[1,0,:5], out[0,-1,:5], 'contents')
             #hidden = hidden.permute(1,0,2)
 
             #out = prune_tensor(out, 2)
-            sub_lst.append(out)
-            num += 1
+            #sub_lst.append(out)
+            #num += 1
 
 
         return out, hidden
