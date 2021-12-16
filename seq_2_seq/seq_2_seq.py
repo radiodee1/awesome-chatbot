@@ -3205,7 +3205,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         if not n.do_interactive:
             print("keyboard interrupt")
-
             n.update_result_file()
             if input("save? (y/N) > ").upper().startswith('Y'):
                 n.save_checkpoint(interrupt=True)
