@@ -635,11 +635,11 @@ class WrapMemRNN(nn.Module):
             #for iii in ans: print(iii.size())
             #print('---')
 
-            ans = torch.cat(ans, dim=-1) ## -2/0
+            ans = torch.cat(ans, dim=-1) ## 
             
             ans = self.model_6_dec.out_concat_b(ans)
             
-            ### ans = self.model_6_dec.tanh_b(ans)
+            ans = self.model_6_dec.tanh_b(ans)
 
             ans = self.model_6_dec.out_target_b(ans)
 
@@ -2444,7 +2444,8 @@ class NMT:
                         t = i_tar_out[j,:book_keeping[j]] 
                         #print(a.size(), t.size(), "a,t")
                         l = criterion(a, t)
-                        loss += l
+                        if not (l != l):
+                            loss += l
                         n_tot += t_var.size(0)
                     except ValueError as e:
                         #print('skip for size...', z)
