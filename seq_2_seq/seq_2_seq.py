@@ -2344,7 +2344,7 @@ class NMT:
             i_range = hparams['tokens_per_sentence']
             #if encoder_output.size(0) is 1:
             #    i_range = 1
-            book_keeping = [0 for _ in range(size)]
+            book_keeping = [size for _ in range(size)]
 
             i_ans = []
             i_tar = []
@@ -2423,6 +2423,7 @@ class NMT:
 
                 if criterion is not None:
                     self.criterion_tot += i_range
+
                 if criterion is not None: 
                     self.criterion_used += book_keeping[j]
                     try:
@@ -2443,9 +2444,17 @@ class NMT:
                         pass
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
+
+                    #if criterion is not None : #not isinstance(loss, int):
+                        #print("loss")
+                        #loss.backward(retain_graph=True)
+                        #wrapper_optimizer_2.step()
+                        #wrapper_optimizer_3.step()
+
                 else:
                     #print(j, "block", ansx.size(), a_var.size(), t_var.size())
                     pass
+
 
                 if True:
                     clip = 50.0
@@ -2453,7 +2462,7 @@ class NMT:
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
 
-            if criterion is not None : #not isinstance(loss, int):
+            if criterion is not None: #not isinstance(loss, int):
                 #print("loss")
                 #loss.backward(retain_graph=True)
                 wrapper_optimizer_2.step()
