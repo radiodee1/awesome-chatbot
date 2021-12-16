@@ -2857,6 +2857,9 @@ class NMT:
         #####################
         outputs = [batch]
         #print(outputs[0].size(),'tv')
+        z_num_short = hparams['tokens_per_sentence'] - 1
+        z_num_regular = hparams['tokens_per_sentence']
+
         if True:
             decoded_words = []
 
@@ -2883,12 +2886,12 @@ class NMT:
                         print('eol found.')
                         if not self.do_print_to_screen: break
                     else:
-                        if di < 4:
+                        if di < z_num_short:
                             if int(ni) == 0 and False:
                                 print(ni, '<--', self.output_lang.word2index[hparams['unk']])
                             if True:
                                 print(int(ni), self.output_lang.index2word[int(ni)])
-                        if di == 5 and len(outputs) > 5:
+                        if di == z_num_regular and len(outputs) > z_num_regular:
                             print('...etc')
                             break
                         ######################
