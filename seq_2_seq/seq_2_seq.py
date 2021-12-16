@@ -2341,7 +2341,10 @@ class NMT:
             i_range = hparams['tokens_per_sentence']
             #if encoder_output.size(0) is 1:
             #    i_range = 1
-            book_keeping = [SOS_token for _ in range(size)]
+            book_keeping = [0 for _ in range(size)]
+
+            i_ans = []
+            i_tar = []
 
             #eol_found = False
             for i in range(i_range): # hparams['tokens_per_sentence']): 
@@ -2375,29 +2378,27 @@ class NMT:
                 #print(hidden.size(),'hid out')
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
-                #print(ans.size(), ansx.size(), 'ansx')
+                #print(ans.size(), ansx.size(), 'ansx', size)
 
-                #ans_y = ans[0:0,0:0]
-                #target_variable_y = target_variable[0:0]
-
+                end_token = 0
+                '''
                 if True: ## modify ansx
                     for j in range(size):
+                        #if criterion is not None and target_variable[j].item() is UNK_token:
+                        #    if end_token >= j or end_token == 0:
+                        #        end_token = j
+                        #    pass
                         if ansx[j].item() in [ EOS_token, UNK_token]:
                             #print('end')
                             book_keeping[j] = EOS_token
-                        '''
-                        if ansx[j].item() is SOS_token and book_keeping[j] is SOS_token:
-                            book_keeping[j] = EOS_token
-                        elif ansx[j].item() is SOS_token and book_keeping[j] is not SOS_token: 
-                            book_keeping[j] = SOS_token
-                        '''
+                        
                         if book_keeping[j] is UNK_token:
                             ansx[j] = UNK_token
 
                         if book_keeping[j] is EOS_token:
                             ansx[j] = EOS_token
                             book_keeping[j] = UNK_token # for next pass
-                            
+                '''                            
 
                 if True:
                     if ansx.size(0) == 1: 
@@ -2420,29 +2421,42 @@ class NMT:
                     a_var = a_var.squeeze(1)
 
                 #print(ansx.size(), t_var.size(),'a,t')
+                i_ans.append(a_var.unsqueeze(1))
+                #i_tar.append(t_var.unsqueeze(1))
 
-                for j in range(size):
-                    if criterion is not None:
-                        self.criterion_tot += 1
-                    if criterion is not None and t_var[j].item() is not UNK_token:
-                        self.criterion_used +=1
-                        try:
-                            a = a_var[j,:].unsqueeze(0)
-                            t = t_var[j].unsqueeze(0)
-                            l = criterion(a, t)
-                            loss += l
-                            n_tot += t_var.size(0)
-                        except ValueError as e:
-                            #print('skip for size...', z)
-                            print(e)
-                            print(a_var.size(), t_var.size(),'a,t')
-                            exit()
-                            pass
-                        #print(l, loss, n_tot, 'loss')
-                        loss.backward(retain_graph=True)
-                    else:
-                        #print(j, "block", ansx.size(), a_var.size(), t_var.size())
+            
+            i_ans_out = torch.cat(i_ans, dim=1)
+            i_tar_out = tv_large 
+
+            for j in range(size):
+                for k in range(i_range):
+                    if criterion is not None and i_tar_out[j,k].item() is UNK_token:
+                        if book_keeping[j] == 0 or book_keeping[j] > k:
+                            book_keeping[j] = k
+                    pass
+
+                if criterion is not None:
+                    self.criterion_tot += i_range
+                if criterion is not None: # and t_var[j].item() is not UNK_token:
+                    self.criterion_used += k
+                    try:
+                        a = i_ans_out[j,:book_keeping[j],:] #.unsqueeze(0)
+                        t = i_tar_out[j,:book_keeping[j]] #.unsqueeze(0)
+                        #print(a.size(), t.size(), "a,t")
+                        l = criterion(a, t)
+                        loss += l
+                        n_tot += t_var.size(0)
+                    except ValueError as e:
+                        #print('skip for size...', z)
+                        print(e)
+                        print(a_var.size(), t_var.size(),'a,t')
+                        exit()
                         pass
+                    #print(l, loss, n_tot, 'loss')
+                    loss.backward(retain_graph=True)
+                else:
+                    #print(j, "block", ansx.size(), a_var.size(), t_var.size())
+                    pass
 
             if not isinstance(loss, int):
                 #print("loss")
