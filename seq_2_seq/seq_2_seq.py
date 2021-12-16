@@ -2380,25 +2380,8 @@ class NMT:
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 #print(ans.size(), ansx.size(), 'ansx', size)
 
-                end_token = 0
-                '''
-                if True: ## modify ansx
-                    for j in range(size):
-                        #if criterion is not None and target_variable[j].item() is UNK_token:
-                        #    if end_token >= j or end_token == 0:
-                        #        end_token = j
-                        #    pass
-                        if ansx[j].item() in [ EOS_token, UNK_token]:
-                            #print('end')
-                            book_keeping[j] = EOS_token
-                        
-                        if book_keeping[j] is UNK_token:
-                            ansx[j] = UNK_token
-
-                        if book_keeping[j] is EOS_token:
-                            ansx[j] = EOS_token
-                            book_keeping[j] = UNK_token # for next pass
-                '''                            
+                #end_token = 0
+                                           
 
                 if True:
                     if ansx.size(0) == 1: 
@@ -2442,7 +2425,7 @@ class NMT:
                     try:
                         a = i_ans_out[j,:book_keeping[j],:] 
                         t = i_tar_out[j,:book_keeping[j]] 
-                        #print(a.size(), t.size(), "a,t")
+                        #print(a.size(), t, "a,t")
                         l = criterion(a, t)
                         if not (l != l):
                             loss += l
