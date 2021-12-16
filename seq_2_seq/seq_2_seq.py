@@ -2469,18 +2469,7 @@ class NMT:
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
-            if criterion is not None and False:
-                #loss.backward()
-                if False:
-                    clip = 50.0
-                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
-                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
-
-                #memory_optimizer_3.step()
-                #wrapper_optimizer_1.step()
-                wrapper_optimizer_2.step()
-                wrapper_optimizer_3.step()
-                pass
+            
 
         if self.do_recurrent_output:
             ans = ansx #.permute(1,0)
