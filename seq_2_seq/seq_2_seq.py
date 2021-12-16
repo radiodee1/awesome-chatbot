@@ -2438,7 +2438,7 @@ class NMT:
                 if criterion is not None:
                     self.criterion_tot += i_range
                 if criterion is not None: 
-                    self.criterion_used += k
+                    self.criterion_used += book_keeping[j]
                     try:
                         a = i_ans_out[j,:book_keeping[j],:] 
                         t = i_tar_out[j,:book_keeping[j]] 
