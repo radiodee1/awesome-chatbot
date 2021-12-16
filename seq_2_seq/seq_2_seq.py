@@ -2266,6 +2266,7 @@ class NMT:
         loss = 0
         n_tot = 0
         l = 0
+        loss_out = 0
 
         if criterion is not None:
             self.criterion_tot = 0
@@ -2427,8 +2428,10 @@ class NMT:
                         t = i_tar_out[j,:book_keeping[j]] 
                         #print(a.size(), t, "a,t")
                         l = criterion(a, t)
-                        if not (l != l) or True:
-                            loss += l
+                        loss += l
+                        if not (l != l) :
+                            loss_out += l
+
                         n_tot += t_var.size(0)
                     except ValueError as e:
                         #print('skip for size...', z)
@@ -2442,26 +2445,28 @@ class NMT:
                     #print(j, "block", ansx.size(), a_var.size(), t_var.size())
                     pass
 
-            if not isinstance(loss, int):
-                #print("loss")
-                #loss.backward(retain_graph=True)
-                wrapper_optimizer_2.step()
-                wrapper_optimizer_3.step()
-                
                 if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
-            
 
+            if criterion is not None : #not isinstance(loss, int):
+                #print("loss")
+                #loss.backward(retain_graph=True)
+                wrapper_optimizer_2.step()
+                wrapper_optimizer_3.step()
+                
+                
         if self.do_recurrent_output:
             ans = ansx #.permute(1,0)
             #print(ans.size(),'ans')
             pass
+        
+        #loss_out = 0
 
         #print("ans_batch", len(ans_batch))
-        return loss, ans_batch
+        return loss_out, ans_batch
 
     #######################################
 
