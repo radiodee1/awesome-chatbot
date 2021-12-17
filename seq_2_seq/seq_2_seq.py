@@ -2425,7 +2425,12 @@ class NMT:
                     if criterion is not None and i_tar_out[j,k].item() is UNK_token:
                         if book_keeping[j] == 0 or book_keeping[j] > k:
                             book_keeping[j] = k
-                    pass
+                    if criterion is not None and i_tar_out[j,k].item() is EOS_token:
+                        if book_keeping[j] == 0 or book_keeping[j] > k + 1:
+                            if k + 1 < i_range:
+                                book_keeping[j] = k + 1
+                                #print("eos token")
+
 
                 if criterion is not None:
                     self.criterion_tot += size #i_range
