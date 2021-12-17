@@ -2418,6 +2418,8 @@ class NMT:
             i_ans_out = torch.cat(i_ans, dim=1)
             i_tar_out = tv_large 
 
+            print(size, i_range, "s,ir")
+
             for j in range(size):
                 for k in range(i_range):
                     if criterion is not None and i_tar_out[j,k].item() is UNK_token:
@@ -2426,7 +2428,7 @@ class NMT:
                     pass
 
                 if criterion is not None:
-                    self.criterion_tot += i_range
+                    self.criterion_tot += size #i_range
 
                 if criterion is not None: 
                     self.criterion_used += book_keeping[j]
