@@ -2418,9 +2418,13 @@ class NMT:
             i_ans_out = torch.cat(i_ans, dim=1)
             i_tar_out = tv_large 
 
-            #print(size, i_range, "s,ir")
+            #print(size, i_range, "s,ir", i_tar_out.size())
 
             for j in range(size):
+
+                if criterion is not None:
+                    self.criterion_tot += i_range
+
                 for k in range(i_range):
                     if criterion is not None and i_tar_out[j,k].item() is UNK_token:
                         if book_keeping[j] == 0 or book_keeping[j] > k:
@@ -2432,11 +2436,9 @@ class NMT:
                                 #print("eos token")
 
 
-                if criterion is not None:
-                    self.criterion_tot += size #i_range
-
                 if criterion is not None: 
                     self.criterion_used += book_keeping[j]
+
                     try:
                         a = i_ans_out[j,:book_keeping[j],:] 
                         t = i_tar_out[j,:book_keeping[j]] 
