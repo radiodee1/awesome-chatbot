@@ -762,6 +762,8 @@ class NMT:
         self.criterion_tot = 0
         self.criterion_used = 0
 
+        self.iter_stop = 0
+
         self.do_train = False
         self.do_infer = False
         self.do_review = False
@@ -859,6 +861,7 @@ class NMT:
         parser.add_argument('--no-vocab', help='use open ended vocabulary length tokens.', action='store_true')
         parser.add_argument('--no-sol', help="do not automatically add *sol* token.", action="store_true")
         parser.add_argument('--add-eol', help="add eol to source material", action="store_true")
+        parser.add_argument('--stop', help='iter to end training at.', default=0)
 
         self.args = parser.parse_args()
         self.args = vars(self.args)
@@ -983,6 +986,7 @@ class NMT:
             self.do_no_vocabulary = True
         if self.printable == '': self.printable = hparams['base_filename']
         if self.args['no_sol'] == True: self.no_sol = True
+        self.iter_stop = int(self.args['stop'])
 
         ''' reset lr vars if changed from command line '''
         self.lr_low = hparams['learning_rate'] #/ 100.0
@@ -2661,6 +2665,17 @@ class NMT:
             if l is not None:
                 print_loss_total += float(l) #.clone())
 
+            if self.iter_stop <= iter and self.iter_stop != 0:
+                print("exit")
+                if not self.do_interactive:
+                    print("counter interrupt")
+                    self.update_result_file()
+                    if input("save? (y/N) > ").upper().startswith('Y'):
+                        self.save_checkpoint(interrupt=True)
+                    else:
+                        print("do not save...")
+                exit()
+
             if iter % print_every == 0:
                 print_loss_avg = print_loss_total / print_every
                 print_loss_total = 0
@@ -2751,10 +2766,16 @@ class NMT:
                     elif len(self.score_list_training) >= 1 and self.do_skip_validation:
                         print('[ last train:', self.score_list_training[-1],'][ no valid ]')
 
+                    
+
                     print("-----")
+
+
 
         if self.do_batch_process:
             self.save_checkpoint(num=len(self.pairs))
+
+        
 
         str_score = ' %.2f'
         if self.score >= 100.00: str_score = '%.2f'
