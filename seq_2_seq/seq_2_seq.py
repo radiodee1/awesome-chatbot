@@ -1308,9 +1308,9 @@ class NMT:
 
                         lans = l_out[i].strip('\n')
                         if True:
-                            lin = format_fn(lin, add_eol=self.args['add_eol'])
-                            lques = format_fn(lques, add_eol=self.args['add_eol'])
-                            lans = format_fn(lans, add_eol=self.args['add_eol'])
+                            lin = format_fn(lin, add_eol=self.args['add_eol'], isolate_punct=True)
+                            lques = format_fn(lques, add_eol=self.args['add_eol'], isolate_punct=True)
+                            lans = format_fn(lans, add_eol=self.args['add_eol'], isolate_punct=True)
                         line = [ lin, lques , lans]
                     self.pairs.append(line)
 

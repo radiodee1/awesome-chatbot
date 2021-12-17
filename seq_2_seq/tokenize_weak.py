@@ -12,7 +12,7 @@ to_lower = True
 test_on_screen = False
 remove_caps = True
 
-def format(content, do_tokenize=False, add_eol=False):
+def format(content, do_tokenize=False, add_eol=False, isolate_punct=False):
     c = content.lower().strip()
     c = unidecode.unidecode(c)
     c = re.sub('[][)(\n\r#@*^><:|{}]',' ', c)
@@ -71,11 +71,12 @@ def format(content, do_tokenize=False, add_eol=False):
         elif len(amp) > 0 or len(link) > 0 or len(link2) > 0 or len(www) > 0 or z == 'newlinechar':
             # do not append z!!
             pass
-
+        
         else:
             pass
             cy.append(z)
 
+        
 
     x = ' '.join(cy)
 
@@ -95,11 +96,17 @@ def format(content, do_tokenize=False, add_eol=False):
     for i in range(len(c)):
         cc = c[i].strip()
 
+        if isolate_punct:
+            if cc in '!.?' : #['!', '.', '?']:
+                cx.append(cc)
+                #print('break', cc)
+                break
         if i < len(c) - 1 and cc != c[i + 1].lower():
             ## skip elipses and repeats.
             cx.append(cc)
         elif i + 1 == len(c):
             cx.append(cc)
+        
     if add_eol:
         cx.append(hparams['eol'])
 
@@ -117,3 +124,4 @@ if __name__ == '__main__':
     print(format(' something like %%%, or $$$ , right?'))
     print(format("it's like 1 or ' me ' or 23ish. $omething "))
     print(format("."))
+    print(format("yes. or . no?", isolate_punct=True, add_eol=True))
