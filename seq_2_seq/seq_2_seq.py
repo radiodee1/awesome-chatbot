@@ -2418,7 +2418,7 @@ class NMT:
             i_ans_out = torch.cat(i_ans, dim=1)
             i_tar_out = tv_large 
 
-            print(size, i_range, "s,ir")
+            #print(size, i_range, "s,ir")
 
             for j in range(size):
                 for k in range(i_range):
