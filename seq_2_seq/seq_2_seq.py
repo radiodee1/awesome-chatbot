@@ -2283,10 +2283,11 @@ class NMT:
                 self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
-                #wrapper_optimizer_1.zero_grad()
-                wrapper_optimizer_2.zero_grad()
-                #memory_optimizer_3.zero_grad()
-                wrapper_optimizer_3.zero_grad()
+                if False:
+                    #wrapper_optimizer_1.zero_grad()
+                    wrapper_optimizer_2.zero_grad()
+                    #memory_optimizer_3.zero_grad()
+                    wrapper_optimizer_3.zero_grad()
 
             else:
                 self.model_0_wra.eval()
@@ -2414,7 +2415,13 @@ class NMT:
                 i_ans.append(a_var.unsqueeze(1))
                 #i_tar.append(t_var.unsqueeze(1))
 
-            
+            if criterion is not None: 
+                if False:
+                    #wrapper_optimizer_1.zero_grad()
+                    wrapper_optimizer_2.zero_grad()
+                    #memory_optimizer_3.zero_grad()
+                    wrapper_optimizer_3.zero_grad()
+
             i_ans_out = torch.cat(i_ans, dim=1)
             i_tar_out = tv_large 
 
@@ -2423,7 +2430,7 @@ class NMT:
             for j in range(size):
 
                 if criterion is not None:
-                    self.criterion_tot += i_range
+                    self.criterion_tot += size #i_range
 
                 for k in range(i_range):
                     if criterion is not None and i_tar_out[j,k].item() is UNK_token:
@@ -2437,6 +2444,12 @@ class NMT:
 
 
                 if criterion is not None: 
+                    if True:
+                        #wrapper_optimizer_1.zero_grad()
+                        wrapper_optimizer_2.zero_grad()
+                        #memory_optimizer_3.zero_grad()
+                        wrapper_optimizer_3.zero_grad()
+
                     self.criterion_used += book_keeping[j]
 
                     try:
@@ -2458,11 +2471,11 @@ class NMT:
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
 
-                    #if criterion is not None : #not isinstance(loss, int):
+                    if criterion is not None and False: #not isinstance(loss, int):
                         #print("loss")
                         #loss.backward(retain_graph=True)
-                        #wrapper_optimizer_2.step()
-                        #wrapper_optimizer_3.step()
+                        wrapper_optimizer_2.step()
+                        wrapper_optimizer_3.step()
 
                 else:
                     #print(j, "block", ansx.size(), a_var.size(), t_var.size())
@@ -2475,7 +2488,7 @@ class NMT:
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
 
 
-            if criterion is not None: #not isinstance(loss, int):
+            if criterion is not None : #not isinstance(loss, int):
                 #print("loss")
                 #loss.backward(retain_graph=True)
                 wrapper_optimizer_2.step()
