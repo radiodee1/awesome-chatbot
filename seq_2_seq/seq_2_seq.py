@@ -2416,10 +2416,8 @@ class NMT:
                 #i_tar.append(t_var.unsqueeze(1))
 
             if criterion is not None: 
-                if False:
-                    #wrapper_optimizer_1.zero_grad()
+                if True:
                     wrapper_optimizer_2.zero_grad()
-                    #memory_optimizer_3.zero_grad()
                     wrapper_optimizer_3.zero_grad()
 
             i_ans_out = torch.cat(i_ans, dim=1)
@@ -2444,11 +2442,13 @@ class NMT:
 
 
                 if criterion is not None: 
-                    if True:
+                    if False:
                         #wrapper_optimizer_1.zero_grad()
                         wrapper_optimizer_2.zero_grad()
                         #memory_optimizer_3.zero_grad()
                         wrapper_optimizer_3.zero_grad()
+                        #wrapper_optimizer_2.step()
+                        #wrapper_optimizer_3.step()
 
                     self.criterion_used += book_keeping[j]
 
@@ -2476,6 +2476,12 @@ class NMT:
                         #loss.backward(retain_graph=True)
                         wrapper_optimizer_2.step()
                         wrapper_optimizer_3.step()
+                        
+                        #loss.backward(retain_graph=True)
+
+                        #wrapper_optimizer_2.zero_grad()
+                        #wrapper_optimizer_3.zero_grad()
+                        
 
                 else:
                     #print(j, "block", ansx.size(), a_var.size(), t_var.size())
