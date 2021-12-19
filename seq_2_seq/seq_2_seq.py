@@ -2324,13 +2324,13 @@ class NMT:
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, wrapper_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
-        size = length_variable.size()[0]
+        size = target_variable.size()[1]
         loss = 0
         n_tot = 0
         l = 0
         loss_out = 0
 
-        #print(size, "size")
+        #print(size, target_variable.size(), "size")
 
         if criterion is not None:
             self.criterion_tot = 0
@@ -2368,13 +2368,11 @@ class NMT:
 
             encoder_output, hidden_x = self.model_0_wra.wrap_encoder_module(iv_large, length_variable)
 
-            #print(encoder_output.size(), hidden_x.size(),  'eos size')
-            #else:
-            #use = -1
-            book_keeping = [size for _ in range(size)]
+            i_range = target_variable.size()[0] # hparams['tokens_per_sentence']
 
-            i_range = hparams['tokens_per_sentence']
-            i_ans = []
+            
+            book_keeping = [i_range for _ in range(size)]
+
 
             output_unchanged = encoder_output[:]
 
@@ -2384,16 +2382,19 @@ class NMT:
                     self.criterion_tot += size #i_range
 
                 for k in range(i_range): ## 10
-                    if criterion is not None and tv_large[j,k].item() is UNK_token:
+                    if tv_large[j,k].item() is UNK_token:
                         if book_keeping[j] == 0 or book_keeping[j] > k:
                             book_keeping[j] = k
-                    if criterion is not None and tv_large[j,k].item() is EOS_token:
+                            #print("unk token", j, k)
+                    if tv_large[j,k].item() is EOS_token:
                         if book_keeping[j] == 0 or book_keeping[j] > k + 1:
                             if k + 1 < i_range:
                                 book_keeping[j] = k + 1
-                                #print("eos token")
+                                #print("eos token", j, k)
 
-                i = 0
+                if size == 1: 
+                    #print(book_keeping, 'book')
+                    pass
                 
                 if len(hidden_x.size()) == 2:
                     hidden_x = hidden_x.unsqueeze(1)
@@ -2414,25 +2415,25 @@ class NMT:
                 output_unchanged_final = output_unchanged[j, :book_keeping[j], :].unsqueeze(0)
                 hidden_final = hidden_x[j,:, :].unsqueeze(0)
 
-                if size == 1:
+                if size == 1 and False:
                     print(encoder_output_final)
                     print(encoder_output_final.size(), target_variable_final.size(), output_unchanged_final.size(), hidden_final.size(),j, book_keeping[j],"final")
 
-                ans, hidden_out, ans_small = self.model_0_wra.wrap_decoder_module(encoder_output_final, hidden_final, target_variable_final, i , output_unchanged_final)
+                ans, hidden_out, ans_small = self.model_0_wra.wrap_decoder_module(encoder_output_final, hidden_final, target_variable_final, 0 , output_unchanged_final)
 
                 #print(hidden.size(),'hid out')
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
-                #print(ans.size(), ansx.size(), 'ansx', size)
-
-                if True:
+                
+                
+                #if True:
                     #print(ansx.size(),"ansx here...")
-                    if ansx.size(1) == 1 and False: 
-                        ansx = ansx.item()
-                    #else:
-                    ans_batch.append(ansx)
+                if ansx.size(1) == 1 and False: 
+                    ansx = ansx.item()
+                #else:
+                ans_batch.append(ansx)
 
-                if size == 1 : #and not self.args['no_sol'] : 
+                if size == 1 and False: #and not self.args['no_sol'] : 
                     ansx = torch.LongTensor([ansx])
 
                 a_var = ans.squeeze(0) 
@@ -2507,7 +2508,7 @@ class NMT:
         
         #loss_out = 0
 
-        print("ans_batch", len(ans_batch))
+        #print("ans_batch", len(ans_batch))
         return loss_out, ans_batch
 
     #######################################
@@ -2868,15 +2869,7 @@ class NMT:
             print('src:', choice[0] )
             print('ref:', choice[2])
 
-        '''
-        nums = self.variablesFromPair(choice)
-        if self.do_load_babi:
-            question = nums[1]
-            target = nums[2]
-        if not self.do_load_babi:
-            question = nums[0]
-            target = None
-        '''
+        
         words, _ = self.evaluate(None, None, input_variable, question=ques_variable, target_variable=target_variable, lengths=lengths)
         # print(choice)
         if not self.do_load_babi or self.do_recurrent_output:
@@ -2913,12 +2906,12 @@ class NMT:
             #ans = ans.permute(1,0,2)
             #print(batch,'- batch 00')
 
-            print(len(batch),'len batch')
-            print(batch[0],'zero batch')
+            #print(len(batch),'len batch')
+            #print(batch[0],'zero batch')
 
         #####################
-        outputs = batch[0][0] # [batch]
-        #print(outputs[0].size(),'tv')
+        outputs = batch # [batch]
+        #print(outputs,'out')
         z_num_short = hparams['tokens_per_sentence'] - 1
         z_num_regular = hparams['tokens_per_sentence']
 
@@ -2932,15 +2925,8 @@ class NMT:
                     output = outputs[di]
                     ni = output
                     #output = output.permute(1, 0)
-                    #print(output,'out')
-                    '''
-                    if True:
-                        #print(output.size(),'out')
-                        ni = torch.argmax(output, dim=0).item()
-                        #print(ni,'ni')
-                    else:
-                        ni = output[di]
-                    '''
+                    print(output,'out')
+                    
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
                         xxx = hparams['eol']
@@ -2965,7 +2951,7 @@ class NMT:
                             decoded_words.append(' ')
                             #print('!!')
 
-        return decoded_words, None #decoder_attentions[:di + 1]
+        return decoded_words, None 
 
 
 
