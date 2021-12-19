@@ -2900,32 +2900,27 @@ class NMT:
         self.model_0_wra.model_6_dec.eval()
 
         with torch.no_grad():
-            #output
+            
             _, batch = self.train(input_variable, t_var, None, lengths, None,None, None, None,None,None, None,None, None)
 
-            #ans = ans.permute(1,0,2)
-            #print(batch,'- batch 00')
-
-            #print(len(batch),'len batch')
-            #print(batch[0],'zero batch')
 
         #####################
-        outputs = batch # [batch]
-        print(outputs,'out')
+        outputs = batch[0] 
+
         z_num_short = hparams['tokens_per_sentence'] - 1
         z_num_regular = hparams['tokens_per_sentence']
 
         if True:
             decoded_words = []
 
-            for db in range(1):
-                outputs = outputs[0] #.squeeze(0)
-                for di in range(len(outputs) - 1):
+            if True:
+                #outputs = outputs.squeeze()
+                for di in range(outputs.size()[1] ):
                     #print(db,di, 'outputs')
-                    output = outputs[di]
-                    ni = output
+                    output = outputs[:,di,:].squeeze()
+                    ni = output.item()
                     #output = output.permute(1, 0)
-                    print(output,'out')
+                    #print(ni,'out')
                     
                     #print(ni, 'ni')
                     if int(ni) == int(EOS_token):
