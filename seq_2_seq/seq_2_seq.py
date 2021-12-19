@@ -437,13 +437,13 @@ class Decoder(nn.Module):
             ans_list.append(ans)
             rnn_list.append(rnn_output)
 
-        hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
+        #hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
 
         #out_x = rnn_output
 
         #rnn_list.append(rnn_output)
 
-        decoder_hidden_x = hidden_small #.permute(1,0,2)
+        decoder_hidden_x = hidden #.permute(1,0,2)
 
         #print(rnn_output.size(), "pre-out_x")
 
@@ -485,14 +485,6 @@ class WrapMemRNN(nn.Module):
 
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size,2, dropout, None,
                                    cancel_attention=self.cancel_attention)
-
-
-        #self.embed = nn.Embedding(vocab_size, hidden_size, padding_idx=1)
-        #self.embed.weight.requires_grad = not self.model_1_seq.freeze_embedding
-
-        #self.attention_mod = Attn(hidden_size, method='dot')
-        #self.out_target_b = nn.Linear(self.hidden_size *2, vocab_size)
-
 
         self.opt_1 = None
         self.opt_2 = None
@@ -671,54 +663,7 @@ class WrapMemRNN(nn.Module):
             print(encoder_out_x.size(), decoder_hidden_x.size(), "ed to gru")
 
             ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
-
-            #################################
-            '''
-            attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged) 
             
-            #print(attn_weights.size(), "attn weights", ans_small.size(), input_unchanged.size(), token)
-
-            context = attn_weights.bmm(input_unchanged) 
-            #context = self.model_6_dec.relu_b(context)
-            #ans_small = sent_out
-            
-            ans_small_x = ans_small
-
-            ans = [
-                ans_small_x, 
-                context 
-            ]
-
-            print('---')
-            for iii in ans: print(iii.size())
-            print('---')
-
-            ans = torch.cat(ans, dim=-1) ## 
-            
-            ans = self.model_6_dec.out_concat_b(ans)
-            
-            ans = self.model_6_dec.tanh_b(ans)
-
-            ans = self.model_6_dec.out_target_b(ans)
-
-            ## ans = self.model_6_dec.relu_b(ans) ## ?? <-- 
-
-            #ans = self.model_6_dec.tanh_b(ans)
-
-            ## ans = self.model_6_dec.softmax_b(ans)
-
-            ans_out.append(ans)
-            decoder_hidden_out.append(decoder_hidden_x)
-            ans_small_out.append(ans_small_x)
-            '''
-        #print("+++")
-        #for iii in ans_out: print(iii.size(), i)
-        #print("+++")
-
-        #ans = torch.cat(ans_out, dim=1)
-        #decoder_hidden_x = torch.cat(decoder_hidden_out, dim=1)
-        #ans_small = torch.cat(ans_small_out, dim=1)
-
         return ans, decoder_hidden_x, ans_small
 
 
