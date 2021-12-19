@@ -351,9 +351,9 @@ class Decoder(nn.Module):
         self.embed.weight.requires_grad = requires_grad
 
     def forward(self, encoder_out, decoder_hidden, last_word=None, index=None):
-        return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
+        #return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
 
-    def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
+        #def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
         encoder_out_x = encoder_out
         while len(encoder_out_x.size()) > 3 and encoder_out_x.size(1) == 1:
@@ -390,15 +390,51 @@ class Decoder(nn.Module):
         #hidden = torch.cat([hidden_prev_thin, hidden_prev_thin], dim=0)
 
         #hidden = decoder_hidden_x.transpose(1,0)
+        input_unchanged = encoder_out
 
         rnn_list = []
+        ans_list = []
 
-        for i in range(embedded.size()[0]):
+        for i in range(embedded.size()[1]):
             #print(embedded.size(), hidden.size(), 'gru inside')
-            embedded_x = embedded[ i, :, :].unsqueeze(0)
-            #print(embedded_x.size(), "gru two")
+            embedded_x = embedded[ :, i, :].unsqueeze(1)
+            print(embedded_x.size(), "gru two", i)
+            if hparams['teacher_forcing_ratio'] > random.random() and self.training and i > 0:
+                embedded_x =  embedded_x + rnn_output
+
             rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
-            #embedded = rnn_output
+
+
+            attn_weights = self.attention_mod(hidden, input_unchanged) 
+            
+            attn = attn_weights #[:,:,i]
+
+            print(attn.size(), "attn weights", rnn_output.size(), input_unchanged.size(),i)
+
+            context = attn.bmm(input_unchanged) 
+            #context = self.model_6_dec.relu_b(context)
+            #ans_small = sent_out
+            
+            ans_small_x = rnn_output #[:,i,:].unsqueeze(1)
+
+            ans = [
+                ans_small_x, 
+                context 
+            ]
+
+            print('---')
+            for iii in ans: print(iii.size())
+            print('---')
+
+            ans = torch.cat(ans, dim=-1) ## 
+            
+            ans = self.out_concat_b(ans)
+            
+            ans = self.tanh_b(ans)
+
+            ans = self.out_target_b(ans)
+
+            ans_list.append(ans)
             rnn_list.append(rnn_output)
 
         hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
@@ -412,10 +448,10 @@ class Decoder(nn.Module):
         #print(rnn_output.size(), "pre-out_x")
 
         out_x = torch.cat(rnn_list, dim=0)
-
+        ans_x = torch.cat(ans_list, dim=0)
         #print(out_x.size(), 'out_x')
 
-        return None, decoder_hidden_x, out_x #, rnn_tot
+        return ans_x, decoder_hidden_x, out_x #, rnn_tot
 
 
 
@@ -590,37 +626,24 @@ class WrapMemRNN(nn.Module):
     def wrap_decoder_module(self, encoder_output_in, encoder_hidden_in, target_variable_in, token, input_unchanged_in=None): ## <--
         
         #decoder_hidden_x = encoder_hidden_in
+        #ans = None
+        #ans_out = []
+        #decoder_hidden_out = []
+        #ans_small_out = []
 
-        ans_out = []
-        decoder_hidden_out = []
-        ans_small_out = []
+        print(encoder_output_in.size(), "eoi size")
 
-        for i in range(encoder_output_in.size()[1]):
+        if True: #for i in range(encoder_output_in.size()[1]):
     
             #print(target_variable_in.size(), encoder_output_in.size(), encoder_hidden_in.size(), input_unchanged_in.size(), 'eos')
 
-            target_variable = target_variable_in[:,i].unsqueeze(0)
-            encoder_output = encoder_output_in[:,i].unsqueeze(0)
+            target_variable = target_variable_in #[:,i].unsqueeze(0)
+            encoder_output = encoder_output_in #[:,i].unsqueeze(0)
             decoder_hidden_x = encoder_hidden_in #[:,i].unsqueeze(0)
             input_unchanged = input_unchanged_in #[i].unsqueeze(0)
 
-            #print(input_unchanged.size(), decoder_hidden_x.size(), encoder_output.size(), target_variable.size(), "all")
-
-            #decoder_hidden = decoder_hidden_x
-            #force = False
-            #print(token, "token")
-            if hparams['teacher_forcing_ratio'] > random.random() and self.model_6_dec.training: # and token != 0:
-                #print("force", encoder_output.size())
-                #force = True
-                embed_index = self.model_1_seq.embed(target_variable) 
-                embed_index = embed_index.unsqueeze(1) + encoder_output
-                #print(embed_index.size(),"index")
-                #embed_index = torch.cat([embed_index_x, embed_index_x], dim=2)
-            elif self.model_6_dec.training:
-                embed_index = encoder_output
-            else:
-                embed_index = encoder_output
-
+            
+            embed_index = encoder_output
             #print(embed_index.size(), "eindex size")
             if embed_index.size(-1) is 1:
                 #embed_index = self.model_1_seq.embed(embed_index)
@@ -643,13 +666,14 @@ class WrapMemRNN(nn.Module):
 
             #decoder_hidden_x = decoder_hidden 
 
-            encoder_out_x = encoder_out_x.unsqueeze(1)
+            #encoder_out_x = encoder_out_x.unsqueeze(1)
             
+            print(encoder_out_x.size(), decoder_hidden_x.size(), "ed to gru")
 
-            _, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
+            ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
 
             #################################
-            
+            '''
             attn_weights = self.model_6_dec.attention_mod(decoder_hidden_x, input_unchanged) 
             
             #print(attn_weights.size(), "attn weights", ans_small.size(), input_unchanged.size(), token)
@@ -657,29 +681,17 @@ class WrapMemRNN(nn.Module):
             context = attn_weights.bmm(input_unchanged) 
             #context = self.model_6_dec.relu_b(context)
             #ans_small = sent_out
-
-            if False:
-                if ans_small.size(1) is not 1 and ans_small.size(1) > token:
-                    ans_small = ans_small[:,token].unsqueeze(1)
-                    #print("force 2")
-                else: 
-                    ans_small = ans_small[:,0].unsqueeze(1)
-
-            #print(context.size(), ans_small.size() , attn_weights.size(), input_unchanged.size() ,'con')
-
-            if ans_small.size(0) > i:
-                ans_small_x = ans_small[i,:,:].unsqueeze(0)
-            else:
-                ans_small_x = ans_small
+            
+            ans_small_x = ans_small
 
             ans = [
                 ans_small_x, 
                 context 
             ]
 
-            #print('---')
-            #for iii in ans: print(iii.size())
-            #print('---')
+            print('---')
+            for iii in ans: print(iii.size())
+            print('---')
 
             ans = torch.cat(ans, dim=-1) ## 
             
@@ -698,14 +710,14 @@ class WrapMemRNN(nn.Module):
             ans_out.append(ans)
             decoder_hidden_out.append(decoder_hidden_x)
             ans_small_out.append(ans_small_x)
-        
+            '''
         #print("+++")
         #for iii in ans_out: print(iii.size(), i)
         #print("+++")
 
-        ans = torch.cat(ans_out, dim=1)
-        decoder_hidden_x = torch.cat(decoder_hidden_out, dim=1)
-        ans_small = torch.cat(ans_small_out, dim=1)
+        #ans = torch.cat(ans_out, dim=1)
+        #decoder_hidden_x = torch.cat(decoder_hidden_out, dim=1)
+        #ans_small = torch.cat(ans_small_out, dim=1)
 
         return ans, decoder_hidden_x, ans_small
 
