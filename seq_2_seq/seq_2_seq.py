@@ -2911,7 +2911,7 @@ class NMT:
 
         #####################
         outputs = batch # [batch]
-        #print(outputs,'out')
+        print(outputs,'out')
         z_num_short = hparams['tokens_per_sentence'] - 1
         z_num_regular = hparams['tokens_per_sentence']
 
