@@ -1929,6 +1929,8 @@ class NMT:
 
                 if not self.do_load_embeddings:
                     self.model_0_wra.model_1_seq.embed.load_state_dict(checkpoint[0]['embedding01'])
+                    self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
+                    
                     #self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding01'])
                 '''
                 if self.do_load_embeddings and False:
