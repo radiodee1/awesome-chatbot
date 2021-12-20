@@ -398,12 +398,7 @@ class Decoder(nn.Module):
         embedded_x = embedded[ :, 0, :].unsqueeze(1)
 
         for i in range(embedded.size()[1]):
-            #print(embedded.size(), hidden.size(), 'gru inside')
-            #if embedded.size(1) < i or i == 0:
-            #    embedded_x = embedded[ :, i, :].unsqueeze(1)
-
             
-            #print(embedded_x.size(), "gru two", i)
             
             if hparams['teacher_forcing_ratio'] > random.random() and self.training and i > 0:
 
