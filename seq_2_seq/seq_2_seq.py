@@ -2420,7 +2420,8 @@ class NMT:
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
                     #loss_out.backward(retain_graph=True)
-                if True:
+                    
+                if criterion is not None:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
