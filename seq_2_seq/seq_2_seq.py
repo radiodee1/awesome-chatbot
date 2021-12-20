@@ -401,7 +401,7 @@ class Decoder(nn.Module):
             elif i > 0:
 
                 embedded_x = rnn_output
-                
+
                 if True:
                     embedded_x = self.embed(ansx)
 
@@ -2359,6 +2359,7 @@ class NMT:
                 #print(hidden.size(),'hid out')
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
+                #print(ansx.size(),'ansx')
                 
                 ans_batch.append(ansx)
 
