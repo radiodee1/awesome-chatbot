@@ -2292,12 +2292,7 @@ class NMT:
                 self.model_0_wra.train()
                 self.model_0_wra.model_1_seq.train()
                 self.model_0_wra.model_6_dec.train()
-                if False:
-                    #wrapper_optimizer_1.zero_grad()
-                    wrapper_optimizer_2.zero_grad()
-                    #memory_optimizer_3.zero_grad()
-                    wrapper_optimizer_3.zero_grad()
-
+                
             else:
                 self.model_0_wra.eval()
                 self.model_0_wra.model_1_seq.eval()
@@ -2327,10 +2322,10 @@ class NMT:
 
             output_unchanged = encoder_output[:]
 
-            for j in range(size): ## 50
+            if criterion is not None and size != 1:
+                self.criterion_tot += size * i_range
 
-                if criterion is not None:
-                    self.criterion_tot += size #i_range
+            for j in range(size): ## 50
 
                 for k in range(i_range): ## 10
                     if tv_large[j,k].item() is UNK_token:
@@ -2342,10 +2337,6 @@ class NMT:
                             if k + 1 < i_range:
                                 book_keeping[j] = k + 1
                                 #print("eos token", j, k)
-
-                if size == 1: 
-                    #print(book_keeping, 'book')
-                    pass
                 
                 if len(hidden_x.size()) == 2:
                     hidden_x = hidden_x.unsqueeze(1)
@@ -2366,27 +2357,14 @@ class NMT:
                 output_unchanged_final = output_unchanged[j, :book_keeping[j], :].unsqueeze(0)
                 hidden_final = hidden_x[j,:, :].unsqueeze(0)
 
-                if size == 1 and False:
-                    print(encoder_output_final)
-                    print(encoder_output_final.size(), target_variable_final.size(), output_unchanged_final.size(), hidden_final.size(),j, book_keeping[j],"final")
-
                 ans, hidden_out, ans_small = self.model_0_wra.wrap_decoder_module(encoder_output_final, hidden_final, target_variable_final, 0 , output_unchanged_final)
 
                 #print(hidden.size(),'hid out')
 
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 
-                
-                #if True:
-                    #print(ansx.size(),"ansx here...")
-                if ansx.size(1) == 1 and False: 
-                    ansx = ansx.item()
-                #else:
                 ans_batch.append(ansx)
-
-                if size == 1 and False: #and not self.args['no_sol'] : 
-                    ansx = torch.LongTensor([ansx])
-
+                
                 a_var = ans.squeeze(0) 
 
                 #print(ansx.size(), a_var.size(), tv_large.size(), "a_var") 
@@ -2403,6 +2381,9 @@ class NMT:
                 #i_tar.append(t_var.unsqueeze(1))
 
                 if criterion is not None: 
+                    #self.criterion_tot += size
+                    self.criterion_used += book_keeping[j]
+
                     if True:
                         wrapper_optimizer_2.zero_grad()
                         wrapper_optimizer_3.zero_grad()
