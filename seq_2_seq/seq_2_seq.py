@@ -202,7 +202,7 @@ class Encoder(nn.Module):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.bidirectional = True
-        self.embed = nn.Embedding(source_vocab_size,  embed_dim)
+        self.embed = nn.Embedding(source_vocab_size, 2* embed_dim)
         self.sum_encoder = True
         self.pack_and_pad = True ##hiddencut
         if hparams['single']:
