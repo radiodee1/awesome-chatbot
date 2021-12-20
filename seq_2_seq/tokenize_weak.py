@@ -12,7 +12,7 @@ to_lower = True
 test_on_screen = False
 remove_caps = True
 
-def format(content, do_tokenize=False, add_eol=False, isolate_punct=False):
+def format(content, do_tokenize=False, add_eol=False, isolate_punct=False, keep_contractions=False):
     c = content.lower().strip()
     c = unidecode.unidecode(c)
     c = re.sub('[][)(\n\r#@*^><:|{}]',' ', c)
@@ -88,7 +88,8 @@ def format(content, do_tokenize=False, add_eol=False, isolate_punct=False):
     x = re.sub("[`]", "'", x)
     x = re.sub('[.]', ' . ', x)
     if hparams['embed_size'] is not None and hparams['embed_size'] != 0:
-        x = re.sub("[']", " ' ", x) #contractions!!
+        if not keep_contractions:
+            x = re.sub("[']", " ' ", x) #contractions!!
 
     c = x.split()
 
@@ -125,3 +126,4 @@ if __name__ == '__main__':
     print(format("it's like 1 or ' me ' or 23ish. $omething "))
     print(format("."))
     print(format("yes. or . no?", isolate_punct=True, add_eol=True))
+    print(format("here's a few i'm and you're.", isolate_punct=True, add_eol=True, keep_contractions=True))
