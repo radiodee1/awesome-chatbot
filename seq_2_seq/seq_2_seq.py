@@ -363,13 +363,11 @@ class Decoder(nn.Module):
 
         if len(decoder_hidden_x.size()) < 3:
             decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
-        #encoder_out_x = encoder_out_x.transpose(1,0)
 
         if len(decoder_hidden_x.size()) > 3:
             decoder_hidden_x = decoder_hidden_x.squeeze(0)
 
         embedded = self.dropout_e(encoder_out_x) #.permute(2,1,0)
-        #embedded = embedded.unsqueeze(1).unsqueeze(0)
         if embedded.size(0) != 1:
             embedded = embedded.permute(2,1,0)
 
@@ -379,8 +377,6 @@ class Decoder(nn.Module):
             hidden = decoder_hidden_x.transpose(1,0) #.contiguous()
         else:
             hidden = decoder_hidden_x
-
-        #hidden = torch.cat([hidden_prev_thin, hidden_prev_thin], dim=0)
 
         #hidden = decoder_hidden_x.transpose(1,0)
         input_unchanged = encoder_out
@@ -401,7 +397,7 @@ class Decoder(nn.Module):
                     embedded_x = self.embed(target_variable[:,i]).unsqueeze(1)
 
                 embedded_x =  embedded_x + rnn_output
-                
+
             elif i > 0:
 
                 embedded_x = rnn_output
@@ -411,13 +407,11 @@ class Decoder(nn.Module):
 
             attn_weights = self.attention_mod(hidden, input_unchanged) 
             
-            attn = attn_weights #[:,:,i]
+            attn = attn_weights 
 
             #print(attn.size(), "attn weights", rnn_output.size(), input_unchanged.size(),i)
 
             context = attn.bmm(input_unchanged) 
-            #context = self.model_6_dec.relu_b(context)
-            #ans_small = sent_out
             
             ans_small_x = rnn_output #[:,i,:].unsqueeze(1)
 
@@ -445,21 +439,13 @@ class Decoder(nn.Module):
             ans_list.append(ans_target)
             rnn_list.append(rnn_output)
 
-        #hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
-
-        #out_x = rnn_output
-
-        #rnn_list.append(rnn_output)
-
-        decoder_hidden_x = hidden #.permute(1,0,2)
-
-        #print(rnn_output.size(), "pre-out_x")
+        decoder_hidden_x = hidden 
 
         out_x = torch.cat(rnn_list, dim=0)
         ans_x = torch.cat(ans_list, dim=0)
         #print(out_x.size(), 'out_x')
 
-        return ans_x, decoder_hidden_x, out_x #, rnn_tot
+        return ans_x, decoder_hidden_x, out_x 
 
 
 
