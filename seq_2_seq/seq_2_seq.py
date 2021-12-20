@@ -306,7 +306,7 @@ class Decoder(nn.Module):
     def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
         super(Decoder, self).__init__()
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed =  nn.Embedding(target_vocab_size, embed_dim // 2 )
+        self.embed =  nn.Embedding(target_vocab_size, embed_dim *2 )
         self.attention_mod = Attn(hidden_dim , method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -1930,7 +1930,7 @@ class NMT:
                 if not self.do_load_embeddings:
                     self.model_0_wra.model_1_seq.embed.load_state_dict(checkpoint[0]['embedding01'])
                     self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
-                    
+
                     #self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding01'])
                 '''
                 if self.do_load_embeddings and False:
