@@ -401,6 +401,10 @@ class Decoder(nn.Module):
                     embedded_x = self.embed(target_variable[:,i]).unsqueeze(1)
 
                 embedded_x =  embedded_x + rnn_output
+                
+            elif i > 0:
+
+                embedded_x = rnn_output
 
             rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
 
@@ -2420,7 +2424,7 @@ class NMT:
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
                     #loss_out.backward(retain_graph=True)
-                    
+
                 if criterion is not None:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
