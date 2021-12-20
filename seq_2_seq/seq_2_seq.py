@@ -396,11 +396,14 @@ class Decoder(nn.Module):
                     #print("embed here...", target_variable[:,i])
                     embedded_x = self.embed(target_variable[:,i]).unsqueeze(1)
 
-                embedded_x =  embedded_x ### + rnn_output ###
+                #embedded_x =  embedded_x ### + rnn_output ###
 
             elif i > 0:
 
                 embedded_x = rnn_output
+                
+                if True:
+                    embedded_x = self.embed(ansx)
 
             rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
 
@@ -435,6 +438,10 @@ class Decoder(nn.Module):
             ans_tanh = self.tanh_b(ans_b)
 
             ans_target = self.out_target_b(ans_tanh)
+
+            ansx = ans_target.topk(k=1, dim=2)[1].squeeze(0)
+
+            ### print( ansx.size(), 'ansx')
 
             ans_list.append(ans_target)
             rnn_list.append(rnn_output)
