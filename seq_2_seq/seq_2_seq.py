@@ -396,7 +396,7 @@ class Decoder(nn.Module):
                     #print("embed here...", target_variable[:,i])
                     embedded_x = self.embed(target_variable[:,i]).unsqueeze(1)
 
-                embedded_x =  embedded_x + rnn_output
+                embedded_x =  embedded_x ### + rnn_output ###
 
             elif i > 0:
 
