@@ -323,12 +323,12 @@ class Decoder(nn.Module):
 
         self.gru = nn.GRU(gru_in_dim * 2 , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * concat_num * 2, target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * concat_num , target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num * 2)
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num )
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -350,7 +350,7 @@ class Decoder(nn.Module):
         self.embed = embedding
         self.embed.weight.requires_grad = requires_grad
 
-    def forward(self, encoder_out, decoder_hidden, last_word=None, index=None):
+    def forward(self, encoder_out, decoder_hidden, target_variable, last_word=None, index=None):
         #return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
 
         #def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
@@ -395,11 +395,21 @@ class Decoder(nn.Module):
         rnn_list = []
         ans_list = []
 
+        embedded_x = embedded[ :, 0, :].unsqueeze(1)
+
         for i in range(embedded.size()[1]):
             #print(embedded.size(), hidden.size(), 'gru inside')
-            embedded_x = embedded[ :, i, :].unsqueeze(1)
-            print(embedded_x.size(), "gru two", i)
+            #if embedded.size(1) < i or i == 0:
+            #    embedded_x = embedded[ :, i, :].unsqueeze(1)
+
+            
+            #print(embedded_x.size(), "gru two", i)
+            
             if hparams['teacher_forcing_ratio'] > random.random() and self.training and i > 0:
+
+                if target_variable.size(1) < i:
+                    embedded_x = self.embed(target_variable[:,i,:]).unsqueeze(1)
+
                 embedded_x =  embedded_x + rnn_output
 
             rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
@@ -409,7 +419,7 @@ class Decoder(nn.Module):
             
             attn = attn_weights #[:,:,i]
 
-            print(attn.size(), "attn weights", rnn_output.size(), input_unchanged.size(),i)
+            #print(attn.size(), "attn weights", rnn_output.size(), input_unchanged.size(),i)
 
             context = attn.bmm(input_unchanged) 
             #context = self.model_6_dec.relu_b(context)
@@ -422,19 +432,23 @@ class Decoder(nn.Module):
                 context 
             ]
 
-            print('---')
-            for iii in ans: print(iii.size())
-            print('---')
+            #print('---')
+            #for iii in ans: print(iii.size())
+            #print('---')
 
-            ans = torch.cat(ans, dim=-1) ## 
+            ans_concat = torch.cat(ans, dim=-1) ## 
             
-            ans = self.out_concat_b(ans)
+            ans_b = self.out_concat_b(ans_concat)
             
-            ans = self.tanh_b(ans)
+            #print(ans.size(), "concat_b")
+            
+            rnn_output = ans_b
 
-            ans = self.out_target_b(ans)
+            ans_tanh = self.tanh_b(ans_b)
 
-            ans_list.append(ans)
+            ans_target = self.out_target_b(ans_tanh)
+
+            ans_list.append(ans_target)
             rnn_list.append(rnn_output)
 
         #hidden_small = hidden #torch.cat((hidden[0,:,:], hidden[1,:,:]), dim=1)
@@ -623,7 +637,7 @@ class WrapMemRNN(nn.Module):
         #decoder_hidden_out = []
         #ans_small_out = []
 
-        print(encoder_output_in.size(), "eoi size")
+        #print(encoder_output_in.size(), "eoi size")
 
         if True: #for i in range(encoder_output_in.size()[1]):
     
@@ -660,9 +674,9 @@ class WrapMemRNN(nn.Module):
 
             #encoder_out_x = encoder_out_x.unsqueeze(1)
             
-            print(encoder_out_x.size(), decoder_hidden_x.size(), "ed to gru")
+            #print(encoder_out_x.size(), decoder_hidden_x.size(), "ed to gru")
 
-            ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, None, None) ## <--
+            ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
             
         return ans, decoder_hidden_x, ans_small
 
@@ -2869,7 +2883,9 @@ class NMT:
 
         if True:
             decoded_words = []
+            outputs = outputs.permute(1,0,2)
 
+            #print(outputs.size(), "outputs")
             if True:
                 #outputs = outputs.squeeze()
                 for di in range(outputs.size()[1] ):
