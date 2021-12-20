@@ -2364,7 +2364,7 @@ class NMT:
                 ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
                 
                 ans_batch.append(ansx)
-                
+
                 a_var = ans.squeeze(0) 
 
                 #print(ansx.size(), a_var.size(), tv_large.size(), "a_var") 
@@ -2419,7 +2419,7 @@ class NMT:
                         pass
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
-
+                    #loss_out.backward(retain_graph=True)
                 if True:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
