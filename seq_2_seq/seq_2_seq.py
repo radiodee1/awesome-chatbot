@@ -2282,6 +2282,8 @@ class NMT:
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, wrapper_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
+        #print(input_variable.size(), "iv size")
+
         size = target_variable.size()[1]
         loss = 0
         n_tot = 0
@@ -2324,7 +2326,7 @@ class NMT:
             i_range = target_variable.size()[0] # hparams['tokens_per_sentence']
 
             
-            book_keeping = [i_range for _ in range(size)]
+            book_keeping = [i_range  for _ in range(size)]
 
 
             output_unchanged = encoder_output[:]
@@ -2332,18 +2334,22 @@ class NMT:
             if criterion is not None and size != 1:
                 self.criterion_tot += size * i_range
 
-            for j in range(size): ## 50
+            #j_size = size
+            #if tv_large.size(0) < i_range : #and criterion is not None:
+            #    i_range = tv_large.size(0)
 
-                for k in range(i_range): ## 10
-                    if tv_large[j,k].item() is UNK_token:
-                        if book_keeping[j] == 0 or book_keeping[j] > k:
-                            book_keeping[j] = k
-                            #print("unk token", j, k)
-                    if tv_large[j,k].item() is EOS_token:
-                        if book_keeping[j] == 0 or book_keeping[j] > k + 1:
-                            if k + 1 < i_range:
-                                book_keeping[j] = k + 1
-                                #print("eos token", j, k)
+            for j in range(size): ## 50
+                if criterion is not None:
+                    for k in range(i_range): ## 10
+                        if tv_large[j,k].item() is UNK_token:
+                            if book_keeping[j] == 0 or book_keeping[j] > k:
+                                book_keeping[j] = k
+                                #print("unk token", j, k)
+                        if tv_large[j,k].item() is EOS_token:
+                            if book_keeping[j] == 0 or book_keeping[j] > k + 1:
+                                if k + 1 < i_range:
+                                    book_keeping[j] = k + 1
+                                    #print("eos token", j, k)
                 
                 if len(hidden_x.size()) == 2:
                     hidden_x = hidden_x.unsqueeze(1)
@@ -2847,6 +2853,7 @@ class NMT:
 
         #####################
         outputs = batch[0] 
+        print(outputs.size())
 
         z_num_short = hparams['tokens_per_sentence'] - 1
         z_num_regular = hparams['tokens_per_sentence']
