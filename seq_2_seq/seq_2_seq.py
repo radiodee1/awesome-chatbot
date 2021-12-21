@@ -303,8 +303,12 @@ class Attn(torch.nn.Module):
         return z
 
 class Decoder(nn.Module):
-    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False):
+    def __init__(self, target_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, cancel_attention=False, mode="near"):
         super(Decoder, self).__init__()
+        self.mode = mode
+        if self.mode not in ['near', 'middle', 'far']:
+            raise ValueError(self.mode, "is not an appropriate Decoder mode.")
+
         self.n_layers = n_layers # if not cancel_attention else 1
         self.embed =  nn.Embedding(target_vocab_size, embed_dim *2 )
         self.attention_mod = Attn(hidden_dim , method='general')
@@ -400,9 +404,13 @@ class Decoder(nn.Module):
 
             elif i > 0:
 
-                embedded_x = rnn_output
+                if self.mode == "near":
+                    embedded_x = rnn_output
 
-                if True:
+                if self.mode == "middle":
+                    embedded_x = ans_b
+
+                if self.mode == "far":
                     embedded_x = self.embed(ansx)
 
             rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
@@ -433,7 +441,7 @@ class Decoder(nn.Module):
             
             #print(ans.size(), "concat_b")
             
-            rnn_output = ans_b
+            #rnn_output = ans_b
 
             ans_tanh = self.tanh_b(ans_b)
 
@@ -485,7 +493,7 @@ class WrapMemRNN(nn.Module):
                                           2, dropout, embed=None)
 
         self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size, 2, dropout, None,
-                                   cancel_attention=self.cancel_attention)
+                                   cancel_attention=self.cancel_attention, mode='near')
 
         self.model_6_dec.embed = self.model_1_seq.embed
 
