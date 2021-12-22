@@ -325,14 +325,18 @@ class Decoder(nn.Module):
         batch_first = True #self.word_mode
         concat_num = 2
 
+        model_const = 1
+        if self.mode != "middle":
+            model_const = 2
+
         self.gru = nn.GRU(gru_in_dim * 2 , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         self.out_target = nn.Linear(hidden_dim , target_vocab_size)
-        self.out_target_b = nn.Linear(self.hidden_dim * concat_num , target_vocab_size)
+        self.out_target_b = nn.Linear(self.hidden_dim * concat_num * model_const, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num )
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num * model_const )
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
