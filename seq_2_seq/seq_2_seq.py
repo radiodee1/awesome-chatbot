@@ -195,17 +195,20 @@ def prune_tensor( input, size):
 ################# pytorch modules ###############
 
 class Encoder(nn.Module):
-    def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
+    def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, mode="left"):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
+        self.mode = mode
+        if self.mode not in ['left', 'double', 'repeat' ,'none']:
+            raise ValueError(self.mode, "is not an appropriate Encoder output method.")
         self.bidirectional = True
-        self.embed = nn.Embedding(source_vocab_size, 2* embed_dim)
+        self.embed = nn.Embedding(source_vocab_size, 1 * embed_dim)
         self.sum_encoder = True
         self.pack_and_pad = True ##hiddencut
         if hparams['single']:
             self.pack_and_pad = False
         self.batch_first = True
-        self.gru = nn.GRU(embed_dim * 2, hidden_dim  , n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
+        self.gru = nn.GRU(embed_dim , hidden_dim  , n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
         #self.dropout_e = nn.Dropout(dropout)
         #self.dropout_o = nn.Dropout(dropout)
 
@@ -227,7 +230,7 @@ class Encoder(nn.Module):
 
         embedded = self.embed(source) #.transpose(1,0)
 
-        #print(embedded.size(), hparams['single'], 'emb-enc')
+        #print(embedded.size(),  'emb')
 
         if self.pack_and_pad:
             if self.training and False: print('pack and pad')
@@ -243,23 +246,29 @@ class Encoder(nn.Module):
             outputs, _ = torch.nn.utils.rnn.pad_packed_sequence(encoder_out, batch_first=self.batch_first)
             encoder_out = outputs
 
-        encoder_hidden = torch.cat([encoder_hidden[:2,:,:], encoder_hidden[2:,:,:]], dim=2)
+        #print(encoder_out.size(), encoder_hidden.size(),'hidd 1')
 
+        if self.mode == "double":
+            encoder_hidden = torch.cat([encoder_hidden[:2,:,:], encoder_hidden[2:,:,:]], dim=2)
+        elif self.mode == "left":
+            encoder_hidden = encoder_hidden[:2, : , :]
+        elif self.mode == "repeat":
+            encoder_hidden = torch.cat([encoder_hidden[:2,:,:], encoder_hidden[:2,:,:]], dim=2)
 
-        #print(encoder_out.size(), encoder_hidden.size(),'hidd')
+        #print(encoder_out.size(), encoder_hidden.size(),'hidd 2')
 
         return encoder_out, encoder_hidden
 
 
 class Attn(torch.nn.Module):
-    def __init__(self,  hidden_size, method="dot"):
+    def __init__(self,  hidden_size, method="general"):
         #method = 'none' #'concat' #''dot' #'general'
         super(Attn, self).__init__()
         self.method = method
         if self.method not in ['dot', 'general', 'concat', 'none']:
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size #* 2
-        self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size * 2)
+        self.attn = torch.nn.Linear(self.hidden_size *1, self.hidden_size * 1)
 
     def general_score(self, hidden, encoder_output):
         
@@ -283,15 +292,15 @@ class Decoder(nn.Module):
         if self.mode not in ['near', 'middle', 'far']:
             raise ValueError(self.mode, "is not an appropriate Decoder mode.")
 
-        self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed = nn.Embedding(target_vocab_size, embed_dim *2 )
-        self.attention_mod = Attn(hidden_dim , method='general')
+        self.n_layers = n_layers 
+        self.embed = nn.Embedding(target_vocab_size, embed_dim * 1 )
+        self.attention_mod = Attn(hidden_dim * 1, method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
         #self.word_mode_b = cancel_attention #False
 
         gru_in_dim = hidden_dim
-        linear_in_dim = hidden_dim * 2
+        #linear_in_dim = hidden_dim * 2
         if cancel_attention:
             gru_in_dim = hidden_dim
             linear_in_dim = hidden_dim
@@ -303,14 +312,16 @@ class Decoder(nn.Module):
         if self.mode != "middle":
             model_const = 2
 
-        self.gru = nn.GRU(gru_in_dim * 2 , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
+        #print(gru_in_dim, hidden_dim, 'gru in')
+
+        self.gru = nn.GRU(gru_in_dim * 1 , hidden_dim * 1, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
         #self.out_target = nn.Linear(hidden_dim , target_vocab_size)
         self.out_target_b = nn.Linear(self.hidden_dim * concat_num * model_const, target_vocab_size)
 
         #self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         #self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         #self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
-        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num * model_const )
+        self.out_concat_b = nn.Linear(hidden_dim * concat_num * 1, hidden_dim * concat_num * model_const )
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
@@ -333,9 +344,6 @@ class Decoder(nn.Module):
         self.embed.weight.requires_grad = requires_grad
 
     def forward(self, encoder_out, decoder_hidden, target_variable, last_word=None, index=None):
-        #return self.mode_batch(encoder_out, decoder_hidden, last_word, index)
-
-        #def mode_batch(self, encoder_out, decoder_hidden, last_word=None, index=None):
 
         encoder_out_x = encoder_out
         while len(encoder_out_x.size()) > 3 and encoder_out_x.size(1) == 1:
@@ -370,7 +378,7 @@ class Decoder(nn.Module):
 
         for i in range(embedded.size()[1]):
             
-            #print(hparams['teacher_forcing_ratio'], target_variable.size(), self.training, i, "tf_ratio")
+            #print( embedded_x.size(), self.training, i, "tf_ratio")
 
             if hparams['teacher_forcing_ratio'] > random.random() and self.training and i > 0:
 
@@ -390,6 +398,8 @@ class Decoder(nn.Module):
 
                 if self.mode == "far":
                     embedded_x = self.embed(ansx)
+
+            #print(embedded_x.size(), hidden.size(), 'emb-size')
 
             rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
 
@@ -451,6 +461,8 @@ class WrapMemRNN(nn.Module):
         super(WrapMemRNN, self).__init__()
 
         self.hidden_size = hidden_size
+        self.hidden_size_half = hidden_size // 2
+        #self.hidden_size_decoder = hidden_size 
         self.n_layers = n_layers
         self.do_babi = do_babi
         self.print_to_screen = print_to_screen
@@ -460,16 +472,17 @@ class WrapMemRNN(nn.Module):
         self.teacher_forcing_ratio = hparams['teacher_forcing_ratio']
         self.recurrent_output = True #recurrent_output
         self.sol_token = sol_token
-        position = hparams['split_sentences']
-        gru_dropout = dropout * 0.0 #0.5
+        #position = hparams['split_sentences']
+        #gru_dropout = dropout * 0.0 #0.5
         self.cancel_attention = cancel_attention
-        beam_width = 0 if hparams['beam'] is None else hparams['beam']
+        #beam_width = 0 if hparams['beam'] is None else hparams['beam']
+        
+        #print(self.hidden_size_encoder, 'encoder', self.hidden_size_decoder, 'decoder')
 
+        self.model_1_seq = Encoder(vocab_size, self.hidden_size , self.hidden_size_half ,
+                                          2, dropout, embed=None, mode="double")
 
-        self.model_1_seq = Encoder(vocab_size,embed_dim, hidden_size,
-                                          2, dropout, embed=None)
-
-        self.model_6_dec = Decoder(vocab_size, embed_dim, hidden_size, 2, dropout, None,
+        self.model_6_dec = Decoder(vocab_size, self.hidden_size, self.hidden_size, 2, dropout, None,
                                    cancel_attention=self.cancel_attention, mode='near')
 
         self.model_6_dec.embed = self.model_1_seq.embed
@@ -516,7 +529,7 @@ class WrapMemRNN(nn.Module):
 
         ### removed ###
 
-        return seq, None, ans, None
+        return None, None, None, None
 
     def new_freeze_embedding(self, do_freeze=True):
         pass
