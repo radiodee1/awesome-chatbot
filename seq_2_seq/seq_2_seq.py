@@ -194,9 +194,6 @@ def prune_tensor( input, size):
 
 ################# pytorch modules ###############
 
-
-
-
 class Encoder(nn.Module):
     def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None):
         super(Encoder, self).__init__()
@@ -209,8 +206,8 @@ class Encoder(nn.Module):
             self.pack_and_pad = False
         self.batch_first = True
         self.gru = nn.GRU(embed_dim * 2, hidden_dim  , n_layers, dropout=dropout, bidirectional=self.bidirectional, batch_first=self.batch_first)
-        self.dropout_e = nn.Dropout(dropout)
-        self.dropout_o = nn.Dropout(dropout)
+        #self.dropout_e = nn.Dropout(dropout)
+        #self.dropout_o = nn.Dropout(dropout)
 
         self.reset_parameters()
 
@@ -223,10 +220,7 @@ class Encoder(nn.Module):
         self.embed.weight.requires_grad = requires_grad
 
     def forward(self, source, input_lengths, hidden=None):
-        #source = prune_tensor(source, 3)
-        #input_lengths = prune_tensor(input_lengths, 2)
-        #if hidden != None: print(hidden.size(), "hidden")
-
+        
         if hparams['cuda']:
             source = source.cuda()
             input_lengths = torch.as_tensor(input_lengths.cpu(), dtype=torch.int64)
@@ -265,41 +259,21 @@ class Attn(torch.nn.Module):
         if self.method not in ['dot', 'general', 'concat', 'none']:
             raise ValueError(self.method, "is not an appropriate attention method.")
         self.hidden_size = hidden_size #* 2
-        #if self.method == 'general':
         self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size * 2)
-        #elif self.method == 'concat':
-        #    self.attn = torch.nn.Linear(self.hidden_size * 2, self.hidden_size)
-        #    self.v = torch.nn.Parameter(torch.FloatTensor(self.hidden_size))
 
     def general_score(self, hidden, encoder_output):
-        #if hidden.size(-1) > self.hidden_size or True:
-        #print('hiddsize')
-        #hidden = hidden[0,:,:] + hidden[1,:,:]
+        
         hidden = hidden.permute(1,2,0)# [:,:,:1] ## hiddencut
 
-        #hidden = hidden[:,:,:self.hidden_size] + hidden[:,:,self.hidden_size:]
-        #hidden = torch.cat([hidden[0,:,:], hidden[1,:,:]], dim=-1)
-        #print(hidden.size(), encoder_output.size(),'hid attn')
         energy = self.attn(encoder_output).permute(0,2,1)
         hidden = hidden.permute(0,2,1)
-        #print(energy.size(),  hidden.size() ,'energy')
-        #z = hidden @ energy #.squeeze(0)
-        #print(z.size(), 'zzz')
+        
         return torch.sum(hidden @ energy, dim=1)
 
     def forward(self, hidden, encoder_outputs):
-        # Calculate the attention weights (energies) based on the given method
-        #if self.method == 'general':
-        attn_energies = self.general_score(hidden, encoder_outputs)
         
-        # Transpose max_length and batch_size dimensions
-        #attn_energies = torch.relu(attn_energies)
-        #print(attn_energies.size(),self.hidden_size ,'att.before')
-        #attn_energies = attn_energies.t()
-        #print(attn_energies.size(),'att')
-        # Return the softmax normalized probability scores (with added dimension)
+        attn_energies = self.general_score(hidden, encoder_outputs)
         z = F.softmax(attn_energies, dim=1).unsqueeze(1)
-        #print(z, 'z')
         return z
 
 class Decoder(nn.Module):
@@ -310,7 +284,7 @@ class Decoder(nn.Module):
             raise ValueError(self.mode, "is not an appropriate Decoder mode.")
 
         self.n_layers = n_layers # if not cancel_attention else 1
-        self.embed =  nn.Embedding(target_vocab_size, embed_dim *2 )
+        self.embed = nn.Embedding(target_vocab_size, embed_dim *2 )
         self.attention_mod = Attn(hidden_dim , method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -330,24 +304,24 @@ class Decoder(nn.Module):
             model_const = 2
 
         self.gru = nn.GRU(gru_in_dim * 2 , hidden_dim * 2, self.n_layers, dropout=dropout, batch_first=batch_first, bidirectional=False)
-        self.out_target = nn.Linear(hidden_dim , target_vocab_size)
+        #self.out_target = nn.Linear(hidden_dim , target_vocab_size)
         self.out_target_b = nn.Linear(self.hidden_dim * concat_num * model_const, target_vocab_size)
 
         self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
-        self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
-        self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
+        #self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
+        #self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
         self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num * model_const )
         self.maxtokens = hparams['tokens_per_sentence']
         self.cancel_attention = cancel_attention
         self.decoder_hidden_z = None
-        self.dropout_o = nn.Dropout(dropout)
+        #self.dropout_o = nn.Dropout(dropout)
         self.dropout_e = nn.Dropout(dropout)
-        self.tanh_a = torch.tanh # nn.Tanh()
+        #self.tanh_a = torch.tanh # nn.Tanh()
         self.tanh_b = torch.tanh # nn.Tanh()
-        self.relu_b = nn.ReLU()
-        self.norm_layer_b = nn.LayerNorm(target_vocab_size)
+        #self.relu_b = nn.ReLU()
+        #self.norm_layer_b = nn.LayerNorm(target_vocab_size)
         self.softmax_b = nn.Softmax(dim=-1)
-        self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
+        #self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -465,7 +439,6 @@ class Decoder(nn.Module):
         #print(out_x.size(), 'out_x')
 
         return ans_x, decoder_hidden_x, out_x 
-
 
 
 #################### Wrapper ####################
