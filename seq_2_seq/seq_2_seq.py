@@ -737,6 +737,8 @@ class NMT:
         self._highest_validation_for_quit = 0
         self._count_epochs_for_quit = 0
 
+        self.low_loss_list = []
+
         self.uniform_low = -1.0
         self.uniform_high = 1.0
 
@@ -1805,7 +1807,7 @@ class NMT:
                 'epoch':0,
                 'start': self.start,
                 'arch': None,
-                'state_dict_0_wra': None, # self.model_0_wra.state_dict(),
+                'state_dict_0_wra': self.model_0_wra.state_dict(),
                 'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
                 'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                 'embedding01': self.model_0_wra.model_1_seq.embed.state_dict(),
@@ -1816,7 +1818,8 @@ class NMT:
                 'best_loss': self.best_loss,
                 'long_term_loss' : self.long_term_loss,
                 'tag': self.tag,
-                'score': self.score
+                'score': self.score,
+                'low_loss_list': self.low_loss_list
             }
         ]
 
@@ -1904,11 +1907,16 @@ class NMT:
                 except:
                     print('no score saved with checkpoint')
                     self.score = 0
-
+                try:
+                    self.low_loss_list = checkpoint[0]['low_loss_list']
+                    pass
+                except:
+                    print("no low loss list")
+                    pass
                 if hparams['zero_start'] is True:
                     self.start = 0
 
-                #self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
+                self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
                 self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
 
@@ -2625,6 +2633,7 @@ class NMT:
                     print("counter interrupt")
                     self.update_result_file()
                     if input("save? (y/N) > ").upper().startswith('Y'):
+                        self.low_loss_list.append("*" + str(self.saved_files + 1) + "*")
                         self.save_checkpoint(interrupt=True)
                     else:
                         print("do not save...")
@@ -2659,6 +2668,8 @@ class NMT:
                         extra = ''
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
+
+                        self.low_loss_list.append("loss:" + str(self.best_loss) + " / step:" + str(self.saved_files + 1))
                         if self.do_save_often:
                             extra = '.batch'
 
@@ -2803,7 +2814,8 @@ class NMT:
             else:
                 print()
             print('try:', self._shorten(words, just_duplicates=True))
-            
+            if len(self.low_loss_list) > 0:
+                print("low loss list:", self.low_loss_list)
             # self._word_from_prediction()
         ############################
         pass
@@ -3177,6 +3189,7 @@ if __name__ == '__main__':
             print("keyboard interrupt")
             n.update_result_file()
             if input("save? (y/N) > ").upper().startswith('Y'):
+                n.low_loss_list.append("*" + str(n.saved_files + 1) + "*")
                 n.save_checkpoint(interrupt=True)
             else:
                 print("do not save...")
