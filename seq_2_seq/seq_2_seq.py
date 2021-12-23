@@ -307,7 +307,7 @@ class Decoder(nn.Module):
         #self.out_target = nn.Linear(hidden_dim , target_vocab_size)
         self.out_target_b = nn.Linear(self.hidden_dim * concat_num * model_const, target_vocab_size)
 
-        self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
+        #self.out_concat = nn.Linear(linear_in_dim, hidden_dim)
         #self.out_attn = nn.Linear(hidden_dim * 3, hparams['tokens_per_sentence'])
         #self.out_combine = nn.Linear(hidden_dim * 3, hidden_dim )
         self.out_concat_b = nn.Linear(hidden_dim * concat_num * 2, hidden_dim * concat_num * model_const )
