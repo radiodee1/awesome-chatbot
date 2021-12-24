@@ -2676,13 +2676,15 @@ class NMT:
                              print_loss_avg <= self.long_term_loss) and not self.do_test_not_train and self.saved_files > 0):
                             self.long_term_loss = print_loss_avg
 
+                            self.low_loss_list.append("loss:%.6f" % self.long_term_loss + " / step:" + str(self.saved_files + 1))
+
                         self.start = iter
                         save_num = 0
                         extra = ''
                         #if hparams['autoencode'] == True: extra = '.autoencode'
                         self.best_loss = print_loss_avg
 
-                        self.low_loss_list.append("loss:%.6f" % self.best_loss + " / step:" + str(self.saved_files + 1))
+                        
                         
                         if self.do_save_often:
                             extra = '.batch'
