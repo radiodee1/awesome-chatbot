@@ -2683,6 +2683,7 @@ class NMT:
                         self.best_loss = print_loss_avg
 
                         self.low_loss_list.append("loss:%.6f" % self.best_loss + " / step:" + str(self.saved_files + 1))
+                        
                         if self.do_save_often:
                             extra = '.batch'
 
