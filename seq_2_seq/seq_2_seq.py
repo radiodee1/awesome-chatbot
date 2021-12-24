@@ -195,7 +195,7 @@ def prune_tensor( input, size):
 ################# pytorch modules ###############
 
 class Encoder(nn.Module):
-    def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, mode="left"):
+    def __init__(self, source_vocab_size, embed_dim, hidden_dim, n_layers, dropout, embed=None, mode="double"):
         super(Encoder, self).__init__()
         self.hidden_dim = hidden_dim
         self.mode = mode
