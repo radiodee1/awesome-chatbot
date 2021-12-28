@@ -1179,7 +1179,7 @@ class NMT:
             print('auto save.')
             print('%.2f' % self.score,'score')
 
-            self.save_checkpoint(num=len(self.pairs))
+            self.save_checkpoint() #num=len(self.pairs))
             self.saved_files += 1
             self.this_epoch = 0
             self.validate_iters()
@@ -1844,10 +1844,14 @@ class NMT:
         if state is None or True:
             state = self.make_state(converted=converted)
             if converted: print(converted, 'is converted.')
+        if num is not 0:
+            num = '00000000' + str(num)
+            num = num[-6:]
+            print(num)
         basename = hparams['save_dir'] + hparams['base_filename']
         if self.do_load_babi or self.do_conserve_space or self.do_train_long or self.do_recurrent_output:
-            num = self.this_epoch * len(self.pairs) + num
-            torch.save(state,basename+ '.best.pth')
+            #num = self.this_epoch * len(self.pairs) + num
+            torch.save(state, basename + '.best.pth')
             #####
             if self.do_test_not_train and not interrupt:
                 self.best_accuracy_dict[
@@ -1870,11 +1874,14 @@ class NMT:
                 torch.save(state, update)
 
                 self.best_accuracy_old = self.best_accuracy
-            if not self.do_save_often or  'batch' not in extra: return
+            if not self.do_save_often or  'batch' not in extra: 
+                pass
+                #return
         basename = hparams['save_dir'] + hparams['base_filename']
-        torch.save(state, basename + extra + '.' + str(num)+ '.pth')
-        if is_best:
-            os.system('cp '+ basename + extra +  '.' + str(num) + '.pth' + ' '  +
+        print('may overwrite', num)
+        torch.save(state, basename + extra + '.' + str(num)+ '.best.pth')
+        if is_best and False:
+            os.system('cp '+ basename + extra +  '.' + str(num) + '.best.pth' + ' '  +
                       basename + '.best.pth')
 
     def move_high_checkpoint(self):
@@ -1887,6 +1894,10 @@ class NMT:
         if self.first_load:
             self.first_load = False
             basename = hparams['save_dir'] + hparams['base_filename'] + '.best.pth'
+            if self.args['basename'].startswith('.'):
+                basename = self.args['basename']  
+                #print(basename, filename, "names")
+                pass    
             if filename is not None: basename = filename
             if os.path.isfile(basename):
                 print("loading checkpoint '{}'".format(basename))
@@ -2647,7 +2658,7 @@ class NMT:
                     self.update_result_file()
                     if input("save? (y/N) > ").upper().startswith('Y'):
                         self.low_loss_list.append("*" + str(self.saved_files + 1) + "*")
-                        self.save_checkpoint(interrupt=True)
+                        self.save_checkpoint(interrupt=True, num=iter)
                     else:
                         print("do not save...")
                 exit()
@@ -2693,7 +2704,8 @@ class NMT:
                             self.best_loss_graph = print_loss_avg
 
                         if ((not self.do_test_not_train and not self.do_load_babi) or
-                                (self.do_save_often and iter % save_every_mod  == 0)):
+                                (self.do_save_often and iter % save_every_mod  == 0) or 
+                                (iter >= self.iter_stop and self.iter_stop != 0) ):# int(self.args['stop'])):
                             self.save_checkpoint(num=iter, extra=extra)
                             self.saved_files += 1
                             print('======= save file '+ extra+' ========')
@@ -2754,7 +2766,7 @@ class NMT:
 
 
         if self.do_batch_process:
-            self.save_checkpoint(num=len(self.pairs))
+            self.save_checkpoint(num=iter) ##num=len(self.pairs))
 
         
 
@@ -2932,7 +2944,7 @@ class NMT:
             self.train_iters(None,None, self.epoch_length, print_every=self.print_every, learning_rate=lr)
         if len(self.score_list) > 0 and float(self.score_list[-1]) >= self.record_threshold: #100.00:
             self.best_accuracy = float(self.score_list[-1])
-            self.save_checkpoint(num=len(self.pairs))
+            self.save_checkpoint() #num=len(self.pairs))
         if self.do_load_once:
             self.pairs_valid = self.pairs
             self.pairs = self.pairs_train
