@@ -435,7 +435,8 @@ class Decoder(nn.Module):
 
             ans_target = self.out_target_b(ans_tanh)
 
-            ansx = ans_target.topk(k=1, dim=2)[1].squeeze(0)
+            if self.mode == "far":
+                ansx = ans_target.topk(k=1, dim=2)[1].squeeze(0)
 
             ### print( ansx.size(), 'ansx')
 
