@@ -383,7 +383,7 @@ class Decoder(nn.Module):
             if hparams['teacher_forcing_ratio'] > random.random() and self.training and i > 0:
 
                 if target_variable.size(1) > i:
-                    #print("embed here...", target_variable[:,i])
+                    #print("embed here...", target_variable)
                     embedded_x = self.embed(target_variable[:, i - 1]).unsqueeze(1)
 
                 #embedded_x =  embedded_x ### + rnn_output ###
