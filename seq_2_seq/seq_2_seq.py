@@ -437,8 +437,7 @@ class Decoder(nn.Module):
 
             if self.mode == "far":
                 ansx = ans_target.topk(k=1, dim=2)[1].squeeze(0)
-
-            ### print( ansx.size(), 'ansx')
+                #print( ansx.size(), 'ansx')
 
             ans_list.append(ans_target)
             rnn_list.append(rnn_output)
@@ -484,7 +483,7 @@ class WrapMemRNN(nn.Module):
                                           2, dropout, embed=None, mode="double")
 
         self.model_6_dec = Decoder(vocab_size, self.hidden_size, self.hidden_size, 2, dropout, None,
-                                   cancel_attention=self.cancel_attention, mode='near')
+                                   cancel_attention=self.cancel_attention, mode='far')
 
         self.model_6_dec.embed = self.model_1_seq.embed
 
