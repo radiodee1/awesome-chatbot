@@ -431,7 +431,9 @@ class Decoder(nn.Module):
             
             #rnn_output = ans_b
 
-            ans_tanh = self.tanh_b(ans_b)
+            #ans_tanh = self.tanh_b(ans_b)
+            ans_tanh = ans_b
+
 
             ans_target = self.out_target_b(ans_tanh)
 
@@ -767,6 +769,8 @@ class NMT:
         self.criterion_used = 0
 
         self.iter_stop = 0
+
+        self.iter_current = 0
 
         self.do_train = False
         self.do_infer = False
@@ -2580,6 +2584,8 @@ class NMT:
             if self.start_epoch is 0: start = 0
 
         for iter in range(epoch_start, epoch_stop + 1, step):
+            
+            self.iter_current = iter
 
             if self.do_batch_process and (iter ) % hparams['batch_size'] == 0 and iter < len(self.pairs):
 
@@ -3218,7 +3224,7 @@ if __name__ == '__main__':
             n.update_result_file()
             if input("save? (y/N) > ").upper().startswith('Y'):
                 n.low_loss_list.append("*" + str(n.saved_files + 1) + "*")
-                n.save_checkpoint(interrupt=True)
+                n.save_checkpoint(interrupt=True, num=n.iter_current)
             else:
                 print("do not save...")
         else:
