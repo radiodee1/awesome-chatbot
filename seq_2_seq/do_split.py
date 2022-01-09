@@ -127,7 +127,7 @@ if __name__ == '__main__':
     parser.add_argument('--filter-possessive', help='filter only possessive sentences for gpt2.', action='store_true')
     parser.add_argument('--force', help='force normal file creation -- disable repeat detection.', action='store_true')
     parser.add_argument('--reverse', help='force reverse output.', action='store_true')
-
+    parser.add_argument('--questions-only', help="store pairs that start with a question sentence", action="store_true")
 
     args = parser.parse_args()
     args = vars(args)
@@ -168,6 +168,7 @@ if __name__ == '__main__':
     arg_reverse_order = False
 
     arg_mode = hparams['train_name']
+    arg_questions_only= args['questions_only']
 
     arg_destination_context = ''
     arg_destination_question = ''
@@ -439,6 +440,8 @@ if __name__ == '__main__':
                 print('stagger output.')
 
             for line in z:
+                
+                question_flag = False
 
                 ## set autoencode here.
                 auto_flag = False
@@ -472,7 +475,12 @@ if __name__ == '__main__':
                         line[1] = line[0]
                         line[0] = line_temp
 
-                    if not arg_stagger and arg_classifier != "MRPC" and arg_classifier != "MNLI" and not arg_gpt2:
+                    if arg_questions_only == True:
+                        if num < 100: print(line[0])
+                        if not line[0].endswith("?"):
+                            question_flag = True
+
+                    if not arg_stagger and arg_classifier != "MRPC" and arg_classifier != "MNLI" and not arg_gpt2 and question_flag == False:
 
                         src.write(line[0].lower())
                         save = line[0][:]
@@ -620,7 +628,8 @@ if __name__ == '__main__':
                     print('early stop -- gpt2 filter' , filter_num)
                     break
 
-                num += 1
+                if question_flag == False:
+                    num += 1
             src.close()
             tgt.close()
             if arg_triplets:
