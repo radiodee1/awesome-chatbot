@@ -333,6 +333,10 @@ class Decoder(nn.Module):
         #self.norm_layer_b = nn.LayerNorm(target_vocab_size)
         self.softmax_b = nn.Softmax(dim=-1)
         #self.out_mod = nn.Linear(self.hidden_dim *2, self.hidden_dim * 2)
+        self.root_token = None
+        self.end_token = None
+        self.counter = 0
+
         self.reset_parameters()
 
     def reset_parameters(self):
@@ -452,6 +456,151 @@ class Decoder(nn.Module):
 
         return ans_x, decoder_hidden_x, out_x 
 
+    def beam_forward(self,  encoder_out, decoder_hidden, index=None, beam_size=3, depth=10, ansx=SOS_token):
+
+        encoder_out_x = encoder_out
+        while len(encoder_out_x.size()) > 3 and encoder_out_x.size(1) == 1:
+            encoder_out_x = encoder_out_x.squeeze(1)
+
+        decoder_hidden_x = decoder_hidden
+
+        if len(decoder_hidden_x.size()) < 3:
+            decoder_hidden_x = decoder_hidden_x.unsqueeze(1)
+
+        if len(decoder_hidden_x.size()) > 3:
+            decoder_hidden_x = decoder_hidden_x.squeeze(0)
+
+        embedded = self.dropout_e(encoder_out_x) #.permute(2,1,0)
+        if embedded.size(0) != 1:
+            embedded = embedded.permute(2,1,0)
+
+        #print(embedded.size(), 'emb')
+
+        if decoder_hidden_x.size(0) != 2:
+            hidden = decoder_hidden_x.transpose(1,0) #.contiguous()
+        else:
+            hidden = decoder_hidden_x
+
+        #hidden = decoder_hidden_x.transpose(1,0)
+        input_unchanged = encoder_out
+
+        #rnn_list = []
+        #ans_list = []
+
+        embedded_x = embedded[ :, 0, :].unsqueeze(1)
+
+        #if True: #for i in range(embedded.size()[1]): ## sentence length
+        #i = 1
+        #if True: #for z in range(beam_size ): # len(current_token['children'])):
+
+        #print( embedded_x.size(), self.training, i, "tf_ratio")
+
+        #if i > 0:
+
+        #    if self.mode == "far":
+        embedded_x = self.embed(ansx)
+
+        #print(embedded_x.size(), hidden.size(), 'emb-size')
+
+        rnn_output, hidden = self.gru(embedded_x, hidden) ## <--
+
+
+        attn_weights = self.attention_mod(hidden, input_unchanged) 
+        
+        attn = attn_weights 
+
+        #print(attn.size(), "attn weights", rnn_output.size(), input_unchanged.size(),i)
+
+        context = attn.bmm(input_unchanged) 
+        
+        ans_small_x = rnn_output #[:,i,:].unsqueeze(1)
+
+        ans = [
+            ans_small_x, 
+            context 
+        ]
+
+        #print('---')
+        #for iii in ans: print(iii.size())
+        #print('---')
+
+        ans_concat = torch.cat(ans, dim=-1) ## 
+        
+        ans_b = self.out_concat_b(ans_concat)
+        
+        #print(ans.size(), "concat_b")
+        
+        #rnn_output = ans_b
+
+        #ans_tanh = self.tanh_b(ans_b)
+        ans_tanh = ans_b
+
+
+        ans_target = self.out_target_b(ans_tanh)
+
+        return ans_target
+
+
+    def beam_recurrent(self, encoder_out, decoder_hidden, current_token=None, index=0, depth=10, beam_size=3):
+
+        beam_token = {
+            "num": 0, # token id number
+            "score": 0, # score for this word 
+            ##"ended": False, # weather or not the sentence has ended as of this token
+            "total": 'EEE', # score so far
+            "children": [] # list of children
+        }
+
+        if self.root_token == None: 
+            self.root_token = beam_token.copy()
+            current_token = self.root_token 
+            current_token['num'] = SOS_token
+            current_token['total'] = 'ROOT'
+            index = 0
+        
+        ansx =  torch.LongTensor([[current_token['num']]])
+
+        ans_target = self.beam_forward(encoder_out, decoder_hidden, index=index, beam_size=beam_size, depth=depth, ansx=ansx)
+
+        #index += 1
+        #print(index, 'index')
+
+        if index < depth: 
+
+            current_token['children'] = []
+            for _ in range(beam_size):
+                current_token['children'].append(beam_token.copy())
+        
+            index += 1
+            ansx = ans_target.topk(k=beam_size, dim=2) 
+            
+            for jj in range(beam_size):
+
+                if len(current_token['children']) == beam_size:
+                    self.counter += 1
+                    
+                    current_token['children'][jj]['num'] = ansx[1][0][0][jj].item()
+                    current_token['children'][jj]['score'] = ansx[0][0][0][jj]
+                    current_token['children'][jj]['total'] = self.counter
+
+                    current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out, decoder_hidden, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
+
+
+        return current_token, encoder_out, decoder_hidden
+
+
+    def beam_view_recurrent(self, node):
+        return
+        print('node ', node['total'], len(node['children']), self.counter , str(node))
+        if len(node['children']) != 0: print()
+        self.counter += 1
+
+        for i in range(len(node['children'])):
+            print('    ', end="")
+            if i < 50:
+                self.beam_view_recurrent(node['children'][i])
+        return 
+        pass
 
 #################### Wrapper ####################
 
@@ -653,8 +802,18 @@ class WrapMemRNN(nn.Module):
             
             #print(encoder_out_x.size(), decoder_hidden_x.size(), "ed to gru")
 
-            ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
-            
+            if self.training:
+                ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
+            else:
+                self.model_6_dec.counter = 0
+                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, None, depth=2, beam_size=2) ## <--
+                
+                print()
+                print(self.model_6_dec.root_token, "-----final-----\n")
+                self.model_6_dec.counter = 0
+                
+                out = self.model_6_dec.beam_view_recurrent(self.model_6_dec.root_token)
+
         return ans, decoder_hidden_x, ans_small
 
 
