@@ -336,6 +336,7 @@ class Decoder(nn.Module):
         self.root_token = None
         self.end_token = None
         self.counter = 0
+        self.beam_sentences = []
 
         self.reset_parameters()
 
@@ -546,17 +547,23 @@ class Decoder(nn.Module):
         beam_token = {
             "num": 0, # token id number
             "score": 0, # score for this word 
-            ##"ended": False, # weather or not the sentence has ended as of this token
-            "total": 'EEE', # score so far
+            "ended": False, # weather or not the sentence has ended as of this token
+            "total": 0, # score so far
+            "words": [],
             "children": [] # list of children
         }
 
         if self.root_token == None: 
+            self.counter = 0
+            self.beam_sentences = []
             self.root_token = beam_token.copy()
             current_token = self.root_token 
             current_token['num'] = SOS_token
-            current_token['total'] = 'ROOT'
+            current_token['total'] = 0
+            current_token['words'] = [ SOS_token ]
+            depth -= 1
             index = 0
+            print('reset root')
         
         ansx =  torch.LongTensor([[current_token['num']]])
 
@@ -564,6 +571,13 @@ class Decoder(nn.Module):
 
         #index += 1
         #print(index, 'index')
+
+        if current_token['num'] == EOS_token:
+            current_token['ended'] = True
+
+        if index == depth:
+            self.beam_sentences.append(current_token)
+            print(index, depth, "i,d")
 
         if index < depth: 
 
@@ -574,33 +588,57 @@ class Decoder(nn.Module):
             index += 1
             ansx = ans_target.topk(k=beam_size, dim=2) 
             
+            parent_token = current_token.copy()
+
             for jj in range(beam_size):
 
                 if len(current_token['children']) == beam_size:
                     self.counter += 1
                     
+                    #### results ####
                     current_token['children'][jj]['num'] = ansx[1][0][0][jj].item()
                     current_token['children'][jj]['score'] = ansx[0][0][0][jj]
-                    current_token['children'][jj]['total'] = self.counter
 
+                    #### node stuff ####
+                    if current_token['ended'] == False:
+                        current_token['children'][jj]['total'] = parent_token['total'] + current_token['children'][jj]['score']
+                    else:
+                        current_token['children'][jj]['total'] = parent_token['total']
+
+                    current_token['children'][jj]['words'] = parent_token['words'].copy()
+                    current_token['children'][jj]['words'].append(current_token['children'][jj]['num'])
+
+                    current_token['children'][jj]['ended'] = parent_token['ended']
+                    print('node stuff', self.counter)
+
+                    #### recurrent call ####
                     current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out, decoder_hidden, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
 
+                        
 
         return current_token, encoder_out, decoder_hidden
 
 
     def beam_view_recurrent(self, node):
-        return
-        print('node ', node['total'], len(node['children']), self.counter , str(node))
-        if len(node['children']) != 0: print()
-        self.counter += 1
+        print(self.beam_sentences)
+        top_beam = 0
+        chosen = 0
+        for i in range(len(self.beam_sentences)):
+            x = self.beam_sentences[i]['total']
+            if x > top_beam:
+                top_beam = x
+                chosen = i
+            print(len(self.beam_sentences),chosen, "beams" , self.beam_sentences[i]['words'])
+        
+        print(self.beam_sentences[chosen]['words']) 
+        c = []
+        for j in range(len(self.beam_sentences[chosen]['words'])):
+            c.append([[self.beam_sentences[chosen]['words'][j]]])
+       
+        return  [ torch.LongTensor(c) ]
 
-        for i in range(len(node['children'])):
-            print('    ', end="")
-            if i < 50:
-                self.beam_view_recurrent(node['children'][i])
-        return 
-        pass
+        
+        
 
 #################### Wrapper ####################
 
@@ -802,18 +840,22 @@ class WrapMemRNN(nn.Module):
             
             #print(encoder_out_x.size(), decoder_hidden_x.size(), "ed to gru")
 
-            if self.training:
+            if self.training or hparams['beam'] == None:
                 ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
             else:
-                self.model_6_dec.counter = 0
-                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, None, depth=2, beam_size=2) ## <--
+                
+                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, None, depth=4, beam_size=hparams['beam']) ## <--
                 
                 print()
                 print(self.model_6_dec.root_token, "-----final-----\n")
-                self.model_6_dec.counter = 0
                 
                 out = self.model_6_dec.beam_view_recurrent(self.model_6_dec.root_token)
+                
+                ans = out
+                decoder_hidden_x = None
+                ans_small = None
 
+        
         return ans, decoder_hidden_x, ans_small
 
 
@@ -1632,8 +1674,8 @@ class NMT:
             print('embedding option detected.')
             self.task_set_embedding_matrix()
 
-        if hparams['beam'] is not None:
-            self.prep_blacklist_supress()
+        #if hparams['beam'] is not None:
+        #    self.prep_blacklist_supress()
 
         return self.input_lang, self.output_lang, self.pairs
 
@@ -2546,10 +2588,18 @@ class NMT:
 
                 #print(hidden.size(),'hid out')
 
-                ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
-                #print(ansx.size(),'ansx')
+                if hparams['beam'] == None or self.model_0_wra.training:
+
+                    ansx = ans.topk(k=1, dim=2)[1] #.squeeze(0)
+                    #print(ansx.size(),'ansx')
                 
-                ans_batch.append(ansx)
+                    ans_batch.append(ansx)
+
+                else:
+                    #print(ans.size())
+
+                    ans_batch = ans #.permute(0,2,1)
+                    break
 
                 a_var = ans.squeeze(0) 
 
@@ -2627,7 +2677,7 @@ class NMT:
         
         #loss_out = 0
 
-        #print("ans_batch", len(ans_batch))
+        print("ans_batch", ans_batch)
         return loss_out, ans_batch
 
     #######################################
