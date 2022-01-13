@@ -843,14 +843,17 @@ class WrapMemRNN(nn.Module):
             if self.training or hparams['beam'] == None:
                 ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
             else:
+                print("input")
                 
-                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, None, depth=4, beam_size=hparams['beam']) ## <--
+                self.model_6_dec.root_token = None
+
+                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, current_token=None, index=0, depth=4, beam_size=hparams['beam']) ## <--
                 
                 print()
                 print(self.model_6_dec.root_token, "-----final-----\n")
                 
                 out = self.model_6_dec.beam_view_recurrent(self.model_6_dec.root_token)
-                
+
                 ans = out
                 decoder_hidden_x = None
                 ans_small = None
