@@ -563,7 +563,7 @@ class Decoder(nn.Module):
             current_token['words'] = [ SOS_token ]
             depth -= 1
             index = 0
-            print('reset root')
+            #print('reset root')
         
         ansx =  torch.LongTensor([[current_token['num']]])
 
@@ -577,7 +577,7 @@ class Decoder(nn.Module):
 
         if index == depth:
             self.beam_sentences.append(current_token)
-            print(index, depth, "i,d")
+            #print(index, depth, "i,d")
 
         if index < depth: 
 
@@ -609,7 +609,7 @@ class Decoder(nn.Module):
                     current_token['children'][jj]['words'].append(current_token['children'][jj]['num'])
 
                     current_token['children'][jj]['ended'] = parent_token['ended']
-                    print('node stuff', self.counter)
+                    #print('node stuff', self.counter)
 
                     #### recurrent call ####
                     current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out, decoder_hidden, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
@@ -620,7 +620,7 @@ class Decoder(nn.Module):
 
 
     def beam_view_recurrent(self, node):
-        print(self.beam_sentences)
+        #print(self.beam_sentences)
         top_beam = 0
         chosen = 0
         for i in range(len(self.beam_sentences)):
@@ -628,9 +628,9 @@ class Decoder(nn.Module):
             if x > top_beam:
                 top_beam = x
                 chosen = i
-            print(len(self.beam_sentences),chosen, "beams" , self.beam_sentences[i]['words'])
+            #print(len(self.beam_sentences),chosen, "beams" , self.beam_sentences[i]['words'])
         
-        print(self.beam_sentences[chosen]['words']) 
+        #print(self.beam_sentences[chosen]['words']) 
         c = []
         for j in range(len(self.beam_sentences[chosen]['words'])):
             c.append([[self.beam_sentences[chosen]['words'][j]]])
@@ -843,14 +843,11 @@ class WrapMemRNN(nn.Module):
             if self.training or hparams['beam'] == None:
                 ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
             else:
-                print("input")
                 
                 self.model_6_dec.root_token = None
 
                 _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, current_token=None, index=0, depth=4, beam_size=hparams['beam']) ## <--
                 
-                print()
-                print(self.model_6_dec.root_token, "-----final-----\n")
                 
                 out = self.model_6_dec.beam_view_recurrent(self.model_6_dec.root_token)
 
@@ -2680,7 +2677,7 @@ class NMT:
         
         #loss_out = 0
 
-        print("ans_batch", ans_batch)
+        #print("ans_batch", ans_batch)
         return loss_out, ans_batch
 
     #######################################
