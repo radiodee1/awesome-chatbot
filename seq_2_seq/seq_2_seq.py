@@ -630,7 +630,6 @@ class Decoder(nn.Module):
                 chosen = i
             #print(len(self.beam_sentences),chosen, "beams" , self.beam_sentences[i]['words'])
         
-        #print(self.beam_sentences[chosen]['words']) 
         c = []
         for j in range(len(self.beam_sentences[chosen]['words'])):
             c.append([[self.beam_sentences[chosen]['words'][j]]])
@@ -846,7 +845,7 @@ class WrapMemRNN(nn.Module):
                 
                 self.model_6_dec.root_token = None
 
-                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, current_token=None, index=0, depth=4, beam_size=hparams['beam']) ## <--
+                _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, current_token=None, index=0, depth=MAX_LENGTH, beam_size=hparams['beam']) ## <--
                 
                 
                 out = self.model_6_dec.beam_view_recurrent(self.model_6_dec.root_token)
