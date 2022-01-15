@@ -611,8 +611,6 @@ class Decoder(nn.Module):
                     #### recurrent call ####
                     current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out, decoder_hidden, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
 
-                        
-
         return current_token, encoder_out, decoder_hidden
 
 
