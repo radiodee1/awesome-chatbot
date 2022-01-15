@@ -545,12 +545,12 @@ class Decoder(nn.Module):
     def beam_recurrent(self, encoder_out, decoder_hidden, current_token=None, index=0, depth=10, beam_size=3):
 
         beam_token = {
-            "num": 0, # token id number
-            "score": 0, # score for this word 
-            "ended": False, # weather or not the sentence has ended as of this token
-            "total": 0, # score so far
-            "words": [],
-            "children": [] # list of children
+            "num": 0,         # token id number
+            "score": 0,       # score for this word 
+            "ended": False,   # weather or not the sentence has ended as of this token
+            "total": 0,       # score so far
+            "words": [],      # words in accumulated sentences
+            "children": []    # list of children
         }
 
         if self.root_token == None: 
