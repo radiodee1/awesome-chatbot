@@ -615,7 +615,7 @@ class Decoder(nn.Module):
 
 
     def beam_view(self):
-        #print(self.beam_sentences)
+        
         top_beam = 0
         chosen = 0
         for i in range(len(self.beam_sentences)):
