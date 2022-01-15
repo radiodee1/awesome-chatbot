@@ -619,7 +619,7 @@ class Decoder(nn.Module):
         return current_token, encoder_out, decoder_hidden
 
 
-    def beam_view_recurrent(self):
+    def beam_view(self):
         #print(self.beam_sentences)
         top_beam = 0
         chosen = 0
@@ -848,7 +848,7 @@ class WrapMemRNN(nn.Module):
                 _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, current_token=None, index=0, depth=MAX_LENGTH, beam_size=hparams['beam']) ## <--
                 
                 
-                out = self.model_6_dec.beam_view_recurrent() 
+                out = self.model_6_dec.beam_view() 
 
                 ans = out
                 decoder_hidden_x = None
