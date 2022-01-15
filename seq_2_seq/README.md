@@ -107,6 +107,19 @@ cd seq_2_seq/
 
 # this makes two files called 'train.from' and 'train.to'
 ```
+For this step the `do_split` program was modified to include a `--questions-only` argument. Use this if you want for limiting the corpus to sentence pairs where the first sentence ends with a question mark. The text would look like that below:
+```
+cd seq_2_seq/
+./do_split.py \
+        --filename \
+        ../raw/cornell\ movie-dialogs\ corpus/movie_lines.txt.tab.txt \
+        --start 0 \
+        --length 0 \
+        --pairs \
+        --questions-only
+
+```
+
 8. Move the two generated files to the 'data' folder. Create 'saved' folder.
 ```
 cd ../raw/cornell\ movie-dialogs\ corpus/
@@ -124,6 +137,8 @@ cd ../../seq_2_seq/
 
 # you might want to experiment and include the flag '--order' above.
 ```
+The 'bsefile' here can be a blob, so you can replace `../data/train.from` with `../data/train.*` in the code above. This would include `train.from` and `train.to`.
+
 10. Then you can start the actual experiment.
 ```
 ./seq_2_seq.py \
@@ -140,3 +155,5 @@ cd ../../seq_2_seq/
 	--add-eol \
 	--stop 4000
 ```
+This `seq_2_seq` code can be run with a `--beam` option. This will run the code with a beam-search method. The `--beam` option takes one argument, a number that specifies the beam width. This code has not been thuroughly tested against the default 'greedy-search' option.
+
