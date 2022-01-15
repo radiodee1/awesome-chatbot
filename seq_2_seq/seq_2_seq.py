@@ -569,15 +569,13 @@ class Decoder(nn.Module):
 
         ans_target = self.beam_forward(encoder_out, decoder_hidden, index=index, beam_size=beam_size, depth=depth, ansx=ansx)
 
-        #index += 1
-        #print(index, 'index')
-
+        ## do this??
         if current_token['num'] == EOS_token:
             current_token['ended'] = True
 
         if index == depth:
             self.beam_sentences.append(current_token)
-            #print(index, depth, "i,d")
+            
 
         if index < depth: 
 
