@@ -607,7 +607,6 @@ class Decoder(nn.Module):
                     current_token['children'][jj]['words'].append(current_token['children'][jj]['num'])
 
                     current_token['children'][jj]['ended'] = parent_token['ended']
-                    #print('node stuff', self.counter)
 
                     #### recurrent call ####
                     current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out, decoder_hidden, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
