@@ -576,10 +576,6 @@ class Decoder(nn.Module):
         if index == depth:
             self.beam_sentences.append(current_token)
             
-        ### if at depth ###
-        encoder_out = encoder_out_i
-        decoder_hidden = decoder_hidden_i
-
         if index < depth: 
 
             current_token['children'] = []
@@ -613,6 +609,11 @@ class Decoder(nn.Module):
 
                     #### recurrent call ####
                     current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out_i, decoder_hidden_i, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
+
+        else:
+            ### if at depth ###
+            encoder_out = encoder_out_i
+            decoder_hidden = decoder_hidden_i
 
         return current_token, encoder_out, decoder_hidden
 
