@@ -576,6 +576,7 @@ class Decoder(nn.Module):
         if index == depth:
             self.beam_sentences.append(current_token)
             
+        ### if at depth ###
         encoder_out = encoder_out_i
         decoder_hidden = decoder_hidden_i
 
