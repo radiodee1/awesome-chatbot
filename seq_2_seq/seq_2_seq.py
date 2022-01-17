@@ -542,7 +542,7 @@ class Decoder(nn.Module):
         return ans_target
 
 
-    def beam_recurrent(self, encoder_out, decoder_hidden, current_token=None, index=0, depth=10, beam_size=3):
+    def beam_recurrent(self, encoder_out_i, decoder_hidden_i, current_token=None, index=0, depth=10, beam_size=3):
 
         beam_token = {
             "num": 0,         # token id number
@@ -567,7 +567,7 @@ class Decoder(nn.Module):
         
         ansx =  torch.LongTensor([[current_token['num']]])
 
-        ans_target = self.beam_forward(encoder_out, decoder_hidden, index=index, beam_size=beam_size, depth=depth, ansx=ansx)
+        ans_target = self.beam_forward(encoder_out_i, decoder_hidden_i, index=index, beam_size=beam_size, depth=depth, ansx=ansx)
 
         ## do this??
         if current_token['num'] == EOS_token:
@@ -576,6 +576,8 @@ class Decoder(nn.Module):
         if index == depth:
             self.beam_sentences.append(current_token)
             
+        encoder_out = encoder_out_i
+        decoder_hidden = decoder_hidden_i
 
         if index < depth: 
 
@@ -609,7 +611,7 @@ class Decoder(nn.Module):
                     current_token['children'][jj]['ended'] = parent_token['ended']
 
                     #### recurrent call ####
-                    current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out, decoder_hidden, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
+                    current_token['children'][jj], encoder_out, decoder_hidden = self.beam_recurrent(encoder_out_i, decoder_hidden_i, current_token['children'][jj], index=index, depth=depth, beam_size=beam_size)  
 
         return current_token, encoder_out, decoder_hidden
 
