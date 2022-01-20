@@ -628,7 +628,7 @@ class Decoder(nn.Module):
                 top_beam = x
                 chosen = i
             #print(len(self.beam_sentences),chosen, "beams" , self.beam_sentences[i]['words'])
-            print(str(chosen) + ', ', end='')
+            #print(str(chosen) + ', ', end='')
         
         print()
         c = []
