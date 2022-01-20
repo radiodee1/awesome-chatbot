@@ -2110,7 +2110,8 @@ class NMT:
                 #print(checkpoint)
                 try:
                     bl = checkpoint[0]['best_loss']
-                    if self.best_loss is None or self.best_loss == 0 or bl < self.best_loss or self.do_review: self.best_loss = bl
+                    if self.best_loss is None or self.best_loss == 0 or bl < self.best_loss or self.do_review: 
+                        self.best_loss = bl
                 except:
                     print('no best loss saved with checkpoint')
                     pass
@@ -2182,6 +2183,9 @@ class NMT:
                         if self.model_0_wra.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
+                        if self.this_epoch is not 0:
+                            print('bad opt 1')
+                            exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         self.model_0_wra.opt_1 = self._make_optimizer([])
                 if self.model_0_wra.opt_2 is not None:
@@ -2191,6 +2195,9 @@ class NMT:
                         if self.model_0_wra.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
+                        if self.this_epoch is not 0:
+                            print('bad opt 2')
+                            exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
                         self.model_0_wra.opt_2 = self._make_optimizer([self.model_0_wra.model_1_seq], lm)
@@ -2201,6 +2208,9 @@ class NMT:
                         if self.model_0_wra.opt_3.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
+                        if self.this_epoch is not 0:
+                            print('bad opt 3')
+                            exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
                         self.model_0_wra.opt_3 = self._make_optimizer([self.model_0_wra.model_6_dec], lm)
