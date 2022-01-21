@@ -2661,13 +2661,13 @@ class NMT:
                         print('skip for size...')
                         print(e)
                         print(a_var.size(), t_var.size(),'a,t')
-                        '''
+                        
                         if input("save? (y/N) > ").upper().startswith('Y'):
-                            n.low_loss_list.append("*" + str(n.saved_files + 1) + "*")
-                            n.save_checkpoint(interrupt=True, num=n.iter_current)
+                            self.low_loss_list.append("*" + str(self.saved_files + 1) + "*")
+                            self.save_checkpoint(interrupt=True, num=self.iter_current)
                         else:
                             print("do not save...")
-                        '''
+                        
                         #exit() ### try without exit...
                         continue
 
