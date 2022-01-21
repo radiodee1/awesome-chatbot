@@ -2658,11 +2658,20 @@ class NMT:
 
                         n_tot += t_var.size(0)
                     except ValueError as e:
-                        #print('skip for size...', z)
+                        print('skip for size...', z)
                         print(e)
                         print(a_var.size(), t_var.size(),'a,t')
-                        exit()
-                        pass
+                        '''
+                        if input("save? (y/N) > ").upper().startswith('Y'):
+                            n.low_loss_list.append("*" + str(n.saved_files + 1) + "*")
+                            n.save_checkpoint(interrupt=True, num=n.iter_current)
+                        else:
+                            print("do not save...")
+                        '''
+                        #exit() ### try without exit...
+                        continue
+
+                        ##pass
                     #print(l, loss, n_tot, 'loss')
                     loss.backward(retain_graph=True)
                     #loss_out.backward(retain_graph=True)
