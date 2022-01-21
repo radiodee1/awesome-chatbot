@@ -2650,7 +2650,7 @@ class NMT:
                     try:
                         a = i_ans_out #i_ans_out[j,:book_keeping[j],:] 
                         t = i_tar_out # i_tar_out[j,:book_keeping[j]] 
-                        #print(a.size(), t, "a,t")
+                        #print(a.size(), t.size(), "a,t")
                         l = criterion(a, t)
                         loss += l
                         if not (l != l) :
@@ -2660,7 +2660,7 @@ class NMT:
                     except ValueError as e:
                         print('skip for size...')
                         print(e)
-                        print(a_var.size(), t_var.size(),'a,t')
+                        print(a.size(), t.size(),'a,t')
                         
                         if input("save? (y/N) > ").upper().startswith('Y'):
                             self.low_loss_list.append("*" + str(self.saved_files + 1) + "*")
