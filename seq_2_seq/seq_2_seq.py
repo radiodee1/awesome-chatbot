@@ -2658,7 +2658,7 @@ class NMT:
 
                         n_tot += t_var.size(0)
                     except ValueError as e:
-                        print('skip for size...', z)
+                        print('skip for size...')
                         print(e)
                         print(a_var.size(), t_var.size(),'a,t')
                         '''
