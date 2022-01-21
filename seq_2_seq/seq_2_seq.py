@@ -570,7 +570,7 @@ class Decoder(nn.Module):
         ans_target = self.beam_forward(encoder_out_i, decoder_hidden_i, index=index, beam_size=beam_size, depth=depth, ansx=ansx)
 
         ## do this??
-        if current_token['num'] == EOS_token:
+        if current_token['num'] == EOS_token or (index != 0 and current_token['num'] == SOS_token):
             current_token['ended'] = True
 
         if index == depth:
