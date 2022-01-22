@@ -2052,7 +2052,7 @@ class NMT:
         if num is not 0:
             num = '00000000' + str(num)
             num = num[-6:]
-            print(num)
+            print('num_saved:',num, 'iter_current:', self.iter_current)
         basename = hparams['save_dir'] + hparams['base_filename']
         if self.do_load_babi or self.do_conserve_space or self.do_train_long or self.do_recurrent_output:
             #num = self.this_epoch * len(self.pairs) + num
