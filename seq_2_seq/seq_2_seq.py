@@ -2155,27 +2155,7 @@ class NMT:
                     self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
 
                     #self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding01'])
-                '''
-                if self.do_load_embeddings and False:
-                    self.model_0_wra.load_embedding(self.embedding_matrix)
-                    self.embedding_matrix_is_loaded = True
-                if self.do_freeze_embedding and False:
-                    self.model_0_wra.new_freeze_embedding()
-                    self.model_0_wra.embed.weight.requires_grad = False
-                    self.model_0_wra.model_1_seq.embed.weight.requires_grad = False
-                    self.model_0_wra.model_6_dec.embed.weight.requires_grad = False
-                    #print('freeze')
-                else:
-                    self.model_0_wra.new_freeze_embedding(do_freeze=False)
-                if self.do_freeze_encoding:
-                    self.model_0_wra.new_freeze_encoding()
-                else:
-                    self.model_0_wra.new_freeze_encoding(do_freeze=False)
-                if self.do_freeze_decoding:
-                    self.model_0_wra.new_freeze_decoding()
-                else:
-                    self.model_0_wra.new_freeze_decoding(do_freeze=False)
-                '''
+                
                 if self.model_0_wra.opt_1 is not None:
                     #####
                     try:
@@ -2237,119 +2217,9 @@ class NMT:
 
 
     def _auto_stop(self):
-        threshold = 70.00
-        use_recipe_switching = self.do_recipe_dropout and self.do_recipe_lr
+        '''
 
-        use_lr_recipe = self.do_recipe_lr
-        use_dropout_recipe = self.do_recipe_dropout
-
-        ''' switch between two recipe types '''
-        if use_recipe_switching and self._recipe_switching % 2 == 0:
-            use_dropout_recipe = False
-            use_lr_recipe = True
-        elif use_recipe_switching and self._recipe_switching % 2 == 1:
-            use_lr_recipe = False
-            use_dropout_recipe = True
-
-        if self._highest_reached_test(num=20, goal=10):
-            time.ctime()
-            t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-            print(t)
-            print('no progress')
-            print('list:', self.score_list)
-            self.update_result_file()
-            exit()
-
-        self.epochs_since_adjustment += 1
-
-        if self.epochs_since_adjustment > 0:
-
-            z1 = z2 = z3 = z4 = 0.0
-
-            if len(self.score_list_training) >= 1:
-                z1 = float(self.score_list_training[-1])
-            if len(self.score_list_training) >= 3:
-                z2 = float(self.score_list_training[-2])
-                z3 = float(self.score_list_training[-3])
-
-            if len(self.score_list) > 0:
-                z4 = float(self.score_list[-1])
-
-            zz1 = z1 == 100.00 and z4 != 100.00 #and z2 == 100.00  ## TWO IN A ROW
-
-            zz2 = z1 == z2 and z1 == z3 and z1 != 0.0 ## TWO IN A ROW
-
-            if ( len(self.score_list) >= 2 and (
-                    float(self.score_list[-2]) == 100 or
-                    (float(self.score_list[-2]) == 100 and float(self.score_list[-1]) == 100) or
-                    (float(self.score_list[-2]) == float(self.score_list[-1]) and
-                     float(self.score_list[-1]) != 0.0))):
-
-                self.do_skip_validation = False
-
-                ''' adjust learning_rate to different value if possible. -- validation '''
-
-                if (False and len(self.score_list) > 3 and float(self.score_list[-2]) == 100.00 and
-                        float(self.score_list[-3]) == 100.00 and float(self.score_list[-1]) != 100):
-                    self.move_high_checkpoint()
-                    time.ctime()
-                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                    print(t)
-                    print('list:', self.score_list)
-                    self.update_result_file()
-                    exit()
-
-                ''' put convergence test here. '''
-                if self._convergence_test(10,lst=self.score_list_training):# or self._convergence_test(4, value=100.00):
-                    time.ctime()
-                    t = time.strftime('%l:%M%p %Z on %b %d, %Y')
-                    print(t)
-                    print('converge')
-                    print('list:', self.score_list)
-                    self.update_result_file()
-                    exit()
-
-                if self.lr_adjustment_num < 1 and use_dropout_recipe:
-                    hparams['dropout'] = 0.0
-                    self.set_dropout(0.0)
-
-            if len(self.score_list_training) < 1: return
-
-            if z1 >= threshold and self.lr_adjustment_num != 0 and (self.lr_adjustment_num % 8 == 0 or self.epochs_since_adjustment > 15 ):
-                if use_lr_recipe:
-                    hparams['learning_rate'] = self.lr_low  # self.lr_increment + hparams['learning_rate']
-                self.epochs_since_adjustment = 0
-                self.do_skip_validation = False
-                self._recipe_switching += 1
-                if use_dropout_recipe:
-                    hparams['dropout'] = 0.00
-                    self.set_dropout(0.00)
-                print('max changes or max epochs')
-
-            if (self.lr_adjustment_num > 25 or self.epochs_since_adjustment > 300) and (self.do_recipe_lr or self.do_recipe_dropout):
-                print('max adjustments -- quit', self.lr_adjustment_num)
-                self.update_result_file()
-                exit()
-
-            if ((zz2) or (zz1 ) or ( abs(z4 - z1) > 10.0 and self.lr_adjustment_num <= 2) ):
-
-                ''' adjust learning_rate to different value if possible. -- training '''
-
-                if (float(self.score_list_training[-1]) == 100.00 and
-                        float(self.score_list[-1]) != 100.00):
-                    if use_lr_recipe:
-                        hparams['learning_rate'] = self.lr_increment + hparams['learning_rate']
-                    if use_dropout_recipe:
-                        hparams['dropout'] = hparams['dropout'] + 0.025
-                        self.set_dropout(hparams['dropout'])
-                    self.do_skip_validation = False
-                    self.lr_adjustment_num += 1
-                    self.epochs_since_adjustment = 0
-                    print('train reached 100 but not validation')
-
-            elif use_lr_recipe and False:
-                print('reset learning rate.')
-                hparams['learning_rate'] = self.lr_low ## essentially old learning_rate !!
+        '''
 
     def _convergence_test(self, num, lst=None, value=None):
         if lst is None:
