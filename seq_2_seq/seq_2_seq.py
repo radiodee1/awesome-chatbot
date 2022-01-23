@@ -2552,6 +2552,7 @@ class NMT:
                     clip = 50.0
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_6_dec.parameters(), clip)
                     _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.model_1_seq.parameters(), clip)
+                    _ = torch.nn.utils.clip_grad_norm_(self.model_0_wra.parameters(), clip)
 
 
             if criterion is not None : #not isinstance(loss, int):
