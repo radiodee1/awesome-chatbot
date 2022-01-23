@@ -2169,7 +2169,8 @@ class NMT:
                             print('bad opt 1')
                             exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
-                        self.model_0_wra.opt_1 = self._make_optimizer([])
+                        lm = hparams['multiplier']
+                        self.model_0_wra.opt_1 = self._make_optimizer([self.model_0_wra], lm)
                 if self.model_0_wra.opt_2 is not None:
                     #####
                     try:
