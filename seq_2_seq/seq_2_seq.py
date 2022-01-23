@@ -2147,13 +2147,15 @@ class NMT:
                     self.start = 0
 
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
-                self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
-                self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
+                #self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
+                #self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
+                self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
+                print('embed redirect')
 
-                if not self.do_load_embeddings:
+                if not self.do_load_embeddings and False:
                     self.model_0_wra.model_1_seq.embed.load_state_dict(checkpoint[0]['embedding01'])
                     self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
-
+                    print('do_load_embeddings block')
                     #self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding01'])
                 
                 if self.model_0_wra.opt_1 is not None:
@@ -2616,8 +2618,8 @@ class NMT:
         self.time_str = self._as_minutes(self.time_num)
 
         if self.model_0_wra.opt_1 is None or self.first_load:
-
-            wrapper_optimizer_1 = self._make_optimizer([])
+            lm = hparams['multiplier']
+            wrapper_optimizer_1 = self._make_optimizer([self.model_0_wra], lm)
             self.model_0_wra.opt_1 = wrapper_optimizer_1
 
         if self.model_0_wra.opt_2 is None or self.first_load:
@@ -2626,7 +2628,7 @@ class NMT:
             self.model_0_wra.opt_2 = wrapper_optimizer_2
 
         if self.model_0_wra.opt_3 is None or self.first_load:
-            lm = 5.0  #hparams['multiplier']
+            lm = hparams['multiplier']
             wrapper_optimizer_3 = self._make_optimizer([ self.model_0_wra.model_6_dec], lm)
             self.model_0_wra.opt_3 = wrapper_optimizer_3
 
