@@ -2367,14 +2367,6 @@ class NMT:
 
     #######################################
 
-    def maskNLLLoss(self, inp, target, mask):
-        nTotal = mask.sum()
-
-        crossEntropy = -torch.log(torch.gather(inp, 1, target.view(-1, 1)).squeeze(1))
-        loss = crossEntropy.masked_select(mask).mean()
-        if hparams['cuda']:
-            loss = loss.cuda()
-        return loss, nTotal.item()
 
     def train(self,input_variable, target_variable, question_variable,length_variable, encoder, decoder, wrapper_optimizer_1, wrapper_optimizer_2, wrapper_optimizer_3, attention_optimizer, criterion, mask, max_target_length):
 
