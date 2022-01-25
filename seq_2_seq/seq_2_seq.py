@@ -844,7 +844,10 @@ class WrapMemRNN(nn.Module):
             if self.training or hparams['beam'] == None:
                 ans, decoder_hidden_x, ans_small = self.model_6_dec(encoder_out_x, decoder_hidden_x, target_variable, None, None) ## <--
             else:
-                
+                if self.model_6_dec.mode != "far":
+                    print('bad mode in decoder')
+                    exit()
+                    
                 self.model_6_dec.root_token = None
 
                 _, _, _ = self.model_6_dec.beam_recurrent(encoder_out_x, decoder_hidden_x, current_token=None, index=0, depth=MAX_LENGTH, beam_size=hparams['beam']) ## <--
