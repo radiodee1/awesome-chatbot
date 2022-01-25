@@ -677,9 +677,9 @@ class WrapMemRNN(nn.Module):
 
         #self.model_6_dec.embed = self.model_1_seq.embed
 
-        self.opt_1 = None
-        self.opt_2 = None
-        self.opt_3 = None
+        #self.opt_1 = None
+        #self.opt_2 = None
+        #self.opt_3 = None
 
         self.input_var = None  # for input
         self.answer_var = None  # for answer
@@ -895,7 +895,13 @@ class NMT:
         global teacher_forcing_ratio, MAX_LENGTH
 
         self.model_0_wra = None
+        
         #self.opt_1 = None
+
+        self.opt_1 = None
+        self.opt_2 = None
+        self.opt_3 = None
+
         self.embedding_matrix = None
         self.embedding_matrix_is_loaded = False
         self.criterion = None
@@ -2031,9 +2037,9 @@ class NMT:
                 #'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                 #'embedding01': self.model_0_wra.embed.state_dict(),
                 #'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
-                'optimizer_1': self.model_0_wra.opt_1.state_dict(),
-                'optimizer_2': self.model_0_wra.opt_2.state_dict(),
-                'optimizer_3': self.model_0_wra.opt_3.state_dict(),
+                'optimizer_1': self.opt_1.state_dict(),
+                'optimizer_2': self.opt_2.state_dict(),
+                'optimizer_3': self.opt_3.state_dict(),
                 'best_loss': self.best_loss,
                 'long_term_loss' : self.long_term_loss,
                 'tag': self.tag,
@@ -2159,11 +2165,11 @@ class NMT:
                     print('do_load_embeddings block')
                     #self.model_0_wra.model_6_dec.embed.load_state_dict(checkpoint[0]['embedding01'])
                 
-                if self.model_0_wra.opt_1 is not None:
+                if self.opt_1 is not None:
                     #####
                     try:
-                        self.model_0_wra.opt_1.load_state_dict(checkpoint[0]['optimizer_1'])
-                        if self.model_0_wra.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
+                        self.opt_1.load_state_dict(checkpoint[0]['optimizer_1'])
+                        if self.opt_1.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
                         if self.this_epoch is not 0:
@@ -2171,12 +2177,12 @@ class NMT:
                             exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
-                        self.model_0_wra.opt_1 = self._make_optimizer([self.model_0_wra], lm)
-                if self.model_0_wra.opt_2 is not None:
+                        self.opt_1 = self._make_optimizer([self.model_0_wra], lm)
+                if self.opt_2 is not None:
                     #####
                     try:
-                        self.model_0_wra.opt_2.load_state_dict(checkpoint[0]['optimizer_2'])
-                        if self.model_0_wra.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
+                        self.opt_2.load_state_dict(checkpoint[0]['optimizer_2'])
+                        if self.opt_2.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
                         if self.this_epoch is not 0:
@@ -2184,12 +2190,12 @@ class NMT:
                             exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
-                        self.model_0_wra.opt_2 = self._make_optimizer([self.model_0_wra.model_1_seq], lm)
-                if self.model_0_wra.opt_3 is not None:
+                        self.opt_2 = self._make_optimizer([self.model_0_wra.model_1_seq], lm)
+                if self.opt_3 is not None:
                     #####
                     try:
-                        self.model_0_wra.opt_3.load_state_dict(checkpoint[0]['optimizer_3'])
-                        if self.model_0_wra.opt_3.param_groups[0]['lr'] != hparams['learning_rate']:
+                        self.opt_3.load_state_dict(checkpoint[0]['optimizer_3'])
+                        if self.opt_3.param_groups[0]['lr'] != hparams['learning_rate']:
                             raise Exception('new optimizer...')
                     except:
                         if self.this_epoch is not 0:
@@ -2197,7 +2203,7 @@ class NMT:
                             exit()
                         if self.do_freeze_embedding: self.model_0_wra.new_freeze_embedding()
                         lm = hparams['multiplier']
-                        self.model_0_wra.opt_3 = self._make_optimizer([self.model_0_wra.model_6_dec], lm)
+                        self.opt_3 = self._make_optimizer([self.model_0_wra.model_6_dec], lm)
                 print("loaded checkpoint '"+ basename + "' ")
                 if self.do_recipe_dropout:
                     self.set_dropout(hparams['dropout'])
@@ -2614,20 +2620,20 @@ class NMT:
 
         self.time_str = self._as_minutes(self.time_num)
 
-        if self.model_0_wra.opt_1 is None or self.first_load:
+        if self.opt_1 is None or self.first_load:
             lm = hparams['multiplier']
             wrapper_optimizer_1 = self._make_optimizer([self.model_0_wra], lm)
-            self.model_0_wra.opt_1 = wrapper_optimizer_1
+            self.opt_1 = wrapper_optimizer_1
 
-        if self.model_0_wra.opt_2 is None or self.first_load:
+        if self.opt_2 is None or self.first_load:
             lm = hparams['multiplier']
             wrapper_optimizer_2 = self._make_optimizer([self.model_0_wra.model_1_seq],lm)
-            self.model_0_wra.opt_2 = wrapper_optimizer_2
+            self.opt_2 = wrapper_optimizer_2
 
-        if self.model_0_wra.opt_3 is None or self.first_load:
+        if self.opt_3 is None or self.first_load:
             lm = hparams['multiplier']
             wrapper_optimizer_3 = self._make_optimizer([ self.model_0_wra.model_6_dec], lm)
-            self.model_0_wra.opt_3 = wrapper_optimizer_3
+            self.opt_3 = wrapper_optimizer_3
 
         #weight = torch.ones(self.output_lang.n_words)
         #weight[self.output_lang.word2index[hparams['unk']]] = 0.0
@@ -2655,9 +2661,9 @@ class NMT:
 
             #print('list:', ', '.join(self.score_list))
             print('hidden:', hparams['units'])
-            for param_group in self.model_0_wra.opt_1.param_groups:
+            for param_group in self.opt_1.param_groups:
                 print(param_group['lr'], 'lr opt_1')
-            for param_group in self.model_0_wra.opt_2.param_groups:
+            for param_group in self.opt_2.param_groups:
                 print(param_group['lr'], 'lr_opt_2')
             print(self.output_lang.n_words, 'num words')
 
@@ -2708,7 +2714,7 @@ class NMT:
             #print(input_variable.size(), target_variable.size(), 'stats')
 
             l , batch = self.train(input_variable, target_variable, question_variable, length_variable, encoder,
-                                   decoder, self.model_0_wra.opt_1, self.model_0_wra.opt_2, self.model_0_wra.opt_3
+                                   decoder, self.opt_1, self.opt_2, self.opt_3
                                    , None, criterion, mask_variable, max_target_length_variable)
 
             target_variable = target_variable.unsqueeze(1) #.transpose(-1,0)
