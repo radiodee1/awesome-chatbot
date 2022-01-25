@@ -202,7 +202,7 @@ class Encoder(nn.Module):
         if self.mode not in ['left', 'double', 'repeat' ,'none']:
             raise ValueError(self.mode, "is not an appropriate Encoder output method.")
         self.bidirectional = True
-        self.embed = nn.Embedding(source_vocab_size, 1 * embed_dim)
+        self.embed = embed #nn.Embedding(source_vocab_size, 1 * embed_dim)
         self.sum_encoder = True
         self.pack_and_pad = True ##hiddencut
         if hparams['single']:
@@ -293,7 +293,7 @@ class Decoder(nn.Module):
             raise ValueError(self.mode, "is not an appropriate Decoder mode.")
 
         self.n_layers = n_layers 
-        self.embed = nn.Embedding(target_vocab_size, embed_dim * 1 )
+        self.embed = embed # nn.Embedding(target_vocab_size, embed_dim * 1 )
         self.attention_mod = Attn(hidden_dim * 1, method='general')
         self.hidden_dim = hidden_dim
         self.word_mode = cancel_attention #False
@@ -665,16 +665,17 @@ class WrapMemRNN(nn.Module):
         #gru_dropout = dropout * 0.0 #0.5
         self.cancel_attention = cancel_attention
         #beam_width = 0 if hparams['beam'] is None else hparams['beam']
-        
+        self.embed = nn.Embedding(vocab_size, 1 * embed_dim)
+
         #print(self.hidden_size_encoder, 'encoder', self.hidden_size_decoder, 'decoder')
 
         self.model_1_seq = Encoder(vocab_size, self.hidden_size , self.hidden_size_half ,
-                                          2, dropout, embed=None, mode="double")
+                                          2, dropout, embed=self.embed, mode="double")
 
-        self.model_6_dec = Decoder(vocab_size, self.hidden_size, self.hidden_size, 2, dropout, None,
+        self.model_6_dec = Decoder(vocab_size, self.hidden_size, self.hidden_size, 2, dropout, embed=self.embed,
                                    cancel_attention=self.cancel_attention, mode='far')
 
-        self.model_6_dec.embed = self.model_1_seq.embed
+        #self.model_6_dec.embed = self.model_1_seq.embed
 
         self.opt_1 = None
         self.opt_2 = None
@@ -2026,9 +2027,9 @@ class NMT:
                 'start': self.start,
                 'arch': None,
                 'state_dict_0_wra': self.model_0_wra.state_dict(),
-                'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
-                'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
-                'embedding01': self.model_0_wra.model_1_seq.embed.state_dict(),
+                #'state_dict_1_seq': self.model_0_wra.model_1_seq.state_dict(),
+                #'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
+                #'embedding01': self.model_0_wra.embed.state_dict(),
                 #'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
                 'optimizer_1': None , #self.model_0_wra.opt_1.state_dict(),
                 'optimizer_2': self.model_0_wra.opt_2.state_dict(),
@@ -2149,7 +2150,7 @@ class NMT:
                 self.model_0_wra.load_state_dict(checkpoint[0]['state_dict_0_wra'])
                 #self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 #self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
-                self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
+                #self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
                 print('embed redirect')
 
                 if not self.do_load_embeddings and False:
