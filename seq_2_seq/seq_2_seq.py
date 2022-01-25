@@ -603,7 +603,8 @@ class Decoder(nn.Module):
                         current_token['children'][jj]['total'] = parent_token['total']
 
                     current_token['children'][jj]['words'] = parent_token['words'].copy()
-                    current_token['children'][jj]['words'].append(current_token['children'][jj]['num'])
+                    if current_token['ended'] == False:
+                        current_token['children'][jj]['words'].append(current_token['children'][jj]['num'])
 
                     current_token['children'][jj]['ended'] = parent_token['ended']
 
