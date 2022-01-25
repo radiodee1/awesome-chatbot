@@ -2031,7 +2031,7 @@ class NMT:
                 #'state_dict_6_dec': self.model_0_wra.model_6_dec.state_dict(),
                 #'embedding01': self.model_0_wra.embed.state_dict(),
                 #'embedding02': self.model_0_wra.model_6_dec.embed.state_dict(),
-                'optimizer_1': None , #self.model_0_wra.opt_1.state_dict(),
+                'optimizer_1': self.model_0_wra.opt_1.state_dict(),
                 'optimizer_2': self.model_0_wra.opt_2.state_dict(),
                 'optimizer_3': self.model_0_wra.opt_3.state_dict(),
                 'best_loss': self.best_loss,
@@ -2497,6 +2497,7 @@ class NMT:
                     self.criterion_used += book_keeping[j]
 
                     if True:
+                        wrapper_optimizer_1.zero_grad()
                         wrapper_optimizer_2.zero_grad()
                         wrapper_optimizer_3.zero_grad()
 
@@ -2552,6 +2553,7 @@ class NMT:
             if criterion is not None : #not isinstance(loss, int):
                 #print("loss")
                 #loss.backward(retain_graph=True)
+                wrapper_optimizer_1.step()
                 wrapper_optimizer_2.step()
                 wrapper_optimizer_3.step()
                 
