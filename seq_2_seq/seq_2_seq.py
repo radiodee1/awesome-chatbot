@@ -2161,7 +2161,7 @@ class NMT:
                 #self.model_0_wra.model_1_seq.load_state_dict(checkpoint[0]['state_dict_1_seq'])
                 #self.model_0_wra.model_6_dec.load_state_dict(checkpoint[0]['state_dict_6_dec'])
                 #self.model_0_wra.model_6_dec.embed = self.model_0_wra.model_1_seq.embed
-                print('embed redirect')
+                #print('embed redirect')
 
                 if not self.do_load_embeddings and False:
                     self.model_0_wra.model_1_seq.embed.load_state_dict(checkpoint[0]['embedding01'])
