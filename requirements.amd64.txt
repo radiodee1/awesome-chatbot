@@ -1,6 +1,8 @@
 
 ## TF ##
-tensorflow==1.15.4
+# you need this version of tensorflow, but github thinks that it is a sucurity 
+# issue. It might be, but you still need it.
+#tensorflow==1.15.4
 tensorflow-probability==0.7.0
 gast==0.2.2
 tqdm==4.46.0

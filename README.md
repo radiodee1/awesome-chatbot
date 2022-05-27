@@ -7,6 +7,10 @@ Also, this was inspiring: [here](https://pythonprogramming.net/chatbot-deep-lear
 Finally there was a great deep learning youtube series from Siraj Raval. 
 A link for that is [here](https://www.youtube.com/watch?v=t5qgjJIBy9g&index=17&list=PL-pLHOzIUduUSTkdsLkToPdegSbpFJXcX)
 
+# Tensorflow
+
+When this project was in development, tensorflow was in 1.15.4, and since then it has moved to 2. The software in this repository relys on 1.15.4. Github does not like this. For this reason the tensorflow line has been commented out of the requirements.amd64.txt file. You may still need it, and should install it by hand.
+
 # Progress
 6/23/18 - The project is in its early stages. No model in this project implements an AI chatbot. That is the goal, but it has not been reached as of yet. Presently the focus is on the babi data set. This implies that we are using pytorch, not keras at this time.
 
